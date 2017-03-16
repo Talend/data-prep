@@ -46,7 +46,7 @@
 
 	talend-editable-regex {
 		input {
-			@include calc('width', '100% - 35px');
+			width: calc(100% - 35px);
 			margin-bottom: 20px;
 		}
 	}

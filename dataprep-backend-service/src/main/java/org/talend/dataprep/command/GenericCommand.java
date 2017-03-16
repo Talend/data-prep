@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.command;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
@@ -313,12 +314,14 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         @Override
         public T apply(HttpRequestBase req, HttpResponse res) {
-            LOGGER.trace("request on error {} -> {}", req.toString(), res.getStatusLine());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("request on error {} -> {}", req.toString(), res.getStatusLine());
+            }
             final int statusCode = res.getStatusLine().getStatusCode();
             String content = StringUtils.EMPTY;
             try {
                 if (res.getEntity() != null) {
-                    content = IOUtils.toString(res.getEntity().getContent());
+                    content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
                 JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(content);
                 code.setHttpStatus(statusCode);
@@ -361,7 +364,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             if (req instanceof HttpEntityEnclosingRequestBase) {
                 try {
                     builder.append("load:")
-                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent()))
+                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(), UTF_8))
                             .append(",\n");
                 } catch (IOException e) {
                     // We ignore the field
@@ -369,7 +372,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             }
             builder.append("}, response:{\n");
             try {
-                builder.append(IOUtils.toString(res.getEntity().getContent()));
+                builder.append(IOUtils.toString(res.getEntity().getContent(), UTF_8));
             } catch (IOException e) {
                 // We ignore the field
             }

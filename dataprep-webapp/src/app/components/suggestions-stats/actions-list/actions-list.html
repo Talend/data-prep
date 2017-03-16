@@ -15,7 +15,7 @@
 
 <div class="actions-list">
     <sc-accordion class="actions-group">
-        <div ng-repeat="category in actionsListCtrl.actions track by $index"
+        <li ng-repeat="category in actionsListCtrl.actions track by $index"
              ng-if="actionsListCtrl.shouldRenderCategory(category)">
             <div class="actions-category" ng-bind-html="category.categoryHtml"></div>
             <sc-accordion-item
@@ -49,7 +49,7 @@
                                     is-transformation-in-progress="actionsListCtrl.transformationInProgress"></transform-form>
                 </content>
             </sc-accordion-item>
-        </div>
+        </li>
     </sc-accordion>
 
 

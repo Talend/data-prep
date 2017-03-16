@@ -47,6 +47,7 @@
         <commons-compress.version>1.13</commons-compress.version>
         <!-- avro version must match the one in the studio -->
         <avro.version>1.7.7</avro.version>
+        <apache.poi.version>3.15</apache.poi.version>
     </properties>
     <modules>
         <module>../dataprep-backend-common</module>
@@ -422,12 +423,12 @@
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>3.14</version>
+                <version>${apache.poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
-                <version>3.14</version>
+                <version>${apache.poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>

@@ -26,6 +26,7 @@
                     <div class="form-group">
                         <label translate-once="COLUMN"></label>
                         <select id="chart-control-aggregation-column"
+                                class="form-control"
                                 ng-model="$ctrl.selected.column"
                                 ng-options="column.name for column in $ctrl.filteredNumericColumns track by column.id"
                                 ng-change="$ctrl.selectColumn()">
@@ -36,6 +37,7 @@
                     <div ng-if="$ctrl.selected.column" class="form-group">
                         <label translate-once="AGGREGATION"></label>
                         <select id="chart-control-aggregation-type"
+                                class="form-control"
                                 ng-model="$ctrl.selected.aggregation"
                                 ng-options="aggreg | translate for aggreg in $ctrl.aggregations track by aggreg"
                                 ng-change="$ctrl.updateSelectedDescription()"></select>

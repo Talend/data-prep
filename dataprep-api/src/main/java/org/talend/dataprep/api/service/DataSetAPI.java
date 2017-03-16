@@ -14,14 +14,11 @@ package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.command.CommandHelper.*;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

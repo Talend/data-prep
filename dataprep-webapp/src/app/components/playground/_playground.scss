@@ -150,7 +150,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 	}
 
 	.playground {
-		@include calc('height', $playground-height);
+		height: calc(#{$playground-height});
 
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -177,10 +177,10 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 			}
 
 			.suggestions-stats-details {
-				@include calc('height', $playground-height);
+				height: calc(#{$playground-height});
 
 				.suggestions-stats-content {
-					@include calc('height', $playground-suggestions-stats-details);
+					height: calc(#{ $playground-suggestions-stats-details});
 					width: 330px;
 
 					.stat-detail-tab-items {

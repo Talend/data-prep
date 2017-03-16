@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -18,28 +17,18 @@ import static org.talend.dataprep.api.type.Type.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalLong;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
@@ -53,6 +42,7 @@ import org.talend.dataprep.schema.xls.streaming.StreamingSheet;
 
 /**
  * This class is in charge of parsing excel file (note apache poi is used for reading .xls)
+ *
  * @see <a hrerf="https://poi.apache.org/
  */
 @Service("parser#xls")
@@ -63,6 +53,9 @@ public class XlsSchemaParser implements SchemaParser {
 
     /** Constant used to record blank cell. */
     private static final String BLANK = "blank";
+
+    @Value("${dataset.import.xls.size.column.max:1000}")
+    private int maxNumberOfColumns;
 
     /**
      * @see SchemaParser#parse(Request)
@@ -82,9 +75,8 @@ public class XlsSchemaParser implements SchemaParser {
                             .draft(false) //
                             .sheetName(sheetContents.get(0).getName()) //
                             .build();
-                }
-                // multiple sheet, set draft flag on
-                else {
+                } else {
+                    // multiple sheet, set draft flag on
                     result = Schema.Builder.parserResult() //
                             .sheetContents(sheetContents) //
                             .draft(true) //
@@ -127,66 +119,35 @@ public class XlsSchemaParser implements SchemaParser {
         }
     }
 
-
     private List<Schema.SheetContent> parseAllSheetsStream(Request request) {
         Workbook workbook = StreamingReader.builder() //
                 .bufferSize(4096) //
-                .rowCacheSize( 1 ) //
+                .rowCacheSize(1) //
                 .open(request.getContent());
         try {
             List<Schema.SheetContent> schemas = new ArrayList<>();
             int sheetNumber = 0;
             for (Sheet sheet : workbook) {
-                List<ColumnMetadata> columnsMetadata = new ArrayList<>();
-                int rowNumber = 0;
-                for (Row r : sheet) {
-                    if (rowNumber < 1) {
-                        if (((StreamingSheet) sheet).getReader().getFirstRowIndex() == 1) {
-                            for (Cell c : r) {
-                                String headerText = StringUtils.trim(c.getStringCellValue());
-                                // header text cannot be null so use a default one
-                                if (StringUtils.isEmpty(headerText)) {
-                                    headerText = "col_" + (columnsMetadata.size() + 1); // +1 because it starts from 0
-                                }
-                                columnsMetadata.add(ColumnMetadata.Builder //
-                                        .column() //
-                                        .name(headerText) //
-                                        .type(Type.STRING) //
-                                        .headerSize(1) //
-                                        .build());
-                            }
-                        }
-                    } else {
-                        break;
-                    }
-                    rowNumber++;
+                List<ColumnMetadata> columnsMetadata = createMetadataFromFirstNonEmptyRowAndInitSheet(sheet);
+                int totalColumnsNumber = getTotalColumnsNumber((StreamingSheet) sheet);
+
+                /*
+                 * Protecting the app against too large data sets => It would break mongo by submitting too large empty
+                 * column metadata or saturate the memory during analysis.
+                 *
+                 * @see https://jira.talendforge.org/browse/TDP-3459
+                 */
+                if (totalColumnsNumber > maxNumberOfColumns) {
+                    throw new TDPException(DataSetErrorCodes.DATASET_HAS_TOO_MANY_COLUMNS, ExceptionContext.build()
+                            .put("number-of-columns", totalColumnsNumber).put("max-allowed", maxNumberOfColumns));
                 }
 
                 String sheetName = sheet.getSheetName();
-                Schema.SheetContent sheetContent = new Schema.SheetContent(StringUtils.isEmpty(sheetName) ? "sheet-" + sheetNumber : sheetName, columnsMetadata);
-                int maxColNumber = (( StreamingSheet)sheet).getReader().getColNumber();
-                String dimension =  (( StreamingSheet)sheet).getReader().getDimension();
-
-                if (StringUtils.isNotEmpty(dimension)){
-                    int maxColNumberFromDimension = XlsUtils.getColumnsNumberFromDimension(dimension);
-                    // well for some files they can disagree so we use the biggest one
-                    if( maxColNumberFromDimension > maxColNumber) {
-                        maxColNumber = maxColNumberFromDimension;
-                    }
-                }
+                Schema.SheetContent sheetContent = new Schema.SheetContent(
+                        StringUtils.isEmpty(sheetName) ? "sheet-" + sheetNumber : sheetName, columnsMetadata);
 
                 // if less columns found than the metadata we complete
-                if (columnsMetadata.size() < maxColNumber) {
-                    int size = maxColNumber - columnsMetadata.size();
-                    for (int j = 0; j < size; j++) {
-                        columnsMetadata.add(ColumnMetadata.Builder //
-                                                .column() //
-                                                .name("col_" + j) //
-                                                .type(Type.STRING) //
-                                .headerSize(1) //
-                                                .build());
-                    }
-                }
+                completeWithEmptyColumnsMetadata(columnsMetadata, totalColumnsNumber);
                 schemas.add(sheetContent);
             }
             return schemas;
@@ -197,6 +158,63 @@ public class XlsSchemaParser implements SchemaParser {
                 LOGGER.error("Unable to close excel file.", e);
             }
         }
+    }
+
+    private int getTotalColumnsNumber(StreamingSheet sheet) {
+        int maxColNumber = sheet.getReader().getColNumber();
+        String dimension = sheet.getReader().getDimension();
+
+        if (StringUtils.isNotEmpty(dimension)) {
+            int maxColNumberFromDimension = XlsUtils.getColumnsNumberFromDimension(dimension);
+            // well for some files they can disagree so we use the biggest one
+            if (maxColNumberFromDimension > maxColNumber) {
+                maxColNumber = maxColNumberFromDimension;
+            }
+        }
+        return maxColNumber;
+    }
+
+    private void completeWithEmptyColumnsMetadata(List<ColumnMetadata> columnsMetadata, int maxColNumber) {
+        int numberOfColumnsAlreadyFound = columnsMetadata.size();
+        if (numberOfColumnsAlreadyFound < maxColNumber) {
+            int columnId = 0;
+            for (int appendedColumnId = numberOfColumnsAlreadyFound; appendedColumnId < maxColNumber; appendedColumnId++) {
+                columnsMetadata.add(ColumnMetadata.Builder //
+                        .column() //
+                        .name("col_" + columnId++) //
+                        .type(Type.STRING) //
+                        .headerSize(1) //
+                        .build());
+            }
+        }
+    }
+
+    private List<ColumnMetadata> createMetadataFromFirstNonEmptyRowAndInitSheet(Sheet sheet) {
+        List<ColumnMetadata> columnsMetadata = new ArrayList<>();
+        int rowNumber = 0;
+        for (Row r : sheet) {
+            if (rowNumber < 1) {
+                if (((StreamingSheet) sheet).getReader().getFirstRowIndex() == 1) {
+                    for (Cell c : r) {
+                        String headerText = StringUtils.trim(c.getStringCellValue());
+                        // header text cannot be null so use a default one
+                        if (StringUtils.isEmpty(headerText)) {
+                            headerText = "col_" + (columnsMetadata.size() + 1); // +1 because it starts from 0
+                        }
+                        columnsMetadata.add(ColumnMetadata.Builder //
+                                .column() //
+                                .name(headerText) //
+                                .type(Type.STRING) //
+                                .headerSize(1) //
+                                .build());
+                    }
+                }
+            } else {
+                break;
+            }
+            rowNumber++;
+        }
+        return columnsMetadata;
     }
 
     /**

@@ -7,6 +7,7 @@
  9 rue Pages 92150 Suresnes, France
  ============================================================================*/
 import template from './home-dataset.html';
+import './home-dataset.scss';
 
 const HomeDatasetContainer = {
 	templateUrl: template,

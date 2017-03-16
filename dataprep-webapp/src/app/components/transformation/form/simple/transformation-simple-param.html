@@ -13,13 +13,14 @@
   ~ ============================================================================
   -->
 
-<div class="param">
+<div class="form-group param">
     <div ng-class="{'param-row' : simpleParamCtrl.isBooleanType()}">
-        <div class="param-name"
-             data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
-             ng-if="!simpleParamCtrl.isBooleanType()">
+        <label class="param-name"
+               data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
+               for="{{::(simpleParamCtrl.parameter.name)}}"
+               ng-if="!simpleParamCtrl.isBooleanType()">
             {{::simpleParamCtrl.parameter.label}}<span translate-once="COLON"></span>
-        </div>
+        </label>
         <div ng-switch="!!simpleParamCtrl.isReadonly">
             <div class="param-input" ng-switch-when="true">
                 <div ng-switch="!simpleParamCtrl.isBooleanType()">
@@ -29,18 +30,19 @@
                         <span class="param-input-label-none" ng-if="simpleParamCtrl.parameter.value === ''"
                               translate-once="NONE"></span>
                     </span>
-                    <div ng-switch-when="false">
-                        <input name="{{::(simpleParamCtrl.parameter.name)}}"
-                               type="{{::simpleParamCtrl.parameter.inputType}}"
-                               ng-model="simpleParamCtrl.parameter.value"
-                               ng-disabled="!!simpleParamCtrl.isReadonly"/>
-                        <span>
-                            {{simpleParamCtrl.parameter.label ? simpleParamCtrl.parameter.label : simpleParamCtrl.parameter.name}}
-                        </span>
+                    <div class="checkbox" ng-switch-when="false">
+                        <label>
+                            <input id="{{::(simpleParamCtrl.parameter.name)}}"
+                                   name="{{::(simpleParamCtrl.parameter.name)}}"
+                                   type="{{::simpleParamCtrl.parameter.inputType}}"
+                                   ng-model="simpleParamCtrl.parameter.value"
+                                   ng-disabled="!!simpleParamCtrl.isReadonly"/>
+                            <span>{{simpleParamCtrl.parameter.label || simpleParamCtrl.parameter.name}}</span>
+                        </label>
                     </div>
                 </div>
             </div>
-            <div  ng-switch-when="false">
+            <div ng-switch-when="false">
                 <div ng-switch="!!simpleParamCtrl.editableSelect">
                     <div class="param-input" ng-switch-when="true">
                         <editable-select
@@ -48,16 +50,32 @@
                                 ng-model="simpleParamCtrl.parameter.value"></editable-select>
                     </div>
                     <div class="param-input" ng-switch-when="false">
-                        <input name="{{::(simpleParamCtrl.parameter.name)}}"
-                               type="{{::simpleParamCtrl.parameter.inputType}}"
-                               ng-model="simpleParamCtrl.parameter.value"
-                               ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
-                               ng-trim="false"
-                               is-type="{{::simpleParamCtrl.parameter.type}}"
-                               can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
-                        <span ng-if="simpleParamCtrl.isBooleanType()">
-                            {{simpleParamCtrl.parameter.label ? simpleParamCtrl.parameter.label : simpleParamCtrl.parameter.name}}
-                        </span>
+                        <div ng-switch="!!simpleParamCtrl.isBooleanType()">
+                            <div ng-switch-when="false">
+                                <input class="form-control"
+                                       id="{{::(simpleParamCtrl.parameter.name)}}"
+                                       name="{{::(simpleParamCtrl.parameter.name)}}"
+                                       type="{{::simpleParamCtrl.parameter.inputType}}"
+                                       ng-model="simpleParamCtrl.parameter.value"
+                                       ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                                       ng-trim="false"
+                                       is-type="{{::simpleParamCtrl.parameter.type}}"
+                                       can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
+                            </div>
+                            <div class="checkbox" ng-switch-when="true">
+                                <label>
+                                    <input id="{{::(simpleParamCtrl.parameter.name)}}"
+                                           name="{{::(simpleParamCtrl.parameter.name)}}"
+                                           type="{{::simpleParamCtrl.parameter.inputType}}"
+                                           ng-model="simpleParamCtrl.parameter.value"
+                                           ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                                           ng-trim="false"
+                                           is-type="{{::simpleParamCtrl.parameter.type}}"
+                                           can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
+                                    <span>{{simpleParamCtrl.parameter.label || simpleParamCtrl.parameter.name}}</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -45,7 +45,8 @@
                     <span translate-once="DATASET_PARAMETERS_ENCODING"></span> :
                 </div>
                 <div class="param-input">
-                    <select ng-model="datasetParametersCtrl.parameters.encoding"
+                    <select class="form-control"
+                            ng-model="datasetParametersCtrl.parameters.encoding"
                             ng-options="encoding for encoding in datasetParametersCtrl.configuration.encodings">
                     </select>
                 </div>
@@ -56,13 +57,14 @@
                     <span translate-once="DATASET_PARAMETERS_SEPARATOR"></span> :
                 </div>
                 <div class="param-input">
-                    <select ng-model="datasetParametersCtrl.parameters.separator"
+                    <select class="form-control"
+                            ng-model="datasetParametersCtrl.parameters.separator"
                             ng-options="separator.value as separator.label for separator in datasetParametersCtrl.configuration.separators">
                         <option value="" translate-once="OTHER"></option>
                     </select>
                 </div>
                 <div ng-if="!datasetParametersCtrl.separatorIsInList()">
-                    <input class="small-input"
+                    <input class="form-control small-input"
                            type="text"
                            ng-trim="false"
                            ng-model="datasetParametersCtrl.parameters.separator"

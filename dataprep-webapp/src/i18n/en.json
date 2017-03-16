@@ -94,7 +94,7 @@
 
   "_comment": "Preparations_creator",
   "EXISTING_DATASETS": "Existing Datasets",
-  "FIND_DATASETS": "Find a Dataset",
+  "FIND_DATASETS": "Find a dataset",
   "RECENT_DATASETS":"Recent Datasets",
   "RECENT_DATASETS_DESCRIPTION":"10 Last modified datasets",
   "FAVORITE_DATASETS":"Favorite Datasets",
@@ -254,7 +254,7 @@
   "NONE": "None",
 
   "_comment": "Action panel",
-  "FIND_FUNCTION": "Find a Function...",
+  "FIND_FUNCTION": "Find a function...",
   "REMOVE_EMPTY_LINES": "Remove Empty Rows",
   "CREATE_EMAIL": "Create Email Addresses",
   "CORRECT_POSTAL_ADDRESS": "Correct Postal Addresses",
@@ -381,7 +381,7 @@
   "ADD_DATASET_TO_PERFORM_A_LOOKUP": "Add a dataset by clicking on \"+\" button to perform a lookup",
 
   "_comment": "Folders",
-  "FIND_FOLDER": "Find a Folder",
+  "FIND_FOLDER": "Find a folder",
   "FOLDER_PATH": "(Path: {{path}})",
 
   "_comment": "Dataset parameters",

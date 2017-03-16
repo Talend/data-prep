@@ -10,10 +10,10 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+.import-modal .modal-inner {
+	overflow: visible;
 
-// Vendors scss only contains Third party css libs
-
-@import '~bourbon/app/assets/stylesheets/bourbon';
-@import '~sunchoke/src/sunchoke';
-@import '~bourbon-neat/app/assets/stylesheets/_neat';
-@import "base/base"; //http://bitters.bourbon.io/
+	[class*="DatalistWidget__items-container"] {
+		max-height: 150px;
+	}
+}

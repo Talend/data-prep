@@ -12,53 +12,53 @@
   ============================================================================*/
 
 .dataset-sheet-preview {
-  $medium-screen: em(640) !default;
-  $large-screen: em(860) !default;
+	$medium-screen: 640em !default;
+	$large-screen: 860em !default;
 
-  padding: 10px 20px;
+	padding: 10px 20px;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: stretch;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	align-items: stretch;
 
-  .form-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+	.form-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
 
-  .form-title {
-    flex-grow: 1;
-    flex-basis: 150px;
-    padding: 5px 5px 0 0;
+	.form-title {
+		flex-grow: 1;
+		flex-basis: 150px;
+		padding: 5px 5px 0 0;
 
-    @include media($medium-screen) {
-      text-align: right;
-    }
-  }
+		@media(max-width: $medium-screen) {
+			text-align: right;
+		}
+	}
 
-  .form-value {
-    flex-grow: 2;
-    flex-basis: 300px;
+	.form-value {
+		flex-grow: 2;
+		flex-basis: 300px;
 
-    input, select {
-      margin: 0;
-    }
-  }
+		input, select {
+			margin: 0;
+		}
+	}
 
-  #datasetSheetPreviewGrid {
-    width: 100%;
-    height: 36%;
+	#datasetSheetPreviewGrid {
+		width: 100%;
+		height: 36%;
 
-    margin: 0;
+		margin: 0;
 
-    &.datagrid{
-      min-height: 200px;
-      .slick-header-columns {
-        height: 29px;
-      }
-    }
-  }
+		&.datagrid {
+			min-height: 200px;
+			.slick-header-columns {
+				height: 29px;
+			}
+		}
+	}
 }

@@ -1116,16 +1116,6 @@ bootstrap-talend-theme@0.66.2:
   dependencies:
     bootstrap-sass "^3.3.7"
 
-bourbon-neat@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/bourbon-neat/-/bourbon-neat-1.8.0.tgz#2ffd6dbfee45db5140f2fff280163302c73e7335"
-  dependencies:
-    node-sass "^3.4"
-
-bourbon@^4.2.6, bourbon@^4.2.7:
-  version "4.2.7"
-  resolved "https://registry.yarnpkg.com/bourbon/-/bourbon-4.2.7.tgz#48a805dff475fbf61e002a64e1e4db68d2f82fba"
-
 brace-expansion@^1.0.0:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.6.tgz#7197d7eaa9b87e648390ea61fc66c84427420df9"
@@ -4823,7 +4813,7 @@ node-pre-gyp@^0.6.29:
     tar "~2.2.1"
     tar-pack "~3.3.0"
 
-node-sass@^3.3.3, node-sass@^3.4:
+node-sass@^3.3.3:
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-3.13.1.tgz#7240fbbff2396304b4223527ed3020589c004fc2"
   dependencies:
@@ -6707,13 +6697,12 @@ style-loader@^0.13.1:
   dependencies:
     loader-utils "^0.2.7"
 
-"sunchoke@git+https://github.com/Talend/sunchoke.git#1.1.0":
-  version "1.1.0"
-  resolved "git+https://github.com/Talend/sunchoke.git#d97a5a01ebf0b0da5ef7bb15d66deaa7eb481c9b"
+"sunchoke@git+https://github.com/Talend/sunchoke.git#2.0.0":
+  version "2.0.0"
+  resolved "git+https://github.com/Talend/sunchoke.git#e6f41662713dbb18dcbe6ccbc33f21dc249c06d5"
   dependencies:
     angular "^1.5.3"
     angular-animate "^1.5.3"
-    bourbon "^4.2.6"
 
 supports-color@^0.2.0:
   version "0.2.0"

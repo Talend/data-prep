@@ -62,7 +62,9 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 			@include slidable-top(200px, 0px);
 			> .content {
 				margin: 10px;
-				height: 100%;
+				display: flex;
+				flex-basis: 200px;
+				flex-grow: 1;
 			}
 		}
 

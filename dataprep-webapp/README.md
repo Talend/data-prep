@@ -160,4 +160,4 @@ The docker image is build from the Dockerfile : [docker/Dockerfile-for-dev-tools
 ###-P docker
 The docker profile adds the build of a docker image to the packaging maven phase.
 This image is launching the nginx web server with the webapp on the port 80. It is build using the Docker file [docker/Dockerfile](docker/Dockerfile).
-You may launch the docker image manually once it is built using this command : `docker run -d -p 80:80 -e TDP_API_HOST="host_for_api_service" -e TDP_API_PORT="port_for_api_service" talend/dataprep-webapp:<pom_version>`
+You may launch the docker image manually once it is built using this command : `docker run -d -p 80:80 -e TDP_GATEWAY_HOST="host_for_api_service" -e TDP_GATEWAY_PORT="port_for_gateway_service" talend/dataprep-webapp:<pom_version>`

@@ -139,6 +139,7 @@
   "DISPLAY_ROWS_INVALID_EMPTY_VALUES": "Display rows with invalid or empty values",
   "FILTER_TITLE": "Filter",
   "FILTERS": "Filters",
+  "TOGGLE_FILTERS": "Toggle filters",
 
   "_comment": "Buttons",
   "CANCEL": "Cancel",

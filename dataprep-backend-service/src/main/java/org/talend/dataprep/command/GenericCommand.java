@@ -14,6 +14,7 @@ package org.talend.dataprep.command;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -41,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
@@ -53,7 +55,6 @@ import org.talend.dataprep.security.Security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
@@ -196,6 +197,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         if (StringUtils.isNotBlank(authenticationToken)) {
             request.addHeader(AUTHORIZATION, authenticationToken);
         }
+
+        // Asks HTTP APIs to return JSON
+        request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON_UTF8_VALUE);
 
         final HttpResponse response;
         try {
@@ -376,11 +380,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
 
-                ObjectMapper exceptionsMapper = new ObjectMapper();
-                exceptionsMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-                TdpExceptionDto exceptionDto = exceptionsMapper.readerFor(TdpExceptionDto.class).readValue(content);
-
-                final TDPException cause = exceptionDto.to(HttpStatus.valueOf(res.getStatusLine().getStatusCode()));
+                TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
+                final TDPException cause = exceptionDto.toTdpException(HttpStatus.valueOf(res.getStatusLine().getStatusCode()));
                 throw onError.apply(cause);
             } catch (JsonMappingException e) {
                 LOGGER.debug("Cannot parse response content as JSON.", e);

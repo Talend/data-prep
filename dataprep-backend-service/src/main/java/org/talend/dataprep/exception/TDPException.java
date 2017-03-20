@@ -32,10 +32,6 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
  * Class for all business (TDP) exception.
@@ -44,7 +40,7 @@ public class TDPException extends TalendRuntimeException {
 
     private static final long serialVersionUID = -51732176302413600L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TDPException.class);
+    private static final Logger log = LoggerFactory.getLogger(TDPException.class);
 
     /**
      * If the exception is a TDPException, rethrow it, else wrap it and then throw it.
@@ -138,11 +134,17 @@ public class TDPException extends TalendRuntimeException {
         return messageTitle;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated use {@link TdpExceptionDto} for serialization.
+     * @param writer
+     */
     @Override
+    @Deprecated
     public void writeTo(Writer writer) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
             objectMapper.writeValue(writer, TdpExceptionDto.from(this));
             writer.flush();
         } catch (IOException e) {

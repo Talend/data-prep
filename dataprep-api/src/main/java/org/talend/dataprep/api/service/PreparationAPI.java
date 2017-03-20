@@ -14,9 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.withBuilder;
 import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
@@ -137,7 +135,7 @@ public class PreparationAPI extends APIService {
     }
 
     //@formatter:off
-    @RequestMapping(value = "/api/preparations", method = POST, consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/preparations", method = POST, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create a new preparation for preparation content in body.", notes = "Returns the created preparation id.")
     @Timed
     public String createPreparation(
@@ -161,7 +159,7 @@ public class PreparationAPI extends APIService {
         return preparationId;
     }
 
-    @RequestMapping(value = "/api/preparations/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/preparations/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Update a preparation with content in body.", notes = "Returns the updated preparation id.")
     @Timed
     public String updatePreparation(
@@ -178,7 +176,7 @@ public class PreparationAPI extends APIService {
         return preparationId;
     }
 
-    @RequestMapping(value = "/api/preparations/{id}", method = DELETE, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/preparations/{id}", method = DELETE, consumes = MediaType.ALL_VALUE)
     @ApiOperation(value = "Delete a preparation by id", notes = "Delete a preparation content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing preparation id returns empty content.")
     @Timed
     public String deletePreparation(
@@ -204,8 +202,8 @@ public class PreparationAPI extends APIService {
      * @return The copied preparation id.
      */
     //@formatter:off
-    @RequestMapping(value = "/api/preparations/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Copy a preparation", produces = TEXT_PLAIN_VALUE, notes = "Copy a preparation based the provided id.")
+    @RequestMapping(value = "/api/preparations/{id}/copy", method = POST)
+    @ApiOperation(value = "Copy a preparation", notes = "Copy a preparation based the provided id.")
     public String copy(
             @ApiParam(value = "Id of the preparation to copy") @PathVariable(value = "id") String id,
             @ApiParam(value = "Optional new name of the copied preparation, if not set the copy will get the original name.") @RequestParam(required = false) String newName,
@@ -233,8 +231,8 @@ public class PreparationAPI extends APIService {
      * @param newName     optional new preparation name.
      */
     //@formatter:off
-    @RequestMapping(value = "/api/preparations/{id}/move", method = PUT, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Move a Preparation", produces = TEXT_PLAIN_VALUE, notes = "Move a preparation to another folder.")
+    @RequestMapping(value = "/api/preparations/{id}/move", method = PUT)
+    @ApiOperation(value = "Move a Preparation", notes = "Move a preparation to another folder.")
     @Timed
     public void move(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String id,
                      @ApiParam(value = "The original folder path of the preparation.") @RequestParam(defaultValue = "", required = false) String folder,
@@ -445,7 +443,7 @@ public class PreparationAPI extends APIService {
      * @param from the preparation id to copy the steps from.
      */
     //@formatter:off
-    @RequestMapping(value = "/api/preparations/{id}/steps/copy", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/preparations/{id}/steps/copy", method = PUT)
     @ApiOperation(value = "Copy the steps from another preparation", notes = "Copy the steps from another preparation if this one has no steps.")
     @Timed
     public void copyStepsFrom(@ApiParam(value="the preparation id to update") @PathVariable("id")String id,

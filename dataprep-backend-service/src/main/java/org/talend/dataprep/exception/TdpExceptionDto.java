@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
 
 /**
@@ -42,11 +43,11 @@ public class TdpExceptionDto {
      * @param internal the internal form of {@link TDPException}.
      * @return the {@link TdpExceptionDto} ready to be serialized to external products
      */
-    public static TdpExceptionDto from(TDPException internal) {
+    public static TdpExceptionDto from(TalendRuntimeException internal) {
         ErrorCode errorCode = internal.getCode();
         String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
         String message = internal.getMessage();
-        String messageTitle = internal.getMessageTitle();
+        String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
         TdpExceptionDto cause = internal.getCause() instanceof TDPException ? from((TDPException) internal.getCause()) : null;
         Map<String, Object> context = new HashMap<>();
         for (Entry<String, Object> contextEntry : internal.getContext().entries()) {
@@ -55,7 +56,7 @@ public class TdpExceptionDto {
         return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
     }
 
-    public TDPException to(HttpStatus httpStatus) {
+    public TDPException toTdpException(HttpStatus httpStatus) {
         String completeErrorCode = getCode();
         ErrorCodeDto errorCodeDto = deserializeErrorCode(httpStatus, completeErrorCode);
         return new TDPException(errorCodeDto, null, getMessage(), getMessageTitle(), ExceptionContext.build().from(getContext()).put("cause", getCause()));

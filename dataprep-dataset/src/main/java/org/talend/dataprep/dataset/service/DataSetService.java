@@ -181,7 +181,7 @@ public class DataSetService extends BaseDataSetService {
         binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
     }
 
-    @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed
     public Callable<Stream<UserDataSetMetadata>> list(
@@ -238,7 +238,7 @@ public class DataSetService extends BaseDataSetService {
      * @return a list containing all data sets that are compatible with the data set with id <tt>dataSetId</tt> and
      * empty list if no data set is compatible.
      */
-    @RequestMapping(value = "/datasets/{id}/compatibledatasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/compatibledatasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all compatible data sets", notes = "Returns the list of data sets the current user is allowed to see and which are compatible with the specified data set id.")
     @Timed
     public Iterable<UserDataSetMetadata> listCompatibleDatasets(
@@ -270,7 +270,7 @@ public class DataSetService extends BaseDataSetService {
      * @see DataSetService#get(boolean, boolean, String)
      */
     //@formatter:off
-    @RequestMapping(value = "/datasets", method = POST, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets", method = POST, consumes = MediaType.ALL_VALUE)
     @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     @VolumeMetered
@@ -347,7 +347,7 @@ public class DataSetService extends BaseDataSetService {
      * @param dataSetId A data set id.
      * @return The full data set.
      */
-    @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET)
     @ApiOperation(value = "Get a data set by id", notes = "Get a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
@@ -396,7 +396,7 @@ public class DataSetService extends BaseDataSetService {
      * @param dataSetId A data set id. If <code>null</code> <b>or</b> if no data set with provided id exits, operation
      * returns {@link org.apache.commons.httpclient.HttpStatus#SC_NO_CONTENT} if metadata does not exist.
      */
-    @RequestMapping(value = "/datasets/{id}/metadata", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/metadata", method = RequestMethod.GET)
     @ApiOperation(value = "Get metadata information of a data set by id", notes = "Get metadata information of a data set by id. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
@@ -428,7 +428,7 @@ public class DataSetService extends BaseDataSetService {
      *
      * @param dataSetId A data set id. If data set id is unknown, no exception nor status code to indicate this is set.
      */
-    @RequestMapping(value = "/datasets/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE)
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     public void delete(
@@ -452,8 +452,8 @@ public class DataSetService extends BaseDataSetService {
      * @param copyName the name of the copy
      * @return The new data id.
      */
-    @RequestMapping(value = "/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Copy a data set", produces = TEXT_PLAIN_VALUE, notes = "Copy a new data set based on the given id. Returns the id of the newly created data set.")
+    @RequestMapping(value = "/datasets/{id}/copy", method = POST)
+    @ApiOperation(value = "Copy a data set", notes = "Copy a new data set based on the given id. Returns the id of the newly created data set.")
     @Timed
     public String copy(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
             @ApiParam(value = "The name of the cloned dataset.") @RequestParam(required = false) String copyName)

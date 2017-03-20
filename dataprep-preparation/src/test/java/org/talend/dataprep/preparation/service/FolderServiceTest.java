@@ -312,7 +312,7 @@ public class FolderServiceTest extends BasePreparationTest {
         JsonNode rootNode = mapper.readTree(response);
         assertTrue(rootNode.has("code"));
         assertTrue(rootNode.has("message"));
-        assertTrue(rootNode.has("message_title"));
+        assertTrue(rootNode.has("messageTitle"));
         assertTrue(rootNode.has("context"));
     }
 

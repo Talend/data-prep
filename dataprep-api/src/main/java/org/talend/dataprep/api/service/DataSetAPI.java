@@ -75,8 +75,8 @@ public class DataSetAPI extends APIService {
      * @param dataSetContent the dataset content from the http request body.
      * @return The dataset id.
      */
-    @RequestMapping(value = "/api/datasets", method = POST, consumes = ALL_VALUE, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
+    @RequestMapping(value = "/api/datasets", method = POST, consumes = ALL_VALUE)
+    @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     public Callable<String> create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
@@ -95,8 +95,8 @@ public class DataSetAPI extends APIService {
         };
     }
 
-    @RequestMapping(value = "/api/datasets/{id}", method = PUT, consumes = ALL_VALUE, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Update a data set by id.", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, //
+    @RequestMapping(value = "/api/datasets/{id}", method = PUT, consumes = ALL_VALUE)
+    @ApiOperation(value = "Update a data set by id.", consumes = ALL_VALUE, //
             notes = "Create or update a data set based on content provided in PUT body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     public Callable<String> createOrUpdateById(
@@ -114,8 +114,8 @@ public class DataSetAPI extends APIService {
         };
     }
 
-    @RequestMapping(value = "/api/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Copy the dataset.", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE,
+    @RequestMapping(value = "/api/datasets/{id}/copy", method = POST)
+    @ApiOperation(value = "Copy the dataset.", consumes = TEXT_PLAIN_VALUE,
             notes = "Copy the dataset, returns the id of the copied created data set.")
     @Timed
     public Callable<String> copy(
@@ -357,7 +357,7 @@ public class DataSetAPI extends APIService {
         };
     }
 
-    @RequestMapping(value = "/api/datasets/{id}", method = DELETE, consumes = ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/datasets/{id}", method = DELETE, consumes = ALL_VALUE)
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     public void delete(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to delete") String dataSetId) {
@@ -373,7 +373,7 @@ public class DataSetAPI extends APIService {
         }
     }
 
-    @RequestMapping(value = "/api/datasets/{id}/processcertification", method = PUT, consumes = ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/datasets/{id}/processcertification", method = PUT, consumes = ALL_VALUE)
     @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
     @Timed
     public void processCertification(
@@ -401,8 +401,8 @@ public class DataSetAPI extends APIService {
         return toStreaming(getLookupActions);
     }
 
-    @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST, consumes = ALL_VALUE, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Set or Unset the dataset as favorite for the current user.", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, //
+    @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST, consumes = ALL_VALUE)
+    @ApiOperation(value = "Set or Unset the dataset as favorite for the current user.", consumes = TEXT_PLAIN_VALUE, //
             notes = "Specify if a dataset is or is not a favorite for the current user.")
     @Timed
     public Callable<String> favorite(

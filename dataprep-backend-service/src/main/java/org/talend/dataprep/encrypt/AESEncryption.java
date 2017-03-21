@@ -92,6 +92,13 @@ public class AESEncryption {
         return new String(decValue, ENCODING);
     }
 
+    /**
+     * Decrypts the password embedded in the supplied URI and returns the URI with its password decrypted.
+     *
+     * @param rawUri The URI that may or may not contain an encrypted password in its user info part.
+     * @return the URI with a decrypted password.
+     * @see URI#getUserInfo()
+     */
     public static String decryptUriPassword(final String rawUri) {
         URI uri;
         try {
@@ -114,6 +121,13 @@ public class AESEncryption {
         }
     }
 
+    /**
+     * Encrypt the password part of the URI if any and returns it.
+     *
+     * @param rawUri the URI that may contain a password in its user info part.
+     * @return the URI with its password part, if any, encrypted.
+     * @throws Exception if rawUri is not a valid URI or encryption fails.
+     */
     public static String encryptUriPassword(final String rawUri) throws Exception {
         URI uri = new URI(rawUri);
         UserInfo userInfo = extractCredentials(uri);

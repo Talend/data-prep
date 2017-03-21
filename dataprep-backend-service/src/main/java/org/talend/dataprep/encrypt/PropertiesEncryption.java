@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.encrypt;
 
+import static org.apache.commons.validator.routines.UrlValidator.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,7 +101,7 @@ public class PropertiesEncryption {
      * @return the encrypted string
      */
     private String encryptIfNot(String input) {
-        if (isUri(input)) {
+        if (isUrl(input)) {
             try {
                 return AESEncryption.encryptUriPassword(input);
             } catch (Exception e) {
@@ -129,7 +131,7 @@ public class PropertiesEncryption {
      * @return the decrypted string
      */
     private String decryptIfNot(String input) {
-        if (isUri(input)) {
+        if (isUrl(input)) {
             try {
                 return AESEncryption.decryptUriPassword(input);
             } catch (Exception e) {
@@ -147,8 +149,8 @@ public class PropertiesEncryption {
         }
     }
 
-    private static boolean isUri(String field) {
-        UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.ALLOW_ALL_SCHEMES + UrlValidator.ALLOW_2_SLASHES);
+    private static boolean isUrl(String field) {
+        UrlValidator urlValidator = new UrlValidator(ALLOW_LOCAL_URLS + ALLOW_ALL_SCHEMES + ALLOW_2_SLASHES);
         return urlValidator.isValid(field);
     }
 

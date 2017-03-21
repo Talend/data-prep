@@ -18,7 +18,7 @@
     <div class="param">
         <div class="dataset-parameters-header param-row">
             <div class="param-row-item">
-                <div class="param-name" translate-once="NAME"></div>
+                <label class="param-name" translate-once="NAME"></label>
                 <div class="dataset-name param-input"
                       title="{{datasetParametersCtrl.dataset.name}}"
                       ng-bind="::datasetParametersCtrl.dataset.name">
@@ -27,7 +27,7 @@
             <div ng-if="datasetParametersCtrl.displayNbLines"
                   ng-switch="!!datasetParametersCtrl.dataset.limit"
                   class="param-row-item">
-                <div class="param-name" translate-once="SIZE"></div>
+                <label class="param-name" translate-once="SIZE"></label>
                 <div class="param-input color-white"
                       ng-switch-when="false"
                       translate="FILE_DETAILS_LINES"
@@ -41,9 +41,9 @@
 
         <div class="param-row">
             <div class="dataset-parameters-encoding param-row-item">
-                <div class="param-name">
+                <label class="param-name">
                     <span translate-once="DATASET_PARAMETERS_ENCODING"></span> :
-                </div>
+                </label>
                 <div class="param-input">
                     <select class="form-control"
                             ng-model="datasetParametersCtrl.parameters.encoding"
@@ -53,9 +53,9 @@
             </div>
             <div class="dataset-parameters-separator param-row-item"
                  ng-if="datasetParametersCtrl.dataset.type === 'text/csv'">
-                <div class="param-name">
+                <label class="param-name">
                     <span translate-once="DATASET_PARAMETERS_SEPARATOR"></span> :
-                </div>
+                </label>
                 <div class="param-input">
                     <select class="form-control"
                             ng-model="datasetParametersCtrl.parameters.separator"

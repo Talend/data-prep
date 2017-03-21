@@ -14,6 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 
@@ -115,7 +116,7 @@ public class TransformAPI extends APIService {
     /**
      * Get the current dictionary (as serialized object).
      */
-    @RequestMapping(value = "/api/transform/dictionary", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/transform/dictionary", method = GET, produces = APPLICATION_OCTET_STREAM_VALUE)
     @ApiOperation(value = "Get current dictionary (as serialized object).", notes = "Returns a DQ dictionary serialized usin Java serialization and GZIP-ed.")
     @Timed
     public StreamingResponseBody getDictionary() {

@@ -270,8 +270,8 @@ public class DataSetService extends BaseDataSetService {
      * @see DataSetService#get(boolean, boolean, String)
      */
     //@formatter:off
-    @RequestMapping(value = "/datasets", method = POST, consumes = MediaType.ALL_VALUE)
-    @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
+    @RequestMapping(value = "/datasets", method = POST)
+    @ApiOperation(value = "Create a data set", notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     @VolumeMetered
     public String create(
@@ -428,7 +428,7 @@ public class DataSetService extends BaseDataSetService {
      *
      * @param dataSetId A data set id. If data set id is unknown, no exception nor status code to indicate this is set.
      */
-    @RequestMapping(value = "/datasets/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE)
+    @RequestMapping(value = "/datasets/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     public void delete(
@@ -513,7 +513,7 @@ public class DataSetService extends BaseDataSetService {
         }
     }
 
-    @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT)
     @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
     @Timed
     public void processCertification(
@@ -558,8 +558,8 @@ public class DataSetService extends BaseDataSetService {
      * @param dataSetContent The new content for the data set. If empty, existing content will <b>not</b> be replaced.
      * For delete operation, look at {@link #delete(String)}.
      */
-    @RequestMapping(value = "/datasets/{id}/raw", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Update a data set by id", consumes = "text/plain", notes = "Update a data set content based on provided id and PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
+    @RequestMapping(value = "/datasets/{id}/raw", method = PUT)
+    @ApiOperation(value = "Update a data set by id", notes = "Update a data set content based on provided id and PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
     @Timed
     @VolumeMetered
     public void updateRawDataSet(
@@ -597,7 +597,7 @@ public class DataSetService extends BaseDataSetService {
     /**
      * List all dataset related error codes.
      */
-    @RequestMapping(value = "/datasets/errors", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/errors", method = RequestMethod.GET)
     @ApiOperation(value = "Get all dataset related error codes.", notes = "Returns the list of all dataset related error codes.")
     @Timed
     public Iterable<JsonErrorCodeDescription> listErrors() {
@@ -618,7 +618,7 @@ public class DataSetService extends BaseDataSetService {
      * @param sheetName the sheet name to preview
      * @param dataSetId A data set id.
      */
-    @RequestMapping(value = "/datasets/{id}/preview", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/preview", method = RequestMethod.GET)
     @ApiOperation(value = "Get a data preview set by id", notes = "Get a data set preview content based on provided id. Not valid or non existing data set id returns empty content. Data set not in drat status will return a redirect 301")
     @Timed
     @ResponseBody
@@ -687,8 +687,8 @@ public class DataSetService extends BaseDataSetService {
      * @param dataSetMetadata The new content for the data set. If empty, existing content will <b>not</b> be replaced.
      * For delete operation, look at {@link #delete(String)}.
      */
-    @RequestMapping(value = "/datasets/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Update a data set metadata by id", consumes = "application/json", notes = "Update a data set metadata according to the content of the PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id return an error response.")
+    @RequestMapping(value = "/datasets/{id}", method = PUT)
+    @ApiOperation(value = "Update a data set metadata by id", notes = "Update a data set metadata according to the content of the PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id return an error response.")
     @Timed
     public void updateDataSet(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId,
@@ -790,7 +790,7 @@ public class DataSetService extends BaseDataSetService {
      * @return a list of the dataset Ids of all the favorites dataset for the current user or an empty list if none
      * found
      */
-    @RequestMapping(value = "/datasets/favorites", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/favorites", method = RequestMethod.GET)
     @ApiOperation(value = "return all favorites datasets of the current user", notes = "Returns the list of favorites datasets.")
     @Timed
     public Iterable<String> favorites() {
@@ -808,7 +808,7 @@ public class DataSetService extends BaseDataSetService {
      * dataSetId to the favorite list
      * @param dataSetId, the id of the favorites data set. If the data set does not exists nothing is done.
      */
-    @RequestMapping(value = "/datasets/{id}/favorite", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets/{id}/favorite", method = PUT)
     @ApiOperation(value = "set or unset a dataset as favorite", notes = "Specify if a dataset is or is not a favorite for the current user.")
     @Timed
     public void setFavorites(
@@ -845,8 +845,8 @@ public class DataSetService extends BaseDataSetService {
      * @param columnId the column id.
      * @param parameters the new type and domain.
      */
-    @RequestMapping(value = "/datasets/{datasetId}/column/{columnId}", method = POST, consumes = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Update a column type and/or domain", consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{datasetId}/column/{columnId}", method = POST)
+    @ApiOperation(value = "Update a column type and/or domain")
     @Timed
     public void updateDatasetColumn(
             @PathVariable(value = "datasetId") @ApiParam(name = "datasetId", value = "Id of the dataset") final String dataSetId,
@@ -920,7 +920,7 @@ public class DataSetService extends BaseDataSetService {
      * @param strict If the searched name should be the full name
      * @return the list of found datasets metadata.
      */
-    @RequestMapping(value = "/datasets/search", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/search", method = GET)
     @ApiOperation(value = "Search the dataset metadata", notes = "Search the dataset metadata.")
     @Timed
     public Stream<UserDataSetMetadata> search( //
@@ -939,7 +939,7 @@ public class DataSetService extends BaseDataSetService {
                 .map(d -> conversionService.convert(d, UserDataSetMetadata.class));
     }
 
-    @RequestMapping(value = "/datasets/encodings", method = GET, consumes = MediaType.ALL_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/encodings", method = GET)
     @ApiOperation(value = "list the supported encodings for dataset", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
@@ -968,7 +968,7 @@ public class DataSetService extends BaseDataSetService {
         return parametersToReturn;
     }
 
-    @RequestMapping(value = "/datasets/{id}/datastore/properties", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/datastore/properties", method = GET)
     @ApiOperation(value = "Get the dataset import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented
@@ -994,7 +994,7 @@ public class DataSetService extends BaseDataSetService {
         return parametersToReturn;
     }
 
-    @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/imports", method = GET)
     @ApiOperation(value = "list the supported encodings for dataset", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
@@ -1037,7 +1037,7 @@ public class DataSetService extends BaseDataSetService {
      * @param columnId the column id.
      * @return the semantic types for a given dataset / column.
      */
-    @RequestMapping(value = "/datasets/{datasetId}/columns/{columnId}/types", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{datasetId}/columns/{columnId}/types", method = GET)
     @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
     @Timed
     @PublicAPI

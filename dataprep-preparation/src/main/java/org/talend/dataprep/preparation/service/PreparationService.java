@@ -1140,6 +1140,7 @@ public class PreparationService {
     private void setPreparationHead(final Preparation preparation, final Step head) {
         preparation.setHeadId(head.id());
         preparation.updateLastModificationDate();
+        preparation.getSteps().add(head);
         preparationRepository.add(preparation);
     }
 

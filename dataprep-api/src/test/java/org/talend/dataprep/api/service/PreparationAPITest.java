@@ -91,8 +91,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationsList() throws Exception {
         // given
-        String tagadaId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
-        String preparationId = createPreparationFromDataset(tagadaId, "testPreparation");
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
 
         // when : short format
         final JsonPath shortFormat = when().get("/api/preparations/?format=short").jsonPath();
@@ -130,8 +130,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationGet() throws Exception {
         // when
-        final String datasetId = createDataset("dataset/dataset.csv", "great dataset", "text/csv");
-        final String preparationId = createPreparationFromDataset(datasetId, "1234");
+        final String datasetId = testClient.createDataset("dataset/dataset.csv", "great dataset", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(datasetId, "1234", home.getId());
 
         // then
         final JsonPath longFormat = given().get("/api/preparations/{id}/details", preparationId).jsonPath();
@@ -147,10 +147,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testListCompatibleDataSets() throws Exception {
         // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "compatible1", "text/csv");
-        final String dataSetId2 = createDataset("dataset/dataset.csv", "compatible2", "text/csv");
-        final String dataSetId3 = createDataset("t-shirt_100.csv", "incompatible", "text/csv");
-        final String preparationId = createPreparationFromDataset(dataSetId, "testPreparation");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1", "text/csv");
+        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2", "text/csv");
+        final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(dataSetId, "testPreparation", home.getId());
 
 
         // when
@@ -164,8 +164,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testListCompatibleDataSetsWhenUniqueDatasetInRepository() throws Exception {
         // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "unique", "text/csv");
-        final String preparationId = createPreparationFromDataset(dataSetId, "testPreparation");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "unique", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(dataSetId, "testPreparation", home.getId());
 
         // when
         final String compatibleDatasetList = when().get("/api/preparations/{id}/basedatasets", preparationId).asString();
@@ -179,7 +179,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         Folder destination = folderRepository.addFolder(home.getId(), "/destination");
         Folder origin = folderRepository.addFolder(home.getId(), "/from");
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv", origin.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv",
+                origin.getId());
 
         // when
         String newPreparationName = "NEW super preparation";
@@ -223,7 +224,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void shouldMovePreparation() throws Exception {
         // given
         final Folder source = folderRepository.addFolder(home.getId(), "source");
-        final String id = createPreparationFromFile("dataset/dataset.csv", "great_preparation", "text/csv", source.getId());
+        final String id = testClient.createPreparationFromFile("dataset/dataset.csv", "great_preparation", "text/csv",
+                source.getId());
 
         final Folder destination = folderRepository.addFolder(home.getId(), "destination");
 
@@ -272,8 +274,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationUpdate() throws Exception {
         // given
-        String tagadaId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
-        final String preparationId = createPreparationFromDataset(tagadaId, "original_name");
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(tagadaId, "original_name", home.getId());
 
         JsonPath longFormat = when().get("/api/preparations/?format=long").jsonPath();
         assertThat(longFormat.getList("name").size(), is(1));
@@ -294,8 +296,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationDelete() throws Exception {
         // given
-        String tagadaId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
-        final String preparationId = createPreparationFromDataset(tagadaId, "original_name");
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(tagadaId, "original_name", home.getId());
 
         String list = when().get("/api/preparations").asString();
         assertTrue(list.contains(preparationId));
@@ -312,8 +314,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void testPreparationCacheDeletion() throws Exception {
         // given
 
-        String tagadaId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
-        final String preparationId = createPreparationFromDataset(tagadaId, "original_name");
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(tagadaId, "original_name", home.getId());
 
         final String list = when().get("/api/preparations").asString();
         assertThat(list.contains(preparationId), is(true));
@@ -359,10 +361,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_append_action_after_actual_head() throws Exception {
         // when
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
 
         // when
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         // then
         final List<String> steps = getPreparation(preparationId).getSteps();
@@ -373,10 +376,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldAddMultipleActionStepAfterHead() throws Exception {
         /// when: 1 AppendStep with 2 actions
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
 
         // when
-        applyActionFromFile(preparationId, "transformation/upper_case_lastname_firstname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname_firstname.json");
 
         // then : it should have appended 2 actions
         final PreparationMessageForTest preparationMessage = getPreparation(preparationId);
@@ -393,10 +397,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_save_created_columns_ids_on_append() throws Exception {
         // when
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
 
         // when
-        applyActionFromFile(preparationId, "transformation/copy_firstname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/copy_firstname.json");
 
         // then
         final JsonPath jsonPath = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath();
@@ -408,8 +413,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_fail_properly_on_append_error() throws Exception {
         // given
-        final String missingScopeAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"));
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
+        final String missingScopeAction = IOUtils.toString(
+                PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), "UTF-8");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
 
         // when
         final Response request = given().contentType(ContentType.JSON)//
@@ -426,16 +433,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_update_action() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
-        applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         List<String> steps = getPreparation(preparationId).getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(rootStep.id()));
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59") with another action
-        final String actionContent3 = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"));
+        final String actionContent3 = IOUtils
+                .toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"), "UTF-8");
         given().contentType(ContentType.JSON)
                 .body(actionContent3)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
@@ -451,15 +460,17 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_save_created_columns_ids_on_update() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
-        applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         final List<String> steps = getPreparation(preparationId).getSteps();
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59")
         // with another action that create a column
-        final String updateAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"));
+        final String updateAction = IOUtils
+                .toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"), "UTF-8");
         given().contentType(ContentType.JSON)
                 .body(updateAction)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
@@ -476,10 +487,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_fail_properly_on_update_error() throws Exception {
         // given
-        final String missingScopeAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"));
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
-        applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        final String missingScopeAction = IOUtils.toString(
+                PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), "UTF-8");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         final List<String> steps = getPreparation(preparationId).getSteps();
         final String firstStep = steps.get(1);
@@ -499,9 +512,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_delete_preparation_action() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
-        applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         List<String> steps = getPreparation(preparationId).getSteps();
         final String firstStep = steps.get(1);
@@ -529,8 +543,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_change_preparation_head() throws Exception {
         //given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv");
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
         final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent().getId();
@@ -549,8 +564,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_throw_exception_on_preparation_head_change_with_unknown_step() throws Exception {
         //given
-        String tagadaId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
-        final String preparationId = createPreparationFromDataset(tagadaId, "testPreparation");
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
 
         //when
         final Response response = given().when()//
@@ -566,11 +581,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldCopySteps() throws Exception {
         // given
-        final String referenceId = createPreparationFromFile("dataset/dataset.csv", "reference", "text/csv");
-        applyActionFromFile(referenceId, "transformation/upper_case_firstname.json");
+        final String referenceId = testClient.createPreparationFromFile("dataset/dataset.csv", "reference", "text/csv",
+                home.getId());
+        testClient.applyActionFromFile(referenceId, "transformation/upper_case_firstname.json");
         Preparation reference = preparationRepository.get(referenceId, Preparation.class);
 
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "prep", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "prep", "text/csv",
+                home.getId());
 
         // when
         final Response response = given() //
@@ -599,7 +616,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertFalse(entries.hasNext());
 
         // when
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation",
+                "text/csv", home.getId());
 
         // then
         entries = folderRepository.entries(home.getId(), PREPARATION).iterator();
@@ -620,7 +638,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertFalse(entries.hasNext());
 
         // when
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", "text/csv", folder.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation",
+                "text/csv", folder.getId());
 
         // then
         entries = folderRepository.entries(folder.getId(), PREPARATION).iterator();
@@ -635,7 +654,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationInitialContent() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
+                "text/csv", home.getId());
 
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json");
 
@@ -649,7 +669,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationContentWithActions() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
+                "text/csv", home.getId());
         PreparationMessageForTest preparation = getPreparation(preparationId);
         List<String> steps = preparation.getSteps();
 
@@ -657,7 +678,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(rootStep.id()));
 
         // when
-        applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         // then
         final PreparationMessageForTest preparationMessage = getPreparation(preparationId);
@@ -683,7 +704,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldGetPreparationContent() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet",
+                "text/csv", home.getId());
 
         // when
         String preparationContent = given().get("/api/preparations/{preparation}/content", preparationId).asString();
@@ -696,7 +718,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldGetPreparationContentWhenInvalidSample() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet",
+                "text/csv", home.getId());
 
         // when
         String preparationContent = given().get("/api/preparations/{preparation}/content?sample=mdljshf", preparationId)
@@ -715,10 +738,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationDiffPreview() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("preview/preview_dataset.csv", "testPreview", "text/csv");
-        applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
-        applyActionFromFile(preparationId, "preview/delete_city.json");
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                "text/csv", home.getId());
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
+        testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
 
         final List<String> steps = getPreparation(preparationId).getSteps();
         final String firstActionStep = steps.get(1);
@@ -745,10 +769,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationUpdatePreview() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("preview/preview_dataset.csv", "testPreview", "text/csv");
-        applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
-        applyActionFromFile(preparationId, "preview/delete_city.json");
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                "text/csv", home.getId());
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
+        testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
 
         final PreparationMessageForTest preparationMessage = getPreparation(preparationId);
         final List<String> steps = preparationMessage.getSteps();
@@ -783,10 +808,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationAddPreviewOnPreparation() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("preview/preview_dataset.csv", "testPreview", "text/csv");
-        applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
-        applyActionFromFile(preparationId, "preview/delete_city.json");
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                "text/csv", home.getId());
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
+        testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
 
         final String input = "{" //
                 + "   \"preparationId\": \"" + preparationId + "\",\n" //
@@ -818,7 +844,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationAddPreviewOnDataset() throws Exception {
         // given
-        final String datasetId = createDataset("preview/preview_dataset.csv", "testPreview", "text/csv");
+        final String datasetId = testClient.createDataset("preview/preview_dataset.csv", "testPreview", "text/csv");
 
         final String input = "{" //
                 + "   \"datasetId\": \"" + datasetId + "\",\n" //
@@ -846,10 +872,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationMultipleAddPreview() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("preview/preview_dataset.csv", "testPreview", "text/csv");
-        applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
-        applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
-        applyActionFromFile(preparationId, "preview/delete_city.json");
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                "text/csv", home.getId());
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
+        testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
+        testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
 
         final String input = "{" //
                 + "   \"preparationId\": \"" + preparationId + "\",\n" //
@@ -890,9 +917,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
     @Test
     public void testMoveStep() throws Exception {
-        final String datasetId = createDataset("preview/preview_dataset.csv", "testPreview", "text/csv");
+        final String datasetId = testClient.createDataset("preview/preview_dataset.csv", "testPreview", "text/csv");
 
-        String testPrepId = createPreparationFromDataset(datasetId, "testPrep");
+        String testPrepId = testClient.createPreparationFromDataset(datasetId, "testPrep", home.getId());
 
         AppendStep appendStep = new AppendStep();
         appendStep.setActions(Arrays.asList(
@@ -924,13 +951,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testSetPreparationHead_TDP_2562() throws Exception {
         // Three data sets
-        final String lookupDataSetId = createDataset("dataset/dataset.csv", "lookup_ds", "text/csv");
-        final String dataSetId = createDataset("dataset/dataset_cars.csv", "cars", "text/csv");
+        final String lookupDataSetId = testClient.createDataset("dataset/dataset.csv", "lookup_ds", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset_cars.csv", "cars", "text/csv");
 
-        String carsPreparationId = createPreparationFromDataset(dataSetId, "cars_preparation");
+        String carsPreparationId = testClient.createPreparationFromDataset(dataSetId, "cars_preparation", home.getId());
 
-        String action = IOUtils.toString(getClass().getResource("preparations/cars_lookup_action.json"));
-        applyAction(carsPreparationId, action.replace("{lookup_ds_id}", lookupDataSetId));
+        String action = IOUtils.toString(getClass().getResource("preparations/cars_lookup_action.json"), "UTF-8");
+        testClient.applyAction(carsPreparationId, action.replace("{lookup_ds_id}", lookupDataSetId));
 
         // Try to delete lookup dataset => fail because used
         expect().statusCode(CONFLICT.value()).when().delete("/api/datasets/{id}", lookupDataSetId);
@@ -949,7 +976,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void shouldGetPreparationColumnTypes() throws Exception {
 
         // given
-        final String id = createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv");
+        final String id = testClient.createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv",
+                home.getId());
 
         // when
         final Response response = when().get("/api/preparations/{preparationId}/columns/{columnId}/types", id, "0000");

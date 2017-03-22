@@ -24,13 +24,15 @@
     </div>
 
     <div class="add-to-lookup">
-        <div ng-if="lookupDatagridHeaderCtrl.showCheckbox()">
-            <input type="checkbox"
-                   ng-model="lookupDatagridHeaderCtrl.added.isAdded"
-                   ng-click="lookupDatagridHeaderCtrl.updateColsToAdd($event)">
-            <span translate-once="ADD_TO_LOOKUP"></span>
-        </div>
-        <span>&nbsp;</span>
+        <form  ng-if="lookupDatagridHeaderCtrl.showCheckbox()">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"
+                           ng-model="lookupDatagridHeaderCtrl.added.isAdded"
+                           ng-click="lookupDatagridHeaderCtrl.updateColsToAdd($event)">
+                    <span translate-once="ADD_TO_LOOKUP"></span>
+                </label>
+            </div>
+        </form>
     </div>
-
 </div>

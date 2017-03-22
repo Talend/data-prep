@@ -47,6 +47,9 @@
         <commons-compress.version>1.13</commons-compress.version>
         <!-- avro version must match the one in the studio -->
         <avro.version>1.7.7</avro.version>
+        <apache.poi.version>3.15</apache.poi.version>
+        <java-semver.version>0.9.0</java-semver.version>
+        <commons-math3.version>3.5</commons-math3.version>
     </properties>
     <modules>
         <module>../dataprep-backend-common</module>
@@ -63,12 +66,12 @@
             <dependency>
                 <groupId>com.github.zafarkhaja</groupId>
                 <artifactId>java-semver</artifactId>
-                <version>0.9.0</version>
+                <version>${java-semver.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
-                <version>3.5</version>
+                <version>${commons-math3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
@@ -422,12 +425,12 @@
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>3.14</version>
+                <version>${apache.poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
-                <version>3.14</version>
+                <version>${apache.poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>

@@ -14,224 +14,224 @@
 /****    INTRO.JS -  START  ****/
 
 .introjs-overlay {
-  position: absolute;
-  z-index: 999999;
-  background-color: $color-overlay-background;
-  opacity: 0.3;
-  background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(0, 0, 0, 0.4)), color-stop(100%, rgba(0, 0, 0, 0.9)));
-  background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
-  background: -o-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
-  background: -ms-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
-  background: radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#66000000', endColorstr='#e6000000', GradientType=1);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-  filter: alpha(opacity=50);
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -ms-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out;
+	position: absolute;
+	z-index: 999999;
+	background-color: $color-overlay-background;
+	opacity: 0.3;
+	background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(0, 0, 0, 0.4)), color-stop(100%, rgba(0, 0, 0, 0.9)));
+	background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
+	background: -o-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
+	background: -ms-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
+	background: radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#66000000', endColorstr='#e6000000', GradientType=1);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	filter: alpha(opacity=50);
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
 }
 
 .introjs-fixParent {
-  z-index: auto !important;
-  opacity: 1.0 !important;
-  /*position: absolute !important;   changed by MM to not trash the overall layout*/
-  -webkit-transform: none !important;
-  -moz-transform: none !important;
-  -ms-transform: none !important;
-  -o-transform: none !important;
-  transform: none !important;
+	z-index: auto !important;
+	opacity: 1.0 !important;
+	/*position: absolute !important;   changed by MM to not trash the overall layout*/
+	-webkit-transform: none !important;
+	-moz-transform: none !important;
+	-ms-transform: none !important;
+	-o-transform: none !important;
+	transform: none !important;
 }
 
 .introjs-showElement,
 tr.introjs-showElement > td,
 tr.introjs-showElement > th {
-  z-index: 9999999 !important;
+	z-index: 9999999 !important;
 }
 
 .introjs-disableInteraction {
-  z-index: 99999999 !important;
-  position: absolute;
+	z-index: 99999999 !important;
+	position: absolute;
 }
 
 .introjs-relativePosition,
 tr.introjs-showElement > td,
 tr.introjs-showElement > th {
-  position: relative;
+	position: relative;
 }
 
 .introjs-helperLayer {
-  position: absolute;
-  z-index: 9999998;
-  background-color: #FFF;
-  background-color: rgba(255, 255, 255, .9);
-  border: 1px solid #777;
-  border: 1px solid rgba(0, 0, 0, .5);
-  border-radius: 4px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, .4);
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -ms-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out;
+	position: absolute;
+	z-index: 9999998;
+	background-color: #FFF;
+	background-color: rgba(255, 255, 255, .9);
+	border: 1px solid #777;
+	border: 1px solid rgba(0, 0, 0, .5);
+	border-radius: 4px;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, .4);
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
 }
 
 .introjs-tooltipReferenceLayer {
-  position: absolute;
-  z-index: 10000000;
-  background-color: transparent;
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -ms-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out;
+	position: absolute;
+	z-index: 10000000;
+	background-color: transparent;
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
 }
 
 .introjs-helperLayer *,
 .introjs-helperLayer *:before,
 .introjs-helperLayer *:after {
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  -ms-box-sizing: content-box;
-  -o-box-sizing: content-box;
-  box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-ms-box-sizing: content-box;
+	-o-box-sizing: content-box;
+	box-sizing: content-box;
 }
 
 .introjs-helperNumberLayer {
-  position: absolute;
-  top: -16px;
-  left: -16px;
-  z-index: 9999999999 !important;
-  font-weight: 700;
-  color: $white;
-  text-align: center;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
-  background: $dark-blue;
-  width: 25px;
-  height: 25px;
-  line-height: 21px;
-  border: 2px solid $white;
-  border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, .4);
+	position: absolute;
+	top: -16px;
+	left: -16px;
+	z-index: 9999999999 !important;
+	font-weight: 700;
+	color: $white;
+	text-align: center;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
+	background: $dark-blue;
+	width: 25px;
+	height: 25px;
+	line-height: 21px;
+	border: 2px solid $white;
+	border-radius: 50%;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, .4);
 }
 
 .introjs-arrow {
-  border: 5px solid white;
-  content: '';
-  position: absolute;
+	border: 5px solid white;
+	content: '';
+	position: absolute;
 }
 
 .introjs-arrow.top {
-  top: -10px;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: white;
-  border-left-color: transparent;
+	top: -10px;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: white;
+	border-left-color: transparent;
 }
 
 .introjs-arrow.top-right {
-  top: -10px;
-  right: 10px;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: white;
-  border-left-color: transparent;
+	top: -10px;
+	right: 10px;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: white;
+	border-left-color: transparent;
 }
 
 .introjs-arrow.top-middle {
-  top: -10px;
-  left: 50%;
-  margin-left: -5px;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: white;
-  border-left-color: transparent;
+	top: -10px;
+	left: 50%;
+	margin-left: -5px;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: white;
+	border-left-color: transparent;
 }
 
 .introjs-arrow.right {
-  right: -10px;
-  top: 10px;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: white;
+	right: -10px;
+	top: 10px;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: white;
 }
 
 .introjs-arrow.right-bottom {
-  bottom: 10px;
-  right: -10px;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: white;
+	bottom: 10px;
+	right: -10px;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: white;
 }
 
 .introjs-arrow.bottom {
-  bottom: -10px;
-  border-top-color: white;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
+	bottom: -10px;
+	border-top-color: white;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
 }
 
 .introjs-arrow.left {
-  left: -10px;
-  top: 10px;
-  border-top-color: transparent;
-  border-right-color: white;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
+	left: -10px;
+	top: 10px;
+	border-top-color: transparent;
+	border-right-color: white;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
 }
 
 .introjs-arrow.left-bottom {
-  left: -10px;
-  bottom: 10px;
-  border-top-color: transparent;
-  border-right-color: white;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
+	left: -10px;
+	bottom: 10px;
+	border-top-color: transparent;
+	border-right-color: white;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
 }
 
 .introjs-tooltip {
-  position: absolute;
-  padding: 10px 20px 15px 20px;
-  background-color: white;
-  min-width: 400px;
-  max-width: 600px;
-  border-radius: 5px;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, .4);
-  -webkit-transition: opacity 0.1s ease-out;
-  -moz-transition: opacity 0.1s ease-out;
-  -ms-transition: opacity 0.1s ease-out;
-  -o-transition: opacity 0.1s ease-out;
-  transition: opacity 0.1s ease-out;
+	position: absolute;
+	padding: 10px 20px 15px 20px;
+	background-color: white;
+	min-width: 400px;
+	max-width: 600px;
+	border-radius: 5px;
+	box-shadow: 0 1px 10px rgba(0, 0, 0, .4);
+	-webkit-transition: opacity 0.1s ease-out;
+	-moz-transition: opacity 0.1s ease-out;
+	-ms-transition: opacity 0.1s ease-out;
+	-o-transition: opacity 0.1s ease-out;
+	transition: opacity 0.1s ease-out;
 }
 
 .introjs-tooltiptitle {
-  font-weight: 300;
-  font-size: 1.7 * $base-font-size;
-  padding-bottom: 5px;
-  border-bottom: 1px solid $light-gray;
+	font-weight: 300;
+	font-size: 1.7 * $font-size-base;
+	padding-bottom: 5px;
+	border-bottom: 1px solid $light-gray;
 }
 
 .introjs-tooltipcontent {
-  padding-top: 15px;
+	padding-top: 15px;
 }
 
 .introjs-tooltipbuttons {
-  text-align: right;
-  white-space: nowrap;
+	text-align: right;
+	white-space: nowrap;
 
-  a {
-    &,
-    &:hover,
-    &:focus,
-    &:active {
-      text-decoration: none;
-    }
-  }
+	a {
+		&,
+		&:hover,
+		&:focus,
+		&:active {
+			text-decoration: none;
+		}
+	}
 }
 
 /*
@@ -239,21 +239,21 @@ tr.introjs-showElement > th {
  Changed by Afshin Mehrabani
 */
 .introjs-button {
-  position: relative;
-  overflow: visible;
-  display: inline-block;
-  padding: 0.3em 0.8em;
-  color: $dark-gray;
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-  background-color: $light-gray;
-  margin-top: 10px;
-  border: 1px solid transparent;
+	position: relative;
+	overflow: visible;
+	display: inline-block;
+	padding: 0.3em 0.8em;
+	color: $dark-gray;
+	white-space: nowrap;
+	cursor: pointer;
+	outline: none;
+	background-color: $light-gray;
+	margin-top: 10px;
+	border: 1px solid transparent;
 }
 
 .introjs-button:hover {
-  border-color: $dark-gray;
+	border-color: $dark-gray;
 }
 
 .introjs-button:focus,
@@ -263,114 +263,114 @@ tr.introjs-showElement > th {
 
 /* overrides extra padding on button elements in Firefox */
 .introjs-button::-moz-focus-inner {
-  padding: 0;
-  border: 0;
+	padding: 0;
+	border: 0;
 }
 
 .introjs-skipbutton {
-  margin-right: 10px;
-  background-color: $blue;
-  color: $white;
-  font-weight: 700;
-  float: left;
-  &:hover, &:focus {
-    border: 1px solid $dark-blue;
-    color: $white;
-  }
+	margin-right: 10px;
+	background-color: $blue;
+	color: $white;
+	font-weight: 700;
+	float: left;
+	&:hover, &:focus {
+		border: 1px solid $dark-blue;
+		color: $white;
+	}
 }
 
 .introjs-prevbutton {
-  margin-right: 2px;
-  background-color: $light-gray;
-  color: $dark-gray;
-  font-weight: 700;
-  &:hover, &:focus {
-    border: 1px solid $blue;
-    color: $dark-gray;
-  }
+	margin-right: 2px;
+	background-color: $light-gray;
+	color: $dark-gray;
+	font-weight: 700;
+	&:hover, &:focus {
+		border: 1px solid $blue;
+		color: $dark-gray;
+	}
 }
 
 .introjs-nextbutton {
-  background-color: $green;
-  color: $white;
-  font-weight: 700;
-  &:focus {
-    border: 1px solid transparent;
-    color: $white;
-  }
-  &:hover {
-    border: 1px solid $blue;
-    color: $white;
-  }
+	background-color: $green;
+	color: $white;
+	font-weight: 700;
+	&:focus {
+		border: 1px solid transparent;
+		color: $white;
+	}
+	&:hover {
+		border: 1px solid $blue;
+		color: $white;
+	}
 
 }
 
 .introjs-disabled, .introjs-disabled:hover, .introjs-disabled:focus {
-  color: $medium-gray;
-  cursor: default;
-  background-color: $light-gray;
+	color: $medium-gray;
+	cursor: default;
+	background-color: $light-gray;
 
 }
 
 .introjs-bullets {
-  text-align: center;
+	text-align: center;
 }
 
 .introjs-bullets ul {
-  clear: both;
-  margin: 15px auto 0;
-  padding: 0;
-  display: inline-block;
+	clear: both;
+	margin: 15px auto 0;
+	padding: 0;
+	display: inline-block;
 }
 
 .introjs-bullets ul li {
-  list-style: none;
-  float: left;
-  margin: 0 2px;
+	list-style: none;
+	float: left;
+	margin: 0 2px;
 }
 
 .introjs-bullets ul li a {
-  display: block;
-  width: 6px;
-  height: 6px;
-  background: #ccc;
-  border-radius: 10px;
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  text-decoration: none;
+	display: block;
+	width: 6px;
+	height: 6px;
+	background: #ccc;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	text-decoration: none;
 }
 
 .introjs-bullets ul li a:hover {
-  background: #999;
+	background: #999;
 }
 
 .introjs-bullets ul li a.active {
-  background: #999;
+	background: #999;
 }
 
 .introjs-progress {
-  overflow: hidden;
-  height: 10px;
-  margin: 10px 0 5px 0;
-  border-radius: 4px;
-  background-color: #ecf0f1
+	overflow: hidden;
+	height: 10px;
+	margin: 10px 0 5px 0;
+	border-radius: 4px;
+	background-color: #ecf0f1
 }
 
 .introjs-progressbar {
-  float: left;
-  width: 0%;
-  height: 100%;
-  font-size: 10px;
-  line-height: 10px;
-  text-align: center;
-  background-color: #08c;
+	float: left;
+	width: 0%;
+	height: 100%;
+	font-size: 10px;
+	line-height: 10px;
+	text-align: center;
+	background-color: #08c;
 }
 
 .introjsFloatingElement {
-  position: absolute;
-  height: 0;
-  width: 0;
-  left: 50%;
-  top: 50%;
+	position: absolute;
+	height: 0;
+	width: 0;
+	left: 50%;
+	top: 50%;
 }
 

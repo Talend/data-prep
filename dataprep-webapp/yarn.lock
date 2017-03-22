@@ -1110,21 +1110,11 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
-bootstrap-talend-theme@0.64.0:
-  version "0.64.0"
-  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.64.0.tgz#fa2b1c6430fd855620a1129a934f850b92b03725"
+bootstrap-talend-theme@0.66.2:
+  version "0.66.2"
+  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.66.2.tgz#b09ae8085c4616a21408d8df50452f01f4ffc5bf"
   dependencies:
     bootstrap-sass "^3.3.7"
-
-bourbon-neat@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/bourbon-neat/-/bourbon-neat-1.8.0.tgz#2ffd6dbfee45db5140f2fff280163302c73e7335"
-  dependencies:
-    node-sass "^3.4"
-
-bourbon@^4.2.6, bourbon@^4.2.7:
-  version "4.2.7"
-  resolved "https://registry.yarnpkg.com/bourbon/-/bourbon-4.2.7.tgz#48a805dff475fbf61e002a64e1e4db68d2f82fba"
 
 brace-expansion@^1.0.0:
   version "1.1.6"
@@ -4823,7 +4813,7 @@ node-pre-gyp@^0.6.29:
     tar "~2.2.1"
     tar-pack "~3.3.0"
 
-node-sass@^3.3.3, node-sass@^3.4:
+node-sass@^3.3.3:
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-3.13.1.tgz#7240fbbff2396304b4223527ed3020589c004fc2"
   dependencies:
@@ -5743,7 +5733,7 @@ react-debounce-input@^2.4.2:
   dependencies:
     lodash.debounce "^3 || ^4"
 
-react-dom@^15.4.1:
+react-dom@^15.4.2:
   version "15.4.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.2.tgz#015363f05b0a1fd52ae9efdd3a0060d90695208f"
   dependencies:
@@ -5774,17 +5764,17 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.64.0:
-  version "0.64.0"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.64.0.tgz#cbcf7e711527a193a3570fa0ae7a1e2650ce9a64"
+react-talend-components@0.66.2:
+  version "0.66.2"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.66.2.tgz#5f526ca4b3d793170670ab287f87ea0af2fd560c"
   dependencies:
     lodash "^4.17.4"
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"
 
-react-talend-forms@0.64.0:
-  version "0.64.0"
-  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.64.0.tgz#eec3b5b0d13c682e7992b2fd9f7d30bb2b6ba60b"
+react-talend-forms@0.66.2:
+  version "0.66.2"
+  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.66.2.tgz#978bf4ebdb0de34d6ea11181e5613545b1002047"
   dependencies:
     classnames "^2.2.5"
     keycode "^2.1.8"
@@ -5797,7 +5787,7 @@ react-themeable@^1.1.0:
   dependencies:
     object-assign "^3.0.0"
 
-react@^15.4.1:
+react@^15.4.2:
   version "15.4.2"
   resolved "https://registry.yarnpkg.com/react/-/react-15.4.2.tgz#41f7991b26185392ba9bae96c8889e7e018397ef"
   dependencies:
@@ -6707,13 +6697,12 @@ style-loader@^0.13.1:
   dependencies:
     loader-utils "^0.2.7"
 
-"sunchoke@git+https://github.com/Talend/sunchoke.git#1.1.0":
-  version "1.1.0"
-  resolved "git+https://github.com/Talend/sunchoke.git#d97a5a01ebf0b0da5ef7bb15d66deaa7eb481c9b"
+"sunchoke@git+https://github.com/Talend/sunchoke.git#2.0.0":
+  version "2.0.0"
+  resolved "git+https://github.com/Talend/sunchoke.git#e6f41662713dbb18dcbe6ccbc33f21dc249c06d5"
   dependencies:
     angular "^1.5.3"
     angular-animate "^1.5.3"
-    bourbon "^4.2.6"
 
 supports-color@^0.2.0:
   version "0.2.0"
@@ -6758,9 +6747,9 @@ table@^3.7.8:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
-talend-icons@0.64.0:
-  version "0.64.0"
-  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.64.0.tgz#ec3d057a811c124bbe593192a47cc544cc08d49d"
+talend-icons@0.66.2:
+  version "0.66.2"
+  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.66.2.tgz#68daf0f22637ecfa6e30d6a8d43bbb6211cd364d"
 
 tapable@^0.2.5, tapable@~0.2.5:
   version "0.2.6"

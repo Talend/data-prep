@@ -33,6 +33,7 @@ const InventoryCopyMoveComponent = {
             <div>
                 <span translate-once="NAME"></span>
                 <input id="copy-move-name-input"
+                       class="form-control"
                        type="text"
                        ng-model="$ctrl.newName"
                        required/>

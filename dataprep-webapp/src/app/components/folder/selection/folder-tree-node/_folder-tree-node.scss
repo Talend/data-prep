@@ -11,59 +11,59 @@
 
   ============================================================================*/
 
-$folder-tree-node-btn-click-area:    10px !default;
+$folder-tree-node-btn-click-area: 10px !default;
 
 .folder-tree-node {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  cursor: pointer;
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	cursor: pointer;
 
-  &.folder-selected {
-    background-color: $light-gray;
-  }
+	&.folder-selected {
+		background-color: $light-gray;
+	}
 
-  .folder-caret {
-    position: relative;
-    margin-right: 5px;
-    width: 8px;
-    height: 8px;
+	.folder-caret {
+		position: relative;
+		margin-right: 5px;
+		width: 8px;
+		height: 8px;
 
-    &.caret {
-      border-top: 8px dashed;
-      border-right: 6px solid transparent;
-      border-left: 6px solid transparent
-    }
+		&.caret {
+			border-top: 8px dashed;
+			border-right: 6px solid transparent;
+			border-left: 6px solid transparent
+		}
 
-    &.closed {
-      @include transform(rotate(-90deg));
-    }
+		&.closed {
+			transform: rotate(-90deg);
+		}
 
-    // increase click area
-    &:before {
-      content: '';
-      position: absolute;
-      top: -$folder-tree-node-btn-click-area;
-      bottom: -$folder-tree-node-btn-click-area;
-      left: -$folder-tree-node-btn-click-area;
-      right: -$folder-tree-node-btn-click-area;
-    }
-  }
+		// increase click area
+		&:before {
+			content: '';
+			position: absolute;
+			top: -$folder-tree-node-btn-click-area;
+			bottom: -$folder-tree-node-btn-click-area;
+			left: -$folder-tree-node-btn-click-area;
+			right: -$folder-tree-node-btn-click-area;
+		}
+	}
 
-  .folder-icon {
-    flex-basis: 30px;
-    flex-grow: 0;
-    text-align: center;
-  }
+	.folder-icon {
+		flex-basis: 30px;
+		flex-grow: 0;
+		text-align: center;
+	}
 
-  .folder-name {
-    flex-grow: 1;
-    text-transform: uppercase;
-    padding-left: 10px;
+	.folder-name {
+		flex-grow: 1;
+		text-transform: uppercase;
+		padding-left: 10px;
 
-    span {
-      color: grey;
-      font-size: 0.75em;
-    }
-  }
+		span {
+			color: grey;
+			font-size: 0.75em;
+		}
+	}
 }

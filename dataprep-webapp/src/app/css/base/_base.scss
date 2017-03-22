@@ -10,20 +10,18 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-
 // Base scss only contains Reset, typography, ...
 // Do not import a file before 'normalize'
-
 @import "fonts";
 
 body {
-  background-color: white;
-  font-family: $sourcesanspro;
-  font-weight: normal;
+	background-color: white;
+	font-family: $sourcesanspro;
+	font-weight: normal;
 
-  select {
-    background-color: $white;
-    margin: 0;
-    width: 100%;
-  }
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
 }

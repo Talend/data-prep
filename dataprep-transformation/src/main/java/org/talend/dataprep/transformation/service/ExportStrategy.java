@@ -208,6 +208,7 @@ public abstract class ExportStrategy {
         try (InputStream details = preparationDetailsGet.execute()) {
             return mapper.readerFor(PreparationMessage.class).readValue(details);
         } catch (Exception e) {
+            LOGGER.error("Unable to read preparation {}", preparationId, e);
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }
 

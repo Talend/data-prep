@@ -28,13 +28,13 @@
         </sc-dropdown>
     </div>
 
-    <div class="talend-dropdown-text-div">
+    <div class="talend-dropdown-text-div clearfix">
         <div class="grid-header-title"
              ng-show="datagridHeaderCtrl.state.playground.isReadOnly || !datagridHeaderCtrl.isEditMode"
              title="{{ datagridHeaderCtrl.column.name }}">{{ datagridHeaderCtrl.column.name }}
         </div>
         <form name="datagridHeaderCtrl.columnNameEdition"  ng-show="!datagridHeaderCtrl.state.playground.isReadOnly && datagridHeaderCtrl.isEditMode">
-            <input class="grid-header-title-input"
+            <input class="form-control grid-header-title-input"
                type="text"
                ng-model="datagridHeaderCtrl.newName"
                ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>

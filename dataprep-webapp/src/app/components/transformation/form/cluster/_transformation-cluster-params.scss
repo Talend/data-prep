@@ -12,151 +12,151 @@
   ============================================================================*/
 
 .cluster {
-  //--------------------------------------------------------------------------------------------------------------------
-  $background-odd-color: $light-gray;
-  $border-color: $medium-gray;
-  $cell-horizontal-space: 15px;
-  $cell-vertical-space: 5px;
-  $left-space: 15px;
-  $text-color: $dark-gray;
+	//--------------------------------------------------------------------------------------------------------------------
+	$background-odd-color: $light-gray;
+	$border-color: $medium-gray;
+	$cell-horizontal-space: 15px;
+	$cell-vertical-space: 5px;
+	$left-space: 15px;
+	$text-color: $dark-gray;
 
-  $column-first-width: 2 * $cell-horizontal-space + 15px;
-  $column-second-width: 200px;
-  $large-column-second-width: 400px;
+	$column-first-width: 2 * $cell-horizontal-space + 15px;
+	$column-second-width: 200px;
+	$large-column-second-width: 400px;
 
-  $table-header-height: 30px;
-  $cluster-max-height: 50vh;
+	$table-header-height: 30px;
+	$cluster-max-height: 50vh;
 
-  $disabled-background-color: $medium-gray;
-  $disabled-border-color: $black;
-  $disabled-text-color: $white;
+	$disabled-background-color: $medium-gray;
+	$disabled-border-color: $black;
+	$disabled-text-color: $white;
 
-  $medium-screen: em(640) !default;
-  $large-screen: em(860) !default;
+	$medium-screen: 640em !default;
+	$large-screen: 860em !default;
 
-  //--------------------------------------------------------------------------------------------------------------------
-  position: relative;
-  padding-top: 35px;
+	//--------------------------------------------------------------------------------------------------------------------
+	position: relative;
+	padding-top: 35px;
 
-  .cluster-body {
-    max-height: $cluster-max-height;
-    overflow: auto;
-    padding-bottom: 10px;
-  }
+	.cluster-body {
+		max-height: $cluster-max-height;
+		overflow: auto;
+		padding-bottom: 10px;
+	}
 
-  @mixin column-border($color, $full: false) {
-    border-bottom: 1px solid $color;
-    border-right: 1px solid $color;
-    @if $full {
-      border-top: 1px solid $color;
-    }
+	@mixin column-border($color, $full: false) {
+		border-bottom: 1px solid $color;
+		border-right: 1px solid $color;
+		@if $full {
+			border-top: 1px solid $color;
+		}
 
-    &:nth-child(1) {
-      border-left: 1px solid $color;
-    }
-  }
+		&:nth-child(1) {
+			border-left: 1px solid $color;
+		}
+	}
 
-  @mixin column-sizes() {
-    &:nth-child(1) {
-      width: $column-first-width;
-      text-align: center;
-    }
+	@mixin column-sizes() {
+		&:nth-child(1) {
+			width: $column-first-width;
+			text-align: center;
+		}
 
-    &:nth-child(2) {
-      width: $column-second-width;
-    }
+		&:nth-child(2) {
+			width: $column-second-width;
+		}
 
-    .editable-select {
-      input {
-        width: 160px;
-      }
-      select {
-        width: 180px;
-      }
-    }
+		.editable-select {
+			input {
+				width: 160px;
+			}
+			select {
+				width: 180px;
+			}
+		}
 
-    @include media($large-screen) {
-      &:nth-child(2) {
-        width: $large-column-second-width;
-      }
+		@media(max-width: $large-screen) {
+			&:nth-child(2) {
+				width: $large-column-second-width;
+			}
 
-      .editable-select {
-        input {
-          width: 235px;
-        }
-        select {
-          width: 255px;
-        }
-      }
-    }
-  }
+			.editable-select {
+				input {
+					width: 235px;
+				}
+				select {
+					width: 255px;
+				}
+			}
+		}
+	}
 
-  .cluster-body > table {
-    margin: 0;
-    width: 100%;
+	.cluster-body > table {
+		margin: 0;
+		width: 100%;
 
-    .cluster-line {
-      td,
-      th {
-        @include column-border($border-color);
-        padding: $cell-vertical-space $cell-horizontal-space;
-      }
-    }
+		.cluster-line {
+			td,
+			th {
+				@include column-border($border-color);
+				padding: $cell-vertical-space $cell-horizontal-space;
+			}
+		}
 
-    thead {
-      position: absolute;
-      left: 0;
-      top: 0;
-      display: table;
-      width: 100%;
-      th {
-        @include column-sizes();
+		thead {
+			position: absolute;
+			left: 0;
+			top: 0;
+			display: table;
+			width: 100%;
+			th {
+				@include column-sizes();
 
-        @include column-border($border-color, true);
-        background-color: $dark-gray;
-        color: $white;
-        height: $table-header-height;
+				@include column-border($border-color, true);
+				background-color: $dark-gray;
+				color: $white;
+				height: $table-header-height;
 
-        input {
-          margin: 0;
-        }
-      }
-    }
+				input {
+					margin: 0;
+				}
+			}
+		}
 
-    tbody {
-      display: table;
-      width: 100%;
-      >.cluster-line {
-        @include transition(background-color 0.3s ease-in-out);
-        color: $text-color;
+		tbody {
+			display: table;
+			width: 100%;
+			> .cluster-line {
+				@include transition(background-color 0.3s ease-in-out);
+				color: $text-color;
 
-        &:nth-child(odd){
-          background-color: $background-odd-color;
-        }
+				&:nth-child(odd) {
+					background-color: $background-odd-color;
+				}
 
-        &.disabled {
-          background-color: $disabled-background-color;
-          color: $disabled-text-color;
-          font-style: italic;
+				&.disabled {
+					background-color: $disabled-background-color;
+					color: $disabled-text-color;
+					font-style: italic;
 
-          >td {
-            @include column-border($disabled-border-color);
-          }
-        }
+					> td {
+						@include column-border($disabled-border-color);
+					}
+				}
 
-        td {
-          @include column-sizes();
+				td {
+					@include column-sizes();
 
-          .param-row {
-            padding: 0;
-            word-break: break-all;
-          }
+					.param-row {
+						padding: 0;
+						word-break: break-all;
+					}
 
-          input {
-            color: $text-color;
-          }
-        }
-      }
-    }
-  }
+					input {
+						color: $text-color;
+					}
+				}
+			}
+		}
+	}
 }

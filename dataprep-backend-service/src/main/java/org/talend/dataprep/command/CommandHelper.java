@@ -55,7 +55,7 @@ public class CommandHelper {
                 } catch (IOException e) {
                     LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), e);
                 }
-            });
+            }, TDPException::rethrowOrWrap);
         };
     }
 

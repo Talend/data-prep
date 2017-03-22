@@ -22,7 +22,7 @@ $typeahead-z-index: 1 !default;
 $typeahead-input-width: 250px !default;
 $typeahead-input-color: $black !default;
 
-@include keyframes(fadeIn) {
+@keyframes fadeIn {
 	from {
 		opacity: 0;
 	}
@@ -31,7 +31,7 @@ $typeahead-input-color: $black !default;
 	}
 }
 
-@include keyframes(slide) {
+@keyframes slide {
 	from {
 		right: -100vw;
 	}
@@ -126,7 +126,7 @@ typeahead {
 		}
 
 		&.ng-enter {
-			@include animation(fadeIn 0.25s ease-in, slide 0.25s ease);
+			animation: fadeIn 0.25s ease-in, slide 0.25s ease;
 		}
 	}
 

@@ -19,15 +19,8 @@ import java.util.List;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 
 public class StreamingWorkbook implements Workbook, AutoCloseable {
 
@@ -212,14 +205,6 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      */
     @Override
     public void removeSheetAt(int index) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Not supported
-     */
-    @Override
-    public void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
         throw new UnsupportedOperationException();
     }
 
@@ -490,6 +475,27 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      */
     @Override
     public boolean getForceFormulaRecalculation() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout,
+                         short typeOffset, byte underline) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<? extends Name> getNames(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<? extends Name> getAllNames() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeName(Name name) {
         throw new UnsupportedOperationException();
     }
 }

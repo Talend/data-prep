@@ -27,10 +27,10 @@
              class="actions-scope"
              selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
         <sc-tabs-item tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" is-default="true">
-            <div class="action-search-container"
+            <form class="action-search-container"
                  ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length">
                 <input type="search"
-                       class="action-search"
+                       class="form-control action-search"
                        id="action-suggestions-search"
                        translate-once-placeholder="FIND_FUNCTION"
                        ng-model="actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString"
@@ -44,7 +44,7 @@
                               should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
                               should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
                               scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
-            </div>
+            </form>
             <div ng-if="!actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length"
                  class="watermark"
                  translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
@@ -66,7 +66,7 @@
         </sc-tabs-item>
     </sc-tabs>
 
-    <div ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
+    <form ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
          class="filters-actions-form" >
         <label class="filters-actions-form-span" translate-once="APPLY_CHANGE_TO"></label>
         <label>
@@ -81,5 +81,5 @@
                    ng-value="true" />
             <span translate-once="FILTERED_LINED"></span>
         </label>
-    </div>
+    </form>
 </div>

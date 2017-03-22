@@ -33,6 +33,12 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 	padding: 1px 4px 2px;
 }
 
+.slickgrid,
+.slickgrid *,
+.slick-header-column {
+	box-sizing: content-box;
+}
+
 .slick-header-columns {
 	height: 55px;
 }
@@ -110,6 +116,11 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 		background: $white;
 	}
 
+	.slick-pane,
+	.grid-canvas {
+		overflow: visible;
+	}
+
 	//-------------------------------------------------Slickgrid hack-----------------------------------------------------
 	//not frozen columns width to fit resizable container
 	.slick-pane-right {
@@ -148,7 +159,7 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 		.slick-header-column {
 			&.ui-state-default {
 				line-height: inherit;
-				height: auto;
+				height: 100%;
 				padding: 0;
 				border-color: #5a5a5a;
 			}
@@ -254,12 +265,13 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 				margin: 0;
 				padding: 1px 0 0 2px;
 				font-size: 1.4rem;
-				border: none;
+				background: $white;
+				border: 1px solid $scooter;
 			}
 
 			.checkboxContainer {
 				padding: 1.5rem 1rem 1rem;
-				min-width: 20rem;
+				min-width: 22rem;
 				text-align: left;
 				background-color: $white;
 				border-radius: 4px;
@@ -273,16 +285,16 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 				input[type="checkbox"] {
 					margin-right: 10px;
 					width: 12px;
+					position: relative;
 
 					&:after {
 						width: 12px;
 						height: 12px;
-						margin-top: -14px;
 						border-width: 1px;
 					}
 					&:checked {
 						&:before {
-							top: -14px;
+							top: 0;
 							left: 4px;
 							width: 5px;
 							height: 10px;

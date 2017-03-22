@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -16,7 +15,7 @@ package org.talend.dataprep.api.preparation.json;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 
 import com.fasterxml.jackson.core.JsonGenerator;

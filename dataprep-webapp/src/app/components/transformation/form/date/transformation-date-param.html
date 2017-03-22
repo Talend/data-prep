@@ -16,9 +16,9 @@
 <div class="param">
 
     <div ng-class="{'param-row' : dateParamCtrl.parameter.type === 'boolean'}">
-        <div class="param-name" ng-if="::(dateParamCtrl.label !== 'false')">
+        <label class="param-name" ng-if="::(dateParamCtrl.label !== 'false')">
             {{::dateParamCtrl.parameter.label}}:
-        </div>
+        </label>
 
         <div class="param-input" ng-switch="!!dateParamCtrl.isReadonly">
             <div ng-switch-when="true">

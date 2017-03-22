@@ -58,6 +58,7 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
 			[],
 			options
 		);
+		DatasetSheetPreviewService.grid.registerPlugin(new Slick.AutoColumnSize());
 	};
 
 	/**

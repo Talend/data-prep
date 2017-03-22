@@ -11,61 +11,61 @@
 
   ============================================================================*/
 
-@include keyframes(rotate) {
-  from {
-    @include transform(rotate(0deg));
-  }
-  to {
-    @include transform(rotate(360deg));
-  }
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .loading {
-  background: rgba(0, 0, 0, 0.3);
+	background: rgba(0, 0, 0, 0.3);
 
-  display: none;
-  opacity: 0;
-  
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  
-  height: 100%;
-  width: 100%;
-  z-index: 999999;
+	display: none;
+	opacity: 0;
 
-  transition: opacity 0.2s ease;
-  
-  .loading-inner {
-    position: absolute;
-    left: 25%;
-    top: 25%;
-    width: 50%;
-    
-    font-size: 2em;
-    color: white;
-    text-align: center;
-  }
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
 
-  .loading-img {
-    position: absolute;
-    left: 0;
-    right: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 999999;
 
-    @include animation-name(rotate);
-    @include animation-duration(1s);
-    @include animation-timing-function(linear);
-    @include animation-iteration-count(infinite);
-  }
+	transition: opacity 0.2s ease;
+
+	.loading-inner {
+		position: absolute;
+		left: 25%;
+		top: 25%;
+		width: 50%;
+
+		font-size: 2em;
+		color: white;
+		text-align: center;
+	}
+
+	.loading-img {
+		position: absolute;
+		left: 0;
+		right: 0;
+
+		@include animation-name(rotate);
+		@include animation-duration(1s);
+		@include animation-timing-function(linear);
+		@include animation-iteration-count(infinite);
+	}
 }
 
 .show-loading {
-  overflow: hidden;
+	overflow: hidden;
 
-  .loading {
-    display: table;
-    opacity: 1;
-  }
+	.loading {
+		display: table;
+		opacity: 1;
+	}
 }

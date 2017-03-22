@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,6 +12,7 @@
 
 package org.talend.dataprep.schema.xls;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.schema.SchemaParser;
@@ -81,7 +82,7 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
             List<ColumnMetadata> columnMetadatas = parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0)
                     .getColumnMetadatas();
-            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(17);
+            assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(17);
         }
 
     }
@@ -94,9 +95,18 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
             List<ColumnMetadata> columnMetadatas = parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0)
                     .getColumnMetadatas();
-            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(2);
+            assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(2);
         }
 
+    }
+
+    @Test(expected = TDPException.class)
+    public void read_xls_TDP_() throws Exception {
+        String fileName = "many column.xlsx";
+
+        try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
+            parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0).getColumnMetadatas();
+        }
     }
 
     @Test
@@ -317,7 +327,7 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         List<ColumnMetadata> columns = result.getSheetContents().get(0).getColumnMetadatas();
         final List<String> actual = columns.stream().map(ColumnMetadata::getName).collect(Collectors.toList());
 
-        Assertions.assertThat(actual).containsExactly(expectedColsName);
+        assertThat(actual).containsExactly(expectedColsName);
     }
 
 }

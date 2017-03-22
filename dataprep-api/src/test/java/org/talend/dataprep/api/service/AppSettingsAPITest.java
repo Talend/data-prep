@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.when;
@@ -356,15 +368,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(localImport.get("label"), is("Local file"));
         assertThat(localImport.get("title"), is("Add local file dataset"));
 
-        final Map<String, Object> hdfsImport = (Map<String, Object>) importTypes.get(1);
-        assertThat(hdfsImport.get("locationType"), is("hdfs"));
-        assertThat(hdfsImport.get("contentType"), is("application/vnd.remote-ds.hdfs"));
-        assertThat(hdfsImport.get("dynamic"), is(false));
-        assertThat(hdfsImport.get("defaultImport"), is(false));
-        assertThat(hdfsImport.get("label"), is("From HDFS"));
-        assertThat(hdfsImport.get("title"), is("Add HDFS dataset"));
-
-        final Map<String, Object> httpImport = (Map<String, Object>) importTypes.get(2);
+        final Map<String, Object> httpImport = (Map<String, Object>) importTypes.get(1);
         assertThat(httpImport.get("locationType"), is("http"));
         assertThat(httpImport.get("contentType"), is("application/vnd.remote-ds.http"));
         assertThat(httpImport.get("dynamic"), is(false));

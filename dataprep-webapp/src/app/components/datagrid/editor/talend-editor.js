@@ -41,7 +41,7 @@ export default function TalendEditor(validationFn, translatedMsg) {
         function init() {
             $container = $('<div></div>')
                 .appendTo(args.container);
-            $input = $('<TEXTAREA hidefocus rows="1"></TEXTAREA>')
+            $input = $('<textarea class="form-control" hidefocus rows="1"></textarea>')
                 .appendTo($container)
                 .keydown(function (e) {
                     switch (e.keyCode) {

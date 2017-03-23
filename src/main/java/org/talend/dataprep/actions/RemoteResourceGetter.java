@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.actions;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URI;
@@ -144,7 +146,7 @@ public class RemoteResourceGetter {
         request.addHeader(jwt);
         try (final CloseableHttpResponse response = client.execute(request)) {
             handleError(response);
-            return IOUtils.toString(response.getEntity().getContent());
+            return IOUtils.toString(response.getEntity().getContent(), UTF_8);
         } catch (IOException e) {
             throw new RemoteConnectionException("Unable to retrieve the preparation with id: " + preparationId, e);
         }

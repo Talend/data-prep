@@ -49,7 +49,6 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 MenuActions.MENU_DATASETS,
                 MenuActions.MENU_FOLDERS,
                 MenuActions.MENU_PREPARATIONS,
-                MenuActions.MENU_PLAYGROUND_DATASET,
                 MenuActions.MENU_PLAYGROUND_PREPARATION,
                 MenuActions.SIDE_PANEL_TOGGLE,
 

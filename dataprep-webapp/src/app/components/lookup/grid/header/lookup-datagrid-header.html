@@ -26,10 +26,10 @@
     <div class="add-to-lookup">
         <form  ng-if="lookupDatagridHeaderCtrl.showCheckbox()">
             <div class="checkbox">
-                <label>
+                <label ng-click="$event.stopPropagation()">
                     <input type="checkbox"
                            ng-model="lookupDatagridHeaderCtrl.added.isAdded"
-                           ng-click="lookupDatagridHeaderCtrl.updateColsToAdd($event)">
+                           ng-change="lookupDatagridHeaderCtrl.updateColsToAdd()">
                     <span translate-once="ADD_TO_LOOKUP"></span>
                 </label>
             </div>

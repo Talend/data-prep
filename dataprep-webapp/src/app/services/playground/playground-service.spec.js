@@ -126,6 +126,7 @@ describe('Playground Service', () => {
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
 			PREPARATION: 'Preparation',
+			TALEND: 'TALEND',
 		});
 		$translateProvider.preferredLanguage('en');
 	}));
@@ -163,7 +164,7 @@ describe('Playground Service', () => {
 	}));
 
 	describe('update preparation', () => {
-		it('should set new name to the preparation name', inject(($rootScope, PlaygroundService, PreparationService, StateService) => {
+		it('should set new name to the preparation name', inject(($window, $rootScope, PlaygroundService, PreparationService, StateService) => {
 			// given
 			const name = 'My preparation';
 			const newName = 'My new preparation name';
@@ -180,6 +181,8 @@ describe('Playground Service', () => {
 			expect(PreparationService.create).not.toHaveBeenCalled();
 			expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
 			expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
+			expect($window.document.title).toEqual(preparations[0].name + ' | TALEND');
+
 		}));
 
 		describe('history', () => {

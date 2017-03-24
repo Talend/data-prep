@@ -387,6 +387,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then((preparation) => {
 				StateService.setCurrentPreparation(preparation);
 				StateService.setPreparationName(preparation.name);
+				$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
 				return preparation;
 			});
 		return promise;

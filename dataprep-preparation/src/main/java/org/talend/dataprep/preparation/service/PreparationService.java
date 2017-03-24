@@ -549,11 +549,21 @@ public class PreparationService {
      * Return a preparation details.
      *
      * @param id the wanted preparation id.
+     * @param stepId the optional step id.
      * @return the preparation details.
      */
-    public PreparationMessage getPreparationDetails(String id) {
+    public PreparationMessage getPreparationDetails(String id, String stepId) {
         LOGGER.debug("Get content of preparation details for #{}.", id);
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
+
+        // specify the step id if provided
+        if (!StringUtils.equals("head", stepId)) {
+            if (preparation.getSteps().stream().map(s -> s.getId()).anyMatch(s -> s.equals(stepId))) {
+                preparation.setHeadId(stepId);
+            } else {
+                throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation).put("stepId", stepId));
+            }
+        }
 
         final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
         LOGGER.info("returning details for {} -> {}", id, details);

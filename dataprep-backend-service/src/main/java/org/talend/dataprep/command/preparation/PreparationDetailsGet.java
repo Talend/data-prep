@@ -22,6 +22,7 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_T
 
 import java.io.InputStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -42,13 +43,31 @@ public class PreparationDetailsGet extends GenericCommand<InputStream> {
      * @param preparationId the requested preparation id.
      */
     public PreparationDetailsGet(String preparationId) {
+        this(preparationId, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param preparationId the requested preparation id.
+     * @param stepId the wanted step id
+     */
+    public PreparationDetailsGet(String preparationId, String stepId) {
         super(PREPARATION_GROUP);
-        execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + preparationId + "/details"));
+        execute(() -> onExecute(preparationId, stepId));
         on(HttpStatus.NO_CONTENT).then(emptyStream());
         on(HttpStatus.NOT_FOUND).then((req, resp) -> {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         });
         on(HttpStatus.OK).then(pipeStream());
         onError(e -> new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId)));
+    }
+
+    private HttpGet onExecute(String preparationId, String stepId) {
+        String uri = preparationServiceUrl + "/preparations/" + preparationId + "/details";
+        if (StringUtils.isNotBlank(stepId)) {
+            uri += "?stepId=" + stepId;
+        }
+        return new HttpGet(uri);
     }
 }

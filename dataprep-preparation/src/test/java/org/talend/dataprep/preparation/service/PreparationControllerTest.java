@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.preparation.service.EntityBuilder.*;
-import static org.talend.dataprep.preparation.service.PreparationControllerTestClient.appendStepsToPrep;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -44,6 +43,7 @@ import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.lock.store.LockedResource;
 import org.talend.dataprep.preparation.BasePreparationTest;
+import org.talend.dataprep.test.MockTDPException;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.util.SortAndOrderHelper;
 
@@ -303,6 +303,45 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         final InputStream expected = PreparationControllerTest.class.getResourceAsStream("preparation_1234.json");
         assertThat(preparationDetails, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void getDetailsWithSpecificStepId() throws Exception {
+
+        // given
+        final String preparationContent = IOUtils.toString(this.getClass().getResourceAsStream("base_preparation.json"), "UTF-8");
+        final String preparationId = clientTest.createPreparationWithAPI(preparationContent);
+
+        final String step = IOUtils.toString(this.getClass().getResourceAsStream("actions/append_copy_firstname.json"), "UTF-8");
+        clientTest.addStep(preparationId, step);
+        final String wantedStepId = clientTest.addStep(preparationId, step);
+        clientTest.addStep(preparationId, step);
+
+        // when
+        final PreparationMessage details = clientTest.getDetails(preparationId, wantedStepId);
+
+        // then
+        assertNotNull(details);
+        assertEquals(wantedStepId, details.getHeadId());
+        assertEquals(3, details.getSteps().size());
+    }
+
+    @Test
+    public void getDetailsWithSpecificStepIdShouldReturn404WhenStepIdNotFound() throws Exception {
+
+        // given
+        final String preparationContent = IOUtils.toString(this.getClass().getResourceAsStream("base_preparation.json"), "UTF-8");
+        final String preparationId = clientTest.createPreparationWithAPI(preparationContent);
+
+        try {
+            // when
+            clientTest.getDetails(preparationId, "toutouyoutou");
+            fail("well done, you managed to get the details out of an unkown step !");
+        } catch (MockTDPException e) {
+            // then
+            assertEquals(404, e.getStatusCode());
+        }
+
     }
 
     @Test
@@ -1195,10 +1234,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String preparationId = createPreparation("1234", "my preparation");
 
         AppendStep firstStep = step(null, action("copy", paramsColAction("0003", "birth")));
-        appendStepsToPrep(preparationId, firstStep);
+        clientTest.addStep(preparationId, firstStep);
         AppendStep secondStep = step(null,
                 action("split", params("column_id", "0001", "column_name", "firstname", "scope", "column", "limit", "2")));
-        appendStepsToPrep(preparationId, secondStep);
+        clientTest.addStep(preparationId, secondStep);
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
         final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
@@ -1275,8 +1314,8 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldDeleteStepsThatApplyToCreatedColumn() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
-        appendStepsToPrep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
-        appendStepsToPrep(preparationId, step(null, action("uppercase", paramsColAction("0004", "lastname_copy"))));
+        clientTest.addStep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0004", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
         final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
@@ -1297,9 +1336,9 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldShiftColumnCreatedAfterStepWithAllActionsParametersOnThoseSteps() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
-        appendStepsToPrep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
-        appendStepsToPrep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
-        appendStepsToPrep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
+        clientTest.addStep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
         final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
@@ -1520,9 +1559,9 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldNotMoveAStepIfItUseANotYetCreatedColumn() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
-        appendStepsToPrep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
-        appendStepsToPrep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
-        appendStepsToPrep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
+        clientTest.addStep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
         final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
@@ -1549,8 +1588,8 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldNotMoveAStepIfItUsesADeletedColumn() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
-        appendStepsToPrep(preparationId, step(null, action("uppercase", paramsColAction("0001", "lastname"))));
-        appendStepsToPrep(preparationId, step(null, action("delete_column", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("delete_column", paramsColAction("0001", "lastname"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
         final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);

@@ -14,7 +14,6 @@ package org.talend.dataprep.api.service;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -255,13 +254,15 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/details", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
-    public ResponseEntity<StreamingResponseBody> getPreparation(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId) {
+    public ResponseEntity<StreamingResponseBody> getPreparation( //
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
+            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId", value = "optional step id", defaultValue = "head") String stepId //
+    ) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation details (pool: {} )...", getConnectionStats());
         }
 
-        final EnrichedPreparationDetails enrichPreparation = getCommand(EnrichedPreparationDetails.class, preparationId);
+        final EnrichedPreparationDetails enrichPreparation = getCommand(EnrichedPreparationDetails.class, preparationId, stepId);
         try {
             return CommandHelper.toStreaming(enrichPreparation);
         } finally {

@@ -13,16 +13,29 @@
 
 package org.talend.dataprep.test;
 
+import com.jayway.restassured.response.Response;
+
 /**
  * Exception that mocks TDPException to be used in tests because you cannot instantiate a TDPException out of a string.
  */
 public class MockTDPException extends RuntimeException {
 
+    private int statusCode;
+
     /**
-     * @see RuntimeException
+     * Create a MockTDPException out of the given response.
+     *
+     * @param response the reponse to create the excepion from.
      */
-    public MockTDPException(String message) {
-        super(message);
+    public MockTDPException(Response response) {
+        super(response.asString());
+        this.statusCode = response.getStatusCode();
     }
 
+    /**
+     * @return the StatusCode
+     */
+    public int getStatusCode() {
+        return statusCode;
+    }
 }

@@ -247,13 +247,16 @@ public class PreparationController {
      * Return a preparation details.
      *
      * @param id the wanted preparation id.
+     * @param stepId optional step id.
      * @return the preparation details.
      */
     @RequestMapping(value = "/preparations/{id}/details", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
-    public PreparationMessage getDetails(@ApiParam("id") @PathVariable("id") String id) {
-        return preparationService.getPreparationDetails(id);
+    public PreparationMessage getDetails( //
+            @ApiParam("id") @PathVariable("id") String id, //
+            @ApiParam(value = "stepId", defaultValue = "head") @RequestParam(value = "stepId", defaultValue = "head") String stepId) {
+        return preparationService.getPreparationDetails(id, stepId);
     }
 
     /**

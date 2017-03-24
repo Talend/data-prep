@@ -15,21 +15,33 @@ package org.talend.dataprep.preparation.test;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_READ_CONTENT;
 
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.test.MockTDPException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 
 /**
  * Test client for preparation service.
@@ -44,11 +56,18 @@ public class PreparationClientTest {
     @Autowired
     protected PreparationRepository preparationRepository;
 
+    @Autowired
+    protected ObjectMapper mapper;
+
     private String homeFolderId;
 
     @PostConstruct
     private void init() {
         this.homeFolderId = folderRepository.getHome().getId();
+    }
+
+    static {
+        RestAssured.defaultParser = Parser.JSON;
     }
 
     /**
@@ -98,4 +117,42 @@ public class PreparationClientTest {
         return preparation.getHeadId();
     }
 
+    /**
+     * Append an action to a preparation.
+     *
+     * @param preparationId The preparation id.
+     * @param stepToAppend The step to append.
+     * @return The created stepContent id.
+     */
+    public void addStep(final String preparationId, AppendStep stepToAppend) {
+        given().body(singletonList(stepToAppend)).contentType(ContentType.JSON).when()
+                .post("/preparations/{id}/actions", preparationId).then().statusCode(200).log().ifError();
+    }
+
+    /**
+     * Return the details of a preparation at a given (optional) step.
+     *
+     * @param preparationId the wanted preparation id.
+     * @param wantedStepId the optional wanted step id.
+     * @return the details of a preparation at a given (optional) step.
+     */
+    public PreparationMessage getDetails(String preparationId, String wantedStepId) {
+        final RequestSpecification specs = given();
+
+        if (StringUtils.isNotBlank(wantedStepId)) {
+            specs.queryParam("stepId", wantedStepId);
+        }
+        final Response response = specs.when().get("/preparations/{id}/details", preparationId);
+
+        if (response.getStatusCode() != 200) {
+            throw new MockTDPException(response);
+        }
+
+        try {
+            return mapper.readerFor(PreparationMessage.class).readValue(response.asString());
+        } catch (IOException e) {
+            throw new TDPException(UNABLE_TO_READ_CONTENT);
+        }
+
+    }
 }

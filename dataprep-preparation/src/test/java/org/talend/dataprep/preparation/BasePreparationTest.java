@@ -33,6 +33,7 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.preparation.test.PreparationClientTest;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
@@ -58,6 +59,9 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
 
     @Autowired
     protected LockedResourceRepository lockRepository;
+
+    @Autowired
+    protected PreparationClientTest clientTest;
 
     /** the HOME folder */
     protected Folder home;

@@ -179,7 +179,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationCopyMove.getType(), is("@@preparation/COPY_MOVE"));
 
         final ActionSettings preparationCreate = settings.getActions().get("preparation:create");
-        assertThat(preparationCreate.getName(), is("Create preparation"));
+        assertThat(preparationCreate.getName(), is("Add preparation"));
         assertThat(preparationCreate.getIcon(), is("talend-plus-circle"));
         assertThat(preparationCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationCreate.getBsStyle(), is("primary"));
@@ -191,7 +191,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationDisplayMode.getPayload().get(PAYLOAD_METHOD_KEY), is("setPreparationsDisplayMode"));
 
         final ActionSettings preparationFolderCreate = settings.getActions().get("preparation:folder:create");
-        assertThat(preparationFolderCreate.getName(), is("Create folder"));
+        assertThat(preparationFolderCreate.getName(), is("Add folder"));
         assertThat(preparationFolderCreate.getIcon(), is("talend-folder"));
         assertThat(preparationFolderCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationFolderCreate.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleFolderCreator"));

@@ -1,5 +1,5 @@
 # Talend Data Preparation - Data Set Service
-![alt text](http://www.talend.com/sites/all/themes/talend_responsive/images/logo.png "Talend")
+![alt text](https://www.talend.com/wp-content/uploads/2016/07/talend-logo.png "Talend")
 
 This folder contains the REST service to all Data Set related operations (creation, removal...).
 
@@ -59,54 +59,6 @@ $ mvn -Ddataset.content.store.file.location=/home/user/permanent_store/
 $ mvn -Ddataset.content.store=hdfs -Ddataset.content.store.hdfs.location=file:/
 ```
 In this configuration, dataset.content.store.hdfs.location takes a URI to initialize a HDFS FileSystem instance (currently no credential support).
-
-## Build a Docker image
-This project can be packages as a Docker image. You simply have to run:
-```
-$ mvn -Pdocker install
-```
-By default, the profile 'docker' isn't active, you need to explicitly enable it ("-Pdocker"). Running this command performs the following:
-* Compiles sources.
-* Packages all classes.
-* Build a docker image that run the services with name "talend/dataprep-dataset:${version}" (e.g. "talend/dataprep-dataset:1.0.M0-SNAPSHOT").
-After "mvn install" completes, run the following command to quickly test the build:
-```
-$ docker -p 8080:8080 run talend/dataprep-dataset:latest
-```
-This runs the latest image version and forwards image's port 8080 to localhost 8080. After initialization, go to http://localhost:8080.
-
-### Multiple instances
-To run multiple instances, you may use the command:
-```
-[fhuaulme@tlnd-fhuaulme ~]$ docker run -p 8080 -d talend/dataprep-dataset:1.0.M0-SNAPSHOT
-336c348ba4dd683d859938b3caee2d7f6c5742e33d06debce8fbbd57ff3de9c4
-[fhuaulme@tlnd-fhuaulme ~]$ docker run -p 8080 -d talend/dataprep-dataset:1.0.M0-SNAPSHOT
-578d7da8218abcf90f8ac4c72dab33c29311e202dbfca17ac3b74cd6737def89
-[fhuaulme@tlnd-fhuaulme ~]$ docker run -p 8080 -d talend/dataprep-dataset:1.0.M0-SNAPSHOT
-234a75e85f109d185efc6c6640a763869abc641ccf1f3bd03e105b9be1ea6801
-[fhuaulme@tlnd-fhuaulme ~]$ docker ps
-CONTAINER ID        IMAGE                                     COMMAND                CREATED             STATUS              PORTS                     NAMES
-234a75e85f10        talend/dataprep-dataset:1.0.M0-SNAPSHOT   "java -jar /dataprep   5 seconds ago       Up 4 seconds        0.0.0.0:49158->8080/tcp   angry_heisenberg
-578d7da8218a        talend/dataprep-dataset:1.0.M0-SNAPSHOT   "java -jar /dataprep   8 seconds ago       Up 7 seconds        0.0.0.0:49157->8080/tcp   thirsty_yonath
-336c348ba4dd        talend/dataprep-dataset:1.0.M0-SNAPSHOT   "java -jar /dataprep   10 seconds ago      Up 9 seconds        0.0.0.0:49156->8080/tcp   insane_hopper
-```
-There are 3 instances of the same image accessible from http://localhost:49156, http://localhost:49157, http://localhost:49158.
-
-### Docker environment properties
-
-Docker image comes with the following environment properties:
-* TDP_DATASET_SERVER_PORT: port for the API service (used for server.port).
-* TDP_DATASET_METADATA_STORE: type of storage for metadata (mongodb, in-memory).
-* TDP_DATASET_CONTENT_STORE: type of storage for the data sets (hdfs, local).
-* TDP_DATASET_CONTENT_STORE_FILE_LOCATION: when TDP_DATASET_CONTENT_STORE = file, path to the local store directory.
-* TDP_DATASET_MONGODB_HOST: when using TDP_DATASET_METADATA_STORE = mongodb, host name (or IP address) of the MongoDB instance.
-* TDP_DATASET_MONGODB_PORT: when using TDP_DATASET_METADATA_STORE = mongodb, port of the MongoDB instance.
-Note: value supports environment property placeholders, this means a environment property such as:
-```
-TDP_API_DATASET_SERVICE_URL: http://${DATASET_PORT_8080_TCP_ADDR}:${DATASET_PORT_8080_TCP_PORT}
-```
-...uses values from environment properties DATASET_PORT_8080_TCP_ADDR and DATASET_PORT_8080_TCP_PORT. Unresolved properties are kept as is.
-
 
 ## Documentation
 REST service is self documented. Once started, go to http://localhost:8080 (modify 8080 if you choose a different port)

@@ -33,15 +33,15 @@ public enum ActionCategory {
     FILTERED("filtered"), //
     DATA_BLENDING("data_blending"), //
     DATA_MASKING("data masking"), //
-    PHONE_NUMBER("phones"),
-    CONVERSIONS("Conversions");
+    PHONE_NUMBER("phones"), //
+    CONVERSIONS("conversions");
 
     /** The category display name. */
     private final String displayName;
 
     /**
      * Create an action category with the given display name.
-     * 
+     *
      * @param displayName the action display name.
      */
     ActionCategory(String displayName) {

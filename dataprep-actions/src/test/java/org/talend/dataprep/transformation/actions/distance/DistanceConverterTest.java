@@ -62,7 +62,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
         final String name = action.getName();
 
         // then
-        assertThat(name, Is.is("convert_distance"));
+        assertThat(name, Is.is("distance_converter"));
     }
 
     @Test

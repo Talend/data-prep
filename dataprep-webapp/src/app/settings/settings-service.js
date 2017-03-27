@@ -24,27 +24,6 @@ export function SettingsService($http, RestURLs) {
 	function refreshSettings() {
 		return $http.get(RestURLs.settingsUrl)
 			.then(response => response.data)
-			.then((settings) => {
-				settings.actions['version:toggle'] = {
-					id: 'version:toggle',
-					name: 'Toggle',
-					payload: { method: 'toggleVersion' },
-					type: '@@version/VERSION_TOGGLE',
-				};
-				settings.actions['version:select'] = {
-					id: 'version:select',
-					name: 'Select',
-					payload: { method: 'selectVersion' },
-					type: '@@router/GO_VERSION_READ_ONLY',
-				};
-				settings.actions['export:toggle'] = {
-					id: 'export:toggle',
-					name: 'Toggle',
-					payload: { method: 'toggleExport' },
-					type: '@@export/EXPORT_TOGGLE',
-				};
-				return settings;
-			})
 			.then(settings => this.setSettings(settings));
 	}
 

@@ -18,8 +18,8 @@ const CollapsiblePanelContainer = {
 		<pure-collapsible-panel
 			header="$ctrl.header"
 			content="$ctrl.item.content"
-			onSelect="$ctrl.item.onSelect"
-			onToggle="$ctrl.item.onToggle"
+			on-select="$ctrl.item.onSelect"
+			on-toggle="$ctrl.item.onToggle"
 			selected="$ctrl.item.selected"
 			expanded="$ctrl.item.expanded"
 			theme="$ctrl.item.theme"

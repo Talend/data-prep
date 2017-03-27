@@ -22,8 +22,23 @@ export default class CollapsiblePanelCtrl {
 		this.actionsDispatchers = [];
 	}
 
+	$onInit() {
+		this.adaptHeaderActions();
+	}
+
 	$onChanges() {
 		this.adaptHeader();
+	}
+
+	adaptHeaderActions() {
+		if (this.item.onToggle) {
+			const headerOnToggle = this.getActionDispatcher(this.item.onToggle);
+			this.item.onToggle = event => headerOnToggle(event, this.item);
+		}
+		if (this.item.onSelect) {
+			const headerOnSelect = this.getActionDispatcher(this.item.onSelect);
+			this.item.onSelect = event => headerOnSelect(event, this.item);
+		}
 	}
 
 	adaptHeaderItem(headerItem) {

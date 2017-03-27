@@ -44,15 +44,13 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     /**
      * Action name.
      */
-    public static final String ACTION_NAME = "convert_distance"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "distance_converter"; //$NON-NLS-1$
 
     private static final String FROM_UNIT_PARAMETER = "from_distance";
 
     private static final String TO_UNIT_PARAMETER = "to_distance";
 
     private static final String TARGET_PRECISION = "precision";
-
-    private static final String DISTANCE_CONVERTER = "distance_converter";
 
     /**
      * @return The list of parameters required for this Action to be executed.
@@ -129,7 +127,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
             DistanceEnum deFrom = DistanceEnum.valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
             DistanceEnum deTo = DistanceEnum.valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
             org.talend.dataquality.converters.DistanceConverter converter = new org.talend.dataquality.converters.DistanceConverter(deFrom, deTo);
-            actionContext.get(DISTANCE_CONVERTER, parameters -> converter);
+            actionContext.get(ACTION_NAME, parameters -> converter);
         }
     }
 
@@ -139,7 +137,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
         final String columnValue = row.get(columnId);
 
         if (columnValue != null) {
-            final org.talend.dataquality.converters.DistanceConverter converter = context.get(DISTANCE_CONVERTER);
+            final org.talend.dataquality.converters.DistanceConverter converter = context.get(ACTION_NAME);
             BigDecimal valueFrom = BigDecimalParser.toBigDecimal(columnValue);
             double valueTo = converter.convert(valueFrom.doubleValue());
 

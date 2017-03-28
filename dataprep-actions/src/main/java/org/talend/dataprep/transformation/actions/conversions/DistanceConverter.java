@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.dataprep.transformation.actions.distance;
+package org.talend.dataprep.transformation.actions.conversions;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
@@ -44,11 +44,11 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     /**
      * Action name.
      */
-    public static final String ACTION_NAME = "distance_converter"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "distance_converter";
 
-    private static final String FROM_UNIT_PARAMETER = "from_distance";
+    private static final String FROM_UNIT_PARAMETER = "from_unit";
 
-    private static final String TO_UNIT_PARAMETER = "to_distance";
+    private static final String TO_UNIT_PARAMETER = "to_unit";
 
     private static final String TARGET_PRECISION = "precision";
 
@@ -58,7 +58,8 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters.add(SelectParameter.Builder.builder()
+
+        SelectParameter.Builder builder = SelectParameter.Builder.builder()
                 .item(DistanceEnum.MILLIMETER.name(), DistanceEnum.MILLIMETER.getShortName())
                 .item(DistanceEnum.CENTIMETER.name(), DistanceEnum.CENTIMETER.getShortName())
                 .item(DistanceEnum.DECIMETER.name(), DistanceEnum.DECIMETER.getShortName())
@@ -72,31 +73,20 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
                 .item(DistanceEnum.MILE.name(), DistanceEnum.MILE.getShortName())
                 .item(DistanceEnum.NAUTICAL_MILE.name(), DistanceEnum.NAUTICAL_MILE.getShortName())
                 .item(DistanceEnum.LIGHT_YEAR.name(), DistanceEnum.LIGHT_YEAR.getShortName())
-                .canBeBlank(false)
+                .canBeBlank(false);
+
+        parameters.add(builder
                 .defaultValue(DistanceEnum.MILE.name())
                 .name(FROM_UNIT_PARAMETER)
                 .build());
 
-        parameters.add(SelectParameter.Builder.builder()
-                .item(DistanceEnum.MILLIMETER.name(), DistanceEnum.MILLIMETER.getShortName())
-                .item(DistanceEnum.CENTIMETER.name(), DistanceEnum.CENTIMETER.getShortName())
-                .item(DistanceEnum.DECIMETER.name(), DistanceEnum.DECIMETER.getShortName())
-                .item(DistanceEnum.METER.name(), DistanceEnum.METER.getShortName())
-                .item(DistanceEnum.DEKAMETER.name(), DistanceEnum.DEKAMETER.getShortName())
-                .item(DistanceEnum.HECTOMETER.name(), DistanceEnum.HECTOMETER.getShortName())
-                .item(DistanceEnum.KILOMETER.name(), DistanceEnum.KILOMETER.getShortName())
-                .item(DistanceEnum.INCH.name(), DistanceEnum.INCH.getShortName())
-                .item(DistanceEnum.FOOT.name(), DistanceEnum.FOOT.getShortName())
-                .item(DistanceEnum.YARD.name(), DistanceEnum.YARD.getShortName())
-                .item(DistanceEnum.MILE.name(), DistanceEnum.MILE.getShortName())
-                .item(DistanceEnum.NAUTICAL_MILE.name(), DistanceEnum.NAUTICAL_MILE.getShortName())
-                .item(DistanceEnum.LIGHT_YEAR.name(), DistanceEnum.LIGHT_YEAR.getShortName())
-                .canBeBlank(false)
+        parameters.add(builder
                 .defaultValue(DistanceEnum.KILOMETER.name())
                 .name(TO_UNIT_PARAMETER)
                 .build());
 
         parameters.add(new Parameter(TARGET_PRECISION, INTEGER, "2", false, true, "precision"));
+
         return ActionsBundle.attachToAction(parameters, this);
     }
 
@@ -124,9 +114,9 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            DistanceEnum deFrom = DistanceEnum.valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
-            DistanceEnum deTo = DistanceEnum.valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
-            org.talend.dataquality.converters.DistanceConverter converter = new org.talend.dataquality.converters.DistanceConverter(deFrom, deTo);
+            DistanceEnum unitFrom = DistanceEnum.valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
+            DistanceEnum unitTo = DistanceEnum.valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
+            org.talend.dataquality.converters.DistanceConverter converter = new org.talend.dataquality.converters.DistanceConverter(unitFrom, unitTo);
             actionContext.get(ACTION_NAME, parameters -> converter);
         }
     }

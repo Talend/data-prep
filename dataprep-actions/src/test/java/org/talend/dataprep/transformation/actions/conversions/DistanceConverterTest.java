@@ -10,7 +10,7 @@
 //  9 rue Pages 92150 Suresnes, France
 //
 //  ============================================================================
-package org.talend.dataprep.transformation.actions.distance;
+package org.talend.dataprep.transformation.actions.conversions;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("from_distance", "to_distance", "precision", "column_id", "row_id",
+        List<String> parameterNames = Arrays.asList("from_unit", "to_unit", "precision", "column_id", "row_id",
                 "scope", "filter");
 
         // when
@@ -128,8 +128,8 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
-        parameters.put("from_distance", deFrom.name());
-        parameters.put("to_distance", deTo.name());
+        parameters.put("from_unit", deFrom.name());
+        parameters.put("to_unit", deTo.name());
         parameters.put("precision", precision);
 
         // when

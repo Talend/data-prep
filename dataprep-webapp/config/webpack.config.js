@@ -140,6 +140,8 @@ function addDevServerConfig(config) {
 		contentBase: BUILD_PATH,
 		stats: {
 			chunks: false,
+			chunkModules: false,
+			chunkOrigins: false,
 		},
 	};
 }

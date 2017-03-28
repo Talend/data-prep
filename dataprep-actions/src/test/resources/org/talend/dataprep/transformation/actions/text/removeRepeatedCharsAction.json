@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "remove_repeated_chars",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "column"
+      }
+    }
+  ]
+}

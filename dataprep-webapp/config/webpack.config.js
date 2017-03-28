@@ -138,6 +138,9 @@ function addDevServerConfig(config) {
 		compress: true,
 		inline: true,
 		contentBase: BUILD_PATH,
+		stats: {
+			chunks: false,
+		},
 	};
 }
 

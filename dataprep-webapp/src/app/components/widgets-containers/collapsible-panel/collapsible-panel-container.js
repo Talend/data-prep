@@ -16,13 +16,13 @@ import CollapsiblePanelCtrl from './collapsible-panel-controller';
 const CollapsiblePanelContainer = {
 	template: `
 		<pure-collapsible-panel
-			header="$ctrl.header"
-			content="$ctrl.item.content"
-			on-select="$ctrl.item.onSelect"
-			on-toggle="$ctrl.item.onToggle"
-			selected="$ctrl.item.selected"
-			expanded="$ctrl.item.expanded"
-			theme="$ctrl.item.theme"
+			header="$ctrl.adaptedItem.header"
+			content="$ctrl.adaptedItem.content"
+			on-select="$ctrl.adaptedItem.onSelect"
+			on-toggle="$ctrl.adaptedItem.onToggle"
+			selected="$ctrl.adaptedItem.selected"
+			expanded="$ctrl.adaptedItem.expanded"
+			theme="$ctrl.adaptedItem.theme"
 		>
 		</pure-collapsible-panel>
 	`,

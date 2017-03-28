@@ -12,7 +12,7 @@
   ============================================================================*/
 const SuggestionsStats = {
 	template: `
-    <div class="suggestions-stats-details">
+    <div class="actions-header-details">
 		<div class="suggestions-title" ng-switch="suggestionsStatsCtrl.state.playground.grid.selectedColumns.length > 1">
 			<span class="title"
 				  title="{{suggestionsStatsCtrl.state.playground.grid.selectedColumns[0].name}}"

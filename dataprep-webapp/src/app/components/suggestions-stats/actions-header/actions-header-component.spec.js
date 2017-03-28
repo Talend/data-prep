@@ -11,7 +11,7 @@
 
   ============================================================================*/
 
-describe('Suggestions stats directive', () => {
+describe('Actions header', () => {
     'use strict';
 
     let scope;
@@ -19,7 +19,7 @@ describe('Suggestions stats directive', () => {
     let element;
     let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.suggestions-stats', ($provide) => {
+    beforeEach(angular.mock.module('data-prep.actions-header', ($provide) => {
         stateMock = {
             playground: {
                 grid: {},
@@ -28,23 +28,19 @@ describe('Suggestions stats directive', () => {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(($rootScope, $compile, $timeout) => {
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+        $translateProvider.translations('en', {
+            MULTI_COLUMNS_SELECTED: '{{nb}} columns selected',
+        });
+        $translateProvider.preferredLanguage('en');
+    }));
+
+    beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
         createElement = () => {
-            element = angular.element(
-                '<suggestions-stats>' +
-                '   <sc-splitter class="suggestions-stats-content" orientation="vertical">' +
-                '       <sc-split-first-pane id="help-suggestions">' +
-                '           <actions-suggestions class="suggestions-part"></actions-suggestions>' +
-                '               </sc-split-first-pane>' +
-                '       <sc-split-second-pane id="help-stats">' +
-                '           <stats-details class="stats-part"></stats-details>' +
-                '       </sc-split-second-pane>' +
-                '   </sc-splitter>' +
-                '</suggestions-stats>');
+            element = angular.element('<actions-header></actions-header>');
             $compile(element)(scope);
             scope.$digest();
-            $timeout.flush();
         };
     }));
 
@@ -64,14 +60,17 @@ describe('Suggestions stats directive', () => {
         expect(element.find('.title').text().trim()).toBe('Col 1');
     });
 
+    it('should set the number of the selected columns in title', () => {
+        //given
+        stateMock.playground.grid.selectedColumns = [
+            { name: 'Col 1' },
+            { name: 'Col 3' },
+        ];
 
-    it('should render suggestions/stats splitter', inject(() => {
         //when
         createElement();
 
         //then
-        expect(element.find('sc-splitter').length).toBe(1);
-        expect(element.find('sc-splitter sc-split-first-pane actions-suggestions').length).toBe(1);
-        expect(element.find('sc-splitter sc-split-second-pane stats-details').length).toBe(1);
-    }));
+        expect(element.find('.title').text().trim()).toBe('2 columns selected');
+    });
 });

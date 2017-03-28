@@ -192,6 +192,18 @@ describe('Playground directive', () => {
 			expect(element.find('.playground-suggestions').eq(0).hasClass('slide-hide')).toBe(false);
 			expect(element.find('.playground-suggestions').eq(0).find('.action').eq(0).hasClass('right')).toBe(true);
 		});
+
+		it('should render right slidable panel', () => {
+			//given
+			stateMock.playground.dataset = metadata;
+
+			//when
+			createElement();
+
+			//then: check right slidable is displayed transformations with right slide action
+			expect(element.find('.playground-suggestions').eq(0).hasClass('slide-hide')).toBe(false);
+			expect(element.find('.playground-suggestions').eq(0).find('.action').eq(0).hasClass('right')).toBe(true);
+		});
 	});
 
 	describe('recipe header', () => {

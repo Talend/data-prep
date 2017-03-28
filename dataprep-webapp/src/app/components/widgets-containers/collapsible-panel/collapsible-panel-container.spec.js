@@ -81,7 +81,6 @@ describe('CollapsiblePanel container', () => {
 		// given
 		scope.exportFullRun = {
 			header: [statusItem],
-			content: [],
 		};
 
 		// when
@@ -151,7 +150,7 @@ describe('CollapsiblePanel container', () => {
 		createElement();
 
 		// then
-		expect(element.find('button').length).toBe(1);
+		expect(element.find('button').length).toBe(2);
 	});
 
 	it('should render simple and badge text', () => {
@@ -165,8 +164,8 @@ describe('CollapsiblePanel container', () => {
 		createElement();
 
 		// then
-		expect(element.find('.panel-heading > div').eq(0).text().trim()).toBe(simpleItem.label);
-		expect(element.find('.panel-heading > div').eq(1).text().trim()).toBe(badgeItem.label);
+		expect(element.find('.panel-heading > div > div').eq(0).text().trim()).toBe(simpleItem.label);
+		expect(element.find('.panel-heading > div > div').eq(1).text().trim()).toBe(badgeItem.label);
 	});
 
 	it('should render simple and badge text in the same group', () => {

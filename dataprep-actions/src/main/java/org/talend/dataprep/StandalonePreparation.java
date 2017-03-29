@@ -32,7 +32,7 @@ public class StandalonePreparation extends PreparationMessage {
     private Map<String, LightweightExportableDataSet> lookupDataSets;
 
     @JsonRawValue
-    private Object filterOut;
+    private Object filterOut = "\"\"";
 
     public List<BroadcastDocumentObject> getDictionary() {
         return dictionary;

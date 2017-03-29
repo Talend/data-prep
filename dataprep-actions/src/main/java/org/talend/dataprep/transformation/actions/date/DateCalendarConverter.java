@@ -22,7 +22,7 @@ import java.time.chrono.IsoChronology;
 import java.time.chrono.JapaneseChronology;
 import java.time.chrono.MinguoChronology;
 import java.time.chrono.ThaiBuddhistChronology;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +39,9 @@ import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.parameters.SelectParameter.Builder;
 import org.talend.dataprep.transformation.actions.Providers;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -53,33 +54,33 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
     /**
      * The action name.
      */
-    public static final String ACTION_NAME = "date_calendar_converter"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "date_calendar_converter";
 
     /**
      * Action parameters:
      */
-    protected static final String FROM_MODE = "from_pattern_mode"; //$NON-NLS-1$
+    protected static final String FROM_MODE = "from_pattern_mode";
 
-    protected static final String FROM_MODE_BEST_GUESS = "unknown_separators"; //$NON-NLS-1$
+    protected static final String FROM_MODE_BEST_GUESS = "unknown_separators";
 
-    protected static final String FROM_MODE_CUSTOM = "from_custom_mode"; //$NON-NLS-1$
+    protected static final String FROM_MODE_CUSTOM = "from_custom_mode";
 
-    protected static final String FROM_CUSTOM_PATTERN = "from_custom_pattern"; //$NON-NLS-1$
+    protected static final String FROM_CUSTOM_PATTERN = "from_custom_pattern";
 
-    protected static final String FROM_CALENDER_TYPE_PARAMETER = "from_calender_type"; //$NON-NLS-1$
+    protected static final String FROM_CALENDER_TYPE_PARAMETER = "from_calender_type";
 
-    protected static final String TO_CALENDER_TYPE_PARAMETER = "to_calender_type"; //$NON-NLS-1$
+    protected static final String TO_CALENDER_TYPE_PARAMETER = "to_calender_type";
 
-    protected static final String CUSTOM = "custom"; //$NON-NLS-1$
+    protected static final String CUSTOM = "custom";
 
     /**
      * Keys for action context:
      */
-    private static final String FROM_DATE_PATTERNS_KEY = "from_date_patterns_key"; //$NON-NLS-1$
+    private static final String FROM_DATE_PATTERNS_KEY = "from_date_patterns_key";
 
-    private static final String FROM_CALENDER_TYPE_KEY = "from_calender_type_key"; //$NON-NLS-1$
+    private static final String FROM_CALENDER_TYPE_KEY = "from_calender_type_key";
 
-    private static final String TO_CALENDER_TYPE_KEY = "to_calender_type_key"; //$NON-NLS-1$
+    private static final String TO_CALENDER_TYPE_KEY = "to_calender_type_key";
 
     @Override
     public String getName() {
@@ -88,7 +89,7 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
 
     @Override
     public String getCategory() {
-        return "Conversions"; //$NON-NLS-1$
+        return ActionCategory.CONVERSIONS.getDisplayName();
     }
 
     @Override
@@ -96,7 +97,7 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         final List<Parameter> parameters = super.getParameters();
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(Builder.builder()
                 .name(FROM_CALENDER_TYPE_PARAMETER)
                 .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString()) 
                 .item(ChronologyUnit.Hijrah.name(), ChronologyUnit.Hijrah.toString()) 
@@ -106,14 +107,14 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
                 .defaultValue(ChronologyUnit.ISO.name()) 
                 .build());
         
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(Builder.builder()
                 .name(FROM_MODE)
                 .item(FROM_MODE_BEST_GUESS, FROM_MODE_BEST_GUESS)
                 .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, new Parameter(FROM_CUSTOM_PATTERN, ParameterType.STRING, EMPTY, false, false))
                 .defaultValue(FROM_MODE_BEST_GUESS)
                 .build());
         
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(Builder.builder()
                 .name(TO_CALENDER_TYPE_PARAMETER)
                 .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString()) 
                 .item(ChronologyUnit.Hijrah.name(), ChronologyUnit.Hijrah.toString()) 
@@ -123,21 +124,21 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
                 .defaultValue(ChronologyUnit.Hijrah.name()) 
                 .build());
         
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(Builder.builder()
                 .name(NEW_PATTERN)
-                .item("yyyy-MM-dd", "datePatternISO")//$NON-NLS-1$ //$NON-NLS-2$
-                .item("M/d/yy",     "datePatternUS") //$NON-NLS-1$ //$NON-NLS-2$
-                .item("dd/MM/yy",   "datePatternFR") //$NON-NLS-1$ //$NON-NLS-2$
-                .item("dd.MM.yy",   "datePatternDE") //$NON-NLS-1$ //$NON-NLS-2$
-                .item("dd/MM/yy",   "datePatternGB") //$NON-NLS-1$ //$NON-NLS-2$
-                .item("yy/MM/dd",   "datePatternJP") //$NON-NLS-1$ //$NON-NLS-2$
-                .item("yyyy/MM/dd", "datePattern1")  //$NON-NLS-1$ //$NON-NLS-2$
-                .item("dd/MM/yyyy", "datePattern2")  //$NON-NLS-1$ //$NON-NLS-2$
-                .item("MM/dd/yyyy", "datePattern3")  //$NON-NLS-1$ //$NON-NLS-2$
-                .item("yyyy MM dd", "datePattern4")  //$NON-NLS-1$ //$NON-NLS-2$
-                .item("yyyyMMdd",   "datePattern5")  //$NON-NLS-1$ //$NON-NLS-2$
+                .item("yyyy-MM-dd", "datePatternISO")
+                .item("M/d/yy",     "datePatternUS")
+                .item("dd/MM/yy",   "datePatternFR")
+                .item("dd.MM.yy",   "datePatternDE")
+                .item("dd/MM/yy",   "datePatternGB")
+                .item("yy/MM/dd",   "datePatternJP")
+                .item("yyyy/MM/dd", "datePattern1")
+                .item("dd/MM/yyyy", "datePattern2")
+                .item("MM/dd/yyyy", "datePattern3")
+                .item("yyyy MM dd", "datePattern4")
+                .item("yyyyMMdd",   "datePattern5")
                 .item(CUSTOM, CUSTOM_PATTERN_PARAMETER)
-                .defaultValue("yyyy-MM-dd") //$NON-NLS-1$
+                .defaultValue("yyyy-MM-dd")
                 .build());
         //@formatter:on
 
@@ -192,9 +193,7 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
             final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
             return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
         case FROM_MODE_CUSTOM:
-            List<DatePattern> fromPatterns = new ArrayList<>();
-            fromPatterns.add(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
-            return fromPatterns;
+            return Collections.singletonList(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
         default:
             return emptyList();
         }
@@ -245,18 +244,18 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.METADATA_CHANGE_TYPE, Behavior.NEED_STATISTICS_PATTERN);
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
     }
 
     /**
      * enum Chronology.
      */
     public enum ChronologyUnit {
-        ISO("IsoChronology", IsoChronology.INSTANCE), //$NON-NLS-1$
-        Hijrah("HijrahChronology", HijrahChronology.INSTANCE), //$NON-NLS-1$
-        Japanese("JapaneseChronology", JapaneseChronology.INSTANCE), //$NON-NLS-1$
-        Minguo("MinguoChronology", MinguoChronology.INSTANCE), //$NON-NLS-1$
-        ThaiBuddhist("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE); //$NON-NLS-1$
+        ISO("IsoChronology", IsoChronology.INSTANCE),
+        Hijrah("HijrahChronology", HijrahChronology.INSTANCE),
+        Japanese("JapaneseChronology", JapaneseChronology.INSTANCE),
+        Minguo("MinguoChronology", MinguoChronology.INSTANCE),
+        ThaiBuddhist("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE);
 
         private final String displayName;
 

@@ -137,7 +137,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 //-----------------------------------------------------BODY--------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------
 .playground-container {
-	$playground-suggestions-stats-details: '100vh - ' + (2*$navigation-height + $navigation-border + $sub-header-height);
+	$playground-suggestions-stats-details: '100vh - ' + ($navigation-height + $navigation-border + $sub-header-height);
 
 	height: 100vh;
 	@include flex-column();

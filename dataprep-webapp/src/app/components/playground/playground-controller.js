@@ -222,9 +222,9 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	// ------------------------------------------------INIT----------------------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
 	if ($stateParams.prepid) {
-		PlaygroundService.initPreparation();
+		PlaygroundService.initPreparation($stateParams.prepid);
 	}
 	else if ($stateParams.datasetid) {
-		PlaygroundService.initDataset();
+		PlaygroundService.initDataset($stateParams.datasetid);
 	}
 }

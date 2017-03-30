@@ -124,8 +124,30 @@ class StepNodeTransformation extends Visitor {
         public State process(Node node) {
             final State newState;
             if (node instanceof CompileNode) {
-                ofNullable(previous).ifPresent(n -> n.setLink(null));
-                newState = new StepState(previous);
+                // Sanity check: there should be enough Step for all Compile/Action couple in pipeline.
+                if (!steps.hasNext()) {
+                    throw new IllegalArgumentException("Not enough steps to transform pipeline.");
+                }
+
+                // insert a StepNode within the pipeline builder
+                Step nextStep = steps.next();
+                if (Step.ROOT_STEP.getId().equals(nextStep.getId())) {
+                    LOGGER.debug("Unable to use step '{}' (root step).", nextStep.getId());
+                    if (steps.hasNext()) {
+                        nextStep = steps.next();
+                    } else {
+                        LOGGER.error("Unable to use root step as first step and no remaining steps.");
+                    }
+                }
+
+                // Check if Step has actual metadata
+                if (nextStep.getRowMetadata() == null) {
+                    LOGGER.warn("Previous execution for step #{} saved no metadata.");
+                    newState = DEFAULT;
+                } else {
+                    ofNullable(previous).ifPresent(n -> n.setLink(null));
+                    newState = new StepState(previous, nextStep);
+                }
             } else {
                 newState = DEFAULT;
             }
@@ -141,33 +163,21 @@ class StepNodeTransformation extends Visitor {
 
         private final Node previous;
 
-        private StepState(Node previous) {
+        private final Step step;
+
+        private StepState(Node previous, Step step) {
             this.previous = previous;
+            this.step = step;
         }
 
         @Override
         public State process(Node node) {
             if (node instanceof CompileNode) {
-                // Sanity check: there should be enough Step for all Compile/Action couple in pipeline.
-                if (!steps.hasNext()) {
-                    throw new IllegalArgumentException("Not enough steps to transform pipeline.");
-                }
-
                 // Continue (create StepNode)
                 final NodeCopy copy = new NodeCopy();
                 node.accept(copy);
 
-                // insert a StepNode within the pipeline builder
-                Step nextStep = steps.next();
-                if (Step.ROOT_STEP.getId().equals(nextStep.getId())) {
-                    LOGGER.debug("Unable to use step '{}' (root step).", nextStep.getId());
-                    if (steps.hasNext()) {
-                        nextStep = steps.next();
-                    } else {
-                        LOGGER.error("Unable to use root step as first step and no remaining steps.");
-                    }
-                }
-                final StepNode stepNode = new StepNode(nextStep, copy.getCopy(), copy.getLastNode());
+                final StepNode stepNode = new StepNode(step, copy.getCopy(), copy.getLastNode());
                 // and plug the previous link to the new StepNode
                 ofNullable(previous).ifPresent(n -> n.setLink(new BasicLink(stepNode)));
                 builder.to(stepNode);

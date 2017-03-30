@@ -44,13 +44,13 @@ const LINE = 'line';
 const EVENT_LOADING_START = 'talend.loading.start';
 const EVENT_LOADING_STOP = 'talend.loading.stop';
 
-export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams, $window,
+export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
                                           state, StateService, StepUtilsService,
                                           DatasetService, DatagridService, StorageService, FilterService,
                                           FilterAdapterService, PreparationService, PreviewService,
                                           RecipeService, TransformationCacheService, ExportService,
                                           StatisticsService, HistoryService,
-                                          OnboardingService, MessageService) {
+                                          OnboardingService, MessageService, TitleService) {
 	'ngInject';
 
 	const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
@@ -135,14 +135,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		if (preparation) {
 			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
-			$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
+			TitleService.setStrict(preparation.name);
 		}
 
 		// dataset specific init
 		else {
 			StateService.setNameEditionMode(true);
 			ExportService.refreshTypes('datasets', dataset.id);
-			$window.document.title = `${dataset.name} | ${$translate.instant('TALEND')}`;
+			TitleService.setStrict(dataset.name);
 		}
 	}
 
@@ -387,7 +387,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then((preparation) => {
 				StateService.setCurrentPreparation(preparation);
 				StateService.setPreparationName(preparation.name);
-				$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
+				TitleService.setStrict(preparation.name);
 				return preparation;
 			});
 		return promise;

@@ -71,13 +71,13 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
         assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
         assertTrue(action.acceptField(getColumn(Type.FLOAT)));
         assertTrue(action.acceptField(getColumn(Type.INTEGER)));
-        assertTrue(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
         assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
         assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test

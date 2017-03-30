@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.conversions;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
@@ -102,7 +103,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType())) || Type.NUMERIC.equals(Type.get(column.getType())) || Type.DOUBLE.equals(Type.get(column.getType())) || Type.FLOAT.equals(Type.get(column.getType())) || Type.INTEGER.equals(Type.get(column.getType()));
+        return Type.NUMERIC.isAssignableFrom(column.getType());
     }
 
     @Override
@@ -126,14 +127,19 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
         final String columnId = context.getColumnId();
         final String columnValue = row.get(columnId);
 
-        if (columnValue != null) {
-            final org.talend.dataquality.converters.DistanceConverter converter = context.get(ACTION_NAME);
-            BigDecimal valueFrom = BigDecimalParser.toBigDecimal(columnValue);
-            double valueTo = converter.convert(valueFrom.doubleValue());
+        if (!StringUtils.isEmpty(columnValue)) {
+            String valueToString;
+            try {
+                final org.talend.dataquality.converters.DistanceConverter converter = context.get(ACTION_NAME);
+                BigDecimal valueFrom = BigDecimalParser.toBigDecimal(columnValue);
+                double valueTo = converter.convert(valueFrom.doubleValue());
 
-            String precisionParameter = context.getParameters().get(TARGET_PRECISION);
-            Integer targetScale = NumberUtils.toInt(precisionParameter, valueFrom.scale());
-            String valueToString = BigDecimalParser.toBigDecimal(String.valueOf(valueTo)).setScale(targetScale, RoundingMode.HALF_UP).toPlainString();
+                String precisionParameter = context.getParameters().get(TARGET_PRECISION);
+                Integer targetScale = NumberUtils.toInt(precisionParameter, valueFrom.scale());
+                valueToString = BigDecimalParser.toBigDecimal(String.valueOf(valueTo)).setScale(targetScale, RoundingMode.HALF_UP).toPlainString();
+            } catch (NumberFormatException nfe) {
+                valueToString = columnValue;
+            }
 
             row.set(columnId, valueToString);
         }

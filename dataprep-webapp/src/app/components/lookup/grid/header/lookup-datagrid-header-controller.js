@@ -47,9 +47,7 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
      * @methodOf data-prep.lookup-datagrid-header.controller:LookupDatagridHeaderCtrl
      * @description updates the array of the selected columns to be added to the lookup
      */
-	vm.updateColsToAdd = function updateColsToAdd(e) {
-        // stop event propagation in order not to select the column
-		e.stopPropagation();
+	vm.updateColsToAdd = function updateColsToAdd() {
 		StateService.updateLookupColumnsToAdd();
 	};
 }

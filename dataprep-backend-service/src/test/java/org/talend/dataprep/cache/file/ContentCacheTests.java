@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.cache.file;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
@@ -123,7 +124,7 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
         // Put a content in cache...
         addCacheEntry(key, content, ContentCache.TimeToLive.DEFAULT);
         // ... get() should return this content back.
-        final String actual = IOUtils.toString(cache.get(key));
+        final String actual = IOUtils.toString(cache.get(key), UTF_8);
         assertThat(actual, is(content));
     }
 
@@ -173,7 +174,7 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
         // Put a content in cache...
         addCacheEntry(key, "content, yes again", ContentCache.TimeToLive.PERMANENT);
         assertThat(cache.has(key), is(true));
-        assertThat(IOUtils.toString(cache.get(key)), is("content, yes again"));
+        assertThat(IOUtils.toString(cache.get(key), UTF_8), is("content, yes again"));
         // ... evict() it...
         cache.evict(key);
         // ... has() must immediately return false
@@ -278,7 +279,7 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
         cache.move(key1, key2, ContentCache.TimeToLive.DEFAULT);
 
         // then
-        final String actual = IOUtils.toString(cache.get(key2));
+        final String actual = IOUtils.toString(cache.get(key2), UTF_8);
         assertThat(actual, is(content));
         assertFalse(cache.has(key1));
         assertTrue(cache.has(key2));

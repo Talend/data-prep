@@ -15,65 +15,64 @@ import DataViewMock from '../../../../../mocks/DataView.mock';
 import SlickGridMock from '../../../../../mocks/SlickGrid.mock';
 
 describe('Lookup Datagrid grid service', () => {
-    'use strict';
+	const realSlickGrid = Slick;
+	let dataViewMock;
+	let stateMock;
 
-    let realSlickGrid = Slick;
-    let dataViewMock;
-    let stateMock;
+	beforeEach(angular.mock.module('data-prep.lookup'));
 
-    beforeEach(angular.mock.module('data-prep.lookup'));
+	beforeEach(() => {
+		dataViewMock = new DataViewMock();
+	});
 
-    beforeEach(() => {
-        dataViewMock = new DataViewMock();
-    });
+	beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
+		stateMock = {
+			playground: {
+				lookup: {
+					dataView: dataViewMock,
+				},
+			},
+		};
+		$provide.constant('state', stateMock);
 
-    beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
-        stateMock = {
-            playground: {
-                lookup: {
-                    dataView: dataViewMock,
-                },
-            },
-        };
-        $provide.constant('state', stateMock);
+		spyOn(dataViewMock.onRowCountChanged, 'subscribe').and.returnValue();
+		spyOn(dataViewMock.onRowsChanged, 'subscribe').and.returnValue();
+	}));
 
-        spyOn(dataViewMock.onRowCountChanged, 'subscribe').and.returnValue();
-        spyOn(dataViewMock.onRowsChanged, 'subscribe').and.returnValue();
-    }));
+	beforeEach(inject((LookupDatagridColumnService, LookupDatagridStyleService) => {
+		spyOn(LookupDatagridColumnService, 'init').and.returnValue();
+		spyOn(LookupDatagridStyleService, 'init').and.returnValue();
+	}));
 
-    beforeEach(inject((LookupDatagridColumnService, LookupDatagridStyleService) => {
-        spyOn(LookupDatagridColumnService, 'init').and.returnValue();
-        spyOn(LookupDatagridStyleService, 'init').and.returnValue();
-    }));
+	beforeEach(inject(($window) => {
+		$window.Slick = {
+			Grid: SlickGridMock,
+			AutoColumnSize() {
+			},
+		};
+	}));
 
-    beforeEach(inject(($window) => {
-        $window.Slick = {
-            Grid: SlickGridMock,
-        };
-    }));
+	afterEach(inject(($window) => {
+		$window.Slick = realSlickGrid;
+	}));
 
-    afterEach(inject(($window) => {
-        $window.Slick = realSlickGrid;
-    }));
+	describe('on creation', () => {
+		it('should init the other datagrid services', inject((LookupDatagridGridService, LookupDatagridColumnService, LookupDatagridStyleService) => {
+			// when
+			LookupDatagridGridService.initGrid();
 
-    describe('on creation', () => {
-        it('should init the other datagrid services', inject((LookupDatagridGridService, LookupDatagridColumnService,
-            LookupDatagridStyleService) => {
-            //when
-            LookupDatagridGridService.initGrid();
+			// then
+			expect(LookupDatagridColumnService.init).toHaveBeenCalled();
+			expect(LookupDatagridStyleService.init).toHaveBeenCalled();
+		}));
 
-            //then
-            expect(LookupDatagridColumnService.init).toHaveBeenCalled();
-            expect(LookupDatagridStyleService.init).toHaveBeenCalled();
-        }));
+		it('should add grid listeners', inject((LookupDatagridGridService) => {
+			// when
+			LookupDatagridGridService.initGrid();
 
-        it('should add grid listeners', inject((LookupDatagridGridService) => {
-            //when
-            LookupDatagridGridService.initGrid();
-
-            //then
-            expect(stateMock.playground.lookup.dataView.onRowCountChanged.subscribe).toHaveBeenCalled();
-            expect(stateMock.playground.lookup.dataView.onRowsChanged.subscribe).toHaveBeenCalled();
-        }));
-    });
+			// then
+			expect(stateMock.playground.lookup.dataView.onRowCountChanged.subscribe).toHaveBeenCalled();
+			expect(stateMock.playground.lookup.dataView.onRowsChanged.subscribe).toHaveBeenCalled();
+		}));
+	});
 });

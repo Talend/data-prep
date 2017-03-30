@@ -17,14 +17,14 @@
  * @description The REST api services url
  */
 export default function RestURLs() {
-    /**
-     * @ngdoc method
-     * @name setServerUrl
-     * @propertyOf data-prep.services.utils.service:RestURLs
-     * @description Init the api urls with a provided server url
-     * @param {string} serverUrl The server url
-     */
-	this.setServerUrl = function setServerUrl(serverUrl) {
+	/**
+	 * @ngdoc method
+	 * @name setConfig
+	 * @propertyOf data-prep.services.utils.service:RestURLs
+	 * @description Init the api urls with a provided URLs configuration
+	 * @param {Object} config The URLs configration
+	 */
+	this.setConfig = function setConfig({ serverUrl }) {
 		this.aggregationUrl = serverUrl + '/api/aggregate';
 		this.datasetUrl = serverUrl + '/api/datasets';
 		this.exportUrl = serverUrl + '/api/export';

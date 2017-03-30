@@ -12,78 +12,86 @@
   ============================================================================*/
 
 .talend-dropdown {
-  $base-border-radius: 3px !default;
-  $base-line-height: 1.5em !default;
+	$base-border-radius: 3px !default;
+	$base-line-height: 1.5em !default;
 
-  $dropdown-border: 1px solid silver;
-  $dropdown-inner-border: 1px solid silver;
-  $dropdown-height: 40px;
-  $dropdown-padding: 1em;
-  $dropdown-distance-from-menu: 50px;
-  $dropdown-arrow-top-distance: 0;
+	$dropdown-border: 1px solid silver;
+	$dropdown-inner-border: 1px solid silver;
+	$dropdown-height: 40px;
+	$dropdown-padding: 1em;
+	$dropdown-distance-from-menu: 50px;
+	$dropdown-arrow-top-distance: 0;
 
-  line-height: $base-line-height;
-  height: 100%;
+	line-height: $base-line-height;
+	height: 100%;
 
-  .dropdown-container {
-    position: relative;
-    height: 100%;
-  }
+	.dropdown-container {
+		position: relative;
+		height: 100%;
+	}
 
-  .dropdown-action {
-    cursor: pointer;
-  }
+	.dropdown-action {
+		cursor: pointer;
+	}
 
-  .dropdown-button:after {
-    content: "\25BE";
-    margin-left: 5px;
-  }
+	.dropdown-button:after {
+		content: "\25BE";
+		margin-left: 5px;
+	}
 
-  .dropdown-menu {
-    @include menu-shape;
-    border-radius: $base-border-radius;
-    cursor: pointer;
-    display: none;
-    overflow: visible;
-    position: fixed;
-    z-index: 20;
+	.dropdown-menu {
+		@include menu-shape;
+		border-radius: $base-border-radius;
+		cursor: pointer;
+		display: none;
+		overflow: visible;
+		position: fixed;
+		z-index: 20;
 
-    &:before {
-      @include position(absolute, -1em 0 auto 0);
-      color: $white;
-      content: "\25b2";
-      font-size: 1.4em;
-      pointer-events: none;
-      text-shadow: 0 -2px 2px transparentize(black, 0.7);
-    }
+		&:before {
+			position: absolute;
+			top: -1em;
+			right: 0;
+			bottom: auto;
+			left: 0;
+			color: $white;
+			content: "\25b2";
+			font-size: 1.4em;
+			pointer-events: none;
+			text-shadow: 0 -2px 2px transparentize(black, 0.7);
+		}
 
-    &.top {
-      &:before {
-        content: "";
-      }
+		&.top {
+			&:before {
+				content: "";
+			}
 
-      &:after {
-        @include position(absolute, auto 0 -0.9em 0);
-        color: $white;
-        content: "\25bc";
-        font-size: 1.4em;
-        pointer-events: none;
-        text-shadow: 0 6px 2px transparentize(black, 0.7);
-      }
-    }
+			&:after {
+				position: absolute;
+				top: auto;
+				right: 0;
+				bottom: -0.9em;
+				left: 0;
+				color: $white;
+				content: "\25bc";
+				font-size: 1.4em;
+				pointer-events: none;
+				text-shadow: 0 6px 2px transparentize(black, 0.7);
+			}
+		}
 
-    &.right {
-      &:before,
-      &:after {
-        left: auto;
-      }
-    }
-  }
+		&.right {
+			&:before,
+			&:after {
+				left: auto;
+			}
+		}
+	}
 
-  .dropdown-menu-small-top {
-    top: 25px;
-  }
-  .show-menu {
-    display: block;
-  }
+	.dropdown-menu-small-top {
+		top: 25px;
+	}
+	.show-menu {
+		display: block;
+	}
 }

@@ -28,7 +28,7 @@
     <span class="filters-list-title" translate-once="EXISTING_DATASETS"></span>
     <input id="filtered-datasets-search"
            type="search"
-           class="action-search no-focus"
+           class="form-control action-search no-focus"
            translate-once-placeholder="FIND_DATASETS"
            ng-model="$ctrl.enteredFilterText"
            ng-model-options="{debounce: { default: 300, blur: 0 }}"
@@ -92,6 +92,7 @@
     <span translate-once="NEW_PREPARATION_NAME" class="preparation-name-input"></span>
     <span class="name-error" translate-once="NAME_ALREADY_EXISTS" ng-if="$ctrl.alreadyExistingName"></span>
     <input type="text"
+           class="form-control"
            ng-model="$ctrl.enteredName"
            ng-disabled="$ctrl.importDisabled"
            ng-change="$ctrl.checkExistingPrepName('user')"

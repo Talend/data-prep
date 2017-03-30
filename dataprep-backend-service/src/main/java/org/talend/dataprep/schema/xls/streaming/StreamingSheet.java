@@ -12,27 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.schema.xls.streaming;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.usermodel.AutoFilter;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellRange;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -940,6 +926,36 @@ public class StreamingSheet implements Sheet {
 
     @Override
     public void setZoom(int scale) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int addMergedRegionUnsafe(CellRangeAddress region) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void validateMergedRegions() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeMergedRegions(Collection<Integer> indices) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isPrintRowAndColumnHeadings() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setPrintRowAndColumnHeadings(boolean show) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Hyperlink getHyperlink(CellAddress addr) {
         throw new UnsupportedOperationException();
     }
 }

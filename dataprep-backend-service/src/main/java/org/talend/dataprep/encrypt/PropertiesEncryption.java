@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.encrypt;
 
+import static org.apache.commons.validator.routines.UrlValidator.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +24,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,15 +101,24 @@ public class PropertiesEncryption {
      * @return the encrypted string
      */
     private String encryptIfNot(String input) {
-        try {
-            AESEncryption.decrypt(input);
-            // If no exception is thrown it must be that it was already encrypted.
-            return input;
-        } catch (Exception e) {
+        if (isUrl(input)) {
             try {
-                return AESEncryption.encrypt(input);
-            } catch (Exception e1) {
-                LOGGER.debug("Error encrypting value.", e1);
+                return AESEncryption.encryptUriPassword(input);
+            } catch (Exception e) {
+                LOGGER.debug("Error encrypting value.", e);
+                return input;
+            }
+        } else {
+            try {
+                AESEncryption.decrypt(input);
+                // If no exception is thrown it must be that it was already encrypted.
+                return input;
+            } catch (Exception e) {
+                try {
+                    return AESEncryption.encrypt(input);
+                } catch (Exception e1) {
+                    LOGGER.debug("Error encrypting value.", e1);
+                }
             }
         }
         return "";
@@ -119,12 +131,27 @@ public class PropertiesEncryption {
      * @return the decrypted string
      */
     private String decryptIfNot(String input) {
-        try {
-            return AESEncryption.decrypt(input);
-        } catch (Exception e) {
-            // Property was already decrypted
-            LOGGER.debug("Trying to decrypt a non encrypted property.", e);
-            return input;
+        if (isUrl(input)) {
+            try {
+                return AESEncryption.decryptUriPassword(input);
+            } catch (Exception e) {
+                LOGGER.debug("Error encrypting value.", e);
+                return input;
+            }
+        } else {
+            try {
+                return AESEncryption.decrypt(input);
+            } catch (Exception e) {
+                // Property was already decrypted
+                LOGGER.debug("Trying to decrypt a non encrypted property.", e);
+                return input;
+            }
         }
     }
+
+    private static boolean isUrl(String field) {
+        UrlValidator urlValidator = new UrlValidator(ALLOW_LOCAL_URLS + ALLOW_ALL_SCHEMES + ALLOW_2_SLASHES);
+        return urlValidator.isValid(field);
+    }
+
 }

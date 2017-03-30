@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import { PLAYGROUND_PREPARATION_ROUTE } from '../../../../index-route';
 
 export default class PreparationCreatorFormCtrl {
 	constructor($document, $state, $translate, state, StateService,
@@ -181,7 +182,7 @@ export default class PreparationCreatorFormCtrl {
 				)
 				.then((prepid) => {
 					this.stateService.togglePreparationCreator();
-					this.$state.go('playground.preparation', { prepid });
+					this.$state.go(PLAYGROUND_PREPARATION_ROUTE, { prepid });
 				});
 		}
 		return promise;

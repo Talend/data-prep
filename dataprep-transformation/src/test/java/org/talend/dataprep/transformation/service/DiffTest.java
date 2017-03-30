@@ -13,10 +13,12 @@
 
 package org.talend.dataprep.transformation.service;
 
-import com.jayway.restassured.http.ContentType;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertThat;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,11 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertThat;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+
+import com.jayway.restassured.http.ContentType;
 
 /**
  * Diff integration tests.
@@ -56,7 +58,8 @@ public class DiffTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("../preview/expected_output.json"));
+        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("../preview/expected_output.json"),
+                UTF_8);
         assertEquals(expected, response, false);
     }
 
@@ -182,19 +185,20 @@ public class DiffTest extends TransformationServiceBaseTest {
     }
 
     private String getSingleTransformation() throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase.json"), UTF_8);
     }
 
     private String getMultipleTransformationWithNewColumn() throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase_copy.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase_copy.json"), UTF_8);
     }
 
     private String getMultipleTransformationWithNewColumnBis() throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase_copy_bis.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase_copy_bis.json"),
+                UTF_8);
     }
 
     private String getTransformation_TDP_1184_step_1() throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/deletecolumn_split.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/deletecolumn_split.json"), UTF_8);
     }
 
     private String getTransformation_TDP_1184_step_2() throws IOException {
@@ -202,15 +206,16 @@ public class DiffTest extends TransformationServiceBaseTest {
         // \"scope\": \"column\" } }, { \"action\": \"split\", \"parameters\":{ \"column_id\": \"city\", \"scope\":
         // \"column\", \"separator\":\" \", \"limit\":\"2\" } }, { \"action\": \"uppercase\",\"parameters\":{
         // \"column_id\": \"0000\", \"scope\": \"column\" } } ]}";
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/deletecolumn_split_uppercase.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/deletecolumn_split_uppercase.json"),
+                UTF_8);
     }
 
     private String getMultipleTransformationWithoutNewColumn() throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase_lowercase.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/uppercase_lowercase.json"), UTF_8);
     }
 
     private String getMultipleTransformation() throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/various_actions.json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream("../preview/various_actions.json"), UTF_8);
     }
 
 }

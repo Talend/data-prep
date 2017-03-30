@@ -173,7 +173,11 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      *
      */
-    LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE(PAYLOAD_TOO_LARGE.value(), "size")
+    LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE(PAYLOAD_TOO_LARGE.value(), "size"),
+    /**
+     * The dataset has too many column to process in DataPrep. This would cause memory issues.
+     */
+    DATASET_HAS_TOO_MANY_COLUMNS(BAD_REQUEST.value(), "number-of-columns", "max-allowed")
     ;
 
     /**

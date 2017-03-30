@@ -6,27 +6,27 @@ IP_ADDRESS_REGEX='[0-9\.]*'
 PORT_REGEX='[0-9]*'
 
 echo 'new values to set are:'
-echo ' - api host=<'$TDP_API_HOST'>'
-echo ' - api port=<'$TDP_API_PORT'>'
-echo ' - api protocol=<'$TDP_API_PROTOCOL'>'
+echo ' - api host=<'$TDP_GATEWAY_HOST'>'
+echo ' - api port=<'$TDP_GATEWAY_PORT'>'
+echo ' - api protocol=<'$TDP_GATEWAY_PROTOCOL'>'
 
 PROTOCOL="http"
 
-if [ $TDP_API_PORT == "443" ]; then
+if [ $TDP_GATEWAY_PORT == "443" ]; then
   PORT_NUMBER="";
-elif [ $TDP_API_PORT == "80" ]; then
+elif [ $TDP_GATEWAY_PORT == "80" ]; then
   PORT_NUMBER="";
 else
-  PORT_NUMBER=":"$TDP_API_PORT;
+  PORT_NUMBER=":"$TDP_GATEWAY_PORT;
 fi
 
-if [ $TDP_API_PROTOCOL == "http" ]; then
+if [ $TDP_GATEWAY_PROTOCOL == "http" ]; then
   PROTOCOL="http";
-elif [ $TDP_API_PROTOCOL == "https" ]; then
+elif [ $TDP_GATEWAY_PROTOCOL == "https" ]; then
   PROTOCOL="https";
 fi
 
-URL_SERVER=${PROTOCOL}"://"${TDP_API_HOST}${PORT_NUMBER}
+URL_SERVER=${PROTOCOL}"://"${TDP_GATEWAY_HOST}${PORT_NUMBER}
 echo $URL_SERVER
 
 # this is the file to patch

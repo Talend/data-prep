@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.transformer.suggestion;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
 
@@ -76,7 +77,7 @@ public class SimpleSuggestionEngineTest {
     @Test
     public void shouldSuggestionsShouldBeSorted() throws IOException {
 
-        final String json = IOUtils.toString(this.getClass().getResourceAsStream("sample_column.json"));
+        final String json = IOUtils.toString(this.getClass().getResourceAsStream("sample_column.json"), UTF_8);
         ObjectMapper mapper = new ObjectMapper();
         final ColumnMetadata columnMetadata = mapper.readValue(json, ColumnMetadata.class);
 

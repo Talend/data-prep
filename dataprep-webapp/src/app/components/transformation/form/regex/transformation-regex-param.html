@@ -15,10 +15,10 @@
 
 <div class="param">
     <div ng-class="{'param-row' : regexParamCtrl.parameter.type === 'boolean'}">
-        <div class="param-name"
+        <label class="param-name"
              data-prep-tooltip="{{::regexParamCtrl.parameter.description}}">
             {{::regexParamCtrl.parameter.label}}<span translate-once="COLON"></span>
-        </div>
+        </label>
 
         <div class="param-input">
             <talend-editable-regex

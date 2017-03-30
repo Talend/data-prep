@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.action;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
@@ -52,7 +53,8 @@ public class ActionParserTest extends AbstractMetadataBaseTest {
 
     @Test(expected = TalendRuntimeException.class)
     public void should_not_accept_unknown_actions() throws IOException {
-        String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("unknown_actions.json"));
+        String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("unknown_actions.json"),
+                UTF_8);
         actionParser.parse(json);
     }
 
@@ -77,7 +79,7 @@ public class ActionParserTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_return_expected_actions() throws IOException {
-        String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("actions.json"));
+        String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("actions.json"), UTF_8);
 
         // when
         List<RunnableAction> actualActions = actionParser.parse(json);

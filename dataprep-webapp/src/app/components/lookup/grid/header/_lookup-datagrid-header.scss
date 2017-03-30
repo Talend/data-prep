@@ -11,20 +11,12 @@
 
   ============================================================================*/
 
-.add-to-lookup {
-	font-size: 12px;
-	font-weight: 700;
-	color: $dark-blue;
-	background-color: $white;
-
-	input[type="checkbox"] {
-		margin-left: 5px;
-		margin-right: 0;
-	}
-}
-
 .lookup-grid-header {
 	.quality-bar {
 		border-bottom: 1px solid silver;
+	}
+
+	.checkbox {
+		margin: 0 5px;
 	}
 }

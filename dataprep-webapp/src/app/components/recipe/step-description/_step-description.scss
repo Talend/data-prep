@@ -30,9 +30,8 @@ $step-description-index-color: $blue;
 	}
 
 	.step-scope {
-		@include ellipsis(200px);
+		@include ellipsis(200px, table-cell);
 		color: $step-description-highlight-color;
-		display: table-cell;
 		text-transform: uppercase;
 	}
 }

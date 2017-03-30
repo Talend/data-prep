@@ -32,7 +32,11 @@
  */
 
 import { map } from 'lodash';
-import { PLAYGROUND_PREPARATION_ROUTE, HOME_DATASETS_ROUTE, HOME_PREPARATIONS_ROUTE } from '../../index-route';
+import {
+	PLAYGROUND_PREPARATION_ROUTE,
+	HOME_DATASETS_ROUTE,
+	HOME_PREPARATIONS_ROUTE,
+} from '../../index-route';
 // actions scopes
 const LINE = 'line';
 
@@ -687,28 +691,29 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @description Perform a cell or a column edition
 	 */
 	function editCell(rowItem, column, newValue, updateAllCellWithValue) {
+		let action;
+		let scope;
+		let params;
 
-        let action, scope, params;
-
-        if (updateAllCellWithValue) {
-            action = { name: 'replace_on_value' };
-            scope = 'column';
-            params = {
-                cell_value: {
-                    token: rowItem[column.id],
-                    operator: 'equals',
-                },
-                replace_value: newValue,
-            };
-        }
-        else {
-            action = { name: 'replace_cell_value' };
-            scope =  'cell';
-            params = {
-                original_value: rowItem[column.id],
-                new_value: newValue
-            };
-        }
+		if (updateAllCellWithValue) {
+			action = { name: 'replace_on_value' };
+			scope = 'column';
+			params = {
+				cell_value: {
+					token: rowItem[column.id],
+					operator: 'equals',
+				},
+				replace_value: newValue,
+			};
+		}
+		else {
+			action = { name: 'replace_cell_value' };
+			scope = 'cell';
+			params = {
+				original_value: rowItem[column.id],
+				new_value: newValue,
+			};
+		}
 
 		return service.completeParamsAndAppend(action, scope, params);
 	}

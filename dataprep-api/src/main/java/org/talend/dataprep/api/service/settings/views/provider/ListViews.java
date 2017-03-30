@@ -1,22 +1,20 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 import org.talend.dataprep.api.service.settings.views.api.actionsbar.ActionsBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.*;
-import org.talend.dataprep.util.SortAndOrderHelper;
 
 import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.InventoryActions.INVENTORY_CANCEL_EDIT;

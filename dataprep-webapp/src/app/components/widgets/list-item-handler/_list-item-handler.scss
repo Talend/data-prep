@@ -11,74 +11,73 @@
 
   ============================================================================*/
 
-$list-item-handler-color:             $medium-gray !default;
-$list-item-handler-hover-color:       $black !default;
+$list-item-handler-color: $medium-gray !default;
+$list-item-handler-hover-color: $black !default;
 
-$list-item-handler-width:             9px !default;
-$list-item-handler-height:            10px !default;
+$list-item-handler-width: 9px !default;
+$list-item-handler-height: 10px !default;
 
-$list-item-handler-btn-width:         5px !default;
-$list-item-handler-btn-border-width:  2px !default;
+$list-item-handler-btn-width: 5px !default;
+$list-item-handler-btn-border-width: 2px !default;
 
-$list-item-handler-btn-click-area:    10px !default;
+$list-item-handler-btn-click-area: 10px !default;
 
 .list-item-handler {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  height: 50px;
-  width: $list-item-handler-width;
-  cursor: move;
-  @include background(
-                  linear-gradient(
-                                  to bottom,
-                                  $list-item-handler-color,
-                                  $list-item-handler-color 20%,
-                                  transparent 20%,
-                                  transparent 40%,
-                                  $list-item-handler-color 40%,
-                                  $list-item-handler-color 60%,
-                                  transparent 60%,
-                                  transparent 80%,
-                                  $list-item-handler-color 80%,
-                                  $list-item-handler-color
-                  ) center center no-repeat);
-  background-size: $list-item-handler-width $list-item-handler-height;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	height: 50px;
+	width: $list-item-handler-width;
+	cursor: move;
+	background: linear-gradient(
+			to bottom,
+			$list-item-handler-color,
+			$list-item-handler-color 20%,
+			transparent 20%,
+			transparent 40%,
+			$list-item-handler-color 40%,
+			$list-item-handler-color 60%,
+			transparent 60%,
+			transparent 80%,
+			$list-item-handler-color 80%,
+			$list-item-handler-color
+	) center center no-repeat;
+	background-size: $list-item-handler-width $list-item-handler-height;
 
-  .top,
-  .bottom {
-    @include transform(rotate(-45deg));
-    position: relative;
-    height: $list-item-handler-btn-width;
-    width: $list-item-handler-btn-width;
-    border: solid $list-item-handler-color;
-    padding: 0;
+	.top,
+	.bottom {
+		transform: rotate(-45deg);
+		position: relative;
+		height: $list-item-handler-btn-width;
+		width: $list-item-handler-btn-width;
+		border: solid $list-item-handler-color;
+		padding: 0;
 
-    // Increase click area size
-    &:before {
-      position: absolute;
-      content: '';
-      top: -$list-item-handler-btn-click-area;
-      right: -$list-item-handler-btn-click-area;
-      bottom: -$list-item-handler-btn-click-area;
-      left: -$list-item-handler-btn-click-area;
-      background: transparent;
-      border-radius: 50%;
-    }
+		// Increase click area size
+		&:before {
+			position: absolute;
+			content: '';
+			top: -$list-item-handler-btn-click-area;
+			right: -$list-item-handler-btn-click-area;
+			bottom: -$list-item-handler-btn-click-area;
+			left: -$list-item-handler-btn-click-area;
+			background: transparent;
+			border-radius: 50%;
+		}
 
-    &:hover,
-    &:focus {
-      border-color: $list-item-handler-hover-color;
-    }
-  }
+		&:hover,
+		&:focus {
+			border-color: $list-item-handler-hover-color;
+		}
+	}
 
-  .top {
-    border-width: $list-item-handler-btn-border-width $list-item-handler-btn-border-width 0 0;
-  }
+	.top {
+		border-width: $list-item-handler-btn-border-width $list-item-handler-btn-border-width 0 0;
+	}
 
-  .bottom {
-    border-width: 0 0 $list-item-handler-btn-border-width $list-item-handler-btn-border-width;
-  }
+	.bottom {
+		border-width: 0 0 $list-item-handler-btn-border-width $list-item-handler-btn-border-width;
+	}
 }

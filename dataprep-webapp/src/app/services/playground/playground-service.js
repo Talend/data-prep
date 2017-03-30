@@ -844,7 +844,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 		StateService.setIsLoadingPlayground(true);
 		startLoader();
-		return PreparationService.getDetails($stateParams.prepid)
+		PreparationService.getDetails(prepid)
 			.then((preparation) => {
 				this.loadPreparation.call(this, preparation);
 				return preparation;

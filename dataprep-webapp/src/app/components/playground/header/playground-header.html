@@ -59,7 +59,7 @@
 </nav>
 <nav class="playground-sub-header navbar">
     <ul class="playground-sub-header-left nav navbar-nav">
-        <li ng-switch="!!$ctrl.isReadonly">
+        <li ng-switch="!!$ctrl.isReadonly" insertion-sub-header-left>
             <talend-editable-text ng-switch-when="false"
                                   edition-mode="$ctrl.nameEditionMode"
                                   on-validate="$ctrl.confirmNameEdition(text)"

@@ -100,7 +100,7 @@ const settingsMock = {
 			list: {
 				columns: [
 					{ key: 'name', label: 'Name' },
-					{ key: 'statusActions', label: '', type: 'actions' },
+					{ key: 'statusActions', label: 'Actions', hideHeader: true, type: 'actions' },
 					{ key: 'author', label: 'Author' },
 					{ key: 'creationDate', label: 'Created' },
 					{ key: 'nbRecords', label: 'Rows' },

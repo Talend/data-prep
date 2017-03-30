@@ -14,6 +14,7 @@
 const NO_OP = () => {};
 const DROPDOWN_ACTION = 'dropdown';
 const SPLITDROPDOWN_ACTION = 'splitDropdown';
+const ACTION_TYPE = 'actions';
 
 export default class InventoryListCtrl {
 	constructor($element, $translate, appSettings, SettingsActionsService) {
@@ -255,7 +256,8 @@ export default class InventoryListCtrl {
 	}
 
 	adaptItemsActions(items) {
-		const actionsColumns = this.listProps.columns.filter(column => column.type === 'actions');
+		const actionsColumns = this.listProps.columns.filter(column => column.type === ACTION_TYPE);
+
 		return items.map((item, index) => {
 			const actions = this.adaptItemActions(item, item.actions, index);
 			const adaptedItem = {

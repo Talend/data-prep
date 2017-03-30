@@ -329,9 +329,11 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
+        final List<Boolean> hideHeaderFlags = map(list.getList().getColumns(), "hideHeader");
         final List<String> types = map(list.getList().getColumns(), "type");
         assertThat(keys, contains("name", "statusActions", "author", "creationDate", "nbRecords"));
-        assertThat(labels, contains("Name", "", "Author", "Created", "Rows"));
+        assertThat(labels, contains("Name", "Actions", "Author", "Created", "Rows"));
+        assertThat(hideHeaderFlags, contains(null, Boolean.TRUE, null, null, null));
         assertThat(types, contains(null, "actions", null, null, null));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
@@ -370,7 +372,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(httpImport.get("title"), is("Add HTTP dataset"));
     }
 
-    private List<String> map(final List<Map<String, String>> list, final String property) {
+    private List map(final List<Map> list, final String property) {
         return list.stream().map(col -> col.get(property)).collect(toList());
     }
 }

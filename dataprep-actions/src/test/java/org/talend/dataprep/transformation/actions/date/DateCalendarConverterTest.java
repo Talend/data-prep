@@ -33,6 +33,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -61,7 +62,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is("Conversions"));
+        assertThat(action.getCategory(), is(ActionCategory.CONVERSIONS.getDisplayName()));
     }
 
     @Test
@@ -172,8 +173,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
     }
 
     private void testConversion(String from, DateCalendarConverter.ChronologyUnit fromUnit, String fromPattern,
-            boolean isFromPatternCustom, String expected, DateCalendarConverter.ChronologyUnit toUnit, String toPattern,
-            boolean isToPatternCustom) {
+            boolean isFromCustomPattern, String expected, DateCalendarConverter.ChronologyUnit toUnit, String toPattern,
+            boolean isToCustomPattern) {
         // given
         // row 1
         Map<String, String> rowContent = new HashMap<>();
@@ -193,14 +194,14 @@ public class DateCalendarConverterTest extends BaseDateTest {
         parameters.put("from_calender_type", fromUnit.name());
         parameters.put("to_calender_type", toUnit.name());
 
-        if (isFromPatternCustom) {
+        if (isFromCustomPattern) {
             parameters.put("from_pattern_mode", "from_custom_mode");
             parameters.put("from_custom_pattern", fromPattern);
         } else {
             parameters.put("from_pattern_mode", "unknown_separators");
         }
 
-        if (isToPatternCustom) {
+        if (isToCustomPattern) {
             parameters.put("new_pattern", "custom");
             parameters.put("custom_date_pattern", toPattern);
         } else {

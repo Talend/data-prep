@@ -184,7 +184,7 @@ public class DateParser {
      * @param chronology
      * @return the parsed date pattern
      */
-    public String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology) {
+    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology) {
 
         // take care of the null value
         if (value == null) {

@@ -34,6 +34,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.i18n.ActionsBundle;
@@ -177,7 +178,7 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
                         return newPatternFreq;
                     });
 
-            long mostUsedPatternCount = getMostUsedPatternCount(column);
+            long mostUsedPatternCount = RowMetadataUtils.getMostUsedPatternCount(column);
             newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
             rowMetadata.update(columnId, column);
         }
@@ -214,7 +215,7 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         }
 
         try {
-            String fromPattern = Providers.get().parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
+            String fromPattern = DateParser.parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
                     context.get(FROM_CALENDER_TYPE_KEY));
             if (fromPattern != null) {
                 row.set(columnId,
@@ -225,21 +226,6 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
             // cannot parse the date, let's leave it as is
             LOGGER.debug("Unable to parse date {}.", value, e);
         }
-    }
-
-    /**
-     * Return the count of the most used pattern.
-     *
-     * @param column the column to work on.
-     * @return the count of the most used pattern.
-     */
-    private long getMostUsedPatternCount(ColumnMetadata column) {
-        final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
-        if (patternFrequencies.isEmpty()) {
-            return 1;
-        }
-        patternFrequencies.sort((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()));
-        return patternFrequencies.get(0).getOccurrences();
     }
 
     @Override

@@ -38,9 +38,9 @@ class StepNodeTransformation extends Visitor {
 
     private final Iterator<Step> steps;
 
-    private State DISPATCH = new Dispatch();
+    private final State DISPATCH = new Dispatch();
 
-    private State DEFAULT = new DefaultState();
+    private final State DEFAULT = new DefaultState();
 
     private State state = DISPATCH;
 

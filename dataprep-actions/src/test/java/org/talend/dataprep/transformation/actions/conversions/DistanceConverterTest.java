@@ -106,6 +106,42 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void testEmpty() { testConversion("", DistanceEnum.METER, "", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testNull() { testConversion(null, DistanceEnum.METER, null, DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testBlank() { testConversion(" ", DistanceEnum.METER, " ", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testZero() { testConversion("0", DistanceEnum.METER, "0.0", DistanceEnum.YARD, "1"); }
+
+    @Test
+    public void testNanInput1() { testConversion(" a ", DistanceEnum.METER, " a ", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testNanInput2() { testConversion(" 3a ", DistanceEnum.METER, " 3a ", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testNanInput3() { testConversion(" 5@ ", DistanceEnum.METER, " 5@ ", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testNanInput4() { testConversion(" 5@6a8 ", DistanceEnum.METER, " 5@6a8 ", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void testMaxValue() { testConversion(String.valueOf(Double.MAX_VALUE) , DistanceEnum.METER, String.valueOf(Double.MAX_VALUE), DistanceEnum.YARD, "1"); }
+
+    @Test
+    public void testMinValue() { testConversion(String.valueOf(Double.MIN_VALUE) , DistanceEnum.METER, String.valueOf(Double.MIN_VALUE), DistanceEnum.YARD, "1"); }
+
+    @Test
+    public void testNegativeNumber() { testConversion("-1", DistanceEnum.METER, "-1.093613298", DistanceEnum.YARD, "9"); }
+
+    @Test
+    public void meter2yardWithBlank() { testConversion(" 1 ", DistanceEnum.METER, "1.093613298", DistanceEnum.YARD, "9"); }
+
+    @Test
     public void meter2yard() { testConversion("1.0", DistanceEnum.METER, "1.093613298", DistanceEnum.YARD, "9"); }
 
     @Test

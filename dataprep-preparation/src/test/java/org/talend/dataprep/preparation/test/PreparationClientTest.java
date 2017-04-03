@@ -14,11 +14,13 @@
 package org.talend.dataprep.preparation.test;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_READ_CONTENT;
 
 import java.io.IOException;
@@ -155,4 +157,14 @@ public class PreparationClientTest {
         }
 
     }
+
+    /**
+     * delete a preparation.
+     *
+     * @param preparationId the preparation id to delete.
+     */
+    public void deletePreparation(String preparationId) {
+        when().delete("/preparations/{id}", preparationId).then().statusCode(OK.value());
+    }
+
 }

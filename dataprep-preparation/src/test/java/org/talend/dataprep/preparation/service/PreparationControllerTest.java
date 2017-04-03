@@ -878,7 +878,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(folderRepository.findFolderEntries(preparationId, PREPARATION).iterator().hasNext(), is(true));
 
         // when
-        when().delete("/preparations/{id}", preparationId).then().statusCode(HttpStatus.OK.value());
+        clientTest.deletePreparation(preparationId);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(0L));
@@ -898,7 +898,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
-        when().delete("/preparations/{id}", preparationId).then().statusCode(HttpStatus.OK.value());
+        clientTest.deletePreparation(preparationId);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(0L));
@@ -922,7 +922,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
-        when().delete("/preparations/{id}", preparationId1).then().statusCode(HttpStatus.OK.value());
+        clientTest.deletePreparation(preparationId1);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));

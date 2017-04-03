@@ -1917,7 +1917,6 @@ describe('Playground Service', () => {
 			spyOn(StateService, 'setPreviousRoute').and.returnValue();
 			spyOn(StateService, 'setIsFetchingStats').and.returnValue();
 
-			$stateParams.prepid = preparations[0].id;
 			$stateParams.reload = true;
 			stateMock.playground.preparation = null;
 			stateMock.playground.data = {
@@ -1955,6 +1954,15 @@ describe('Playground Service', () => {
 			);
 		}));
 
+		it('should call get dataset details', inject(($q, $rootScope, PlaygroundService, PreparationService) => {
+			// when
+			PlaygroundService.initPreparation('prep1');
+			$rootScope.$apply();
+
+			// then
+			expect(PreparationService.getDetails).toHaveBeenCalledWith('prep1');
+		}));
+
 		it('should get dataset metadata', inject(($q, $rootScope, PlaygroundService, DatasetService) => {
 			// given
 			spyOn(PlaygroundService, 'loadPreparation').and.returnValue($q.when());
@@ -1982,6 +1990,7 @@ describe('Playground Service', () => {
 
 		it('should not reload preparation', inject(($q, $rootScope, $stateParams, PlaygroundService) => {
 			// given
+			$stateParams.prepid = preparations[0].id;
 			$stateParams.reload = false;
 			stateMock.playground.preparation = preparations[0];
 			spyOn(PlaygroundService, 'loadPreparation').and.returnValue($q.when());
@@ -2105,7 +2114,7 @@ describe('Playground Service', () => {
 	});
 
 	describe('dataset', () => {
-		beforeEach(inject(($q, $stateParams, DatasetService, MessageService, PlaygroundService, StateService) => {
+		beforeEach(inject(($q, DatasetService, MessageService, PlaygroundService, StateService) => {
 			spyOn(PlaygroundService, 'startLoader').and.returnValue();
 			spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 			spyOn(StateService, 'setPreviousRoute').and.returnValue();
@@ -2114,8 +2123,6 @@ describe('Playground Service', () => {
 			spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
 
 			// given
-			$stateParams.prepid = null;
-			$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 			stateMock.playground.data = {
 				metadata: {
 					id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
@@ -2153,18 +2160,16 @@ describe('Playground Service', () => {
 			spyOn(PlaygroundService, 'loadDataset').and.returnValue($q.when());
 
 			// when
-			PlaygroundService.initDataset();
+			PlaygroundService.initDataset('dataset1');
 			$rootScope.$apply();
 
 			// then
-			expect(PlaygroundService.loadDataset).toHaveBeenCalled();
+			expect(PlaygroundService.loadDataset).toHaveBeenCalledWith('dataset1');
 		}));
 
 		it('should fetch statistics when they are not computed yet',
-			inject(($q, $rootScope, $stateParams, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
 				// given
-				$stateParams.prepid = null;
-				$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
@@ -2195,11 +2200,9 @@ describe('Playground Service', () => {
 		);
 
 		it('should retry statistics fetch when the previous fetch has been rejected (stats not computed yet) with a delay of 1500ms',
-			inject(($q, $rootScope, $timeout, $stateParams, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, $timeout, PlaygroundService, StateService) => {
 				// given
 				let retry = 0;
-				$stateParams.prepid = null;
-				$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(PlaygroundService, 'updateStatistics').and.callFake(() => {
@@ -2242,10 +2245,8 @@ describe('Playground Service', () => {
 		);
 
 		it('should NOT fetch statistics when they are already computed',
-			inject(($q, $rootScope, $stateParams, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
 				// given
-				$stateParams.prepid = null;
-				$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());

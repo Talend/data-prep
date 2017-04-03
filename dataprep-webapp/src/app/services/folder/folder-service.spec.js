@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import moment from 'moment';
+
 const preparation = {
 	id: '1',
 	dataset: {
@@ -28,20 +30,22 @@ const preparation = {
 		'599725f0e1331d5f8aae24f22cd1ec768b10348d',
 	],
 };
-const adaptedPreparation = {
-	id: '1',
-	type: 'preparation',
-	name: 'JSO prep 1',
-	author: 'toto',
-	creationDate: 'a few seconds ago',
-	lastModificationDate: 'a few seconds ago',
-	datasetName: 'US states',
-	nbSteps: 3,
-	icon: 'talend-dataprep',
-	displayMode: 'text',
-	className: 'list-item-preparation',
-	actions: ['inventory:edit', 'preparation:copy-move', 'preparation:remove'],
-	model: preparation,
+const getAdaptedPreparation = () => {
+	return {
+		id: '1',
+		type: 'preparation',
+		name: 'JSO prep 1',
+		author: 'toto',
+		creationDate: moment(preparation.creationDate).fromNow(),
+		lastModificationDate: moment(preparation.lastModificationDate).fromNow(),
+		datasetName: 'US states',
+		nbSteps: 3,
+		icon: 'talend-dataprep',
+		displayMode: 'text',
+		className: 'list-item-preparation',
+		actions: ['inventory:edit', 'preparation:copy-move', 'preparation:remove'],
+		model: preparation,
+	};
 };
 
 const folder = {
@@ -52,18 +56,20 @@ const folder = {
 	creationDate: new Date().getTime(),
 	lastModificationDate: new Date().getTime(),
 };
-const adaptedFolder = {
-	id: 'Lw==',
-	type: 'folder',
-	name: 'toto',
-	author: 'toto',
-	creationDate: 'a few seconds ago',
-	lastModificationDate: 'a few seconds ago',
-	icon: 'talend-folder',
-	displayMode: 'text',
-	className: 'list-item-folder',
-	actions: ['inventory:edit', 'preparation:folder:remove'],
-	model: folder,
+const getAdaptedFolder = () => {
+	return {
+		id: 'Lw==',
+		type: 'folder',
+		name: 'toto',
+		author: 'toto',
+		creationDate: moment(folder.creationDate).fromNow(),
+		lastModificationDate: moment(folder.lastModificationDate).fromNow(),
+		icon: 'talend-folder',
+		displayMode: 'text',
+		className: 'list-item-folder',
+		actions: ['inventory:edit', 'preparation:folder:remove'],
+		model: folder,
+	};
 };
 
 describe('Folder services', () => {
@@ -227,8 +233,8 @@ describe('Folder services', () => {
 			preparations: [preparation],
 		};
 		const adaptedContent = {
-			folders: [adaptedFolder],
-			preparations: [adaptedPreparation],
+			folders: [getAdaptedFolder()],
+			preparations: [getAdaptedPreparation()],
 		};
 
 		beforeEach(inject(($q, StateService, FolderRestService) => {
@@ -268,6 +274,10 @@ describe('Folder services', () => {
 			inject(($rootScope, FolderService, StateService) => {
 				// given
 				const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
+				const adaptedContent = {
+					folders: [getAdaptedFolder()],
+					preparations: [getAdaptedPreparation()],
+				};
 
 				// when
 				FolderService.refresh(folderId);
@@ -345,7 +355,7 @@ describe('Folder services', () => {
 			const actualAdaption = FolderService.adaptPreparations([preparation]);
 
 			// then
-			expect(actualAdaption).toEqual([adaptedPreparation]);
+			expect(actualAdaption).toEqual([getAdaptedPreparation()]);
 		}));
 	});
 
@@ -355,7 +365,7 @@ describe('Folder services', () => {
 			const actualAdaptation = FolderService.adaptFolders([folder]);
 
 			// then
-			expect(actualAdaptation).toEqual([adaptedFolder]);
+			expect(actualAdaptation).toEqual([getAdaptedFolder()]);
 		}));
 	});
 

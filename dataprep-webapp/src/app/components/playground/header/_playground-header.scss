@@ -68,29 +68,23 @@ $playground-preview-icon-padding: 10px !default;
 		flex-grow: 1;
 	}
 
-	ul {
-		> * {
-			display: flex;
-		}
+	ul > li {
+		display: flex;
+		align-items: center;
 
-		li {
-			display: flex;
-			align-items: center;
+		> a {
+			padding: 10px 15px;
+			color: $medium-gray;
+			cursor: pointer;
+			height: $sub-header-height;
 
-			> a {
-				padding: 10px 15px;
-				color: $medium-gray;
-				cursor: pointer;
-				height: $sub-header-height;
+			&.pressed,
+			&:hover {
+				background-color: $navbar-default-link-active-bg;
+			}
 
-				&.pressed,
-				&:hover {
-					background-color: $navbar-default-link-active-bg;
-				}
-
-				&.inactive {
-					cursor: not-allowed;
-				}
+			&.inactive {
+				cursor: not-allowed;
 			}
 		}
 	}

@@ -46,17 +46,6 @@ export default class CollapsiblePanelCtrl {
 		}
 	}
 
-	adaptHeaderItem(headerItem) {
-		switch (headerItem.displayMode) {
-		case STATUS_DISPLAY_MODE:
-			return this.adaptStatusItem(headerItem);
-		case ACTION_DISPLAY_MODE:
-			return this.adaptActionItem(headerItem);
-		default:
-			return headerItem;
-		}
-	}
-
 	adaptHeader() {
 		this.adaptedItem.header = this.adaptedItem
 			.header
@@ -66,6 +55,17 @@ export default class CollapsiblePanelCtrl {
 				}
 				return this.adaptHeaderItem(headerItem);
 			});
+	}
+
+	adaptHeaderItem(headerItem) {
+		switch (headerItem.displayMode) {
+		case STATUS_DISPLAY_MODE:
+			return this.adaptStatusItem(headerItem);
+		case ACTION_DISPLAY_MODE:
+			return this.adaptActionItem(headerItem);
+		default:
+			return headerItem;
+		}
 	}
 
 	adaptStatusItem(statusItem) {

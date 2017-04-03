@@ -53,6 +53,43 @@ const content = {
 	description: 'Description3',
 };
 
+const onSelect = jasmine.createSpy('onSelect');
+const onToggle = jasmine.createSpy('onToggle');
+const version = {
+	header: [
+		{
+			label: 'Version 1',
+			bsStyle: 'default',
+			tooltipPlacement: 'top',
+			className: 'title',
+		},
+		{
+			label: '05/02/2017 14:44:55',
+			bsStyle: 'default',
+			tooltipPlacement: 'top',
+			className: 'detail',
+		},
+	],
+	content: {
+		head: [
+			{
+				label: '21 steps',
+				bsStyle: 'default',
+				tooltipPlacement: 'top',
+			}, {
+				label: 'by Henry-Mayeul de Benque',
+				bsStyle: 'default',
+				tooltipPlacement: 'top',
+				className: 'text-right',
+			},
+		],
+		description: `Lorem ipsum`
+	},
+	onSelect: 'version:select',
+	onToggle: 'version:toggle',
+	theme: 'descriptive-panel',
+};
+
 describe('CollapsiblePanel container', () => {
 	let scope;
 	let createElement;
@@ -65,7 +102,7 @@ describe('CollapsiblePanel container', () => {
 		element.remove();
 	}));
 
-	describe('Default Collapsible', () => {
+	describe('Default Collapsible header', () => {
 		beforeEach(inject(($rootScope, $compile, SettingsService) => {
 			scope = $rootScope.$new();
 
@@ -200,44 +237,7 @@ describe('CollapsiblePanel container', () => {
 			SettingsService.setSettings(settings);
 		}));
 
-		const onSelect = jasmine.createSpy('onSelect');
-		const onToggle = jasmine.createSpy('onToggle');
-		const version = {
-			header: [
-				{
-					label: 'Version 1',
-					bsStyle: 'default',
-					tooltipPlacement: 'top',
-					className: 'title',
-				},
-				{
-					label: '05/02/2017 14:44:55',
-					bsStyle: 'default',
-					tooltipPlacement: 'top',
-					className: 'detail',
-				},
-			],
-			content: {
-				head: [
-					{
-						label: '21 steps',
-						bsStyle: 'default',
-						tooltipPlacement: 'top',
-					}, {
-						label: 'by Henry-Mayeul de Benque',
-						bsStyle: 'default',
-						tooltipPlacement: 'top',
-						className: 'text-right',
-					},
-				],
-				description: `Lorem ipsum`
-			},
-			onSelect: 'version:select',
-			onToggle: 'version:toggle',
-			theme: 'descriptive-panel',
-		};
-
-		it('should render a selectable header', () => {
+		it('should render a collapsible descriptive panel header', () => {
 			// given
 			scope.version = version;
 
@@ -282,5 +282,52 @@ describe('CollapsiblePanel container', () => {
 			// then
 			expect(element.find('.panel-body .content-description').eq(0).text().trim()).toBe(version.content.description);
 		});
+	});
+
+	describe('Collapsible events', () => {
+		beforeEach(inject((SettingsActionsService, SettingsService) => {
+			SettingsService.setSettings(settings);
+			spyOn(SettingsActionsService, 'dispatch').and.returnValue();
+		}));
+
+		beforeEach(inject(($rootScope, $compile, SettingsService) => {
+			scope = $rootScope.$new();
+
+			createElement = () => {
+				element = angular.element('<collapsible-panel item="version"></collapsible-panel>');
+				angular.element('body').append(element);
+				$compile(element)(scope);
+				scope.$digest();
+			};
+			SettingsService.setSettings(settings);
+		}));
+
+		it('should trigger onSelect function', inject((SettingsActionsService) => {
+			// given
+			scope.version = version;
+			createElement();
+
+			// when
+			element.find('.panel-heading > button').eq(0).click();
+			scope.$digest();
+
+			// then
+			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO_PREPARATION_READ_ONLY');
+		}));
+
+		it('should trigger onToggle function', inject((SettingsActionsService) => {
+			// given
+			scope.version = version;
+			createElement();
+
+			// when
+			element.find('.panel-heading > button').eq(1).click();
+			scope.$digest();
+
+			// then
+			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@version/VERSION_TOGGLE');
+		}));
 	});
 });

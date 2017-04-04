@@ -200,10 +200,10 @@ describe('CollapsiblePanel container', () => {
 
 			// when
 			createElement();
-
 			// then
 			expect(element.find('.panel-heading > div > div').eq(0).text().trim()).toBe(simpleItem.label);
 			expect(element.find('.panel-heading > div > div').eq(1).text().trim()).toBe(badgeItem.label);
+			expect(element.find('.panel-heading > div > div').eq(1).find('span').hasClass('label')).toBe(true);
 		});
 
 		it('should render simple and badge text in the same group', () => {

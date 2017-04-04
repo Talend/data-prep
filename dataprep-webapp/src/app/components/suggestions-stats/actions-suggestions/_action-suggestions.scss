@@ -12,7 +12,7 @@
   ============================================================================*/
 .actions-suggestions {
 	@include flex-column();
-	height: 100%;
+	height: calc(100% - #{$navigation-height});
 
 	.actions-scope {
 		flex-grow: 1;

@@ -184,20 +184,6 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 				}
 			}
 
-			#help-suggestions {
-
-				.loading-container {
-					position: relative;
-
-					.wait-icon {
-						position: absolute;
-					}
-					.wait-text {
-						padding-left: 40px;
-					}
-				}
-			}
-
 			.loading-msg {
 				position: absolute;
 				text-align: center;

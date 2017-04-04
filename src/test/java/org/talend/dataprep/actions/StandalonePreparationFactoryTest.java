@@ -26,13 +26,18 @@ import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
+import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.transformation.service.Dictionaries;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StandalonePreparationFactoryTest {
 
@@ -40,16 +45,18 @@ public class StandalonePreparationFactoryTest {
 
     private StandalonePreparationFactory factory = new StandalonePreparationFactory();
 
-    private static DictionaryResource dictionaryResource = new DictionaryResource(new Dictionaries(null, null));;
+    private static DictionaryResource dictionaryResource = new DictionaryResource(new Dictionaries(null, null));
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidJSON() throws Exception {
-        factory.create(IOUtils.toInputStream("{"), dictionaryResource);
+        factory.create(IOUtils.toInputStream("{", "UTF-8"), dictionaryResource);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyJSON() throws Exception {
-        factory.create(IOUtils.toInputStream(""), dictionaryResource);
+        factory.create(IOUtils.toInputStream("", "UTF-8"), dictionaryResource);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -276,7 +283,8 @@ public class StandalonePreparationFactoryTest {
         // Given
 
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string" });
-        final Function<IndexedRecord, IndexedRecord> function = factory.create(IOUtils.toInputStream("{\"actions\":[]}"), dictionaryResource);
+        final Function<IndexedRecord, IndexedRecord> function = factory.create(IOUtils.toInputStream("{\"actions\":[]}", "UTF-8"),
+                dictionaryResource);
         assertNotNull(function);
         assertEquals("string", record.get(0));
 
@@ -314,9 +322,9 @@ public class StandalonePreparationFactoryTest {
     @Test
     public void testDeleteInvalidCountries() throws Exception {
         // Given
-        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1", "01/01/1970", "Taboulistan"});
-        final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "1", "5/24/1982", "France"});
-        final IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "1", "11/9/1970", "United States"});
+        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1", "01/01/1970", "Taboulistan" });
+        final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "1", "5/24/1982", "France" });
+        final IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "1", "11/9/1970", "United States" });
         final Function<IndexedRecord, IndexedRecord> function;
         try (final InputStream dataSetStream = DefaultActionParserTest.class
                 .getResourceAsStream("delete_invalid_country_preparation.json")) {
@@ -350,9 +358,12 @@ public class StandalonePreparationFactoryTest {
     @Test
     public void testSplitUpperDeletePreparation() throws Exception {
         // Given
-        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1", "01/01/1970", "Taboulistan","6.0", "22.0", "F", "False" , "162"});
-        final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "1", "5/24/1982", "France", "4.0", "44.0", "F", "False", "193"});
-        final IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "1", "11/9/1970", "United States", "7.0", "10.0", "M", "True", "134"});
+        final IndexedRecord record1 = GenericDataRecordHelper
+                .createRecord(new Object[] { "1", "01/01/1970", "Taboulistan", "6.0", "22.0", "F", "False", "162" });
+        final IndexedRecord record2 = GenericDataRecordHelper
+                .createRecord(new Object[] { "1", "5/24/1982", "France", "4.0", "44.0", "F", "False", "193" });
+        final IndexedRecord record3 = GenericDataRecordHelper
+                .createRecord(new Object[] { "1", "11/9/1970", "United States", "7.0", "10.0", "M", "True", "134" });
         final Function<IndexedRecord, IndexedRecord> function;
         try (final InputStream dataSetStream = DefaultActionParserTest.class
                 .getResourceAsStream("split_upper_delete_preparation.json")) {
@@ -630,6 +641,20 @@ public class StandalonePreparationFactoryTest {
         assertNull(result1);
         assertNotNull(result2);
         assertNotNull(result3);
+    }
+
+    @Test
+    public void TDP_3518() throws Exception {
+        // Given
+        StandalonePreparation standalonePreparation = new StandalonePreparation();
+
+        // When
+        String standalonePreparationJson = mapper.writeValueAsString(standalonePreparation);
+
+        // Then
+        ObjectNode objectNode = mapper.reader(ObjectNode.class).readValue(standalonePreparationJson);
+        String prep = objectNode.get("filterOut").asText();
+        Assert.assertEquals("", prep);
     }
 
     private static void assertSerializable(Function<IndexedRecord, IndexedRecord> function) {

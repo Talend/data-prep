@@ -14,6 +14,17 @@
 	@include flex-column();
 	height: calc(100% - #{$navigation-height});
 
+	.loading-container {
+		position: relative;
+
+		.wait-icon {
+			position: absolute;
+		}
+		.wait-text {
+			padding-left: 40px;
+		}
+	}
+
 	.actions-scope {
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -40,10 +51,9 @@
 			}
 
 		}
-	;
 
 		.action-suggestion-tab-items {
-			height: calc(100% - 75px);
+			height: calc(100% - 110px);
 			overflow-y: auto;
 			overflow-x: hidden;
 			position: absolute;

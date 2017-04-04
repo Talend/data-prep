@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -1111,50 +1110,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
     }
 
     @Test
-    public void testAskCertification() throws Exception {
-        int before = dataSetMetadataRepository.size();
-        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
-        int after = dataSetMetadataRepository.size();
-        assertThat(after - before, is(1));
-        assertQueueMessages(dataSetId);
-
-        DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertThat(dataSetMetadata, notNullValue());
-        assertEquals(Certification.NONE, dataSetMetadata.getGovernance().getCertificationStep());
-
-        when().put("/datasets/{id}/processcertification", dataSetId).then().statusCode(OK.value());
-        dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertThat(dataSetMetadata, notNullValue());
-        assertEquals(Certification.PENDING, dataSetMetadata.getGovernance().getCertificationStep());
-        assertThat(dataSetMetadata.getRowMetadata().getColumns(), not(empty()));
-    }
-
-    @Test
-    public void testCertify() throws Exception {
-        int before = dataSetMetadataRepository.size();
-        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
-        int after = dataSetMetadataRepository.size();
-        assertThat(after - before, is(1));
-        assertQueueMessages(dataSetId);
-
-        DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertThat(dataSetMetadata, notNullValue());
-        long originalNbLines = dataSetMetadata.getContent().getNbRecords(); // to check later if no modified
-        assertEquals(Certification.NONE, dataSetMetadata.getGovernance().getCertificationStep());
-
-        // NONE -> PENDING
-        when().put("/datasets/{id}/processcertification", dataSetId).then().statusCode(OK.value());
-        // PENDING -> CERTIFIED
-        when().put("/datasets/{id}/processcertification", dataSetId).then().statusCode(OK.value());
-        dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertThat(dataSetMetadata, notNullValue());
-        assertEquals(Certification.CERTIFIED, dataSetMetadata.getGovernance().getCertificationStep());
-        assertEquals(originalNbLines, dataSetMetadata.getContent().getNbRecords());
-    }
-
-    @Test
     public void testGetFavoritesDatasetList() {
         when().get("/datasets/favorites").then().statusCode(OK.value()).body(equalTo("[]"));
         String dsId1 = UUID.randomUUID().toString();
@@ -1503,24 +1458,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
             .body("name", hasSize(4));
 
         // @formatter:on
-    }
-
-    @Test
-    public void should_have_grants_to_certify_dataset() throws Exception {
-        // create data sets
-        final String dataSetId = createCSVDataSet(this.getClass().getResourceAsStream("../tagada3.csv"), "dataset1");
-
-        // @formatter:off
-        given()
-            .pathParam("id", dataSetId)
-        .when()
-            .put("/datasets/{id}/processcertification")
-        .then()
-            .statusCode(200);
-        // @formatter:on
-
-        final DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertEquals(Certification.PENDING, dataSetMetadata.getGovernance().getCertificationStep());
     }
 
     @Test

@@ -13,6 +13,7 @@
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -413,8 +414,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_fail_properly_on_append_error() throws Exception {
         // given
-        final String missingScopeAction = IOUtils.toString(
-                PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), "UTF-8");
+        final String missingScopeAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"),
+                UTF_8);
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
                 home.getId());
 
@@ -443,8 +444,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(rootStep.id()));
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59") with another action
-        final String actionContent3 = IOUtils
-                .toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"), "UTF-8");
+        final String actionContent3 = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"), UTF_8);
         given().contentType(ContentType.JSON)
                 .body(actionContent3)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
@@ -469,8 +469,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59")
         // with another action that create a column
-        final String updateAction = IOUtils
-                .toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"), "UTF-8");
+        final String updateAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"), UTF_8);
         given().contentType(ContentType.JSON)
                 .body(updateAction)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
@@ -487,10 +486,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_fail_properly_on_update_error() throws Exception {
         // given
-        final String missingScopeAction = IOUtils.toString(
-                PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), "UTF-8");
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
-                home.getId());
+        final String missingScopeAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), UTF_8);
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv", home.getId());
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
@@ -956,7 +953,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         String carsPreparationId = testClient.createPreparationFromDataset(dataSetId, "cars_preparation", home.getId());
 
-        String action = IOUtils.toString(getClass().getResource("preparations/cars_lookup_action.json"), "UTF-8");
+        String action = IOUtils.toString(getClass().getResource("preparations/cars_lookup_action.json"), UTF_8);
         testClient.applyAction(carsPreparationId, action.replace("{lookup_ds_id}", lookupDataSetId));
 
         // Try to delete lookup dataset => fail because used

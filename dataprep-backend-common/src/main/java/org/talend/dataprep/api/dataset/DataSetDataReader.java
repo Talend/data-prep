@@ -1,16 +1,14 @@
-/*
- * // ============================================================================
- * // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
- * //
- * // This source code is available under agreement available at
- * // https://github.com/Talend/data-prep/blob/master/LICENSE
- * //
- * // You should have received a copy of the agreement
- * // along with this program; if not, write to Talend SA
- * // 9 rue Pages 92150 Suresnes, France
- * //
- * // ============================================================================
- */
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 
 package org.talend.dataprep.api.dataset;
 
@@ -24,7 +22,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOExceptionWithCause;
 import org.apache.commons.lang3.Validate;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;

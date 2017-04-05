@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,21 +13,27 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.converters.StringTrimmer;
 
 /**
- * Trim leading and trailing spaces.
+ * Trim leading and trailing characters.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Trim.TRIM_ACTION_NAME)
 public class Trim extends AbstractActionMetadata implements ColumnAction {
@@ -38,7 +43,21 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String TRIM_ACTION_NAME = "trim"; //$NON-NLS-1$
 
-    private static final String TRIM_PATTERN = "trimPattern";
+    /** Padding Character. */
+    public static final String PADDING_CHAR_PARAMETER = "padding_character"; //$NON-NLS-1$
+
+    /** Custom Padding Character. */
+    public static final String CUSTOM_PADDING_CHAR_PARAMETER = "custom_padding_character"; //$NON-NLS-1$
+
+    /** String Converter help class. */
+    public static final String STRING_CONVERTER = "string_converter"; //$NON-NLS-1$
+
+    /**
+     * Keys used in the values of different parameters:
+     */
+    public static final String CUSTOM = "custom"; //$NON-NLS-1$
+
+    public static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -56,11 +75,26 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public List<Parameter> getParameters() {
+        final List<Parameter> parameters = super.getParameters();
+
+        // @formatter:off
+        parameters.add(SelectParameter.Builder.builder()
+                .name(PADDING_CHAR_PARAMETER)
+                .item(WHITESPACE)
+                .item(CUSTOM, CUSTOM, new Parameter(CUSTOM_PADDING_CHAR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY))
+                .canBeBlank(true)
+                .defaultValue(WHITESPACE)
+                .build());
+        // @formatter:on
+        return ActionsBundle.attachToAction(parameters, this);
+    }
+
+    @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            final Pattern pattern = Pattern.compile("(^\\h*)|(\\h*$)");
-            actionContext.get(TRIM_PATTERN, parameters -> pattern);
+            actionContext.get(STRING_CONVERTER, p -> new StringTrimmer());
         }
     }
 
@@ -72,8 +106,13 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
         final String columnId = context.getColumnId();
         final String toTrim = row.get(columnId);
         if (toTrim != null) {
-            final Pattern trimPattern = context.get(TRIM_PATTERN);
-            row.set(columnId, trimPattern.matcher(toTrim).replaceAll(StringUtils.EMPTY));
+            final Map<String, String> parameters = context.getParameters();
+            final StringTrimmer stringConverter = context.get(STRING_CONVERTER);
+            if (CUSTOM.equals(parameters.get(PADDING_CHAR_PARAMETER))) {
+                row.set(columnId, stringConverter.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER)));
+            } else {
+                row.set(columnId, stringConverter.removeTrailingAndLeadingWhitespaces(toTrim));
+            }
         }
     }
 

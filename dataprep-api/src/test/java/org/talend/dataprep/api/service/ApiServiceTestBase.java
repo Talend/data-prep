@@ -12,6 +12,14 @@
 
 package org.talend.dataprep.api.service;
 
+import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.test.APIClientTest;
 import org.talend.dataprep.cache.ContentCache;
@@ -29,8 +37,8 @@ import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.url.UrlRuntimeUpdater;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
-import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
 /**
  * Base test for all API service unit.
@@ -61,12 +69,14 @@ public abstract class ApiServiceTestBase extends ServiceBaseTest {
     protected Folder home;
 
     @Autowired
-    TransformationServiceUrlRuntimeUpdater transformationUrlUpdater;
+    private UrlRuntimeUpdater[] urlUpdaters;
 
     @Before
     public void setUp() {
         super.setUp();
-        transformationUrlUpdater.setUp();
+        for(UrlRuntimeUpdater urlUpdater : urlUpdaters) {
+            urlUpdater.setUp();
+        }
         home = folderRepository.getHome();
     }
 

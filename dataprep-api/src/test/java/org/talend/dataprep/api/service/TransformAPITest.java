@@ -14,6 +14,7 @@
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
@@ -49,7 +50,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testDataset", "text/csv",
                 home.getId());
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_firstname.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_firstname.json"), UTF_8));
 
         // when
         final String transformed = given().when() //
@@ -68,7 +69,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "another test Dataset",
                 "text/csv", home.getId());
         testClient.applyAction(preparationId, IOUtils
-                .toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json"), "UTF-8"));
+                .toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json"), UTF_8));
 
         // when
         final String transformed = given().when() //
@@ -87,7 +88,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("transformation/cluster_dataset.csv", "testClustering", "text/csv");
         final String expectedClusterParameters = IOUtils
                 .toString(this.getClass()
-                        .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), "UTF-8");
+                        .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
 
         // when
         final String actualClusterParameters = given().formParam("datasetId", dataSetId).formParam("columnId", "0001")
@@ -104,7 +105,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 "text/csv", home.getId());
         final String expectedClusterParameters = IOUtils
                 .toString(this.getClass()
-                        .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), "UTF-8");
+                        .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
 
         // when
         final String actualClusterParameters = given().formParam("preparationId", preparationId)
@@ -128,7 +129,7 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         final String expectedClusterParameters = IOUtils
                 .toString(this.getClass()
-                        .getResourceAsStream("transformation/expected_cluster_params_with_steps.json"), "UTF-8");
+                        .getResourceAsStream("transformation/expected_cluster_params_with_steps.json"), UTF_8);
 
         // when
         final String actualClusterParameters = given()
@@ -164,7 +165,8 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         // parameters for text clustering are complicated and computed by the front. Since computing them is not
         // the point of this test, let's just get them from a file.
-        final String actions = IOUtils.toString(this.getClass().getResourceAsStream("bugfix/TDP-280_action.json"), "UTF-8");
+        final String actions = IOUtils.toString(this.getClass().getResourceAsStream("bugfix/TDP-280_action.json"),
+                UTF_8);
 
         // when
         final int addActionResponseCode = given().contentType(ContentType.JSON).body(actions).when().post("/api/preparations/{id}/actions", preparationId).getStatusCode();
@@ -184,7 +186,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset",
                 "text/csv", home.getId());
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-402.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-402.json"), UTF_8));
 
         // when
         final String transformed = given().when() //
@@ -205,7 +207,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-1308.csv", "testDataset",
                 "text/csv", home.getId());
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1308.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1308.json"), UTF_8));
 
         // when
         final String transformed = given().when() //
@@ -224,7 +226,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset",
                 "text/csv", home.getId());
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/multiple_filters.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/multiple_filters.json"), UTF_8));
 
         // when
         final String transformed = given().when() //
@@ -248,8 +250,9 @@ public class TransformAPITest extends ApiServiceTestBase {
                 home.getId());
 
         // when (change the date format to an unknown DQ pattern)
-        testClient.applyAction(preparationId, IOUtils
-                .toString(this.getClass().getResourceAsStream("transformation/change_date_format_MMM_dd_yyyy.json"), "UTF-8"));
+        applyAction(preparationId,
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/change_date_format_MMM_dd_yyyy.json"),
+                        UTF_8));
 
         // then (the column is still a date without any invalid)
         final String datasetContent = given().when() //
@@ -279,7 +282,7 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         // when (change the date format to an unknown DQ pattern)
         testClient.applyAction(preparationId, IOUtils
-                .toString(this.getClass().getResourceAsStream("transformation/change_date_format_MMMM_yyyy_dd.json"), "UTF-8"));
+                .toString(this.getClass().getResourceAsStream("transformation/change_date_format_MMMM_yyyy_dd.json"), UTF_8));
 
         // then (the column is still a date without any invalid)
         final String datasetContent = given().when() //
@@ -309,7 +312,7 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         // when (change the date format to an unknown DQ pattern)
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/split_compare_numbers.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/split_compare_numbers.json"), UTF_8));
 
         // then (the column is still a date without any invalid)
         final String datasetContent = given().when() //
@@ -332,7 +335,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-1672.csv", "testDataset",
                 "text/csv", home.getId());
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1672.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1672.json"), UTF_8));
 
         // when
         final String transformed = given().when() //
@@ -353,7 +356,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-2165.csv", "testDataset",
                 "text/csv", home.getId());
         testClient.applyAction(preparationId,
-                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), "UTF-8"));
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), UTF_8));
 
         // when
         final String transformed = given().when() //

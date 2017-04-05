@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import java.math.BigDecimal;
 import java.util.EnumSet;
 import java.util.Set;
 

@@ -28,8 +28,7 @@
         <li ng-repeat="step in $ctrl.state.playground.recipe.current.reorderedSteps track by step.transformation.stepId"
             as-sortable-item>
             <div class="step-container"
-                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}"
-                 as-sortable-item-handle>
+                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}">
 
                 <sc-accordion-item id="step-{{step.transformation.stepId}}"
                                    class="recipe-step"
@@ -37,7 +36,8 @@
                                    default="$index === ($ctrl.state.playground.recipe.current.reorderedSteps.length - 1)">
 
                     <trigger class="recipe-step-trigger"
-                             ng-click="$ctrl.select(step)">
+                             ng-click="$ctrl.select(step)"
+                             as-sortable-item-handle>
                         <list-item-handler class="reorder-handler"
                                            ng-if="!($first && $last)"
                                            show-top-button="!$first"

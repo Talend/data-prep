@@ -13,13 +13,14 @@
 
 package org.talend.dataprep.exception;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
+
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +28,11 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
 
 /**
  * Class for all business (TDP) exception.
@@ -44,6 +42,19 @@ public class TDPException extends TalendRuntimeException {
     private static final long serialVersionUID = -51732176302413600L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TDPException.class);
+
+    /**
+     * If the exception is a TDPException, rethrow it, else wrap it and then throw it.
+     *
+     * @param throwable
+     */
+    public static void rethrowOrWrap(Throwable throwable) {
+        if (throwable instanceof TDPException) {
+            throw (TDPException) throwable;
+        } else {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, throwable);
+        }
+    }
 
     /**
      * this field if set to <code>true</code> will prevent {@link TDPExceptionController} to log a stack trace

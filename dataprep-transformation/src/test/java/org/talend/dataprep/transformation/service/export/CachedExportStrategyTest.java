@@ -21,7 +21,8 @@ import java.io.OutputStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
+import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.ContentCache;
@@ -86,6 +87,29 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         parameters.setFrom(ExportParameters.SourceType.HEAD);
 
         // Then
+        assertFalse(cachedExportStrategy.accept(parameters));
+    }
+
+    @Test
+    public void shouldNotAcceptNullParameter() throws Exception {
+        // Then
+        assertFalse(cachedExportStrategy.accept(null));
+    }
+
+    @Test
+    public void shouldNotAcceptNullParameterContent() throws Exception {
+        // Then
+        final ExportParameters parameters = new ExportParameters();
+        parameters.setContent(null);
+        assertFalse(cachedExportStrategy.accept(parameters));
+    }
+
+    @Test
+    public void shouldNotAcceptNullPreparationId() throws Exception {
+        // Then
+        final ExportParameters parameters = new ExportParameters();
+        parameters.setContent(new DataSet());
+        parameters.setPreparationId(null);
         assertFalse(cachedExportStrategy.accept(parameters));
     }
 

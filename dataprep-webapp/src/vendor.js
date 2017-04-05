@@ -78,8 +78,12 @@ import 'sunchoke';
 
 // ngReact
 import 'react';
+import 'react-dom';
 import 'ngreact';
 
 // Babel
 import 'babel-polyfill'; // eslint-disable-line import/no-extraneous-dependencies
+
+// slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
+import './lib/slick.autocolumnsize';
 

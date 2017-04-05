@@ -29,8 +29,8 @@ $switch-shadow: 0 2px 5px transparentize(black, 0.6);
 $slide-action-background: $base-background-color;
 
 $navigation-border: 1px;
-$navigation-height: 38px;
-$sub-header-height: 40px;
+$navigation-height: $navbar-height;
+$sub-header-height: $navbar-height;
 $navigation-all-height: ($navigation-height + $navigation-border + $sub-header-height);
 $playground-height: '100vh - ' + ($navigation-all-height);
 
@@ -60,8 +60,11 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 
 		#playground-dataset-parameters {
 			@include slidable-top(200px, 0px);
-			> * {
+			> .content {
 				margin: 10px;
+				display: flex;
+				flex-basis: 200px;
+				flex-grow: 1;
 			}
 		}
 
@@ -149,7 +152,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 	}
 
 	.playground {
-		@include calc('height', $playground-height);
+		height: calc(#{$playground-height});
 
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -175,9 +178,12 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 				}
 			}
 
-			.suggestions-stats-content {
-				@include calc('height', $playground-suggestions-stats-details);
-				width: 330px;
+			.suggestions-stats-details {
+				height: calc(#{$playground-height});
+
+				.suggestions-stats-content {
+					height: calc(#{ $playground-suggestions-stats-details});
+					width: 330px;
 
 				.stat-detail-tab-items {
 					width: 330px;
@@ -219,8 +225,20 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 	}
 }
 
-.preparation-picker-modal {
-	.modal .modal-inner {
-		width: 70vw;
+.preparation-modal {
+	&.preparation-picker-modal {
+		.modal .modal-inner {
+			width: 70vw;
+		}
+	}
+
+	&.preparation-save-discard-modal {
+		.btn-link {
+			text-transform: inherit;
+			font-size: inherit;
+			letter-spacing: inherit;
+			line-height: inherit;
+			padding: inherit;
+		}
 	}
 }

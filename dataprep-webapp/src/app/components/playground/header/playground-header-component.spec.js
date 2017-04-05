@@ -72,7 +72,7 @@ describe('Playground header component', () => {
 			createElement();
 
 			// then
-			expect(element.find('.playground-header-preview').length).toBe(1);
+			expect(element.find('.preview').length).toBe(1);
 		});
 	});
 

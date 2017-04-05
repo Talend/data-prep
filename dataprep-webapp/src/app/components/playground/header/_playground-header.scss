@@ -10,35 +10,13 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-
-$playground-preview-icon-size: 20px !default;
-$playground-preview-icon-color: $black !default;
-$playground-preview-icon-padding: 10px !default;
-
-.playground-header-preview {
-	@include flex-row-center();
-	position: absolute;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	color: $dark-gray;
-	background: rgba(255, 255, 255, 0.9);
-	height: $navigation-all-height;
-	padding: ($navigation-all-height - $playground-preview-icon-size)/2 $playground-preview-icon-padding;
-}
-
-.preview-icon, .playground-header-icon {
-	margin: 8px 5px 0 0;
-}
-
 .playground-sub-header {
 	@include flex-row();
 	min-height: $sub-header-height;
 	height: $sub-header-height;
 	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
 	padding: 0 15px;
-	z-index: 20;
+	z-index: 15;
 
 	.playground-sub-header-left {
 		display: flex;
@@ -47,9 +25,16 @@ $playground-preview-icon-padding: 10px !default;
 		flex-basis: 400px;
 		flex-grow: 1;
 		font-weight: bold;
-
-		.editable-text .edition-text-input {
-			min-width: 300px;
+		.editable-text {
+			.edition-text-input {
+				width: 500px;
+			}
+		}
+		.header-preparation-name {
+			max-width: 500px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
 		}
 		.btn {
 			min-height: $sub-header-height;
@@ -58,6 +43,10 @@ $playground-preview-icon-padding: 10px !default;
 
 	.playground-sub-header-center {
 		@include flex-row-center();
+
+		.playground-header-icon {
+			margin: 5px 5px 0 0;
+		}
 	}
 
 	.playground-sub-header-right {
@@ -75,7 +64,6 @@ $playground-preview-icon-padding: 10px !default;
 		> a {
 			padding: 10px 15px;
 			color: $medium-gray;
-			cursor: pointer;
 			height: $sub-header-height;
 
 			&.pressed,
@@ -85,7 +73,13 @@ $playground-preview-icon-padding: 10px !default;
 
 			&.inactive {
 				cursor: not-allowed;
+				opacity: 0.5;
+			}
+
+			> icon {
+				line-height: $svg-md-size;
 			}
 		}
+
 	}
 }

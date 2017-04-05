@@ -50,7 +50,7 @@ describe('Folder creator form component', () => {
             createElement();
 
             //then
-            expect(element.find('span').eq(0).text()).toBe('Enter folder name');
+            expect(element.find('label').eq(0).text()).toBe('Enter folder name');
             expect(element.find('input#create-folder-name').length).toBe(1);
             expect(element.find('button').eq(0).text()).toBe('Cancel');
             expect(element.find('button').eq(1).text()).toBe('Ok');

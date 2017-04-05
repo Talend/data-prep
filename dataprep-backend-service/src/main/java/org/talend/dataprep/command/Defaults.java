@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.command;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +70,7 @@ public class Defaults {
     public static BiFunction<HttpRequestBase, HttpResponse, String> asString() {
         return (request, response) -> {
             try {
-                return IOUtils.toString(response.getEntity().getContent());
+                return IOUtils.toString(response.getEntity().getContent(), UTF_8);
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             } finally {
@@ -123,7 +125,7 @@ public class Defaults {
         return (request, response) -> {
             try {
                 final InputStream content = response.getEntity().getContent();
-                final String contentAsString = IOUtils.toString(content);
+                final String contentAsString = IOUtils.toString(content, UTF_8);
                 if (StringUtils.isEmpty(contentAsString)) {
                     return null;
                 } else {

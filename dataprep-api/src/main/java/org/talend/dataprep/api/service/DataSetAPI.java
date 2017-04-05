@@ -14,14 +14,11 @@ package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.command.CommandHelper.*;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -374,18 +371,6 @@ public class DataSetAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing datasets (pool: {}) done.", getConnectionStats());
         }
-    }
-
-    @RequestMapping(value = "/api/datasets/{id}/processcertification", method = PUT, consumes = ALL_VALUE, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
-    @Timed
-    public void processCertification(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Ask certification for dataset #{}", dataSetId);
-        }
-        HystrixCommand<Void> command = getCommand(DatasetCertification.class, dataSetId);
-        command.execute();
     }
 
     @RequestMapping(value = "/api/datasets/{id}/actions", method = GET, produces = APPLICATION_JSON_VALUE)

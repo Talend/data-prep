@@ -61,6 +61,7 @@ public class Documentation {
     @Controller
     @ConditionalOnBean(Documentation.class)
     public static class SwaggerUIRedirection {
+
         @RequestMapping("/docs")
         String swaggerUI() {
             return "redirect:/docs/index.html";

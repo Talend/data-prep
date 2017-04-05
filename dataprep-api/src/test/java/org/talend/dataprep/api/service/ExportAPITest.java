@@ -13,6 +13,7 @@
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.*;
 
 import java.io.InputStream;
@@ -36,7 +37,8 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void get_all_export_types() throws Exception {
         String actual = RestAssured.when().get("/api/export/formats").asString();
-        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("export/export_type.json"), "UTF-8");
+        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("export/export_type.json"),
+                UTF_8);
         JSONAssert.assertEquals(expectedContent, actual, false);
     }
 
@@ -45,8 +47,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // given
         final String datasetId = testClient.createDataset("export/export_dataset.csv", "testExport", "text/csv");
 
-        final String expectedExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), "UTF-8");
+        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
         final String export = given().formParam("exportType", "CSV").formParam("datasetId", datasetId).when().get("/api/export")
@@ -65,8 +66,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // given
         final String datasetId = testClient.createDataset("export/export_dataset.csv", "testExport", "text/csv");
 
-        final String expectedExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), "UTF-8");
+        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
         final String export = given() //
@@ -109,9 +109,8 @@ public class ExportAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "export/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "export/delete_city.json");
 
-        final String expectedExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"),
-                        "UTF-8");
+        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"),
+                UTF_8);
 
         final PreparationMessageForTest preparationMessage = mapper.readValue(
                 given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
@@ -140,9 +139,8 @@ public class ExportAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "export/make_header.json");
         testClient.applyActionFromFile(preparationId, "export/upper_case_lastname.json");
 
-        final String expectedExport = IOUtils.toString(
-                this.getClass().getResourceAsStream("export/expected_export_preparation_header_uppercase_firstname.csv"),
-                "UTF-8");
+        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_preparation_header_uppercase_firstname.csv"),
+                UTF_8);
 
         // when
         final String export = given() //
@@ -169,7 +167,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "export/split.json");
 
         final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/split_cars_expected.csv"),
-                "UTF-8");
+                UTF_8);
 
         // when
         final String export = given() //
@@ -203,7 +201,7 @@ public class ExportAPITest extends ApiServiceTestBase {
 
         // then
         final InputStream expectedInput = this.getClass().getResourceAsStream("export/expected_export_default_separator.csv");
-        final String expectedExport = IOUtils.toString(expectedInput, "UTF-8");
+        final String expectedExport = IOUtils.toString(expectedInput, UTF_8);
         assertEquals(expectedExport, export);
     }
 
@@ -213,8 +211,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", "text/csv",
                 home.getId());
 
-        final String expectedExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), "UTF-8");
+        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
         final String export = given() //
@@ -236,10 +233,8 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", "text/csv",
                 home.getId());
 
-        final String expectedSemiColonExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_semicolon_separator.csv"), "UTF-8");
-        final String expectedSpaceExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), "UTF-8");
+        final String expectedSemiColonExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_semicolon_separator.csv"), UTF_8);
+        final String expectedSpaceExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
         final String export1 = given() //

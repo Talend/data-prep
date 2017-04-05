@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,13 +13,16 @@
 package org.talend.dataprep.encrypt;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.Key;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.bouncycastle.openssl.EncryptionException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +90,80 @@ public class AESEncryption {
         final byte[] decodedValue = Base64.getDecoder().decode(src);
         final byte[] decValue = c.doFinal(decodedValue);
         return new String(decValue, ENCODING);
+    }
+
+    /**
+     * Decrypts the password embedded in the supplied URI and returns the URI with its password decrypted.
+     *
+     * @param rawUri The URI that may or may not contain an encrypted password in its user info part.
+     * @return the URI with a decrypted password.
+     * @see URI#getUserInfo()
+     */
+    public static String decryptUriPassword(final String rawUri) {
+        URI uri;
+        try {
+            uri = new URI(rawUri);
+        } catch (URISyntaxException e) {
+            LOGGER.info("Invalid URI {}", rawUri, e);
+            return rawUri;
+        }
+        UserInfo userInfo = extractCredentials(uri);
+        if (userInfo != null && userInfo.password != null) {
+            try {
+                userInfo.password = decrypt(userInfo.password);
+                return setCredentials(uri, userInfo).toString();
+            } catch (Exception e) {
+                LOGGER.info("Could not decrypt URI password.");
+                return rawUri;
+            }
+        } else {
+            return rawUri;
+        }
+    }
+
+    /**
+     * Encrypt the password part of the URI if any and returns it.
+     *
+     * @param rawUri the URI that may contain a password in its user info part.
+     * @return the URI with its password part, if any, encrypted.
+     * @throws Exception if rawUri is not a valid URI or encryption fails.
+     */
+    public static String encryptUriPassword(final String rawUri) throws Exception {
+        URI uri = new URI(rawUri);
+        UserInfo userInfo = extractCredentials(uri);
+        if (userInfo != null && userInfo.password != null) {
+            userInfo.password = encrypt(userInfo.password);
+            return setCredentials(uri, userInfo).toString();
+        } else {
+            return rawUri;
+        }
+    }
+
+    private static UserInfo extractCredentials(URI uri) {
+        String rawUserInfo = uri.getUserInfo();
+        if (StringUtils.isNotBlank(rawUserInfo)) {
+            String[] parts = rawUserInfo.split(":");
+            if (parts.length > 1) {
+                String part0 = parts[0];
+                return new UserInfo(part0, rawUserInfo.substring(part0.length() + 1));
+            }
+        }
+        return null;
+    }
+
+    private static URI setCredentials(URI uri, UserInfo userInfo) throws URISyntaxException {
+        return new URIBuilder(uri).setUserInfo(userInfo.userName, userInfo.password).build();
+    }
+
+    private static class UserInfo {
+        String userName;
+
+        String password;
+
+        public UserInfo(String userName, String password) {
+            this.userName = userName;
+            this.password = password;
+        }
     }
 
     /**

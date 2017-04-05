@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.when;
@@ -36,7 +48,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetClone.getPayload().get(PAYLOAD_METHOD_KEY), is("clone"));
 
         final ActionSettings datasetCreate = settings.getActions().get("dataset:create");
-        assertThat(datasetCreate.getName(), is("Add Dataset"));
+        assertThat(datasetCreate.getName(), is("Add dataset"));
         assertThat(datasetCreate.getIcon(), is("talend-plus-circle"));
         assertThat(datasetCreate.getType(), is("@@dataset/CREATE"));
         assertThat(datasetCreate.getBsStyle(), is("primary"));
@@ -57,7 +69,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetFetch.getType(), is("@@dataset/DATASET_FETCH"));
 
         final ActionSettings datasetOpen = settings.getActions().get("dataset:open");
-        assertThat(datasetOpen.getName(), is("Open dataset"));
+        assertThat(datasetOpen.getName(), is("Create new preparation"));
         assertThat(datasetOpen.getIcon(), is("talend-datastore"));
         assertThat(datasetOpen.getType(), is("@@dataset/OPEN"));
 
@@ -119,13 +131,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(menuFolders.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
         assertThat(((List<String>) menuFolders.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
 
-        final ActionSettings menuPlaygroundDataset = settings.getActions().get("menu:playground:dataset");
-        assertThat(menuPlaygroundDataset.getName(), is("Create new preparation"));
-        assertThat(menuPlaygroundDataset.getIcon(), is("talend-datastore"));
-        assertThat(menuPlaygroundDataset.getType(), is("@@router/GO_DATASET"));
-        assertThat(menuPlaygroundDataset.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>) menuPlaygroundDataset.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("playground.dataset"));
-
         final ActionSettings menuPlaygroundPreparation = settings.getActions().get("menu:playground:preparation");
         assertThat(menuPlaygroundPreparation.getName(), is("Open Preparation"));
         assertThat(menuPlaygroundPreparation.getIcon(), is("talend-dataprep"));
@@ -155,11 +160,11 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final ActionDropdownSettings listDatasetPreparations = (ActionDropdownSettings) settings.getActions()
                 .get("list:dataset:preparations");
-        assertThat(listDatasetPreparations.getName(), is("Open Preparation"));
+        assertThat(listDatasetPreparations.getName(), is("Open preparation"));
         assertThat(listDatasetPreparations.getIcon(), is("talend-dataprep"));
         assertThat(listDatasetPreparations.getItems(), is("preparations"));
         assertThat(listDatasetPreparations.getDynamicAction(), is("menu:playground:preparation"));
-        assertThat(listDatasetPreparations.getStaticActions().get(0), is("menu:playground:dataset"));
+        assertThat(listDatasetPreparations.getStaticActions().iterator().next(), is("dataset:open"));
 
         final ActionSettings onboardingPreparation = settings.getActions().get("onboarding:preparation");
         assertThat(onboardingPreparation.getName(), is("Click here to discover the application"));
@@ -174,7 +179,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationCopyMove.getType(), is("@@preparation/COPY_MOVE"));
 
         final ActionSettings preparationCreate = settings.getActions().get("preparation:create");
-        assertThat(preparationCreate.getName(), is("Create preparation"));
+        assertThat(preparationCreate.getName(), is("Add preparation"));
         assertThat(preparationCreate.getIcon(), is("talend-plus-circle"));
         assertThat(preparationCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationCreate.getBsStyle(), is("primary"));
@@ -186,7 +191,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationDisplayMode.getPayload().get(PAYLOAD_METHOD_KEY), is("setPreparationsDisplayMode"));
 
         final ActionSettings preparationFolderCreate = settings.getActions().get("preparation:folder:create");
-        assertThat(preparationFolderCreate.getName(), is("Create folder"));
+        assertThat(preparationFolderCreate.getName(), is("Add folder"));
         assertThat(preparationFolderCreate.getIcon(), is("talend-folder"));
         assertThat(preparationFolderCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationFolderCreate.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleFolderCreator"));
@@ -356,15 +361,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(localImport.get("label"), is("Local file"));
         assertThat(localImport.get("title"), is("Add local file dataset"));
 
-        final Map<String, Object> hdfsImport = (Map<String, Object>) importTypes.get(1);
-        assertThat(hdfsImport.get("locationType"), is("hdfs"));
-        assertThat(hdfsImport.get("contentType"), is("application/vnd.remote-ds.hdfs"));
-        assertThat(hdfsImport.get("dynamic"), is(false));
-        assertThat(hdfsImport.get("defaultImport"), is(false));
-        assertThat(hdfsImport.get("label"), is("From HDFS"));
-        assertThat(hdfsImport.get("title"), is("Add HDFS dataset"));
-
-        final Map<String, Object> httpImport = (Map<String, Object>) importTypes.get(2);
+        final Map<String, Object> httpImport = (Map<String, Object>) importTypes.get(1);
         assertThat(httpImport.get("locationType"), is("http"));
         assertThat(httpImport.get("contentType"), is("application/vnd.remote-ds.http"));
         assertThat(httpImport.get("dynamic"), is(false));

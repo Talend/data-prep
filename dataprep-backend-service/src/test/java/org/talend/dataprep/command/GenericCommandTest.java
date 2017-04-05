@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -35,7 +34,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.dataprep.BaseErrorCodes;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.user.UserGroup;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -72,11 +71,26 @@ public class GenericCommandTest extends ServiceBaseTest {
         return context.getBean(TestCommand.class, url, errorHandling);
     }
 
+    private TestGroupedStatusCommand getGroupedCommand(String url) {
+        return context.getBean(TestGroupedStatusCommand.class, url);
+    }
+
     @Test
     public void testSuccess() throws Exception {
         // Given
         final GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/success",
                 GenericCommandTest::error);
+        // When
+        final String result = command.run();
+        // Then
+        assertThat(result, is("success"));
+        assertThat(lastException, nullValue());
+    }
+
+    @Test
+    public void testGenericSuccess() throws Exception {
+        // Given
+        final GenericCommand<String> command = getGroupedCommand("http://localhost:" + port + "/command/test/success");
         // When
         final String result = command.run();
         // Then
@@ -228,6 +242,20 @@ public class GenericCommandTest extends ServiceBaseTest {
             final Map.Entry<String, Object> next = entries.next();
             assertThat(next.getKey(), is("message"));
             assertThat(String.valueOf(next.getValue()), is("Unable to execute an operation"));
+        }
+    }
+
+    // Test command
+    @Component
+    @Scope("prototype")
+    private static class TestGroupedStatusCommand extends GenericCommand<String> {
+
+        protected TestGroupedStatusCommand(String url) {
+            super(HystrixCommandGroupKey.Factory.asKey("dataset"));
+            execute(() -> new HttpGet(url));
+            onInfo().then(asString());
+            onSuccess().then(asString());
+            onRedirect().then(asString());
         }
     }
 

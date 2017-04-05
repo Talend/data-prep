@@ -15,6 +15,7 @@ package org.talend.dataprep.dataset;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -73,7 +74,8 @@ public class DataSetImportTest extends DataSetBaseTest {
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
-                dataSetId = given().body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv")))
+                dataSetId = given().body(
+                        IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
                         .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
                 LOGGER.debug("testImportStatus dataset created #{}", dataSetId);
             } catch (IOException e) {
@@ -112,7 +114,8 @@ public class DataSetImportTest extends DataSetBaseTest {
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
-                dataSetId = given().body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv")))
+                dataSetId = given().body(
+                        IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
                         .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -158,7 +161,8 @@ public class DataSetImportTest extends DataSetBaseTest {
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
-                dataSetId = given().body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv")))
+                dataSetId = given().body(
+                        IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
                         .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
                 LOGGER.debug("testCannotOpenDataSetBeingImported dataset created #{}", dataSetId);
             } catch (IOException e) {
@@ -194,7 +198,8 @@ public class DataSetImportTest extends DataSetBaseTest {
     public void testImportFailure() throws Exception {
         try {
             System.setProperty("DataSetImportTest.FailingAnalyzer", "true");
-            final int statusCode = given().body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv")))
+            final int statusCode = given().body(
+                    IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
                     .queryParam("Content-Type", "text/csv").when().post("/datasets").statusCode();
             assertEquals(500, statusCode);
             assertEquals(0, dataSetMetadataRepository.size());

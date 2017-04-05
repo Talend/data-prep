@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
+import { HOME_PREPARATIONS_ROUTE, PLAYGROUND_PREPARATION_ROUTE } from '../../index-route';
 
 /**
  * @ngdoc service
@@ -181,6 +181,6 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 	 * @description open a preparation
 	 */
 	function open(preparation) {
-		$state.go('playground.preparation', { prepid: preparation.id });
+		$state.go(PLAYGROUND_PREPARATION_ROUTE, { prepid: preparation.id });
 	}
 }

@@ -23,11 +23,11 @@
             </button>
             <a class="navbar-brand"><span class="sr-only">Talend</span>Data Preparation</a>
         </div>
-
         <div class="collapse navbar-collapse" uib-collapse="isPGNavCollapsed" insertion-playground-left-header>
             <ul class="nav navbar-nav navbar-right">
                 <li  ng-if="!$ctrl.isReadonly">
                     <a id="playground-onboarding-icon"
+                       role="button"
                        translate-once-title="ONBOARDING"
                        ng-click="$ctrl.onOnboarding()">
                         <icon name="'talend-board'" />
@@ -35,6 +35,7 @@
                 </li>
                 <li ng-if="$ctrl.feedbackVisible">
                     <a id="playground-feedback-icon"
+                       role="button"
                        ng-click="$ctrl.onFeedback()"
                        translate-once-title="FEEDBACK_TOOLTIP">
                         <icon name="'talend-bubbles'" />
@@ -51,7 +52,8 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li id="documentation-search-container">
-                    <documentation-search></documentation-search>
+                    <documentation-search translate-once-title="TOGGLE_SEARCH">
+                    </documentation-search>
                 </li>
             </ul>
         </div>
@@ -78,14 +80,19 @@
     </ul>
     <ul class="playground-sub-header-center nav navbar-nav">
         <li ng-if="$ctrl.isReadonly">
-            <span class="playground-header-icon"><icon name="'talend-eye'"/></span>
+            <span class="playground-header-icon"><icon name="'talend-lock'"/></span>
             <span translate-once="READ_ONLY"></span>
+        </li>
+        <li class="preview" ng-if="$ctrl.preview">
+            <icon class="playground-header-icon" name="'talend-eye'"/>
+            <span translate-once="PREVIEW"></span>
         </li>
     </ul>
     <ul class="playground-sub-header-right nav navbar-nav">
         <li insertion-playground-sub-header-right></li>
         <li ng-if="!$ctrl.isReadonly">
             <a id="playground-gear-icon"
+               role="button"
                ng-click="$ctrl.onParameters()"
                ng-class="{pressed: $ctrl.parametersVisible}"
                translate-once-title="DATAGRID_PARAMETERS_GEAR">
@@ -94,6 +101,7 @@
         </li>
         <li ng-if="$ctrl.preparationPicker">
             <a id="playground-preparation-picker-icon"
+               role="button"
                ng-click="$ctrl.onPreparationPicker()"
                translate-once-title="CHOOSE_PREPARATION_TO_APPLY">
                 <icon name="'talend-dataprep'"/>
@@ -101,6 +109,7 @@
         </li>
         <li ng-if="!$ctrl.isReadonly">
             <a id="playground-lookup-icon"
+               role="button"
                ng-click="$ctrl.onLookup()"
                ng-class="{pressed: $ctrl.lookupVisible}"
                translate-once-title="LOOKUP_ICON_TOOLTIP">
@@ -118,9 +127,9 @@
                     ng-if="!$ctrl.isReadonly">
             </history-control>
         </li>
-
         <li>
             <a id="playground-close-icon"
+               role="button"
                ng-click="$ctrl.onClose()"
                translate-once-title="CLOSE_ICON_TOOLTIP">
                 <icon name="'talend-cross'"/>
@@ -128,7 +137,3 @@
         </li>
     </ul>
 </nav>
-<div class="playground-header-preview" ng-if="$ctrl.preview">
-    <icon class="preview-icon" name="'talend-eye'"/>
-    <span translate-once="PREVIEW"></span>
-</div>

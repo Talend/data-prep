@@ -15,7 +15,8 @@
 
 <ul class="nav navbar-nav">
     <li>
-        <a ng-class="{'inactive': !historyCtrl.service.canUndo()}"
+        <a role="button"
+           ng-class="{'inactive': !historyCtrl.service.canUndo()}"
            ng-click="historyCtrl.service.undo()"
            translate-once-title="UNDO_ICON_TOOLTIP"
            alt="UNDO ({{historyCtrl.service.canUndo()}})">
@@ -23,7 +24,8 @@
         </a>
     </li>
     <li>
-        <a ng-click="historyCtrl.service.redo()"
+        <a role="button"
+           ng-click="historyCtrl.service.redo()"
            ng-class="{'inactive': !historyCtrl.service.canRedo()}"
            translate-once-title="REDO_ICON_TOOLTIP"
            alt="REDO ({{historyCtrl.service.canRedo()}})">

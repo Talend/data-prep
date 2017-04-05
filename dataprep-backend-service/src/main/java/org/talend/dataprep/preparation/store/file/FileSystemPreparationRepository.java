@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.preparation.store.file;
 
@@ -20,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -27,6 +27,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +102,11 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         }
 
         final File outputFile = getIdentifiableFile(object);
+        try {
+            FileUtils.touch(outputFile);
+        } catch (IOException e) {
+            LOG.error("Unable to prepare file for {}.", object, e);
+        }
 
         try (GZIPOutputStream output = new GZIPOutputStream(new FileOutputStream(outputFile))) {
             mapper.writer().writeValue(output, object);
@@ -122,7 +128,7 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         final Stream<File> stream = Arrays.stream(files);
         return stream.filter(file -> startsWith(file.getName(), clazz.getSimpleName())) //
                 .map(file -> read(file.getName(), clazz)) // read all files
-                .filter(entry -> entry != null) // filter out null entries
+                .filter(Objects::nonNull) // filter out null entries
                 .filter(entry -> clazz.isAssignableFrom(entry.getClass())) // filter out the unwanted objects (should not be
                                                                            // necessary but you never know)
                 .onClose(stream::close);
@@ -159,8 +165,10 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
 
         // clear all files
         final File[] preparations = getRootFolder().listFiles();
-        for (File file : preparations) {
-            FilesHelper.deleteQuietly(file);
+        if (preparations != null) {
+            for (File file : preparations) {
+                FilesHelper.deleteQuietly(file);
+            }
         }
 
         // add the default files

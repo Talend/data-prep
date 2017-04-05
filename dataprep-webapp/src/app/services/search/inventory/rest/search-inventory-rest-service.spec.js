@@ -13,37 +13,37 @@
 
 describe('Search Inventory Rest Service', () => {
 
-    let $httpBackend;
+	let $httpBackend;
 
-    beforeEach(angular.mock.module('data-prep.services.search.inventory'));
+	beforeEach(angular.mock.module('data-prep.services.search.inventory'));
 
-    beforeEach(inject(($injector, RestURLs) => {
-        RestURLs.setServerUrl('');
-        $httpBackend = $injector.get('$httpBackend');
-    }));
+	beforeEach(inject(($injector, RestURLs) => {
+		RestURLs.setConfig({ serverUrl: '' });
+		$httpBackend = $injector.get('$httpBackend');
+	}));
 
-    it('should call inventory search rest service ', inject(($rootScope, $q, SearchInventoryRestService, RestURLs) => {
-        //given
-        let result = null;
-        const expectedResult = {
-            folders: [],
-            preparations: [],
-            datasets: [],
-        };
-        $httpBackend
-            .expectGET(RestURLs.searchUrl + '?path=/&name=test')
-            .respond(200, expectedResult);
+	it('should call inventory search rest service ', inject(($rootScope, $q, SearchInventoryRestService, RestURLs) => {
+		//given
+		let result = null;
+		const expectedResult = {
+			folders: [],
+			preparations: [],
+			datasets: [],
+		};
+		$httpBackend
+			.expectGET(RestURLs.searchUrl + '?path=/&name=test')
+			.respond(200, expectedResult);
 
-        //when
-        SearchInventoryRestService.search('test', $q.defer())
-            .then((response) => {
-                result = response.data;
-            });
+		//when
+		SearchInventoryRestService.search('test', $q.defer())
+			.then((response) => {
+				result = response.data;
+			});
 
-        $httpBackend.flush();
-        $rootScope.$digest();
+		$httpBackend.flush();
+		$rootScope.$digest();
 
-        //then
-        expect(result).toEqual(expectedResult);
-    }));
+		//then
+		expect(result).toEqual(expectedResult);
+	}));
 });

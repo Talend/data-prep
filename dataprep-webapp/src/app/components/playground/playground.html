@@ -90,6 +90,7 @@
 </div>
 
 <talend-modal
+        class="preparation-modal preparation-save-discard-modal"
         fullscreen="false"
         ng-if="playgroundCtrl.showNameValidation"
         state="playgroundCtrl.showNameValidation"
@@ -109,10 +110,10 @@
                 ng-model="playgroundCtrl.destinationFolder"></folder-selection>
 
         <div class="modal-form-row">
-            <div class="param-name" translate-once="PREPARATION_NAME"></div>
+            <label class="param-name" translate-once="PREPARATION_NAME"></label>
             <input id="playground-save-name-input"
                    type="text"
-                   class="param-input"
+                   class="form-control param-input"
                    translate-once-placeholder="ENTER_PREPARATION_NAME"
                    ng-model="playgroundCtrl.state.playground.preparationName"
                    ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
@@ -120,9 +121,11 @@
         </div>
 
         <div class="modal-buttons">
-            <a class="modal-secondary-button"
-               ng-click="playgroundCtrl.discardSaveOnClose()"
-               translate-once="NO_THANKS"></a>
+            <button ng-click="playgroundCtrl.discardSaveOnClose()"
+                    type="button"
+                    class="btn modal-secondary-button btn-link"
+                    translate-once="NO_THANKS">
+            </button>
 
             <talend-button-loader button-class="btn modal-primary-button btn-primary"
                                   disable-condition="playgroundCtrl.savePreparationForm.$invalid || playgroundCtrl.state.playground.isSavingPreparation"
@@ -135,7 +138,7 @@
 </talend-modal>
 
 <talend-modal
-            class="preparation-picker-modal"
+            class="preparation-modal preparation-picker-modal"
             fullscreen="false"
             state="playgroundCtrl.displayPreparationPicker"
             close-button="true"

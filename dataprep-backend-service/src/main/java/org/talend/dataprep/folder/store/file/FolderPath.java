@@ -1,10 +1,22 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.folder.store.file;
 
 import java.util.Arrays;
 
 import com.google.common.base.MoreObjects;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.folder.store.FoldersRepositoriesConstants;
 
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.HOME_FOLDER_KEY;

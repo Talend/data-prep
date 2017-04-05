@@ -15,13 +15,11 @@ package org.talend.dataprep.encrypt;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Properties;
 
 import org.junit.Test;
 
@@ -37,20 +35,29 @@ public class PropertiesEncryptionTest {
         String propertyKey = "admin.password";
         String propertyValue = "5ecr3t";
         String propertyEncodedValue = "JP6lC6hVeu3wRZA1Tzigyg==";
+
+
+        String mongoPropName = "mongodb.uri";
+        String mongoPropValue = "mongodb://userName:5ecr3t@dataprep-server.org:27017/dataprep?toto=tata";
+        String mongoPropValueEncrypted = "mongodb://userName:JP6lC6hVeu3wRZA1Tzigyg==@dataprep-server.org:27017/dataprep?toto=tata";
+
         Path tempFile = Files.createTempFile("dataprep-PropertiesEncryptionTest.", ".properties");
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempFile, Charsets.UTF_8)) {
             for (int i = 0; i < 5; i++) {
                 bufferedWriter.write(propertyKey + "=" + propertyValue);
                 bufferedWriter.newLine();
             }
+            bufferedWriter.write(mongoPropName + "=" + mongoPropValue);
         }
 
         // when
-        new PropertiesEncryption().encryptAndSave(tempFile.toString(), Sets.newHashSet(propertyKey));
+        new PropertiesEncryption().encryptAndSave(tempFile.toString(), Sets.newHashSet(propertyKey, mongoPropName));
 
         // then
-        final String expectedLine = propertyKey + "=" + propertyEncodedValue;
-        verifyContent(expectedLine, tempFile);
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(tempFile.toFile()));
+        assertEquals(propertyEncodedValue, properties.getProperty(propertyKey));
+        assertEquals(mongoPropValueEncrypted, properties.getProperty(mongoPropName));
     }
 
     @Test

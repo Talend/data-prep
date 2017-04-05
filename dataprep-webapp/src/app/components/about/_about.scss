@@ -11,8 +11,8 @@
 
   ============================================================================*/
 
-$medium-screen: em(640) !default;
-$large-screen: em(860) !default;
+$medium-screen: 640em !default;
+$large-screen: 860em !default;
 
 #about-modal {
 	.modal {
@@ -30,11 +30,11 @@ $large-screen: em(860) !default;
 			padding: 0;
 			width: 80%;
 
-			@include media($medium-screen) {
+			@media (max-width: $medium-screen) {
 				width: 55%;
 			}
 
-			@include media($large-screen) {
+			@media(max-width: $large-screen) {
 				width: 40%;
 			}
 

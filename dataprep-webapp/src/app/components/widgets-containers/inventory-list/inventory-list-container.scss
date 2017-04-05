@@ -78,7 +78,7 @@ $x-large-screen: 120em !default;
 			+ td .actions {
 				width: auto;
 			}
-			@include media($x-large-screen) {
+			@media(max-width: $x-large-screen) {
 				width: 700px;
 				max-width: 700px;
 			}
@@ -86,7 +86,7 @@ $x-large-screen: 120em !default;
 		.item-text {
 			max-width: 200px;
 		}
-		@include media($x-large-screen) {
+		@media(max-width: $x-large-screen) {
 			.item-text {
 				max-width: 250px;
 			}

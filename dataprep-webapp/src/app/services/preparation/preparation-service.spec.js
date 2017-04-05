@@ -1,4 +1,4 @@
-import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
+import { HOME_PREPARATIONS_ROUTE, PLAYGROUND_PREPARATION_ROUTE } from '../../index-route';
 
 describe('Preparation Service', () => {
     'use strict';
@@ -176,7 +176,7 @@ describe('Preparation Service', () => {
                 PreparationService.open(preparation);
 
                 //then
-                expect($state.go).toHaveBeenCalledWith('playground.preparation', {prepid: preparation.id});
+                expect($state.go).toHaveBeenCalledWith(PLAYGROUND_PREPARATION_ROUTE, {prepid: preparation.id});
             }));
         });
     });

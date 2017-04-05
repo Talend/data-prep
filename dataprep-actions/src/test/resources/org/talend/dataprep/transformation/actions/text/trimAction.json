@@ -4,6 +4,7 @@
       "action": "trim",
       "parameters": {
         "column_id": "0000",
+        "padding_character": "whitespace",
         "scope": "column"
       }
     }

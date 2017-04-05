@@ -12,63 +12,63 @@
   ============================================================================*/
 
 .feedback {
-  $medium-screen: em(640) !default;
-  $large-screen: em(860) !default;
-  $x-large-screen: em(1824) !default;
+	$medium-screen: 640em !default;
+	$large-screen: 860em !default;
+	$x-large-screen: 1824em !default;
 
-  .modal {
-    .modal-window {
-      @include media($medium-screen) {
-        padding-top: 0;
-      }
+	.modal {
+		.modal-window {
+			@media(max-width: $medium-screen) {
+				padding-top: 0;
+			}
 
-      @include media($large-screen) {
-        padding-top: 0;
-      }
+			@media(max-width: $large-screen) {
+				padding-top: 0;
+			}
 
-      @include media($x-large-screen) {
-        padding-top: 4em;
-      }
-    }
-  }
+			@media(max-width: $x-large-screen) {
+				padding-top: 4em;
+			}
+		}
+	}
 
-  .title {
-    font-weight: bold;
-    padding: 10px;
-  }
+	.title {
+		font-weight: bold;
+		padding: 10px;
+	}
 
-  .feedback-form-line {
-    @include flex-row();
-    flex-wrap: nowrap;
-    padding: 10px 0;
+	.feedback-form-line {
+		@include flex-row();
+		flex-wrap: nowrap;
+		padding: 10px 0;
 
-    .feedback-form-label {
-      flex-basis: 120px;
-      flex-grow: 0;
-      flex-shrink: 0;
+		.feedback-form-label {
+			flex-basis: 120px;
+			flex-grow: 0;
+			flex-shrink: 0;
 
-      text-align: right;
-      padding-right: 10px;
-    }
+			text-align: right;
+			padding-right: 10px;
+		}
 
-    select {
-      height: 32px;
-      margin-left: 5px;
-    }
-  }
+		select {
+			height: 32px;
+			margin-left: 5px;
+		}
+	}
 }
 
 .feedback-sending-div {
-  height: 100%;
-  min-width: 30px;
-  position: relative;
+	height: 100%;
+	min-width: 30px;
+	position: relative;
 
-  .feedback-sending {
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    font-size: 0.8em;
-  }
+	.feedback-sending {
+		position: absolute;
+		right: 0;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		font-size: 0.8em;
+	}
 }

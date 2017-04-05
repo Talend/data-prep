@@ -17,7 +17,6 @@ import static org.talend.dataprep.api.service.settings.actions.api.ActionDropdow
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.builder;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings.splitDropdownBuilder;
-import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.MENU_PLAYGROUND_DATASET;
 import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.MENU_PLAYGROUND_PREPARATION;
 
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
@@ -27,13 +26,20 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
  */
 // @formatter:off
 public interface DatasetActions {
+    ActionSettings DATASET_OPEN = builder()
+            .id("dataset:open")
+            .icon("talend-datastore")
+            .name("Create new preparation")
+            .type("@@dataset/OPEN")
+            .build();
+
     ActionSettings DATASET_PREPARATIONS = dropdownBuilder()
             .id("list:dataset:preparations")
-            .name("Open Preparation")
+            .name("Open preparation")
             .icon("talend-dataprep")
             .items("preparations")
             .dynamicAction(MENU_PLAYGROUND_PREPARATION.getId())
-            .staticAction(MENU_PLAYGROUND_DATASET.getId())
+            .staticAction(DATASET_OPEN.getId())
             .build();
 
     ActionSettings DATASET_DISPLAY_MODE = builder()
@@ -41,13 +47,6 @@ public interface DatasetActions {
             .name("Change dataset display mode")
             .type("@@inventory/DISPLAY_MODE")
             .payload(PAYLOAD_METHOD_KEY, "setDatasetsDisplayMode")
-            .build();
-
-    ActionSettings DATASET_OPEN = builder()
-            .id("dataset:open")
-            .icon("talend-datastore")
-            .name("Open dataset")
-            .type("@@dataset/OPEN")
             .build();
 
     ActionSettings DATASET_SORT = builder()
@@ -101,7 +100,7 @@ public interface DatasetActions {
 
     ActionSettings DATASET_CREATE = splitDropdownBuilder()
             .id("dataset:create")
-            .name("Add Dataset")
+            .name("Add dataset")
             .icon("talend-plus-circle")
             .type("@@dataset/CREATE")
             .bsStyle("primary")

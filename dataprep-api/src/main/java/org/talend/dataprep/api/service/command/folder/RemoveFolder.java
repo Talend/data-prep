@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.command.folder;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE_FOLDER;
@@ -62,7 +63,8 @@ public class RemoveFolder extends GenericCommand<ResponseEntity<String>> {
             headers.put(header.getName(), Collections.singletonList(header.getValue()));
         }
         try {
-            return new ResponseEntity<>(IOUtils.toString(response.getEntity().getContent()), headers, status);
+            return new ResponseEntity<>(IOUtils.toString(response.getEntity().getContent(), UTF_8), headers,
+                    status);
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

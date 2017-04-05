@@ -32,7 +32,11 @@
  */
 
 import { map } from 'lodash';
-import { PLAYGROUND_PREPARATION_ROUTE, HOME_DATASETS_ROUTE, HOME_PREPARATIONS_ROUTE } from '../../index-route';
+import {
+	PLAYGROUND_PREPARATION_ROUTE,
+	HOME_DATASETS_ROUTE,
+	HOME_PREPARATIONS_ROUTE,
+} from '../../index-route';
 // actions scopes
 const LINE = 'line';
 
@@ -40,13 +44,13 @@ const LINE = 'line';
 const EVENT_LOADING_START = 'talend.loading.start';
 const EVENT_LOADING_STOP = 'talend.loading.stop';
 
-export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams, $window,
+export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
                                           state, StateService, StepUtilsService,
                                           DatasetService, DatagridService, StorageService, FilterService,
                                           FilterAdapterService, PreparationService, PreviewService,
                                           RecipeService, TransformationCacheService, ExportService,
                                           StatisticsService, HistoryService,
-                                          OnboardingService, MessageService) {
+                                          OnboardingService, MessageService, TitleService) {
 	'ngInject';
 
 	const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
@@ -132,14 +136,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		if (preparation) {
 			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
-			$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
+			TitleService.setStrict(preparation.name);
 		}
 
 		// dataset specific init
 		else {
 			StateService.setNameEditionMode(true);
 			ExportService.refreshTypes('datasets', dataset.id);
-			$window.document.title = `${dataset.name} | ${$translate.instant('TALEND')}`;
+			TitleService.setStrict(dataset.name);
 		}
 	}
 
@@ -384,6 +388,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then((preparation) => {
 				StateService.setCurrentPreparation(preparation);
 				StateService.setPreparationName(preparation.name);
+				TitleService.setStrict(preparation.name);
 				return preparation;
 			});
 		return promise;
@@ -688,15 +693,29 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @description Perform a cell or a column edition
 	 */
 	function editCell(rowItem, column, newValue, updateAllCellWithValue) {
-		const action = { name: 'replace_on_value' };
-		const scope = updateAllCellWithValue ? 'column' : 'cell';
-		const params = {
-			cell_value: {
-				token: rowItem[column.id],
-				operator: 'equals',
-			},
-			replace_value: newValue,
-		};
+		let action;
+		let scope;
+		let params;
+
+		if (updateAllCellWithValue) {
+			action = { name: 'replace_on_value' };
+			scope = 'column';
+			params = {
+				cell_value: {
+					token: rowItem[column.id],
+					operator: 'equals',
+				},
+				replace_value: newValue,
+			};
+		}
+		else {
+			action = { name: 'replace_cell_value' };
+			scope = 'cell';
+			params = {
+				original_value: rowItem[column.id],
+				new_value: newValue,
+			};
+		}
 
 		return service.completeParamsAndAppend(action, scope, params);
 	}

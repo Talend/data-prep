@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,15 +12,19 @@
 
 package org.talend.dataprep.command;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
@@ -101,6 +104,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     protected String preparationServiceUrl;
 
     private String authenticationToken;
+    private final Map<String, String> headers = new HashMap<>();
 
     private Supplier<HttpRequestBase> httpCall;
 
@@ -109,15 +113,37 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Default onError behaviour. */
     private Function<Exception, RuntimeException> onError = Defaults.passthrough();
+
     private HttpStatus status;
+
+    private static final HttpStatus[] SUCCESS_STATUS = Stream.of(HttpStatus.values()) //
+            .filter(HttpStatus::is2xxSuccessful) //
+            .collect(Collectors.toList()) //
+            .toArray(new HttpStatus[0]);
+
+    private static final HttpStatus[] REDIRECT_STATUS = Stream.of(HttpStatus.values()) //
+            .filter(HttpStatus::is3xxRedirection) //
+            .collect(Collectors.toList()) //
+            .toArray(new HttpStatus[0]);
+
+    private static final HttpStatus[] INFO_STATUS = Stream.of(HttpStatus.values()) //
+            .filter(HttpStatus::is1xxInformational) //
+            .collect(Collectors.toList()) //
+            .toArray(new HttpStatus[0]);
 
     /**
      * Protected constructor.
      *
      * @param group the command group.
      */
-    protected GenericCommand(HystrixCommandGroupKey group) {
+    protected GenericCommand(final HystrixCommandGroupKey group) {
         super(group);
+    }
+
+    protected GenericCommand(final HystrixCommandGroupKey group, final Map<String, String> headers) {
+        this(group);
+        this.headers.putAll(headers);
+
     }
 
     @PostConstruct
@@ -157,6 +183,10 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     protected T run() throws Exception {
         final HttpRequestBase request = httpCall.get();
 
+        // insert all the provided headers in the request
+        if (headers.size() > 0) {
+            headers.entrySet().forEach(entry -> request.addHeader(entry.getKey(), entry.getValue()));
+        }
         // update request header with security token
         if (StringUtils.isNotBlank(authenticationToken)) {
             request.addHeader(AUTHORIZATION, authenticationToken);
@@ -216,7 +246,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             LOGGER.error("Unable to process message for request {} (response code: {}).", req,
                     res.getStatusLine().getStatusCode());
             req.releaseConnection();
-            return Defaults.<T>asNull().apply(req, res);
+            return Defaults.<T> asNull().apply(req, res);
         };
     }
 
@@ -257,6 +287,36 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      */
     protected BehaviorBuilder on(HttpStatus... status) {
         return new BehaviorBuilder(status);
+    }
+
+    /**
+     * Starts declaration of behavior(s) to adopt when HTTP response has status code of 1xx.
+     *
+     * @return A {@link BehaviorBuilder builder} to continue behavior declaration for the HTTP status(es).
+     * @see BehaviorBuilder#then(BiFunction)
+     */
+    protected BehaviorBuilder onInfo() {
+        return on(INFO_STATUS);
+    }
+
+    /**
+     * Starts declaration of behavior(s) to adopt when HTTP response has status code of 2xx.
+     *
+     * @return A {@link BehaviorBuilder builder} to continue behavior declaration for the HTTP status(es).
+     * @see BehaviorBuilder#then(BiFunction)
+     */
+    protected BehaviorBuilder onSuccess() {
+        return on(SUCCESS_STATUS);
+    }
+
+    /**
+     * Starts declaration of behavior(s) to adopt when HTTP response has status code of 3xx.
+     *
+     * @return A {@link BehaviorBuilder builder} to continue behavior declaration for the HTTP status(es).
+     * @see BehaviorBuilder#then(BiFunction)
+     */
+    protected BehaviorBuilder onRedirect() {
+        return on(REDIRECT_STATUS);
     }
 
     /**
@@ -301,12 +361,14 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         @Override
         public T apply(HttpRequestBase req, HttpResponse res) {
-            LOGGER.trace("request on error {} -> {}", req.toString(), res.getStatusLine());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("request on error {} -> {}", req.toString(), res.getStatusLine());
+            }
             final int statusCode = res.getStatusLine().getStatusCode();
             String content = StringUtils.EMPTY;
             try {
                 if (res.getEntity() != null) {
-                    content = IOUtils.toString(res.getEntity().getContent());
+                    content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
                 JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(content);
                 code.setHttpStatus(statusCode);
@@ -349,7 +411,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             if (req instanceof HttpEntityEnclosingRequestBase) {
                 try {
                     builder.append("load:")
-                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent()))
+                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(),
+                                    UTF_8))
                             .append(",\n");
                 } catch (IOException e) {
                     // We ignore the field
@@ -357,7 +420,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             }
             builder.append("}, response:{\n");
             try {
-                builder.append(IOUtils.toString(res.getEntity().getContent()));
+                builder.append(IOUtils.toString(res.getEntity().getContent(), UTF_8));
             } catch (IOException e) {
                 // We ignore the field
             }

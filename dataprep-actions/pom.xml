@@ -28,6 +28,10 @@
             <artifactId>dataquality-sampling</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.talend.dataquality</groupId>
+            <artifactId>dataquality-converters</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>

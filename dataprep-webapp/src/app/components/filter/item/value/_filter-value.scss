@@ -12,19 +12,18 @@
   ============================================================================*/
 
 .filter-value {
-  @include ellipsis(180px);
-  display: inline;
-  padding: 0 5px;
-  background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
+	@include ellipsis(180px, inline);
+	padding: 0 5px;
+	background-color: rgba(255, 255, 255, 0.15);
+	border-radius: 2px;
 
-  &-btn-remove {
-    margin-left: 5px;
-    color: $white;
+	&-btn-remove {
+		margin-left: 5px;
+		color: $white;
 
-    &:hover, &:focus {
-      color: darken($white, 10%);
-      text-decoration: none
-    }
-  }
+		&:hover, &:focus {
+			color: darken($white, 10%);
+			text-decoration: none
+		}
+	}
 }

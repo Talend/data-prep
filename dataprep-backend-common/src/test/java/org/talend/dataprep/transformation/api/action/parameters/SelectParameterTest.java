@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.action.parameters;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -51,7 +52,8 @@ public class SelectParameterTest extends ParameterBaseTest {
         mapper.writer().writeValue(out, expected);
 
         // then
-        assertThat(out.toString(), sameJSONAs(IOUtils.toString(this.getClass().getResourceAsStream("selectParameter.json"))));
+        assertThat(out.toString(), sameJSONAs(
+                IOUtils.toString(this.getClass().getResourceAsStream("selectParameter.json"), UTF_8)));
     }
 
     @Test

@@ -107,18 +107,19 @@ export default function NavigationList($timeout) {
 					return ctrl.list;
 				}
 
-				scope.$watchGroup([getList, getSelectedItem],
-                    function () {
-	const hasCorrectSelectedItem = ctrl.list && ctrl.selectedItem && ctrl.list.indexOf(ctrl.selectedItem) > -1;
-	if (!hasCorrectSelectedItem) {
-		posLeft = 0;
-		translate(posLeft);
-	}
-	else if (!itemIsVisible(ctrl.selectedItem)) {
-		posLeft = getVisiblePosition(ctrl.selectedItem);
-		translate(posLeft);
-	}
-}
+				scope.$watchGroup(
+					[getList, getSelectedItem],
+					function () {
+						const hasCorrectSelectedItem = ctrl.list && ctrl.selectedItem && ctrl.list.indexOf(ctrl.selectedItem) > -1;
+						if (!hasCorrectSelectedItem) {
+							posLeft = 0;
+							translate(posLeft);
+						}
+						else if (!itemIsVisible(ctrl.selectedItem)) {
+							posLeft = getVisiblePosition(ctrl.selectedItem);
+							translate(posLeft);
+						}
+					}
                 );
 			}, 500, false);
 		},

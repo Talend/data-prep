@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.datablending;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
@@ -39,7 +41,7 @@ public class MockDataSetProvider {
      */
     @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getSampleRemoteFile(@PathVariable(value = "id") String lookupId) throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream(lookupId + ".json"));
+        return IOUtils.toString(this.getClass().getResourceAsStream(lookupId + ".json"), UTF_8);
     }
 
 }

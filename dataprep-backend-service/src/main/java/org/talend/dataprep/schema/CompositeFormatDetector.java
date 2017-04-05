@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,10 +13,8 @@
 package org.talend.dataprep.schema;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import org.apache.tika.io.TemporaryResources;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +41,7 @@ public class CompositeFormatDetector implements Detector {
      *
      * Note that the stream will not close the specified stream before returning. It is to the responsibility of the
      * caller to close it.
-     * 
+     *
      * @param metadata the specified TIKA {@link Metadata}
      * @param inputStream the specified input stream
      * @return either null or the detected format

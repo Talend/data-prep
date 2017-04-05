@@ -117,8 +117,13 @@ public class AppHeaderBarSettings implements ViewSettings {
     }
 
     public static Builder from(final AppHeaderBarSettings viewSettings) {
-        return builder().id(viewSettings.getId()).app(viewSettings.getApp()).brandLink(viewSettings.getBrandLink())
-                .search(viewSettings.getSearch()).actions(viewSettings.getActions()).userMenu(viewSettings.getUserMenu());
+        return builder() //
+                .id(viewSettings.getId()) //
+                .app(viewSettings.getApp()) //
+                .brandLink(viewSettings.getBrandLink()) //
+                .search(viewSettings.getSearch()) //
+                .actions(viewSettings.getActions()) //
+                .userMenu(viewSettings.getUserMenu());
     }
 
     public static class Builder {

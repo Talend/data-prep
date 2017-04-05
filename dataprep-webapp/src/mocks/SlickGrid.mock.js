@@ -81,6 +81,7 @@ function SlickGridMock() {
 		},
 		scrollRowToTop() {},
 		updateRowCount() {},
+		registerPlugin() {},
 	};
 }
 

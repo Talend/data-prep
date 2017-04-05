@@ -77,6 +77,13 @@ public class SidePanelSettings implements ViewSettings {
         return new Builder();
     }
 
+    public static Builder from(final SidePanelSettings viewSettings) {
+        return builder() //
+                .id(viewSettings.getId()) //
+                .onToggleDock(viewSettings.getOnToggleDock()) //
+                .actions(viewSettings.getActions());
+    }
+
     public static class Builder {
 
         private String id;
@@ -97,6 +104,11 @@ public class SidePanelSettings implements ViewSettings {
 
         public Builder action(final String action) {
             this.actions.add(action);
+            return this;
+        }
+
+        public Builder actions(final List<String> actions) {
+            this.actions.addAll(actions);
             return this;
         }
 

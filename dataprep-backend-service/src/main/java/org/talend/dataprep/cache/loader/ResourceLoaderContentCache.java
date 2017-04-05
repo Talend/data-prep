@@ -35,6 +35,8 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.metrics.VolumeMetered;
 
 @Component
 @ConditionalOnBean(ContentServiceEnabled.class)
@@ -94,11 +96,13 @@ public class ResourceLoaderContentCache implements ContentCache {
         }
     }
 
+    @Timed
     @Override
     public boolean has(ContentCacheKey key) {
         return ofNullable(getResource(key)).isPresent();
     }
 
+    @VolumeMetered
     @Override
     public InputStream get(ContentCacheKey key) {
         return ofNullable(getResource(key)).map(r -> {
@@ -110,6 +114,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         }).orElse(null);
     }
 
+    @VolumeMetered
     @Override
     public OutputStream put(ContentCacheKey key, TimeToLive timeToLive) {
         try {
@@ -119,6 +124,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         }
     }
 
+    @Timed
     @Override
     public void evict(ContentCacheKey key) {
         ofNullable(getResource(key)).ifPresent(r -> {
@@ -130,6 +136,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         });
     }
 
+    @Timed
     @Override
     public void evictMatch(ContentCacheKey key) {
         try {
@@ -147,6 +154,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         }
     }
 
+    @Timed
     @Override
     public void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
         final DeletableResource resource = getResource(from);
@@ -159,6 +167,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         }
     }
 
+    @Timed
     @Override
     public void clear() {
         try {

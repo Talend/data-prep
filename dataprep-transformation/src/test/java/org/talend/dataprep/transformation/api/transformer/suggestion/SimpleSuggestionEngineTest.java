@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.suggestion;
 
@@ -60,8 +59,9 @@ public class SimpleSuggestionEngineTest {
 
         // ReflectionUtils to save the use of a spring context
         List<SuggestionEngineRule> rules = new ArrayList<>();
-        rules.add(InvalidRules.deleteInvalidRule());
-        rules.add(InvalidRules.fillInvalidRule());
+        final InvalidRules invalidRules = new InvalidRules();
+        rules.add(invalidRules.deleteInvalidRule());
+        rules.add(invalidRules.fillInvalidRule());
         rules.add(EmptyRules.deleteEmptyRule());
         rules.add(EmptyRules.fillEmptyRule());
         rules.add(IntegerRules.absoluteRule());

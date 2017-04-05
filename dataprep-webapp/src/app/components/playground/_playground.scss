@@ -210,8 +210,20 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 	}
 }
 
-.preparation-picker-modal {
-	.modal .modal-inner {
-		width: 70vw;
+.preparation-modal {
+	&.preparation-picker-modal {
+		.modal .modal-inner {
+			width: 70vw;
+		}
+	}
+
+	&.preparation-save-discard-modal {
+		.btn-link {
+			text-transform: inherit;
+			font-size: inherit;
+			letter-spacing: inherit;
+			line-height: inherit;
+			padding: inherit;
+		}
 	}
 }

@@ -11,19 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.transformation.actions.math;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.CELSIUS;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+package org.talend.dataprep.transformation.actions.conversions;
 
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -31,8 +19,21 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.CELSIUS;
+import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
 
 /**
  * Unit test for the CelsiusToFahrenheit action.
@@ -48,7 +49,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
         final String name = action.getCategory();
 
         // then
-        assertThat(name, is("Conversions"));
+        assertThat(name, is(ActionCategory.CONVERSIONS.getDisplayName()));
     }
 
     @Test

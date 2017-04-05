@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -76,9 +75,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
     @Autowired
     VersionService versionService;
-
-    @Autowired
-    private ObjectMapper mapper;
 
     @Before
     public void cleanupFolder() throws Exception {
@@ -535,37 +531,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
                 }
             }
         }
-    }
-
-    @Test
-    public void testAskCertification() throws Exception {
-        // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
-
-        DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertNotNull(dataSetMetadata);
-        assertNotNull(dataSetMetadata.getGovernance());
-        assertEquals(DataSetGovernance.Certification.NONE, dataSetMetadata.getGovernance().getCertificationStep());
-
-        // when
-        when().put("/api/datasets/{id}/processcertification", dataSetId).then().statusCode(HttpStatus.OK.value());
-
-        // then
-        dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertNotNull(dataSetMetadata);
-        assertNotNull(dataSetMetadata.getGovernance());
-        assertEquals(DataSetGovernance.Certification.PENDING, dataSetMetadata.getGovernance().getCertificationStep());
-        assertThat(dataSetMetadata.getRowMetadata().getColumns(), not(empty()));
-
-        // when
-        when().put("/api/datasets/{id}/processcertification", dataSetId).then().statusCode(HttpStatus.OK.value());
-
-        // then
-        dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        assertNotNull(dataSetMetadata);
-        assertNotNull(dataSetMetadata.getGovernance());
-        assertEquals(DataSetGovernance.Certification.CERTIFIED, dataSetMetadata.getGovernance().getCertificationStep());
-        assertThat(dataSetMetadata.getRowMetadata().getColumns(), not(empty()));
     }
 
     @Test

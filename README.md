@@ -18,6 +18,8 @@ These files must be used together with the common code contained in [daikon](htt
 | [dataprep-api](dataprep-api)                       | *rest service on top of transformation, preparation & dataset, used by webapp*    |
 | [dataprep-backend-common](dataprep-backend-common) | *set of common objects shared by multiple services*                  |
 | [dataprep-backend](dataprep-backend)               | *parent project for all backend projects*                            |
+| [dataprep-backend-service](dataprep-backend-service)         | *Common Spring related classes (shared configuration...)* |
+| [dataprep-backend-service-parent](dataprep-backend-service-parent)         | *A parent module for all back end services to ease dependency and plugin management* |
 | [dataprep-dataset](dataprep-dataset)               | *rest service to manage datasets (import, export, sample, stats)*    |
 | [dataprep-preparation](dataprep-preparation)       | *rest service to manage preparations (create, list steps, get data)* |
 | [dataprep-transformation](dataprep-transformation) | *rest service to apply transformations (actions are here)*           |
@@ -51,8 +53,9 @@ The following projects don't build any back-end artifacts but provide build util
 | _Project_                  | _Description_ |
 |:-------------------------|-------------|
 | [dataprep-backend](dataprep-backend)          | *Common POM for all back-end modules (defines all libraries & versions, as well as common build behaviors)* |
-| [dataprep-backend-common](dataprep-backend-common)         | *Common resources and classes for back-end modules (CORS Filter, Branded Swagger UI...)* |
-
+| [dataprep-backend-common](dataprep-backend-common)         | *Common resources and classes for back-end modules (no dependency on Spring)* |
+| [dataprep-backend-service](dataprep-backend-service)         | *Common Spring related classes (shared configuration...)* |
+| [dataprep-backend-service-parent](dataprep-backend-service-parent)         | *A parent module for all back end services to ease dependency and plugin management* |
 
 
 ## 2. Download

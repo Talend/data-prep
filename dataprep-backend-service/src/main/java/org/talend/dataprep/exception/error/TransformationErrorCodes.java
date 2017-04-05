@@ -31,7 +31,7 @@ public enum TransformationErrorCodes implements ErrorCode {
     UNSUPPORTED_SAMPLE_STATUS_UPDATE(400, "status"),
     UNABLE_TO_CANCEL_EXECUTION(404, "id"),
     // 403
-    INSUFFICIENT_ROLE(403),
+    INSUFFICIENT_AUTHORITY(403),
     // 404
     UNKNOWN_DYNAMIC_ACTION(404, "value"),
     NO_RUNNING_SAMPLING(404, "preparation"),

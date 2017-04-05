@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -77,7 +79,7 @@ public class EnrichedPreparationDetails extends GenericCommand<InputStream> {
 
         this.enrichPreparation(preparationJsonRootNode, dataset);
 
-        return IOUtils.toInputStream(preparationJsonRootNode.toString());
+        return IOUtils.toInputStream(preparationJsonRootNode.toString(), UTF_8);
     }
 
     /**

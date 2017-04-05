@@ -68,8 +68,6 @@ import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
-import org.talend.dataprep.grants.AccessGrantChecker;
-import org.talend.dataprep.grants.CommonRestrictedActions;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
@@ -154,9 +152,6 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private VersionService versionService;
-
-    @Autowired
-    private AccessGrantChecker accessGrantChecker;
 
     @Autowired
     private BeanConversionService conversionService;
@@ -513,43 +508,6 @@ public class DataSetService extends BaseDataSetService {
         }
     }
 
-    @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
-    @Timed
-    public void processCertification(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Ask certification for dataset #{}", dataSetId);
-        }
-
-        // Check if the user has sufficient grants to perform the action
-        accessGrantChecker.allowed(CommonRestrictedActions.CERTIFICATION);
-
-        DistributedLock datasetLock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
-        datasetLock.lock();
-        try {
-            DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-            if (dataSetMetadata != null) {
-                LOG.trace("Current certification step is " + dataSetMetadata.getGovernance().getCertificationStep());
-
-                if (dataSetMetadata.getGovernance().getCertificationStep() == Certification.NONE) {
-                    dataSetMetadata.getGovernance().setCertificationStep(Certification.PENDING);
-                    dataSetMetadataRepository.save(dataSetMetadata);
-                } else if (dataSetMetadata.getGovernance().getCertificationStep() == Certification.PENDING) {
-                    dataSetMetadata.getGovernance().setCertificationStep(Certification.CERTIFIED);
-                    dataSetMetadataRepository.save(dataSetMetadata);
-                } else if (dataSetMetadata.getGovernance().getCertificationStep() == Certification.CERTIFIED) {
-                    dataSetMetadata.getGovernance().setCertificationStep(Certification.NONE);
-                    dataSetMetadataRepository.save(dataSetMetadata);
-                }
-
-                LOG.debug("New certification step is " + dataSetMetadata.getGovernance().getCertificationStep());
-            } // else do nothing if the dataset does not exists
-        } finally {
-            datasetLock.unlock();
-        }
-    }
-
     /**
      * Updates a data set content and metadata. If no data set exists for given id, data set is silently created.
      *
@@ -741,9 +699,7 @@ public class DataSetService extends BaseDataSetService {
 
                 // update limit
                 final Optional<Long> newLimit = dataSetMetadata.getContent().getLimit();
-                if (newLimit.isPresent()) {
-                    metadataForUpdate.getContent().setLimit(newLimit.get());
-                }
+                newLimit.ifPresent(limit -> metadataForUpdate.getContent().setLimit(limit));
 
                 // Validate that the new data set metadata and removes the draft status
                 final String formatFamilyId = dataSetMetadata.getContent().getFormatFamilyId();

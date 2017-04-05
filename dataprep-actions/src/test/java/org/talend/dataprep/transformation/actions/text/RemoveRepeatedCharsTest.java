@@ -153,7 +153,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("abc\r\n\r\nd", row.get("0000"));
+        assertEquals("abc\r\nd", row.get("0000"));
     }
 
     @Test
@@ -207,6 +207,46 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(RemoveRepeatedChars.REMOVE_TYPE, RemoveRepeatedChars.CUSTOM);
         parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, "n");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("haand", row.get("0000"));
+    }
+
+    @Test
+    public void should_not_remove_custom_string() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "hanand");
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, RemoveRepeatedChars.CUSTOM);
+        parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, "an");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("hanand", row.get("0000"));
+    }
+
+    @Test
+    public void should_not_remove_custom_null() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "haand");
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, RemoveRepeatedChars.CUSTOM);
+        parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, null);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

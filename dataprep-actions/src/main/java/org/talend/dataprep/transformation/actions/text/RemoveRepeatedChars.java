@@ -31,7 +31,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.converters.StringConverter;
+import org.talend.dataquality.converters.DuplicateCharEraser;
 
 /**
  * Remove consecutive repeated characters for a Text.
@@ -42,17 +42,17 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     /** Action name. */
     public static final String ACTION_NAME = "remove_repeated_chars";
 
-    private static final String STRING_CONVERT_KEY = "string_convert_key";
+    private static final String DUPLICATE_CHAR_ERASER_KEY = "duplicate_char_eraser_key";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoveRepeatedChars.class);
 
-    /** The selected remmove type within the provided list. */
+    /** The selected remmove type within the provided list.*/
     protected static final String REMOVE_TYPE = "remove_type";
 
     /** Keys used in the values of different parameters. */
     protected static final String CUSTOM = "custom";
 
-    /** Remove repeated white spaces(" ","\n","\r","\t","\f")  */
+    /** Remove repeated white spaces(" ","\n","\r","\t","\f"). */
     protected static final String WHITESPACE = "whitespace";
 
     /** Custom repeated char  */
@@ -65,10 +65,14 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
             try {
                 Map<String, String> parameters = context.getParameters();
                 if (CUSTOM.equals(parameters.get(REMOVE_TYPE))) {//for custom repeated chart
-                    String customRepChar = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
-                    context.get(STRING_CONVERT_KEY, p -> new StringConverter(customRepChar));
+                    String customChars = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
+                    char[] chars = customChars.toCharArray();
+                    if (chars.length != 1) {//API only support a char not String.
+                        throw new IllegalArgumentException("'Repeated character' only support a valid character not a String!");
+                    }
+                    context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser(chars[0]));
                 } else {//for repeated whitespace.
-                    context.get(STRING_CONVERT_KEY, p -> new StringConverter());
+                    context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser());
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -84,14 +88,10 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         if (StringUtils.isEmpty(originalValue)) {
             return;
         }
-        final StringConverter stringConverter = context.get(STRING_CONVERT_KEY);
+        final DuplicateCharEraser duplicateCharEraser = context.get(DUPLICATE_CHAR_ERASER_KEY);
         String cleanValue = originalValue;
         Map<String, String> parameters = context.getParameters();
-        if (WHITESPACE.equals(parameters.get(REMOVE_TYPE))) {// remove all whitespaces
-            cleanValue = stringConverter.removeRepeatedWhitespaces(originalValue);
-        } else {// remove specified repeated chars.
-            cleanValue = stringConverter.removeRepeatedChar(originalValue);
-        }
+        cleanValue = duplicateCharEraser.removeRepeatedChar(originalValue);
         row.set(columnId, cleanValue);
     }
 
@@ -102,7 +102,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         final List<Parameter> parameters = super.getParameters();
         parameters.add(SelectParameter.Builder.builder()
                 .name(REMOVE_TYPE)
-                .item(WHITESPACE,WHITESPACE)
+                .item(WHITESPACE, WHITESPACE)
                 .item(CUSTOM, CUSTOM, new Parameter(CUSTOM_REPEAT_CHAR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY))
                 .canBeBlank(false)
                 .defaultValue(WHITESPACE)

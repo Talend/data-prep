@@ -12,7 +12,7 @@
   ============================================================================*/
 .actions-suggestions {
 	@include flex-column();
-	height: calc(100% - #{$navigation-height});
+	height: 100%;
 
 	.loading-container {
 		position: relative;

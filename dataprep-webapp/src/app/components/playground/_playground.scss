@@ -184,6 +184,10 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 				}
 			}
 
+			#help-suggestions {
+				overflow: hidden;
+			}
+
 			.loading-msg {
 				position: absolute;
 				text-align: center;

@@ -70,9 +70,9 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         values.put("0000", "ab   c  d");
         final DataSetRow row = new DataSetRow(values);
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
-        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace");
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
@@ -84,116 +84,135 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
     public void should_remove_repeated_tab() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "abc\t\t\td"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        values.put("0000", "abc\t\t\td");
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
-        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("abc\td", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("abc\td", row.get("0000"));
     }
 
     @Test
     public void should_remove_repeated_return() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "abc\r\r\rd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        values.put("0000", "abc\r\r\rd");
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
-        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("abc\rd", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("abc\rd", row.get("0000"));
     }
 
     @Test
     public void should_remove_repeated_unicode_whitespace() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "\u2028\u2028abcd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        values.put("0000", "\u2028\u2028abcd");
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
-        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("\u2028abcd", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("\u2028abcd", row.get("0000"));
     }
 
     @Test
     public void should_not_remove_repeated_return_wrap() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "abc\r\n\r\nd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        values.put("0000", "abc\r\n\r\nd");
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
-        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("abc\r\n\r\nd", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("abc\r\n\r\nd", row.get("0000"));
+    }
+
+    @Test
+    public void should_not_remove_null() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", null);
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "whitespace");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(null, row.get("0000"));
     }
 
     @Test
     public void should_remove_custom_value() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "haand"); //$NON-NLS-1$ //$NON-NLS-2$
+        values.put("0000", "haand");
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(RemoveRepeatedChars.REMOVE_TYPE, RemoveRepeatedChars.CUSTOM);
-        parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, "a"); //$NON-NLS-1$
+        parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, "a");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("hand", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("hand", row.get("0000"));
     }
 
     @Test
     public void should_not_remove_custom_value() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "haand"); //$NON-NLS-1$ //$NON-NLS-2$
+        values.put("0000", "haand");
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(RemoveRepeatedChars.REMOVE_TYPE, RemoveRepeatedChars.CUSTOM);
-        parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, "n"); //$NON-NLS-1$
+        parameters.put(RemoveRepeatedChars.CUSTOM_REPEAT_CHAR_PARAMETER, "n");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("haand", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("haand", row.get("0000"));
     }
 
     @Test

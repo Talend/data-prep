@@ -40,23 +40,23 @@ import org.talend.dataquality.converters.StringConverter;
 public class RemoveRepeatedChars extends AbstractActionMetadata implements ColumnAction {
 
     /** Action name. */
-    public static final String ACTION_NAME = "remove_repeated_chars"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "remove_repeated_chars";
 
-    private static final String STRING_CONVERT_KEY = "string_convert_key";//$NON-NLS-1$
+    private static final String STRING_CONVERT_KEY = "string_convert_key";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoveRepeatedChars.class);
 
     /** The selected remmove type within the provided list. */
-    protected static final String REMOVE_TYPE = "remove_type"; //$NON-NLS-1$
+    protected static final String REMOVE_TYPE = "remove_type";
 
     /** Keys used in the values of different parameters. */
-    protected static final String CUSTOM = "custom"; //$NON-NLS-1$
+    protected static final String CUSTOM = "custom";
 
     /** Remove repeated white spaces(" ","\n","\r","\t","\f")  */
-    protected static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
+    protected static final String WHITESPACE = "whitespace";
 
     /** Custom repeated char  */
-    protected static final String CUSTOM_REPEAT_CHAR_PARAMETER = "custom_repeat_chars"; //$NON-NLS-1$
+    protected static final String CUSTOM_REPEAT_CHAR_PARAMETER = "custom_repeat_chars";
 
     @Override
     public void compile(ActionContext context) {
@@ -64,8 +64,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
                 Map<String, String> parameters = context.getParameters();
-                //for custom repeated chart
-                if (CUSTOM.equals(parameters.get(REMOVE_TYPE))) {
+                if (CUSTOM.equals(parameters.get(REMOVE_TYPE))) {//for custom repeated chart
                     String customRepChar = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
                     context.get(STRING_CONVERT_KEY, p -> new StringConverter(customRepChar));
                 } else {//for repeated whitespace.
@@ -88,8 +87,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         final StringConverter stringConverter = context.get(STRING_CONVERT_KEY);
         String cleanValue = originalValue;
         Map<String, String> parameters = context.getParameters();
-        // remove all whitespaces
-        if (WHITESPACE.equals(parameters.get(REMOVE_TYPE))) {
+        if (WHITESPACE.equals(parameters.get(REMOVE_TYPE))) {// remove all whitespaces
             cleanValue = stringConverter.removeRepeatedWhitespaces(originalValue);
         } else {// remove specified repeated chars.
             cleanValue = stringConverter.removeRepeatedChar(originalValue);
@@ -104,9 +102,9 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         final List<Parameter> parameters = super.getParameters();
         parameters.add(SelectParameter.Builder.builder()
                 .name(REMOVE_TYPE)
-                .item(WHITESPACE)
+                .item(WHITESPACE,WHITESPACE)
                 .item(CUSTOM, CUSTOM, new Parameter(CUSTOM_REPEAT_CHAR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY))
-                .canBeBlank(true)
+                .canBeBlank(false)
                 .defaultValue(WHITESPACE)
                 .build());
         return ActionsBundle.attachToAction(parameters, this);

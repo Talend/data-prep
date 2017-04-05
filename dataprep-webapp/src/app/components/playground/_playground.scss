@@ -181,29 +181,18 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 			.suggestions-stats-details {
 				height: calc(#{$playground-height});
 
-				.suggestions-stats-content {
-					height: calc(#{ $playground-suggestions-stats-details});
-					width: 330px;
+                .suggestions-stats-content {
+                    height: calc(#{ $playground-suggestions-stats-details});
+                    width: 330px;
 
-				.stat-detail-tab-items {
-					width: 330px;
-				}
-			}
+                    .stat-detail-tab-items {
+                        width: 330px;
+                    }
+			    }
 
-			#help-suggestions {
-				overflow: hidden;
-			}
-
-			.loading-msg {
-				position: absolute;
-				text-align: center;
-				top: 100px;
-				left: 35px;
-				right: 35px;
-
-				background: transparent;
-				color: $pale-blue;
-				opacity: 0.8;
+                #help-suggestions {
+                    overflow: hidden;
+                }
 			}
 		}
 

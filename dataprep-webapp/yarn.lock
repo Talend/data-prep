@@ -1110,9 +1110,9 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
-bootstrap-talend-theme@0.69.0:
-  version "0.69.0"
-  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.69.0.tgz#f9528910cfe313bd7fed6a0a3a3436651f022876"
+bootstrap-talend-theme@0.70.0:
+  version "0.70.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.70.0.tgz#5688f425dc0fdceb772e2d5aa7a91f87991e45be"
   dependencies:
     bootstrap-sass "^3.3.7"
 
@@ -5774,17 +5774,17 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.69.0:
-  version "0.69.0"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.69.0.tgz#83f03f903bd25924ffae64712d42ecf0d738f19e"
+react-talend-components@0.70.0:
+  version "0.70.0"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.70.0.tgz#52e8e4058657be25249d424949592523aa5c6711"
   dependencies:
     lodash "^4.17.4"
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"
 
-react-talend-forms@0.69.0:
-  version "0.69.0"
-  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.69.0.tgz#48a124f14371899e5a05ad43a6eb27df63e26e25"
+react-talend-forms@0.70.0:
+  version "0.70.0"
+  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.70.0.tgz#5ac7f95da48b137ae466743acda9bdb079101651"
   dependencies:
     classnames "^2.2.5"
     keycode "^2.1.8"
@@ -6758,9 +6758,9 @@ table@^3.7.8:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
-talend-icons@0.69.0:
-  version "0.69.0"
-  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.69.0.tgz#c3ed1defff60cd8e9792f08c4eefd63aa6817632"
+talend-icons@0.70.0:
+  version "0.70.0"
+  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.70.0.tgz#41ca48ce54e359421428b7600a4271b8e5d22913"
 
 tapable@^0.2.5, tapable@~0.2.5:
   version "0.2.6"

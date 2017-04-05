@@ -250,7 +250,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 home.getId());
 
         // when (change the date format to an unknown DQ pattern)
-        applyAction(preparationId,
+        testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/change_date_format_MMM_dd_yyyy.json"),
                         UTF_8));
 

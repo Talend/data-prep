@@ -59,11 +59,11 @@ public class PreparationController {
      * @param folderId      where to store the preparation.
      * @return the created preparation id.
      */
-    @RequestMapping(value = "/preparations", method = POST, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations", method = POST)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the created preparation.")
     @Timed
     public String create(@ApiParam("preparation") @RequestBody final Preparation preparation,
-                         @ApiParam(value = "The folderId path to create the entry.") @RequestParam() String folderId) {
+                         @ApiParam(value = "The folderId path to create the entry.") @RequestParam String folderId) {
         return preparationService.create(preparation, folderId);
     }
 
@@ -74,7 +74,7 @@ public class PreparationController {
      * @param order how to apply the sort.
      * @return the preparations id list.
      */
-    @RequestMapping(value = "/preparations", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations", method = GET)
     @ApiOperation(value = "List all preparations id", notes = "Returns the list of preparations ids the current user is allowed to see. Creation date is always displayed in UTC time zone. See 'preparations/all' to get all details at once.")
     @Timed
     public Stream<String> list(
@@ -220,7 +220,7 @@ public class PreparationController {
     @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
     @Timed
     public String updateStepMetadata(@ApiParam("preparationId") @PathVariable("preparationId") String preparationId,
-            @RequestBody @ApiParam("rowMetadata") final List<Step> steps) {
+                                     @RequestBody @ApiParam("rowMetadata") final List<Step> steps) {
 
         preparationService.updatePreparationSteps(preparationId, steps);
 
@@ -386,7 +386,11 @@ public class PreparationController {
     @Timed
     public ResponseEntity<Void> preparationsThatUseDataset(
             @ApiParam("datasetId") @PathVariable("datasetId") final String datasetId) {
-        return preparationService.preparationsThatUseDataset(datasetId);
+        if (preparationService.isDatasetUsedInPreparation(datasetId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RequestMapping(value = "/preparations/{id}/steps/{stepId}/order", method = POST)
@@ -399,7 +403,7 @@ public class PreparationController {
         preparationService.moveStep(preparationId, stepId, parentStepId);
     }
 
-    @RequestMapping(value = "/preparations/{id}/actions", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/actions", method = POST)
     @ApiOperation(value = "Adds an action at the end of preparation.",
                   notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed

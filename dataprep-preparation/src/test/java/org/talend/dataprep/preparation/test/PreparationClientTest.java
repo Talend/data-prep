@@ -13,8 +13,7 @@
 
 package org.talend.dataprep.preparation.test;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,6 +29,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.folder.FolderTreeNode;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationMessage;
@@ -167,4 +167,44 @@ public class PreparationClientTest {
         when().delete("/preparations/{id}", preparationId).then().statusCode(OK.value());
     }
 
+    public PreparationMessage getPreparation(String preparationId) {
+        return when().get("/preparations/{id}/details", preparationId).as(PreparationMessage.class);
+    }
+
+    /**
+     *
+     * @param preparation
+     * @param folderId the id of folder where to c
+     * @return the newly created preparation
+     */
+    public PreparationMessage createPreparation(final Preparation preparation, final String folderId) {
+        Response post = given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails()
+                .post("/preparations?folderId={folderId}", folderId);
+        return getPreparation(post.asString());
+    }
+
+    public FolderTreeNode getFolderTree() {
+        return get("/folders/tree").as(FolderTreeNode.class);
+    }
+
+    /**
+     * Append an action to a preparation
+     *
+     * @param preparationId The preparation id
+     * @param transformationJson The transformation json
+     */
+    public void applyTransformation(final String preparationId, final String transformationJson) throws IOException {
+        given() //
+                .body(transformationJson) //
+                .contentType(ContentType.JSON) //
+                .when() //
+                .post("/preparations/{id}/actions", preparationId);
+    }
+
+    /**
+     * Sets the preparation head step to given step ID.
+     */
+    public void setPreparationHead(String preparationId, String headId) {
+        put("/preparations/{id}/head/{headId}", preparationId, headId);
+    }
 }

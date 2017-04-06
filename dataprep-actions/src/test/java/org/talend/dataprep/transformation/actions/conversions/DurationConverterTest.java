@@ -14,7 +14,6 @@ package org.talend.dataprep.transformation.actions.conversions;
 
 import static org.hamcrest.core.Is.*;
 import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.*;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
 
 import java.io.IOException;
@@ -28,13 +27,11 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-import org.talend.dataprep.transformation.actions.conversions.DurationConverter;
 import org.talend.dataprep.transformation.actions.date.BaseDateTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -128,7 +125,8 @@ public class DurationConverterTest extends BaseDateTest {
     public void testConversionMonthsTo() {
         testConversion(month, ChronoUnit.MONTHS, year, ChronoUnit.YEARS);
         testConversion(month, ChronoUnit.MONTHS, month, ChronoUnit.MONTHS);
-        testConversion(month, ChronoUnit.MONTHS, week-1, ChronoUnit.WEEKS);
+        // because there is a small deviation need to avoid, so week -1
+        testConversion(month, ChronoUnit.MONTHS, week - 1, ChronoUnit.WEEKS);
         testConversion(month, ChronoUnit.MONTHS, day, ChronoUnit.DAYS);
         testConversion(month, ChronoUnit.MONTHS, hour, ChronoUnit.HOURS);
         testConversion(month, ChronoUnit.MONTHS, minute, ChronoUnit.MINUTES);

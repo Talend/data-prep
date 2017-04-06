@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -35,8 +33,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DurationConverter.ACTION_NAME)
 public class DurationConverter extends AbstractActionMetadata implements ColumnAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DurationConverter.class);
 
     /**
      * The action name.

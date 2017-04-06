@@ -18,17 +18,6 @@ $search-actions-height: 25px;
 	@include flex-column();
 	height: calc(100% - #{$header-col-details});
 
-	.loading-container {
-		position: relative;
-
-		.wait-icon {
-			position: absolute;
-		}
-		.wait-text {
-			padding-left: 40px;
-		}
-	}
-
 	.actions-scope {
 		flex-grow: 1;
 		flex-shrink: 1;

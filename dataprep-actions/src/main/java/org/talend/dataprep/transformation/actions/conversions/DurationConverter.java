@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.transformation.actions.date;
+package org.talend.dataprep.transformation.actions.conversions;
 
 import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
@@ -71,29 +71,24 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters();
 
         //@formatter:off
-        parameters.add(Builder.builder()
-                .name(FROM_UNIT_PARAMETER)
+        Builder builder = Builder.builder()
                 .item(ChronoUnit.YEARS.name(), ChronoUnit.YEARS.toString())
-                .item(ChronoUnit.MONTHS.name(), ChronoUnit.MONTHS.toString()) 
-                .item(ChronoUnit.WEEKS.name(), ChronoUnit.WEEKS.toString()) 
-                .item(ChronoUnit.DAYS.name(), ChronoUnit.DAYS.toString()) 
-                .item(ChronoUnit.HOURS.name(), ChronoUnit.HOURS.toString()) 
-                .item(ChronoUnit.MINUTES.name(), ChronoUnit.MINUTES.toString()) 
-                .item(ChronoUnit.SECONDS.name(), ChronoUnit.SECONDS.toString()) 
-                .item(ChronoUnit.MILLIS.name(), ChronoUnit.MILLIS.toString()) 
+                .item(ChronoUnit.MONTHS.name(), ChronoUnit.MONTHS.toString())
+                .item(ChronoUnit.WEEKS.name(), ChronoUnit.WEEKS.toString())
+                .item(ChronoUnit.DAYS.name(), ChronoUnit.DAYS.toString())
+                .item(ChronoUnit.HOURS.name(), ChronoUnit.HOURS.toString())
+                .item(ChronoUnit.MINUTES.name(), ChronoUnit.MINUTES.toString())
+                .item(ChronoUnit.SECONDS.name(), ChronoUnit.SECONDS.toString())
+                .item(ChronoUnit.MILLIS.name(), ChronoUnit.MILLIS.toString())
+                .canBeBlank(false);
+
+        parameters.add(builder
+                .name(FROM_UNIT_PARAMETER)
                 .defaultValue(ChronoUnit.DAYS.name()) 
                 .build());
         
-        parameters.add(Builder.builder()
+        parameters.add(builder
                 .name(TO_UNIT_PARAMETER)
-                .item(ChronoUnit.YEARS.name(), ChronoUnit.YEARS.toString())
-                .item(ChronoUnit.MONTHS.name(), ChronoUnit.MONTHS.toString()) 
-                .item(ChronoUnit.WEEKS.name(), ChronoUnit.WEEKS.toString()) 
-                .item(ChronoUnit.DAYS.name(), ChronoUnit.DAYS.toString()) 
-                .item(ChronoUnit.HOURS.name(), ChronoUnit.HOURS.toString()) 
-                .item(ChronoUnit.MINUTES.name(), ChronoUnit.MINUTES.toString()) 
-                .item(ChronoUnit.SECONDS.name(), ChronoUnit.SECONDS.toString()) 
-                .item(ChronoUnit.MILLIS.name(), ChronoUnit.MILLIS.toString()) 
                 .defaultValue(ChronoUnit.HOURS.name()) 
                 .build());
         

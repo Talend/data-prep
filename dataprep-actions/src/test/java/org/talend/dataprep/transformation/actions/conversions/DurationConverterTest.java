@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.dataprep.transformation.actions.date;
+package org.talend.dataprep.transformation.actions.conversions;
 
 import static org.hamcrest.core.Is.*;
 import static org.junit.Assert.*;
@@ -34,6 +34,8 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.conversions.DurationConverter;
+import org.talend.dataprep.transformation.actions.date.BaseDateTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -50,22 +52,6 @@ public class DurationConverterTest extends BaseDateTest {
 
     @Before
     public void init() throws IOException {
-    }
-
-    @Test
-    public void testAdapt() throws Exception {
-        assertThat(action.adapt((ColumnMetadata) null), is(action));
-        ColumnMetadata column = column().name("myColumn").id(0).type(Type.INTEGER).build();
-        assertThat(action.adapt(column), is(action));
-
-        ColumnMetadata column1 = column().name("myColumn1").id(0).type(Type.DOUBLE).build();
-        assertThat(action.adapt(column1), is(action));
-
-        ColumnMetadata column2 = column().name("myColumn2").id(0).type(Type.NUMERIC).build();
-        assertThat(action.adapt(column2), is(action));
-
-        ColumnMetadata column3 = column().name("myColumn3").id(0).type(Type.FLOAT).build();
-        assertThat(action.adapt(column3), is(action));
     }
 
     @Test
@@ -248,6 +234,18 @@ public class DurationConverterTest extends BaseDateTest {
         rowContent.put("0001", "1985-08-27");
         final DataSetRow row6 = new DataSetRow(rowContent);
 
+        // row 7
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "0");
+        final DataSetRow row7 = new DataSetRow(rowContent);
+
+        // row 8
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "-1");
+        final DataSetRow row8 = new DataSetRow(rowContent);
+
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
@@ -264,11 +262,16 @@ public class DurationConverterTest extends BaseDateTest {
         assertEquals("", row4.get("0001"));
         assertEquals("true", row5.get("0001"));
         assertEquals("1985-08-27", row6.get("0001"));
+        assertEquals("0", row7.get("0001"));
+        assertEquals("-1", row8.get("0001"));
     }
 
     @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
     }
 
     @Test

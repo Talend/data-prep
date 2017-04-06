@@ -179,12 +179,8 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 			}
 
 			.suggestions-stats-content {
-				height: calc(#{ $suggestions-stats-content-height});
+				height: calc(#{$suggestions-stats-content-height});
 				width: 330px;
-
-				#help-suggestions {
-						overflow: hidden;
-				}
 			}
 		}
 

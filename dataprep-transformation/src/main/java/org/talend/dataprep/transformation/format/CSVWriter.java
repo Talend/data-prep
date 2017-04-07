@@ -27,10 +27,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.util.FilesHelper;
 
@@ -39,7 +39,7 @@ import org.talend.dataprep.util.FilesHelper;
  */
 @Scope("prototype")
 @Component("writer#" + CSV)
-public class CSVWriter implements TransformerWriter {
+public class CSVWriter extends AbstractTransformerWriter {
 
     /** The default separator. */
     private static final Character DEFAULT_SEPARATOR = ',';
@@ -88,6 +88,11 @@ public class CSVWriter implements TransformerWriter {
         }
     }
 
+    @Override
+    protected au.com.bytecode.opencsv.CSVWriter getRecordsWriter() {
+        return recordsWriter;
+    }
+
     /**
      * @see TransformerWriter#write(RowMetadata)
      */
@@ -109,15 +114,6 @@ public class CSVWriter implements TransformerWriter {
 
     }
 
-    /**
-     * @see TransformerWriter#write(DataSetRow)
-     * @throws UnsupportedOperationException if CsvWriter#write(RowMetadata) was not called before.
-     */
-    @Override
-    public void write(final DataSetRow row) throws IOException {
-        // values need to be written in the same order as the columns
-        recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID));
-    }
 
     /**
      * @see TransformerWriter#flush()

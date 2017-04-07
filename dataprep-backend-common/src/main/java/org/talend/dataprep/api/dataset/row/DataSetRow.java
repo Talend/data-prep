@@ -325,7 +325,7 @@ public class DataSetRow implements Cloneable, Serializable {
         if (columns.isEmpty()) {
             return this;
         }
-        if (columns.size() < values.size()) {
+        if (columns.size() < values.size() && (!values.containsKey(TDP_INVALID) || columns.size() + 1 < values().size())) {
             throw new IllegalArgumentException("Expected " + values.size() + " columns but got " + columns.size());
         }
 
@@ -339,6 +339,7 @@ public class DataSetRow implements Cloneable, Serializable {
         dataSetRow.values = orderedValues;
         return dataSetRow;
     }
+
 
     /**
      * Order values of this data set row according to its own <code>columns</code>. This method clones the current

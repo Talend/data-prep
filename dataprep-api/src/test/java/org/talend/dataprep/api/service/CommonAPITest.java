@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
 
 /**
  * Common Unit test for the dataset service API.
@@ -69,7 +68,7 @@ public class CommonAPITest extends ApiServiceTestBase {
         final ObjectMapper mapper = new ObjectMapper();
 
         // when
-        final String badRequest = given().accept(ContentType.JSON).get("/command/test/fail_bad_request_exception").asString();
+        final String badRequest = when().get("/command/test/fail_bad_request_exception").asString();
         final String commandException = when().get("//command/test/fail_command_exception").asString();
         final String rejectedSemaphoreExecution = when().get("/command/test/fail_rejected_semaphore_execution").asString();
         final String rejectedExecution = when().get("/command/test/fail_rejected_execution").asString();
@@ -79,6 +78,7 @@ public class CommonAPITest extends ApiServiceTestBase {
 
         // then
         List<JsonNode> rootNodes = new ArrayList<>();
+
         try {
             rootNodes.add(mapper.readTree(badRequest));
             final JsonNode commandExceptionNodes = mapper.readTree(commandException);

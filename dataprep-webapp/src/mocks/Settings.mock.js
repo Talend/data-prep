@@ -25,7 +25,7 @@ const settingsMock = {
 				onChange: 'search:all',
 				onSelect: {
 					preparation: 'menu:playground:preparation',
-					dataset: 'menu:playground:dataset',
+					dataset: 'dataset:open',
 					folder: 'menu:folders',
 					documentation: 'external:documentation',
 				},
@@ -181,18 +181,6 @@ const settingsMock = {
 				args: ['playground.preparation'],
 			},
 		},
-		'menu:playground:dataset': {
-			id: 'menu:playground:dataset',
-			name: 'Create new preparation',
-			icon: 'talend-plus',
-			type: '@@router/GO_DATASET',
-			payload: {
-				method: 'go',
-				args: [
-					'playground.dataset',
-				],
-			},
-		},
 		'list:dataset:preparations': {
 			id: 'list:dataset:preparations',
 			name: 'Open preparation',
@@ -200,7 +188,7 @@ const settingsMock = {
 			displayMode: 'dropdown',
 			items: 'preparations',
 			dynamicAction: 'menu:playground:preparation',
-			staticActions: ['menu:playground:dataset'],
+			staticActions: ['dataset:open'],
 		},
 		'sidepanel:toggle': {
 			id: 'sidepanel:toggle',

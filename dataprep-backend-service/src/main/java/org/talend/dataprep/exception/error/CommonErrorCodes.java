@@ -83,7 +83,11 @@ public enum CommonErrorCodes implements ErrorCode {
     /**
      * If we are unable to connect to streams
      */
-    UNABLE_TO_CONNECT_TO_STREAMS(BAD_GATEWAY.value());
+    UNABLE_TO_CONNECT_TO_STREAMS(BAD_GATEWAY.value()),
+    /**
+     * If unable to access SCIM server whatever the reason. It will encapsulate the {@link org.talend.iam.common.exception.SCIMException}.
+     */
+    SCIM_CLIENT_ERROR(INTERNAL_SERVER_ERROR.value(), "message");
 
     /** The http status to use. */
     private int httpStatus;
@@ -93,7 +97,7 @@ public enum CommonErrorCodes implements ErrorCode {
 
     /**
      * default constructor.
-     * 
+     *
      * @param httpStatus the http status to use.
      */
     CommonErrorCodes(int httpStatus) {

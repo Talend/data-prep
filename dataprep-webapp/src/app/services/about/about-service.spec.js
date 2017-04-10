@@ -39,7 +39,7 @@ describe('About Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.about'));
 
 	beforeEach(inject(($injector, RestURLs) => {
-		RestURLs.setServerUrl('');
+		RestURLs.setConfig({ serverUrl: '' });
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

@@ -18,7 +18,6 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMapping;

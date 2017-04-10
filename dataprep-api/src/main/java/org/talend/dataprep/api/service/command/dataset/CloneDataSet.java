@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -71,8 +73,8 @@ public class CloneDataSet extends GenericCommand<HttpResponse> {
             try {
                 // we transfer status code and content type
                 return new HttpResponse(httpResponse.getStatusLine().getStatusCode(), //
-                        IOUtils.toString(httpResponse.getEntity().getContent()), //
-                        httpResponse.getStatusLine().getStatusCode() == HttpStatus.BAD_REQUEST.value() ? //
+                        IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8), //
+                        httpResponse.getStatusLine().getStatusCode() == BAD_REQUEST.value() ? //
                                 APPLICATION_JSON_VALUE : TEXT_PLAIN_VALUE);
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

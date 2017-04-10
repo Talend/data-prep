@@ -35,8 +35,8 @@ describe('Settings service', () => {
 		let $httpBackend;
 
 		beforeEach(inject(($rootScope, $injector, RestURLs) => {
+			RestURLs.setConfig({ serverUrl: '' });
 			$httpBackend = $injector.get('$httpBackend');
-			RestURLs.setServerUrl('');
 		}));
 
 		it('should get remote settings and update local settings', inject(($rootScope, appSettings, RestURLs, SettingsService) => {

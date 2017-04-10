@@ -16,11 +16,11 @@
 <div class="param">
     <div ng-class="{'param-row' : columnParamCtrl.parameter.type === 'boolean'}">
 
-        <div class="param-name"
+        <label class="param-name"
              data-prep-tooltip="{{::columnParamCtrl.parameter.description}}"
              ng-if="::(columnParamCtrl.label !== 'false')">
             {{::columnParamCtrl.parameter.label}}:
-        </div>
+        </label>
         <div class="param-input" ng-switch="!!columnParamCtrl.isReadonly">
             <div ng-switch-when="true">
                 <span class="param-input-label" ng-if="columnParamCtrl.parameter.value !== ''">{{columnParamCtrl.getLabelById(columnParamCtrl.parameter.value)}}</span>

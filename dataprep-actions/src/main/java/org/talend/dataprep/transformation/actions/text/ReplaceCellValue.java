@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -122,7 +121,7 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
         final String columnId = context.getColumnId();
         final String oldValue = row.get(columnId);
         row.set(columnId, replacement);
-        LOGGER.info("{} replaced by {} in row {}, column {}", oldValue, replacement, row.getTdpId(), columnId);
+        LOGGER.debug("{} replaced by {} in row {}, column {}", oldValue, replacement, row.getTdpId(), columnId);
 
         // all done
         context.setActionStatus(ActionContext.ActionStatus.DONE);

@@ -54,11 +54,8 @@ import org.talend.dataprep.http.HttpRequestContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 
-import com.netflix.hystrix.HystrixCommand;
-
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import reactor.core.publisher.Flux;
 
 @RestController
 public class ExportAPI extends APIService {

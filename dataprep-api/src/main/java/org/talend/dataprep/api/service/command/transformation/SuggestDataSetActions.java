@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.command.Defaults.asNull;
 
 import java.io.IOException;
@@ -30,8 +31,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.command.common.ChainedCommand;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -74,7 +75,7 @@ public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadat
     private BiFunction<HttpRequestBase, HttpResponse, String> onOk() {
         return (request, response) -> {
             try {
-                return IOUtils.toString(response.getEntity().getContent());
+                return IOUtils.toString(response.getEntity().getContent(), UTF_8);
             } catch (IOException e) {
                 throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e);
             }
@@ -83,7 +84,7 @@ public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadat
 
     /**
      * Retrieve the dataset metadata and look for the possible actions.
-     * 
+     *
      * @return the dataset possible actions.
      */
     private HttpRequestBase onExecute() {

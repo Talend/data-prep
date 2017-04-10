@@ -48,7 +48,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetClone.getPayload().get(PAYLOAD_METHOD_KEY), is("clone"));
 
         final ActionSettings datasetCreate = settings.getActions().get("dataset:create");
-        assertThat(datasetCreate.getName(), is("Add Dataset"));
+        assertThat(datasetCreate.getName(), is("Add dataset"));
         assertThat(datasetCreate.getIcon(), is("talend-plus-circle"));
         assertThat(datasetCreate.getType(), is("@@dataset/CREATE"));
         assertThat(datasetCreate.getBsStyle(), is("primary"));
@@ -69,7 +69,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetFetch.getType(), is("@@dataset/DATASET_FETCH"));
 
         final ActionSettings datasetOpen = settings.getActions().get("dataset:open");
-        assertThat(datasetOpen.getName(), is("Open dataset"));
+        assertThat(datasetOpen.getName(), is("Create new preparation"));
         assertThat(datasetOpen.getIcon(), is("talend-datastore"));
         assertThat(datasetOpen.getType(), is("@@dataset/OPEN"));
 
@@ -131,13 +131,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(menuFolders.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
         assertThat(((List<String>) menuFolders.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
 
-        final ActionSettings menuPlaygroundDataset = settings.getActions().get("menu:playground:dataset");
-        assertThat(menuPlaygroundDataset.getName(), is("Create new preparation"));
-        assertThat(menuPlaygroundDataset.getIcon(), is("talend-datastore"));
-        assertThat(menuPlaygroundDataset.getType(), is("@@router/GO_DATASET"));
-        assertThat(menuPlaygroundDataset.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>) menuPlaygroundDataset.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("playground.dataset"));
-
         final ActionSettings menuPlaygroundPreparation = settings.getActions().get("menu:playground:preparation");
         assertThat(menuPlaygroundPreparation.getName(), is("Open Preparation"));
         assertThat(menuPlaygroundPreparation.getIcon(), is("talend-dataprep"));
@@ -167,11 +160,11 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final ActionDropdownSettings listDatasetPreparations = (ActionDropdownSettings) settings.getActions()
                 .get("list:dataset:preparations");
-        assertThat(listDatasetPreparations.getName(), is("Open Preparation"));
+        assertThat(listDatasetPreparations.getName(), is("Open preparation"));
         assertThat(listDatasetPreparations.getIcon(), is("talend-dataprep"));
         assertThat(listDatasetPreparations.getItems(), is("preparations"));
         assertThat(listDatasetPreparations.getDynamicAction(), is("menu:playground:preparation"));
-        assertThat(listDatasetPreparations.getStaticActions().get(0), is("menu:playground:dataset"));
+        assertThat(listDatasetPreparations.getStaticActions().iterator().next(), is("dataset:open"));
 
         final ActionSettings onboardingPreparation = settings.getActions().get("onboarding:preparation");
         assertThat(onboardingPreparation.getName(), is("Click here to discover the application"));
@@ -186,7 +179,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationCopyMove.getType(), is("@@preparation/COPY_MOVE"));
 
         final ActionSettings preparationCreate = settings.getActions().get("preparation:create");
-        assertThat(preparationCreate.getName(), is("Create preparation"));
+        assertThat(preparationCreate.getName(), is("Add preparation"));
         assertThat(preparationCreate.getIcon(), is("talend-plus-circle"));
         assertThat(preparationCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationCreate.getBsStyle(), is("primary"));
@@ -198,7 +191,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationDisplayMode.getPayload().get(PAYLOAD_METHOD_KEY), is("setPreparationsDisplayMode"));
 
         final ActionSettings preparationFolderCreate = settings.getActions().get("preparation:folder:create");
-        assertThat(preparationFolderCreate.getName(), is("Create folder"));
+        assertThat(preparationFolderCreate.getName(), is("Add folder"));
         assertThat(preparationFolderCreate.getIcon(), is("talend-folder"));
         assertThat(preparationFolderCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationFolderCreate.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleFolderCreator"));

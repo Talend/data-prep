@@ -13,12 +13,18 @@
 
 package org.talend.dataprep.encrypt;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import javax.crypto.IllegalBlockSizeException;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 public class AESEncryptionTest {
+
+    public static final String DECRYPTED_URI = "mongodb://toto:truc@dataprep.org/dataprep-db?ssl=toto&truc=machin";
+
+    public static final String ENCRYPTED_URI = "mongodb://toto:qxjQWF%2FZsuzzeLzKIop2pQ==@dataprep.org/dataprep-db?ssl=toto&truc=machin";
 
     @Test
     public void should_get_the_same_string_after_encrypt_then_decrypt() throws Exception {
@@ -30,7 +36,7 @@ public class AESEncryptionTest {
         String decrypted = AESEncryption.decrypt(encrypted);
 
         // then
-        Assert.assertEquals(src, decrypted);
+        assertEquals(src, decrypted);
     }
 
     @Test(expected = IllegalBlockSizeException.class)
@@ -43,6 +49,23 @@ public class AESEncryptionTest {
 
         // then
         Assert.fail("should not reach this point");
+    }
+
+    @Test
+    public void encryptUriPassword_shouldEncryptCredentials() throws Exception {
+        String encrypted = AESEncryption.encryptUriPassword(DECRYPTED_URI);
+
+        // then
+        assertEquals(ENCRYPTED_URI, encrypted);
+    }
+
+    @Test
+    public void decryptUriPassword_shouldDecryptCredentials() throws Exception {
+        // when
+        String decrypted = AESEncryption.decryptUriPassword(ENCRYPTED_URI);
+
+        // then
+        assertEquals(DECRYPTED_URI, decrypted);
     }
 
 }

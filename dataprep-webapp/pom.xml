@@ -1,14 +1,13 @@
 <!--
   ~ ============================================================================
+  ~ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~ This source code is available under agreement available at
+  ~ https://github.com/Talend/data-prep/blob/master/LICENSE
   ~
-  ~  This source code is available under agreement available at
-  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
-  ~
-  ~  You should have received a copy of the agreement
-  ~  along with this program; if not, write to Talend SA
-  ~  9 rue Pages 92150 Suresnes, France
+  ~ You should have received a copy of the agreement
+  ~ along with this program; if not, write to Talend SA
+  ~ 9 rue Pages 92150 Suresnes, France
   ~
   ~ ============================================================================
   -->
@@ -36,28 +35,6 @@
         <docker.user>1000</docker.user>
         <docker.path.dataprep>/data-prep</docker.path.dataprep>
     </properties>
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <configuration>
-                        <imageName>${docker.image.name}</imageName>
-                        <dockerDirectory>${basedir}/docker</dockerDirectory>
-                        <forceTags>true</forceTags>
-                        <resources>
-                            <resource>
-                                <targetPath>/build</targetPath>
-                                <directory>${basedir}/build</directory>
-                                <include>**/*</include>
-                            </resource>
-                        </resources>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
     <profiles>
         <profile>
             <id>dev</id>
@@ -335,31 +312,6 @@
             </build>
         </profile>
         <profile>
-            <id>docker</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <docker.image.name>talend/${project.name}:${project.version}</docker.image.name>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>docker-ci</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -370,19 +322,6 @@
             </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                    <goal>push</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>

@@ -814,7 +814,7 @@
     ],
     "category": "dates",
     "dynamic": false,
-    "description": "Create columns with year, month, day, hour, minute, second, etc...",
+    "description": "Create columns with year, month, day, hour, minute, second, etc.",
     "label": "Extract date parts",
     "actionScope": [],
     "docUrl": ""

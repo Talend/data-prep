@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.service;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -92,7 +93,8 @@ public class AggregationTest extends TransformationServiceBaseTest {
         applyActionFromFile(preparationId, "../aggregation/uppercase_action.json");
 
         // when
-        final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream("../aggregation/sum.json"));
+        final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream("../aggregation/sum.json"),
+                UTF_8);
         final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(null);
         parameters.setPreparationId(preparationId);
@@ -135,7 +137,7 @@ public class AggregationTest extends TransformationServiceBaseTest {
                 "text/csv");
 
         // update the actions
-        final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream(actions));
+        final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream(actions), UTF_8);
         final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(datasetId);
         parameters.setPreparationId(null);

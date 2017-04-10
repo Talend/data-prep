@@ -13,6 +13,7 @@
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
@@ -98,7 +99,7 @@ public abstract class ApiServiceTestBase extends ServiceBaseTest {
     protected String createDataset(final String file, final String name, final String type) throws IOException {
         final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
         assertNotNull(resourceAsStream);
-        final String datasetContent = IOUtils.toString(resourceAsStream);
+        final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //
                 .contentType(ContentType.JSON) //
                 .body(datasetContent) //
@@ -159,7 +160,7 @@ public abstract class ApiServiceTestBase extends ServiceBaseTest {
     }
 
     protected void applyActionFromFile(final String preparationId, final String actionFile) throws IOException {
-        final String action = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(actionFile));
+        final String action = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(actionFile), UTF_8);
         applyAction(preparationId, action);
     }
 

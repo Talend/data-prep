@@ -25,16 +25,14 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriterTest;
 
 /**
  * Unit test for the CSVWriter.
  * 
  * @see CSVWriter
  */
-public class CSVWriterTest extends BaseFormatTest {
-
-    /** The writer to test. */
-    private CSVWriter writer;
+public class CSVWriterTest extends AbstractTransformerWriterTest {
 
     /** Where the writer should... write! */
     private OutputStream outputStream;
@@ -62,14 +60,16 @@ public class CSVWriterTest extends BaseFormatTest {
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
         final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("band").type(Type.STRING).build();
         final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
 
-        final DataSetRow row = new DataSetRow(Collections.emptyMap());
-        row.set("0001", "last nite");
-        row.set("0002", "the Strokes");
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "last nite");
+        values.put("0002", "the Strokes");
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
         tabWriter.write(row);
-        tabWriter.write(new RowMetadata(columns));
+        tabWriter.write(rowMetadata);
         tabWriter.flush();
 
         // then
@@ -109,9 +109,10 @@ public class CSVWriterTest extends BaseFormatTest {
         final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("firstname").type(Type.STRING).build();
         final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
 
-        final DataSetRow row = new DataSetRow(Collections.emptyMap());
-        row.set("0001", "64a5456ac148b64524ef165");
-        row.set("0002", "Superman");
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "64a5456ac148b64524ef165");
+        values.put("0002", "Superman");
+        final DataSetRow row = new DataSetRow(new RowMetadata(columns), values);
 
         final String expectedCsv = "\"id\";\"firstname\"\n" + "\"64a5456ac148b64524ef165\";\"Superman\"\n";
 

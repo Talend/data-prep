@@ -48,6 +48,10 @@ public class StepNode extends BasicNode {
         this.lastNode = lastNode;
     }
 
+    public Node getEntryNode() {
+        return entryNode;
+    }
+
     public Step getStep() {
         return step;
     }

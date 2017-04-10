@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -11,31 +10,17 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.grants;
+package org.talend.dataprep.processor;
+
+import org.talend.dataprep.conversions.BeanConversionService;
 
 /**
- * Enum keeping track of Restricted actions.
+ * A super class for all configurations that registers conversions to {@link BeanConversionService}.
  */
-public enum CommonRestrictedActions implements RestrictedAction {
-
-    CERTIFICATION("CERTIFICATION");
-
-    /**
-     * The name of the action
-     */
-    private final String action;
-
-    /**
-     * Constructor.
-     * 
-     * @param action the specified action
-     */
-    CommonRestrictedActions(String action) {
-        this.action = action;
-    }
+public abstract class BeanConversionServiceWrapper implements Wrapper<BeanConversionService> {
 
     @Override
-    public String action() {
-        return action;
+    public Class<BeanConversionService> wrapped() {
+        return BeanConversionService.class;
     }
 }

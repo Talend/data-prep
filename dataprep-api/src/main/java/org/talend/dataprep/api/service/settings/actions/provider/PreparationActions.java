@@ -39,7 +39,7 @@ public interface PreparationActions {
 
     ActionSettings PREPARATION_CREATE = builder()
             .id("preparation:create")
-            .name("Create preparation")
+            .name("Add preparation")
             .icon("talend-plus-circle")
             .type("@@preparation/CREATE")
             .bsStyle("primary")
@@ -68,7 +68,7 @@ public interface PreparationActions {
 
     ActionSettings PREPARATION_FOLDER_CREATE = builder()
             .id("preparation:folder:create")
-            .name("Create folder")
+            .name("Add folder")
             .icon("talend-folder")
             .type("@@preparation/CREATE")
             .payload(PAYLOAD_METHOD_KEY, "toggleFolderCreator")

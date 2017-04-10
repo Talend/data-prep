@@ -118,22 +118,19 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Default onError behaviour. */
     private Function<Exception, RuntimeException> onError = Defaults.passthrough();
 
-    private HttpStatus status;//
-//
-//
-    public static final HttpStatus[] SUCCESS_STATUS = Stream.of(HttpStatus.values()) //
+    private HttpStatus status;
+
+    private static final HttpStatus[] SUCCESS_STATUS = Stream.of(HttpStatus.values()) //
             .filter(HttpStatus::is2xxSuccessful) //
             .collect(Collectors.toList()) //
-            .toArray(new HttpStatus[0]);//
-//
-//
-    public static final HttpStatus[] REDIRECT_STATUS = Stream.of(HttpStatus.values()) //
+            .toArray(new HttpStatus[0]);
+
+    private static final HttpStatus[] REDIRECT_STATUS = Stream.of(HttpStatus.values()) //
             .filter(HttpStatus::is3xxRedirection) //
             .collect(Collectors.toList()) //
-            .toArray(new HttpStatus[0]);//
-//
-//
-    public static final HttpStatus[] INFO_STATUS = Stream.of(HttpStatus.values()) //
+            .toArray(new HttpStatus[0]);
+
+    private static final HttpStatus[] INFO_STATUS = Stream.of(HttpStatus.values()) //
             .filter(HttpStatus::is1xxInformational) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
@@ -422,7 +419,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             if (req instanceof HttpEntityEnclosingRequestBase) {
                 try {
                     builder.append("load:")
-                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(), UTF_8))
+                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(),
+                                    UTF_8))
                             .append(",\n");
                 } catch (IOException e) {
                     // We ignore the field

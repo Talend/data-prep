@@ -75,6 +75,22 @@
 			animation: fadeOut 0.25s;
 		}
 
+		.radio-inline {
+			padding-left: 10px;
+
+			label {
+				padding-left: 15px;
+			}
+
+			input {
+				top: 0;
+			}
+
+			+ .radio-inline {
+				margin-left: 0;
+			}
+		}
+
 		label {
 			display: inline-flex;
 			align-items: center;

@@ -1,22 +1,22 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.*;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -63,13 +64,13 @@ public class TrimTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_trim_value() {
+    public void should_remove_whiteSpace_value() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", " the beatles ");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
@@ -83,7 +84,7 @@ public class TrimTest extends AbstractMetadataBaseTest {
         values.put("0000", "The  Beatles");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
@@ -97,11 +98,69 @@ public class TrimTest extends AbstractMetadataBaseTest {
         values.put("0000", "the beatles");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("the beatles", row.get("0000"));
+    }
+
+    @Test
+    public void should_remove_tab_value() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "\t" + " the beatles " + "\t"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
+        parameters.put(Trim.PADDING_CHAR_PARAMETER, "whitespace"); //$NON-NLS-1$
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("the beatles", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    @Test
+    public void should_remove_other_value() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", " the beatles " + '\u2028'+""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
+        parameters.put(Trim.PADDING_CHAR_PARAMETER, "whitespace"); //$NON-NLS-1$
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("the beatles", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    @Test
+    public void should_remove_custom_value() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "the beatles"); //$NON-NLS-1$ //$NON-NLS-2$ 
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column"); //$NON-NLS-1$
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000"); //$NON-NLS-1$
+        parameters.put(Trim.PADDING_CHAR_PARAMETER, Trim.CUSTOM);
+        parameters.put(Trim.CUSTOM_PADDING_CHAR_PARAMETER, "s"); //$NON-NLS-1$
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("the beatle", row.get("0000")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

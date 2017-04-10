@@ -373,18 +373,6 @@ public class DataSetAPI extends APIService {
         }
     }
 
-    @RequestMapping(value = "/api/datasets/{id}/processcertification", method = PUT, consumes = ALL_VALUE)
-    @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
-    @Timed
-    public void processCertification(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Ask certification for dataset #{}", dataSetId);
-        }
-        HystrixCommand<Void> command = getCommand(DatasetCertification.class, dataSetId);
-        command.execute();
-    }
-
     @RequestMapping(value = "/api/datasets/{id}/actions", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get suggested actions for a whole data set.", notes = "Returns the suggested actions for the given dataset in decreasing order of likeness.")
     @Timed

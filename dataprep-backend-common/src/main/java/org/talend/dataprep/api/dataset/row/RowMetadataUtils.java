@@ -62,7 +62,7 @@ public class RowMetadataUtils {
                 "a dataprep preparation", //
                 "org.talend.dataprep", //
                 false //
-        );
+                );
 
         schema.setFields(fields);
         return schema;
@@ -120,5 +120,20 @@ public class RowMetadataUtils {
             return patternFrequencies.get(0).getPattern();
         }
         return null;
+    }
+
+    /**
+     * Return the count of the most used pattern.
+     *
+     * @param column the column to work on.
+     * @return the count of the most used pattern.
+     */
+    public static long getMostUsedPatternCount(ColumnMetadata column) {
+        final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
+        if (patternFrequencies.isEmpty()) {
+            return 1;
+        }
+        patternFrequencies.sort((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()));
+        return patternFrequencies.get(0).getOccurrences();
     }
 }

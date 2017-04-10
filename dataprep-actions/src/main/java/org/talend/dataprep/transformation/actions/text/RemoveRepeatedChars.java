@@ -76,17 +76,12 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     public void compile(ActionContext context) {
         super.compile(context);
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            try {
-                Map<String, String> parameters = context.getParameters();
-                if (CUSTOM.equals(parameters.get(REMOVE_TYPE))) {//for custom repeated chart
-                    String customChars = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
-                    context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser(customChars));
-                } else {//for repeated whitespace.
-                    context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser());
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            Map<String, String> parameters = context.getParameters();
+            if (CUSTOM.equals(parameters.get(REMOVE_TYPE))) {//for custom repeated chart
+                String customChars = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
+                context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser(customChars));
+            } else {//for repeated whitespace.
+                context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser());
             }
         }
     }

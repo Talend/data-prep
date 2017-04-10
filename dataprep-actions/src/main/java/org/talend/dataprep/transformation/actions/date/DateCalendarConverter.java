@@ -12,16 +12,11 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Collections.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.time.DateTimeException;
-import java.time.chrono.AbstractChronology;
-import java.time.chrono.HijrahChronology;
-import java.time.chrono.IsoChronology;
-import java.time.chrono.JapaneseChronology;
-import java.time.chrono.MinguoChronology;
-import java.time.chrono.ThaiBuddhistChronology;
+import java.time.chrono.*;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -90,7 +85,7 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
 
     @Override
     public String getCategory() {
-        return ActionCategory.CONVERSIONS.getDisplayName();
+        return ActionCategory.DATE.getDisplayName();
     }
 
     @Override

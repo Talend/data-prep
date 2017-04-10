@@ -226,7 +226,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("hanand", row.get("0000"));
+        assertEquals("hand", row.get("0000"));
     }
 
     @Test

@@ -80,11 +80,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
                 Map<String, String> parameters = context.getParameters();
                 if (CUSTOM.equals(parameters.get(REMOVE_TYPE))) {//for custom repeated chart
                     String customChars = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
-                    char[] chars = customChars.toCharArray();
-                    if (chars.length != 1) {//API only support a char not String.
-                        throw new IllegalArgumentException("'Repeated character' only support a valid character instead of a String!");
-                    }
-                    context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser(chars[0]));
+                    context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser(customChars));
                 } else {//for repeated whitespace.
                     context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser());
                 }

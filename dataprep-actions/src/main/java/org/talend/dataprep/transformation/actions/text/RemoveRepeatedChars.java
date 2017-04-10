@@ -59,6 +59,20 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     protected static final String CUSTOM_REPEAT_CHAR_PARAMETER = "custom_repeat_chars";
 
     @Override
+    @Nonnull
+    public List<Parameter> getParameters() {
+        final List<Parameter> parameters = super.getParameters();
+        parameters.add(SelectParameter.Builder.builder()
+                .name(REMOVE_TYPE)
+                .item(WHITESPACE, WHITESPACE)
+                .item(CUSTOM, CUSTOM, new Parameter(CUSTOM_REPEAT_CHAR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY))
+                .canBeBlank(false)
+                .defaultValue(WHITESPACE)
+                .build());
+        return ActionsBundle.attachToAction(parameters, this);
+    }
+
+    @Override
     public void compile(ActionContext context) {
         super.compile(context);
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
@@ -68,7 +82,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
                     String customChars = parameters.get(CUSTOM_REPEAT_CHAR_PARAMETER);
                     char[] chars = customChars.toCharArray();
                     if (chars.length != 1) {//API only support a char not String.
-                        throw new IllegalArgumentException("'Repeated character' only support a valid character not a String!");
+                        throw new IllegalArgumentException("'Repeated character' only support a valid character instead of a String!");
                     }
                     context.get(DUPLICATE_CHAR_ERASER_KEY, p -> new DuplicateCharEraser(chars[0]));
                 } else {//for repeated whitespace.
@@ -89,25 +103,8 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
             return;
         }
         final DuplicateCharEraser duplicateCharEraser = context.get(DUPLICATE_CHAR_ERASER_KEY);
-        String cleanValue = originalValue;
-        Map<String, String> parameters = context.getParameters();
-        cleanValue = duplicateCharEraser.removeRepeatedChar(originalValue);
+        String cleanValue = duplicateCharEraser.removeRepeatedChar(originalValue);
         row.set(columnId, cleanValue);
-    }
-
-
-    @Override
-    @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(SelectParameter.Builder.builder()
-                .name(REMOVE_TYPE)
-                .item(WHITESPACE, WHITESPACE)
-                .item(CUSTOM, CUSTOM, new Parameter(CUSTOM_REPEAT_CHAR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY))
-                .canBeBlank(false)
-                .defaultValue(WHITESPACE)
-                .build());
-        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

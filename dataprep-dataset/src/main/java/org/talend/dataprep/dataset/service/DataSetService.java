@@ -276,8 +276,6 @@ public class DataSetService extends BaseDataSetService {
             @ApiParam(value = "content") InputStream content) throws IOException {
         //@formatter:on
 
-        HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
-
         final String id = UUID.randomUUID().toString();
         final Marker marker = Markers.dataset(id);
         LOG.debug(marker, "Creating...");

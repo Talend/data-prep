@@ -12,17 +12,11 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Collections.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static java.util.Collections.emptyList;
+import static org.talend.dataprep.api.type.Type.DATE;
 
 import java.time.DateTimeException;
-import java.time.chrono.AbstractChronology;
-import java.time.chrono.HijrahChronology;
-import java.time.chrono.IsoChronology;
-import java.time.chrono.JapaneseChronology;
-import java.time.chrono.MinguoChronology;
-import java.time.chrono.ThaiBuddhistChronology;
-import java.util.Collections;
+import java.time.chrono.*;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -34,21 +28,19 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter.Builder;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DateCalendarConverter.ACTION_NAME)
-public class DateCalendarConverter extends AbstractDate implements ColumnAction {
+public class DateCalendarConverter extends AbstractActionMetadata implements ColumnAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateCalendarConverter.class);
 
@@ -72,11 +64,6 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
 
     protected static final String TO_CALENDER_TYPE_PARAMETER = "to_calender_type";
 
-    protected static final String CUSTOM = "custom";
-
-    /**
-     * Keys for action context:
-     */
     private static final String FROM_DATE_PATTERNS_KEY = "from_date_patterns_key";
 
     private static final String FROM_CALENDER_TYPE_KEY = "from_calender_type_key";
@@ -93,6 +80,11 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         return ActionCategory.CONVERSIONS.getDisplayName();
     }
 
+    @Override public boolean acceptField(ColumnMetadata column) {
+        final String domain = column.getDomain().toUpperCase();
+        return DATE.equals(Type.get(column.getType())) || SemanticCategoryEnum.DATE.name().equals(domain);
+    }
+
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -101,45 +93,21 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         parameters.add(Builder.builder()
                 .name(FROM_CALENDER_TYPE_PARAMETER)
                 .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString())
-                .item(ChronologyUnit.Hijri.name(), ChronologyUnit.Hijri.toString())
-                .item(ChronologyUnit.Japanese.name(), ChronologyUnit.Japanese.toString())
-                .item(ChronologyUnit.Minguo.name(), ChronologyUnit.Minguo.toString())
-                .item(ChronologyUnit.ThaiBuddhist.name(), ChronologyUnit.ThaiBuddhist.toString())
+                .item(ChronologyUnit.HIJRI.name(), ChronologyUnit.HIJRI.toString())
+                .item(ChronologyUnit.JAPANESE.name(), ChronologyUnit.JAPANESE.toString())
+                .item(ChronologyUnit.MINGUO.name(), ChronologyUnit.MINGUO.toString())
+                .item(ChronologyUnit.THAI_BUDDHIST.name(), ChronologyUnit.THAI_BUDDHIST.toString())
                 .defaultValue(ChronologyUnit.ISO.name())
-                .build());
-
-        parameters.add(Builder.builder()
-                .name(FROM_MODE)
-                .item(FROM_MODE_BEST_GUESS, FROM_MODE_BEST_GUESS)
-                .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, new Parameter(FROM_CUSTOM_PATTERN, ParameterType.STRING, EMPTY, false, false))
-                .defaultValue(FROM_MODE_BEST_GUESS)
                 .build());
 
         parameters.add(Builder.builder()
                 .name(TO_CALENDER_TYPE_PARAMETER)
                 .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString())
-                .item(ChronologyUnit.Hijri.name(), ChronologyUnit.Hijri.toString())
-                .item(ChronologyUnit.Japanese.name(), ChronologyUnit.Japanese.toString())
-                .item(ChronologyUnit.Minguo.name(), ChronologyUnit.Minguo.toString())
-                .item(ChronologyUnit.ThaiBuddhist.name(), ChronologyUnit.ThaiBuddhist.toString())
-                .defaultValue(ChronologyUnit.Minguo.name())
-                .build());
-
-        parameters.add(Builder.builder()
-                .name(NEW_PATTERN)
-                .item("yyyy-MM-dd", "datePatternISO")
-                .item("M/d/yy",     "datePatternUS")
-                .item("dd/MM/yy",   "datePatternFR")
-                .item("dd.MM.yy",   "datePatternDE")
-                .item("dd/MM/yy",   "datePatternGB")
-                .item("yy/MM/dd",   "datePatternJP")
-                .item("yyyy/MM/dd", "datePattern1")
-                .item("dd/MM/yyyy", "datePattern2")
-                .item("MM/dd/yyyy", "datePattern3")
-                .item("yyyy MM dd", "datePattern4")
-                .item("yyyyMMdd",   "datePattern5")
-                .item(CUSTOM, CUSTOM_PATTERN_PARAMETER)
-                .defaultValue("yyyy-MM-dd")
+                .item(ChronologyUnit.HIJRI.name(), ChronologyUnit.HIJRI.toString())
+                .item(ChronologyUnit.JAPANESE.name(), ChronologyUnit.JAPANESE.toString())
+                .item(ChronologyUnit.MINGUO.name(), ChronologyUnit.MINGUO.toString())
+                .item(ChronologyUnit.THAI_BUDDHIST.name(), ChronologyUnit.THAI_BUDDHIST.toString())
+                .defaultValue(ChronologyUnit.MINGUO.name())
                 .build());
         //@formatter:on
 
@@ -162,24 +130,12 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
 
             // register the new pattern in column stats as most used pattern, to be able to process date action more
             // efficiently later
-            final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final String columnId = actionContext.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
-            final Statistics statistics = column.getStatistics();
 
             actionContext.get(FROM_DATE_PATTERNS_KEY, p -> compileFromDatePattern(actionContext));
 
-            final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
-                    .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
-                    .findFirst().orElseGet(() -> {
-                        final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
-                        statistics.getPatternFrequencies().add(newPatternFreq);
-                        return newPatternFreq;
-                    });
-
-            long mostUsedPatternCount = RowMetadataUtils.getMostUsedPatternCount(column);
-            newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
             rowMetadata.update(columnId, column);
         }
     }
@@ -188,16 +144,9 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         if (actionContext.getParameters() == null) {
             return emptyList();
         }
-        switch (actionContext.getParameters().get(FROM_MODE)) {
-        case FROM_MODE_BEST_GUESS:
-            final RowMetadata rowMetadata = actionContext.getRowMetadata();
-            final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
-            return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
-        case FROM_MODE_CUSTOM:
-            return Collections.singletonList(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
-        default:
-            return emptyList();
-        }
+        final RowMetadata rowMetadata = actionContext.getRowMetadata();
+        final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
+        return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
     }
 
     /**
@@ -206,7 +155,6 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
-        final DatePattern newPattern = context.get(COMPILED_DATE_PATTERN);
 
         // Change the date calender
         final String value = row.get(columnId);
@@ -217,9 +165,10 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         try {
             String fromPattern = DateParser.parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
                     context.get(FROM_CALENDER_TYPE_KEY));
+
             if (fromPattern != null) {
                 row.set(columnId,
-                        new org.talend.dataquality.converters.DateCalendarConverter(fromPattern, newPattern.getPattern(), context
+                        new org.talend.dataquality.converters.DateCalendarConverter(fromPattern, fromPattern, context
                                 .get(FROM_CALENDER_TYPE_KEY), context.get(TO_CALENDER_TYPE_KEY)).convert(value));
             }
         } catch (DateTimeException e) {
@@ -233,19 +182,23 @@ public class DateCalendarConverter extends AbstractDate implements ColumnAction 
         return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
     }
 
+    void compileDatePattern(ActionContext actionContext) {
+        // no op, just to override the default behaviour
+    }
+
     /**
      * enum Chronology.
      */
     public enum ChronologyUnit {
         ISO("IsoChronology", IsoChronology.INSTANCE),
-        Hijri("HijrahChronology", HijrahChronology.INSTANCE),
-        Japanese("JapaneseChronology", JapaneseChronology.INSTANCE),
-        Minguo("MinguoChronology", MinguoChronology.INSTANCE),
-        ThaiBuddhist("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE);
+        HIJRI("HijrahChronology", HijrahChronology.INSTANCE),
+        JAPANESE("JapaneseChronology", JapaneseChronology.INSTANCE),
+        MINGUO("MinguoChronology", MinguoChronology.INSTANCE),
+        THAI_BUDDHIST("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE);
 
         private final String displayName;
 
-        private final AbstractChronology chronologyType;
+        private final transient AbstractChronology chronologyType;
 
         ChronologyUnit(String displayName, AbstractChronology calendarType) {
             this.displayName = displayName;

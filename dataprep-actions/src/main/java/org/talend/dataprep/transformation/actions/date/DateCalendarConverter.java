@@ -16,9 +16,14 @@ import static java.util.Collections.emptyList;
 import static org.talend.dataprep.api.type.Type.DATE;
 
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.chrono.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalAccessor;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,10 +61,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     protected static final String FROM_MODE_BEST_GUESS = "unknown_separators";
 
-    protected static final String FROM_MODE_CUSTOM = "from_custom_mode";
-
-    protected static final String FROM_CUSTOM_PATTERN = "from_custom_pattern";
-
     protected static final String FROM_CALENDER_TYPE_PARAMETER = "from_calender_type";
 
     protected static final String TO_CALENDER_TYPE_PARAMETER = "to_calender_type";
@@ -69,6 +70,10 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     private static final String FROM_CALENDER_TYPE_KEY = "from_calender_type_key";
 
     private static final String TO_CALENDER_TYPE_KEY = "to_calender_type_key";
+
+    private static final String FROM_LOCALE_KEY = "from_locale_key";
+
+    private static final String TO_LOCALE_KEY = "to_locale_key";
 
     @Override
     public String getName() {
@@ -80,7 +85,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         return ActionCategory.CONVERSIONS.getDisplayName();
     }
 
-    @Override public boolean acceptField(ColumnMetadata column) {
+    @Override
+    public boolean acceptField(ColumnMetadata column) {
         final String domain = column.getDomain().toUpperCase();
         return DATE.equals(Type.get(column.getType())) || SemanticCategoryEnum.DATE.name().equals(domain);
     }
@@ -119,12 +125,19 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
 
-            AbstractChronology fromCalenderType = ChronologyUnit.valueOf(
-                    actionContext.getParameters().get(FROM_CALENDER_TYPE_PARAMETER)).getCalendarType();
-            AbstractChronology toCalenderType = ChronologyUnit.valueOf(
-                    actionContext.getParameters().get(TO_CALENDER_TYPE_PARAMETER)).getCalendarType();
+            AbstractChronology fromCalenderType = ChronologyUnit
+                    .valueOf(actionContext.getParameters().get(FROM_CALENDER_TYPE_PARAMETER)).getCalendarType();
+            AbstractChronology toCalenderType = ChronologyUnit
+                    .valueOf(actionContext.getParameters().get(TO_CALENDER_TYPE_PARAMETER)).getCalendarType();
+            Locale fromLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(FROM_CALENDER_TYPE_PARAMETER))
+                    .getDefaultLocale();
+            Locale toLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(TO_CALENDER_TYPE_PARAMETER))
+                    .getDefaultLocale();
+
             actionContext.get(FROM_CALENDER_TYPE_KEY, p -> fromCalenderType);
             actionContext.get(TO_CALENDER_TYPE_KEY, p -> toCalenderType);
+            actionContext.get(FROM_LOCALE_KEY, p -> fromLocale);
+            actionContext.get(TO_LOCALE_KEY, p -> toLocale);
 
             compileDatePattern(actionContext);
 
@@ -163,13 +176,18 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
 
         try {
-            String fromPattern = DateParser.parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
+            String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
                     context.get(FROM_CALENDER_TYPE_KEY));
 
             if (fromPattern != null) {
                 row.set(columnId,
-                        new org.talend.dataquality.converters.DateCalendarConverter(fromPattern, fromPattern, context
-                                .get(FROM_CALENDER_TYPE_KEY), context.get(TO_CALENDER_TYPE_KEY)).convert(value));
+                        new org.talend.dataquality.converters.DateCalendarConverter(
+                                fromPattern,
+                                fromPattern,
+                                (Chronology)context.get(FROM_CALENDER_TYPE_KEY),
+                                (Chronology)context.get(TO_CALENDER_TYPE_KEY),
+                                (Locale)context.get(FROM_LOCALE_KEY),
+                                (Locale)context.get(TO_LOCALE_KEY)).convert(value));
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
@@ -187,22 +205,56 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     }
 
     /**
+     * Parse the date from the given patterns and chronology.
+     *
+     * @param value the text to parse.
+     * @param patterns the patterns to use.
+     * @param chronology
+     * @return the parsed date pattern
+     */
+    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology) {
+
+        // take care of the null value
+        if (value == null) {
+            throw new DateTimeException("cannot parse null"); //$NON-NLS-1$
+        }
+
+        for (DatePattern pattern : patterns) {
+            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseLenient().appendPattern(pattern.getPattern())
+                    .toFormatter().withChronology(chronology).withLocale(Locale.US);
+
+            TemporalAccessor temporal = formatter.parse(value);
+            ChronoLocalDate cDate = chronology.date(temporal);
+            try {
+                LocalDate.from(cDate);
+                return pattern.getPattern();
+            } catch (DateTimeException e) {
+                LOGGER.trace("Unable to parse date '{}' using LocalDate.", value, e);
+            }
+        }
+        throw new DateTimeException("'" + value + "' does not match any known pattern");
+    }
+
+    /**
      * enum Chronology.
      */
     public enum ChronologyUnit {
-        ISO("IsoChronology", IsoChronology.INSTANCE),
-        HIJRI("HijrahChronology", HijrahChronology.INSTANCE),
-        JAPANESE("JapaneseChronology", JapaneseChronology.INSTANCE),
-        MINGUO("MinguoChronology", MinguoChronology.INSTANCE),
-        THAI_BUDDHIST("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE);
+        ISO("IsoChronology", IsoChronology.INSTANCE, Locale.US),
+        HIJRI("HijrahChronology", HijrahChronology.INSTANCE, new Locale("ar")),
+        JAPANESE("JapaneseChronology", JapaneseChronology.INSTANCE, Locale.JAPANESE),
+        MINGUO("MinguoChronology", MinguoChronology.INSTANCE, Locale.CHINESE),
+        THAI_BUDDHIST("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE, new Locale("th"));
 
         private final String displayName;
 
         private final transient AbstractChronology chronologyType;
 
-        ChronologyUnit(String displayName, AbstractChronology calendarType) {
+        private final Locale defaultLocale;
+
+        ChronologyUnit(String displayName, AbstractChronology calendarType, Locale defaultLocale) {
             this.displayName = displayName;
             this.chronologyType = calendarType;
+            this.defaultLocale = defaultLocale;
         }
 
         @Override
@@ -212,6 +264,10 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         public AbstractChronology getCalendarType() {
             return chronologyType;
+        }
+
+        public Locale getDefaultLocale() {
+            return defaultLocale;
         }
     }
 

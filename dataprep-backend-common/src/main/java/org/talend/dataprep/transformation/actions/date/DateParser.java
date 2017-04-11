@@ -13,24 +13,15 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.chrono.AbstractChronology;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -171,37 +162,6 @@ public class DateParser {
                     LOGGER.trace("Unable to parse date '{}' using LocalDate.", value, e2);
                     // nothing to do here, just try the next formatter
                 }
-            }
-        }
-        throw new DateTimeException("'" + value + "' does not match any known pattern");
-    }
-
-    /**
-     * Parse the date from the given patterns and chronology.
-     *
-     * @param value the text to parse.
-     * @param patterns the patterns to use.
-     * @param chronology
-     * @return the parsed date pattern
-     */
-    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology) {
-
-        // take care of the null value
-        if (value == null) {
-            throw new DateTimeException("cannot parse null"); //$NON-NLS-1$
-        }
-
-        for (DatePattern pattern : patterns) {
-            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseLenient().appendPattern(pattern.getPattern())
-                    .toFormatter().withChronology(chronology);
-
-            TemporalAccessor temporal = formatter.parse(value);
-            ChronoLocalDate cDate = chronology.date(temporal);
-            try {
-                LocalDate.from(cDate);
-                return pattern.getPattern();
-            } catch (DateTimeException e) {
-                LOGGER.trace("Unable to parse date '{}' using LocalDate.", value, e);
             }
         }
         throw new DateTimeException("'" + value + "' does not match any known pattern");

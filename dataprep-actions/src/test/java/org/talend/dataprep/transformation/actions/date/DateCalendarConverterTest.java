@@ -19,10 +19,7 @@ import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTes
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
@@ -132,6 +129,14 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 DateCalendarConverter.ChronologyUnit.THAI_BUDDHIST);
         testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, IsoStr2,
                 DateCalendarConverter.ChronologyUnit.ISO);
+    }
+
+    @Test
+    public void testConversion_month() {
+        testConversion("01/09/2015", DateCalendarConverter.ChronologyUnit.ISO, "dd/MM/yyyy", "17/11/1436",
+                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion("01/Sep/2015", DateCalendarConverter.ChronologyUnit.ISO, "dd/MMM/yyyy", "17/ذو القعدة/1436",
+                DateCalendarConverter.ChronologyUnit.HIJRI);
     }
 
     @Test

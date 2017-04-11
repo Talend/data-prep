@@ -13,14 +13,10 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.talend.daikon.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.daikon.exception.error.ErrorCode;
 
 /**
  * Representation of an exception for the APIs.
@@ -36,25 +32,6 @@ public class TdpExceptionDto {
     private Map<String, Object> context;
 
     private TdpExceptionDto cause;
-
-    /**
-     * Creates the DTO based on a {@link TDPException}. It handles the conversion code that would be serialization code.
-     *
-     * @param internal the internal form of {@link TDPException}.
-     * @return the {@link TdpExceptionDto} ready to be serialized to external products
-     */
-    public static TdpExceptionDto from(TalendRuntimeException internal) {
-        ErrorCode errorCode = internal.getCode();
-        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
-        String message = internal.getMessage();
-        String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
-        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? from((TDPException) internal.getCause()) : null;
-        Map<String, Object> context = new HashMap<>();
-        for (Entry<String, Object> contextEntry : internal.getContext().entries()) {
-            context.put(contextEntry.getKey(), contextEntry.getValue());
-        }
-        return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
-    }
 
     public TDPException toTdpException(HttpStatus httpStatus) {
         String completeErrorCode = getCode();

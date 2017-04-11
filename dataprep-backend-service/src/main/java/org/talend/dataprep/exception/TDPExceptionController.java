@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.conversions.BeanConversionService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,9 @@ public class TDPExceptionController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private BeanConversionService conversionService;
+
     /**
      * Send the TDPException into the http response.
      *
@@ -52,7 +56,8 @@ public class TDPExceptionController {
         }
         HttpHeaders httpStatus = new HttpHeaders();
         httpStatus.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(TdpExceptionDto.from(e)), httpStatus, HttpStatus.valueOf(e.getCode().getHttpStatus()));
+        TdpExceptionDto ExceptionDto = conversionService.convert(e, TdpExceptionDto.class);
+        return new ResponseEntity<>(objectMapper.writeValueAsString(ExceptionDto), httpStatus, HttpStatus.valueOf(e.getCode().getHttpStatus()));
     }
 
 }

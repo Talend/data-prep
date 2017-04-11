@@ -1,6 +1,5 @@
 // ============================================================================
-//
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -20,6 +19,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.FORBID_DISTRIBUTED;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
 import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.NEW_VALUE_PARAMETER;
@@ -27,6 +27,7 @@ import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.O
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,10 @@ import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.FlagNames;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -168,6 +172,24 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_tag_invalid_value() {
+        // given
+        final DataSetRow row = getDataSetRow(1L, "True");
+        final ColumnMetadata columnMetadata = row.getRowMetadata().getColumns().get(0);
+        columnMetadata.setType(Type.BOOLEAN.getName()); // Column is a boolean
+        columnMetadata.setTypeForced(true);
+        final Map<String, String> parameters = getParameters(1L, "True", "NotABoolean");
+
+        // when
+        final AnalyzerService analyzerService = new AnalyzerService();
+        ActionTestWorkbench.test(Collections.singleton(row), analyzerService, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertThat(row.get("0000"), is("NotABoolean"));
+        assertThat(row.getInternalValues().get(FlagNames.TDP_INVALID), is(",0000"));
+    }
+
+    @Test
     public void should_accept_string_column() {
         // given
         final ColumnMetadata column = ActionMetadataTestUtils.getColumn(STRING);
@@ -177,8 +199,9 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, action.getBehavior().size());
+        assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(FORBID_DISTRIBUTED));
+        assertTrue(action.getBehavior().contains(VALUES_COLUMN));
     }
 
     private Map<String, String> getParameters(Long rowId, String originalValue, String replacement) {

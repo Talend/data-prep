@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -96,6 +95,9 @@ public class ActionTestWorkbench {
                 final DataSetRow next = input.next();
                 next.values().clear();
                 next.values().putAll(row.values());
+                for (Map.Entry<String, String> entry : row.getInternalValues().entrySet()) {
+                    next.set(entry.getKey(), entry.getValue());
+                }
             }
             if (!row.isDeleted() || this.metadata == null) {
                 this.metadata = metadata;

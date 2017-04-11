@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,12 +36,12 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public class GenericCommandTestService {
 
-    @RequestMapping(value = "/command/test/success", method = RequestMethod.GET)
+    @RequestMapping(value = "/command/test/success", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String success() throws IOException {
         return "success";
     }
 
-    @RequestMapping(value = "/command/test/authentication/token", method = RequestMethod.GET)
+    @RequestMapping(value = "/command/test/authentication/token", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String testToken(@RequestHeader(value= AUTHORIZATION) String token) throws IOException {
         if (StringUtils.isBlank(token)) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION);
@@ -48,18 +49,18 @@ public class GenericCommandTestService {
         return token;
     }
 
-    @RequestMapping(value = "/command/test/success_with_unknown", method = RequestMethod.GET)
+    @RequestMapping(value = "/command/test/success_with_unknown", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String success_with_unknown() throws IOException {
         HttpResponseContext.status(HttpStatus.ACCEPTED);
         return "success";
     }
 
-    @RequestMapping(value = "/command/test/fail_with_400", method = RequestMethod.GET)
+    @RequestMapping(value = "/command/test/fail_with_400", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String fail_with_400() throws IOException {
         throw new TDPException(BaseErrorCodes.MISSING_ACTION_SCOPE);
     }
 
-    @RequestMapping(value = "/command/test/fail_with_500", method = RequestMethod.GET)
+    @RequestMapping(value = "/command/test/fail_with_500", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String fail_with_500() throws IOException {
         throw new TDPException(CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON);
     }

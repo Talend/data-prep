@@ -14,9 +14,6 @@ package org.talend.dataprep.command;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.MediaType.ALL_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -195,10 +192,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         if (StringUtils.isNotBlank(authenticationToken)) {
             request.addHeader(AUTHORIZATION, authenticationToken);
         }
-
-        // Asks HTTP APIs to return JSON
-        request.addHeader(ACCEPT, APPLICATION_JSON_UTF8_VALUE);
-        request.addHeader(ACCEPT, ALL_VALUE);
 
         final HttpResponse response;
         try {

@@ -12,7 +12,8 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.dataprep.command.CommandHelper.*;
 
@@ -75,8 +76,8 @@ public class DataSetAPI extends APIService {
      * @param dataSetContent the dataset content from the http request body.
      * @return The dataset id.
      */
-    @RequestMapping(value = "/api/datasets", method = POST)
-    @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
+    @RequestMapping(value = "/api/datasets", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Create a data set", produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     public Callable<String> create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
@@ -95,8 +96,8 @@ public class DataSetAPI extends APIService {
         };
     }
 
-    @RequestMapping(value = "/api/datasets/{id}", method = PUT)
-    @ApiOperation(value = "Update a data set by id.", //
+    @RequestMapping(value = "/api/datasets/{id}", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Update a data set by id.", produces = TEXT_PLAIN_VALUE, //
             notes = "Create or update a data set based on content provided in PUT body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     public Callable<String> createOrUpdateById(
@@ -114,8 +115,8 @@ public class DataSetAPI extends APIService {
         };
     }
 
-    @RequestMapping(value = "/api/datasets/{id}/copy", method = POST)
-    @ApiOperation(value = "Copy the dataset.", consumes = TEXT_PLAIN_VALUE,
+    @RequestMapping(value = "/api/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy the dataset.", produces = TEXT_PLAIN_VALUE,
             notes = "Copy the dataset, returns the id of the copied created data set.")
     @Timed
     public Callable<String> copy(
@@ -148,8 +149,8 @@ public class DataSetAPI extends APIService {
         LOG.debug("Dataset creation or update for #{} done.", id);
     }
 
-    @RequestMapping(value = "/api/datasets/{id}", method = POST, consumes = ALL_VALUE)
-    @ApiOperation(value = "Update a dataset.", consumes = TEXT_PLAIN_VALUE, //
+    @RequestMapping(value = "/api/datasets/{id}", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Update a dataset.", produces = TEXT_PLAIN_VALUE, //
             notes = "Update a data set based on content provided in POST body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
     @Timed
     public Callable<String> update(@ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
@@ -389,8 +390,8 @@ public class DataSetAPI extends APIService {
         return toStreaming(getLookupActions);
     }
 
-    @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST)
-    @ApiOperation(value = "Set or Unset the dataset as favorite for the current user.", consumes = TEXT_PLAIN_VALUE, //
+    @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Set or Unset the dataset as favorite for the current user.", produces = TEXT_PLAIN_VALUE, //
             notes = "Specify if a dataset is or is not a favorite for the current user.")
     @Timed
     public Callable<String> favorite(

@@ -264,8 +264,8 @@ public class DataSetService extends BaseDataSetService {
      * @see DataSetService#get(boolean, boolean, String)
      */
     //@formatter:off
-    @RequestMapping(value = "/datasets", method = POST)
-    @ApiOperation(value = "Create a data set", notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
+    @RequestMapping(value = "/datasets", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Create a data set", produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     @VolumeMetered
     public String create(
@@ -444,8 +444,8 @@ public class DataSetService extends BaseDataSetService {
      * @param copyName the name of the copy
      * @return The new data id.
      */
-    @RequestMapping(value = "/datasets/{id}/copy", method = POST)
-    @ApiOperation(value = "Copy a data set", notes = "Copy a new data set based on the given id. Returns the id of the newly created data set.")
+    @RequestMapping(value = "/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy a data set", produces = TEXT_PLAIN_VALUE, notes = "Copy a new data set based on the given id. Returns the id of the newly created data set.")
     @Timed
     public String copy(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
             @ApiParam(value = "The name of the cloned dataset.") @RequestParam(required = false) String copyName)

@@ -13,6 +13,7 @@
 package org.talend.dataprep.preparation.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class PreparationController {
      * @param folderId      where to store the preparation.
      * @return the created preparation id.
      */
-    @RequestMapping(value = "/preparations", method = POST, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations", method = POST, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the created preparation.")
     @Timed
     public String create(@ApiParam("preparation") @RequestBody final Preparation preparation,
@@ -151,8 +152,8 @@ public class PreparationController {
      * @param destination the folder path where to copy the preparation, if empty, the copy is in the same folder.
      * @return The new preparation id.
      */
-    @RequestMapping(value = "/preparations/{id}/copy", method = POST)
-    @ApiOperation(value = "Copy a preparation", notes = "Copy the preparation to the new name / folder and returns the new id.")
+    @RequestMapping(value = "/preparations/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy a preparation", produces = TEXT_PLAIN_VALUE, notes = "Copy the preparation to the new name / folder and returns the new id.")
     @Timed
     public String copy(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to copy") String preparationId,
@@ -199,7 +200,7 @@ public class PreparationController {
      * @param preparation the updated preparation.
      * @return the updated preparation id.
      */
-    @RequestMapping(value = "/preparations/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}", method = PUT, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the updated preparation.")
     @Timed
     public String update(@ApiParam("id") @PathVariable("id") String id,
@@ -214,7 +215,7 @@ public class PreparationController {
      * @param steps the steps to update.
      * @return the updated preparation id.
      */
-    @RequestMapping(value = "/preparations/{preparationId}/steps", method = PUT, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{preparationId}/steps", method = PUT, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
     @Timed
     public String updateStepMetadata(@ApiParam("preparationId") @PathVariable("preparationId") String preparationId,
@@ -394,7 +395,7 @@ public class PreparationController {
         preparationService.moveStep(preparationId, stepId, parentStepId);
     }
 
-    @RequestMapping(value = "/preparations/{id}/actions", method = POST, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/actions", method = POST)
     @ApiOperation(value = "Adds an action at the end of preparation.",
                   notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed

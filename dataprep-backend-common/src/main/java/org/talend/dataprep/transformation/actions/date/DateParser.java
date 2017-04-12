@@ -186,7 +186,7 @@ public class DateParser {
                         LOGGER.debug("Unable to parse pattern '{}'", patternFreqItem.getPattern(), e);
                         return null;
                     }
-                }).filter(datePattern -> datePattern != null) // remove non valid date patterns
+                }).filter(Objects::nonNull) // remove non valid date patterns
                 .sorted().collect(toList());
     }
 }

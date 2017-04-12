@@ -177,7 +177,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         try {
             String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
-                    context.get(FROM_CALENDER_TYPE_KEY));
+                    context.get(FROM_CALENDER_TYPE_KEY), (Locale)context.get(FROM_LOCALE_KEY));
 
             if (fromPattern != null) {
                 row.set(columnId,
@@ -212,7 +212,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
      * @param chronology
      * @return the parsed date pattern
      */
-    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology) {
+    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology, Locale locale) {
 
         // take care of the null value
         if (value == null) {
@@ -221,7 +221,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         for (DatePattern pattern : patterns) {
             final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseLenient().appendPattern(pattern.getPattern())
-                    .toFormatter().withChronology(chronology).withLocale(Locale.US);
+                    .toFormatter().withChronology(chronology).withLocale(locale);
 
             TemporalAccessor temporal = formatter.parse(value);
             ChronoLocalDate cDate = chronology.date(temporal);

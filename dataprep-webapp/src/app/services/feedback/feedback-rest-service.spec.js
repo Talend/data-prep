@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import settings from '../../../mocks/Settings.mock';
+
 describe('Feedback Rest Service', function () {
 	'use strict';
 
@@ -19,7 +21,7 @@ describe('Feedback Rest Service', function () {
 	beforeEach(angular.mock.module('data-prep.services.feedback'));
 
 	beforeEach(inject(function ($rootScope, $injector, RestURLs) {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

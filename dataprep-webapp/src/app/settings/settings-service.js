@@ -32,30 +32,30 @@ export function SettingsService($http, RestURLs) {
 		this.clearSettings();
 
 		// FIXME [NC]: MOCK !
-		settings.uris = {
-			logout: '/logout',
-			apiUser: '/api/user',
-			apiShare: '/api/share',
-			groups: '/groups',
-			users: '/users',
-			apiExportAsync: '/api/export/async',
-			api: '/api',
-			apiAggregate: '/api/aggregate',
-			apiDatasets: '/api/datasets',
-			apiExport: '/api/export',
-			apiFolders: '/api/folders',
-			apiMail: '/api/mail',
-			apiPreparations: '/api/preparations',
-			apiPreparationsPreview: '/api/preparations/preview',
-			apiSearch: '/api/search',
-			apiSettings: '/api/settings',
-			apiTcomp: '/api/tcomp',
-			apiTransform: '/api/transform',
-			apiTypes: '/api/types',
-			apiUpgradeCheck: '/api/upgrade/check',
-			apiVersion: '/api/version',
-			logoutRedirect: 'http://localhost:9080/oidc/idp/logout?client_id=J3Wqyvlzgw0ySg&post_logout_redirect_uri=http://localhost:3000/',
-		};
+		// settings.uris = {
+		// 	logout: '/logout',
+		// 	apiUser: '/api/user',
+		// 	apiShare: '/api/share',
+		// 	groups: '/groups',
+		// 	users: '/users',
+		// 	apiExportAsync: '/api/export/async',
+		// 	api: '/api',
+		// 	apiAggregate: '/api/aggregate',
+		// 	apiDatasets: '/api/datasets',
+		// 	apiExport: '/api/export',
+		// 	apiFolders: '/api/folders',
+		// 	apiMail: '/api/mail',
+		// 	apiPreparations: '/api/preparations',
+		// 	apiPreparationsPreview: '/api/preparations/preview',
+		// 	apiSearch: '/api/search',
+		// 	apiSettings: '/api/settings',
+		// 	apiTcomp: '/api/tcomp',
+		// 	apiTransform: '/api/transform',
+		// 	apiTypes: '/api/types',
+		// 	apiUpgradeCheck: '/api/upgrade/check',
+		// 	apiVersion: '/api/version',
+		// 	logoutRedirect: 'http://localhost:9080/oidc/idp/logout?client_id=J3Wqyvlzgw0ySg&post_logout_redirect_uri=http://localhost:3000/',
+		// };
 
 		Object.assign(appSettings, settings);
 	}

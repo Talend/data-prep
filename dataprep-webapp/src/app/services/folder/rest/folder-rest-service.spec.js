@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+ import settings from '../../../../mocks/Settings.mock';
+
 describe('Folder Rest Service', () => {
 	'use strict';
 
@@ -19,7 +21,7 @@ describe('Folder Rest Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.folder'));
 
 	beforeEach(inject(($rootScope, $injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

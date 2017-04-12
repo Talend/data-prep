@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import settings from '../../../mocks/Settings.mock';
+
 describe('About Service', () => {
 	let $httpBackend;
 	const buildDetails = [
@@ -39,7 +41,7 @@ describe('About Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.about'));
 
 	beforeEach(inject(($injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

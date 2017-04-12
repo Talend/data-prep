@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import settings from '../../../../../mocks/Settings.mock';
+
 describe('Search Inventory Rest Service', () => {
 
 	let $httpBackend;
@@ -18,7 +20,7 @@ describe('Search Inventory Rest Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.search.inventory'));
 
 	beforeEach(inject(($injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

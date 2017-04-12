@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 /**
@@ -42,6 +43,12 @@ public class AppSettingsService {
     @Autowired(required = false)
     private AppSettingsConfigurer<ViewSettings>[] viewsConfigurers;
 
+    @Autowired
+    private AppSettingsProvider<UriSettings>[] urisProviders;
+
+    @Autowired(required = false)
+    private AppSettingsConfigurer<UriSettings>[] urisConfigurers;
+
     /**
      * Generate the app settings
      */
@@ -55,6 +62,10 @@ public class AppSettingsService {
         // populate appSettings views dictionary (key: viewId, value: view)
         getSettingsStream(viewsProviders, viewsConfigurers) //
                 .forEach(view -> appSettings.getViews().put(view.getId(), view));
+
+        // populate appSettings uris (key: viewId, value: view)
+        getSettingsStream(urisProviders, urisConfigurers) //
+                .forEach(uri -> appSettings.getUris().put(uri.getName(), uri));
 
         return appSettings;
     }

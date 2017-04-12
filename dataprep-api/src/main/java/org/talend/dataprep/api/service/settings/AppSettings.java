@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 /**
@@ -35,11 +36,23 @@ public class AppSettings {
      */
     private final Map<String, ActionSettings> actions = new HashMap<>();
 
+    /**
+     * The actions settings dictionary
+     */
+    private final Map<String, UriSettings> uris = new HashMap<>();
+
+    /**
+     * Getters
+     */
     public Map<String, ViewSettings> getViews() {
         return views;
     }
 
     public Map<String, ActionSettings> getActions() {
         return actions;
+    }
+
+    public Map<String, UriSettings> getUris() {
+        return uris;
     }
 }

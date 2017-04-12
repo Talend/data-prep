@@ -19,6 +19,7 @@ import static java.util.stream.StreamSupport.stream;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -145,11 +146,26 @@ public class TDPException extends TalendRuntimeException {
     public void writeTo(Writer writer) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(writer, TdpExceptionDto.from(this));
+            objectMapper.writeValue(writer, toExceptionDto(this));
             writer.flush();
         } catch (IOException e) {
             log.error("Unable to write exception to " + writer + ".", e);
         }
+    }
+
+    // Needed to keep the compatibility with the deprecated writeTo(Writer) method.
+    // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
+    private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
+        ErrorCode errorCode = internal.getCode();
+        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
+        String message = internal.getMessage();
+        String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
+        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause()) : null;
+        Map<String, Object> context = new HashMap<>();
+        for (Map.Entry<String, Object> contextEntry : internal.getContext().entries()) {
+            context.put(contextEntry.getKey(), contextEntry.getValue());
+        }
+        return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
     }
 
 }

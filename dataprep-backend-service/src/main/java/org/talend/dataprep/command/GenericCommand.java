@@ -43,8 +43,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -104,7 +107,11 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Value("${preparation.service.url:}")
     protected String preparationServiceUrl;
 
+    @Autowired
+    private BeanConversionService conversionService;
+
     private String authenticationToken;
+
     private final Map<String, String> headers = new HashMap<>();
 
     private Supplier<HttpRequestBase> httpCall;
@@ -373,7 +380,11 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 }
 
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
-                final TDPException cause = exceptionDto.toTdpException(HttpStatus.valueOf(res.getStatusLine().getStatusCode()));
+                TDPException cause = conversionService.convert(exceptionDto, TDPException.class);
+                ErrorCode code = cause.getCode();
+                if (code instanceof ErrorCodeDto) {
+                    ((ErrorCodeDto) code).setHttpStatus(statusCode);
+                }
                 throw onError.apply(cause);
             } catch (JsonMappingException e) {
                 LOGGER.debug("Cannot parse response content as JSON.", e);

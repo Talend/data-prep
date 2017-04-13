@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -45,7 +44,6 @@ import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
-import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -58,14 +56,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class DataSetAPI extends APIService {
-
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
-        // URLs are cleaner in lowercase.
-        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
-        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
-    }
 
     /**
      * Create a dataset from request body content.

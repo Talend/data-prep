@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -82,7 +81,6 @@ import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
-import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.dataquality.common.inference.Analyzer;
@@ -167,14 +165,6 @@ public class DataSetService extends BaseDataSetService {
 
     @Value("${dataset.local.file.size.limit:2000000}")
     private long maximumInputStreamSize;
-
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
-        // URLs are cleaner in lowercase.
-        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
-        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
-    }
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")

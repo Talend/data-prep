@@ -39,7 +39,7 @@ public class AppSettings {
     /**
      * The actions settings dictionary
      */
-    private final Map<String, UriSettings> uris = new HashMap<>();
+    private final Map<String, String> uris = new HashMap<>();
 
     /**
      * Getters
@@ -52,7 +52,7 @@ public class AppSettings {
         return actions;
     }
 
-    public Map<String, UriSettings> getUris() {
+    public Map<String, String> getUris() {
         return uris;
     }
 }

@@ -63,9 +63,9 @@ public class AppSettingsService {
         getSettingsStream(viewsProviders, viewsConfigurers) //
                 .forEach(view -> appSettings.getViews().put(view.getId(), view));
 
-        // populate appSettings uris (key: viewId, value: view)
+        // populate appSettings uris (key: uriName, value: uriValue)
         getSettingsStream(urisProviders, urisConfigurers) //
-                .forEach(uri -> appSettings.getUris().put(uri.getName(), uri));
+                .forEach(uri -> appSettings.getUris().put(uri.getName(), uri.getUri()));
 
         return appSettings;
     }

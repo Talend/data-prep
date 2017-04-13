@@ -20,63 +20,143 @@ import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
  */
 
 // @formatter:off
-//@Configuration
 public interface Uris {
 
-    //@Value("${security.oauth2.logout.uri:/logout}")
-    //String logoutUri;
-
-    // {serverUrl}/logout
     UriSettings LOGOUT_URI =
             UriSettings.builder()
                     .name("logout")
                     .uri("/logout")
                             .build();
 
-    // {serverUrl}/api/user
     UriSettings API_USER_URI =
             UriSettings.builder()
-                    .name("api_user")
+                    .name("apiUser")
                     .uri("/api/user")
                     .build();
 
-    // {serverUrl}/api/share
     UriSettings API_SHARE_URI =
             UriSettings.builder()
-                    .name("api_share")
+                    .name("apiShare")
                     .uri("/api/share")
                     .build();
 
-   //  {this.shareUrl}/groups
     UriSettings GROUPS_URI =
             UriSettings.builder()
-                    .name("group")
-                    .uri("/group")
+                    .name("groups")
+                    .uri("/groups")
                     .build();
 
-    //{this.shareUrl}/users
     UriSettings USERS_URI =
             UriSettings.builder()
-                    .name("share")
-                    .uri("/api/share")
+                    .name("users")
+                    .uri("/users")
                     .build();
-    //{serverUrl}/api/export/async
+
     UriSettings API_EXPORT_ASYNC_URI =
             UriSettings.builder()
-                    .name("export_async")
+                    .name("apiExportAsync")
                     .uri("/api/export/async")
                     .build();
-    //{serverUrl}/api
+
     UriSettings API_URI =
             UriSettings.builder()
                     .name("api")
                     .uri("/api")
                     .build();
 
-    //{serverUrl}/api
+    UriSettings API_AGGREGATE_URI =
+            UriSettings.builder()
+                    .name("apiAggregate")
+                    .uri("/api/aggregate")
+                    .build();
+
+    UriSettings API_DATASETS_URI =
+            UriSettings.builder()
+                    .name("apiDatasets")
+                    .uri("/api/datasets")
+                    .build();
+
+    UriSettings API_EXPORT_URI =
+            UriSettings.builder()
+                    .name("apiExport")
+                    .uri("/api/export")
+                    .build();
+
+    UriSettings API_FOLDERS_URI =
+            UriSettings.builder()
+                    .name("apiFolders")
+                    .uri("/api/folders")
+                    .build();
+
+    UriSettings API_MAIL_URI =
+            UriSettings.builder()
+                    .name("apiMail")
+                    .uri("/api/mail")
+                    .build();
+
+    UriSettings API_PREPARATIONS_URI =
+            UriSettings.builder()
+                    .name("apiPreparations")
+                    .uri("/api/preparations")
+                    .build();
+
+    UriSettings API_PREPARATIONS_PREVIEW_URI =
+            UriSettings.builder()
+                    .name("apiPreparationsPreview")
+                    .uri("/api/preparations/preview")
+                    .build();
+
+    UriSettings API_SEARCH_URI =
+            UriSettings.builder()
+                    .name("apiSearch")
+                    .uri("/api/search")
+                    .build();
+
+    UriSettings API_SETTINGS_URI =
+            UriSettings.builder()
+                    .name("apiSettings")
+                    .uri("/api/settings")
+                    .build();
+
+    UriSettings API_TCOMP_URI =
+            UriSettings.builder()
+                    .name("apiTcomp")
+                    .uri("/api/tcomp")
+                    .build();
+
+    UriSettings API_TRANSFORM_URI =
+            UriSettings.builder()
+                    .name("apiTransform")
+                    .uri("/api/transform")
+                    .build();
+
+    UriSettings API_TYPES_URI =
+            UriSettings.builder()
+                    .name("apiTypes")
+                    .uri("/api/types")
+                    .build();
+
+    UriSettings API_UPGRADE_CHECK_URI =
+            UriSettings.builder()
+                    .name("apiUpgradeCheck")
+                    .uri("/api/upgrade/check")
+                    .build();
+
+    UriSettings API_VERSION_URI =
+            UriSettings.builder()
+                    .name("apiVersion")
+                    .uri("/api/version")
+                    .build();
+
+    UriSettings LOGIN_URI =
+            UriSettings.builder()
+                    .name("login")
+                    .uri("/login")
+                    .build();
+
     UriSettings LOGOUT_REDIRECTION_URI =
             UriSettings.builder()
-                    .name("logout_redirection")
+                    .name("logoutRedirect")
                     .uri("http://localhost:9080/oidc/idp/logout?client_id=J3Wqyvlzgw0ySg&post_logout_redirect_uri=http://localhost:3000/")
                     .build();
 }

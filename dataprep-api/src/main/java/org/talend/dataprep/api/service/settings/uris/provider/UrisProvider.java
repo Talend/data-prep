@@ -17,12 +17,10 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
-import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
-import org.talend.dataprep.api.service.settings.views.provider.HomeViews;
-import org.talend.dataprep.api.service.settings.views.provider.ListViews;
 
 /**
  * Default views settings provider
@@ -30,11 +28,14 @@ import org.talend.dataprep.api.service.settings.views.provider.ListViews;
 @Component
 public class UrisProvider implements AppSettingsProvider<UriSettings> {
 
+    @Autowired
+    private UrisBuilder urisBuilder;
+
     @Override
     public List<UriSettings> getSettings() {
+
         // @formatter:off
         return asList(
-                Uris.LOGOUT_URI,
                 Uris.API_USER_URI,
                 Uris.API_SHARE_URI,
                 Uris.GROUPS_URI,
@@ -55,10 +56,11 @@ public class UrisProvider implements AppSettingsProvider<UriSettings> {
                 Uris.API_TYPES_URI,
                 Uris.API_UPGRADE_CHECK_URI,
                 Uris.API_VERSION_URI,
-                Uris.LOGIN_URI,
-                Uris.LOGOUT_REDIRECTION_URI
-
+                urisBuilder.getLoginUriSettings(),
+                urisBuilder.getLogoutUriSettings(),
+                urisBuilder.getLogoutUriRedirectSettings()
         );
         // @formatter:on
     }
+
 }

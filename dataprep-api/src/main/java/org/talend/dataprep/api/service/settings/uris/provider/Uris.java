@@ -16,7 +16,7 @@ package org.talend.dataprep.api.service.settings.uris.provider;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 
 /**
- * Home elements configuration
+ * Uris elements configuration
  */
 
 // @formatter:off
@@ -148,16 +148,5 @@ public interface Uris {
                     .uri("/api/version")
                     .build();
 
-    UriSettings LOGIN_URI =
-            UriSettings.builder()
-                    .name("login")
-                    .uri("/login")
-                    .build();
-
-    UriSettings LOGOUT_REDIRECTION_URI =
-            UriSettings.builder()
-                    .name("logoutRedirect")
-                    .uri("http://localhost:9080/oidc/idp/logout?client_id=J3Wqyvlzgw0ySg&post_logout_redirect_uri=http://localhost:3000/")
-                    .build();
 }
 // @formatter:on

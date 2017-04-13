@@ -11,12 +11,14 @@
 
  ============================================================================*/
 
+import settings from '../../../../mocks/Settings.mock';
+
 describe('REST urls service', () => {
 	beforeEach(angular.mock.module('data-prep.services.utils'));
 
 	it('should init api urls with empty server url (same url by default)', inject((RestURLs) => {
 		// when
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: ''}, settings);
 
 		// then
 		expect(RestURLs.datasetUrl).toBe('/api/datasets');
@@ -36,7 +38,7 @@ describe('REST urls service', () => {
 
 	it('should change api url with provided server url', inject((RestURLs) => {
 		// when
-		RestURLs.setConfig({ serverUrl: 'http://10.10.10.10:8888' });
+		RestURLs.setConfig({ serverUrl: 'http://10.10.10.10:8888' }, settings);
 
 		// then
 		expect(RestURLs.datasetUrl).toBe('http://10.10.10.10:8888/api/datasets');

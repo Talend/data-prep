@@ -12,6 +12,8 @@
  * ============================================================================
  */
 
+import settings from '../../../mocks/Settings.mock';
+
 describe('Export controller', () => {
 	'use strict';
 
@@ -121,7 +123,7 @@ describe('Export controller', () => {
 	}));
 
 	beforeEach(inject((RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 	}));
 
 	beforeEach(inject(($rootScope, $controller, ExportService) => {

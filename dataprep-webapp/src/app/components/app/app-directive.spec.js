@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import DataPrepAppModule from './app-module';
+import settings from '../../../mocks/Settings.mock';
 
 describe('App directive', () => {
 	'use strict';
@@ -33,7 +34,7 @@ describe('App directive', () => {
 	}));
 
 	beforeEach(inject(($injector, $q, RestURLs, UpgradeVersionService) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 
 		const $httpBackend = $injector.get('$httpBackend');
 		$httpBackend

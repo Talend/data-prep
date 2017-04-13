@@ -11,6 +11,7 @@
 
  ============================================================================*/
 
+import settings from '../../../../mocks/Settings.mock';
 
 describe('Column types rest service', () => {
 	let $httpBackend;
@@ -33,7 +34,7 @@ describe('Column types rest service', () => {
 	beforeEach(angular.mock.module('data-prep.services.column-types'));
 
 	beforeEach(inject(($rootScope, $injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

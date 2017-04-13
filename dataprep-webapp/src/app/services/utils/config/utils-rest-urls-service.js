@@ -24,20 +24,23 @@ export default function RestURLs() {
 	 * @description Init the api urls with a provided URLs configuration
 	 * @param {Object} config The URLs configration
 	 */
-	this.setConfig = function setConfig({ serverUrl }) {
-		this.aggregationUrl = serverUrl + '/api/aggregate';
-		this.datasetUrl = serverUrl + '/api/datasets';
-		this.exportUrl = serverUrl + '/api/export';
-		this.folderUrl = serverUrl + '/api/folders';
-		this.mailUrl = serverUrl + '/api/mail';
-		this.preparationUrl = serverUrl + '/api/preparations';
-		this.previewUrl = serverUrl + '/api/preparations/preview';
-		this.searchUrl = serverUrl + '/api/search';
-		this.settingsUrl = serverUrl + '/api/settings';
-		this.tcompUrl = serverUrl + '/api/tcomp';
-		this.transformUrl = serverUrl + '/api/transform';
-		this.typesUrl = serverUrl + '/api/types';
-		this.upgradeVersion = serverUrl + '/api/upgrade/check';
-		this.versionUrl = serverUrl + '/api/version';
+	this.setConfig = function setConfig(config, settings) {
+		const serverUrl = config.serverUrl;
+		const uris = settings.uris;
+
+		this.aggregationUrl = serverUrl + uris.apiAggregate;
+		this.datasetUrl = serverUrl + uris.apiDatasets;
+		this.exportUrl = serverUrl + uris.apiExport;
+		this.folderUrl = serverUrl + uris.apiFolders;
+		this.mailUrl = serverUrl + uris.apiMail;
+		this.preparationUrl = serverUrl + uris.apiPreparations;
+		this.previewUrl = serverUrl + uris.apiPreparationsPreview;
+		this.searchUrl = serverUrl + uris.apiSearch;
+		this.settingsUrl = serverUrl + uris.apiSettings;
+		this.tcompUrl = serverUrl + uris.apiTcomp;
+		this.transformUrl = serverUrl + uris.apiTransform;
+		this.typesUrl = serverUrl + uris.apiTypes;
+		this.upgradeVersion = serverUrl + uris.apiUpgradeCheck;
+		this.versionUrl = serverUrl + uris.apiVersion;
 	};
 }

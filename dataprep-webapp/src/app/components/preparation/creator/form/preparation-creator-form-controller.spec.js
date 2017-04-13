@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import settings from '../../../../../mocks/Settings.mock';
+
 describe('Preparation Creator Form Controller', () => {
 	let createController;
 	let scope;
@@ -50,7 +52,7 @@ describe('Preparation Creator Form Controller', () => {
 	}));
 
 	beforeEach(inject(($q, DatasetService, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 
 		uploadDefer = $q.defer();
 		uploadDefer.promise.progress = (callback) => {

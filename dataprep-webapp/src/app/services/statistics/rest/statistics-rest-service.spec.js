@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import settings from '../../../../mocks/Settings.mock';
+
 describe('Statistics REST service', function () {
 	'use strict';
 
@@ -19,7 +21,7 @@ describe('Statistics REST service', function () {
 	beforeEach(angular.mock.module('data-prep.services.statistics'));
 
 	beforeEach(inject(function ($injector, RestURLs) {
-		RestURLs.setConfig({ serverUrl: '' });
+		RestURLs.setConfig({ serverUrl: '' }, settings);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

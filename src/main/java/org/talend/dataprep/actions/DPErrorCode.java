@@ -22,7 +22,7 @@ public class DPErrorCode {
     @JsonProperty
     private String message;
 
-    @JsonProperty(value = "message_title")
+    @JsonProperty(value = "messageTitle")
     private String messageTitle;
 
     @JsonProperty

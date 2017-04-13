@@ -16,6 +16,7 @@ package org.talend.dataprep.exception;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -29,7 +30,6 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,13 +52,19 @@ public class TDPException extends TalendRuntimeException {
         if (throwable instanceof TDPException) {
             throw (TDPException) throwable;
         } else {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, throwable);
+            throw new TDPException(UNEXPECTED_EXCEPTION, throwable);
         }
     }
 
-    private final String message;
+    private String message;
 
-    private final String messageTitle;
+    private String messageTitle;
+
+    /** Build a blank TDP unexpected exception. **/
+    // Needed to be able to convert with conversionService
+    public TDPException() {
+        super(UNEXPECTED_EXCEPTION);
+    }
 
     /**
      * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a component

@@ -15,9 +15,7 @@ package org.talend.dataprep.transformation.service;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
@@ -28,18 +26,8 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -55,13 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
@@ -197,7 +179,7 @@ public class TransformationService extends BaseTransformationService {
     @Resource(name = "rootStep")
     private Step rootStep;
 
-    @RequestMapping(value = "/apply", method = POST, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters", notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
     @VolumeMetered
     public StreamingResponseBody execute(
@@ -264,7 +246,7 @@ public class TransformationService extends BaseTransformationService {
      * @param rawParams the aggregation rawParams as body rawParams.
      */
     // @formatter:off
-    @RequestMapping(value = "/aggregate", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/aggregate", method = POST, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Compute the aggregation according to the request body rawParams", consumes = APPLICATION_JSON_VALUE)
     @VolumeMetered
     public AggregationResult aggregate(@ApiParam(value = "The aggregation rawParams in json") @RequestBody final String rawParams) {
@@ -458,7 +440,7 @@ public class TransformationService extends BaseTransformationService {
      * A diff is between 2 sets of actions and return the info like created columns ids
      */
     //@formatter:off
-    @RequestMapping(value = "/transform/diff/metadata", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/transform/diff/metadata", method = POST)
     @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids", notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
     @VolumeMetered
     public Stream<StepDiff> getCreatedColumns(@ApiParam(name = "body", value = "Preview parameters list in json.") @RequestBody final List<PreviewParameters> previewParameters) {
@@ -585,7 +567,7 @@ public class TransformationService extends BaseTransformationService {
      * @return A list of {@link ActionDefinition} that can be applied to this column.
      * @see #suggest(ColumnMetadata, int)
      */
-    @RequestMapping(value = "/actions/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/actions/column", method = POST)
     @ApiOperation(value = "Return all actions for a column (regardless of column metadata)", notes = "This operation returns an array of actions.")
     @ResponseBody
     public Stream<ActionDefinition> columnActions(@RequestBody(required = false) ColumnMetadata column) {
@@ -602,7 +584,7 @@ public class TransformationService extends BaseTransformationService {
      * @return A list of {@link ActionDefinition} that can be applied to this column.
      * @see #suggest(DataSet)
      */
-    @RequestMapping(value = "/suggest/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/suggest/column", method = POST)
     @ApiOperation(value = "Suggest actions for a given column metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
     public Stream<ActionDefinition> suggest(@RequestBody(required = false) ColumnMetadata column, //
@@ -625,7 +607,7 @@ public class TransformationService extends BaseTransformationService {
      *
      * @return A list of {@link ActionDefinition} that can be applied to a line.
      */
-    @RequestMapping(value = "/actions/line", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/actions/line", method = GET)
     @ApiOperation(value = "Return all actions on lines", notes = "This operation returns an array of actions.")
     @ResponseBody
     public Stream<ActionDefinition> lineActions() {
@@ -641,7 +623,7 @@ public class TransformationService extends BaseTransformationService {
      * @return A list of {@link ActionDefinition} that can be applied to this data set.
      * @see #suggest(ColumnMetadata, int)
      */
-    @RequestMapping(value = "/suggest/dataset", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/suggest/dataset", method = POST)
     @ApiOperation(value = "Suggest actions for a given data set metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
     public List<ActionDefinition> suggest(DataSet dataSet) {
@@ -651,7 +633,7 @@ public class TransformationService extends BaseTransformationService {
     /**
      * List all transformation related error codes.
      */
-    @RequestMapping(value = "/transform/errors", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/transform/errors", method = RequestMethod.GET)
     @ApiOperation(value = "Get all transformation related error codes.", notes = "Returns the list of all transformation related error codes.")
     @Timed
     public Iterable<JsonErrorCodeDescription> listErrors() {
@@ -741,7 +723,7 @@ public class TransformationService extends BaseTransformationService {
      * @param stepId the step id (optional, if not specified, it's 'head')
      * @return the semantic types for a given preparation / column.
      */
-    @RequestMapping(value = "/preparations/{preparationId}/columns/{columnId}/types", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{preparationId}/columns/{columnId}/types", method = GET)
     @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
     @Timed
     @PublicAPI

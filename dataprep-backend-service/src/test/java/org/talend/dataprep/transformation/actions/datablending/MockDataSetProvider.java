@@ -39,7 +39,7 @@ public class MockDataSetProvider {
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getSampleRemoteFile(@PathVariable(value = "id") String lookupId) throws IOException {
         return IOUtils.toString(this.getClass().getResourceAsStream(lookupId + ".json"), UTF_8);
     }

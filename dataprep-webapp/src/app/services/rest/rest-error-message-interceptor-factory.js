@@ -40,8 +40,8 @@ export default function RestErrorMessageHandler($q, MessageService) {
 			else if (rejection.status === 500) {
 				MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 			}
-			else if (rejection.data && rejection.data.message_title && rejection.data.message) {
-				MessageService.error(rejection.data.message_title, rejection.data.message);
+			else if (rejection.data && rejection.data.messageTitle && rejection.data.message) {
+				MessageService.error(rejection.data.messageTitle, rejection.data.message);
 			}
 
 			return $q.reject(rejection);

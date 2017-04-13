@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.EnumSet.of;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
@@ -129,7 +130,7 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.FORBID_DISTRIBUTED);
+        return of(Behavior.FORBID_DISTRIBUTED, Behavior.VALUES_COLUMN);
     }
 
 }

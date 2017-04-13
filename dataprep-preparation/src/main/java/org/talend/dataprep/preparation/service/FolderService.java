@@ -14,7 +14,6 @@ package org.talend.dataprep.preparation.service;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
@@ -66,8 +65,8 @@ public class FolderService {
      * @return direct sub folders for the given id.
      */
     //@formatter:off
-    @RequestMapping(value = "/folders/{id}/children", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Folder children", produces = APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
+    @RequestMapping(value = "/folders/{id}/children", method = GET)
+    @ApiOperation(value = "Folder children", notes = "List all child folders of the one as parameter")
     @Timed
     public Stream<Folder> children(@PathVariable String id,
                                    @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
@@ -102,8 +101,8 @@ public class FolderService {
      * @param id the folder id.
      * @return the folder metadata with its hierarchy.
      */
-    @RequestMapping(value = "/folders/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get folder by id", produces = APPLICATION_JSON_VALUE, notes = "GET a folder by id")
+    @RequestMapping(value = "/folders/{id}", method = GET)
+    @ApiOperation(value = "Get folder by id", notes = "GET a folder by id")
     @Timed
     public FolderInfo getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
         final Folder folder = folderRepository.getFolderById(id);
@@ -119,8 +118,8 @@ public class FolderService {
      * @param strict strict mode means the name is the full name.
      * @return the folders whose part of their name match the given path.
      */
-    @RequestMapping(value = "/folders/search", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Search Folders with parameter as part of the name", produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/folders/search", method = GET)
+    @ApiOperation(value = "Search Folders with parameter as part of the name")
     @Timed
     public Iterable<Folder> search(@RequestParam final String name,
                                    @RequestParam(required = false) final boolean strict) {
@@ -144,8 +143,8 @@ public class FolderService {
      * @param parentId where to add the folder.
      * @return the created folder.
      */
-    @RequestMapping(value = "/folders", method = PUT, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create a Folder", produces = APPLICATION_JSON_VALUE, notes = "Create a folder")
+    @RequestMapping(value = "/folders", method = PUT)
+    @ApiOperation(value = "Create a Folder", notes = "Create a folder")
     @Timed
     public Folder addFolder(@RequestParam String parentId, @RequestParam String path) {
         return folderRepository.addFolder(parentId, path);
@@ -157,7 +156,7 @@ public class FolderService {
      * @param id the id that points to the folder to remove.
      */
     @RequestMapping(value = "/folders/{id}", method = DELETE)
-    @ApiOperation(value = "Remove a Folder", produces = APPLICATION_JSON_VALUE, notes = "Remove the folder")
+    @ApiOperation(value = "Remove a Folder", notes = "Remove the folder")
     @Timed
     public void removeFolder(@PathVariable String id) {
         folderRepository.removeFolder(id);
@@ -170,14 +169,14 @@ public class FolderService {
      * @param newName the new folder id.
      */
     @RequestMapping(value = "/folders/{id}/name", method = PUT)
-    @ApiOperation(value = "Rename a Folder", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Rename a Folder")
     @Timed
     public void renameFolder(@PathVariable String id, @RequestBody String newName) {
         folderRepository.renameFolder(id, newName);
     }
 
     @RequestMapping(value = "/folders/tree", method = GET)
-    @ApiOperation(value = "List all folders", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List all folders")
     @Timed
     public FolderTreeNode getTree() {
         final Folder home = folderRepository.getHome();

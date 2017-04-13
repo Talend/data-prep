@@ -16,9 +16,11 @@ package org.talend.dataprep.exception;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,11 +30,9 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Class for all business (TDP) exception.
@@ -41,7 +41,7 @@ public class TDPException extends TalendRuntimeException {
 
     private static final long serialVersionUID = -51732176302413600L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TDPException.class);
+    private static final Logger log = LoggerFactory.getLogger(TDPException.class);
 
     /**
      * If the exception is a TDPException, rethrow it, else wrap it and then throw it.
@@ -52,18 +52,29 @@ public class TDPException extends TalendRuntimeException {
         if (throwable instanceof TDPException) {
             throw (TDPException) throwable;
         } else {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, throwable);
+            throw new TDPException(UNEXPECTED_EXCEPTION, throwable);
         }
     }
 
+    private String message;
+
+    private String messageTitle;
+
+    /** Build a blank TDP unexpected exception. **/
+    // Needed to be able to convert with conversionService
+    public TDPException() {
+        super(UNEXPECTED_EXCEPTION);
+    }
+
     /**
-     * this field if set to <code>true</code> will prevent {@link TDPExceptionController} to log a stack trace
+     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a component
+     * that does not have access to the exception bundle.
      */
-    private boolean error = false;
-
-    private final String message;
-
-    private final String messageTitle;
+    public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
+        super(code, cause, context);
+        this.message = message;
+        this.messageTitle = messageTitle;
+    }
 
     /**
      * Build a Talend exception that can be interpreted throughout the application and handled by the HTTP API to translate into
@@ -104,17 +115,6 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
-     * Lightweight constructor without a cause.
-     *
-     * @param code the error code that holds all the .
-     * @param context the exception context.
-     */
-    public TDPException(ErrorCode code, ExceptionContext context, boolean error) {
-        this(code, null, context);
-        this.error = error;
-    }
-
-    /**
      * Basic constructor from a JSON error code.
      *
      * @param code an error code serialized to JSON.
@@ -132,43 +132,46 @@ public class TDPException extends TalendRuntimeException {
         this(code, null, null);
     }
 
-    /**
-     * @return <code>true</code> if exception is used to convey an error. In this case, stack trace is less important.
-     */
-    public boolean isError() {
-        return error;
-    }
-
     @Override
-    public void writeTo(Writer writer) {
-
-        try {
-            JsonGenerator generator = (new JsonFactory()).createGenerator(writer);
-            generator.writeStartObject();
-            writeErrorContent(generator);
-            generator.writeEndObject();
-            generator.flush();
-        } catch (IOException e) {
-            LOGGER.error("Unable to write exception to " + writer + ".", e);
-        }
-
+    public String getMessage() {
+        return message;
     }
 
-    private void writeErrorContent(JsonGenerator generator) throws IOException {
-        generator.writeStringField("code", getCode().getProduct() + '_' + getCode().getGroup() + '_' + getCode().getCode());
-        generator.writeStringField("message", message);
-        generator.writeStringField("message_title", messageTitle);
-        if (getCause() != null) {
-            generator.writeStringField("cause", getCause().getMessage());
+    public String getMessageTitle() {
+        return messageTitle;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated use {@link TdpExceptionDto} for serialization.
+     * @param writer
+     */
+    @Override
+    @Deprecated
+    public void writeTo(Writer writer) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(writer, toExceptionDto(this));
+            writer.flush();
+        } catch (IOException e) {
+            log.error("Unable to write exception to " + writer + ".", e);
         }
-        if (getContext() != null) {
-            generator.writeFieldName("context");
-            generator.writeStartObject();
-            for (Map.Entry<String, Object> entry : getContext().entries()) {
-                generator.writeStringField(entry.getKey(), entry.getValue().toString());
-            }
-            generator.writeEndObject();
+    }
+
+    // Needed to keep the compatibility with the deprecated writeTo(Writer) method.
+    // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
+    private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
+        ErrorCode errorCode = internal.getCode();
+        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
+        String message = internal.getMessage();
+        String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
+        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause()) : null;
+        Map<String, Object> context = new HashMap<>();
+        for (Map.Entry<String, Object> contextEntry : internal.getContext().entries()) {
+            context.put(contextEntry.getKey(), contextEntry.getValue());
         }
+        return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
     }
 
 }

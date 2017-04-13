@@ -85,17 +85,17 @@ window.fetchConfiguration = function fetchConfiguration() {
 					$compileProvider.debugInfoEnabled(config.enableDebug);
 				})
 				// Fetch dynamic configuration (supported encodings, ...)
-				.run((SettingsService, DatasetService) => {
+				.run((SettingsService) => {
 					'ngInject';
 					// base settings
 					SettingsService.setSettings(appSettings);
-					// dataset encodings
-					DatasetService.refreshSupportedEncodings();
 				})
 				// Configure server api urls
-				.run((RestURLs) => {
+				.run((RestURLs, DatasetService) => {
 					'ngInject';
 					RestURLs.setConfig(config, appSettings);
+					// dataset encodings
+					DatasetService.refreshSupportedEncodings();
 				})
 				// Open a keepalive websocket if requested
 				.run(() => {

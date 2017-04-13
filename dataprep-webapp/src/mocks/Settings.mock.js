@@ -470,12 +470,6 @@ const settingsMock = {
 		},
 	},
 	uris: {
-		logout: '/logout',
-		apiUser: '/api/user',
-		apiShare: '/api/share',
-		groups: '/groups',
-		users: '/users',
-		apiExportAsync: '/api/export/async',
 		api: '/api',
 		apiAggregate: '/api/aggregate',
 		apiDatasets: '/api/datasets',
@@ -491,7 +485,6 @@ const settingsMock = {
 		apiTypes: '/api/types',
 		apiUpgradeCheck: '/api/upgrade/check',
 		apiVersion: '/api/version',
-		logoutRedirect: 'http://mockredirecturl.tld/',
 	},
 };
 

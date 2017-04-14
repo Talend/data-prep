@@ -1725,12 +1725,11 @@ public class PreparationControllerTest extends BasePreparationTest {
      * @return The created step id
      */
     private String applyTransformation(final String preparationId, final String transformationFilePath) throws IOException {
-        given().body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream(transformationFilePath),
-                UTF_8))//
-                .contentType(ContentType.JSON)//
-                .when()//
-                .post("/preparations/{id}/actions", preparationId)//
-                .then()//
+        given().body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream(transformationFilePath), UTF_8)) //
+                .contentType(ContentType.JSON) //
+                .when() //
+                .post("/preparations/{id}/actions", preparationId) //
+                .then() //
                 .statusCode(200);
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);

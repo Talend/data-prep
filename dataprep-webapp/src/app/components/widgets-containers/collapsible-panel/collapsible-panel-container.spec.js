@@ -164,9 +164,10 @@ describe('CollapsiblePanel container', () => {
 				createElement();
 
 				// then
-				expect(element.find('.panel-heading > div > div').eq(0).text().trim()).toBe(simpleItem.label);
-				expect(element.find('.panel-heading > div > div').eq(1).text().trim()).toBe(badgeItem.label);
-				expect(element.find('.panel-heading > div > div').eq(1).find('span').hasClass('label')).toBe(true);
+				const panelHeader = element.find('.panel-heading > div > div');
+				expect(panelHeader.eq(0).text().trim()).toBe(simpleItem.label);
+				expect(panelHeader.eq(1).text().trim()).toBe(badgeItem.label);
+				expect(panelHeader.eq(1).find('span').hasClass('label')).toBe(true);
 			});
 
 			it('should render simple and badge text in the same group', () => {
@@ -180,10 +181,10 @@ describe('CollapsiblePanel container', () => {
 				createElement();
 
 				// then
-				expect(element.find('.panel-heading > div').length).toBe(1);
-
-				expect(element.find('.panel-heading > div').eq(0).find('span').eq(0).text().trim()).toBe(simpleItem.label);
-				expect(element.find('.panel-heading > div').eq(0).find('span').eq(1).text().trim()).toBe(badgeItem.label);
+				const panelHeader = element.find('.panel-heading > div');
+				expect(panelHeader.length).toBe(1);
+				expect(panelHeader.eq(0).find('span').eq(0).text().trim()).toBe(simpleItem.label);
+				expect(panelHeader.eq(0).find('span').eq(1).text().trim()).toBe(badgeItem.label);
 			});
 		});
 
@@ -258,8 +259,9 @@ describe('CollapsiblePanel container', () => {
 				createElement();
 
 				// then
-				expect(element.find('.panel-body > div').eq(0).find('span').eq(0).text().trim()).toBe(version.content.head[0].label);
-				expect(element.find('.panel-body > div').eq(0).find('span').eq(1).text().trim()).toBe(version.content.head[1].label);
+				const panelHeader = element.find('.panel-body > div');
+				expect(panelHeader.eq(0).find('span').eq(0).text().trim()).toBe(version.content.head[0].label);
+				expect(panelHeader.eq(0).find('span').eq(1).text().trim()).toBe(version.content.head[1].label);
 			});
 
 			it('should render body description', () => {

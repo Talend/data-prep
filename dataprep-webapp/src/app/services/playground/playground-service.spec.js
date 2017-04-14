@@ -1957,12 +1957,15 @@ describe('Playground Service', () => {
 		}));
 
 		it('should call get dataset details', inject(($q, $rootScope, PlaygroundService, PreparationService) => {
+			// given
+			const prepId = 'prep1';
+
 			// when
-			PlaygroundService.initPreparation('prep1');
+			PlaygroundService.initPreparation(prepId);
 			$rootScope.$apply();
 
 			// then
-			expect(PreparationService.getDetails).toHaveBeenCalledWith('prep1');
+			expect(PreparationService.getDetails).toHaveBeenCalledWith(prepId);
 		}));
 
 		it('should get dataset metadata', inject(($q, $rootScope, PlaygroundService, DatasetService) => {
@@ -2159,14 +2162,15 @@ describe('Playground Service', () => {
 
 		it('should init playground', inject(($q, $rootScope, PlaygroundService) => {
 			// given
+			const datasetId = 'dataset1';
 			spyOn(PlaygroundService, 'loadDataset').and.returnValue($q.when());
 
 			// when
-			PlaygroundService.initDataset('dataset1');
+			PlaygroundService.initDataset(datasetId);
 			$rootScope.$apply();
 
 			// then
-			expect(PlaygroundService.loadDataset).toHaveBeenCalledWith('dataset1');
+			expect(PlaygroundService.loadDataset).toHaveBeenCalledWith(datasetId);
 		}));
 
 		it('should fetch statistics when they are not computed yet',

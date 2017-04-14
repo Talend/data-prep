@@ -25,8 +25,8 @@ export default function RestURLs() {
 	 * @param {Object} config The URLs configration
 	 */
 	this.setConfig = function setConfig(config, settings) {
-		const serverUrl = config.serverUrl;
-		const uris = settings.uris;
+		const { serverUrl } = config;
+		const { uris } = settings;
 
 		this.aggregationUrl = serverUrl + uris.apiAggregate;
 		this.datasetUrl = serverUrl + uris.apiDatasets;

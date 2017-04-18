@@ -23,6 +23,7 @@ const BUILD_PATH = path.resolve(__dirname, '../build');
 const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
 function getDefaultConfig(options) {
+	const isTestMode = options.env === 'test';
 	return {
 		module: {
 			rules: [
@@ -36,21 +37,21 @@ function getDefaultConfig(options) {
 				},
 				{
 					test: /\.css$/,
-					use: extractCSS.extract(getCommonStyleLoaders()),
+					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getCommonStyleLoaders()),
 					exclude: /react-talend-/,
 				},
 				{
 					test: /\.scss$/,
-					use: extractCSS.extract(getSassLoaders()),
+					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders()),
 					exclude: /react-talend-/,
 				},
-				// css moodules local scope
+				// css modules local scope
 				{
 					test: /\.scss$/,
-					use: extractCSS.extract(getSassLoaders(true)),
+					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders(true)),
 					include: /react-talend-/,
 				},
-				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', options: { mimetype: 'image/png' } },
+				{ test: /\.(png|jpg|jpeg|gif)$/, loader: isTestMode ? 'null-loader' : 'url-loader', options: { mimetype: 'image/png' } },
 				{
 					test: /\.html$/,
 					use: [
@@ -59,8 +60,8 @@ function getDefaultConfig(options) {
 					],
 					exclude: INDEX_TEMPLATE_PATH,
 				},
-				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' } },
-				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' } },
+				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: isTestMode ? 'null-loader' : 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' } },
+				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: isTestMode ? 'null-loader' : 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' } },
 			]
 		},
 		plugins: [

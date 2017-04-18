@@ -6,10 +6,7 @@
     "quality": {
       "empty": 0,
       "invalid": 0,
-      "valid": 0,
-      "invalidValues": [
-
-      ]
+      "valid": 0
     },
     "id": "0001",
     "statistics": {
@@ -31,10 +28,7 @@
     "quality": {
       "empty": 0,
       "invalid": 0,
-      "valid": 0,
-      "invalidValues": [
-
-      ]
+      "valid": 0
     },
     "id": "0002",
     "statistics": {

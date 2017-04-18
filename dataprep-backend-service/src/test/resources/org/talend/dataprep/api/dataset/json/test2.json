@@ -30,7 +30,6 @@
           "empty": 0,
           "invalid": 10,
           "valid": 50,
-          "invalidValues": []
         },
         "statistics": {},
         "domain": ""

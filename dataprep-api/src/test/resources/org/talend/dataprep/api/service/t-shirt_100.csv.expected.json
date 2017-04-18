@@ -8,8 +8,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0000",
         "statistics": {}
@@ -21,8 +20,7 @@
         "quality": {
           "empty": 2,
           "invalid": 0,
-          "valid": 98,
-          "invalidValues": []
+          "valid": 98
         },
         "id": "0001",
         "statistics": {}
@@ -34,8 +32,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0002",
         "statistics": {}
@@ -47,8 +44,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0003",
         "statistics": {}
@@ -60,8 +56,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0004",
         "statistics": {}
@@ -73,8 +68,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0005",
         "statistics": {}
@@ -86,8 +80,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0006",
         "statistics": {}
@@ -99,8 +92,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0007",
         "statistics": {}
@@ -112,8 +104,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 100,
-          "invalidValues": []
+          "valid": 100
         },
         "id": "0008",
         "statistics": {}

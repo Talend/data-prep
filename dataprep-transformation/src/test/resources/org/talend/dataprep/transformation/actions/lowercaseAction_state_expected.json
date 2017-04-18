@@ -26,8 +26,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 4,
-          "invalidValues": []
+          "valid": 4
         },
         "id": "state",
         "statistics": {

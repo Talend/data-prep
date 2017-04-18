@@ -28,8 +28,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0000"
       },
@@ -40,8 +39,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0001"
       },
@@ -52,8 +50,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0002"
       },
@@ -64,8 +61,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0003"
       },
@@ -76,8 +72,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0004"
       },
@@ -88,8 +83,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0005"
       },
@@ -100,8 +94,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2,
-          "invalidValues": []
+          "valid": 2
         },
         "id": "0006"
       }

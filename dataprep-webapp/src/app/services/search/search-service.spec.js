@@ -67,41 +67,40 @@ describe('Search service', () => {
 		}));
 	});
 
-	//TODO CNG: TDP-3594: decomment when documentation search works
-	//describe('searchAll', () => {
-	//	it('should call all services', inject(($rootScope, $q, SearchService, SearchDocumentationService, SearchInventoryService) => {
-	//		// given
-	//		spyOn(SearchDocumentationService, 'search').and.returnValue($q.when([]));
-	//		spyOn(SearchInventoryService, 'search').and.returnValue($q.when([]));
-	//
-	//		// when
-	//		SearchService.searchAll(searchInput);
-	//		$rootScope.$digest();
-	//
-	//		// then
-	//		expect(SearchDocumentationService.search).toHaveBeenCalledWith(searchInput);
-	//		expect(SearchInventoryService.search).toHaveBeenCalledWith(searchInput);
-	//	}));
-	//
-	//	it('should aggregate results', inject(($rootScope, $q, SearchService, SearchDocumentationService, SearchInventoryService) => {
-	//		let results = null;
-	//
-	//		// given
-	//		const documentationResult = 'documentation';
-	//		const inventoryResult = 'inventory';
-	//		spyOn(SearchDocumentationService, 'search').and.returnValue($q.when([documentationResult]));
-	//		spyOn(SearchInventoryService, 'search').and.returnValue($q.when([inventoryResult]));
-	//
-	//		// when
-	//		SearchService.searchAll(searchInput).then((response) => {
-	//			results = response;
-	//		});
-	//		$rootScope.$digest();
-	//
-	//		// then
-	//		expect(results.length).toBe(2);
-	//		expect(results).toContain(documentationResult);
-	//		expect(results).toContain(inventoryResult);
-	//	}));
-	//});
+	describe('searchAll', () => {
+		it('should call all services', inject(($rootScope, $q, SearchService, SearchDocumentationService, SearchInventoryService) => {
+			// given
+			spyOn(SearchDocumentationService, 'search').and.returnValue($q.when([]));
+			spyOn(SearchInventoryService, 'search').and.returnValue($q.when([]));
+
+			// when
+			SearchService.searchAll(searchInput);
+			$rootScope.$digest();
+
+			// then
+			expect(SearchDocumentationService.search).toHaveBeenCalledWith(searchInput);
+			expect(SearchInventoryService.search).toHaveBeenCalledWith(searchInput);
+		}));
+
+		it('should aggregate results', inject(($rootScope, $q, SearchService, SearchDocumentationService, SearchInventoryService) => {
+			let results = null;
+
+			// given
+			const documentationResult = 'documentation';
+			const inventoryResult = 'inventory';
+			spyOn(SearchDocumentationService, 'search').and.returnValue($q.when([documentationResult]));
+			spyOn(SearchInventoryService, 'search').and.returnValue($q.when([inventoryResult]));
+
+			// when
+			SearchService.searchAll(searchInput).then((response) => {
+				results = response;
+			});
+			$rootScope.$digest();
+
+			// then
+			expect(results.length).toBe(2);
+			expect(results).toContain(documentationResult);
+			expect(results).toContain(inventoryResult);
+		}));
+	});
 });

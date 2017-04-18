@@ -45,13 +45,11 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 			EasterEggsService.enableEasterEgg(searchInput);
 		}
 
-		return searchInventory(searchInput);
-		// TODO CNG: TDP-3594: decomment when documentation search works
-		// const inventoryPromise = searchInventory(searchInput);
-		// const documentationPromise = searchDocumentation(searchInput);
-		//
-		// return $q
-		//	.all([inventoryPromise, documentationPromise])
-		//	.then(([inventory, documentation]) => inventory.concat(documentation));
+		const inventoryPromise = searchInventory(searchInput);
+		const documentationPromise = searchDocumentation(searchInput);
+
+		return $q
+			.all([inventoryPromise, documentationPromise])
+			.then(([inventory, documentation]) => inventory.concat(documentation));
 	}
 }

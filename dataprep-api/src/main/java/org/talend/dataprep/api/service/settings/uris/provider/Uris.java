@@ -24,85 +24,85 @@ public interface Uris {
 
     UriSettings API_AGGREGATE_URI =
             UriSettings.builder()
-                    .name("apiAggregate")
+                    .id("apiAggregate")
                     .uri("/api/aggregate")
                     .build();
 
     UriSettings API_DATASETS_URI =
             UriSettings.builder()
-                    .name("apiDatasets")
+                    .id("apiDatasets")
                     .uri("/api/datasets")
                     .build();
 
     UriSettings API_EXPORT_URI =
             UriSettings.builder()
-                    .name("apiExport")
+                    .id("apiExport")
                     .uri("/api/export")
                     .build();
 
     UriSettings API_FOLDERS_URI =
             UriSettings.builder()
-                    .name("apiFolders")
+                    .id("apiFolders")
                     .uri("/api/folders")
                     .build();
 
     UriSettings API_MAIL_URI =
             UriSettings.builder()
-                    .name("apiMail")
+                    .id("apiMail")
                     .uri("/api/mail")
                     .build();
 
     UriSettings API_PREPARATIONS_URI =
             UriSettings.builder()
-                    .name("apiPreparations")
+                    .id("apiPreparations")
                     .uri("/api/preparations")
                     .build();
 
     UriSettings API_PREPARATIONS_PREVIEW_URI =
             UriSettings.builder()
-                    .name("apiPreparationsPreview")
+                    .id("apiPreparationsPreview")
                     .uri("/api/preparations/preview")
                     .build();
 
     UriSettings API_SEARCH_URI =
             UriSettings.builder()
-                    .name("apiSearch")
+                    .id("apiSearch")
                     .uri("/api/search")
                     .build();
 
     UriSettings API_SETTINGS_URI =
             UriSettings.builder()
-                    .name("apiSettings")
+                    .id("apiSettings")
                     .uri("/api/settings")
                     .build();
 
     UriSettings API_TCOMP_URI =
             UriSettings.builder()
-                    .name("apiTcomp")
+                    .id("apiTcomp")
                     .uri("/api/tcomp")
                     .build();
 
     UriSettings API_TRANSFORM_URI =
             UriSettings.builder()
-                    .name("apiTransform")
+                    .id("apiTransform")
                     .uri("/api/transform")
                     .build();
 
     UriSettings API_TYPES_URI =
             UriSettings.builder()
-                    .name("apiTypes")
+                    .id("apiTypes")
                     .uri("/api/types")
                     .build();
 
     UriSettings API_UPGRADE_CHECK_URI =
             UriSettings.builder()
-                    .name("apiUpgradeCheck")
+                    .id("apiUpgradeCheck")
                     .uri("/api/upgrade/check")
                     .build();
 
     UriSettings API_VERSION_URI =
             UriSettings.builder()
-                    .name("apiVersion")
+                    .id("apiVersion")
                     .uri("/api/version")
                     .build();
 

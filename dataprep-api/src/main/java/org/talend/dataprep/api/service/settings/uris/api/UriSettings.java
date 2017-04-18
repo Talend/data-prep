@@ -27,24 +27,22 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public class UriSettings {
 
     /**
-     * The uri display name
+     * The uri display id
      */
-    private String name;
+    private String id;
 
     /**
-     * The action uri that will appears next to the name
+     * The action uri that will appears next to the id
      */
     private String uri;
 
     /**
      * Getters & Setters
      */
-    public String getName() {
-        return name;
-    }
+    public String getId() { return id; }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUri() {
@@ -58,25 +56,18 @@ public class UriSettings {
     /**
      * Builder Pattern for immutable purpose
      */
-
-    public static Builder from(final UriSettings actionSettings) {
-        return builder()
-                .name(actionSettings.getName())
-                .uri(actionSettings.getUri());
-    }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
 
-        private String name;
+        private String id;
 
         private String uri;
 
-        public Builder name(String name) {
-            this.name = name;
+        public Builder id(String id) {
+            this.id = id;
             return this;
         }
 
@@ -87,7 +78,7 @@ public class UriSettings {
 
         public UriSettings build() {
             final UriSettings action = new UriSettings();
-            action.setName(this.name);
+            action.setId(this.id);
             action.setUri(this.uri);
             return action;
         }

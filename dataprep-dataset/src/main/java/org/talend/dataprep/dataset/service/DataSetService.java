@@ -317,7 +317,11 @@ public class DataSetService extends BaseDataSetService {
         }
         dataSetMetadataRepository.remove(id);
         if (dataSetMetadata != null) {
-            contentStore.delete(dataSetMetadata);
+            try {
+                contentStore.delete(dataSetMetadata);
+            } catch (Exception e) {
+                LOG.error("Unable to delete uploaded data.", e);
+            }
         }
         throw hypotheticalException;
     }

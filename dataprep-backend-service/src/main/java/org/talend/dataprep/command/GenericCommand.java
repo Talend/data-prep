@@ -64,8 +64,6 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
  *
  * @param <T> Command result type.
  */
-@Component
-@Scope("request")
 public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Hystrix group used for dataset related commands. */

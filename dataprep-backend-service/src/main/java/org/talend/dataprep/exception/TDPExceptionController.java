@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -56,8 +55,8 @@ public class TDPExceptionController {
         }
         HttpHeaders httpStatus = new HttpHeaders();
         httpStatus.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        TdpExceptionDto ExceptionDto = conversionService.convert(e, TdpExceptionDto.class);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(ExceptionDto), httpStatus, HttpStatus.valueOf(e.getCode().getHttpStatus()));
+        TdpExceptionDto exceptionDto = conversionService.convert(e, TdpExceptionDto.class);
+        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpStatus, HttpStatus.valueOf(e.getCode().getHttpStatus()));
     }
 
 }

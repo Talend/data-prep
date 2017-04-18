@@ -46,7 +46,7 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 		}
 
 		return searchInventory(searchInput);
-		//TODO CNG: decomment
+		//TODO CNG: TDP-3594: decomment when documentation search works
 		//const inventoryPromise = searchInventory(searchInput);
 		//const documentationPromise = searchDocumentation(searchInput);
 		//

@@ -10,15 +10,16 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-class SearchInventoryService {
+export default function SearchInventoryService ($q, SearchInventoryRestService) {
+	'ngInject';
 
-	constructor($q, SearchInventoryRestService, TextFormatService) {
-		'ngInject';
-		this.deferredCancel = null;
-		this.$q = $q;
-		this.SearchInventoryRestService = SearchInventoryRestService;
-		this.TextFormatService = TextFormatService;
-	}
+	let deferredCancel = null;
+
+	return {
+		adaptSearchResult,
+		addHtmlLabelsAndSort,
+		search,
+	};
 
 	/**
 	 * @ngdoc method
@@ -26,10 +27,10 @@ class SearchInventoryService {
 	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
 	 * @description Cancel the pending search GET request
 	 */
-	cancelPendingGetRequest() {
-		if (this.deferredCancel) {
-			this.deferredCancel.resolve('user cancel');
-			this.deferredCancel = null;
+	function cancelPendingGetRequest() {
+		if (deferredCancel) {
+			deferredCancel.resolve('user cancel');
+			deferredCancel = null;
 		}
 	}
 
@@ -40,30 +41,30 @@ class SearchInventoryService {
 	 * @param {String} searchValue string
 	 * @description Search inventory items
 	 */
-	search(searchValue) {
-		this.cancelPendingGetRequest();
+	function search(searchValue) {
+		cancelPendingGetRequest();
 
-		this.deferredCancel = this.$q.defer();
+		deferredCancel = $q.defer();
 
-		return this.SearchInventoryRestService.search(searchValue, this.deferredCancel)
+		return SearchInventoryRestService.search(searchValue, deferredCancel)
 			.then((response) => {
 				return this.addHtmlLabelsAndSort(response.data);
 			})
-			.finally(() => this.deferredCancel = null);
+			.finally(() => deferredCancel = null);
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name addHtmlLabelsAndSort
+	 * @name adaptSearchResult
 	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
 	 * @param {Object} data data to process
-	 * @description add html label to data based on searchValue and sort the results
+	 * @description adapte search result for react components
 	 */
-	addHtmlLabelsAndSort(data) {
+	function adaptSearchResult(data) {
 		let inventoryItems = [];
 
 		if (data.datasets && data.datasets.length) {
-			_.each(data.datasets, function (item) {
+			data.datasets.forEach((item) => {
 				const itemToDisplay = {};
 
 				itemToDisplay.id = item.id;
@@ -84,7 +85,7 @@ class SearchInventoryService {
 		}
 
 		if (data.preparations && data.preparations.length) {
-			_.each(data.preparations, function (item) {
+			data.preparations.forEach((item) => {
 				item.inventoryType = 'preparation';
 				item.tooltipName = item.name;
 			});
@@ -93,7 +94,7 @@ class SearchInventoryService {
 		}
 
 		if (data.folders && data.folders.length) {
-			_.each(data.folders, function (item) {
+			data.folders.forEach((item) => {
 				item.inventoryType = 'folder';
 				item.tooltipName = item.name;
 			});
@@ -101,20 +102,20 @@ class SearchInventoryService {
 			inventoryItems = inventoryItems.concat(data.folders);
 		}
 
-		if (data.semanticCategories && data.semanticCategories.length) {
-			_.each(data.semanticCategories, function (item) {
-				item.inventoryType = 'semanticType';
-				item.tooltipName = item.name;
-			});
+		return inventoryItems;
+	}
 
-			inventoryItems = inventoryItems.concat(data.semanticCategories);
-		}
-
-		return _.chain(inventoryItems)
+	/**
+	 * @ngdoc method
+	 * @name addHtmlLabelsAndSort
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
+	 * @param {Object} data data to process
+	 * @description add html label to data based on searchValue and sort the results
+	 */
+	function addHtmlLabelsAndSort(data) {
+		return _.chain(this.adaptSearchResult(data))
 			.sortBy('lastModificationDate')
 			.reverse()
 			.value();
 	}
 }
-
-export default SearchInventoryService;

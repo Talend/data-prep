@@ -30,10 +30,9 @@ class SearchDocumentationService {
 	search(keyword) {
 		return this.searchDocumentationRestService.search(keyword)
 			.then((response) => {
-				const parsed = _.chain(this._thcParser(response.data)).value();
-				return parsed;
-			})
-			.catch(() => []);
+				//const parsed = _.chain(this._thcParser(response.data)).value();
+				return response.data.results.map(this._createDocElement);
+			});
 	}
 
 	/**
@@ -53,28 +52,28 @@ class SearchDocumentationService {
 			});
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name _thcParser
-	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
-	 * @description Convert Talend help center csv to documentation elements
-	 * @param {string} thcCsv The THC search result to adapt
-	 * @returns {Array} The array of documentation elements
-	 */
-	_thcParser(thcCsv) {
-		return thcCsv
-		// remove non ascii du to THC encoding
-			.replace(/[^\x00-\x7F]/g, ' ') // eslint-disable-line no-control-regex
-			.split('\n')
-			.map(line => line.trim())
-			// remove empty lines
-			.filter(line => line)
-			// strip leading/trailing quotes
-			.map(line => line.replace(/^"(.*)"$/, '$1'))
-			.map(line => line.split('","'))
-			.filter(lineParts => lineParts.length === properties.length)
-			.map(lineParts => this._createDocElement(lineParts));
-	}
+	///**
+	// * @ngdoc method
+	// * @name _thcParser
+	// * @methodOf data-prep.services.search.documentation:SearchDocumentationService
+	// * @description Convert Talend help center csv to documentation elements
+	// * @param {string} thcCsv The THC search result to adapt
+	// * @returns {Array} The array of documentation elements
+	// */
+	//_thcParser(thcCsv) {
+	//	return thcCsv
+	//	// remove non ascii du to THC encoding
+	//		.replace(/[^\x00-\x7F]/g, ' ') // eslint-disable-line no-control-regex
+	//		.split('\n')
+	//		.map(line => line.trim())
+	//		// remove empty lines
+	//		.filter(line => line)
+	//		// strip leading/trailing quotes
+	//		.map(line => line.replace(/^"(.*)"$/, '$1'))
+	//		.map(line => line.split('","'))
+	//		.filter(lineParts => lineParts.length === properties.length)
+	//		.map(lineParts => this._createDocElement(lineParts));
+	//}
 
 	/**
 	 * @ngdoc method
@@ -84,14 +83,13 @@ class SearchDocumentationService {
 	 * @param {Array} parts The documentation parts ['url', 'name', 'description']
 	 * @returns {object} The documentation elements
 	 */
-	_createDocElement(parts) {
-		const doc = { inventoryType: 'documentation' };
-		for (let i = 0; i < properties.length; ++i) {
-			const name = properties[i];
-			const value = parts[i];
-			doc[name] = value;
-		}
-
+	_createDocElement(topic) {
+		const doc = {
+			inventoryType: 'documentation',
+			description: topic.htmlExcerpt.replace(/(<[^>]*>)/g, ''),
+			name: topic.htmlTitle.replace(/(<[^>]*>)/g, ''),
+			url: topic.occurrences[0].readerUrl,
+		};
 		doc.tooltipName = doc.name;
 		return doc;
 	}

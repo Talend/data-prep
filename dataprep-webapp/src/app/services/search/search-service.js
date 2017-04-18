@@ -45,11 +45,13 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 			EasterEggsService.enableEasterEgg(searchInput);
 		}
 
-		const inventoryPromise = searchInventory(searchInput);
-		const documentationPromise = searchDocumentation(searchInput);
-
-		return $q
-			.all([inventoryPromise, documentationPromise])
-			.then(([inventory, documentation]) => inventory.concat(documentation));
+		return searchInventory(searchInput);
+		//TODO CNG: decomment
+		//const inventoryPromise = searchInventory(searchInput);
+		//const documentationPromise = searchDocumentation(searchInput);
+		//
+		//return $q
+		//	.all([inventoryPromise, documentationPromise])
+		//	.then(([inventory, documentation]) => inventory.concat(documentation));
 	}
 }

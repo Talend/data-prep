@@ -101,6 +101,15 @@ class SearchInventoryService {
 			inventoryItems = inventoryItems.concat(data.folders);
 		}
 
+		if (data.semanticCategories && data.semanticCategories.length) {
+			_.each(data.semanticCategories, function (item) {
+				item.inventoryType = 'semanticType';
+				item.tooltipName = item.name;
+			});
+
+			inventoryItems = inventoryItems.concat(data.semanticCategories);
+		}
+
 		return _.chain(inventoryItems)
 			.sortBy('lastModificationDate')
 			.reverse()

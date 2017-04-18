@@ -30,7 +30,8 @@ class SearchDocumentationService {
 	search(keyword) {
 		return this.searchDocumentationRestService.search(keyword)
 			.then((response) => {
-				return _.chain(this._thcParser(response.data)).value();
+				const parsed = _.chain(this._thcParser(response.data)).value();
+				return parsed;
 			})
 			.catch(() => []);
 	}

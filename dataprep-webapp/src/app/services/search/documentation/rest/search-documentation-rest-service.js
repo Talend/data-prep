@@ -19,13 +19,33 @@ class SearchDocumentationRestService {
 		this.documentationSearchURL = documentationSearchURL;
 	}
 
-    /**
-     * @ngdoc method
-     * @name search
-     * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
-     * @description search documentation with keyword
-     */
+	/**
+	 * @ngdoc method
+	 * @name search
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
+	 * @description search documentation with keyword
+	 */
 	search(keyword) {
+		//const parameters = {
+		//	query: keyword,
+		//	contentLocale: 'en',
+		//	filters: [
+		//		{
+		//			key: 'version',
+		//			values: ['2.0'],
+		//		},
+		//		{
+		//			key: 'EnrichPlatform',
+		//			values: ['Talend Data Preparation'],
+		//		},
+		//	],
+		//	paging: {
+		//		page: 1,
+		//		perPage: 2,
+		//	},
+		//};
+		//return this.$http.post('https://talend.fluidtopics.net/api/khub/maps/search', parameters);
+
 		return this.$http({
 			method: 'GET',
 			url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword),

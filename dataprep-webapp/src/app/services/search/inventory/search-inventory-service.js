@@ -10,7 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-export default function SearchInventoryService ($q, SearchInventoryRestService) {
+export default function SearchInventoryService($q, SearchInventoryRestService) {
 	'ngInject';
 
 	let deferredCancel = null;

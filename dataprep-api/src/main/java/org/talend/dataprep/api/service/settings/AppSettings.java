@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 /**
@@ -52,7 +51,5 @@ public class AppSettings {
         return actions;
     }
 
-    public Map<String, String> getUris() {
-        return uris;
-    }
+    public Map<String, String> getUris() { return uris; }
 }

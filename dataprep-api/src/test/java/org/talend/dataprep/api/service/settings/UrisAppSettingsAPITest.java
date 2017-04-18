@@ -22,9 +22,6 @@ import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 import org.talend.dataprep.api.service.ApiServiceTestBase;
 
-@TestPropertySource(properties = { "security.oidc.client.endSessionEndpoint=http://localhost:9080/oidc/idp/logout",
-        "security.postLogoutRedirect=http://localhost:3000/", "security.oauth2.client.clientId=J3Wqyvlzgw0ySg",
-        "security.oauth2.login.uri:/otherLogin", "security.oauth2.logout.uri:/otherLogout" })
 public class UrisAppSettingsAPITest extends ApiServiceTestBase {
 
     @Test
@@ -35,31 +32,7 @@ public class UrisAppSettingsAPITest extends ApiServiceTestBase {
         // then
         final Map<String, String> mapUriSettings = settings.getUris();
 
-        assertThat(mapUriSettings.size(), is(23));
-
-        // then
-        assertThat(mapUriSettings.containsKey("apiUser"), is(true));
-        assertThat(mapUriSettings.get("apiUser"), is("/api/user"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("apiShare"), is(true));
-        assertThat(mapUriSettings.get("apiShare"), is("/api/share"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("groups"), is(true));
-        assertThat(mapUriSettings.get("groups"), is("/groups"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("users"), is(true));
-        assertThat(mapUriSettings.get("users"), is("/users"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("apiExportAsync"), is(true));
-        assertThat(mapUriSettings.get("apiExportAsync"), is("/api/export/async"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("api"), is(true));
-        assertThat(mapUriSettings.get("api"), is("/api"));
+        assertThat(mapUriSettings.size(), is(14));
 
         // then
         assertThat(mapUriSettings.containsKey("apiAggregate"), is(true));
@@ -116,19 +89,5 @@ public class UrisAppSettingsAPITest extends ApiServiceTestBase {
         // then
         assertThat(mapUriSettings.containsKey("apiVersion"), is(true));
         assertThat(mapUriSettings.get("apiVersion"), is("/api/version"));
-
-        // Builded Uri Part
-        // then
-        assertThat(mapUriSettings.containsKey("logout"), is(true));
-        assertThat(mapUriSettings.get("logout"), is("/otherLogout"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("logoutRedirect"), is(true));
-        assertThat(mapUriSettings.get("logoutRedirect"), is(
-                "http://localhost:9080/oidc/idp/logout?client_id=J3Wqyvlzgw0ySg&post_logout_redirect_uri=http://localhost:3000/"));
-
-        // then
-        assertThat(mapUriSettings.containsKey("login"), is(true));
-        assertThat(mapUriSettings.get("login"), is("/otherLogin"));
     }
 }

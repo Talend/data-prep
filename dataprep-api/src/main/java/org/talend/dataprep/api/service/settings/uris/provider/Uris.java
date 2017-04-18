@@ -22,42 +22,6 @@ import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 // @formatter:off
 public interface Uris {
 
-    UriSettings API_USER_URI =
-            UriSettings.builder()
-                    .name("apiUser")
-                    .uri("/api/user")
-                    .build();
-
-    UriSettings API_SHARE_URI =
-            UriSettings.builder()
-                    .name("apiShare")
-                    .uri("/api/share")
-                    .build();
-
-    UriSettings GROUPS_URI =
-            UriSettings.builder()
-                    .name("groups")
-                    .uri("/groups")
-                    .build();
-
-    UriSettings USERS_URI =
-            UriSettings.builder()
-                    .name("users")
-                    .uri("/users")
-                    .build();
-
-    UriSettings API_EXPORT_ASYNC_URI =
-            UriSettings.builder()
-                    .name("apiExportAsync")
-                    .uri("/api/export/async")
-                    .build();
-
-    UriSettings API_URI =
-            UriSettings.builder()
-                    .name("api")
-                    .uri("/api")
-                    .build();
-
     UriSettings API_AGGREGATE_URI =
             UriSettings.builder()
                     .name("apiAggregate")

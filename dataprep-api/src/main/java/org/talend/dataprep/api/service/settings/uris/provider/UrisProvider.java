@@ -17,7 +17,6 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
@@ -28,20 +27,11 @@ import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 @Component
 public class UrisProvider implements AppSettingsProvider<UriSettings> {
 
-    @Autowired
-    private UrisBuilder urisBuilder;
-
     @Override
     public List<UriSettings> getSettings() {
 
         // @formatter:off
         return asList(
-                Uris.API_USER_URI,
-                Uris.API_SHARE_URI,
-                Uris.GROUPS_URI,
-                Uris.USERS_URI,
-                Uris.API_EXPORT_ASYNC_URI,
-                Uris.API_URI,
                 Uris.API_AGGREGATE_URI,
                 Uris.API_DATASETS_URI,
                 Uris.API_EXPORT_URI,
@@ -55,10 +45,7 @@ public class UrisProvider implements AppSettingsProvider<UriSettings> {
                 Uris.API_TRANSFORM_URI,
                 Uris.API_TYPES_URI,
                 Uris.API_UPGRADE_CHECK_URI,
-                Uris.API_VERSION_URI,
-                urisBuilder.getLoginUriSettings(),
-                urisBuilder.getLogoutUriSettings(),
-                urisBuilder.getLogoutUriRedirectSettings()
+                Uris.API_VERSION_URI
         );
         // @formatter:on
     }

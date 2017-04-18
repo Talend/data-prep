@@ -60,6 +60,12 @@ public class UriSettings {
         return new Builder();
     }
 
+    public static Builder from(final UriSettings uriSettings) {
+        return builder() //
+                .id(uriSettings.getId()) //
+                .uri(uriSettings.getUri());
+    }
+
     public static class Builder {
 
         private String id;

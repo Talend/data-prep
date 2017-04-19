@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -74,7 +73,7 @@ public class PreparationController {
      * @param order how to apply the sort.
      * @return the preparations id list.
      */
-    @RequestMapping(value = "/preparations", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations", method = GET)
     @ApiOperation(value = "List all preparations id", notes = "Returns the list of preparations ids the current user is allowed to see. Creation date is always displayed in UTC time zone. See 'preparations/all' to get all details at once.")
     @Timed
     public Stream<String> list(
@@ -132,7 +131,7 @@ public class PreparationController {
      * @param sort       Sort key (by name, creation date or modification date).
      * @param order      Order for sort key (desc or asc).
      */
-    @RequestMapping(value = "/preparations/search", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/search", method = GET)
     @ApiOperation(value = "Search for preparations details", notes = "Returns the list of preparations details that match the search criteria.")
     @Timed
     public Stream<UserPreparation> searchPreparations(
@@ -170,8 +169,8 @@ public class PreparationController {
      * @param destination The new folder of the preparation.
      * @param newName     The new preparation name.
      */
-    @RequestMapping(value = "/preparations/{id}/move", method = PUT, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Move a preparation", produces = TEXT_PLAIN_VALUE, notes = "Move a preparation to an other folder.")
+    @RequestMapping(value = "/preparations/{id}/move", method = PUT)
+    @ApiOperation(value = "Move a preparation", notes = "Move a preparation to an other folder.")
     @Timed
     public void move(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String preparationId,
@@ -187,7 +186,7 @@ public class PreparationController {
      *
      * @param id the preparation id to delete.
      */
-    @RequestMapping(value = "/preparations/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/preparations/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete a preparation by id", notes = "Delete a preparation content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing preparation id returns empty content.")
     @Timed
     public void delete(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to delete") String id) {
@@ -201,7 +200,7 @@ public class PreparationController {
      * @param preparation the updated preparation.
      * @return the updated preparation id.
      */
-    @RequestMapping(value = "/preparations/{id}", method = PUT, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}", method = PUT, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the updated preparation.")
     @Timed
     public String update(@ApiParam("id") @PathVariable("id") String id,
@@ -216,7 +215,7 @@ public class PreparationController {
      * @param steps the steps to update.
      * @return the updated preparation id.
      */
-    @RequestMapping(value = "/preparations/{preparationId}/steps", method = PUT, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{preparationId}/steps", method = PUT, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
     @Timed
     public String updateStepMetadata(@ApiParam("preparationId") @PathVariable("preparationId") String preparationId,
@@ -235,7 +234,7 @@ public class PreparationController {
      * @param id   the preparation id to update.
      * @param from the preparation id to copy the steps from.
      */
-    @RequestMapping(value = "/preparations/{id}/steps/copy", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/preparations/{id}/steps/copy", method = PUT)
     @ApiOperation(value = "Copy the steps from another preparation", notes = "Copy the steps from another preparation if this one has no steps.")
     @Timed
     public void copyStepsFrom(@ApiParam(value = "the preparation id to update") @PathVariable("id") String id,
@@ -249,7 +248,7 @@ public class PreparationController {
      * @param id the wanted preparation id.
      * @return the preparation details.
      */
-    @RequestMapping(value = "/preparations/{id}/details", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/details", method = GET)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
     public PreparationMessage getDetails(@ApiParam("id") @PathVariable("id") String id) {
@@ -262,7 +261,7 @@ public class PreparationController {
      * @param id the wanted preparation id.
      * @return the preparation details.
      */
-    @RequestMapping(value = "/preparations/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}", method = GET)
     @ApiOperation(value = "Get preparation", notes = "Return the preparation with provided id.")
     @Timed
     public Preparation get(@ApiParam("id") @PathVariable("id") String id) {
@@ -275,14 +274,14 @@ public class PreparationController {
      * @param id the wanted preparation id.
      * @return the folder that holds this preparation.
      */
-    @RequestMapping(value = "/preparations/{id}/folder", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/folder", method = GET)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
     public Folder searchLocation(@ApiParam(value = "the preparation id") @PathVariable("id") String id) {
         return preparationService.searchLocation(id);
     }
 
-    @RequestMapping(value = "/preparations/{id}/steps", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/steps", method = GET)
     @ApiOperation(value = "Get all preparation steps id", notes = "Return the steps of the preparation with provided id.")
     @Timed
     public List<String> getSteps(@ApiParam("id") @PathVariable("id") String id) {
@@ -301,7 +300,7 @@ public class PreparationController {
      * <li>4. Append each action (one step is created by action) after the new preparation head</li>
      * </ul>
      */
-    @RequestMapping(value = "/preparations/{id}/actions/{stepId}", method = PUT, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/actions/{stepId}", method = PUT)
     @ApiOperation(value = "Updates an action in a preparation", notes = "Modifies an action in preparation's steps.")
     @Timed
     public void updateAction(@PathVariable("id") final String preparationId, @PathVariable("stepId") final String stepToModifyId,
@@ -346,7 +345,7 @@ public class PreparationController {
      * @param version the wanted preparation version.
      * @return the list of actions.
      */
-    @RequestMapping(value = "/preparations/{id}/actions/{version}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/actions/{version}", method = GET)
     @ApiOperation(value = "Get all the actions of a preparation at given version.", notes = "Returns the action JSON at version.")
     @Timed
     public List<Action> getVersionedAction(@ApiParam("id") @PathVariable("id") final String id,
@@ -357,21 +356,21 @@ public class PreparationController {
     /**
      * List all preparation related error codes.
      */
-    @RequestMapping(value = "/preparations/errors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/errors", method = RequestMethod.GET)
     @ApiOperation(value = "Get all preparation related error codes.", notes = "Returns the list of all preparation related error codes.")
     @Timed
     public Iterable<JsonErrorCodeDescription> listErrors() {
         return preparationService.listErrors();
     }
 
-    @RequestMapping(value = "/preparations/{preparationId}/lock", method = PUT, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{preparationId}/lock", method = PUT)
     @ApiOperation(value = "Lock the specified preparation.", notes = "Returns a locked resource.")
     @Timed
     public void lockPreparation(@ApiParam("preparationId") @PathVariable("preparationId") final String preparationId) {
         preparationService.lockPreparation(preparationId);
     }
 
-    @RequestMapping(value = "/preparations/{preparationId}/unlock", method = PUT, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{preparationId}/unlock", method = PUT)
     @ApiOperation(value = "Unlock the specified preparation.", notes = "Returns a locked resource.")
     @Timed
     public void unlockPreparation(@ApiParam("preparationId") @PathVariable("preparationId") final String preparationId) {
@@ -396,7 +395,7 @@ public class PreparationController {
         preparationService.moveStep(preparationId, stepId, parentStepId);
     }
 
-    @RequestMapping(value = "/preparations/{id}/actions", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/actions", method = POST)
     @ApiOperation(value = "Adds an action at the end of preparation.",
                   notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed

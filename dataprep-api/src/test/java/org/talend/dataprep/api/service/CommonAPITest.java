@@ -78,7 +78,7 @@ public class CommonAPITest extends ApiServiceTestBase {
 
         // then
         List<JsonNode> rootNodes = new ArrayList<>();
-        ;
+
         try {
             rootNodes.add(mapper.readTree(badRequest));
             final JsonNode commandExceptionNodes = mapper.readTree(commandException);
@@ -95,7 +95,7 @@ public class CommonAPITest extends ApiServiceTestBase {
         for (final JsonNode rootNode : rootNodes) {
             assertTrue(rootNode.has("code"));
             assertTrue(rootNode.has("message"));
-            assertTrue(rootNode.has("message_title"));
+            assertTrue(rootNode.has("messageTitle"));
             assertTrue(rootNode.has("context"));
         }
     }

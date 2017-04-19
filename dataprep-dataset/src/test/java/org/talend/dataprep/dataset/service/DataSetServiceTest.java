@@ -1514,10 +1514,10 @@ public class DataSetServiceTest extends DataSetBaseTest {
             ReflectionTestUtils.setField(dataSetService, "maximumInputStreamSize", 2);
             given() //
                 .body("abc") //
-                .queryParam("Content-Type", "text/csv") //
+                .contentType("text/csv") //
                 .queryParam("name", "tooLargeInputDataset") //
             .when() //
-                .expect().statusCode(413).log().ifError() //
+                .expect().statusCode(413).log().ifValidationFails() //
                 .post("/datasets") //
             .then()
                 .body("code", equalTo("TDP_DSS_LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE"));

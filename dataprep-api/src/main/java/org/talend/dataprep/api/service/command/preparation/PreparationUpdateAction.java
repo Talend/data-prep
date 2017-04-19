@@ -1,28 +1,27 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.preparation;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.command.Defaults.asNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.Optional;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.InputStreamEntity;
@@ -62,8 +61,11 @@ public class PreparationUpdateAction extends ChainedCommand<Void, InputStream> {
         try {
             final String url = preparationServiceUrl + "/preparations/" + preparationId + "/actions/" + stepId;
 
-            final List<StepDiff> diff = objectMapper.readValue(getInput(), new TypeReference<List<StepDiff>>(){});
-            updatedStep.setDiff(diff.get(0));
+            final Optional<StepDiff> firstStepDiff = toStream(StepDiff.class, objectMapper, input).findFirst();
+            if (firstStepDiff.isPresent()) { // Only interested in first one
+                final StepDiff diff = firstStepDiff.get();
+                updatedStep.setDiff(diff);
+            }
             final String stepAsString = objectMapper.writeValueAsString(updatedStep);
 
             final HttpPut actionAppend = new HttpPut(url);

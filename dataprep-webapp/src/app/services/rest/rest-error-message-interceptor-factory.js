@@ -29,8 +29,10 @@ export default function RestErrorMessageHandler($q, MessageService) {
          * @description Display the error message depending on the error status and error code
          */
 		responseError(rejection) {
-            // user cancel the request : we do not show message
-			if (rejection.config && rejection.config.timeout && rejection.config.timeout.$$state.value === 'user cancel') { // eslint-disable-line angular/no-private-call
+			const config = rejection.config;
+
+			// user cancel the request or the request should fail silently : we do not show message
+			if (config && (config.failSilently || (config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
 				return $q.reject(rejection);
 			}
 

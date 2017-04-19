@@ -59,6 +59,24 @@ describe('Rest message interceptor factory', function () {
         expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
     }));
 
+    it('should not show toast when fileSilently flag is set', inject(function ($rootScope, $http, MessageService) {
+        //given
+        var request = {
+            method: 'POST',
+            url: 'testService',
+            failSilently: true,
+        };
+        $httpBackend.expectPOST('testService').respond(500);
+
+        //when
+        $http(request);
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+        //then
+        expect(MessageService.error).not.toHaveBeenCalled();
+    }));
+
     it('should not show message on user cancel', inject(function ($rootScope, $q, $http, MessageService) {
         //given
         var canceler = $q.defer();

@@ -29,6 +29,7 @@ class SearchDocumentationRestService {
 		return this.$http({
 			method: 'GET',
 			url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword),
+			failSilently: true,
 			withCredentials: false,
 		});
 	}

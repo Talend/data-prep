@@ -31,7 +31,8 @@ class SearchDocumentationService {
 		return this.searchDocumentationRestService.search(keyword)
 			.then((response) => {
 				return _.chain(this._thcParser(response.data)).value();
-			});
+			})
+			.catch(() => []);
 	}
 
 	/**

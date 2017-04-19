@@ -42,7 +42,7 @@ const preparationTour = [
 	{
 		element: '#external\\:help',
 		title: '<center>Online Documentation</center>',
-		content: 'Click here to access the <a href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=on_boarding" target="_blank">online help</a>.',
+		content: 'Click here to access the <a href="https://talend.fluidtopics.net/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.0%2522&utm_medium=dpdesktop&utm_source=on_boarding" target="_blank">online help</a>.',
 		position: 'left',
 	},
 ];

@@ -45,7 +45,7 @@ class SearchDocumentationRestService {
 		//	],
 		//	paging: {
 		//		page: 1,
-		//		perPage: 2,
+		//		perPage: 5,
 		//	},
 		//};
 		//return this.$http({

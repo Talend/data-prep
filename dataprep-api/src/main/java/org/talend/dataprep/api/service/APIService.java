@@ -30,7 +30,7 @@ import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.Api;
 
 @Api(value = "api", basePath = "/api", description = "Data Preparation API")
-class APIService {
+public class APIService {
 
     protected static final Logger LOG = LoggerFactory.getLogger(APIService.class);
 

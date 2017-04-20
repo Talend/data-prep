@@ -60,21 +60,7 @@ public class SearchAPI extends APIService {
             @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict) {
     //@formatter:on
         return output -> {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
-            }
-            final List<String> info;
-            try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
-                generator.writeStartObject();
-                searchDelegate.search(filter, name, strict, generator);
-                generator.writeEndObject();
-
-            } catch (IOException e) {
-                throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
-            }
-            LOG.info(
-                    "Searching Done on dataprep for {} done with filter: {} and strict mode: {}",
-                    name, filter, strict);
+            searchDelegate.search(filter, name, strict, output);
         };
     }
 }

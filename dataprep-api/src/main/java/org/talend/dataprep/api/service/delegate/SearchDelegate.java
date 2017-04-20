@@ -12,49 +12,63 @@
 
 package org.talend.dataprep.api.service.delegate;
 
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.io.OutputStream;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.dataset.SearchDataSets;
 import org.talend.dataprep.api.service.command.folder.SearchFolders;
 import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByName;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.service.UserPreparation;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
-public class SearchDelegate extends APIDelegate {
+public class SearchDelegate extends APIService {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SearchDelegate.class);
 
-    public void search(List<String> filter, String name, boolean strict, JsonGenerator generator) {
-        final List<String> result = new ArrayList<>();
-        try {
-            if (filter == null || filter.contains("folder")) {
-                final int foldersFound = searchAndWriteFolders(name, strict, generator);
-                LOGGER.info("{} folder(s) found", foldersFound);
-            }
-            if (filter == null || filter.contains("dataset")) {
-                final int dataSetsFound = searchAndWriteDatasets(name, strict, generator);
-                LOGGER.info("{} dataset(s) found", dataSetsFound);
-            }
-            if (filter == null || filter.contains("preparation")) {
-                final int preparationsFound = searchAndWritePreparations(name, strict, generator);
-                LOGGER.info("{} preparation(s) found", preparationsFound);
-            }
-        } catch (Exception exception) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION);
+    public void search(List<String> filter, String name, boolean strict, OutputStream output) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
+        }
+        try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
+            generator.writeStartObject();
+            search(filter, name, strict, generator);
+            generator.writeEndObject();
+
+        } catch (IOException e) {
+            throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
+        }
+        LOG.info("Searching Done on dataprep for {} done with filter: {} and strict mode: {}", name, filter, strict);
+    }
+
+    protected void search(List<String> filter, String name, boolean strict, JsonGenerator generator) throws IOException {
+        if (filter == null || filter.contains("folder")) {
+            final int foldersFound = searchAndWriteFolders(name, strict, generator);
+            LOGGER.info("{} folder(s) found", foldersFound);
+        }
+        if (filter == null || filter.contains("dataset")) {
+            final int dataSetsFound = searchAndWriteDatasets(name, strict, generator);
+            LOGGER.info("{} dataset(s) found", dataSetsFound);
+        }
+        if (filter == null || filter.contains("preparation")) {
+            final int preparationsFound = searchAndWritePreparations(name, strict, generator);
+            LOGGER.info("{} preparation(s) found", preparationsFound);
         }
     }
 

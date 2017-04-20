@@ -874,9 +874,9 @@ public class DataSetService extends BaseDataSetService {
 
         final String filter;
         if (strict) {
-            filter = "name = '" + name + "'";
+            filter = "name = '" + name + "' or name = '" + name.toUpperCase() + "'";
         } else {
-            filter = "name contains '" + name + "'";
+            filter = "name contains '" + name.toLowerCase() + "' or name contains  '" + name.toUpperCase() + "'";
         }
         return dataSetMetadataRepository.list(filter, null, null) //
                 .map(d -> conversionService.convert(d, UserDataSetMetadata.class));

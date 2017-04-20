@@ -35,6 +35,7 @@ export default function InventoryRestService($http, RestURLs) {
 			url: `${RestURLs.searchUrl}?path=/&name=${encodeURIComponent(searchString)}`,
 			method: 'GET',
 			timeout: deferredAbort.promise,
+			failSilently: true,
 		});
 	}
 }

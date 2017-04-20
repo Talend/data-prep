@@ -50,6 +50,7 @@ export default function SearchInventoryService($q, SearchInventoryRestService) {
 			.then((response) => {
 				return this.addHtmlLabelsAndSort(response.data);
 			})
+			.catch(() => [])
 			.finally(() => deferredCancel = null);
 	}
 

@@ -15,6 +15,7 @@ package org.talend.dataprep.configuration;
 import static org.talend.dataprep.conversions.BeanConversionService.RegistrationBuilder.fromBean;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
@@ -74,69 +76,93 @@ public class PreparationRepositoryConfiguration {
             // Preparation -> PersistentPreparation
             conversionService.register(fromBean(Preparation.class) //
                     .toBeans(PersistentPreparation.class) //
-                    .using(PersistentPreparation.class, (preparation, persistentPreparation) -> {
-                        final List<Step> steps = preparation.getSteps();
-                        if (steps != null) {
-                            final List<String> stepIds = steps.stream() //
-                                    .map(Step::getId) //
-                                    .collect(Collectors.toList());
-                            persistentPreparation.setSteps(stepIds);
-                        }
-                        return persistentPreparation;
-                    }) //
                     .build());
             // PersistentPreparation -> Preparation
             conversionService.register(fromBean(PersistentPreparation.class) //
                     .toBeans(Preparation.class) //
-                    .using(Preparation.class, (persistentPreparation, preparation) -> {
-                        final PreparationRepository repository = getPreparationRepository(applicationContext);
-                        final List<String> persistentPreparationSteps = persistentPreparation.getSteps();
-                        if (persistentPreparationSteps != null) {
-                            final List<Step> steps = persistentPreparationSteps.stream() //
-                                    .map(step -> conversionService.convert(repository.get(step, PersistentStep.class),
-                                            Step.class)) //
-                                    .collect(Collectors.toList());
-                            preparation.setSteps(steps);
-                        }
-                        return preparation;
-                    }) //
+                    .using(Preparation.class, toPreparation(conversionService, applicationContext)) //
                     .build());
             // Step -> PersistentStep
             conversionService.register(fromBean(Step.class) //
                     .toBeans(PersistentStep.class) //
-                    .using(PersistentStep.class, (step, persistentStep) -> {
-                        if (step.getParent() != null) {
-                            persistentStep.setParentId(step.getParent().getId());
-                        } else {
-                            final String rootStepId = Step.ROOT_STEP.getId();
-                            if (!rootStepId.equals(step.getId())) {
-                                persistentStep.setParentId(rootStepId);
-                            }
-                        }
-                        persistentStep.setContent(step.getContent().getId());
-                        return persistentStep;
-                    }) //
+                    .using(PersistentStep.class, toPersistentStep()) //
                     .build());
             // PersistentStep -> Step
             conversionService.register(fromBean(PersistentStep.class) //
                     .toBeans(Step.class) //
-                    .using(Step.class, (persistentStep, step) -> {
-                        final PreparationRepository repository = getPreparationRepository(applicationContext);
-                        if (!Step.ROOT_STEP.getId().equals(persistentStep.getId())) {
-                            step.setParent(conversionService
-                                    .convert(repository.get(persistentStep.getParentId(), PersistentStep.class), Step.class));
-                        }
-                        final PreparationActions content = repository.get(persistentStep.getContent(),
-                                PreparationActions.class);
-                        step.setContent(content);
-                        return step;
-                    }) //
+                    .using(Step.class, toStep(conversionService, applicationContext)) //
                     .build());
             return conversionService;
         }
 
+        /**
+         * Return a BiFunction that convert a PersistentStep into a Step.
+         *
+         * @param conversionService the famous conversionService.
+         * @param applicationContext the spring application context.
+         * @return a BiFunction that convert a PersistentStep into a Step.
+         */
+        private BiFunction<PersistentStep, Step, Step> toStep(BeanConversionService conversionService,
+                ApplicationContext applicationContext) {
+            return (persistentStep, step) -> {
+                final PreparationRepository repository = getPreparationRepository(applicationContext);
+                if (!Step.ROOT_STEP.getId().equals(persistentStep.getId())) {
+                    step.setParent(conversionService.convert(repository.get(persistentStep.getParentId(), PersistentStep.class),
+                            Step.class));
+                }
+                final PreparationActions content = repository.get(persistentStep.getContent(), PreparationActions.class);
+                step.setContent(content);
+                return step;
+            };
+        }
+
+        /**
+         * @return a BiFunction In charge of converting steps to PersistentStep.
+         */
+        private BiFunction<Step, PersistentStep, PersistentStep> toPersistentStep() {
+            return (step, persistentStep) -> {
+                if (step.getParent() != null) {
+                    persistentStep.setParentId(step.getParent().getId());
+                } else {
+                    final String rootStepId = Step.ROOT_STEP.getId();
+                    if (!rootStepId.equals(step.getId())) {
+                        persistentStep.setParentId(rootStepId);
+                    }
+                }
+                persistentStep.setContent(step.getContent().getId());
+                return persistentStep;
+            };
+        }
+
+        /**
+         * BiFunction in charge of converting PersistentPreparation to Preparation.
+         *
+         * @param conversionService the conversion service.
+         * @param applicationContext the one and only application context.
+         * @return the BiFunction that converts PeristentPreparation to Preparation.
+         */
+        private BiFunction<PersistentPreparation, Preparation, Preparation> toPreparation(BeanConversionService conversionService,
+                ApplicationContext applicationContext) {
+            return (persistentPreparation, preparation) -> {
+                final PreparationRepository repository = getPreparationRepository(applicationContext);
+                final PreparationUtils utils = getPreparationUtils(applicationContext);
+                final List<String> stepsIds = utils.listStepsIds(preparation.getHeadId(), repository);
+                if (stepsIds != null) {
+                    final List<Step> steps = stepsIds.stream() //
+                            .map(step -> conversionService.convert(repository.get(step, PersistentStep.class), Step.class)) //
+                            .collect(Collectors.toList());
+                    preparation.setSteps(steps);
+                }
+                return preparation;
+            };
+        }
+
         private PreparationRepository getPreparationRepository(ApplicationContext applicationContext) {
             return applicationContext.getBean(PreparationRepository.class);
+        }
+
+        private PreparationUtils getPreparationUtils(ApplicationContext applicationContext) {
+            return applicationContext.getBean(PreparationUtils.class);
         }
     }
 

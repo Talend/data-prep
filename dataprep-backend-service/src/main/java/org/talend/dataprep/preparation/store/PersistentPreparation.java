@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.preparation.store;
 
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
@@ -55,25 +53,10 @@ public class PersistentPreparation extends PersistentIdentifiable {
     @JsonProperty("app-version")
     private String appVersion;
 
-    /** List of the steps id for this preparation. */
-    private List<String> steps;
-
     /**
      * Default empty constructor.
      */
     public PersistentPreparation() {
-    }
-
-    /**
-     * @return List of the steps id for this preparation.
-     * @see org.talend.dataprep.preparation.store.PreparationRepository#get(String, Class)
-     */
-    public List<String> getSteps() {
-        return steps;
-    }
-
-    public void setSteps(List<String> steps) {
-        this.steps = steps;
     }
 
     public String getName() {

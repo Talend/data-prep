@@ -26,6 +26,7 @@ import com.netflix.hystrix.HystrixCommand;
 
 /**
  * Configurer that modify a Setting
+ * 
  * @param <T> (ViewSettings | ActionSettings)
  */
 public abstract class AppSettingsConfigurer<T> {
@@ -50,6 +51,10 @@ public abstract class AppSettingsConfigurer<T> {
      * @return The resulting T setting
      */
     public abstract T configure(final T setting);
+
+    public boolean isUserAuthorized() {
+        return true;
+    }
 
     /**
      * Get hystrix command

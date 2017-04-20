@@ -253,13 +253,15 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/details", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
-    public ResponseEntity<StreamingResponseBody> getPreparation(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId) {
+    public ResponseEntity<StreamingResponseBody> getPreparation( //
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
+            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId", value = "optional step id", defaultValue = "head") String stepId //
+    ) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation details (pool: {} )...", getConnectionStats());
         }
 
-        final EnrichedPreparationDetails enrichPreparation = getCommand(EnrichedPreparationDetails.class, preparationId);
+        final EnrichedPreparationDetails enrichPreparation = getCommand(EnrichedPreparationDetails.class, preparationId, stepId);
         try {
             return CommandHelper.toStreaming(enrichPreparation);
         } finally {

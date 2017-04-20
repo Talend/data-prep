@@ -468,6 +468,25 @@ const settingsMock = {
 			displayMode: 'dropdown',
 			staticActions: ['user:logout'],
 		},
+		'version:toggle': {
+			displayMode: 'ActionSettings',
+			id: 'version:toggle',
+			name: 'Toggle version',
+			type: '@@version/VERSION_TOGGLE',
+			payload: {
+				method: 'toggleVersion',
+			},
+		},
+		'version:select': {
+			displayMode: 'ActionSettings',
+			id: 'version:select',
+			name: 'Select version',
+			type: '@@router/GO_PREPARATION_READ_ONLY',
+			payload: {
+				args: 'version',
+				method: 'go',
+			},
+		},
 	},
 };
 

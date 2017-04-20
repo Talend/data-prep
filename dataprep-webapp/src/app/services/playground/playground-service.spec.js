@@ -126,13 +126,14 @@ describe('Playground Service', () => {
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
 			PREPARATION: 'Preparation',
+			TALEND: 'TALEND',
 		});
 		$translateProvider.preferredLanguage('en');
 	}));
 
 	beforeEach(inject(($q, $state, StateService, DatasetService, RecipeService, DatagridService,
 	                   PreparationService, TransformationCacheService, ExportService,
-	                   HistoryService, PreviewService, FilterService) => {
+	                   HistoryService, PreviewService, FilterService, TitleService) => {
 		stateMock.playground.preparationName = '';
 
 		spyOn($state, 'go').and.returnValue();
@@ -160,27 +161,31 @@ describe('Playground Service', () => {
 		spyOn(StateService, 'hideRecipe').and.returnValue();
 		spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
 		spyOn(FilterService, 'initFilters').and.returnValue();
+		spyOn(TitleService, 'setStrict').and.returnValue();
 	}));
 
 	describe('update preparation', () => {
-		it('should set new name to the preparation name', inject(($rootScope, PlaygroundService, PreparationService, StateService) => {
-			// given
-			const name = 'My preparation';
-			const newName = 'My new preparation name';
+		it('should set new name to the preparation name',
+			inject(($rootScope, PlaygroundService, PreparationService, TitleService, StateService) => {
+				// given
+				const name = 'My preparation';
+				const newName = 'My new preparation name';
 
-			PlaygroundService.preparationName = name;
-			stateMock.playground.dataset = { id: '123d120394ab0c53' };
-			stateMock.playground.preparation = { id: 'e85afAa78556d5425bc2' };
+				PlaygroundService.preparationName = name;
+				stateMock.playground.dataset = { id: '123d120394ab0c53' };
+				stateMock.playground.preparation = { id: 'e85afAa78556d5425bc2' };
 
-			// when
-			PlaygroundService.createOrUpdatePreparation(newName);
-			$rootScope.$digest();
+				// when
+				PlaygroundService.createOrUpdatePreparation(newName);
+				$rootScope.$digest();
 
-			// then
-			expect(PreparationService.create).not.toHaveBeenCalled();
-			expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
-			expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
-		}));
+				// then
+				expect(PreparationService.create).not.toHaveBeenCalled();
+				expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
+				expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
+				expect(TitleService.setStrict).toHaveBeenCalledWith(preparations[0].name);
+			}
+		));
 
 		describe('history', () => {
 			let undo;
@@ -237,8 +242,8 @@ describe('Playground Service', () => {
 	describe('load dataset', () => {
 		let assertNewPreparationInitialization;
 
-		beforeEach(inject(($rootScope, $window, TransformationCacheService, ExportService,
-		                   HistoryService, FilterService,
+		beforeEach(inject(($rootScope, TransformationCacheService, ExportService,
+		                   HistoryService, FilterService, TitleService,
 		                   PreviewService, StateService) => {
 			spyOn($rootScope, '$emit').and.returnValue();
 			assertNewPreparationInitialization = () => {
@@ -252,7 +257,7 @@ describe('Playground Service', () => {
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				expect(FilterService.initFilters).toHaveBeenCalled();
 				expect(ExportService.refreshTypes).toHaveBeenCalledWith('datasets', datasetColumns.metadata.id);
-				expect($window.document.title).toEqual(datasetColumns.metadata.name + ' | TALEND');
+				expect(TitleService.setStrict).toHaveBeenCalledWith(datasetColumns.metadata.name);
 			};
 		}));
 
@@ -340,8 +345,8 @@ describe('Playground Service', () => {
 		let assertDatasetLoadInitialized;
 		let assertDatasetLoadNotInitialized;
 
-		beforeEach(inject(($rootScope, $q, $window, StateService, ExportService,
-		                   PreparationService, RecipeService, StorageService,
+		beforeEach(inject(($rootScope, $q, StateService, ExportService,
+		                   PreparationService, RecipeService, StorageService, TitleService,
 		                   TransformationCacheService, HistoryService, PreviewService, FilterService) => {
 			spyOn($rootScope, '$emit').and.returnValue();
 			spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
@@ -363,7 +368,7 @@ describe('Playground Service', () => {
 				expect(FilterService.initFilters).toHaveBeenCalled();
 				expect(StateService.setGridSelection).toHaveBeenCalledWith([{ id: '0001' }]);
 				expect(ExportService.refreshTypes).toHaveBeenCalledWith('preparations', preparation.id);
-				expect($window.document.title).toEqual('prep1 | TALEND');
+				expect(TitleService.setStrict).toHaveBeenCalledWith('prep1');
 			};
 
 			assertDatasetLoadNotInitialized = () => {
@@ -379,7 +384,7 @@ describe('Playground Service', () => {
 				expect(FilterService.initFilters).not.toHaveBeenCalled();
 				expect(StateService.setGridSelection).not.toHaveBeenCalled();
 				expect(ExportService.refreshTypes).not.toHaveBeenCalled();
-				expect($window.document.title).toEqual('DATA_PREPARATION | TALEND');
+				expect(TitleService.setStrict).toHaveBeenCalledWith('DATA_PREPARATION');
 			};
 		}));
 
@@ -1914,7 +1919,6 @@ describe('Playground Service', () => {
 			spyOn(StateService, 'setPreviousRoute').and.returnValue();
 			spyOn(StateService, 'setIsFetchingStats').and.returnValue();
 
-			$stateParams.prepid = preparations[0].id;
 			$stateParams.reload = true;
 			stateMock.playground.preparation = null;
 			stateMock.playground.data = {
@@ -1952,6 +1956,18 @@ describe('Playground Service', () => {
 			);
 		}));
 
+		it('should call get dataset details', inject(($q, $rootScope, PlaygroundService, PreparationService) => {
+			// given
+			const prepId = 'prep1';
+
+			// when
+			PlaygroundService.initPreparation(prepId);
+			$rootScope.$apply();
+
+			// then
+			expect(PreparationService.getDetails).toHaveBeenCalledWith(prepId);
+		}));
+
 		it('should get dataset metadata', inject(($q, $rootScope, PlaygroundService, DatasetService) => {
 			// given
 			spyOn(PlaygroundService, 'loadPreparation').and.returnValue($q.when());
@@ -1979,6 +1995,7 @@ describe('Playground Service', () => {
 
 		it('should not reload preparation', inject(($q, $rootScope, $stateParams, PlaygroundService) => {
 			// given
+			$stateParams.prepid = preparations[0].id;
 			$stateParams.reload = false;
 			stateMock.playground.preparation = preparations[0];
 			spyOn(PlaygroundService, 'loadPreparation').and.returnValue($q.when());
@@ -2102,7 +2119,7 @@ describe('Playground Service', () => {
 	});
 
 	describe('dataset', () => {
-		beforeEach(inject(($q, $stateParams, DatasetService, MessageService, PlaygroundService, StateService) => {
+		beforeEach(inject(($q, DatasetService, MessageService, PlaygroundService, StateService) => {
 			spyOn(PlaygroundService, 'startLoader').and.returnValue();
 			spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 			spyOn(StateService, 'setPreviousRoute').and.returnValue();
@@ -2111,8 +2128,6 @@ describe('Playground Service', () => {
 			spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
 
 			// given
-			$stateParams.prepid = null;
-			$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 			stateMock.playground.data = {
 				metadata: {
 					id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
@@ -2147,21 +2162,20 @@ describe('Playground Service', () => {
 
 		it('should init playground', inject(($q, $rootScope, PlaygroundService) => {
 			// given
+			const datasetId = 'dataset1';
 			spyOn(PlaygroundService, 'loadDataset').and.returnValue($q.when());
 
 			// when
-			PlaygroundService.initDataset();
+			PlaygroundService.initDataset(datasetId);
 			$rootScope.$apply();
 
 			// then
-			expect(PlaygroundService.loadDataset).toHaveBeenCalled();
+			expect(PlaygroundService.loadDataset).toHaveBeenCalledWith(datasetId);
 		}));
 
 		it('should fetch statistics when they are not computed yet',
-			inject(($q, $rootScope, $stateParams, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
 				// given
-				$stateParams.prepid = null;
-				$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
@@ -2192,11 +2206,9 @@ describe('Playground Service', () => {
 		);
 
 		it('should retry statistics fetch when the previous fetch has been rejected (stats not computed yet) with a delay of 1500ms',
-			inject(($q, $rootScope, $timeout, $stateParams, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, $timeout, PlaygroundService, StateService) => {
 				// given
 				let retry = 0;
-				$stateParams.prepid = null;
-				$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(PlaygroundService, 'updateStatistics').and.callFake(() => {
@@ -2239,10 +2251,8 @@ describe('Playground Service', () => {
 		);
 
 		it('should NOT fetch statistics when they are already computed',
-			inject(($q, $rootScope, $stateParams, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
 				// given
-				$stateParams.prepid = null;
-				$stateParams.datasetid = 'de3cc32a-b624-484e-b8e7-dab9061a009c';
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());

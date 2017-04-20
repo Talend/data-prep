@@ -19,6 +19,7 @@ import org.talend.dataprep.parameters.Parameter;
 /**
  * Models a type of format for DTO
  */
+@SuppressWarnings("common-java:InsufficientBranchCoverage ")
 public class ExportFormatMessage {
 
     private String mimeType;

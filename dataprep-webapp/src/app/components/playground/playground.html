@@ -76,21 +76,21 @@
         <talend-slidable class="playground-suggestions"
                          visible="true"
                          side="right">
-            <suggestions-stats>
                 <sc-splitter class="suggestions-stats-content" orientation="vertical">
-                    <sc-split-first-pane id="help-suggestions">
+                    <sc-split-first-pane id="help-suggestions" insertion-versions-panel>
+                        <actions-header></actions-header>
                         <actions-suggestions class="suggestions-part"></actions-suggestions>
                     </sc-split-first-pane>
                     <sc-split-second-pane id="help-stats">
                         <stats-details class="stats-part"></stats-details>
                     </sc-split-second-pane>
                 </sc-splitter>
-            </suggestions-stats>
         </talend-slidable>
     </div>
 </div>
 
 <talend-modal
+        class="preparation-modal preparation-save-discard-modal"
         fullscreen="false"
         ng-if="playgroundCtrl.showNameValidation"
         state="playgroundCtrl.showNameValidation"
@@ -121,9 +121,11 @@
         </div>
 
         <div class="modal-buttons">
-            <a class="modal-secondary-button"
-               ng-click="playgroundCtrl.discardSaveOnClose()"
-               translate-once="NO_THANKS"></a>
+            <button ng-click="playgroundCtrl.discardSaveOnClose()"
+                    type="button"
+                    class="btn modal-secondary-button btn-link"
+                    translate-once="NO_THANKS">
+            </button>
 
             <talend-button-loader button-class="btn modal-primary-button btn-primary"
                                   disable-condition="playgroundCtrl.savePreparationForm.$invalid || playgroundCtrl.state.playground.isSavingPreparation"
@@ -136,7 +138,7 @@
 </talend-modal>
 
 <talend-modal
-            class="preparation-picker-modal"
+            class="preparation-modal preparation-picker-modal"
             fullscreen="false"
             state="playgroundCtrl.displayPreparationPicker"
             close-button="true"

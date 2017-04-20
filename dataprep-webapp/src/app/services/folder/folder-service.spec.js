@@ -232,10 +232,6 @@ describe('Folder services', () => {
 			folders: [folder],
 			preparations: [preparation],
 		};
-		const adaptedContent = {
-			folders: [getAdaptedFolder()],
-			preparations: [getAdaptedPreparation()],
-		};
 
 		beforeEach(inject(($q, StateService, FolderRestService) => {
 			spyOn(FolderRestService, 'getById').and.returnValue($q.when(folderMetadata));
@@ -274,6 +270,10 @@ describe('Folder services', () => {
 			inject(($rootScope, FolderService, StateService) => {
 				// given
 				const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
+				const adaptedContent = {
+					folders: [getAdaptedFolder()],
+					preparations: [getAdaptedPreparation()],
+				};
 
 				// when
 				FolderService.refresh(folderId);

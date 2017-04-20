@@ -80,7 +80,8 @@
 
 		function getMaxColumnTextWidth(columnDef, colIndex) {
 			const texts = [];
-			const rowEl = createRow(columnDef);
+			const elements = createMeasurementElements(columnDef);
+
 			let data = grid.getData();
 			if (Slick.Data && data instanceof Slick.Data.DataView) {
 				data = data.getItems();
@@ -88,17 +89,17 @@
 			for (let i = 0; i < data.length; i++) {
 				texts.push(data[i][columnDef.field]);
 			}
-			const template = getMaxTextTemplate(texts, columnDef, colIndex, data, rowEl);
-			const width = getTemplateWidth(rowEl, template);
-			deleteRow(rowEl);
+			const template = getMaxTextTemplate(texts, columnDef, colIndex, data, elements.row);
+			const width = getTemplateWidth(elements.cell, template);
+			deleteMeasurementElements(elements);
 			return width;
 		}
 
-		function getTemplateWidth(rowEl, template) {
-			const cell = $(rowEl.find('.slick-cell'));
+		function getTemplateWidth(cell, template) {
 			cell.append(template);
-			$(cell).find('*').css('position', 'relative');
-			return $(cell).outerWidth(true) + 1;
+			const width = cell.outerWidth(true) + 1;
+			cell.empty();
+			return width;
 		}
 
 		function getMaxTextTemplate(texts, columnDef, colIndex, data, rowEl) {
@@ -120,20 +121,20 @@
 			return maxTemplate;
 		}
 
-		function createRow(columnDef) { // eslint-disable-line no-unused-vars
-			const rowEl = $('<div class="slick-row"><div class="slick-cell"></div></div>');
-			rowEl.find('.slick-cell').css({
-				visibility: 'hidden',
-				'text-overflow': 'initial',
-				'white-space': 'nowrap',
-			});
-			const gridCanvas = $container.find('.grid-canvas');
-			$(gridCanvas).append(rowEl);
-			return rowEl;
+		function createMeasurementElements(columnDef) { // eslint-disable-line no-unused-vars
+			const row = $('<div class="slick-row"><div id="measurement-cell" class="slick-cell"></div></div>');
+			const cell = row.children();
+			row.find('.slick-cell').css('visibility', 'hidden');
+			$container.find('.grid-canvas').first().append(row);
+
+			return {
+				row,
+				cell,
+			};
 		}
 
-		function deleteRow(rowEl) {
-			$(rowEl).remove();
+		function deleteMeasurementElements(elements) {
+			elements.row.remove();
 		}
 
 		function getElementWidth(element) {

@@ -20,7 +20,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.*;
@@ -29,7 +31,15 @@ public class StepNodeTransformerTest {
 
     private static final Step STEP = new Step(null, null, "");
 
+    private static final Step INVALID_STEP = new Step(null, null, "");
+
     private static final Step ROOT = new Step(null, null, "");
+
+    @Before
+    public void setUp() throws Exception {
+        STEP.setRowMetadata(new RowMetadata());
+        INVALID_STEP.setRowMetadata(null);
+    }
 
     @Test
     public void shouldNotCreateStepNode() throws Exception {
@@ -61,6 +71,25 @@ public class StepNodeTransformerTest {
         processed.accept(visitor);
         assertThat(visitor.traversedClasses, hasItems(expectedClasses));
 
+    }
+
+    @Test
+    public void shouldNotCreateStepNodeWhenSurroundedAndNoMetadata() throws Exception {
+        // given
+        Node node = NodeBuilder //
+                .from(new CompileNode(null, null)) //
+                .to(new ActionNode(null, null)) //
+                .to(new BasicNode()) //
+                .build();
+
+        // when
+        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, INVALID_STEP));
+
+        // then
+        final Class[] expectedClasses = { SourceNode.class, CompileNode.class, ActionNode.class};
+        final NodeClassVisitor visitor = new NodeClassVisitor();
+        processed.accept(visitor);
+        assertThat(visitor.traversedClasses, hasItems(expectedClasses));
     }
 
     @Test

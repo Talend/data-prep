@@ -39,9 +39,7 @@ import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
-import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
-import org.talend.dataprep.transformation.pipeline.node.StepNode;
 import org.talend.dataprep.transformation.service.PreparationUpdater;
 import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
 
@@ -111,16 +109,10 @@ public class PipelineTransformer implements Transformer {
         }
 
         if (preparation != null) {
-            List<Step> stepsToUpdate = new ArrayList<>();
-            pipeline.accept(new Visitor() {
-                @Override
-                public void visitStepNode(StepNode stepNode) {
-                    stepsToUpdate.add(stepNode.getStep());
-                    super.visitStepNode(stepNode);
-                }
-            });
+            final UpdatedStepVisitor visitor = new UpdatedStepVisitor();
+            pipeline.accept(visitor);
 
-            preparation.setSteps(stepsToUpdate);
+            preparation.setSteps(visitor.getUpdatedSteps());
             preparationUpdater.update(preparation.getId(), preparation.getSteps());
         }
     }
@@ -129,4 +121,5 @@ public class PipelineTransformer implements Transformer {
     public boolean accept(Configuration configuration) {
         return Configuration.class.equals(configuration.getClass());
     }
+
 }

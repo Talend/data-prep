@@ -75,6 +75,10 @@ public class CloseableResourceWatch implements Condition {
         return proceed;
     }
 
+    public Set<CloseableHandler> getEntries() {
+        return entries;
+    }
+
     private boolean remove(CloseableHandler handler) {
         return entries.remove(handler);
     }
@@ -99,10 +103,10 @@ public class CloseableResourceWatch implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return LOGGER.isDebugEnabled();
+        return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE) || LOGGER.isDebugEnabled();
     }
 
-    interface CloseableHandler {
+    public interface CloseableHandler {
 
         RuntimeException getCaller();
 

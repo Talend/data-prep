@@ -31,18 +31,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
-import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
+import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriter;
 import org.talend.dataprep.util.FilesHelper;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 @Scope("prototype")
 @Component("writer#" + XLSX)
-public class XlsWriter implements TransformerWriter {
+public class XlsWriter extends AbstractTransformerWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XlsWriter.class);
 
@@ -79,6 +78,11 @@ public class XlsWriter implements TransformerWriter {
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_USE_EXPORT, e);
         }
+    }
+
+    @Override
+    protected au.com.bytecode.opencsv.CSVWriter getRecordsWriter() {
+        return recordsWriter;
     }
 
     @Override
@@ -139,12 +143,7 @@ public class XlsWriter implements TransformerWriter {
         }
     }
 
-    @Override
-    public void write(DataSetRow row) throws IOException {
-        LOGGER.trace("Buffering DataSetRow (metadata not ready): {}", row);
-        // values need to be written in the same order as the columns
-        recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID));
-    }
+
 
     @Override
     public void flush() throws IOException {

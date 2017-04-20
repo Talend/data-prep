@@ -44,13 +44,13 @@ const LINE = 'line';
 const EVENT_LOADING_START = 'talend.loading.start';
 const EVENT_LOADING_STOP = 'talend.loading.stop';
 
-export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams, $window,
+export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
                                           state, StateService, StepUtilsService,
                                           DatasetService, DatagridService, StorageService, FilterService,
                                           FilterAdapterService, PreparationService, PreviewService,
                                           RecipeService, TransformationCacheService, ExportService,
                                           StatisticsService, HistoryService,
-                                          OnboardingService, MessageService) {
+                                          OnboardingService, MessageService, TitleService) {
 	'ngInject';
 
 	const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
@@ -73,6 +73,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		loadStep,           // load preparation step
 		updateStatistics,   // load column statistics and trigger statistics update
 		close,
+		errorGoBack,
 
 		// preparation
 		createOrUpdatePreparation,
@@ -135,14 +136,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		if (preparation) {
 			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
-			$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
+			TitleService.setStrict(preparation.name);
 		}
 
 		// dataset specific init
 		else {
 			StateService.setNameEditionMode(true);
 			ExportService.refreshTypes('datasets', dataset.id);
-			$window.document.title = `${dataset.name} | ${$translate.instant('TALEND')}`;
+			TitleService.setStrict(dataset.name);
 		}
 	}
 
@@ -387,6 +388,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then((preparation) => {
 				StateService.setCurrentPreparation(preparation);
 				StateService.setPreparationName(preparation.name);
+				TitleService.setStrict(preparation.name);
 				return preparation;
 			});
 		return promise;
@@ -850,7 +852,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description open a preparation
 	 */
-	function initPreparation() {
+	function initPreparation(prepid) {
 		StateService.setPreviousRoute(
 			HOME_PREPARATIONS_ROUTE,
 			{ folderId: state.inventory.folder.metadata.id }
@@ -861,7 +863,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 		StateService.setIsLoadingPlayground(true);
 		startLoader();
-		PreparationService.getDetails($stateParams.prepid)
+		PreparationService.getDetails(prepid)
 			.then((preparation) => {
 				this.loadPreparation.call(this, preparation);
 				return preparation;
@@ -880,10 +882,10 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description open a dataset
 	 */
-	function initDataset() {
+	function initDataset(datasetid) {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		StateService.setIsLoadingPlayground(true);
-		this.loadDataset.call(this, $stateParams.datasetid);
+		this.loadDataset.call(this, datasetid);
 	}
 
 	/**

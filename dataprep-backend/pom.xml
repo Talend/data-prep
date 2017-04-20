@@ -38,8 +38,8 @@
         <org.talend.dataquality.record.linkage.version>3.2.7</org.talend.dataquality.record.linkage.version>
         <org.talend.dataquality.sampling.version>2.3.7</org.talend.dataquality.sampling.version>
         <org.talend.dataquality.standardization.version>3.2.7</org.talend.dataquality.standardization.version>
-        <org.talend.dataquality.converters.version>1.0.0-SNAPSHOT</org.talend.dataquality.converters.version>
-        <spring-boot.version>1.5.1.RELEASE</spring-boot.version>
+        <org.talend.dataquality.converters.version>1.1.0-SNAPSHOT</org.talend.dataquality.converters.version>
+        <spring-boot.version>1.5.2.RELEASE</spring-boot.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
@@ -655,12 +655,7 @@
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
-                    <version>2.2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.4.13</version>
+                    <version>2.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -15,20 +15,25 @@ package org.talend.dataprep.transformation.format;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.SchemaParser;
+import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriterTest;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
@@ -40,10 +45,20 @@ import com.fasterxml.jackson.core.JsonParser;
  * 
  * @see XlsWriter
  */
-public class XlsWriterTest extends BaseFormatTest {
+public class XlsWriterTest extends AbstractTransformerWriterTest {
 
     @Autowired
     private TransformerFactory factory;
+
+    /** Where the writer should... write! */
+    private OutputStream outputStream;
+
+    @Before
+    public void init() {
+        outputStream = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        writer = (XlsWriter) context.getBean("writer#XLSX", outputStream, parameters);
+    }
 
     @Test
     public void write_simple_xls_file() throws Exception {
@@ -122,7 +137,6 @@ public class XlsWriterTest extends BaseFormatTest {
 
     /**
      * Please have a look at <a href="https://jira.talendforge.org/browse/TDP-1528">TDP-1528</a>.
-     * @throws Exception
      */
     @Test
     public void TDP_1528_export_of_backslash() throws Exception {

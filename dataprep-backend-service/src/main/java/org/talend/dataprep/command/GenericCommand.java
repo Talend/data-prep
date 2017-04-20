@@ -43,9 +43,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
@@ -103,7 +107,11 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Value("${preparation.service.url:}")
     protected String preparationServiceUrl;
 
+    @Autowired
+    private BeanConversionService conversionService;
+
     private String authenticationToken;
+
     private final Map<String, String> headers = new HashMap<>();
 
     private Supplier<HttpRequestBase> httpCall;
@@ -114,22 +122,19 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Default onError behaviour. */
     private Function<Exception, RuntimeException> onError = Defaults.passthrough();
 
-    private HttpStatus status;//
-//
-//
-    public static final HttpStatus[] SUCCESS_STATUS = Stream.of(HttpStatus.values()) //
+    private HttpStatus status;
+
+    private static final HttpStatus[] SUCCESS_STATUS = Stream.of(HttpStatus.values()) //
             .filter(HttpStatus::is2xxSuccessful) //
             .collect(Collectors.toList()) //
-            .toArray(new HttpStatus[0]);//
-//
-//
-    public static final HttpStatus[] REDIRECT_STATUS = Stream.of(HttpStatus.values()) //
+            .toArray(new HttpStatus[0]);
+
+    private static final HttpStatus[] REDIRECT_STATUS = Stream.of(HttpStatus.values()) //
             .filter(HttpStatus::is3xxRedirection) //
             .collect(Collectors.toList()) //
-            .toArray(new HttpStatus[0]);//
-//
-//
-    public static final HttpStatus[] INFO_STATUS = Stream.of(HttpStatus.values()) //
+            .toArray(new HttpStatus[0]);
+
+    private static final HttpStatus[] INFO_STATUS = Stream.of(HttpStatus.values()) //
             .filter(HttpStatus::is1xxInformational) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
@@ -373,9 +378,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 if (res.getEntity() != null) {
                     content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
-                JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(content);
-                code.setHttpStatus(statusCode);
-                final TDPException cause = new TDPException(code);
+
+                TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
+                TDPException cause = conversionService.convert(exceptionDto, TDPException.class);
+                ErrorCode code = cause.getCode();
+                if (code instanceof ErrorCodeDto) {
+                    ((ErrorCodeDto) code).setHttpStatus(statusCode);
+                }
                 throw onError.apply(cause);
             } catch (JsonMappingException e) {
                 LOGGER.debug("Cannot parse response content as JSON.", e);

@@ -58,8 +58,6 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     private final Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer;
 
-    private final Predicate<ColumnMetadata> filter;
-
     private final StatisticsAdapter adapter;
 
     private long totalTime;
@@ -68,11 +66,10 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     private long count;
 
-    public TypeDetectionNode(Predicate<ColumnMetadata> filter, StatisticsAdapter adapter,
+    public TypeDetectionNode(Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter,
             Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer) {
         super(filter);
         this.analyzer = analyzer;
-        this.filter = filter;
         this.adapter = adapter;
         try {
             reservoir = File.createTempFile("TypeDetection", ".zip");
@@ -165,13 +162,17 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                     // Adapt row metadata to infer type (adapter takes care of type-forced columns)
                     resultAnalyzer.end();
                     final List<ColumnMetadata> columns = rowMetadata.getColumns();
-                    adapter.adapt(columns, resultAnalyzer.getResult(), filter);
+                    adapter.adapt(columns, resultAnalyzer.getResult(), (Predicate<ColumnMetadata>) filter);
                     resultAnalyzer.close();
                 }
                 // Continue process
                 try (JsonParser parser = mapper.getFactory().createParser(new GZIPInputStream(new FileInputStream(reservoir)))) {
                     final DataSet dataSet = mapper.reader(DataSet.class).readValue(parser);
-                    dataSet.getRecords().forEach(r -> link.exec().emit(r, rowMetadata));
+                    dataSet.getRecords().forEach(r -> {
+                        r.setRowMetadata(rowMetadata);
+                        link.exec().emit(r, rowMetadata);
+                    });
+
                 }
             }
         } catch (Exception e) {

@@ -168,7 +168,8 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	 * @description Discard implicit preparation save. This trigger a preparation delete.
 	 */
 	vm.discardSaveOnClose = () => {
-		PreparationService.delete(state.playground.preparation).then(PlaygroundService.close);
+		PreparationService.delete(state.playground.preparation);
+		PlaygroundService.close();
 	};
 
 	/**
@@ -222,9 +223,9 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	// ------------------------------------------------INIT----------------------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
 	if ($stateParams.prepid) {
-		PlaygroundService.initPreparation();
+		PlaygroundService.initPreparation($stateParams.prepid);
 	}
 	else if ($stateParams.datasetid) {
-		PlaygroundService.initDataset();
+		PlaygroundService.initDataset($stateParams.datasetid);
 	}
 }

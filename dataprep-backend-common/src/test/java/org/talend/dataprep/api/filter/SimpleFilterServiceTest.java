@@ -1050,4 +1050,21 @@ public class SimpleFilterServiceTest {
         //then
     }
 
+    /**
+     * Make preparation sent to stream work when no filter is sent
+     * <a>https://jira.talendforge.org/browse/TDP-3518</a>
+     *
+     */
+    @Test
+    public void TDP_3518_should_create_TRUE_predicate_on_double_quote() throws Exception {
+        // given
+        final String filtersDefinition = "\"\"";
+
+        // when
+        final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        assertThat(filter.test(datasetRowFromValues), is(true));
+    }
+
 }

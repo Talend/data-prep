@@ -13,13 +13,13 @@
 
 package org.talend.dataprep.exception.error;
 
-import org.talend.daikon.exception.error.ErrorCode;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import org.talend.daikon.exception.error.ErrorCode;
 
 /**
  * Preparation error codes.
@@ -34,7 +34,8 @@ public enum PreparationErrorCodes implements ErrorCode {
     UNABLE_TO_READ_PREPARATION(INTERNAL_SERVER_ERROR.value(), "id", "version"),
     PREPARATION_NAME_ALREADY_USED(CONFLICT.value(), "id", "name", "folder"),
     PREPARATION_NOT_EMPTY(CONFLICT.value(), "id"),
-    FORBIDDEN_PREPARATION_CREATION(FORBIDDEN.value());
+    FORBIDDEN_PREPARATION_CREATION(FORBIDDEN.value()),
+    PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId");
 
     /** The http status to use. */
     private int httpStatus;

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * Uris settings
  *
- * */
+ */
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 public class UriSettings {
@@ -39,7 +39,9 @@ public class UriSettings {
     /**
      * Getters & Setters
      */
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
     public void setId(String id) {
         this.id = id;

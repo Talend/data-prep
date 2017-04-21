@@ -51,5 +51,7 @@ public class AppSettings {
         return actions;
     }
 
-    public Map<String, String> getUris() { return uris; }
+    public Map<String, String> getUris() {
+        return uris;
+    }
 }

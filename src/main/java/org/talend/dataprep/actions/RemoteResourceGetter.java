@@ -139,9 +139,26 @@ public class RemoteResourceGetter {
         }
     }
 
-    String retrievePreparation(String apiUrl, String login, String password, String preparationId) {
+    /**
+     * Return the preparation as JSON string from the given parameters.
+     *
+     * @param apiUrl the dataprep api url.
+     * @param login the login to use to get the preparation.
+     * @param password the password that matches the login.
+     * @param preparationId the preparation id.
+     * @param versionId the optional preparation version id. If null, preparation head will be used.
+     * @return the preparation as JSON string from the given parameters.
+     */
+    String retrievePreparation(String apiUrl, String login, String password, String preparationId, String versionId) {
         final Header jwt = login(apiUrl, login, password);
-        String url = apiUrl + "/api/preparations/" + preparationId + "/details";
+        String url = apiUrl + "/api/preparations/" + preparationId;
+
+        // update the url to match the version id parameter if needed
+        if (StringUtils.isNotBlank(versionId)) {
+            url += "/versions/" + versionId;
+        }
+        url += "/details";
+
         HttpGet request = new HttpGet(url);
         request.addHeader(jwt);
         try (final CloseableHttpResponse response = client.execute(request)) {

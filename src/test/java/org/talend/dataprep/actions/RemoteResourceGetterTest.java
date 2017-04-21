@@ -23,6 +23,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+import org.apache.tika.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -119,8 +120,7 @@ public class RemoteResourceGetterTest {
     @Test
     public void testGetDataSet_withTcompLookup_TDP3098() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/*",
-                RemoteResourceGetterTest.class.getResourceAsStream("lookup_dataset_from_Tcomp.json"), header);
+        serverMock.addEndPoint("/api/datasets/*", this.getClass().getResourceAsStream("lookup_dataset_from_Tcomp.json"), header);
         serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
@@ -183,4 +183,40 @@ public class RemoteResourceGetterTest {
         assertNull(result.getKeyword());
     }
 
+    @Test
+    public void shouldGetPreparation() throws Exception {
+        // given
+        serverMock.addEndPoint("/login", "", header);
+        String preparationId = "f52382cf-2e11-4c42-a2ec-0dc84f1dfa2f";
+        serverMock.addEndPoint("/api/preparations/" + preparationId + "/details",
+                this.getClass().getResourceAsStream("preparation.json"), header);
+        String serverUrl = serverMock.getServerUrl();
+        remoteResourceGetter = new RemoteResourceGetter();
+
+        // when
+        final String actual = remoteResourceGetter.retrievePreparation(serverUrl, "Maximus", "Spanish", preparationId, null);
+
+        // then
+        assertNotNull(actual);
+        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("preparation.json")), actual);
+    }
+
+    @Test
+    public void shouldGetPreparationWithVersion() throws Exception {
+        // given
+        serverMock.addEndPoint("/login", "", header);
+        String preparationId = "f52382cf-2e11-4c42-a2ec-0dc84f1dfa2f";
+        String versionId = "123-ABC-456-DEF";
+        serverMock.addEndPoint("/api/preparations/" + preparationId + "/versions/" + versionId + "/details",
+                this.getClass().getResourceAsStream("preparation.json"), header);
+        String serverUrl = serverMock.getServerUrl();
+        remoteResourceGetter = new RemoteResourceGetter();
+
+        // when
+        final String actual = remoteResourceGetter.retrievePreparation(serverUrl, "Maximus", "Spanish", preparationId, versionId);
+
+        // then
+        assertNotNull(actual);
+        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("preparation.json")), actual);
+    }
 }

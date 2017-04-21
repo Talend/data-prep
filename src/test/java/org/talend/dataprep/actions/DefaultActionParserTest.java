@@ -51,6 +51,8 @@ public class DefaultActionParserTest {
 
     private static final String preparationId = "A1B2C3";
 
+    private static final String versionId = "1A2B3C";
+
     private static final String dataSetId1 = "A1B2C3";
 
     private static final String dataSetId2 = "A1B2C3D4";
@@ -126,6 +128,22 @@ public class DefaultActionParserTest {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
+        }
+
+        // Then
+        assertSerializable(function);
+        assertNotNull(function);
+    }
+
+    @Test
+    public void testPreparationWithVersion() throws Exception {
+        // Given
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("actions_sample1.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/versions/" + versionId + "/details", resourceAsStream,
+                    header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId, versionId);
         }
 
         // Then

@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.actions;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.InputStream;
 import java.util.function.Function;
 
@@ -61,9 +63,17 @@ public class DefaultActionParser implements ActionParser {
         this.allowNonDistributedActions = allowNonDistributedActions;
     }
 
-    private String getPreparation(RemoteResourceGetter clientFormLogin, String preparationId) {
-        LOGGER.debug("Retrieving preparation '{}'", preparationId);
-        return clientFormLogin.retrievePreparation(apiUrl, login, password, preparationId);
+    /**
+     * Return the preparation as json string that match the preparation id and optional version id.
+     *
+     * @param clientFormLogin the client that can retrieve the preparation.
+     * @param preparationId the preparation id.
+     * @param versionId the version id.
+     * @return the preparation as json string that match the preparation id and optional version id.
+     */
+    private String getPreparation(RemoteResourceGetter clientFormLogin, String preparationId, String versionId) {
+        LOGGER.debug("Retrieving preparation '{}' version '{}'", preparationId, versionId == null ? "head" : versionId);
+        return clientFormLogin.retrievePreparation(apiUrl, login, password, preparationId, versionId);
     }
 
     private Function<IndexedRecord, IndexedRecord> internalParse(InputStream preparation) {
@@ -74,9 +84,14 @@ public class DefaultActionParser implements ActionParser {
 
     @Override
     public Function<IndexedRecord, IndexedRecord> parse(String preparationId) {
+        return parse(preparationId, null);
+    }
+
+    @Override
+    public Function<IndexedRecord, IndexedRecord> parse(String preparationId, String versionId) {
         final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
-        String preparation = getPreparation(clientFormLogin, preparationId);
-        return internalParse(IOUtils.toInputStream(preparation));
+        String preparation = getPreparation(clientFormLogin, preparationId, versionId);
+        return internalParse(IOUtils.toInputStream(preparation, UTF_8));
     }
 
 }

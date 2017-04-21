@@ -14,8 +14,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 50,
-          "invalidValues": []
+          "valid": 50
         },
         "id": "0000",
         "statistics": {
@@ -169,8 +168,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 50,
-          "invalidValues": []
+          "valid": 50
         },
         "id": "0001",
         "statistics": {

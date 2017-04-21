@@ -8,8 +8,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2000,
-          "invalidValues": []
+          "valid": 2000
         },
         "id": "0000",
         "statistics": {
@@ -51,8 +50,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 2000,
-          "invalidValues": []
+          "valid": 2000
         },
         "id": "0001",
         "statistics": {
@@ -94,8 +92,7 @@
         "quality": {
           "empty": 5,
           "invalid": 1,
-          "valid": 1994,
-          "invalidValues": []
+          "valid": 1994
         },
         "id": "0002",
         "statistics": {

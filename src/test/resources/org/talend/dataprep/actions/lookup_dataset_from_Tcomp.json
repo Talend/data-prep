@@ -14,8 +14,7 @@
         "quality": {
           "empty": 0,
           "invalid": 4,
-          "valid": 1000,
-          "invalidValues": []
+          "valid": 1000
         },
         "id": "0000",
         "statistics": {
@@ -367,8 +366,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 1004,
-          "invalidValues": []
+          "valid": 1004
         },
         "id": "0001",
         "statistics": {
@@ -553,8 +551,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 1004,
-          "invalidValues": []
+          "valid": 1004
         },
         "id": "0002",
         "statistics": {
@@ -735,8 +732,7 @@
         "quality": {
           "empty": 0,
           "invalid": 4,
-          "valid": 1000,
-          "invalidValues": []
+          "valid": 1000
         },
         "id": "0003",
         "statistics": {
@@ -906,8 +902,7 @@
         "quality": {
           "empty": 0,
           "invalid": 4,
-          "valid": 1000,
-          "invalidValues": []
+          "valid": 1000
         },
         "id": "0004",
         "statistics": {
@@ -996,8 +991,7 @@
         "quality": {
           "empty": 0,
           "invalid": 4,
-          "valid": 1000,
-          "invalidValues": []
+          "valid": 1000
         },
         "id": "0005",
         "statistics": {
@@ -1167,8 +1161,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 1004,
-          "invalidValues": []
+          "valid": 1004
         },
         "id": "0006",
         "statistics": {

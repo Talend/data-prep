@@ -57,7 +57,8 @@ public class PreparationRepositoryConfiguration {
         }
 
         @Override
-        public PreparationRepository doWith(PreparationRepository instance, String beanName, ApplicationContext applicationContext) {
+        public PreparationRepository doWith(PreparationRepository instance, String beanName,
+                ApplicationContext applicationContext) {
             if ("preparationRepository#mongodb".equals(beanName)) {
                 LOGGER.info("Skip wrapping of '{}' (not a primary implementation).", beanName);
                 return instance;
@@ -72,7 +73,8 @@ public class PreparationRepositoryConfiguration {
     public class PersistentPreparationConversions extends BeanConversionServiceWrapper {
 
         @Override
-        public BeanConversionService doWith(BeanConversionService conversionService, String beanName, ApplicationContext applicationContext) {
+        public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
+                ApplicationContext applicationContext) {
             // Preparation -> PersistentPreparation
             conversionService.register(fromBean(Preparation.class) //
                     .toBeans(PersistentPreparation.class) //
@@ -96,19 +98,21 @@ public class PreparationRepositoryConfiguration {
         }
 
         /**
-         * Return a BiFunction that convert a PersistentStep into a Step.
+         * Return a {@link BiFunction} that convert a PersistentStep into a Step.
          *
-         * @param conversionService the famous conversionService.
-         * @param applicationContext the spring application context.
-         * @return a BiFunction that convert a PersistentStep into a Step.
+         * @param converter the famous conversionService.
+         * @param context the spring application context.
+         * @return a {@link BiFunction} that convert a PersistentStep into a Step.
          */
-        private BiFunction<PersistentStep, Step, Step> toStep(BeanConversionService conversionService,
-                ApplicationContext applicationContext) {
+        private BiFunction<PersistentStep, Step, Step> toStep(BeanConversionService converter, ApplicationContext context) {
             return (persistentStep, step) -> {
-                final PreparationRepository repository = getPreparationRepository(applicationContext);
+
+                // PersistentStep to Step will trigger recursive calls to build the full step hierarchy up to the root step
+
+                final PreparationRepository repository = getPreparationRepository(context);
                 if (!Step.ROOT_STEP.getId().equals(persistentStep.getId())) {
-                    step.setParent(conversionService.convert(repository.get(persistentStep.getParentId(), PersistentStep.class),
-                            Step.class));
+                    step.setParent(
+                            converter.convert(repository.get(persistentStep.getParentId(), PersistentStep.class), Step.class));
                 }
                 final PreparationActions content = repository.get(persistentStep.getContent(), PreparationActions.class);
                 step.setContent(content);
@@ -117,7 +121,7 @@ public class PreparationRepositoryConfiguration {
         }
 
         /**
-         * @return a BiFunction In charge of converting steps to PersistentStep.
+         * @return a {@link BiFunction} In charge of converting steps to PersistentStep.
          */
         private BiFunction<Step, PersistentStep, PersistentStep> toPersistentStep() {
             return (step, persistentStep) -> {
@@ -135,21 +139,25 @@ public class PreparationRepositoryConfiguration {
         }
 
         /**
-         * BiFunction in charge of converting PersistentPreparation to Preparation.
+         * {@link BiFunction} in charge of converting PersistentPreparation to Preparation.
          *
-         * @param conversionService the conversion service.
-         * @param applicationContext the one and only application context.
-         * @return the BiFunction that converts PeristentPreparation to Preparation.
+         * @param converter the conversion service.
+         * @param context the one and only application context.
+         * @return the {@link BiFunction} that converts PersistentPreparation to Preparation.
          */
-        private BiFunction<PersistentPreparation, Preparation, Preparation> toPreparation(BeanConversionService conversionService,
-                ApplicationContext applicationContext) {
+        private BiFunction<PersistentPreparation, Preparation, Preparation> toPreparation(BeanConversionService converter,
+                ApplicationContext context) {
+
             return (persistentPreparation, preparation) -> {
-                final PreparationRepository repository = getPreparationRepository(applicationContext);
-                final PreparationUtils utils = getPreparationUtils(applicationContext);
+                final PreparationRepository repository = getPreparationRepository(context);
+                final PreparationUtils utils = getPreparationUtils(context);
+
+                // PersistentStep to Step will trigger recursive calls to build the full step hierarchy up to the root step
+
                 final List<String> stepsIds = utils.listStepsIds(preparation.getHeadId(), repository);
                 if (stepsIds != null) {
                     final List<Step> steps = stepsIds.stream() //
-                            .map(step -> conversionService.convert(repository.get(step, PersistentStep.class), Step.class)) //
+                            .map(step -> converter.convert(repository.get(step, PersistentStep.class), Step.class)) //
                             .collect(Collectors.toList());
                     preparation.setSteps(steps);
                 }

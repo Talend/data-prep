@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.common;
 
@@ -26,7 +25,7 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 public abstract class ChainedCommand<O, I> extends GenericCommand<O> {
 
     /** The command to execute to get the input for this one. */
-    private final HystrixCommand<I> input;
+    protected final HystrixCommand<I> input;
 
     /**
      * Constructor.
@@ -50,7 +49,7 @@ public abstract class ChainedCommand<O, I> extends GenericCommand<O> {
 
     /**
      * Execute the input command to get its result as input for this one.
-     * 
+     *
      * @return the input command result.
      */
     public I getInput() {

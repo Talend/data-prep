@@ -13,28 +13,30 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
-import org.junit.Test;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Preparation;
-
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.preparation.Preparation;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
 
 public class SearchAPITest extends ApiServiceTestBase {
 
     @Test
     public void shouldReturnMatchingPreparationsWhenPerformingInventory() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventoryOfPreparations", "text/csv",
+        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testInventoryOfPreparations",
+                "text/csv",
                 folderRepository.getHome().getId());
 
         // when
@@ -58,7 +60,8 @@ public class SearchAPITest extends ApiServiceTestBase {
     @Test
     public void shouldReturnMatchingPreparationsWithSpaceWhenPerformingInventory() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations", "text/csv",
+        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations",
+                "text/csv",
                 folderRepository.getHome().getId());
 
         // when
@@ -82,7 +85,7 @@ public class SearchAPITest extends ApiServiceTestBase {
     @Test
     public void shouldNotReturnNonMatchingPreparationsWhenPerformingInventory() throws IOException {
         // given
-        createPreparationFromFile("t-shirt_100.csv", "nonMatchingPreparation", "text/csv");
+        testClient.createPreparationFromFile("t-shirt_100.csv", "nonMatchingPreparation", "text/csv", home.getId());
 
         // when
         final Response response = given() //
@@ -117,16 +120,17 @@ public class SearchAPITest extends ApiServiceTestBase {
         folderRepository.addFolder(home.getId(), "/menu/menu B");
         folderRepository.addFolder(home.getId(), "/menu/menu C");
 
-        final String datasetId1 = createDataset("dataset/dataset.csv", "MacCallan collection", "text/csv");
-        final String datasetId2 = createDataset("dataset/dataset.csv", "menu", "text/csv");
-        createDataset("dataset/dataset.csv", "Saint Feuillien", "text/csv");
-        createDataset("dataset/dataset.csv", "menu bis", "text/csv");
+        final String datasetId1 = testClient.createDataset("dataset/dataset.csv", "MacCallan collection", "text/csv");
+        final String datasetId2 = testClient.createDataset("dataset/dataset.csv", "menu", "text/csv");
+        testClient.createDataset("dataset/dataset.csv", "Saint Feuillien", "text/csv");
+        testClient.createDataset("dataset/dataset.csv", "menu bis", "text/csv");
 
-        final String preparationId1 = createPreparationFromFile("dataset/dataset.csv", "cleanup MacCallan", "text/csv",
+        final String preparationId1 = testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup MacCallan", "text/csv",
                 whiskyFolder.getId());
-        final String preparationId2 = createPreparationFromFile("dataset/dataset.csv", "menu", "text/csv", menuFolder.getId());
-        createPreparationFromFile("dataset/dataset.csv", "cleanup Queue 2 charrue", "text/csv", beerFolder.getId());
-        createPreparationFromFile("dataset/dataset.csv", "cleanup menu", "text/csv", menuFolder.getId());
+        final String preparationId2 = testClient.createPreparationFromFile("dataset/dataset.csv", "menu", "text/csv",
+                menuFolder.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup Queue 2 charrue", "text/csv", beerFolder.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup menu", "text/csv", menuFolder.getId());
 
         final boolean nonStrict = false;
         final boolean strict = true;

@@ -129,9 +129,9 @@ public class FolderAPITest extends ApiServiceTestBase {
         // given
         folderRepository.addFolder(home.getId(), "/one");
         folderRepository.addFolder(home.getId(), "/two");
-        createPreparationFromFile("dataset/dataset.csv", "yet another preparation", "text/csv", home.getId());
-        createPreparationFromFile("dataset/dataset.csv", "prep 2", "text/csv", home.getId());
-        createPreparationFromFile("dataset/dataset.csv", "preparation 3 !", "text/csv", home.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "yet another preparation", "text/csv", home.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "prep 2", "text/csv", home.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "preparation 3 !", "text/csv", home.getId());
 
         // when
         final Response response = given() //
@@ -170,7 +170,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         // given
         int numberOfPreparations = 33;
         for (int preparationId = 0; preparationId < numberOfPreparations; preparationId++) {
-            createPreparationFromFile("dataset/dataset.csv", "preparation " + preparationId, "text/csv", home.getId());
+            testClient.createPreparationFromFile("dataset/dataset.csv", "preparation " + preparationId, "text/csv", home.getId());
         }
 
         // when

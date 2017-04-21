@@ -84,7 +84,7 @@ public interface ListViews {
             .list(
                     ListDetailsSettings.builder()
                             .column("name", "Name")
-                            .column("statusActions", "", "actions")
+                            .column("statusActions", "Actions", Boolean.TRUE, "actions")
                             .column("author", "Author")
                             .column("creationDate", "Created")
                             .column("nbRecords", "Rows")

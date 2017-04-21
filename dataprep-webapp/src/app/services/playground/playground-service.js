@@ -73,6 +73,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		loadStep,           // load preparation step
 		updateStatistics,   // load column statistics and trigger statistics update
 		close,
+		errorGoBack,
 
 		// preparation
 		createOrUpdatePreparation,
@@ -851,7 +852,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description open a preparation
 	 */
-	function initPreparation() {
+	function initPreparation(prepid) {
 		StateService.setPreviousRoute(
 			HOME_PREPARATIONS_ROUTE,
 			{ folderId: state.inventory.folder.metadata.id }
@@ -862,7 +863,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 		StateService.setIsLoadingPlayground(true);
 		startLoader();
-		PreparationService.getDetails($stateParams.prepid)
+		PreparationService.getDetails(prepid)
 			.then((preparation) => {
 				this.loadPreparation.call(this, preparation);
 				return preparation;
@@ -881,10 +882,10 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description open a dataset
 	 */
-	function initDataset() {
+	function initDataset(datasetid) {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		StateService.setIsLoadingPlayground(true);
-		this.loadDataset.call(this, $stateParams.datasetid);
+		this.loadDataset.call(this, datasetid);
 	}
 
 	/**

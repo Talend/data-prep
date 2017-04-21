@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.exception;
 
@@ -41,7 +40,7 @@ public class TDPException extends TalendRuntimeException {
 
     private static final long serialVersionUID = -51732176302413600L;
 
-    private static final Logger log = LoggerFactory.getLogger(TDPException.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TDPException.class);
 
     /**
      * If the exception is a TDPException, rethrow it, else wrap it and then throw it.
@@ -155,7 +154,7 @@ public class TDPException extends TalendRuntimeException {
             objectMapper.writeValue(writer, toExceptionDto(this));
             writer.flush();
         } catch (IOException e) {
-            log.error("Unable to write exception to " + writer + ".", e);
+            LOGGER.error("Unable to write exception to " + writer + ".", e);
         }
     }
 

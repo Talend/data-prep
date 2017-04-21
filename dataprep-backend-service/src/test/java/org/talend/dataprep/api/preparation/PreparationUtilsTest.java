@@ -311,13 +311,15 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         // Given
         final Preparation preparation = new Preparation();
         preparation.setId("prep-1234");
-        final Step step1 = new FixedIdStep("step-1234");
-        final Step step2 = new FixedIdStep("step-5678");
+        final Step step1 = new FixedIdStep("step-1234", rootStep);
+        final Step step2 = new FixedIdStep("step-5678", step1);
         final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
         final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
         step1.setContent(actions1);
         step2.setContent(actions2);
-        preparation.setSteps(Arrays.asList(step1, step2));
+        final List<Step> expectedSteps = Arrays.asList(rootStep, step1, step2);
+        preparation.setSteps(expectedSteps);
+        preparation.setHeadId(step2.getId());
 
         // When
         repository.add(preparation);
@@ -326,13 +328,11 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         // Then
         assertEquals(PersistentPreparationRepository.class, repository.getClass());
         assertEquals(preparation.getId(), savedPreparation.getId());
-        assertEquals(2, savedPreparation.getSteps().size());
-        assertEquals("step-1234", savedPreparation.getSteps().get(0).getId());
-        assertEquals("step-5678", savedPreparation.getSteps().get(1).getId());
-        assertNotNull(savedPreparation.getSteps().get(0).getContent());
-        assertNotNull(savedPreparation.getSteps().get(1).getContent());
-        assertEquals("actions-1234", savedPreparation.getSteps().get(0).getContent().getId());
-        assertEquals("actions-5678", savedPreparation.getSteps().get(1).getContent().getId());
+        final List<Step> actualSteps = savedPreparation.getSteps();
+        assertEquals(expectedSteps.size(), actualSteps.size());
+        assertEquals(rootStep, actualSteps.get(0));
+        assertEquals(step1.getId(), actualSteps.get(1).getId());
+        assertEquals(step2.getId(), actualSteps.get(2).getId());
     }
 
 

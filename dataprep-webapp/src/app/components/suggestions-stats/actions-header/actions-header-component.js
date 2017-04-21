@@ -10,26 +10,22 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-const SuggestionsStats = {
+const ActionsHeader = {
 	template: `
-    <div class="suggestions-stats-details">
-		<div class="suggestions-title" ng-switch="suggestionsStatsCtrl.state.playground.grid.selectedColumns.length > 1">
+		<div class="suggestions-title actions-header" ng-switch="actionsHeaderCtrl.state.playground.grid.selectedColumns.length > 1">
 			<span class="title"
-				  title="{{suggestionsStatsCtrl.state.playground.grid.selectedColumns[0].name}}"
+				  title="{{actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name}}"
 				  ng-switch-when="false"
-				  ng-if="suggestionsStatsCtrl.state.playground.grid.selectedColumns[0].name">
-				{{suggestionsStatsCtrl.state.playground.grid.selectedColumns[0].name}}
+				  ng-if="actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name">
+				{{actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name}}
 			</span>
 			<span class="title"
 				  ng-switch-when="true"
 				  translate="MULTI_COLUMNS_SELECTED"
-				  translate-values="{nb: suggestionsStatsCtrl.state.playground.grid.selectedColumns.length}">
+				  translate-values="{nb: actionsHeaderCtrl.state.playground.grid.selectedColumns.length}">
 			</span>
-		</div>
-		<ng-transclude></ng-transclude>
-    </div>`,
-	transclude: true,
-	controllerAs: 'suggestionsStatsCtrl',
+		</div>`,
+	controllerAs: 'actionsHeaderCtrl',
 	controller(state) {
 		'ngInject';
 
@@ -37,4 +33,4 @@ const SuggestionsStats = {
 	},
 };
 
-export default SuggestionsStats;
+export default ActionsHeader;

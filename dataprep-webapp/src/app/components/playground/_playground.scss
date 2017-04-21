@@ -140,7 +140,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 //-----------------------------------------------------BODY--------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------
 .playground-container {
-	$playground-suggestions-stats-details: '100vh - ' + (2*$navigation-height + $navigation-border + $sub-header-height);
+	$suggestions-stats-content-height: '100vh - ' + ($navigation-height + $navigation-border + $sub-header-height);
 
 	height: 100vh;
 	@include flex-column();
@@ -178,16 +178,27 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 				}
 			}
 
-			.suggestions-stats-details {
-				height: calc(#{$playground-height});
+			.suggestions-stats-content {
+				height: calc(#{$suggestions-stats-content-height});
+				width: 330px;
+			}
 
-				.suggestions-stats-content {
-					height: calc(#{ $playground-suggestions-stats-details});
-					width: 330px;
+			.loading-msg {
+				position: absolute;
+				text-align: center;
+				top: 100px;
+				left: 35px;
+				right: 35px;
+				background: transparent;
+				color: $pale-blue;
+				opacity: 0.8;
 
-					.stat-detail-tab-items {
-						width: 330px;
-					}
+				.wait-icon {
+					position: absolute;
+				}
+
+				.wait-text {
+					padding-left: 40px;
 				}
 			}
 		}

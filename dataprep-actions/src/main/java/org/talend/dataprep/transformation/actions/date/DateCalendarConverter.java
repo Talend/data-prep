@@ -33,7 +33,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
@@ -158,7 +157,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
         final RowMetadata rowMetadata = actionContext.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
-
         return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
     }
 
@@ -177,17 +175,21 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         try {
             String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
-                    context.get(FROM_CALENDER_TYPE_KEY), (Locale)context.get(FROM_LOCALE_KEY));
+                    context.get(FROM_CALENDER_TYPE_KEY), (Locale) context.get(FROM_LOCALE_KEY));
 
             if (fromPattern != null) {
-                row.set(columnId,
-                        new org.talend.dataquality.converters.DateCalendarConverter(
-                                fromPattern,
-                                fromPattern,
-                                (Chronology)context.get(FROM_CALENDER_TYPE_KEY),
-                                (Chronology)context.get(TO_CALENDER_TYPE_KEY),
-                                (Locale)context.get(FROM_LOCALE_KEY),
-                                (Locale)context.get(TO_LOCALE_KEY)).convert(value));
+
+                org.talend.dataquality.converters.DateCalendarConverter date = new org.talend.dataquality.converters.DateCalendarConverter(
+                        fromPattern, fromPattern, (Chronology) context.get(FROM_CALENDER_TYPE_KEY),
+                        (Chronology) context.get(TO_CALENDER_TYPE_KEY), (Locale) context.get(FROM_LOCALE_KEY),
+                        (Locale) context.get(TO_LOCALE_KEY));
+
+                String newValue = date.convert(value);
+
+                if (!StringUtils.isBlank(newValue)) {
+                    row.set(columnId, newValue);
+                }
+
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
@@ -208,7 +210,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
      * @param chronology
      * @return the parsed date pattern
      */
-    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology, Locale locale) {
+    public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology,
+            Locale locale) {
 
         // take care of the null value
         if (value == null) {
@@ -216,8 +219,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
 
         for (DatePattern pattern : patterns) {
-            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().parseLenient().appendPattern(pattern.getPattern())
-                    .toFormatter().withChronology(chronology).withLocale(locale);
+            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().parseLenient()
+                    .appendPattern(pattern.getPattern()).toFormatter().withChronology(chronology).withLocale(locale);
             try {
                 TemporalAccessor temporal = formatter.parse(value);
                 ChronoLocalDate cDate = chronology.date(temporal);

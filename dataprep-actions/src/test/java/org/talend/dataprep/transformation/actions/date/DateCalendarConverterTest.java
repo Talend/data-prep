@@ -124,6 +124,15 @@ public class DateCalendarConverterTest extends BaseDateTest {
     private static final String ThaiBuddhistStr2 = "2539-10-29";
 
     @Test
+    public void testBlank_values() {
+        testConversion(null, DateCalendarConverter.ChronologyUnit.ISO, pattern, null,
+                DateCalendarConverter.ChronologyUnit.HIJRI);
+
+        testConversion("", DateCalendarConverter.ChronologyUnit.ISO, pattern, "",
+                DateCalendarConverter.ChronologyUnit.HIJRI);
+    }
+
+    @Test
     public void testConversion_all_custom_patterns() {
         testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, HijrahStr,
                 DateCalendarConverter.ChronologyUnit.HIJRI);
@@ -142,6 +151,12 @@ public class DateCalendarConverterTest extends BaseDateTest {
         testConversion("01/09/2015", DateCalendarConverter.ChronologyUnit.ISO, "dd/MM/yyyy", "17/11/1436",
                 DateCalendarConverter.ChronologyUnit.HIJRI);
         testConversion("01/Sep/2015", DateCalendarConverter.ChronologyUnit.ISO, "dd/MMM/yyyy", "17/ذو القعدة/1436",
+                DateCalendarConverter.ChronologyUnit.HIJRI);
+    }
+
+    @Test
+    public void testConversion_out_of_range_calendar() {
+        testConversion("12/5/15", DateCalendarConverter.ChronologyUnit.ISO, "MM/dd/yyyy", "12/5/15",
                 DateCalendarConverter.ChronologyUnit.HIJRI);
     }
 
@@ -184,37 +199,6 @@ public class DateCalendarConverterTest extends BaseDateTest {
         // then
         final DataSetRow expectedRow = getRow("toto", HijrahStr3, "tata");
         assertEquals(expectedRow.values(), row.values());
-    }
-
-    private void testConversion(String from, DateCalendarConverter.ChronologyUnit fromUnit, String fromPattern, String expected,
-            DateCalendarConverter.ChronologyUnit toUnit) {
-        // given
-        // row 1
-        Map<String, String> rowContent = new HashMap<>();
-        rowContent.put("0000", "David");
-        rowContent.put("0001", from);
-        final DataSetRow row1 = new DataSetRow(rowContent);
-        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
-                .add(new PatternFrequency(fromPattern, 1));
-
-        // row 2
-        rowContent = new HashMap<>();
-        rowContent.put("0000", "John");
-        rowContent.put("0001", "foo");
-        final DataSetRow row2 = new DataSetRow(rowContent);
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
-        parameters.put("column_id", "0001");
-        parameters.put("from_calender_type", fromUnit.name());
-        parameters.put("to_calender_type", toUnit.name());
-
-        // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expected, row1.get("0001"));
-        assertEquals("foo", row2.get("0001"));
     }
 
     @Test
@@ -323,6 +307,38 @@ public class DateCalendarConverterTest extends BaseDateTest {
         // then
         action.parseDateFromPatterns(value, patterns, chronology, locale);
 
+    }
+
+
+    private void testConversion(String from, DateCalendarConverter.ChronologyUnit fromUnit, String fromPattern, String expected,
+                                DateCalendarConverter.ChronologyUnit toUnit) {
+        // given
+        // row 1
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", from);
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
+                .add(new PatternFrequency(fromPattern, 1));
+
+        // row 2
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "foo");
+        final DataSetRow row2 = new DataSetRow(rowContent);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_calender_type", fromUnit.name());
+        parameters.put("to_calender_type", toUnit.name());
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expected, row1.get("0001"));
+        assertEquals("foo", row2.get("0001"));
     }
 
 }

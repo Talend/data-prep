@@ -61,6 +61,8 @@ export function LookupStateService() {
 		setActions,
 		setAddedActions,
 		setDatasets,
+		setDataset,
+		setData,
 
 		setAddMode,
 		setUpdateMode,
@@ -240,7 +242,7 @@ export function LookupStateService() {
 	 * @description Set parameters for add mode
 	 */
 	function setAddMode(lookupAction, data) {
-		lookupState.step = null;
+		// lookupState.step = null;
 		setDataset(lookupAction);
 		setData(data); // this updates the checkboxes
 		setSelectedColumn(data.metadata.columns[0]); // this update the columns to add
@@ -257,7 +259,7 @@ export function LookupStateService() {
 	 */
 	function setUpdateMode(lookupAction, data, step) {
 		const selectedColumn = _.find(data.metadata.columns, { id: step.actionParameters.parameters.lookup_join_on });
-		lookupState.step = step;
+		// lookupState.step = step;
 		setDataset(lookupAction);
 		setData(data); // this updates the checkboxes
 		setSelectedColumn(selectedColumn); // this update the columns to add

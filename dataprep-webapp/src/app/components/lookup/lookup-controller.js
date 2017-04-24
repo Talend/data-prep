@@ -31,8 +31,20 @@ export default function LookupCtrl($timeout, state, StateService,
 	const vm = this;
 	vm.state = state;
 	vm.cancelEarlyPreview = EarlyPreviewService.cancelEarlyPreview;
-	vm.loadFromAction = LookupService.loadFromAction;
+	vm.fetchLookupDatasetContent = LookupService.fetchLookupDatasetContent;
 	vm.addLookupDatasetModal = false;
+
+	vm.whereToLoadFrom = function whereToLoadFrom(item) {
+		if (vm.state.playground.stepInEditionMode) {
+			const lookupDatasetId = item.parameters
+				.find(param => param.name === 'lookup_ds_id')
+				.default;
+			vm.fetchLookupDatasetContent(lookupDatasetId, item);
+		}
+		else {
+			vm.loadFromAction(item);
+		}
+	};
 
     /**
      * @ngdoc method
@@ -67,8 +79,8 @@ export default function LookupCtrl($timeout, state, StateService,
      * @description trigger a preview mode on the main dataset to show the lookup action effet
      */
 	vm.hoverSubmitBtn = function hoverSubmitBtn() {
-		if (state.playground.lookup.step) {
-			PreviewService.updatePreview(state.playground.lookup.step, getParams());
+		if (state.playground.stepInEditionMode) {
+			PreviewService.updatePreview(state.playground.stepInEditionMode, getParams());
 		}
 		else {
 			const previewClosure = EarlyPreviewService.earlyPreview(state.playground.lookup.dataset, 'dataset');
@@ -129,13 +141,13 @@ export default function LookupCtrl($timeout, state, StateService,
 		EarlyPreviewService.deactivatePreview();
 		EarlyPreviewService.cancelPendingPreview();
 		let promise;
-		const lookupStep = vm.state.playground.lookup.step;
+		const lookupStep = vm.state.playground.stepInEditionMode;
 
 		if (lookupStep) {
 			promise = PlaygroundService.updateStep(lookupStep, getParams());
 		}
 		else {
-			promise = PlaygroundService.completeParamsAndAppend(state.playground.lookup.dataset, 'dataset', getParams());
+			promise = PlaygroundService.completeParamsAndAppend(vm.state.playground.lookup.dataset, 'dataset', getParams());
 		}
 
 		promise.then(StateService.setLookupVisibility.bind(null, false))
@@ -166,8 +178,8 @@ export default function LookupCtrl($timeout, state, StateService,
 		vm.addLookupDatasetModal = false;
 
         // refresh lookup panel by selecting the first action
-		if (state.playground.lookup.addedActions.length > 0) {
-			LookupService.loadFromAction(state.playground.lookup.addedActions[0]);
+		if (vm.state.playground.lookup.addedActions.length > 0) {
+			LookupService.loadFromAction(vm.state.playground.lookup.addedActions[0]);
 		}
 	};
 

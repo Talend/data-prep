@@ -34,6 +34,8 @@ export default class LookupService {
 		this.StorageService = StorageService;
 
 		this.loadFromAction = this.loadFromAction.bind(this);
+		this.loadFromStep = this.loadFromStep.bind(this);
+		this.fetchLookupDatasetContent = this.fetchLookupDatasetContent.bind(this);
 	}
 
 	/**
@@ -53,7 +55,7 @@ export default class LookupService {
 							return;
 						}
 
-						const step = this._getSelectedColumnLastLookup();
+						const step = this.state.playground.stepInEditionMode;
 						if (step) {
 							return this.loadFromStep(step);
 						}
@@ -61,6 +63,16 @@ export default class LookupService {
 							return this.loadFromAction(lookupActions[0]);
 						}
 					});
+			});
+	}
+
+	fetchLookupDatasetContent(lookupDsId, lookupAction) {
+		this.StateService.setLookupDataset(lookupAction);
+		return this.DatasetRestService.getContent(lookupDsId, true)
+			.then((lookupDsContent) => {
+				this.StateService.setLookupData(lookupDsContent);
+				this.StateService.setLookupSelectedColumn(lookupDsContent.metadata.columns[0]);
+				return lookupDsContent;
 			});
 	}
 
@@ -74,10 +86,10 @@ export default class LookupService {
 	 * Otherwise, load the lookup action as a new lookup
 	 */
 	loadFromAction(lookupAction) {
-		const step = this._getSelectedColumnLookup(lookupAction);
-		if (step) {
-			return this.loadFromStep(step);
-		}
+		//const step = this._getSelectedColumnLookup(lookupAction);
+		//if (step) {
+		//	return this.loadFromStep(step);
+		//}
 
 		return this._getActions(this.state.playground.dataset.id)
 			.then(() => {
@@ -87,10 +99,10 @@ export default class LookupService {
 				}
 
 				// load content
-				return this.DatasetRestService.getContent(this._getDsId(lookupAction), true)
-					.then((lookupDsContent) => {
-						this._initLookupState(lookupAction, lookupDsContent, undefined);
-					});
+				return this.fetchLookupDatasetContent(this._getDsId(lookupAction), lookupAction)
+					/*.then((lookupDsContent) => {
+						this.StateService.setLookupAddMode(lookupAction, lookupDsContent);
+					})*/;
 			});
 	}
 
@@ -106,9 +118,9 @@ export default class LookupService {
 			.then(() => {
 				return this._getActions(this.state.playground.dataset.id)
 					.then((actions) => {
-						const lookupId = step.actionParameters.parameters.lookup_ds_id;
+						const lookupDsId = step.actionParameters.parameters.lookup_ds_id;
 						const lookupAction = _.find(actions, (action) => {
-							return this._getDsId(action) === lookupId;
+							return this._getDsId(action) === lookupDsId;
 						});
 
 						// change column selection to focus on step target
@@ -116,16 +128,19 @@ export default class LookupService {
 						this.StateService.setGridSelection([selectedColumn]);
 
 						// lookup already loaded
-						if (this.state.playground.lookup.dataset === lookupAction &&
-							this.state.playground.lookup.step === step) {
+						console.log(this.state.playground.lookup.dataset === lookupAction);
+/*						if (this.state.playground.lookup.dataset === lookupAction/!* &&
+							this.state.playground.lookup.step === step*!/) {
 							return;
-						}
+						}*/
 
 						// load content
 						return this._getActions(this.state.playground.dataset.id)
-							.then(() => this.DatasetRestService.getContent(lookupId, true))
+							.then(() => this.fetchLookupDatasetContent(lookupDsId, lookupAction))
 							.then((lookupDsContent) => {
-								this._initLookupState(lookupAction, lookupDsContent, step);
+								const selectedColumn = _.find(lookupDsContent.metadata.columns, { id: step.actionParameters.parameters.lookup_join_on });
+								this.StateService.setLookupSelectedColumn(selectedColumn);
+								// this._initLookupState(lookupAction, lookupDsContent);
 							});
 					});
 			});
@@ -144,8 +159,7 @@ export default class LookupService {
 		if (!this.state.playground.lookup.visibility || !lookupAction) {
 			return;
 		}
-
-		return this.loadFromAction(lookupAction);
+		// return this.loadFromAction(lookupAction);
 	}
 
 	/**
@@ -268,14 +282,14 @@ export default class LookupService {
 	 * @param {object} step The step that the lookup is updating (falsy means no update but add mode)
 	 * @description Set the lookup state
 	 */
-	_initLookupState(lookupAction, lookupDsContent, step) {
-		if (step) {
-			this.StateService.setLookupUpdateMode(lookupAction, lookupDsContent, step);
-		}
-		else {
-			this.StateService.setLookupAddMode(lookupAction, lookupDsContent);
-		}
-	}
+	//_initLookupState(lookupAction, lookupDsContent) {
+	//	if (step) {
+	//		this.StateService.setLookupUpdateMode(lookupAction, lookupDsContent, step);
+	//	}
+	//	else {
+	//		this.StateService.setLookupAddMode(lookupAction, lookupDsContent);
+	//	}
+	//}
 
 	/**
 	 * @ngdoc method
@@ -283,13 +297,13 @@ export default class LookupService {
 	 * @methodOf data-prep.services.lookup.service:LookupService
 	 * @description Fetch the last step in recipe that is a lookup action for the selected column
 	 */
-	_getSelectedColumnLastLookup() {
-		const selectedColumn = this.state.playground.grid.selectedColumns.length ? this.state.playground.grid.selectedColumns[0] : null;
-		return selectedColumn &&
-			_.findLast(this.state.playground.recipe.current.steps, (nextStep) => {
-				return nextStep.column.id === selectedColumn.id && nextStep.transformation.name === 'lookup';
-			});
-	}
+	//_getSelectedColumnLastLookup() {
+	//	const selectedColumn = this.state.playground.grid.selectedColumns.length ? this.state.playground.grid.selectedColumns[0] : null;
+	//	return selectedColumn &&
+	//		_.findLast(this.state.playground.recipe.current.steps, (nextStep) => {
+	//			return nextStep.column.id === selectedColumn.id && nextStep.transformation.name === 'lookup';
+	//		});
+	//}
 
 	/**
 	 * @ngdoc method

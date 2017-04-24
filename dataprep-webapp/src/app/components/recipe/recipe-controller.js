@@ -418,12 +418,14 @@ export default class RecipeCtrl {
 	}
 
 	_toggleSpecificParams(step) {
-		if (this.state.playground.lookup.visibility && this.state.playground.lookup.step === step) {
+		if (this.state.playground.lookup.visibility && this.state.playground.stepInEditionMode === step) {
 			this.StateService.setLookupVisibility(false);
+			this.StateService.setStepInEditionMode(null);
 		}
 		else if (step.transformation.name === 'lookup') {
-			this.LookupService.loadFromStep(step)
-				.then(this.StateService.setLookupVisibility.bind(null, true));
+			this.StateService.setStepInEditionMode(step);
+			this.StateService.setLookupVisibility(true);
+			this.LookupService.loadFromStep(step);
 		}
 	}
 

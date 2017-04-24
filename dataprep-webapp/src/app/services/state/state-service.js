@@ -72,6 +72,7 @@ export function StateService(RouteStateService, routeState,
 		updateDatasetRecord: PlaygroundStateService.updateDatasetRecord,
 		setCurrentSampleType: PlaygroundStateService.setSampleType,
 		setPlaygroundReadOnlyMode: PlaygroundStateService.setReadOnlyMode,
+		setStepInEditionMode: PlaygroundStateService.setStepInEditionMode,
 
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
@@ -101,6 +102,7 @@ export function StateService(RouteStateService, routeState,
 		setLookupActions: PlaygroundStateService.setLookupActions,
 		setLookupAddedActions: PlaygroundStateService.setLookupAddedActions,
 		setLookupDatasets: PlaygroundStateService.setLookupDatasets,
+		setLookupDataset: PlaygroundStateService.setLookupDataset,
 		setLookupAddMode: PlaygroundStateService.setLookupAddMode,
 		setLookupSelectedColumn: PlaygroundStateService.setLookupSelectedColumn,
 		setLookupUpdateMode: PlaygroundStateService.setLookupUpdateMode,
@@ -108,6 +110,7 @@ export function StateService(RouteStateService, routeState,
 		updateLookupColumnsToAdd: PlaygroundStateService.updateLookupColumnsToAdd,
 		setLookupDatasetsSort: PlaygroundStateService.setLookupDatasetsSort,
 		setLookupDatasetsOrder: PlaygroundStateService.setLookupDatasetsOrder,
+		setLookupData: PlaygroundStateService.setLookupData,
 
 		// playground - filters
 		addGridFilter: PlaygroundStateService.addGridFilter,

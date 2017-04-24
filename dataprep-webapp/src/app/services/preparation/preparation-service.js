@@ -120,15 +120,15 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 	function copyImplicitParameters(parameters, originalParameters) {
 		parameters.scope = originalParameters.scope;
 
-		if ('column_id' in originalParameters) {
+		if ('column_id' in originalParameters && !('column_id' in parameters)) {
 			parameters.column_id = originalParameters.column_id;
 		}
 
-		if ('column_name' in originalParameters) {
+		if ('column_name' in originalParameters && !('column_name' in parameters)) {
 			parameters.column_name = originalParameters.column_name;
 		}
 
-		if ('row_id' in originalParameters) {
+		if ('row_id' in originalParameters && !('row_id' in parameters)) {
 			parameters.row_id = originalParameters.row_id;
 		}
 

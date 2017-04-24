@@ -11,18 +11,22 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
-import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.*;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.*;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.*;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.IOException;
+import java.time.DateTimeException;
+import java.time.chrono.AbstractChronology;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -229,6 +233,80 @@ public class DateCalendarConverterTest extends BaseDateTest {
         assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_PATTERN));
+    }
+
+    @Test
+    public void testLitteralMonthsParseDateFromPatterns() {
+
+        //given
+        String valueWithMonthInCapital = "02-FEB-1978";
+
+        List<DatePattern> patterns = Arrays.asList(new DatePattern("M/d/yyyy"),new DatePattern("dd-MMM-yyyy"),new DatePattern("yyyy/MMMM"));
+        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+
+        Locale locale = Locale.US;
+
+        // then
+        assertEquals(patterns.get(1).getPattern(),action.parseDateFromPatterns(valueWithMonthInCapital,patterns,chronology,locale));
+
+        //given
+        String valueMonthUSShortLitteral = "02-Dec-1997";
+
+        // then
+        assertEquals(patterns.get(1).getPattern(),action.parseDateFromPatterns(valueMonthUSShortLitteral,patterns,chronology,locale));
+
+        //given
+        String valueMonthUSLongLitteral = "1997/February";
+
+        // then
+        assertEquals(patterns.get(2).getPattern(),action.parseDateFromPatterns(valueMonthUSLongLitteral,patterns,chronology,locale));
+
+        //given
+        Locale localeFr = Locale.FRANCE;
+        String valueMonthFrLongLitteral = "1997/February";
+
+    }
+
+
+    @Test(expected = DateTimeException.class)
+    public void shouldNotParseNull() {
+
+        //given
+        List<DatePattern> patterns = Arrays.asList(new DatePattern("M/d/yyyy"),new DatePattern("dd-MMM-yyyy"));
+        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        Locale locale = Locale.US;
+
+        // then
+        action.parseDateFromPatterns(null,patterns,chronology,locale);
+
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void testEmptyListPatterns() {
+
+        //given
+        String value = "02-Dec-197" ;
+        List<DatePattern> patterns = new ArrayList<>();
+        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        Locale locale = Locale.US;
+
+        // then
+        action.parseDateFromPatterns(value,patterns,chronology,locale);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWrongPatterns() {
+
+        //given
+        String value = "02-Dec-197" ;
+        List<DatePattern> patterns = Arrays.asList(new DatePattern("a/bb/cccc"),new DatePattern("tt/zzz/fffff"));
+        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        Locale locale = Locale.US;
+
+        // then
+        action.parseDateFromPatterns(value,patterns,chronology,locale);
+
     }
 
 }

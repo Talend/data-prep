@@ -33,6 +33,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
@@ -139,8 +140,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
             actionContext.get(FROM_LOCALE_KEY, p -> fromLocale);
             actionContext.get(TO_LOCALE_KEY, p -> toLocale);
 
-            compileDatePattern(actionContext);
-
             // register the new pattern in column stats as most used pattern, to be able to process date action more
             // efficiently later
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
@@ -159,6 +158,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
         final RowMetadata rowMetadata = actionContext.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
+
         return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
     }
 
@@ -200,10 +200,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
     }
 
-    void compileDatePattern(ActionContext actionContext) {
-        // no op, just to override the default behaviour
-    }
-
     /**
      * Parse the date from the given patterns and chronology.
      *
@@ -220,12 +216,11 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
 
         for (DatePattern pattern : patterns) {
-            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseLenient().appendPattern(pattern.getPattern())
+            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().parseLenient().appendPattern(pattern.getPattern())
                     .toFormatter().withChronology(chronology).withLocale(locale);
-
-            TemporalAccessor temporal = formatter.parse(value);
-            ChronoLocalDate cDate = chronology.date(temporal);
             try {
+                TemporalAccessor temporal = formatter.parse(value);
+                ChronoLocalDate cDate = chronology.date(temporal);
                 LocalDate.from(cDate);
                 return pattern.getPattern();
             } catch (DateTimeException e) {

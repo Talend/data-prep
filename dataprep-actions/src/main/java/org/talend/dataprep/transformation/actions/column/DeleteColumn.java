@@ -55,7 +55,7 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
 
     @Override
     public String getCategory() {
-        return ActionCategory.COLUMN_METADATA.getDisplayName();
+        return ActionCategory.COLUMNS.getDisplayName();
     }
 
     @Override

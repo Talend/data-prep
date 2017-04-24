@@ -60,129 +60,313 @@ describe('CollapsiblePanel container', () => {
 
 	beforeEach(angular.mock.module('react-talend-components.containers'));
 
-	beforeEach(inject(($rootScope, $compile, SettingsService) => {
-		scope = $rootScope.$new();
-
-		createElement = () => {
-			element = angular.element('<collapsible-panel item="exportFullRun"></collapsible-panel>');
-			$compile(element)(scope);
-			scope.$digest();
-		};
-
-		SettingsService.setSettings(settings);
-	}));
-
 	afterEach(inject(() => {
 		scope.$destroy();
 		element.remove();
 	}));
 
-	it('should render adapted header only', () => {
-		// given
-		scope.exportFullRun = {
-			header: [statusItem],
-			content: [],
-		};
+	describe('Collapsible rendering', () => {
+		beforeEach(inject(($rootScope, $compile, SettingsService) => {
+			scope = $rootScope.$new();
 
-		// when
-		createElement();
+			createElement = () => {
+				element = angular.element('<collapsible-panel item="exportFullRun"></collapsible-panel>');
+				$compile(element)(scope);
+				scope.$digest();
+			};
 
-		// then
-		expect(element.find('.panel-heading').length).toBe(1);
-		expect(element.find('.panel-body').length).toBe(0);
+			SettingsService.setSettings(settings);
+		}));
+
+		describe('Collapsible header', () => {
+			it('should render adapted header only', () => {
+				// given
+				scope.exportFullRun = {
+					header: [statusItem],
+				};
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('.panel-heading').length).toBe(1);
+				expect(element.find('.panel-body').length).toBe(0);
+			});
+
+			it('should render adapted header with content', () => {
+				// given
+				scope.exportFullRun = {
+					header: [statusItem],
+					content: [],
+				};
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('.panel-heading').length).toBe(1);
+			});
+
+			it('should render adapted status header', () => {
+				// given
+				scope.exportFullRun = {
+					header: [statusItem],
+					content: [],
+				};
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('.tc-status').length).toBe(1);
+				expect(element.find('.tc-status-label').eq(0).text().trim()).toBe(statusItem.label);
+				expect(element.find('.tc-status button').length).toBe(0);
+			});
+
+			it('should render adapted status with actions', () => {
+				// given
+				scope.exportFullRun = {
+					header: [statusItemWithActions],
+					content: [],
+				};
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('.tc-status').length).toBe(1);
+				expect(element.find('.tc-status-label').eq(0).text().trim()).toBe(statusItemWithActions.label);
+				expect(element.find('.tc-status button').length).toBe(2);
+			});
+
+			it('should render adapted action item', () => {
+				// given
+				scope.exportFullRun = {
+					header: [actionItem],
+					content: [],
+				};
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('button').length).toBe(2);
+			});
+
+			it('should render simple and badge text', () => {
+				// given
+				scope.exportFullRun = {
+					header: [simpleItem, badgeItem],
+					content: [],
+				};
+
+				// when
+				createElement();
+
+				// then
+				const panelHeader = element.find('.panel-heading > div > div');
+				expect(panelHeader.eq(0).text().trim()).toBe(simpleItem.label);
+				expect(panelHeader.eq(1).text().trim()).toBe(badgeItem.label);
+				expect(panelHeader.eq(1).find('span').hasClass('label')).toBe(true);
+			});
+
+			it('should render simple and badge text in the same group', () => {
+				// given
+				scope.exportFullRun = {
+					header: [[simpleItem, badgeItem]],
+					content: [],
+				};
+
+				// when
+				createElement();
+
+				// then
+				const panelHeader = element.find('.panel-heading > div');
+				expect(panelHeader.length).toBe(1);
+				expect(panelHeader.eq(0).find('span').eq(0).text().trim()).toBe(simpleItem.label);
+				expect(panelHeader.eq(0).find('span').eq(1).text().trim()).toBe(badgeItem.label);
+			});
+		});
+
+		describe('Default Collapsible content', () => {
+			it('should render content', () => {
+				// given
+				scope.exportFullRun = {
+					header: [statusItem],
+					content: [content],
+				};
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('.panel-body').length).toBe(1);
+				expect(element.find('.panel-body').eq(0).text().trim()).toBe(`${content.label}${content.description}`);
+			});
+		});
+
+		describe('Collapsible with descriptive content', () => {
+			beforeEach(inject(($rootScope, $compile, SettingsService) => {
+				scope = $rootScope.$new();
+
+				createElement = () => {
+					element = angular.element('<collapsible-panel item="version"></collapsible-panel>');
+					$compile(element)(scope);
+					scope.$digest();
+				};
+
+				SettingsService.setSettings(settings);
+			}));
+
+			const version = {
+				header: [
+					{
+						label: 'Version 1',
+						bsStyle: 'default',
+						tooltipPlacement: 'top',
+						className: 'title',
+					},
+					{
+						label: '05/02/2017 14:44:55',
+						bsStyle: 'default',
+						tooltipPlacement: 'top',
+						className: 'detail',
+					},
+				],
+				content: {
+					head: [
+						{
+							label: '21 steps',
+							bsStyle: 'default',
+							tooltipPlacement: 'top',
+						}, {
+							label: 'by Henry-Mayeul de Benque',
+							bsStyle: 'default',
+							tooltipPlacement: 'top',
+							className: 'text-right',
+						},
+					],
+					description: `Lorem ipsum`
+				},
+				theme: 'descriptive-panel',
+			};
+
+			it('should render body header', () => {
+				// given
+				scope.version = version;
+
+				// when
+				createElement();
+
+				// then
+				const panelHeader = element.find('.panel-body > div');
+				expect(panelHeader.eq(0).find('span').eq(0).text().trim()).toBe(version.content.head[0].label);
+				expect(panelHeader.eq(0).find('span').eq(1).text().trim()).toBe(version.content.head[1].label);
+			});
+
+			it('should render body description', () => {
+				// given
+				scope.version = version;
+
+				// when
+				createElement();
+
+				// then
+				expect(element.find('.panel-body .content-description').eq(0).text().trim()).toBe(version.content.description);
+			});
+		});
 	});
 
-	it('should render adapted header with content', () => {
-		// given
-		scope.exportFullRun = {
-			header: [statusItem],
-			content: [content],
+	describe('Collapsible events', () => {
+		beforeEach(inject((SettingsActionsService, SettingsService) => {
+			SettingsService.setSettings(settings);
+			spyOn(SettingsActionsService, 'dispatch').and.returnValue();
+		}));
+
+		beforeEach(inject(($rootScope, $compile, SettingsService) => {
+			scope = $rootScope.$new();
+
+			createElement = () => {
+				element = angular.element('<collapsible-panel item="version"></collapsible-panel>');
+				angular.element('body').append(element);
+				$compile(element)(scope);
+				scope.$digest();
+			};
+			SettingsService.setSettings(settings);
+		}));
+
+		const version = {
+			header: [
+				{
+					label: 'Version 1',
+					bsStyle: 'default',
+					tooltipPlacement: 'top',
+					className: 'title',
+				},
+				{
+					label: '05/02/2017 14:44:55',
+					bsStyle: 'default',
+					tooltipPlacement: 'top',
+					className: 'detail',
+				},
+			],
+			content: {
+				head: [
+					{
+						label: '21 steps',
+						bsStyle: 'default',
+						tooltipPlacement: 'top',
+					}, {
+						label: 'by Henry-Mayeul de Benque',
+						bsStyle: 'default',
+						tooltipPlacement: 'top',
+						className: 'text-right',
+					},
+				],
+				description: `Lorem ipsum`
+			},
+			onSelect: 'version:select',
+			onToggle: 'version:toggle',
+			theme: 'descriptive-panel',
 		};
 
-		// when
-		createElement();
+		it('should render a collapsible descriptive panel header buttons', () => {
+			// given
+			scope.version = version;
 
-		// then
-		expect(element.find('.panel-heading').length).toBe(1);
-		expect(element.find('.panel-body').length).toBe(1);
-		expect(element.find('.panel-body').eq(0).text().trim()).toBe(`${content.label}${content.description}`);
-	});
+			// when
+			createElement();
 
-	it('should render adapted status header', () => {
-		// given
-		scope.exportFullRun = {
-			header: [statusItem],
-			content: [],
-		};
+			// then
+			expect(element.find('.panel-heading > button').length).toBe(2);
+		});
 
-		// when
-		createElement();
+		it('should trigger onSelect function', inject((SettingsActionsService) => {
+			// given
+			scope.version = version;
+			createElement();
 
-		// then
-		expect(element.find('.tc-status').length).toBe(1);
-		expect(element.find('.tc-status-label').eq(0).text().trim()).toBe(statusItem.label);
-		expect(element.find('.tc-status button').length).toBe(0);
-	});
+			// when
+			element.find('.panel-heading > button').eq(0).click();
+			scope.$digest();
 
-	it('should render adapted status with actions', () => {
-		// given
-		scope.exportFullRun = {
-			header: [statusItemWithActions],
-			content: [],
-		};
+			// then
+			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO_PREPARATION_READ_ONLY');
+		}));
 
-		// when
-		createElement();
+		it('should trigger onToggle function', inject((SettingsActionsService) => {
+			// given
+			scope.version = version;
+			createElement();
 
-		// then
-		expect(element.find('.tc-status').length).toBe(1);
-		expect(element.find('.tc-status-label').eq(0).text().trim()).toBe(statusItemWithActions.label);
-		expect(element.find('.tc-status button').length).toBe(2);
-	});
+			// when
+			element.find('.panel-heading > button').eq(1).click();
+			scope.$digest();
 
-	it('should render adapted action item', () => {
-		// given
-		scope.exportFullRun = {
-			header: [actionItem],
-			content: [],
-		};
-
-		// when
-		createElement();
-
-		// then
-		expect(element.find('button').length).toBe(1);
-	});
-
-	it('should render simple and badge text', () => {
-		// given
-		scope.exportFullRun = {
-			header: [simpleItem, badgeItem],
-			content: [],
-		};
-
-		// when
-		createElement();
-
-		// then
-		expect(element.find('.panel-heading > div').eq(0).text().trim()).toBe(simpleItem.label);
-		expect(element.find('.panel-heading > div').eq(1).text().trim()).toBe(badgeItem.label);
-	});
-
-	it('should render simple and badge text in the same group', () => {
-		// given
-		scope.exportFullRun = {
-			header: [[simpleItem, badgeItem]],
-			content: [],
-		};
-
-		// when
-		createElement();
-
-		// then
-		expect(element.find('.panel-heading > div').length).toBe(1);
-
-		expect(element.find('.panel-heading > div').eq(0).find('span').eq(0).text().trim()).toBe(simpleItem.label);
-		expect(element.find('.panel-heading > div').eq(0).find('span').eq(1).text().trim()).toBe(badgeItem.label);
+			// then
+			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@version/VERSION_TOGGLE');
+		}));
 	});
 });

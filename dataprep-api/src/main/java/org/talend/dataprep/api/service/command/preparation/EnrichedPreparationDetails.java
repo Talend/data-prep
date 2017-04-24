@@ -43,7 +43,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class EnrichedPreparationDetails extends GenericCommand<InputStream> {
 
     private static final String JOB_TYPE = "job";
+
+    /** The preparation id. */
     private final String preparationId;
+
+    /** The step id. */
+    private final String stepId;
 
     @Autowired
     private ApplicationContext context;
@@ -57,9 +62,10 @@ public class EnrichedPreparationDetails extends GenericCommand<InputStream> {
      * @param preparationId the preparation id.
      */
     // private constructor to ensure the use of IoC
-    private EnrichedPreparationDetails(final String preparationId) { // NOSONAR used by IoC
+    private EnrichedPreparationDetails(final String preparationId, String stepId) { // NOSONAR used by IoC
         super(PREPARATION_GROUP);
         this.preparationId = preparationId;
+        this.stepId = stepId;
     }
 
     /**
@@ -100,7 +106,8 @@ public class EnrichedPreparationDetails extends GenericCommand<InputStream> {
      * Get preparation details from the right command
      */
     private ObjectNode getPreparationDetails() throws IOException {
-        final PreparationDetailsGet preparationDetails = context.getBean(PreparationDetailsGet.class, this.preparationId);
+        final PreparationDetailsGet preparationDetails = context.getBean(PreparationDetailsGet.class, this.preparationId,
+                this.stepId);
         return (ObjectNode) objectMapper.readTree(preparationDetails.execute());
     }
 

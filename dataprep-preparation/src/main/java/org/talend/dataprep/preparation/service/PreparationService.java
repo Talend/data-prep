@@ -39,8 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -70,7 +69,7 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-@Component
+@Service
 public class PreparationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationService.class);
@@ -84,7 +83,7 @@ public class PreparationService {
      * Where preparation are stored.
      */
     @Autowired
-    private PreparationRepository preparationRepository;
+    protected PreparationRepository preparationRepository;
 
     /**
      * Where the folders are stored.
@@ -108,7 +107,7 @@ public class PreparationService {
      * DataPrep abstraction to the underlying security (whether it's enabled or not).
      */
     @Autowired
-    private Security security;
+    protected Security security;
 
     /**
      * Version service.
@@ -238,7 +237,7 @@ public class PreparationService {
      * @param order Order for sort key (desc or asc).
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-                                                        Sort sort, Order order) {
+                                                      Sort sort, Order order) {
         final Stream<Preparation> result;
 
         if (dataSetId != null) {
@@ -542,11 +541,21 @@ public class PreparationService {
      * Return a preparation details.
      *
      * @param id the wanted preparation id.
+     * @param stepId the optional step id.
      * @return the preparation details.
      */
-    public PreparationMessage getPreparationDetails(String id) {
+    public PreparationMessage getPreparationDetails(String id, String stepId) {
         LOGGER.debug("Get content of preparation details for #{}.", id);
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
+
+        // specify the step id if provided
+        if (!StringUtils.equals("head", stepId)) {
+            if (preparation.getSteps().stream().map(s -> s.getId()).anyMatch(s -> s.equals(stepId))) {
+                preparation.setHeadId(stepId);
+            } else {
+                throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation).put("stepId", stepId));
+            }
+        }
 
         final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
         LOGGER.info("returning details for {} -> {}", id, details);
@@ -774,13 +783,14 @@ public class PreparationService {
         unlock(preparationId);
     }
 
-    public ResponseEntity<Void> preparationsThatUseDataset(final String datasetId) {
-        final boolean preparationUseDataSet = preparationRepository.exist(Preparation.class, "dataSetId = '" + datasetId + "'");
+    public boolean isDatasetUsedInPreparation(final String datasetId) {
+        final boolean preparationUseDataSet = isDatasetBaseOfPreparation(datasetId);
         final boolean dataSetUsedInLookup = isDatasetUsedToLookupInPreparationHead(datasetId);
-        if (!preparationUseDataSet && !dataSetUsedInLookup) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.noContent().build();
+        return preparationUseDataSet || dataSetUsedInLookup;
+    }
+
+    private boolean isDatasetBaseOfPreparation(String datasetId) {
+        return preparationRepository.exist(Preparation.class, "dataSetId = '" + datasetId + "'");
     }
 
     /** Check if the preparation uses this dataset in its head version. */
@@ -825,7 +835,7 @@ public class PreparationService {
      * @param preparation The preparation
      * @return The converted step Id
      */
-    private String getStepId(final String version, final Preparation preparation) {
+    protected String getStepId(final String version, final Preparation preparation) {
         if ("head".equalsIgnoreCase(version)) { //$NON-NLS-1$
             return preparation.getHeadId();
         } else if ("origin".equalsIgnoreCase(version)) { //$NON-NLS-1$
@@ -840,7 +850,7 @@ public class PreparationService {
      * @param step The step
      * @return The list of actions
      */
-    private List<Action> getActions(final Step step) {
+    protected List<Action> getActions(final Step step) {
         return new ArrayList<>(preparationRepository.get(step.getContent().id(), PreparationActions.class).getActions());
     }
 
@@ -1133,6 +1143,7 @@ public class PreparationService {
     private void setPreparationHead(final Preparation preparation, final Step head) {
         preparation.setHeadId(head.id());
         preparation.updateLastModificationDate();
+        preparation.getSteps().add(head);
         preparationRepository.add(preparation);
     }
 

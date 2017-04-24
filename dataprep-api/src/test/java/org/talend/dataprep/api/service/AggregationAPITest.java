@@ -54,7 +54,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
     public void should_aggregate_on_dataset() throws IOException {
 
         // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
 
         AggregationParameters params = getAggregationParameters("aggregation/aggregation_parameters.json");
         params.setDatasetId(dataSetId);
@@ -75,7 +75,8 @@ public class AggregationAPITest extends ApiServiceTestBase {
     public void should_aggregate_on_preparation() throws IOException {
 
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", "text/csv");
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
+                "text/csv", home.getId());
 
         AggregationParameters params = getAggregationParameters("aggregation/aggregation_parameters.json");
         params.setDatasetId(null);

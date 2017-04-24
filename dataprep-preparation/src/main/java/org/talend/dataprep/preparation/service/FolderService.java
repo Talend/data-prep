@@ -28,7 +28,6 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderInfo;
@@ -37,7 +36,6 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.Security;
-import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -59,14 +57,6 @@ public class FolderService {
     /** DataPrep abstraction to the underlying security (whether it's enabled or not). */
     @Autowired
     private Security security;
-
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
-        // URLs are cleaner in lowercase.
-        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
-        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
-    }
 
     /**
      * List direct sub folders for the given id.

@@ -9,8 +9,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0000",
         "statistics": {
@@ -52,8 +51,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0001",
         "statistics": {
@@ -95,8 +93,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0002",
         "statistics": {
@@ -138,8 +135,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0003",
         "statistics": {
@@ -181,8 +177,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0004",
         "statistics": {
@@ -224,8 +219,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0005",
         "statistics": {
@@ -267,8 +261,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0006",
         "statistics": {
@@ -310,8 +303,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0007",
         "statistics": {
@@ -353,8 +345,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0008",
         "statistics": {
@@ -396,8 +387,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0009",
         "statistics": {
@@ -439,8 +429,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0010",
         "statistics": {
@@ -482,8 +471,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 0,
-          "invalidValues": []
+          "valid": 0
         },
         "id": "0011",
         "statistics": {

@@ -480,5 +480,15 @@ describe('Inventory list container', () => {
 			expect(lastCallArgs.id).toBe('dataset:sort');
 			expect(lastCallArgs.type).toBe('@@dataset/SORT');
 		}));
+
+ 		it('should have an invisible and screen reader compatible header', inject(() => {
+			// when
+			const actionsHeaderChildren = element.find('thead tr th').eq(1).children();
+
+			// then
+			expect(actionsHeaderChildren.length).toBe(1);
+			expect(actionsHeaderChildren[0].tagName).toBe('SPAN');
+			expect(actionsHeaderChildren.hasClass('sr-only'));
+ 		}));
 	});
 });

@@ -22,13 +22,11 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -43,14 +41,6 @@ public class PreparationController {
     @Autowired
     private PreparationService preparationService;
 
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
-        // URLs are cleaner in lowercase.
-        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
-        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
-    }
-
     /**
      * Create a preparation from the http request body.
      *
@@ -58,11 +48,11 @@ public class PreparationController {
      * @param folderId      where to store the preparation.
      * @return the created preparation id.
      */
-    @RequestMapping(value = "/preparations", method = POST, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations", method = POST)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the created preparation.")
     @Timed
     public String create(@ApiParam("preparation") @RequestBody final Preparation preparation,
-                         @ApiParam(value = "The folderId path to create the entry.") @RequestParam() String folderId) {
+                         @ApiParam(value = "The folderId path to create the entry.") @RequestParam String folderId) {
         return preparationService.create(preparation, folderId);
     }
 
@@ -219,7 +209,7 @@ public class PreparationController {
     @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
     @Timed
     public String updateStepMetadata(@ApiParam("preparationId") @PathVariable("preparationId") String preparationId,
-            @RequestBody @ApiParam("rowMetadata") final List<Step> steps) {
+                                     @RequestBody @ApiParam("rowMetadata") final List<Step> steps) {
 
         preparationService.updatePreparationSteps(preparationId, steps);
 
@@ -246,13 +236,16 @@ public class PreparationController {
      * Return a preparation details.
      *
      * @param id the wanted preparation id.
+     * @param stepId optional step id.
      * @return the preparation details.
      */
     @RequestMapping(value = "/preparations/{id}/details", method = GET)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
-    public PreparationMessage getDetails(@ApiParam("id") @PathVariable("id") String id) {
-        return preparationService.getPreparationDetails(id);
+    public PreparationMessage getDetails( //
+            @ApiParam("id") @PathVariable("id") String id, //
+            @ApiParam(value = "stepId", defaultValue = "head") @RequestParam(value = "stepId", defaultValue = "head") String stepId) {
+        return preparationService.getPreparationDetails(id, stepId);
     }
 
     /**
@@ -382,7 +375,11 @@ public class PreparationController {
     @Timed
     public ResponseEntity<Void> preparationsThatUseDataset(
             @ApiParam("datasetId") @PathVariable("datasetId") final String datasetId) {
-        return preparationService.preparationsThatUseDataset(datasetId);
+        if (preparationService.isDatasetUsedInPreparation(datasetId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RequestMapping(value = "/preparations/{id}/steps/{stepId}/order", method = POST)

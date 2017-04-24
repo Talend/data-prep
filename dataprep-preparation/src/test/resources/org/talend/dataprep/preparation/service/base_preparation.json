@@ -1,0 +1,321 @@
+{
+  "name": "test",
+  "dataSetId": "1234",
+  "rowMetadata": {
+    "columns": [
+      {
+        "name": "id",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 6,
+          "invalidValues": []
+        },
+        "id": "0000",
+        "statistics": {
+          "count": 6,
+          "valid": 6,
+          "invalid": 0,
+          "empty": 0,
+          "max": 6.0,
+          "min": 1.0,
+          "mean": 3.5,
+          "variance": 3.5,
+          "duplicateCount": 0,
+          "distinctCount": 6,
+          "frequencyTable": [
+            {
+              "data": "1",
+              "occurrences": 1
+            },
+            {
+              "data": "2",
+              "occurrences": 1
+            },
+            {
+              "data": "3",
+              "occurrences": 1
+            },
+            {
+              "data": "4",
+              "occurrences": 1
+            },
+            {
+              "data": "5",
+              "occurrences": 1
+            },
+            {
+              "data": "6",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9",
+              "occurrences": 6
+            }
+          ],
+          "quantiles": {
+            "median": 3.5,
+            "lowerQuantile": 1.75,
+            "upperQuantile": 5.25
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "firstname",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 6,
+          "invalidValues": []
+        },
+        "id": "0001",
+        "statistics": {
+          "count": 6,
+          "valid": 6,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 6,
+          "frequencyTable": [
+          ],
+          "patternFrequencyTable": [
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": 4.0,
+            "maximalLength": 8.0,
+            "averageLength": 5.833333333333333
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "lastname",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 6,
+          "invalidValues": []
+        },
+        "id": "0002",
+        "statistics": {
+          "count": 6,
+          "valid": 6,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 6,
+          "frequencyTable": [
+          ],
+          "patternFrequencyTable": [
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": 4.0,
+            "maximalLength": 10.0,
+            "averageLength": 7.166666666666667
+          }
+        },
+        "domain": "FIRST_NAME",
+        "domainLabel": "First Name",
+        "domainFrequency": 66.66,
+        "semanticDomains": [
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "dept",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 6,
+          "invalidValues": []
+        },
+        "id": "0003",
+        "statistics": {
+          "count": 6,
+          "valid": 6,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 1,
+          "distinctCount": 5,
+          "frequencyTable": [
+          ],
+          "patternFrequencyTable": [
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": 3.0,
+            "maximalLength": 9.0,
+            "averageLength": 4.5
+          }
+        },
+        "domain": "HR_DEPARTMENT",
+        "domainLabel": "HR Department",
+        "domainFrequency": 66.66,
+        "semanticDomains": [
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "mail",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 1,
+          "valid": 4,
+          "invalidValues": []
+        },
+        "id": "0004",
+        "statistics": {
+          "count": 6,
+          "valid": 4,
+          "invalid": 1,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 6,
+          "frequencyTable": [
+          ],
+          "patternFrequencyTable": [
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": 0.0,
+            "maximalLength": 41.0,
+            "averageLength": 18.833333333333332
+          }
+        },
+        "domain": "EMAIL",
+        "domainLabel": "Email",
+        "domainFrequency": 66.66,
+        "semanticDomains": [
+          {
+            "id": "EMAIL",
+            "label": "Email",
+            "frequency": 66.66
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "hire",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 1,
+          "invalid": 1,
+          "valid": 4,
+          "invalidValues": []
+        },
+        "id": "0005",
+        "statistics": {
+          "count": 6,
+          "valid": 4,
+          "invalid": 1,
+          "empty": 1,
+          "max": 1.2832992E12,
+          "min": 1.1656224E12,
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 6,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": {
+            "type": "date",
+            "items": [],
+            "pace": "QUARTER"
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      }
+    ]
+  }
+}

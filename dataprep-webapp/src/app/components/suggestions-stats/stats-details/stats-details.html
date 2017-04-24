@@ -16,7 +16,8 @@
 <div class="actions-suggestions">
     <div class="watermark"
          ng-if="!statsDetailsCtrl.state.playground.grid.selectedColumns.length"
-         translate-once="SELECT_COLUMN_TO_DISPLAY_STATS"></div>
+         translate-once="SELECT_COLUMN_TO_DISPLAY_STATS">
+    </div>
 
     <sc-tabs ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length">
         <sc-tabs-item class="tab-container" tab-title="{{'STATS_TAB_CHART' | translate}}" default="true">

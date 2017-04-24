@@ -14,13 +14,12 @@
   -->
 
 <div class="actions-suggestions">
-	<div id="actions-ghost"
-	     ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
-	     class="loading-container">
-		<div class="loading-msg">
-			<span class="wait-icon continuous-rotate"><i data-icon="c" class="icon"></i></span>
-			<span class="wait-text" translate-once="REFRESHING_WAIT"></span>
-		</div>
+	<div
+		id="actions-ghost"
+		ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
+		class="loading-msg">
+		<span class="wait-icon continuous-rotate"><i data-icon="c" class="icon"></i></span>
+		<span class="wait-text" translate-once="REFRESHING_WAIT"></span>
 	</div>
 
 	<sc-tabs ng-show="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"

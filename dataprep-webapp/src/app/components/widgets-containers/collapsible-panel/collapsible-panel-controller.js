@@ -22,8 +22,39 @@ export default class CollapsiblePanelCtrl {
 		this.actionsDispatchers = [];
 	}
 
-	$onChanges() {
+	$onChanges(changes) {
+		if (!changes.item) {
+			return;
+		}
+		this.adaptItem();
+	}
+
+	adaptItem() {
+		this.adaptedItem = { ...this.item };
+		this.adaptHeaderActions();
 		this.adaptHeader();
+	}
+
+	adaptHeaderActions() {
+		if (this.adaptedItem.onToggle) {
+			const headerOnToggle = this.getActionDispatcher(this.adaptedItem.onToggle);
+			this.adaptedItem.onToggle = event => headerOnToggle(event, this.adaptedItem);
+		}
+		if (this.adaptedItem.onSelect) {
+			const headerOnSelect = this.getActionDispatcher(this.adaptedItem.onSelect);
+			this.adaptedItem.onSelect = event => headerOnSelect(event, this.adaptedItem);
+		}
+	}
+
+	adaptHeader() {
+		this.adaptedItem.header = this.adaptedItem
+			.header
+			.map((headerItem) => {
+				if (Array.isArray(headerItem)) {
+					return headerItem.map(item => this.adaptHeaderItem(item));
+				}
+				return this.adaptHeaderItem(headerItem);
+			});
 	}
 
 	adaptHeaderItem(headerItem) {
@@ -37,17 +68,6 @@ export default class CollapsiblePanelCtrl {
 		}
 	}
 
-	adaptHeader() {
-		this.header = this.item
-			.header
-			.map((headerItem) => {
-				if (Array.isArray(headerItem)) {
-					return headerItem.map(item => this.adaptHeaderItem(item));
-				}
-				return this.adaptHeaderItem(headerItem);
-			});
-	}
-
 	adaptStatusItem(statusItem) {
 		const actions = statusItem.actions;
 		if (!actions || !actions.length) {
@@ -55,7 +75,7 @@ export default class CollapsiblePanelCtrl {
 		}
 
 		const statusActions = actions.map(
-			action => this.createItemAction(this.item, action)
+			action => this.createItemAction(this.adaptedItem, action)
 		);
 		return {
 			...statusItem,
@@ -69,7 +89,7 @@ export default class CollapsiblePanelCtrl {
 			return actionItem;
 		}
 
-		const adaptedAction = this.createItemAction(this.item, action);
+		const adaptedAction = this.createItemAction(this.adaptedItem, action);
 		adaptedAction.displayMode = ACTION_DISPLAY_MODE;
 		return adaptedAction;
 	}

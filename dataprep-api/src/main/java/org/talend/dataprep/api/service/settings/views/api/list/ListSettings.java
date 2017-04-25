@@ -14,6 +14,7 @@
 package org.talend.dataprep.api.service.settings.views.api.list;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.talend.dataprep.api.service.settings.actions.provider.PreparationActions.PREPARATION_FOLDER_FETCH;
 
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
@@ -86,6 +87,14 @@ public class ListSettings implements ViewSettings {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static Builder from(final ListSettings viewSettings) {
+        return builder() //
+                .id(viewSettings.getId()) //
+                .didMountActionCreator(PREPARATION_FOLDER_FETCH.getId())
+                .list(viewSettings.getList()) //
+                .toolbar(viewSettings.getToolbar());
     }
 
     public static class Builder {

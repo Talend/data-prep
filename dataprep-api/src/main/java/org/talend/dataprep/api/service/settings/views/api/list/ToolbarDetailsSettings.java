@@ -55,6 +55,11 @@ public class ToolbarDetailsSettings {
         return new Builder();
     }
 
+    public static Builder from(final ToolbarDetailsSettings viewSettings) {
+        return builder() //
+                .actionBar(viewSettings.getActionBar());
+    }
+
     public static class Builder {
 
         private ListSortSettings sort;

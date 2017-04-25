@@ -18,7 +18,6 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,12 +40,12 @@ import io.swagger.annotations.ApiParam;
 public class SearchAPI extends APIService {
 
     @Autowired
-    SearchDelegate searchDelegate;
+    private List<SearchDelegate> searchDelegates;
 
     /**
      * Search dataprep folders, preparations and datasets.
      *
-     * @param name the name searched.
+     * @param query the name searched.
      * @param filter the types of items to search. It can be (dataset, preparation, folder).
      * @param strict strict mode means that the name should be the full name (still case insensitive).
      */
@@ -60,7 +59,23 @@ public class SearchAPI extends APIService {
             @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict) {
     //@formatter:on
         return output -> {
-            searchDelegate.search(filter, name, strict, output);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
+            }
+            try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
+                generator.writeStartObject();
+                for (SearchDelegate searchDelegate : searchDelegates) {
+                    if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
+                        generator.writeFieldName(searchDelegate.getSearchCategory());
+                        generator.writeObject(searchDelegate.search(name, strict));
+                    }
+                }
+                generator.writeEndObject();
+
+            } catch (IOException e) {
+                throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
+            }
+            LOG.info("Searching Done on dataprep for {} done with filter: {} and strict mode: {}", name, filter, strict);
         };
     }
 }

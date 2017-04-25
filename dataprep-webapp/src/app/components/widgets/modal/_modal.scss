@@ -191,16 +191,10 @@
 		}
 
 		.modal-buttons {
+			display: flex;
+			justify-content: space-between;
 			padding-top: 10px;
 			border-top: 1px solid $light-gray;
-
-			.modal-secondary-button {
-				float: left;
-			}
-
-			.modal-primary-button {
-				float: right;
-			}
 		}
 
 		.modal-form-row {

@@ -255,6 +255,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		playgroundState.preparation = null;
 		playgroundState.sampleType = 'HEAD';
 		playgroundState.isReadOnly = false;
+		playgroundState.stepInEditionMode = null;
 
 		RecipeStateService.reset();
 		FilterStateService.reset();

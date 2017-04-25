@@ -46,12 +46,12 @@ export default function LookupCtrl($timeout, state, StateService,
 		}
 	};
 
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @name refreshLookupDatasetsSort
-     * @description refresh the actual sort parameter
-     * */
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @name refreshLookupDatasetsSort
+	 * @description refresh the actual sort parameter
+	 * */
 	function refreshLookupDatasetsSort() {
 		const savedSort = StorageService.getLookupDatasetsSort();
 		if (savedSort) {
@@ -59,12 +59,12 @@ export default function LookupCtrl($timeout, state, StateService,
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @name refreshLookupDatasetsOrder
-     * @description refresh the actual order parameter
-     */
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @name refreshLookupDatasetsOrder
+	 * @description refresh the actual order parameter
+	 */
 	function refreshLookupDatasetsOrder() {
 		const savedSortOrder = StorageService.getLookupDatasetsOrder();
 		if (savedSortOrder) {
@@ -72,12 +72,12 @@ export default function LookupCtrl($timeout, state, StateService,
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name hoverSubmitBtn
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description trigger a preview mode on the main dataset to show the lookup action effet
-     */
+	/**
+	 * @ngdoc method
+	 * @name hoverSubmitBtn
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description trigger a preview mode on the main dataset to show the lookup action effet
+	 */
 	vm.hoverSubmitBtn = function hoverSubmitBtn() {
 		if (state.playground.stepInEditionMode) {
 			PreviewService.updatePreview(state.playground.stepInEditionMode, getParams());
@@ -88,26 +88,26 @@ export default function LookupCtrl($timeout, state, StateService,
 		}
 	};
 
-    /**
-     * @ngdoc method
-     * @name getDsName
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @param {object} item dataset lookup action
-     * @returns {String} the name of th dataset to be shown in the list
-     * @description loops over the dataset lookup action parameters to collect the dataset name
-     */
+	/**
+	 * @ngdoc method
+	 * @name getDsName
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @param {object} item dataset lookup action
+	 * @returns {String} the name of th dataset to be shown in the list
+	 * @description loops over the dataset lookup action parameters to collect the dataset name
+	 */
 	vm.getDsName = function getDsName(item) {
 		return _.find(item.parameters, { name: 'lookup_ds_name' }).default;
 	};
 
-    /**
-     * @ngdoc method
-     * @name extractLookupParams
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @param {object} dsLookup dataset lookup action
-     * @returns {object} the params object
-     * @description loops over the dataset lookup action parameters to collect the params
-     */
+	/**
+	 * @ngdoc method
+	 * @name extractLookupParams
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @param {object} dsLookup dataset lookup action
+	 * @returns {object} the params object
+	 * @description loops over the dataset lookup action parameters to collect the params
+	 */
 	function extractLookupParams(dsLookup) {
 		return _.reduce(dsLookup.parameters, function (res, param) {
 			res[param.name] = param.default;
@@ -115,12 +115,12 @@ export default function LookupCtrl($timeout, state, StateService,
 		}, {});
 	}
 
-    /**
-     * @ngdoc method
-     * @name getParams
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description returns the params of the lookup action
-     */
+	/**
+	 * @ngdoc method
+	 * @name getParams
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description returns the params of the lookup action
+	 */
 	function getParams() {
 		const params = extractLookupParams(state.playground.lookup.dataset);
 		params.column_id = state.playground.grid.selectedColumns[0].id;
@@ -131,12 +131,12 @@ export default function LookupCtrl($timeout, state, StateService,
 		return params;
 	}
 
-    /**
-     * @ngdoc method
-     * @name submit
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description submits the lookup action
-     */
+	/**
+	 * @ngdoc method
+	 * @name submit
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description submits the lookup action
+	 */
 	vm.submit = function submit() {
 		EarlyPreviewService.deactivatePreview();
 		EarlyPreviewService.cancelPendingPreview();
@@ -151,45 +151,45 @@ export default function LookupCtrl($timeout, state, StateService,
 		}
 
 		promise.then(StateService.setLookupVisibility.bind(null, false))
-            .finally(function () {
-	$timeout(EarlyPreviewService.activatePreview, 500, false);
-});
+			.finally(function () {
+				$timeout(EarlyPreviewService.activatePreview, 500, false);
+			});
 	};
 
-    /**
-     * @ngdoc method
-     * @name openAddLookupDatasetModal
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description Open the add lookup dataset modal
-     */
+	/**
+	 * @ngdoc method
+	 * @name openAddLookupDatasetModal
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description Open the add lookup dataset modal
+	 */
 	vm.openAddLookupDatasetModal = function openAddLookupDatasetModal() {
 		LookupService.disableDatasetsUsedInRecipe();
 		vm.addLookupDatasetModal = true;
 	};
 
-    /**
-     * @ngdoc method
-     * @name addLookupDatasets
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description Add datasets to the lookup
-     */
+	/**
+	 * @ngdoc method
+	 * @name addLookupDatasets
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description Add datasets to the lookup
+	 */
 	vm.addLookupDatasets = function addLookupDatasets() {
 		LookupService.updateLookupDatasets();
 		vm.addLookupDatasetModal = false;
 
-        // refresh lookup panel by selecting the first action
+		// refresh lookup panel by selecting the first action
 		if (vm.state.playground.lookup.addedActions.length > 0) {
 			LookupService.loadFromAction(vm.state.playground.lookup.addedActions[0]);
 		}
 	};
 
-    /**
-     * @ngdoc method
-     * @name sort
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description sort dataset by sortType by calling refreshDatasets from DatasetService
-     * @param {object} sortType Criteria to sort
-     */
+	/**
+	 * @ngdoc method
+	 * @name sort
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description sort dataset by sortType by calling refreshDatasets from DatasetService
+	 * @param {object} sortType Criteria to sort
+	 */
 	vm.updateSortBy = function updateSortBy(sortType) {
 		$timeout(function () {
 			StateService.setLookupDatasetsSort(sortType);
@@ -197,13 +197,13 @@ export default function LookupCtrl($timeout, state, StateService,
 		});
 	};
 
-    /**
-     * @ngdoc method
-     * @name sort
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description sort dataset in order (ASC or DESC) by calling refreshDatasets from DatasetService
-     * @param {object} order Sort order ASC(ascending) or DESC(descending)
-     */
+	/**
+	 * @ngdoc method
+	 * @name sort
+	 * @methodOf data-prep.lookup.controller:LookupCtrl
+	 * @description sort dataset in order (ASC or DESC) by calling refreshDatasets from DatasetService
+	 * @param {object} order Sort order ASC(ascending) or DESC(descending)
+	 */
 	vm.updateSortOrder = function updateSortOrder(order) {
 		$timeout(function () {
 			StateService.setLookupDatasetsOrder(order);

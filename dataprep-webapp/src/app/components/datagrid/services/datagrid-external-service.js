@@ -92,7 +92,6 @@ export default class DatagridExternalService {
 
 			if (this.lastSelectedColumnsNumber === 1 && column) {
 				this.StatisticsService.updateStatistics();
-				this.LookupService.updateTargetColumn();
 			}
 			else {
 				this.StatisticsService.reset();

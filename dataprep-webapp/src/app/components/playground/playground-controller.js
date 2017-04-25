@@ -128,6 +128,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.toggleLookup = () => {
 		if (state.playground.lookup.visibility) {
 			StateService.setLookupVisibility(false);
+			StateService.setStepInEditionMode(null);
 		}
 		else {
 			LookupService.initLookups()

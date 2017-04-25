@@ -445,8 +445,9 @@ export default class RecipeCtrl {
 		this.PlaygroundService.removeStep(step)
 			.then(() => {
 				this.resetStepToBeDeleted();// otherwise it will wrongly appear when undo
-				if (this.state.playground.lookup.visibility && this.state.playground.lookup.step) {
+				if (this.state.playground.lookup.visibility && this.state.playground.stepInEditionMode) {
 					this.StateService.setLookupVisibility(false);
+					this.StateService.setStepInEditionMode(null);
 				}
 			});
 	}

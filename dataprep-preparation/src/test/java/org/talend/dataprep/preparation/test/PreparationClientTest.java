@@ -132,6 +132,14 @@ public class PreparationClientTest {
     }
 
     /**
+     * @param preparationId the wanted preparation id.
+     * @return the preparation details from its id.
+     */
+    public PreparationMessage getDetails(String preparationId) {
+        return getDetails(preparationId, null);
+    }
+
+    /**
      * Return the details of a preparation at a given (optional) step.
      *
      * @param preparationId the wanted preparation id.
@@ -206,5 +214,9 @@ public class PreparationClientTest {
      */
     public void setPreparationHead(String preparationId, String headId) {
         put("/preparations/{id}/head/{headId}", preparationId, headId);
+    }
+
+    public void deleteStep(String prepId, String stepIdToRemove) {
+        when().delete("/preparations/{id}/actions/{action}", prepId, stepIdToRemove);
     }
 }

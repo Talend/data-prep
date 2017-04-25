@@ -337,7 +337,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         try {
             // when
             clientTest.getDetails(preparationId, "toutouyoutou");
-            fail("well done, you managed to get the details out of an unkown step !");
+            fail("well done, you managed to get the details out of an unknown step !");
         } catch (MockTDPException e) {
             // then
             assertEquals(404, e.getStatusCode());

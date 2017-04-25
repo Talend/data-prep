@@ -550,7 +550,9 @@ public class PreparationService {
 
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
-            if (preparation.getSteps().stream().map(s -> s.getId()).anyMatch(s -> s.equals(stepId))) {
+            // just make sure the step does exist
+            final Step step = preparationRepository.get(stepId, Step.class);
+            if (step != null) {
                 preparation.setHeadId(stepId);
             } else {
                 throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation).put("stepId", stepId));
@@ -707,6 +709,9 @@ public class PreparationService {
      * <li>3. Set preparation head to STD's parent, so STD will be excluded</li>
      * <li>4. Append each action after the new preparation head</li>
      * </ul>
+     *
+     * @param id the preparation id.
+     * @param stepToDeleteId the step id to delete.
      */
     public void deleteAction(final String id, final String stepToDeleteId) {
         if (rootStep.getId().equals(stepToDeleteId)) {
@@ -1167,8 +1172,8 @@ public class PreparationService {
     /**
      * Append a single appendStep after the preparation head
      *
-     * @param preparation The preparation
-     * @param appendStep The appendStep to apply
+     * @param preparation The preparation.
+     * @param appendStep The appendStep to apply.
      */
     private void appendStepToHead(final Preparation preparation, final AppendStep appendStep) {
         // Add new actions after head

@@ -12,11 +12,10 @@
 
 package org.talend.dataprep.preparation.task;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
@@ -63,29 +62,18 @@ public class PreparationCleaner {
     @Autowired
     private PreparationUtils preparationUtils;
 
-    /**
-     * Get all the step ids that belong to a preparation
-     *
-     * @return The step ids
-     */
-    private Set<String> getPreparationStepIds() {
-        return repository.list(Preparation.class) //
-                .flatMap(prep -> preparationUtils.listStepsIds(prep.getHeadId(), repository).stream()).collect(toSet());
-    }
+    @Autowired
+    private List<OrphanStepsFinder> orphanStepsFinders;
 
     /**
-     * Get current steps that has no preparation
-     *
-     * @return The orphan steps
+     * @return all orphanSteps.
      */
-    private List<Step> getCurrentOrphanSteps() {
-        final Collection<Step> steps = repository.list(Step.class).collect(toList());
-        final Set<String> preparationStepIds = getPreparationStepIds();
-
-        final Predicate<Step> isNotRootStep = step -> !rootStep.getId().equals(step.getId());
-        final Predicate<Step> isOrphan = step -> !preparationStepIds.contains(step.getId());
-
-        return steps.stream().filter(isNotRootStep).filter(isOrphan).collect(toList());
+    private Set<Step> getOrphanSteps() {
+        Set<Step> orphanSteps = new HashSet<>();
+        for (OrphanStepsFinder finder : orphanStepsFinders) {
+            orphanSteps.addAll(finder.getOrphanSteps());
+        }
+        return orphanSteps;
     }
 
     /**
@@ -93,7 +81,7 @@ public class PreparationCleaner {
      *
      * @param currentOrphans The current orphans
      */
-    private void updateOrphanTags(final List<Step> currentOrphans) {
+    private void updateOrphanTags(final Set<Step> currentOrphans) {
         orphansStepsTags = currentOrphans.stream().collect(toMap(Function.identity(), step -> {
             final Integer tag = orphansStepsTags.get(step);
             return tag == null ? 0 : tag + 1;
@@ -166,7 +154,7 @@ public class PreparationCleaner {
     public void removeOrphanSteps() {
         securityProxy.asTechnicalUser();
         try {
-            final List<Step> currentOrphans = getCurrentOrphanSteps();
+            final Set<Step> currentOrphans = getOrphanSteps();
             updateOrphanTags(currentOrphans);
             cleanSteps();
         } finally {

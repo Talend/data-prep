@@ -32,6 +32,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.talend.dataprep.util.OrderedBeans;
 
 /**
  * API in charge of the search.
@@ -40,12 +41,12 @@ import io.swagger.annotations.ApiParam;
 public class SearchAPI extends APIService {
 
     @Autowired
-    private List<SearchDelegate> searchDelegates;
+    private OrderedBeans<SearchDelegate> searchDelegates;
 
     /**
      * Search dataprep folders, preparations and datasets.
      *
-     * @param query the name searched.
+     * @param name the name searched.
      * @param filter the types of items to search. It can be (dataset, preparation, folder).
      * @param strict strict mode means that the name should be the full name (still case insensitive).
      */
@@ -64,16 +65,17 @@ public class SearchAPI extends APIService {
             }
             try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
                 generator.writeStartObject();
-                for (SearchDelegate searchDelegate : searchDelegates) {
+                searchDelegates.forEach(searchDelegate -> {
                     if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
                         try {
+                            ... Hey, et l'espace avec type semantic!!
                             generator.writeFieldName(searchDelegate.getSearchCategory());
                             generator.writeObject(searchDelegate.search(name, strict));
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOG.error("Unable to search '{}'.", searchDelegate.getSearchCategory(), e);
                         }
                     }
-                }
+                });
                 generator.writeEndObject();
 
             } catch (IOException e) {

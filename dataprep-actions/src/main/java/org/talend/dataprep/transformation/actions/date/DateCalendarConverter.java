@@ -175,25 +175,24 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         try {
             String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
-                    context.get(FROM_CALENDER_TYPE_KEY), (Locale) context.get(FROM_LOCALE_KEY));
+                    context.get(FROM_CALENDER_TYPE_KEY), context.get(FROM_LOCALE_KEY));
 
             if (fromPattern != null) {
 
                 org.talend.dataquality.converters.DateCalendarConverter date = new org.talend.dataquality.converters.DateCalendarConverter(
-                        fromPattern, fromPattern, (Chronology) context.get(FROM_CALENDER_TYPE_KEY),
-                        (Chronology) context.get(TO_CALENDER_TYPE_KEY), (Locale) context.get(FROM_LOCALE_KEY),
-                        (Locale) context.get(TO_LOCALE_KEY));
+                        fromPattern, fromPattern, context.get(FROM_CALENDER_TYPE_KEY), context.get(TO_CALENDER_TYPE_KEY),
+                        context.get(FROM_LOCALE_KEY), context.get(TO_LOCALE_KEY));
 
                 String newValue = date.convert(value);
 
-                if (!StringUtils.isBlank(newValue)) {
+                if (StringUtils.isNotEmpty(newValue) && StringUtils.isNotBlank(newValue)) {
                     row.set(columnId, newValue);
                 }
 
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
-            LOGGER.debug("Unable to parse date {}.", value, e);
+            LOGGER.debug("Unable to parse date {}.", value);
         }
     }
 

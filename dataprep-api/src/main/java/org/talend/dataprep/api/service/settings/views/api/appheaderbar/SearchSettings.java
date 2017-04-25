@@ -122,6 +122,17 @@ public class SearchSettings {
         return new Builder();
     }
 
+    public static Builder from(final SearchSettings viewSettings) {
+        return builder() //
+                .debounceTimeout(viewSettings.getDebounceTimeout()) //
+                .onBlur(viewSettings.getOnBlur()) //
+                .onChange(viewSettings.getOnChange()) //
+                .onKeyDown(viewSettings.getOnKeyDown()) //
+                .onToggle(viewSettings.getOnToggle()) //
+                .addAllOnSelect(viewSettings.getOnSelect())
+                .placeholder(viewSettings.getPlaceholder());
+    }
+
     public static class Builder {
 
         private int debounceTimeout;
@@ -170,6 +181,11 @@ public class SearchSettings {
 
         public Builder onSelect(final String type, final String onSelect) {
             this.onSelect.put(type, onSelect);
+            return this;
+        }
+
+        public Builder addAllOnSelect(final Map<String, String> onSelects) {
+            this.onSelect.putAll(onSelects);
             return this;
         }
 

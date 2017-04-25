@@ -87,7 +87,7 @@ public abstract class BaseDataSetService {
         if (dataSetMetadataRepository.exist("name = '" + name + "'")) {
             final ExceptionContext context = ExceptionContext.build() //
                     .put("name", name);
-            throw new TDPException(DATASET_NAME_ALREADY_USED, context, true);
+            throw new TDPException(DATASET_NAME_ALREADY_USED, context);
         }
     }
 

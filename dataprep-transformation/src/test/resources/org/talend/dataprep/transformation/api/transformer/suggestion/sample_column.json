@@ -4,15 +4,7 @@
   "quality": {
     "empty": 4,
     "invalid": 6,
-    "valid": 90,
-    "invalidValues": [
-      "--",
-      "17.5",
-      "NA",
-      "Unknown",
-      "null",
-      "NC"
-    ]
+    "valid": 90
   },
   "statistics": {
     "max": 98,

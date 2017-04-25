@@ -43,9 +43,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
@@ -60,8 +64,6 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
  *
  * @param <T> Command result type.
  */
-@Component
-@Scope("request")
 public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Hystrix group used for dataset related commands. */
@@ -103,7 +105,11 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Value("${preparation.service.url:}")
     protected String preparationServiceUrl;
 
+    @Autowired
+    private BeanConversionService conversionService;
+
     private String authenticationToken;
+
     private final Map<String, String> headers = new HashMap<>();
 
     private Supplier<HttpRequestBase> httpCall;
@@ -370,9 +376,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 if (res.getEntity() != null) {
                     content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
-                JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(content);
-                code.setHttpStatus(statusCode);
-                final TDPException cause = new TDPException(code);
+
+                TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
+                TDPException cause = conversionService.convert(exceptionDto, TDPException.class);
+                ErrorCode code = cause.getCode();
+                if (code instanceof ErrorCodeDto) {
+                    ((ErrorCodeDto) code).setHttpStatus(statusCode);
+                }
                 throw onError.apply(cause);
             } catch (JsonMappingException e) {
                 LOGGER.debug("Cannot parse response content as JSON.", e);

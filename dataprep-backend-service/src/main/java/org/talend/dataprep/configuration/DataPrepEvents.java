@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -22,6 +21,8 @@ import org.springframework.core.task.AsyncListenableTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.talend.dataprep.event.DataPrepEventsCaster;
 
+import javax.annotation.Resource;
+
 /**
  * Setup the events management in data prep.
  */
@@ -32,26 +33,16 @@ public class DataPrepEvents {
     @Autowired
     private BeanFactory beanFactory;
 
+    @Resource(name = "applicationEventMulticaster#executor")
+    private AsyncListenableTaskExecutor executor;
+
     /**
      * @return The default application context ApplicationEventMulticaster.
      */
     // do NOT change the name as it is important to replace the default application context event multi caster
     @Bean(name = "applicationEventMulticaster")
-    public ApplicationEventMulticaster getDataPrepEventsCaster() {
-        return new DataPrepEventsCaster(dataPrepAsyncTaskExecutor(), beanFactory);
+    public ApplicationEventMulticaster getDataPrepEventsCaster( ) {
+        return new DataPrepEventsCaster(executor, beanFactory);
     }
 
-    /**
-     * @return an Authenticated task executor ready to run.
-     */
-    private AsyncListenableTaskExecutor dataPrepAsyncTaskExecutor() {
-        final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(2);
-        taskExecutor.setMaxPoolSize(10);
-        taskExecutor.setWaitForTasksToCompleteOnShutdown(false);
-        taskExecutor.initialize();
-
-        // wrap this task executor into a friendly authenticated one
-        return AuthenticatedTaskExecutor.authenticated(taskExecutor);
-    }
 }

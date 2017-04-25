@@ -220,8 +220,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 30,
-          "invalidValues": []
+          "valid": 30
         },
         "id": "birth",
         "domain": "",
@@ -234,8 +233,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 30,
-          "invalidValues": []
+          "valid": 30
         },
         "id": "0000",
         "domain": "",
@@ -248,8 +246,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 30,
-          "invalidValues": []
+          "valid": 30
         },
         "id": "0001",
         "domain": "",
@@ -262,8 +259,7 @@
         "quality": {
           "empty": 0,
           "invalid": 0,
-          "valid": 30,
-          "invalidValues": []
+          "valid": 30
         },
         "id": "0002",
         "domain": "",

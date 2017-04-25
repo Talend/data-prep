@@ -26,7 +26,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.folder.Folder;
@@ -42,7 +41,6 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.SecurityProxy;
-import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -62,14 +60,6 @@ public class FolderAPI extends APIService {
     /** Security proxy let the current thread to borrow another identity for a while. */
     @Autowired
     private SecurityProxy securityProxy;
-
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
-        // URLs are cleaner in lowercase.
-        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
-        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
-    }
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List children folders of the parameter if null list root children.", produces = APPLICATION_JSON_VALUE)

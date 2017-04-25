@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -38,7 +37,7 @@ public final class TransformationContext implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationContext.class);
 
     /** Map of action context for each action instance within a transformation. */
-    private final transient Map<DataSetRowAction, ActionContext> contexts = new HashMap<>();
+    private final transient Map<DataSetRowAction, ActionContext> contexts;
 
     /** The context itself. */
     private final transient Map<String, Object> context;
@@ -48,6 +47,7 @@ public final class TransformationContext implements Serializable {
      */
     public TransformationContext() {
         context = new HashMap<>();
+        contexts = new HashMap<>();
     }
 
     /**

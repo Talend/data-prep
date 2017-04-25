@@ -73,14 +73,17 @@ public class StreamModule extends SimpleModule {
                     // Ends input (and handle empty iterators).
                     if (!startedResultArray) {
                         jsonGenerator.writeStartArray();
+                        startedResultArray = true;
                     }
-                    jsonGenerator.writeEndArray();
-                    jsonGenerator.flush();
                 } catch (TalendRuntimeException e) {
                     throw new IOException(e); // IOException so it doesn't get swallowed by Jackson
                 } catch (Exception e) {
                     LOGGER.error("Unable to iterate over values.", e);
                 } finally {
+                    if (startedResultArray) {
+                        jsonGenerator.writeEndArray();
+                    }
+                    jsonGenerator.flush();
                     try {
                         stream.close();
                     } catch (Exception e) {

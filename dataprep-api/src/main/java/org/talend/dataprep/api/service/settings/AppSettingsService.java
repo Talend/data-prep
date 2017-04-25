@@ -66,7 +66,7 @@ public class AppSettingsService {
      * @return The function
      */
     private <T> Function<T, T> configure(final AppSettingsConfigurer<T> configurer) {
-        return action -> configurer.isApplicable(action) ? configurer.configure(action) : action;
+        return action -> configurer.isApplicable(action) && configurer.isUserAuthorized() ? configurer.configure(action) : action;
     }
 
     /**

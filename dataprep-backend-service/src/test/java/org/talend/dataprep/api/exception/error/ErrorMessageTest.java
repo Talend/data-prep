@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.ServiceBaseTest;
+import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.exception.TDPException;
 
 /**
@@ -66,7 +66,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "Service unavailable" + "\",\"message_title\":An error has occurred,\"context\":{}}";
+                + "\",\"message\":\"" + "Service unavailable" + "\",\"messageTitle\":An error has occurred,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 
@@ -110,7 +110,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
                 + "\",\"message\":\""
                 + "Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation"
-                + "\",\"message_title\":An error has occurred,\"context\":{}}";
+                + "\",\"messageTitle\":An error has occurred,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 
@@ -127,7 +127,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
         // then
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
                 + "\",\"message\":\"" + "Unable to create data set, content is not supported. Try with a csv or xls file!"
-                + "\",\"message_title\":Unsupported content,\"context\":{}}";
+                + "\",\"messageTitle\":Unsupported content,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         unsupportedContent.writeTo(stringWriter);
 
@@ -144,7 +144,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
         // then
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
                 + "\",\"message\":\"" + "Deletion not allowed, dataset still used by preparation(s)"
-                + "\",\"message_title\":Deletion forbidden,\"context\":{}}";
+                + "\",\"messageTitle\":Deletion forbidden,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 
@@ -161,7 +161,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
         // then
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
                 + "\",\"message\":\"" + "This action cannot be deleted alone because other following actions depends on it"
-                + "\",\"message_title\":Delete action not authorized,\"context\":{}}";
+                + "\",\"messageTitle\":Delete action not authorized,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 
@@ -177,7 +177,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "An error occurred during import" + "\",\"message_title\":Import error,\"context\":{}}";
+                + "\",\"message\":\"" + "An error occurred during import" + "\",\"messageTitle\":Import error,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 
@@ -193,7 +193,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "An error occurred during update" + "\",\"message_title\":Update error,\"context\":{}}";
+                + "\",\"message\":\"" + "An error occurred during update" + "\",\"messageTitle\":Update error,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 
@@ -237,7 +237,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
         String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
                 + "\",\"message\":\""
                 + "Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation"
-                + "\",\"message_title\":An error has occurred,\"context\":{}}";
+                + "\",\"messageTitle\":An error has occurred,\"context\":{}}";
         StringWriter stringWriter = new StringWriter();
         exception.writeTo(stringWriter);
 

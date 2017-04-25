@@ -168,13 +168,13 @@ describe('Playground directive', () => {
 
 	describe('loading', () => {
 		it('should NOT render playground header and playground', () => {
-			//given
+			// given
 			stateMock.playground.isLoading = true;
 
-			//when
+			// when
 			createElement();
 
-			//then
+			// then
 			expect(element.find('playground-header').length).toBe(0);
 			expect(element.find('.playground').length).toBe(0);
 		});
@@ -182,15 +182,28 @@ describe('Playground directive', () => {
 
 	describe('suggestions', () => {
 		it('should render right slidable panel', () => {
-			//given
+			// given
 			stateMock.playground.dataset = metadata;
 
-			//when
+			// when
 			createElement();
 
-			//then: check right slidable is displayed transformations with right slide action
+			// then: check right slidable is displayed transformations with right slide action
 			expect(element.find('.playground-suggestions').eq(0).hasClass('slide-hide')).toBe(false);
 			expect(element.find('.playground-suggestions').eq(0).find('.action').eq(0).hasClass('right')).toBe(true);
+		});
+
+		it('should render splitter inside slidable panel', () => {
+			// given
+			stateMock.playground.dataset = metadata;
+
+			// when
+			createElement();
+
+			// then
+			expect(element.find('.suggestions-stats-content').length).toBe(1);
+			expect(element.find('#help-suggestions').length).toBe(1);
+			expect(element.find('#help-stats').length).toBe(1);
 		});
 	});
 
@@ -203,13 +216,13 @@ describe('Playground directive', () => {
 		}));
 
 		it('should render left slidable panel', () => {
-			//given
+			// given
 			stateMock.playground.dataset = metadata;
 
-			//when
+			// when
 			createElement();
 
-			//then : check left slidable is hidden recipe with left slide action
+			// then : check left slidable is hidden recipe with left slide action
 			expect(element.find('.playground-recipe').eq(0).hasClass('slide-hide')).toBe(true);
 			expect(element.find('.playground-recipe').eq(0).find('.action').eq(0).hasClass('right')).toBe(false);
 		});
@@ -217,13 +230,13 @@ describe('Playground directive', () => {
 
 	describe('dataset parameters', () => {
 		it('should render dataset parameters', () => {
-			//given
+			// given
 			stateMock.playground.dataset = metadata;
 
-			//when
+			// when
 			createElement();
 
-			//then : check dataset parameters is present
+			// then : check dataset parameters is present
 			const playground = element.find('.playground').eq(0);
 			expect(playground.find('.dataset-parameters').length).toBe(1);
 		});
@@ -231,13 +244,13 @@ describe('Playground directive', () => {
 
 	describe('datagrid', () => {
 		it('should render datagrid with filters', () => {
-			//given
+			// given
 			stateMock.playground.dataset = metadata;
 
-			//when
+			// when
 			createElement();
 
-			//then : check datagrid and filters are present
+			// then : check datagrid and filters are present
 			const playground = element.find('.playground').eq(0);
 			expect(playground.eq(0).find('filter-bar').length).toBe(1);
 			expect(playground.eq(0).find('filter-bar').find('#filter-search').length).toBe(1);
@@ -247,52 +260,52 @@ describe('Playground directive', () => {
 
 	describe('ESC management', () => {
 		it('should close playground on escape key', inject(($timeout) => {
-			//given
+			// given
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
 
-			//when
+			// when
 			element.find('.playground-container').eq(0).trigger(event);
 			$timeout.flush();
 
-			//then
+			// then
 			expect(ctrl.beforeClose).toHaveBeenCalled();
 		}));
 
 		it('should NOT close playground on non escape key', inject(($timeout) => {
-			//given
+			// given
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 14;
 
-			//when
+			// when
 			element.find('.playground-container').eq(0).trigger(event);
 			$timeout.flush();
 
-			//then
+			// then
 			expect(ctrl.beforeClose).not.toHaveBeenCalled();
 		}));
 
 		it('should NOT close playground when event target is on input element', inject(($timeout) => {
-			//given
+			// given
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
 
-			//when
+			// when
 			element.find('.playground-container input').eq(0).trigger(event);
 			$timeout.flush();
 
-			//then
+			// then
 			expect(ctrl.beforeClose).not.toHaveBeenCalled();
 		}));
 
 		it('should focus on playground container when event target is on input element', inject(($timeout) => {
-			//given
+			// given
 			createElement();
 			angular.element('body').append(element);
 			const container = element.find('.playground-container').eq(0)[0];
@@ -301,11 +314,11 @@ describe('Playground directive', () => {
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
 
-			//when
+			// when
 			element.find('.playground-container input').eq(0).trigger(event);
 			$timeout.flush();
 
-			//then
+			// then
 			expect(document.activeElement).toBe(container);
 		}));
 	});

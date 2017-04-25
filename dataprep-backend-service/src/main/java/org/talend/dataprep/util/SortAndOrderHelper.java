@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.util;
 
@@ -42,7 +41,7 @@ import com.google.common.base.Converter;
  */
 public final class SortAndOrderHelper {
 
-    private static final Logger log = getLogger(SortAndOrderHelper.class);
+    private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
     private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL.converterTo(CaseFormat.UPPER_UNDERSCORE);
 
@@ -59,11 +58,11 @@ public final class SortAndOrderHelper {
             try{
                 value = Sort.valueOf(fromCamelCase);
             } catch (IllegalArgumentException e) {
-                log.debug("Could not read Sort parameter as snake case.", e);
+                LOGGER.debug("Could not read Sort parameter as snake case.", e);
                 try {
                     value = Sort.valueOf(text.toUpperCase());
                 } catch (IllegalArgumentException e2) {
-                    log.debug("Could not read Sort parameter as snake case.", e2);
+                    LOGGER.debug("Could not read Sort parameter as snake case.", e2);
                     throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
                 }
             }
@@ -80,11 +79,11 @@ public final class SortAndOrderHelper {
             try{
                 value = Order.valueOf(fromCamelCase);
             } catch (IllegalArgumentException e) {
-                log.debug("Could not read Order parameter as camel case.", e);
+                LOGGER.debug("Could not read Order parameter as camel case.", e);
                 try {
                     value = Order.valueOf(text.toUpperCase());
                 } catch (IllegalArgumentException e2) {
-                    log.debug("Could not read Order parameter as snake case.", e2);
+                    LOGGER.debug("Could not read Order parameter as snake case.", e2);
                     throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, e2);
                 }
             }
@@ -266,7 +265,7 @@ public final class SortAndOrderHelper {
                 if (dataSetFinder != null) {
                     keyExtractor = p -> getUpperCaseNameFromNullable(dataSetFinder.apply(p));
                 } else {
-                    log.debug(
+                    LOGGER.debug(
                             "There is no dataset finding function to sort preparations on dataset name. Default to natural name order.");
                     // default to sort on name
                     keyExtractor = preparation -> preparation.getName().toUpperCase();

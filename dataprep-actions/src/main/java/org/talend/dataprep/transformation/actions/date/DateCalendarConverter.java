@@ -82,7 +82,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     @Override
     public String getCategory() {
-        return ActionCategory.CONVERSIONS.getDisplayName();
+        return ActionCategory.DATE.getDisplayName();
     }
 
     @Override

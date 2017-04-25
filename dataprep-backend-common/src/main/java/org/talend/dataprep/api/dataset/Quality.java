@@ -14,8 +14,6 @@
 package org.talend.dataprep.api.dataset;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -38,10 +36,6 @@ public class Quality implements Serializable {
     /** Number of valid records. */
     @JsonProperty("valid")
     private int valid;
-
-    /** List of invalid values. */
-    @JsonProperty("invalidValues")
-    private Set<String> invalidValues = new HashSet<>();
 
     /**
      * @return the number of empty records.

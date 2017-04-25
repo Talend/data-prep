@@ -179,6 +179,7 @@ export default class AppHeaderBarCtrl {
 				name: onToggleAction.icon,
 				title: onToggleAction.name,
 				bsStyle: 'link',
+				tooltipPlacement: 'bottom',
 			},
 			onToggle: this.searchOnToggle,
 			onBlur: this.searchOnBlur,
@@ -247,6 +248,7 @@ export default class AppHeaderBarCtrl {
 					name: this.$translate.instant(action.name),
 					icon: action.icon,
 					onClick: this.settingsActionsService.createDispatcher(action),
+					tooltipPlacement: 'bottom',
 				},
 			}));
 	}

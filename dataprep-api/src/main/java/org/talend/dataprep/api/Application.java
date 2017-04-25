@@ -21,14 +21,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Profile;
 
 import com.netflix.hystrix.Hystrix;
+import org.talend.daikon.documentation.DocumentationController;
 
 @SpringBootApplication
 @Configuration("org.talend.dataprep.api.Application")
 @Profile("standalone")
-@ComponentScan(basePackages = {"org.talend.dataprep", "org.talend.daikon.content"})
+@ComponentScan(basePackages = {"org.talend.dataprep", "org.talend.daikon"}, excludeFilters = @ComponentScan.Filter(value = DocumentationController.class, type = FilterType.ASSIGNABLE_TYPE))
 public class Application implements DisposableBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.content.DeletableResource;
 import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.cache.CacheJanitor;
+import org.talend.dataprep.security.ForAll;
 
 @Component
 @ConditionalOnBean(ResourceResolver.class)
@@ -40,43 +41,27 @@ public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
     @Autowired
     private ResourceResolver deletablePathResolver;
 
+    @Autowired
+    private ForAll forAll;
+
     @Override
     @Scheduled(fixedDelay = 60000)
     public void janitor() {
-        final long start = System.currentTimeMillis();
         final AtomicLong deletedCount = new AtomicLong();
         final AtomicLong totalCount = new AtomicLong();
-        LOGGER.debug("Janitor process started @ {}.", start);
+        LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
 
+        forAll.execute(() -> performCleanUp(deletedCount, totalCount));
+
+        LOGGER.debug("Janitor process ended @ {} ({}/{} files successfully deleted).", System.currentTimeMillis(), deletedCount,
+                totalCount);
+    }
+
+    private void performCleanUp(AtomicLong deletedCount, AtomicLong totalCount) {
         try {
+            final long start = System.currentTimeMillis();
             final DeletableResource[] resources = deletablePathResolver.getResources("/cache/*");
-            final Predicate<DeletableResource> deleteOld = (resource) -> {
-                final String fileName = resource.getFilename();
-                final String suffix = StringUtils.substringAfterLast(fileName, ".");
-
-                // Ignore "." files (hidden files like MacOS).
-                if (resource.getFilename().startsWith(".")) {
-                    return false;
-                }
-                // Ignore NFS files (may happen in local mode when NFS is used).
-                if (suffix.startsWith("nfs")) {
-                    return false;
-                }
-                if (StringUtils.isEmpty(suffix)) {
-                    return false;
-                }
-
-                try {
-                    final long time = Long.parseLong(suffix);
-                    if (time < start) {
-                        return true;
-                    }
-                } catch (NumberFormatException e) {
-                    LOGGER.debug("Ignore file '{}'", resource);
-                }
-                totalCount.incrementAndGet();
-                return false;
-            };
+            final Predicate<DeletableResource> deleteOld = resource -> cleanUpResources(totalCount, start, resource);
 
             // Perform deletes for old resources
             stream(resources).filter(deleteOld).forEach(r -> {
@@ -90,9 +75,34 @@ public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
         } catch (IOException e) {
             LOGGER.error("Unable to clean up resources", e);
         }
+    }
 
-        LOGGER.debug("Janitor process ended @ {} ({}/{} files successfully deleted).", System.currentTimeMillis(), deletedCount,
-                totalCount);
+    private boolean cleanUpResources(AtomicLong totalCount, long start, DeletableResource resource) {
+        final String fileName = resource.getFilename();
+        final String suffix = StringUtils.substringAfterLast(fileName, ".");
+
+        // Ignore "." files (hidden files like MacOS).
+        if (resource.getFilename().startsWith(".")) {
+            return false;
+        }
+        // Ignore NFS files (may happen in local mode when NFS is used).
+        if (suffix.startsWith("nfs")) {
+            return false;
+        }
+        if (StringUtils.isEmpty(suffix)) {
+            return false;
+        }
+
+        try {
+            final long time = Long.parseLong(suffix);
+            if (time < start) {
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.debug("Ignore file '{}'", resource);
+        }
+        totalCount.incrementAndGet();
+        return false;
     }
 
 }

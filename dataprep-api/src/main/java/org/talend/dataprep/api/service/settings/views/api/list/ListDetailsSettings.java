@@ -33,7 +33,7 @@ public class ListDetailsSettings {
      * The columns to display. Each column configuration should have a key (the item property key) and a label (the property
      * display label).
      */
-    private List<Map<String, String>> columns;
+    private List<Map> columns;
 
     /**
      * Items extra properties
@@ -50,11 +50,11 @@ public class ListDetailsSettings {
      */
     private ListTitleSettings titleProps;
 
-    public List<Map<String, String>> getColumns() {
+    public List<Map> getColumns() {
         return columns;
     }
 
-    public void setColumns(final List<Map<String, String>> columns) {
+    public void setColumns(final List<Map> columns) {
         this.columns = columns;
     }
 
@@ -94,7 +94,9 @@ public class ListDetailsSettings {
 
         private static final String TYPE = "type";
 
-        private final List<Map<String, String>> columns = new ArrayList<>();
+        private static final String HIDE_HEADER = "hideHeader";
+
+        private final List<Map> columns = new ArrayList<>();
 
         private ListItemsSettings itemProps;
 
@@ -103,14 +105,17 @@ public class ListDetailsSettings {
         private ListTitleSettings titleProps;
 
         public Builder column(final String key, final String label) {
-           this.column(key, label, null);
+            this.column(key, label, null, null);
             return this;
         }
 
-        public Builder column(final String key, final String label, final String type) {
-            final Map<String, String> keyValue = new HashMap<>(2);
+        public Builder column(final String key, final String label, final Boolean hideHeader, final String type) {
+            final Map keyValue = new HashMap<>(2);
             keyValue.put(KEY, key);
             keyValue.put(LABEL, label);
+            if(hideHeader != null) {
+                keyValue.put(HIDE_HEADER, hideHeader);
+            }
             if(type != null) {
                 keyValue.put(TYPE, type);
             }
@@ -141,6 +146,5 @@ public class ListDetailsSettings {
             settings.setTitleProps(this.titleProps);
             return settings;
         }
-
     }
 }

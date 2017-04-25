@@ -41,7 +41,9 @@ public class DataSetLocationService {
      * @return the available dataset locations.
      */
     public List<DataSetLocation> getAvailableLocations() {
-        List<DataSetLocation> suppliedLocations = datasetLocationsSuppliers.stream().flatMap(dls -> dls.getAvailableLocations().stream()).collect(toList());
+        List<DataSetLocation> suppliedLocations = datasetLocationsSuppliers.stream() //
+                .flatMap(dls -> dls.getAvailableLocations().stream()) //
+                .collect(toList());
         ArrayList<DataSetLocation> allLocations = new ArrayList<>();
         allLocations.addAll(locations);
         allLocations.addAll(suppliedLocations);

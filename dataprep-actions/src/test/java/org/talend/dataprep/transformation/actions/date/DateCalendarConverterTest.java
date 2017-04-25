@@ -62,7 +62,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.CONVERSIONS.getDisplayName()));
+        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
     }
 
     @Test

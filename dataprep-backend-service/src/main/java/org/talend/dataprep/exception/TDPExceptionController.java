@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,17 +12,20 @@
 
 package org.talend.dataprep.exception;
 
-import java.io.StringWriter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.dataprep.http.HttpResponseContext;
+import org.talend.dataprep.conversions.BeanConversionService;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Controller advice applied to all controllers so that they can handle TDPExceptions.
@@ -34,6 +36,12 @@ public class TDPExceptionController {
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TDPExceptionController.class);
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private BeanConversionService conversionService;
+
     /**
      * Send the TDPException into the http response.
      *
@@ -41,21 +49,14 @@ public class TDPExceptionController {
      * @return the http response.
      */
     @ExceptionHandler({ TalendRuntimeException.class })
-    @ResponseBody
-    public String handleError(TalendRuntimeException e) {
+    public ResponseEntity<String> handleError(TalendRuntimeException e) throws JsonProcessingException {
         if (e instanceof TDPException) {
-            final TDPException tdpException = (TDPException) e;
-            if (!tdpException.isError()) {
-                LOGGER.error("An error occurred", e);
-            } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("An error occurred", e);
-            }
+            LOGGER.error("An  error occurred", e);
         }
-        HttpResponseContext.status(HttpStatus.valueOf(e.getCode().getHttpStatus()));
-        HttpResponseContext.header("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-        final StringWriter message = new StringWriter();
-        e.writeTo(message);
-        return message.toString();
+        HttpHeaders httpStatus = new HttpHeaders();
+        httpStatus.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        TdpExceptionDto exceptionDto = conversionService.convert(e, TdpExceptionDto.class);
+        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpStatus, HttpStatus.valueOf(e.getCode().getHttpStatus()));
     }
 
 }

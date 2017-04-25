@@ -66,8 +66,12 @@ public class SearchAPI extends APIService {
                 generator.writeStartObject();
                 for (SearchDelegate searchDelegate : searchDelegates) {
                     if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
-                        generator.writeFieldName(searchDelegate.getSearchCategory());
-                        generator.writeObject(searchDelegate.search(name, strict));
+                        try {
+                            generator.writeFieldName(searchDelegate.getSearchCategory());
+                            generator.writeObject(searchDelegate.search(name, strict));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 generator.writeEndObject();

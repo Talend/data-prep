@@ -80,6 +80,14 @@ public class SearchAPI extends APIService {
             // Write category information
             generator.writeFieldName("categories");
             generator.writeStartArray();
+
+            // Add static information about documentation category
+            generator.writeStartObject();
+            generator.writeStringField("type", "documentation");
+            generator.writeStringField("label", messagesBundle.getString(Locale.ENGLISH, "search.documentation"));
+            generator.writeEndObject();
+
+            // Now the search types categories
             searchDelegates.forEach(searchDelegate -> {
                 final String categoryLabel = messagesBundle.getString(Locale.ENGLISH,
                         "search." + searchDelegate.getSearchLabel());
@@ -96,11 +104,12 @@ public class SearchAPI extends APIService {
 
             // Write results
             searchDelegates.forEach(searchDelegate -> {
-                if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
+                final String category = searchDelegate.getSearchCategory();
+                if (filter == null || filter.contains(category)) {
                     try {
-                        generator.writeObjectField(searchDelegate.getSearchCategory(), searchDelegate.search(name, strict));
+                        generator.writeObjectField(category, searchDelegate.search(name, strict));
                     } catch (IOException e) {
-                        LOG.error("Unable to search '{}'.", searchDelegate.getSearchCategory(), e);
+                        LOG.error("Unable to search '{}'.", category, e);
                     }
                 }
             });

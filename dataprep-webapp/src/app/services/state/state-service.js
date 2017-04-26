@@ -180,6 +180,7 @@ export function StateService(RouteStateService, routeState,
 		setSearching: SearchStateService.setSearching,
 		setSearchInput: SearchStateService.setSearchInput,
 		setSearchResults: SearchStateService.setSearchResults,
+		setSearchCategories: SearchStateService.setSearchCategories,
 		setFocusedSectionIndex: SearchStateService.setFocusedSectionIndex,
 		setFocusedItemIndex: SearchStateService.setFocusedItemIndex,
 	};

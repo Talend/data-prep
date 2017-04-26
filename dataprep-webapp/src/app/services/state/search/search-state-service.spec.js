@@ -59,6 +59,17 @@ describe('Search', () => {
 			expect(searchState.searchResults).toEqual([1, 2, 3]);
 		}));
 
+		it('should set search categories', inject((searchState, SearchStateService) => {
+			// given
+			expect(searchState.searchCategories).toBeNull();
+
+			// when
+			SearchStateService.setSearchCategories([1, 2, 3]);
+
+			// then
+			expect(searchState.searchCategories).toEqual([1, 2, 3]);
+		}));
+
 		it('should set focused section index', inject((searchState, SearchStateService) => {
 			// given
 			expect(searchState.focusedSectionIndex).toBeNull();

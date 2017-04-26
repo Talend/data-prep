@@ -14,20 +14,6 @@
 describe('Search Inventory Service', () => {
 	const results = {
 		data: {
-			categories:[
-				{
-					type: 'folder',
-					label: 'Folders',
-				},
-				{
-					type: 'dataset',
-					label: 'Datasets',
-				},
-				{
-					type: 'preparation',
-					label: 'Preparations',
-				}
-			],
 			folders: [{ name: 'folder test', lastModificationDate: 1 }],
 			preparations: [{ name: 'prep test', lastModificationDate: 2 }],
 			datasets: [{
@@ -71,21 +57,18 @@ describe('Search Inventory Service', () => {
 				owner: {
 					id: 'charles',
 				},
-				inventoryLabel: 'Datasets',
 			},
 			{
 				name: 'prep test',
 				lastModificationDate: 2,
 				inventoryType: 'preparation',
 				tooltipName: 'prep test',
-				inventoryLabel: 'Preparations',
 			},
 			{
 				name: 'folder test',
 				lastModificationDate: 1,
 				inventoryType: 'folder',
 				tooltipName: 'folder test',
-				inventoryLabel: 'Folders',
 			},
 		];
 

@@ -15,13 +15,14 @@ const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
 
 export default class AppHeaderBarCtrl {
-	constructor($element, $translate, appSettings, SettingsActionsService) {
+	constructor($element, $translate, state, appSettings, SettingsActionsService) {
 		'ngInject';
 
 		this.$element = $element;
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.settingsActionsService = SettingsActionsService;
+		this.state = state;
 	}
 
 	$onInit() {
@@ -130,6 +131,8 @@ export default class AppHeaderBarCtrl {
 					title: type,
 					iconName: onSelectAction.icon,
 					iconTitle: onSelectAction.name,
+					label: this.state.search.searchCategories && this.state.search.searchCategories.find((category) => category.type === type) ?
+						this.state.search.searchCategories.find((category) => category.type === type).label : type,
 				});
 				onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
 			}
@@ -195,10 +198,10 @@ export default class AppHeaderBarCtrl {
 			.map((inventoryType) => {
 				const suggestions = searchResults.filter(result => result.inventoryType === inventoryType.title);
 				return {
-					title: inventoryType.inventoryLabel,
+					title: inventoryType.label,
 					icon: {
 						name: inventoryType.iconName,
-						title: inventoryType.inventoryLabel,
+						title: inventoryType.label,
 					},
 					suggestions: suggestions.map((result) => {
 						return {

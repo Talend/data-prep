@@ -16,6 +16,7 @@ export const searchState = {
 	searching: false,
 	searchInput: null,
 	searchResults: null,
+	searchCategories: null,
 	focusedSectionIndex: null,
 	focusedItemIndex: null,
 };
@@ -31,6 +32,7 @@ export function SearchStateService() {
 		setSearching,
 		setSearchInput,
 		setSearchResults,
+		setSearchCategories,
 		setFocusedSectionIndex,
 		setFocusedItemIndex,
 	};
@@ -73,6 +75,16 @@ export function SearchStateService() {
 	 */
 	function setSearchResults(searchResults) {
 		searchState.searchResults = searchResults;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setSearchCategories
+	 * @methodOf data-prep.services.state.service:SearchStateService
+	 * @description Set the search result categories
+	 */
+	function setSearchCategories(searchCategories) {
+		searchState.searchCategories = searchCategories;
 	}
 
 	/**

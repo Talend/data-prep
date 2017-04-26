@@ -17,6 +17,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,27 +67,47 @@ public class SearchAPI extends APIService {
             @ApiParam(value = "filter") @RequestParam(required = false) final List<String> filter,
             @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict) {
     //@formatter:on
-        return output -> {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
-            }
-            try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
-                generator.writeStartObject();
-                searchDelegates.forEach(searchDelegate -> {
-                    if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
-                        try {
-                            final String fieldName = messagesBundle.getString(Locale.ENGLISH, searchDelegate.getSearchLabel());
-                            generator.writeObjectField(fieldName, searchDelegate.search(name, strict));
-                        } catch (IOException e) {
-                            LOG.error("Unable to search '{}'.", searchDelegate.getSearchCategory(), e);
-                        }
+        return output -> doSearch(name, filter, strict, output);
+    }
+
+    private void doSearch(String name, List<String> filter, boolean strict, OutputStream output) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
+        }
+        try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
+            generator.writeStartObject();
+
+            // Write category information
+            generator.writeFieldName("categories");
+            generator.writeStartArray();
+            searchDelegates.forEach(searchDelegate -> {
+                final String categoryLabel = messagesBundle.getString(Locale.ENGLISH,
+                        "search." + searchDelegate.getSearchLabel());
+                try {
+                    generator.writeStartObject();
+                    generator.writeStringField("type", searchDelegate.getSearchCategory());
+                    generator.writeStringField("label", categoryLabel);
+                    generator.writeEndObject();
+                } catch (IOException e) {
+                    LOG.error("Unable to write category information for '{}'.", searchDelegate.getSearchCategory(), e);
+                }
+            });
+            generator.writeEndArray();
+
+            // Write results
+            searchDelegates.forEach(searchDelegate -> {
+                if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
+                    try {
+                        generator.writeObjectField(searchDelegate.getSearchCategory(), searchDelegate.search(name, strict));
+                    } catch (IOException e) {
+                        LOG.error("Unable to search '{}'.", searchDelegate.getSearchCategory(), e);
                     }
-                });
-                generator.writeEndObject();
-            } catch (IOException e) {
-                throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
-            }
-            LOG.debug("Search done on for '{}' with filter '{}' (strict mode: {})", name, filter, strict);
-        };
+                }
+            });
+            generator.writeEndObject();
+        } catch (IOException e) {
+            throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
+        }
+        LOG.debug("Search done on for '{}' with filter '{}' (strict mode: {})", name, filter, strict);
     }
 }

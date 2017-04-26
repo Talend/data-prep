@@ -32,6 +32,6 @@ public class SearchConfiguration {
     public OrderedBeans<SearchDelegate> searchDelegateOrderedBeans(FolderSearchDelegate folder, //
                                                             DataSetSearchDelegate dataset, //
                                                             PreparationSearchDelegate preparation) {
-        return new OrderedBeans<>(SearchDelegate.class, asList(folder, dataset, preparation));
+        return new OrderedBeans<>(asList(folder, dataset, preparation));
     }
 }

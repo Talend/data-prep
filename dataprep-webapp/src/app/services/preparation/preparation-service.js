@@ -102,15 +102,11 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 	 * @param {string} preparationId The preparation id
 	 * @param {string} name The preparation name
 	 * @description Create a new preparation if no preparation is loaded, update the name otherwise
-	 * @returns {promise} The POST promise
+	 * @returns {promise} The PUT promise
 	 */
 	function setName(preparationId, name) {
 		return PreparationRestService.update(preparationId, { name })
-			.then(preparationId => PreparationRestService.getDetails(preparationId))
-			.then((preparation) => {
-				StorageService.moveAggregations(preparation.dataSetId, preparationId, preparation.id);
-				return preparation;
-			});
+			.then(preparationId => PreparationRestService.getDetails(preparationId));
 	}
 
 	/**

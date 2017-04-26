@@ -261,44 +261,6 @@ describe('Storage service', () => {
 			expect($window.localStorage.getItem(prepKey1)).toBe(aggregation1);
 			expect($window.localStorage.getItem(prepKey2)).toBe(aggregation2);
 		}));
-
-		it('should move all preparation aggregations to the new preparation id', inject(($window, StorageService) => {
-			// given
-			const datasetId = '87a646f763bd545b684';
-			const oldPreparationId = '72515d3212cf565b624';
-			const newPreparationId = '8ef6254d6214554bb68';
-			const aggregation1 = JSON.stringify({
-				aggregation: 'MAX',
-				aggregationColumnId: '0002',
-			});
-			const aggregation2 = JSON.stringify({
-				aggregation: 'SUM',
-				aggregationColumnId: '0003',
-			});
-			const otherAggregation = JSON.stringify({
-				aggregation: 'MIN',
-				aggregationColumnId: '0003',
-			});
-
-			const oldPrepKey1 = 'org.talend.dataprep.aggregation.87a646f763bd545b684.72515d3212cf565b624.0001';
-			const oldPrepKey2 = 'org.talend.dataprep.aggregation.87a646f763bd545b684.72515d3212cf565b624.0002';
-			const otherKey = 'org.talend.dataprep.aggregation.9b87564ef564e651.56ef46541e32251a25.0002';
-			$window.localStorage.setItem(oldPrepKey1, aggregation1);
-			$window.localStorage.setItem(oldPrepKey2, aggregation2);
-			$window.localStorage.setItem(otherKey, otherAggregation);
-
-			// when
-			StorageService.moveAggregations(datasetId, oldPreparationId, newPreparationId);
-
-			// then
-			const newPrepKey1 = 'org.talend.dataprep.aggregation.87a646f763bd545b684.8ef6254d6214554bb68.0001';
-			const newPrepKey2 = 'org.talend.dataprep.aggregation.87a646f763bd545b684.8ef6254d6214554bb68.0002';
-			expect($window.localStorage.getItem(oldPrepKey1)).toBeFalsy();
-			expect($window.localStorage.getItem(oldPrepKey2)).toBeFalsy();
-			expect($window.localStorage.getItem(newPrepKey1)).toBe(aggregation1);
-			expect($window.localStorage.getItem(newPrepKey2)).toBe(aggregation2);
-			expect($window.localStorage.getItem(otherKey)).toBe(otherAggregation);
-		}));
 	});
 
 	describe('lookup', () => {

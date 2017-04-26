@@ -289,44 +289,6 @@ export default class StorageService {
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name moveAggregations
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @param {string} datasetId The dataset id
-     * @param {string} oldPreparationId The new preparation id
-     * @param {string} newPreparationId The old preparation id
-     * @description Move all preparation aggregation to another preparation id
-     */
-	moveAggregations(datasetId, oldPreparationId, newPreparationId) {
-		const preparationAggregationPrefix = this.getAggregationKey(
-            datasetId,
-            oldPreparationId,
-            ''
-        );
-		const aggregationsToMove = [];
-
-		for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
-			const key = this.$window.localStorage.key(i);
-			if (key.indexOf(preparationAggregationPrefix) === 0) {
-				aggregationsToMove.push({
-					columnId: key.substring(key.lastIndexOf('.') + 1),
-					aggregation: this.getItem(key),
-				});
-			}
-		}
-
-		aggregationsToMove.forEach((aggregDef) => {
-			this.setAggregation(
-                datasetId,
-                newPreparationId,
-                aggregDef.columnId,
-                aggregDef.aggregation
-            );
-			this.removeAggregation(datasetId, oldPreparationId, aggregDef.columnId);
-		});
-	}
-
     // --------------------------------------------------------------------------------------------
     // -------------------------------------------Lookup-------------------------------------------
     // --------------------------------------------------------------------------------------------

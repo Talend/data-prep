@@ -45,7 +45,6 @@ describe('Preparation Service', () => {
 
         spyOn(StorageService, 'savePreparationAggregationsFromDataset').and.returnValue();
         spyOn(StorageService, 'removeAllAggregations').and.returnValue();
-        spyOn(StorageService, 'moveAggregations').and.returnValue();
     }));
 
     afterEach(inject((StateService) => {
@@ -112,20 +111,6 @@ describe('Preparation Service', () => {
 
                 //then
                 expect(PreparationRestService.update).toHaveBeenCalledWith(preparationId, {name});
-            }));
-
-            it('should move aggregations to the new preparation id key in localStorage', inject(($rootScope, PreparationService, StorageService) => {
-                //given
-                const preparationId = '6cd546546548a745';
-                const name = 'my preparation';
-                expect(StorageService.moveAggregations).not.toHaveBeenCalled();
-
-                //when
-                PreparationService.setName(preparationId, name);
-                $rootScope.$digest();
-
-                //then
-                expect(StorageService.moveAggregations).toHaveBeenCalledWith(updatedDatasetId, preparationId, newPreparationId);
             }));
         });
 

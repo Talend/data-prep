@@ -193,6 +193,7 @@ describe('Playground controller', () => {
 		beforeEach(inject(($q, LookupService, StateService) => {
 			spyOn(LookupService, 'initLookups').and.returnValue($q.when());
 			spyOn(StateService, 'setLookupVisibility').and.returnValue();
+			spyOn(StateService, 'setStepInEditionMode').and.returnValue();
 
 			stateMock.playground.grid = {
 				selectedColumns: [{
@@ -238,6 +239,7 @@ describe('Playground controller', () => {
 
 			// then
 			expect(LookupService.initLookups).not.toHaveBeenCalled();
+			expect(StateService.setStepInEditionMode).toHaveBeenCalledWith(null);
 			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
 		}));
 	});

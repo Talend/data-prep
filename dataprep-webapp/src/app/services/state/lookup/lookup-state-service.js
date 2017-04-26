@@ -32,7 +32,6 @@ export const lookupState = {
 	dataView: new Slick.Data.DataView({ inlineFilters: false }),  // grid view that hold the dataset data
 	selectedColumn: null,                                       // selected column
 	visibility: false,                                          // visibility flag
-	step: null,                                                  // lookup step
 	sort: sortList[1],
 	order: orderList[1],
 	sortList,
@@ -182,6 +181,15 @@ export function LookupStateService() {
 		}
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name _getDsId
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @private
+	 * @param {object} lookupDataset lookup dataset
+	 * @return {string} lookup dataset id
+	 * @description extracts the lookup dataset id from the parameters
+	 */
 	function _getDsId(lookupDataset) {
 		return _.find(lookupDataset.parameters, { name: 'lookup_ds_id' }).default;
 	}
@@ -252,7 +260,6 @@ export function LookupStateService() {
 		lookupState.data = null;
 		lookupState.selectedColumn = null;
 		lookupState.visibility = false;
-		lookupState.step = null;
 		lookupState.searchDatasetString = '';
 		lookupState.showTooltip = false;
 		lookupState.tooltip = {};

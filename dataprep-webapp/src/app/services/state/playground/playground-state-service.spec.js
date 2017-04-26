@@ -158,7 +158,7 @@ describe('Playground state service', () => {
             expect(playgroundState.isLoading).toBe(true);
         }));
 
-        it('should set set Lookup Visibility flag', inject((playgroundState, LookupStateService, PlaygroundStateService) => {
+        it('should set Lookup Visibility flag', inject((playgroundState, LookupStateService, PlaygroundStateService) => {
             //given
             playgroundState.grid = {
                 selectedColumns :  [{ id: '0000'}, { id: '0001'}],
@@ -170,6 +170,18 @@ describe('Playground state service', () => {
             //then
             expect(playgroundState.grid.selectedColumns).toEqual([{ id: '0000'}]);
             expect(LookupStateService.setVisibility).toHaveBeenCalledWith(true);
+        }));
+
+        it('should set set Lookup Visibility flag', inject((playgroundState, LookupStateService, PlaygroundStateService) => {
+            //given
+            playgroundState.stepInEditionMode = null;
+            const step = {};
+
+            //when
+            PlaygroundStateService.setStepInEditionMode(step);
+
+            //then
+            expect(playgroundState.stepInEditionMode).toBe(step);
         }));
     });
 
@@ -510,6 +522,7 @@ describe('Playground state service', () => {
             playgroundState.isLoading = true;
             playgroundState.isSavingPreparation = true;
             playgroundState.isReadOnly = true;
+            playgroundState.stepInEditionMode = {};
 
             //when
             PlaygroundStateService.reset();
@@ -524,6 +537,7 @@ describe('Playground state service', () => {
             expect(playgroundState.isLoading).toBe(false);
             expect(playgroundState.isSavingPreparation).toBe(false);
             expect(playgroundState.isReadOnly).toBe(false);
+            expect(playgroundState.stepInEditionMode).toBe(null);
         }));
 
         it('should reset sub-states', inject((playgroundState, PlaygroundStateService, RecipeStateService, GridStateService, FilterStateService, LookupStateService, SuggestionsStateService, ParametersStateService) => {

@@ -50,8 +50,6 @@ describe('Datagrid external service', () => {
         spyOn(StatisticsService, 'reset').and.returnValue();
         spyOn(TransformationService, 'initTransformations').and.returnValue();
         spyOn(StorageService, 'setSelectedColumns').and.returnValue();
-
-        spyOn(LookupService, 'updateTargetColumn').and.returnValue();
     }));
 
     beforeEach(() => {
@@ -139,18 +137,6 @@ describe('Datagrid external service', () => {
 
                 // then
                 expect(StatisticsService.updateStatistics).toHaveBeenCalled();
-            }));
-
-            it('should load Lookup Panel when a new column is selected', inject((DatagridExternalService, LookupService) => {
-                // given
-                stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
-                expect(LookupService.updateTargetColumn).not.toHaveBeenCalled();
-
-                // when
-                DatagridExternalService.updateSuggestionPanel(null, null);
-
-                // then
-                expect(LookupService.updateTargetColumn).toHaveBeenCalled();
             }));
 
             it('should reset statistics when multiple columns are selected', inject((DatagridExternalService, StatisticsService) => {

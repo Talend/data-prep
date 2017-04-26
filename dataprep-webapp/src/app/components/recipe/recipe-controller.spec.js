@@ -302,6 +302,7 @@ describe('Recipe controller', () => {
 		beforeEach(inject(($q, PlaygroundService, StateService) => {
 			spyOn(PlaygroundService, 'removeStep').and.returnValue($q.when());
 			spyOn(StateService, 'setLookupVisibility').and.returnValue();
+			spyOn(StateService, 'setStepInEditionMode').and.returnValue();
 		}));
 
 		it('should remove step', inject((PlaygroundService) => {
@@ -319,6 +320,24 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.removeStep).toHaveBeenCalledWith(step);
 		}));
 
+		it('should hide lookup panel when the deleted step is a lookup step',
+			inject((StateService) => {
+			// given
+			const ctrl = createController();
+			const event = angular.element.Event('click');
+			ctrl.stepToBeDeleted = {};
+			stateMock.playground.lookup.visibility = true;
+			stateMock.playground.stepInEditionMode = {};
+
+			// when
+			ctrl.remove(step, event);
+			scope.$digest();
+
+			// then
+			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
+			expect(StateService.setStepInEditionMode).toHaveBeenCalledWith(null);
+		}));
+
 		it('should stop click propagation', () => {
 			// given
 			const ctrl = createController();
@@ -326,7 +345,7 @@ describe('Recipe controller', () => {
 			spyOn(event, 'stopPropagation').and.returnValue();
 
 			stateMock.playground.lookup.visibility = true;
-			stateMock.playground.lookup.step = step;
+			stateMock.playground.stepInEditionMode = step;
 
 			// when
 			ctrl.remove(step, event);
@@ -342,7 +361,7 @@ describe('Recipe controller', () => {
 			const event = angular.element.Event('click');
 
 			stateMock.playground.lookup.visibility = true;
-			stateMock.playground.lookup.step = step;
+			stateMock.playground.stepInEditionMode = step;
 
 			// when
 			ctrl.remove(step, event);
@@ -358,7 +377,7 @@ describe('Recipe controller', () => {
 			const event = angular.element.Event('click');
 
 			stateMock.playground.lookup.visibility = true;
-			stateMock.playground.lookup.step = null;
+			stateMock.playground.stepInEditionMode = null;
 
 			// when
 			ctrl.remove(step, event);
@@ -374,7 +393,7 @@ describe('Recipe controller', () => {
 			const event = angular.element.Event('click');
 
 			stateMock.playground.lookup.visibility = false;
-			stateMock.playground.lookup.step = step;
+			stateMock.playground.stepInEditionMode = step;
 
 			// when
 			ctrl.remove(step, event);
@@ -408,11 +427,11 @@ describe('Recipe controller', () => {
 			spyOn(StateService, 'setLookupVisibility').and.returnValue();
 		}));
 
-		it('should close lookup if it is opened in selected step update mode', inject((StateService) => {
+		it('should close lookup if it is opened', inject((StateService) => {
 			// given
 			const ctrl = createController();
 			stateMock.playground.lookup.visibility = true;
-			stateMock.playground.lookup.step = lookupStep;
+			stateMock.playground.stepInEditionMode = lookupStep;
 
 			// when
 			ctrl.select(lookupStep);
@@ -422,7 +441,7 @@ describe('Recipe controller', () => {
 			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
 		}));
 
-		it('should open lookup in update mode', inject((LookupService, StateService) => {
+		it('should open lookup to update it', inject((LookupService, StateService) => {
 			// given
 			const ctrl = createController();
 			stateMock.playground.lookup.visibility = false;
@@ -433,7 +452,7 @@ describe('Recipe controller', () => {
 
 			// then
 			expect(LookupService.loadFromStep).toHaveBeenCalledWith(lookupStep);
-			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true, undefined);
+			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true);
 		}));
 
 		it('should do nothing on lookup when the selected step is not a lookup', inject((LookupService, StateService) => {

@@ -22,7 +22,9 @@
  * @requires data-prep.services.utils.service:StorageService
  */
 export default class LookupService {
-	constructor($q, state, DatasetListService, StateService, TransformationRestService, DatasetRestService, StorageService) {
+	constructor($q, state, DatasetListService,
+				StateService, TransformationRestService,
+				DatasetRestService, StorageService) {
 		'ngInject';
 
 		this.$q = $q;
@@ -42,9 +44,8 @@ export default class LookupService {
 	 * @ngdoc method
 	 * @name initLookups
 	 * @methodOf data-prep.services.lookup.service:LookupService
-	 * @description Load lookup panel content.
-	 * We completely init the panel, so if the selected column has a lookup in the recipe, we load the last one as update.
-	 * Otherwise, we init the the first lookup action as new lookup.
+	 * @description Loads the lookup panel content for creating a new lookup or updating
+	 * an existing one
 	 */
 	initLookups() {
 		return this._getDatasets()
@@ -66,6 +67,12 @@ export default class LookupService {
 			});
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name fetchLookupDatasetContent
+	 * @methodOf data-prep.services.lookup.service:LookupService
+	 * @description fetches the dataset content and updates the state
+	 */
 	fetchLookupDatasetContent(lookupDsId, lookupAction) {
 		this.StateService.setLookupDataset(lookupAction);
 		return this.DatasetRestService.getContent(lookupDsId, true)
@@ -81,9 +88,7 @@ export default class LookupService {
 	 * @name loadFromAction
 	 * @methodOf data-prep.services.lookup.service:LookupService
 	 * @param {object} lookupAction The lookup action
-	 * @description Loads the lookup dataset content.
-	 * When the selected column already has a this lookup in recipe, we load it as update.
-	 * Otherwise, load the lookup action as a new lookup
+	 * @description initializes the creation of a lookup step
 	 */
 	loadFromAction(lookupAction) {
 		return this._getActions(this.state.playground.dataset.id)
@@ -95,7 +100,7 @@ export default class LookupService {
 	 * @name loadFromStep
 	 * @methodOf data-prep.services.lookup.service:LookupService
 	 * @param {object} step The lookup step to load in update mode
-	 * @description Loads the lookup dataset content from step in update mode
+	 * @description Loads the lookup parameters from the step
 	 */
 	loadFromStep(step) {
 		return this._getDatasets()
@@ -103,19 +108,20 @@ export default class LookupService {
 				return this._getActions(this.state.playground.dataset.id)
 					.then((actions) => {
 						const lookupDsId = step.actionParameters.parameters.lookup_ds_id;
-						const lookupAction = _.find(actions, (action) => {
-							return this._getDsId(action) === lookupDsId;
-						});
+						const lookupAction = actions.find(action => this._getDsId(action) === lookupDsId);
 
 						// change column selection to focus on step target
-						const selectedColumn = _.find(this.state.playground.data.metadata.columns, { id: step.actionParameters.parameters.column_id });
+						const selectedColumn = this.state.playground
+							.data
+							.metadata
+							.columns.find(col => col.id === step.actionParameters.parameters.column_id);
 						this.StateService.setGridSelection([selectedColumn]);
 
 						// load content
-						return this._getActions(this.state.playground.dataset.id)
-							.then(() => this.fetchLookupDatasetContent(lookupDsId, lookupAction))
+						return this.fetchLookupDatasetContent(lookupDsId, lookupAction)
 							.then((lookupDsContent) => {
-								const selectedColumn = _.find(lookupDsContent.metadata.columns, { id: step.actionParameters.parameters.lookup_join_on });
+								const selectedColumn = lookupDsContent.metadata
+									.columns.find(col => col.id === step.actionParameters.parameters.lookup_join_on);
 								this.StateService.setLookupSelectedColumn(selectedColumn);
 							});
 					});
@@ -155,7 +161,7 @@ export default class LookupService {
 	 * @ngdoc method
 	 * @name disableDatasetsUsedInRecipe
 	 * @methodOf data-prep.services.lookup.service:LookupService
-	 * @description Disable datasets already used in a lookup step of the recipe to not to be removed
+	 * @description Disables datasets already used in a lookup step of the recipe to not to be removed
 	 */
 	disableDatasetsUsedInRecipe() {
 		_.forEach(this.state.playground.lookup.datasets, (dataset) => {
@@ -234,25 +240,7 @@ export default class LookupService {
 	 * @description Extract the dataset id from lookup action
 	 */
 	_getDsId(lookup) {
-		return _.find(lookup.parameters, { name: 'lookup_ds_id' }).default;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name _getSelectedColumnLookup
-	 * @methodOf data-prep.services.lookup.service:LookupService
-	 * @param {object} lookupAction The lookup action to seek
-	 * @description Fetch the step in recipe that is a lookup action on a specific dataset for the selected column
-	 */
-	_getSelectedColumnLookup(lookupAction) {
-		const datasetId = this._getDsId(lookupAction);
-		const selectedColumn = this.state.playground.grid.selectedColumns.length ? this.state.playground.grid.selectedColumns[0] : null;
-		return selectedColumn &&
-			_.findLast(this.state.playground.recipe.current.steps, (nextStep) => {
-				return nextStep.column.id === selectedColumn.id &&
-					nextStep.transformation.name === 'lookup' &&
-					nextStep.actionParameters.parameters.lookup_ds_id === datasetId;
-			});
+		return lookup.parameters.find(param => param.name === 'lookup_ds_id').default;
 	}
 
 	/**

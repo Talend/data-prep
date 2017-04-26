@@ -128,11 +128,9 @@ export default class AppHeaderBarCtrl {
 			const onSelectAction = this.appSettings.actions[onSelectActionBy[type]];
 			if (onSelectAction) {
 				this.searchAvailableInventoryTypes.push({
-					title: type,
+					type,
 					iconName: onSelectAction.icon,
 					iconTitle: onSelectAction.name,
-					label: this.state.search.searchCategories && this.state.search.searchCategories.find((category) => category.type === type) ?
-						this.state.search.searchCategories.find((category) => category.type === type).label : type,
 				});
 				onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
 			}
@@ -194,14 +192,16 @@ export default class AppHeaderBarCtrl {
 
 	_adaptSearchResults(searchResults) {
 		return this.searchAvailableInventoryTypes
-			.filter(inventoryType => searchResults.some(result => result.inventoryType === inventoryType.title))
+			.filter(inventoryType => searchResults.some(result => result.inventoryType === inventoryType.type))
 			.map((inventoryType) => {
-				const suggestions = searchResults.filter(result => result.inventoryType === inventoryType.title);
+				const suggestions = searchResults.filter(result => result.inventoryType === inventoryType.type);
+				const label = this.state.search.searchCategories && this.state.search.searchCategories.find((category) => category.type === inventoryType.type) ?
+					this.state.search.searchCategories.find((category) => category.type === inventoryType.type).label : inventoryType.type;
 				return {
-					title: inventoryType.label,
+					title: label,
 					icon: {
 						name: inventoryType.iconName,
-						title: inventoryType.label,
+						title: label,
 					},
 					suggestions: suggestions.map((result) => {
 						return {

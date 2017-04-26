@@ -18,21 +18,24 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.service.delegate.SearchDelegate;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.util.OrderedBeans;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.talend.dataprep.util.OrderedBeans;
 
 /**
  * API in charge of the search.
@@ -41,6 +44,10 @@ import org.talend.dataprep.util.OrderedBeans;
 public class SearchAPI extends APIService {
 
     @Autowired
+    private MessagesBundle messagesBundle;
+
+    @Autowired
+    @Qualifier("ordered#search")
     private OrderedBeans<SearchDelegate> searchDelegates;
 
     /**
@@ -68,20 +75,18 @@ public class SearchAPI extends APIService {
                 searchDelegates.forEach(searchDelegate -> {
                     if (filter == null || filter.contains(searchDelegate.getSearchCategory())) {
                         try {
-                            ... Hey, et l'espace avec type semantic!!
-                            generator.writeFieldName(searchDelegate.getSearchCategory());
-                            generator.writeObject(searchDelegate.search(name, strict));
+                            final String fieldName = messagesBundle.getString(Locale.ENGLISH, searchDelegate.getSearchLabel());
+                            generator.writeObjectField(fieldName, searchDelegate.search(name, strict));
                         } catch (IOException e) {
                             LOG.error("Unable to search '{}'.", searchDelegate.getSearchCategory(), e);
                         }
                     }
                 });
                 generator.writeEndObject();
-
             } catch (IOException e) {
                 throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
             }
-            LOG.info("Searching Done on dataprep for {} done with filter: {} and strict mode: {}", name, filter, strict);
+            LOG.debug("Search done on for '{}' with filter '{}' (strict mode: {})", name, filter, strict);
         };
     }
 }

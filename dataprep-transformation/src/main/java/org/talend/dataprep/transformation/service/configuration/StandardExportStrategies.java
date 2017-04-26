@@ -30,7 +30,7 @@ public class StandardExportStrategies {
             CachedExportStrategy cachedExportStrategy) {
         // Order is important: it gives priority for one strategy over others.
         return new OrderedBeans<>( //
-                asList(cachedExportStrategy, //
+                StandardExportStrategy.class, asList(cachedExportStrategy, //
                         optimizedExportStrategy, //
                         preparationExportStrategy, //
                         dataSetExportStrategy, //

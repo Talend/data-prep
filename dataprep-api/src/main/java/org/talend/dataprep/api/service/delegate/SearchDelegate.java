@@ -31,6 +31,12 @@ public interface SearchDelegate<T> {
     String getSearchCategory();
 
     /**
+     * @return A i18n label key for the search result.
+     * @see org.talend.dataprep.i18n.MessagesBundle
+     */
+    String getSearchLabel();
+
+    /**
      * Search the underlying category for <code>query</code>.
      *
      * @param query The name to be searched in underlying category.

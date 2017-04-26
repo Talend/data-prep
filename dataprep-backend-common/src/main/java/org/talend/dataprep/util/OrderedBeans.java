@@ -18,9 +18,12 @@ import java.util.stream.*;
 
 public class OrderedBeans<T> implements Stream<T> {
 
+    private final Class<T> clazz;
+
     private final List<T> beans;
 
-    public OrderedBeans(List<T> beans) {
+    public OrderedBeans(Class<T> clazz, List<T> beans) {
+        this.clazz = clazz;
         this.beans = new ArrayList<>(beans);
     }
 
@@ -254,5 +257,9 @@ public class OrderedBeans<T> implements Stream<T> {
 
     public void append(T item) {
         beans.add(item);
+    }
+
+    public boolean isAssignableFrom(Class from) {
+        return clazz.isAssignableFrom(from);
     }
 }

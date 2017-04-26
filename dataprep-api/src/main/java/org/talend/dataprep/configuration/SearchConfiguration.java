@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.api.configuration;
+package org.talend.dataprep.configuration;
 
 import static java.util.Arrays.asList;
 
@@ -28,10 +28,10 @@ import org.talend.dataprep.util.OrderedBeans;
 @Configuration
 public class SearchConfiguration {
 
-    @Bean
-    OrderedBeans<SearchDelegate> searchDelegateOrderedBeans(FolderSearchDelegate folder, //
+    @Bean(name = "ordered#search")
+    public OrderedBeans<SearchDelegate> searchDelegateOrderedBeans(FolderSearchDelegate folder, //
                                                             DataSetSearchDelegate dataset, //
                                                             PreparationSearchDelegate preparation) {
-        return new OrderedBeans<>(asList(folder, dataset, preparation));
+        return new OrderedBeans<>(SearchDelegate.class, asList(folder, dataset, preparation));
     }
 }

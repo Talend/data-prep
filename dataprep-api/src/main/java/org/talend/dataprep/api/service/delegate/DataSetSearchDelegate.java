@@ -31,6 +31,11 @@ public class DataSetSearchDelegate extends AbstractSearchDelegate<DataSetMetadat
     }
 
     @Override
+    public String getSearchLabel() {
+        return "datasets";
+    }
+
+    @Override
     public Stream<DataSetMetadata> search(String query, boolean strict) {
         final SearchDataSets command = getCommand(SearchDataSets.class, query, strict);
         return CommandHelper.toStream(DataSetMetadata.class, mapper, command);

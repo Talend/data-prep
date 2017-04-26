@@ -12,11 +12,7 @@
   ============================================================================*/
 
 $typeahead-height: $navbar-height !default;
-$typeahead-padding: 10px 15px !default;
 
-$typeahead-icon-color: $white !default;
-$typeahead-icon-hover-color: $black !default;
-$typeahead-icon-size: $svg-md-size !default;
 $typeahead-z-index: 1 !default;
 
 $typeahead-input-width: 250px !default;
@@ -50,45 +46,38 @@ typeahead {
 		height: $typeahead-height;
 	}
 
-	.search-icon {
-		cursor: pointer;
-		padding: $typeahead-padding;
-
-		svg {
-			height: $typeahead-icon-size;
-			width: $typeahead-icon-size;
-			fill: $typeahead-icon-color;
-			shape-rendering: auto;
-		}
-
+	button {
 		&.inverse {
 			position: absolute;
 			z-index: $typeahead-z-index;
+
+			&:hover,
+			&:active,
+			&:focus,
+			&:visited {
+				background-color: transparent !important;
+			}
 
 			svg {
 				fill: $typeahead-input-color;
 			}
 		}
-
-		&:not(.inverse):hover {
-			background: rgba(0, 0, 0, 0.25);
-		}
 	}
 
 	.search-input {
 		padding: 0 15px 0 45px;
-		border: none;
-		border-radius: 0;
-		box-shadow: none;
-		color: $black;
 		height: 100%;
-		opacity: 1;
-		transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
-		width: $typeahead-input-width;
+		width: 0;
+		opacity: 0;
+		color: $black;
+		border-radius: 0;
+		border: none;
+		box-shadow: none;
 
-		&.ng-hide {
-			width: 0;
-			opacity: 0;
+		&:not(.ng-hide) {
+			width: $typeahead-input-width;
+			opacity: 1;
+			transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
 		}
 	}
 

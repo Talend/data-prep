@@ -55,7 +55,7 @@ describe('Typeahead directive', () => {
 	describe('render', () => {
 		it('should render icon', () => {
 			//then
-			expect(element.find('.search-icon').length).toBe(1);
+			expect(element.find('button').length).toBe(1);
 		});
 
 		it('should toggle search input visibility on icon click', () => {
@@ -65,7 +65,7 @@ describe('Typeahead directive', () => {
 			expect(input.is(":visible")).toBe(false);
 
 			// when
-			element.find('.search-icon').eq(0).click();
+			element.find('button').eq(0).click();
 
 			scope.$digest();
 			//then
@@ -93,17 +93,6 @@ describe('Typeahead directive', () => {
 
 			//then
 			expect(element.find('.search-input').hasClass('ng-hide')).toBe(true);
-		});
-
-		it('should render searching message', () => {
-			//given
-			ctrl.searching = true;
-
-			//when
-			scope.$digest();
-
-			//then
-			expect(element.find('.searching').length).toBe(1);
 		});
 
 		it('should render searching message', () => {

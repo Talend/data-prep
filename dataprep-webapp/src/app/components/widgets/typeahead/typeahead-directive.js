@@ -142,7 +142,7 @@ export default function Typeahead($timeout, $window) {
 				});
 
 				$timeout(() => {
-					icon = iElement.find('.search-icon');
+					icon = iElement.find('button');
 					icon.click(() => {
 						$timeout(() => {
 							input.focus();

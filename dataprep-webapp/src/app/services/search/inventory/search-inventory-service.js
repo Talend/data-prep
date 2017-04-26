@@ -80,6 +80,7 @@ export default function SearchInventoryService($q, SearchInventoryRestService) {
 				itemToDisplay.lastModificationDate = item.lastModificationDate;
 				itemToDisplay.tooltipName = item.name;
 				itemToDisplay.owner = item.owner;
+				itemToDisplay.inventoryLabel = data.categories ? data.categories.find((category) => category.type === itemToDisplay.inventoryType).label : itemToDisplay.inventoryType;
 
 				inventoryItems.push(itemToDisplay);
 			});
@@ -89,6 +90,8 @@ export default function SearchInventoryService($q, SearchInventoryRestService) {
 			data.preparations.forEach((item) => {
 				item.inventoryType = 'preparation';
 				item.tooltipName = item.name;
+				item.inventoryLabel = data.categories ? data.categories.find((category) => category.type === item.inventoryType).label : item.inventoryType;
+
 			});
 
 			inventoryItems = inventoryItems.concat(data.preparations);
@@ -98,6 +101,7 @@ export default function SearchInventoryService($q, SearchInventoryRestService) {
 			data.folders.forEach((item) => {
 				item.inventoryType = 'folder';
 				item.tooltipName = item.name;
+				item.inventoryLabel = data.categories ? data.categories.find((category) => category.type === item.inventoryType).label : item.inventoryType;
 			});
 
 			inventoryItems = inventoryItems.concat(data.folders);

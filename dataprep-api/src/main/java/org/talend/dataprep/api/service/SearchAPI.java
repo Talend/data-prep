@@ -85,7 +85,7 @@ public class SearchAPI extends APIService {
                         "search." + searchDelegate.getSearchLabel());
                 try {
                     generator.writeStartObject();
-                    generator.writeStringField("type", searchDelegate.getSearchCategory());
+                    generator.writeStringField("type", searchDelegate.getInventoryType());
                     generator.writeStringField("label", categoryLabel);
                     generator.writeEndObject();
                 } catch (IOException e) {

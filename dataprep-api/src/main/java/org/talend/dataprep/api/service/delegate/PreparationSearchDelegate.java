@@ -39,6 +39,11 @@ public class PreparationSearchDelegate extends AbstractSearchDelegate<EnrichedPr
     }
 
     @Override
+    public String getInventoryType() {
+        return "preparation";
+    }
+
+    @Override
     public Stream<EnrichedPreparation> search(String query, boolean strict) {
         final PreparationSearchByName command = getCommand(PreparationSearchByName.class, query, strict);
         return CommandHelper.toStream(UserPreparation.class, mapper, command).map(this::locatePreparation);

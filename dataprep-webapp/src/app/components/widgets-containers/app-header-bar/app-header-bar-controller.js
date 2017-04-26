@@ -195,10 +195,10 @@ export default class AppHeaderBarCtrl {
 			.map((inventoryType) => {
 				const suggestions = searchResults.filter(result => result.inventoryType === inventoryType.title);
 				return {
-					title: inventoryType.title,
+					title: inventoryType.inventoryLabel,
 					icon: {
 						name: inventoryType.iconName,
-						title: inventoryType.title,
+						title: inventoryType.inventoryLabel,
 					},
 					suggestions: suggestions.map((result) => {
 						return {

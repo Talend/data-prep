@@ -37,6 +37,11 @@ public interface SearchDelegate<T> {
     String getSearchLabel();
 
     /**
+     * @return The inventory type as requested by UI.
+     */
+    String getInventoryType();
+
+    /**
      * Search the underlying category for <code>query</code>.
      *
      * @param query The name to be searched in underlying category.

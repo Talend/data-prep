@@ -876,11 +876,13 @@ public class DataSetService extends BaseDataSetService {
 
         LOG.debug("search datasets metadata for {}", name);
 
+        final String regex = "(?i)" + name;
+
         final String filter;
         if (strict) {
-            filter = "name = '" + name + "' or name = '" + name.toUpperCase() + "'";
+            filter = "name ~ '^" + regex + "$'";
         } else {
-            filter = "name contains '" + name.toLowerCase() + "' or name contains  '" + name.toUpperCase() + "'";
+            filter = "name ~ '.*" + regex + ".*'";
         }
         return dataSetMetadataRepository.list(filter, null, null) //
                 .map(d -> conversionService.convert(d, UserDataSetMetadata.class));

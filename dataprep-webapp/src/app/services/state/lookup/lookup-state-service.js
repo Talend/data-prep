@@ -190,8 +190,8 @@ export function LookupStateService() {
 	 * @return {string} lookup dataset id
 	 * @description extracts the lookup dataset id from the parameters
 	 */
-	function _getDsId(lookupDataset) {
-		return _.find(lookupDataset.parameters, { name: 'lookup_ds_id' }).default;
+	function _getDsId(lookup) {
+		return lookup.parameters.find(param => param.name === 'lookup_ds_id').default;
 	}
 
 	/**

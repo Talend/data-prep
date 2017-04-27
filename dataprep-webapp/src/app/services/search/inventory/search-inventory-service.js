@@ -90,7 +90,6 @@ export default function SearchInventoryService($q, SearchInventoryRestService, S
 			data.preparations.forEach((item) => {
 				item.inventoryType = 'preparation';
 				item.tooltipName = item.name;
-
 			});
 
 			inventoryItems = inventoryItems.concat(data.preparations);

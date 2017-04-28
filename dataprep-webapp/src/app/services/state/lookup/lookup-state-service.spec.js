@@ -16,7 +16,7 @@ import DataViewMock from '../../../../mocks/DataView.mock';
 describe('Lookup state service', () => {
 	'use strict';
 
-	var data = {
+	const data = {
 		metadata: {
 			columns: [
 				{ id: '0000', name: 'identif' },
@@ -41,20 +41,14 @@ describe('Lookup state service', () => {
 		],
 	};
 
-	var initialColumnCheckboxes = [
-		{ id: '0000', name: 'identif', isAdded: false },
-		{ id: '0001', name: 'code', isAdded: false },
-		{ id: '0002', name: 'firstname', isAdded: false },
-		{ id: '0003', name: 'lastname', isAdded: false },
-	];
-	var columnCheckboxesWithSelection = [
+	const columnCheckboxesWithSelection = [
 		{ id: '0000', name: 'identif', isAdded: false },
 		{ id: '0001', name: 'code', isAdded: false },
 		{ id: '0002', name: 'firstname', isAdded: true },
 		{ id: '0003', name: 'lastname', isAdded: true },
 	];
 
-	var actions = [
+	const actions = [
 		{
 			category: 'data_blending',
 			name: 'lookup',
@@ -102,7 +96,6 @@ describe('Lookup state service', () => {
 			],
 		},
 	];
-	var lookupAction = actions[0];
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
@@ -192,7 +185,7 @@ describe('Lookup state service', () => {
 		it('should set selected column', inject((lookupState, LookupStateService) => {
 			//given
 			lookupState.selectedColumn = null;
-			var selectedColumn = { id: '0001' };
+			const selectedColumn = { id: '0001' };
 
 			//when
 			LookupStateService.setSelectedColumn(selectedColumn);
@@ -204,7 +197,7 @@ describe('Lookup state service', () => {
 		it('should update the columns to add on new column selection', inject((lookupState, LookupStateService) => {
 			//given
 			lookupState.columnCheckboxes = columnCheckboxesWithSelection;
-			var selectedColumn = { id: '0001' };
+			const selectedColumn = { id: '0001' };
 
 			//when
 			LookupStateService.setSelectedColumn(selectedColumn);
@@ -218,7 +211,7 @@ describe('Lookup state service', () => {
 
 		it('should NOT update the columns to add when there is no selected column', inject((lookupState, LookupStateService) => {
 			//given
-			var addedCols = ['0018'];
+			const addedCols = ['0018'];
 			lookupState.columnsToAdd = addedCols;
 			lookupState.columnCheckboxes = columnCheckboxesWithSelection;
 

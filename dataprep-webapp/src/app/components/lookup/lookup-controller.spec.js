@@ -181,11 +181,11 @@ describe('Lookup controller', () => {
 			stateMock.playground.stepInEditionMode = step;
 
 			// when
-			ctrl.whereToLoadFrom(dsActions[0]);
+			ctrl.load(dsActions[0]);
 
 			// then
 			expect(LookupService.fetchLookupDatasetContent)
-				.toHaveBeenCalledWith('lookup_dataset_id', dsActions[0])
+				.toHaveBeenCalledWith(dsActions[0].parameters[3].default, dsActions[0])
 		}));
 
 		it('should load lookup from the action', inject((LookupService) => {
@@ -194,7 +194,7 @@ describe('Lookup controller', () => {
 			stateMock.playground.stepInEditionMode = null;
 
 			// when
-			ctrl.whereToLoadFrom(dsActions[0]);
+			ctrl.load(dsActions[0]);
 
 			// then
 			expect(LookupService.loadFromAction).toHaveBeenCalledWith(dsActions[0])
@@ -204,8 +204,8 @@ describe('Lookup controller', () => {
 	describe('preview', () => {
 		it('should trigger lookup preview', inject((EarlyPreviewService) => {
 			//given
-			var ctrl = createController();
-			var previewClosure = jasmine.createSpy('preview');
+			const ctrl = createController();
+			const previewClosure = jasmine.createSpy('preview');
 			spyOn(EarlyPreviewService, 'earlyPreview').and.returnValue(previewClosure);
 
 			//when
@@ -219,7 +219,7 @@ describe('Lookup controller', () => {
 
 		it('should trigger lookup preview update', inject((PreviewService) => {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 			spyOn(PreviewService, 'updatePreview').and.returnValue();
 			stateMock.playground.stepInEditionMode = step;
 
@@ -242,7 +242,7 @@ describe('Lookup controller', () => {
 
 		it('should cancel and deactivate preview', inject((EarlyPreviewService) => {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 
 			//when
 			ctrl.submit();
@@ -255,7 +255,7 @@ describe('Lookup controller', () => {
 		it('should reactivate preview after the operation with a delay of 500ms',
 			inject(($q, $timeout, EarlyPreviewService) => {
 				//given
-				var ctrl = createController();
+				const ctrl = createController();
 
 				//when
 				ctrl.submit();
@@ -269,7 +269,7 @@ describe('Lookup controller', () => {
 
 		it('should add new lookup action', inject(($q, PlaygroundService) => {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 
 			//when
 			ctrl.submit();
@@ -280,7 +280,7 @@ describe('Lookup controller', () => {
 
 		it('should update lookup action', inject((PlaygroundService) => {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 			stateMock.playground.stepInEditionMode = step;
 
 			//when
@@ -294,10 +294,10 @@ describe('Lookup controller', () => {
 	describe('utils', () => {
 		it('should return the action name', inject(function () {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 
 			//when
-			var label = ctrl.getDsName(dsActions[0]);
+			const label = ctrl.getDsName(dsActions[0]);
 			//then
 			expect(label).toBe('lookup_2');
 		}));
@@ -306,7 +306,7 @@ describe('Lookup controller', () => {
 	describe('add datasets ', () => {
 		it('show modal on click', inject((LookupService) => {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 			spyOn(LookupService, 'disableDatasetsUsedInRecipe').and.returnValue();
 
 			//when
@@ -319,7 +319,7 @@ describe('Lookup controller', () => {
 
 		it('should add datasets and close the modal', inject((LookupService) => {
 			//given
-			var ctrl = createController();
+			const ctrl = createController();
 			spyOn(LookupService, 'updateLookupDatasets').and.returnValue();
 
 			//when
@@ -333,7 +333,7 @@ describe('Lookup controller', () => {
 		it('should refresh lookup panel after adding datasets', inject(($q, LookupService) => {
 			//given
 			stateMock.playground.lookup.addedActions[0] = { name: 'toto' };
-			var ctrl = createController();
+			const ctrl = createController();
 			spyOn(LookupService, 'loadFromAction').and.returnValue($q.when());
 			spyOn(LookupService, 'updateLookupDatasets').and.returnValue();
 
@@ -346,11 +346,11 @@ describe('Lookup controller', () => {
 
 		it('should update sort by', inject(($timeout, StorageService, StateService) => {
 			//given
-			var sortBy = { id: 'date', name: 'DATE_SORT', property: 'created' };
+			const sortBy = { id: 'date', name: 'DATE_SORT', property: 'created' };
 			stateMock.playground.lookup.datasets = [{ created: 1 }, { created: 3 }, { created: 2 }];
 			spyOn(StorageService, 'setLookupDatasetsSort').and.returnValue();
 			spyOn(StateService, 'setLookupDatasetsSort').and.returnValue();
-			var ctrl = createController();
+			const ctrl = createController();
 
 			//when
 			stateMock.playground.lookup.sort = { id: 'name', name: 'NAME_SORT', property: 'name' };
@@ -366,11 +366,11 @@ describe('Lookup controller', () => {
 
 		it('should update sort order', inject(($timeout, StorageService, StateService) => {
 			//given
-			var orderBy = { id: 'desc', name: 'DESC_ORDER' };
+			const orderBy = { id: 'desc', name: 'DESC_ORDER' };
 			stateMock.playground.lookup.datasets = [{ created: 1 }, { created: 3 }, { created: 2 }];
 			spyOn(StorageService, 'setLookupDatasetsOrder').and.returnValue();
 			spyOn(StateService, 'setLookupDatasetsOrder').and.returnValue();
-			var ctrl = createController();
+			const ctrl = createController();
 
 			//when
 			stateMock.playground.lookup.sort = {

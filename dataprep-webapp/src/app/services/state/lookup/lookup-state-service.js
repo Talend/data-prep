@@ -204,7 +204,7 @@ export function LookupStateService() {
 	function createColumnsCheckboxes(data, currentStep) {
 		const addedColIds = currentStep &&
 			currentStep.actionParameters.parameters.lookup_ds_id === _getDsId(lookupState.dataset) ?
-			_.map(currentStep.actionParameters.parameters.lookup_selected_cols, 'id') :
+			currentStep.actionParameters.parameters.lookup_selected_cols.map(col => col.id) :
 			[];
 		lookupState.columnCheckboxes = _.map(data.metadata.columns, function (col) {
 			return {

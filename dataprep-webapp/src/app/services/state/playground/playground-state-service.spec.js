@@ -172,7 +172,7 @@ describe('Playground state service', () => {
             expect(LookupStateService.setVisibility).toHaveBeenCalledWith(true);
         }));
 
-        it('should set set Lookup Visibility flag', inject((playgroundState, LookupStateService, PlaygroundStateService) => {
+        it('should set the step in edition mode', inject((playgroundState, LookupStateService, PlaygroundStateService) => {
             //given
             playgroundState.stepInEditionMode = null;
             const step = {};

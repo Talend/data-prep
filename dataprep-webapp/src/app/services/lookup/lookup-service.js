@@ -60,9 +60,7 @@ export default class LookupService {
 						if (step) {
 							return this.loadFromStep(step);
 						}
-						else {
-							return this.loadFromAction(lookupActions[0]);
-						}
+						return this.loadFromAction(lookupActions[0]);
 					});
 			});
 	}

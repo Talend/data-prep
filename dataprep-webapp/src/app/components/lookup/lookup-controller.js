@@ -38,11 +38,11 @@ export default function LookupCtrl($timeout, state, StateService,
 	/**
 	 * @ngdoc method
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
-	 * @name whereToLoadFrom
+	 * @name load
 	 * @description it loads the lookup params from the step or from the action
 	 * */
-	vm.whereToLoadFrom = function whereToLoadFrom(item) {
-		if (vm.state.playground.stepInEditionMode) {
+	vm.load = function whereToLoadFrom(item) {
+		if (state.playground.stepInEditionMode) {
 			const lookupDatasetId = item.parameters
 				.find(param => param.name === 'lookup_ds_id')
 				.default;

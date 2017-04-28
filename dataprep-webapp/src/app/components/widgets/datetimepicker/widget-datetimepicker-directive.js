@@ -33,8 +33,8 @@ export default function TalendDatetimePicker($timeout) {
 	return {
 		restrict: 'E',
 		template: `
-            <input type="text" 
-                   class="datetimepicker" 
+            <input type="text"
+                   class="datetimepicker"
                    ng-model="ctrl.value"
                    ng-blur="ctrl.onBlur()" />
         `,
@@ -63,7 +63,7 @@ export default function TalendDatetimePicker($timeout) {
 				});
 			}
 
-			const input = iElement.find('.datetimepicker');
+			const input = $('.datetimepicker');
 			input.datetimepicker({
 				lang: 'en',
 				format,

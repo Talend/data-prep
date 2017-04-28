@@ -28,7 +28,7 @@ public enum PreparationErrorCodes implements ErrorCode {
     PREPARATION_DOES_NOT_EXIST(NOT_FOUND.value(), "id"),
     PREPARATION_STEP_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId"),
     PREPARATION_STEP_CANNOT_BE_DELETED_IN_SINGLE_MODE(FORBIDDEN.value(), "id", "stepId"),
-    PREPARATION_STEP_CANNOT_BE_REORDERED(FORBIDDEN.value()),
+    PREPARATION_STEP_CANNOT_BE_REORDERED(CONFLICT.value()),
     PREPARATION_ROOT_STEP_CANNOT_BE_DELETED(FORBIDDEN.value(), "id", "stepId"),
     UNABLE_TO_SERVE_PREPARATION_CONTENT(BAD_REQUEST.value(), "id", "version"),
     UNABLE_TO_READ_PREPARATION(INTERNAL_SERVER_ERROR.value(), "id", "version"),
@@ -46,7 +46,7 @@ public enum PreparationErrorCodes implements ErrorCode {
     /**
      * default constructor.
      *
-     * @param httpStatus     the http status to use.
+     * @param httpStatus the http status to use.
      * @param contextEntries expected context entries.
      */
     PreparationErrorCodes(int httpStatus, String... contextEntries) {

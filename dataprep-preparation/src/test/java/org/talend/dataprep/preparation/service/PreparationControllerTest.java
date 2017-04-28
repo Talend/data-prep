@@ -87,14 +87,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = when().get("/preparations/details");
 
         // then
-        response.then().statusCode(HttpStatus.OK.value())
-                .body(sameJSONAs(
-                        "[{\"id\":\"#548425458\"," +
-                                "\"dataSetId\":\"1234\"," +
-                                "\"creationDate\":0," +
-                                "\"lastModificationDate\":12345}]"
-                        ).allowingExtraUnexpectedFields()
-                );
+        response.then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[{\"id\":\"#548425458\"," + "\"dataSetId\":\"1234\","
+                + "\"creationDate\":0," + "\"lastModificationDate\":12345}]").allowingExtraUnexpectedFields());
 
         // given
         final Preparation preparation1 = new Preparation("#1438725", "5678", rootStep.id(),
@@ -779,17 +773,11 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final String preparationId = createPreparationWithAPI("{\"name\": \"yap\", \"dataSetId\": \"7535\"}", fromFolder.getId());
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final String expected = "{" +
-                "\"id\":\"" + preparation.getId() + "\"," +
-                "\"app-version\":\"" + preparation.getAppVersion() + "\"," +
-                "\"dataSetId\":\"7535\"," +
-                "\"rowMetadata\":null," +
-                "\"author\":\"" + preparation.getAuthor() + "\"," +
-                "\"name\":\"yap\"," +
-                "\"creationDate\":" + preparation.getCreationDate() + "," +
-                "\"lastModificationDate\":" + preparation.getCreationDate() + "," +
-                "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" +
-                "}";
+        final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
+                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"rowMetadata\":null," + "\"author\":\""
+                + preparation.getAuthor() + "\"," + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate()
+                + "," + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
+                + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
 
         // when
         final Response response = given() //
@@ -1067,7 +1055,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Step head = repository.get(preparation.getHeadId(), Step.class);
         final Step lastBeforeHead = repository.get(head.getParent().id(), Step.class);
         final PreparationActions headAction = repository.get(head.getContent().id(), PreparationActions.class);
-        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent().id(), PreparationActions.class);
+        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent().id(),
+                PreparationActions.class);
 
         // first step : contains only uppercase on lastname
         assertThat(lastBeforeHeadAction.getActions(), hasSize(1));
@@ -1138,7 +1127,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final Response request = given()
-                .body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_list_params.json"),
+                .body(IOUtils.toString(
+                        PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_list_params.json"),
                         UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
@@ -1164,9 +1154,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when
-        given().body(
-                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
-                        UTF_8))//
+        given().body(IOUtils
+                .toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"), UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .put("/preparations/{id}/actions/{action}", preparationId, firstStepId);
@@ -1190,9 +1179,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when : update second (last) step
-        given().body(
-                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
-                        UTF_8))
+        given().body(IOUtils
+                .toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"), UTF_8))
                 .contentType(ContentType.JSON).when().put("/preparations/{id}/actions/{action}", preparationId, secondStepId);
 
         // then
@@ -1214,9 +1202,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when
-        given().body(
-                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
-                        UTF_8))
+        given().body(IOUtils
+                .toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"), UTF_8))
                 .contentType(ContentType.JSON).when()
                 .put("/preparations/{id}/actions/{action}", preparation.id(), "a41184275b046d86c8d98d413ed019bc0a7f3c49");
 
@@ -1270,7 +1257,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final Response request = given()
-                .body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_params.json"),
+                .body(IOUtils.toString(
+                        PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_params.json"),
                         UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
@@ -1574,7 +1562,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         // when : delete second step in single mode
         given().queryParam("parentStepId", stepIds.get(1)).when()
                 .post("/preparations/{id}/steps/{stepId}/order", preparationId, stepIds.get(3))//
-                .then().statusCode(403);
+                // TDP-3624
+                .then().statusCode(409);
 
         final Preparation preparationAfter = repository.get(preparationId, Preparation.class);
         final String newHeadStepId = preparationAfter.getHeadId();
@@ -1602,7 +1591,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         // when : delete second step in single mode
         given().queryParam("parentStepId", stepIds.get(0)).when()
                 .post("/preparations/{id}/steps/{stepId}/order", preparationId, stepIds.get(2))//
-                .then().statusCode(403);
+                // TDP-3624
+                .then().statusCode(409);
 
         final Preparation preparationAfter = repository.get(preparationId, Preparation.class);
         final String newHeadStepId = preparationAfter.getHeadId();

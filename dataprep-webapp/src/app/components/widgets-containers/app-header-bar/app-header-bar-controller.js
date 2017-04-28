@@ -192,12 +192,17 @@ export default class AppHeaderBarCtrl {
 
 	_adaptSearchResults(searchResults) {
 		return this.searchAvailableInventoryTypes
-			.filter(inventoryType => searchResults.some(result => result.inventoryType === inventoryType.type))
+			.filter(inventoryType => searchResults
+				.some(result => result.inventoryType === inventoryType.type))
 			.map((inventoryType) => {
-				const suggestions = searchResults.filter(result => result.inventoryType === inventoryType.type);
+				const suggestions = searchResults
+					.filter(result => result.inventoryType === inventoryType.type);
 				let label = inventoryType.type;
 				if (this.state.search.searchCategories) {
-					label = this.state.search.searchCategories.find(category => category.type === inventoryType.type).label;
+					label = this.state
+						.search
+						.searchCategories
+						.find(category => category.type === inventoryType.type).label;
 				}
 
 				return {

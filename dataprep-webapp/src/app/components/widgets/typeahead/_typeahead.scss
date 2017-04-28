@@ -44,40 +44,39 @@ typeahead {
 		display: flex;
 		position: relative;
 		height: $typeahead-height;
-	}
 
-	button {
-		&.inverse {
+		.btn.inverse {
 			position: absolute;
+			height: $navbar-height;
 			z-index: $typeahead-z-index;
 
 			&:hover,
 			&:active,
 			&:focus,
 			&:visited {
-				background-color: transparent !important;
+				background-color: transparent;
 			}
 
 			svg {
 				fill: $typeahead-input-color;
 			}
 		}
-	}
 
-	.search-input {
-		padding: 0 15px 0 45px;
-		height: 100%;
-		width: 0;
-		opacity: 0;
-		color: $black;
-		border-radius: 0;
-		border: none;
-		box-shadow: none;
+		.search-input {
+			padding: 0 15px 0 45px;
+			height: 100%;
+			width: 0;
+			opacity: 0;
+			color: $black;
+			border-radius: 0;
+			border: none;
+			box-shadow: none;
 
-		&:not(.ng-hide) {
-			width: $typeahead-input-width;
-			opacity: 1;
-			transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
+			&:not(.ng-hide) {
+				width: $typeahead-input-width;
+				opacity: 1;
+				transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
+			}
 		}
 	}
 

@@ -17,7 +17,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -30,6 +31,11 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DurationConverter.ACTION_NAME)
 public class DurationConverter extends AbstractActionMetadata implements ColumnAction {
@@ -46,6 +52,8 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
     protected static final String FROM_UNIT_PARAMETER = "from_unit";
 
     protected static final String TO_UNIT_PARAMETER = "to_unit";
+
+    protected static final String TARGET_PRECISION = "precision";
 
     /**
      * Converter help class.
@@ -87,7 +95,9 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
                 .name(TO_UNIT_PARAMETER)
                 .defaultValue(ChronoUnit.HOURS.name()) 
                 .build());
-        
+
+         parameters.add(new Parameter(TARGET_PRECISION, INTEGER, "1", false, true, "precision"));
+
         //@formatter:on
         return ActionsBundle.attachToAction(parameters, this);
     }
@@ -109,10 +119,25 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         String columnId = context.getColumnId();
         String colValue = row.get(columnId);
-        if (NumberUtils.isNumber(colValue)) {
-            double value = BigDecimalParser.toBigDecimal(colValue).doubleValue();
-            final org.talend.dataquality.converters.DurationConverter converter = context.get(CONVERTER_HELPER);
-            row.set(columnId, String.valueOf(converter.convert(value)));
+
+        if (!StringUtils.isEmpty(colValue)) {
+            String valueToString;
+            try {
+                final org.talend.dataquality.converters.DurationConverter converter = context.get(CONVERTER_HELPER);
+                BigDecimal valueFrom = BigDecimalParser.toBigDecimal(colValue);
+                if (Double.POSITIVE_INFINITY == valueFrom.doubleValue() || Double.NEGATIVE_INFINITY == valueFrom.doubleValue()) {
+                    valueToString = colValue;
+                } else {
+                    double valueTo = converter.convert(valueFrom.doubleValue());
+                    String precisionParameter = context.getParameters().get(TARGET_PRECISION);
+                    Integer targetScale = NumberUtils.toInt(precisionParameter, valueFrom.scale());
+                    valueToString = BigDecimalParser.toBigDecimal(String.valueOf(valueTo)).setScale(targetScale, RoundingMode.HALF_UP).toPlainString();
+                }
+            } catch (NumberFormatException nfe) {
+                valueToString = colValue;
+            }
+
+            row.set(columnId, valueToString);
         }
     }
 

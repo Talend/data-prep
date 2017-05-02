@@ -68,24 +68,24 @@ public class DurationConverterTest extends BaseDateTest {
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("from_unit", "to_unit", "column_id", "row_id", "scope", "filter");
+        List<String> parameterNames = Arrays.asList("from_unit", "to_unit", "precision","column_id", "row_id", "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters();
 
         // then
         assertNotNull(parameters);
-        assertEquals(6, parameters.size());
+        assertEquals(7, parameters.size());
         final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
     }
 
-    private static double year = 1;
+    private static double year = 1.0;
 
-    private static double month = 12;
+    private static double month = 12.2;
 
-    private static double week = 52;
+    private static double week = 52.1;
 
     private static double day = 365;
 
@@ -93,108 +93,119 @@ public class DurationConverterTest extends BaseDateTest {
 
     private static double minute = 525600;// 365 * 24 * 60;
 
-    private static double second = 31536000;// 365 * 24 * 60 * 60;
+    private static double second = 31536000;// 3.1536E7; //31536000;// 365 * 24 * 60 * 60;
 
     private static double millisecond = 31536000000L;// (365 * 24 * 60 * 60 * 1000);
 
     @Test
     public void testConversionDaysTo() {
-        testConversion(day, ChronoUnit.DAYS, year, ChronoUnit.YEARS);
-        testConversion(day, ChronoUnit.DAYS, month, ChronoUnit.MONTHS);
-        testConversion(day, ChronoUnit.DAYS, week, ChronoUnit.WEEKS);
-        testConversion(day, ChronoUnit.DAYS, day, ChronoUnit.DAYS);
-        testConversion(day, ChronoUnit.DAYS, hour, ChronoUnit.HOURS);
-        testConversion(day, ChronoUnit.DAYS, minute, ChronoUnit.MINUTES);
-        testConversion(day, ChronoUnit.DAYS, second, ChronoUnit.SECONDS);
-        testConversion(day, ChronoUnit.DAYS, millisecond, ChronoUnit.MILLIS);
+        testConversion(day, ChronoUnit.DAYS, year, ChronoUnit.YEARS,"1");
+        testConversion(day, ChronoUnit.DAYS, month, ChronoUnit.MONTHS,"1");
+        testConversion(day, ChronoUnit.DAYS, week, ChronoUnit.WEEKS,"1");
+        testConversion(day, ChronoUnit.DAYS, day, ChronoUnit.DAYS,"1");
+        testConversion(day, ChronoUnit.DAYS, hour, ChronoUnit.HOURS,"1");
+        testConversion(day, ChronoUnit.DAYS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(day, ChronoUnit.DAYS, second, ChronoUnit.SECONDS,"1");
+        testConversion(day, ChronoUnit.DAYS, millisecond, ChronoUnit.MILLIS,"1");
+
+        // TDP-3675: add precision parameter
+        testConversion(1440, ChronoUnit.DAYS, 3.9, ChronoUnit.YEARS,"1");
+        testConversion(1440, ChronoUnit.DAYS, 3.95, ChronoUnit.YEARS,"2");
+        testConversion(1440, ChronoUnit.DAYS, 3.945, ChronoUnit.YEARS,"3");
+        testConversion(1440, ChronoUnit.DAYS, 3.9452, ChronoUnit.YEARS,"4");
+        testConversion(1440, ChronoUnit.DAYS, 3.94521, ChronoUnit.YEARS,"5");
+        testConversion(1440, ChronoUnit.DAYS, 3.945205, ChronoUnit.YEARS,"6");
+        testConversion(1440, ChronoUnit.DAYS, 3.9452055, ChronoUnit.YEARS,"7");
+        testConversion(1440, ChronoUnit.DAYS, 3.94520548, ChronoUnit.YEARS,"8");
+        testConversion(1440, ChronoUnit.DAYS, 3.945205479, ChronoUnit.YEARS,"9");
+        testConversion(1440, ChronoUnit.DAYS, 3.9452054795, ChronoUnit.YEARS,"10");
     }
 
     @Test
     public void testConversionYearsTo() {
-        testConversion(year, ChronoUnit.YEARS, year, ChronoUnit.YEARS);
-        testConversion(year, ChronoUnit.YEARS, month, ChronoUnit.MONTHS);
-        testConversion(year, ChronoUnit.YEARS, week, ChronoUnit.WEEKS);
-        testConversion(year, ChronoUnit.YEARS, day, ChronoUnit.DAYS);
-        testConversion(year, ChronoUnit.YEARS, hour, ChronoUnit.HOURS);
-        testConversion(year, ChronoUnit.YEARS, minute, ChronoUnit.MINUTES);
-        testConversion(year, ChronoUnit.YEARS, second, ChronoUnit.SECONDS);
-        testConversion(year, ChronoUnit.YEARS, millisecond, ChronoUnit.MILLIS);
+        testConversion(year, ChronoUnit.YEARS, year, ChronoUnit.YEARS,"1");
+        testConversion(year, ChronoUnit.YEARS, month, ChronoUnit.MONTHS,"1");
+        testConversion(year, ChronoUnit.YEARS, week, ChronoUnit.WEEKS,"1");
+        testConversion(year, ChronoUnit.YEARS, day, ChronoUnit.DAYS,"1");
+        testConversion(year, ChronoUnit.YEARS, hour, ChronoUnit.HOURS,"1");
+        testConversion(year, ChronoUnit.YEARS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(year, ChronoUnit.YEARS, second, ChronoUnit.SECONDS,"1");
+        testConversion(year, ChronoUnit.YEARS, millisecond, ChronoUnit.MILLIS,"1");
     }
 
     @Test
     public void testConversionMonthsTo() {
-        testConversion(month, ChronoUnit.MONTHS, year, ChronoUnit.YEARS);
-        testConversion(month, ChronoUnit.MONTHS, month, ChronoUnit.MONTHS);
-        // because there is a small deviation need to avoid, so week -1
-        testConversion(month, ChronoUnit.MONTHS, week - 1, ChronoUnit.WEEKS);
-        testConversion(month, ChronoUnit.MONTHS, day, ChronoUnit.DAYS);
-        testConversion(month, ChronoUnit.MONTHS, hour, ChronoUnit.HOURS);
-        testConversion(month, ChronoUnit.MONTHS, minute, ChronoUnit.MINUTES);
-        testConversion(month, ChronoUnit.MONTHS, second, ChronoUnit.SECONDS);
-        testConversion(month, ChronoUnit.MONTHS, millisecond, ChronoUnit.MILLIS);
+        testConversion(month, ChronoUnit.MONTHS, year, ChronoUnit.YEARS,"1");
+        testConversion(month, ChronoUnit.MONTHS, month, ChronoUnit.MONTHS,"1");
+        testConversion(month, ChronoUnit.MONTHS, week+0.2 , ChronoUnit.WEEKS,"1");
+        testConversion(month, ChronoUnit.MONTHS, day, ChronoUnit.DAYS,"1");
+        testConversion(month, ChronoUnit.MONTHS, hour, ChronoUnit.HOURS,"1");
+        testConversion(month, ChronoUnit.MONTHS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(month, ChronoUnit.MONTHS, second, ChronoUnit.SECONDS,"1");
+        testConversion(month, ChronoUnit.MONTHS, millisecond, ChronoUnit.MILLIS,"1");
     }
 
     @Test
     public void testConversionWeeksTo() {
-        testConversion(week, ChronoUnit.WEEKS, year, ChronoUnit.YEARS);
-        testConversion(week, ChronoUnit.WEEKS, month, ChronoUnit.MONTHS);
-        testConversion(week, ChronoUnit.WEEKS, week, ChronoUnit.WEEKS);
-        testConversion(week, ChronoUnit.WEEKS, day, ChronoUnit.DAYS);
-        testConversion(week, ChronoUnit.WEEKS, hour, ChronoUnit.HOURS);
-        testConversion(week, ChronoUnit.WEEKS, minute, ChronoUnit.MINUTES);
-        testConversion(week, ChronoUnit.WEEKS, second, ChronoUnit.SECONDS);
-        testConversion(week, ChronoUnit.WEEKS, millisecond, ChronoUnit.MILLIS);
+        testConversion(week, ChronoUnit.WEEKS, year, ChronoUnit.YEARS,"1");
+        testConversion(week, ChronoUnit.WEEKS, month, ChronoUnit.MONTHS,"1");
+        testConversion(week, ChronoUnit.WEEKS, week, ChronoUnit.WEEKS,"1");
+        testConversion(week, ChronoUnit.WEEKS, day, ChronoUnit.DAYS,"1");
+        testConversion(week, ChronoUnit.WEEKS, hour, ChronoUnit.HOURS,"1");
+        testConversion(week, ChronoUnit.WEEKS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(week, ChronoUnit.WEEKS, second, ChronoUnit.SECONDS,"1");
+        testConversion(week, ChronoUnit.WEEKS, millisecond, ChronoUnit.MILLIS,"1");
     }
 
     @Test
     public void testConversionHoursTo() {
-        testConversion(hour, ChronoUnit.HOURS, year, ChronoUnit.YEARS);
-        testConversion(hour, ChronoUnit.HOURS, month, ChronoUnit.MONTHS);
-        testConversion(hour, ChronoUnit.HOURS, week, ChronoUnit.WEEKS);
-        testConversion(hour, ChronoUnit.HOURS, day, ChronoUnit.DAYS);
-        testConversion(hour, ChronoUnit.HOURS, hour, ChronoUnit.HOURS);
-        testConversion(hour, ChronoUnit.HOURS, minute, ChronoUnit.MINUTES);
-        testConversion(hour, ChronoUnit.HOURS, second, ChronoUnit.SECONDS);
-        testConversion(hour, ChronoUnit.HOURS, millisecond, ChronoUnit.MILLIS);
+        testConversion(hour, ChronoUnit.HOURS, year, ChronoUnit.YEARS,"1");
+        testConversion(hour, ChronoUnit.HOURS, month, ChronoUnit.MONTHS,"1");
+        testConversion(hour, ChronoUnit.HOURS, week, ChronoUnit.WEEKS,"1");
+        testConversion(hour, ChronoUnit.HOURS, day, ChronoUnit.DAYS,"1");
+        testConversion(hour, ChronoUnit.HOURS, hour, ChronoUnit.HOURS,"1");
+        testConversion(hour, ChronoUnit.HOURS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(hour, ChronoUnit.HOURS, second, ChronoUnit.SECONDS,"1");
+        testConversion(hour, ChronoUnit.HOURS, millisecond, ChronoUnit.MILLIS,"1");
     }
 
     @Test
     public void testConversionMinutesTo() {
-        testConversion(minute, ChronoUnit.MINUTES, year, ChronoUnit.YEARS);
-        testConversion(minute, ChronoUnit.MINUTES, month, ChronoUnit.MONTHS);
-        testConversion(minute, ChronoUnit.MINUTES, week, ChronoUnit.WEEKS);
-        testConversion(minute, ChronoUnit.MINUTES, day, ChronoUnit.DAYS);
-        testConversion(minute, ChronoUnit.MINUTES, hour, ChronoUnit.HOURS);
-        testConversion(minute, ChronoUnit.MINUTES, minute, ChronoUnit.MINUTES);
-        testConversion(minute, ChronoUnit.MINUTES, second, ChronoUnit.SECONDS);
-        testConversion(minute, ChronoUnit.MINUTES, millisecond, ChronoUnit.MILLIS);
+        testConversion(minute, ChronoUnit.MINUTES, year, ChronoUnit.YEARS,"1");
+        testConversion(minute, ChronoUnit.MINUTES, month, ChronoUnit.MONTHS,"1");
+        testConversion(minute, ChronoUnit.MINUTES, week, ChronoUnit.WEEKS,"1");
+        testConversion(minute, ChronoUnit.MINUTES, day, ChronoUnit.DAYS,"1");
+        testConversion(minute, ChronoUnit.MINUTES, hour, ChronoUnit.HOURS,"1");
+        testConversion(minute, ChronoUnit.MINUTES, minute, ChronoUnit.MINUTES,"1");
+        testConversion(minute, ChronoUnit.MINUTES, second, ChronoUnit.SECONDS,"1");
+        testConversion(minute, ChronoUnit.MINUTES, millisecond, ChronoUnit.MILLIS,"1");
     }
 
     @Test
     public void testConversionSecondsTo() {
-        testConversion(second, ChronoUnit.SECONDS, year, ChronoUnit.YEARS);
-        testConversion(second, ChronoUnit.SECONDS, month, ChronoUnit.MONTHS);
-        testConversion(second, ChronoUnit.SECONDS, week, ChronoUnit.WEEKS);
-        testConversion(second, ChronoUnit.SECONDS, day, ChronoUnit.DAYS);
-        testConversion(second, ChronoUnit.SECONDS, hour, ChronoUnit.HOURS);
-        testConversion(second, ChronoUnit.SECONDS, minute, ChronoUnit.MINUTES);
-        testConversion(second, ChronoUnit.SECONDS, second, ChronoUnit.SECONDS);
-        testConversion(second, ChronoUnit.SECONDS, millisecond, ChronoUnit.MILLIS);
+        testConversion(second, ChronoUnit.SECONDS, year, ChronoUnit.YEARS,"1");
+        testConversion(second, ChronoUnit.SECONDS, month, ChronoUnit.MONTHS,"1");
+        testConversion(second, ChronoUnit.SECONDS, week, ChronoUnit.WEEKS,"1");
+        testConversion(second, ChronoUnit.SECONDS, day, ChronoUnit.DAYS,"1");
+        testConversion(second, ChronoUnit.SECONDS, hour, ChronoUnit.HOURS,"1");
+        testConversion(second, ChronoUnit.SECONDS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(second, ChronoUnit.SECONDS, second, ChronoUnit.SECONDS,"1");
+        testConversion(second, ChronoUnit.SECONDS, millisecond, ChronoUnit.MILLIS,"1");
     }
 
     @Test
     public void testConversionMillisecondsTo() {
-        testConversion(millisecond, ChronoUnit.MILLIS, year, ChronoUnit.YEARS);
-        testConversion(millisecond, ChronoUnit.MILLIS, month, ChronoUnit.MONTHS);
-        testConversion(millisecond, ChronoUnit.MILLIS, week, ChronoUnit.WEEKS);
-        testConversion(millisecond, ChronoUnit.MILLIS, day, ChronoUnit.DAYS);
-        testConversion(millisecond, ChronoUnit.MILLIS, hour, ChronoUnit.HOURS);
-        testConversion(millisecond, ChronoUnit.MILLIS, minute, ChronoUnit.MINUTES);
-        testConversion(millisecond, ChronoUnit.MILLIS, second, ChronoUnit.SECONDS);
-        testConversion(millisecond, ChronoUnit.MILLIS, millisecond, ChronoUnit.MILLIS);
+        testConversion(millisecond, ChronoUnit.MILLIS, year, ChronoUnit.YEARS,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, month, ChronoUnit.MONTHS,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, week, ChronoUnit.WEEKS,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, day, ChronoUnit.DAYS,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, hour, ChronoUnit.HOURS,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, minute, ChronoUnit.MINUTES,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, second, ChronoUnit.SECONDS,"1");
+        testConversion(millisecond, ChronoUnit.MILLIS, millisecond, ChronoUnit.MILLIS,"1");
     }
 
-    private void testConversion(double from, ChronoUnit fromUnit, double expected, ChronoUnit toUnit) {
+    private void testConversion(double from, ChronoUnit fromUnit, double expected, ChronoUnit toUnit, String precision) {
         // given
         // row 1
         Map<String, String> rowContent = new HashMap<>();
@@ -249,12 +260,14 @@ public class DurationConverterTest extends BaseDateTest {
         parameters.put("column_id", "0001");
         parameters.put("from_unit", fromUnit.name());
         parameters.put("to_unit", toUnit.name());
+        parameters.put("precision", precision);
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(String.valueOf(expected), row1.get("0001"));
+        // TDP-3675: add precision parameter
+        assertEquals(expected , Double.valueOf(row1.get("0001")), Math.pow(0.1, Integer.valueOf(precision)));
         assertEquals("foo", row2.get("0001"));
         assertEquals(null, row3.get("0001"));
         assertEquals("", row4.get("0001"));

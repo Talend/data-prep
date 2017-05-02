@@ -10,7 +10,7 @@
         <relativePath>../dataprep-ee-backend/pom.xml</relativePath>
     </parent>
     <artifactId>dataprep-ee-actions-parser</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>${dataprep.core.build.version}</version>
     <name>dataprep-ee-actions-parser</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

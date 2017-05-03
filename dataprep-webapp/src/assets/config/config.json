@@ -5,5 +5,5 @@
   "enableDebug": false,
   "version": "2.1.0-SNAPSHOT",
   "copyRights": "© 2017 Talend. All Rights Reserved",
-  "documentationSearchURL" : "https://www.talendforge.org/find/api/index.php?source=DATA%20PREP&condition=AND&max=5"
+  "documentationSearchURL" : "https://talend-rc.fluidtopics.net/api/khub/topics/search"
 }

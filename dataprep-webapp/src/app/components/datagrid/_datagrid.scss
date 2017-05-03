@@ -305,7 +305,6 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 		}
 
 		.highlight {
-			background-color: $white;
 			position: absolute;
 			left: 0;
 			right: 0;
@@ -313,6 +312,7 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 			top: 0;
 			padding-left: 4px;
 			padding-right: 7px;
+			font-weight: bold;
 		}
 
 		.cellNewValue {

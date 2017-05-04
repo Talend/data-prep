@@ -73,6 +73,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Hystrix group used for transformation related commands. */
     public static final HystrixCommandGroupKey TRANSFORM_GROUP = HystrixCommandGroupKey.Factory.asKey("transform");
 
+    /** Hystrix group used for transformation related commands. */
+    public static final HystrixCommandGroupKey FULLRUN_GROUP = HystrixCommandGroupKey.Factory.asKey("fullrun");
+
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
 
@@ -94,6 +97,10 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Transformation service URL. */
     @Value("${transformation.service.url:}")
     protected String transformationServiceUrl;
+
+    /** Full run service URL. */
+    @Value("${fullrun.service.url:}")
+    protected String fullRunServiceUrl;
 
     /** Dataset service URL. */
     @Value("${dataset.service.url:}")

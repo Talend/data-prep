@@ -293,5 +293,10 @@ public class GenericCommandTest extends ServiceBaseTest {
         public Set<UserGroup> getGroups() {
             return Collections.emptySet();
         }
+
+        @Override
+        public String getTenantId() {
+            return "tenant";
+        }
     }
 }

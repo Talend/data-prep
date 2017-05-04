@@ -269,13 +269,11 @@ describe('Preparation Creator Form Controller', () => {
 				//when
 				ctrl.import();
 				expect(ctrl.importDisabled).toBe(true);
-				expect(ctrl.uploadingDatasets.length).toBe(0);
 				uploadDefer.resolve({ data: dataset.id });
 				scope.$digest();
 
 				//then
 				expect(ctrl.importDisabled).toBe(false);
-				expect(ctrl.uploadingDatasets.length).toBe(0);
 				expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
 				expect(ctrl.baseDataset).toBe(dataset);
 				expect(ctrl.createPreparation).toHaveBeenCalled();

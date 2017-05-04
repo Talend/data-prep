@@ -28,6 +28,6 @@ angular.module(MODULE_NAME,
 		UPGRADE_VERSION_MODULE,
 		WIDGET_CONTAINERS,
 	])
-    .directive('dataprepApp', DataPrepApp);
+	.directive('dataprepApp', DataPrepApp);
 
 export default MODULE_NAME;

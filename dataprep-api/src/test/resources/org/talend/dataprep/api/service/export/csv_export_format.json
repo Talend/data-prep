@@ -6,7 +6,7 @@
   "defaultExport": "false",
   "parameters": [
     {
-      "name": "csvSeparator",
+      "name": "csv_fields_delimiter",
       "labelKey": "CHOOSE_SEPARATOR",
       "type": "radio",
       "defaultValue": {

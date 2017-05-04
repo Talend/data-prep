@@ -31,7 +31,7 @@ public class CSVFormat extends ExportFormat {
     /** CSV format type name. */
     public static final String CSV = "CSV";
 
-    public static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name("csvSeparator") //
+    public static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name("csv_fields_delimiter") //
             .item(";", "semiColon") //
             .item("\u0009", "tabulation") //
             .item(" ", "space") //

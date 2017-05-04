@@ -13,115 +13,107 @@
 
 describe('Search Documentation Service', () => {
 
-	const thcResult = `
-    "https://help.talend.com/pages/viewpage.action?pageId=266309178","What is a recipe?"," ... data, called datasets, and the directions are the set of functions applied to the dataset. recipe.png Visually, the recipe is the topdown sequence of functions in the left collapsible panel. A recipe is linked to the dataset through a preparation. Do not look for a save button: every update ...  ... "
-    "https://help.talend.com/pages/viewpage.action?pageId=266309061","Export the results of your recipe"," ... Once your recipe is complete, you may want to export the sample dataset you have cleaned ... "
-    "https://help.talend.com/pages/viewpage.action?pageId=266309169","What is a dataset?"," ... dataset holds the raw data that can be used as the raw material for one or more recipes. It is presented as a table on which you can apply recipes without affecting the original data. As they are not altered by the recipes, datasets can be reused across preparations.    Related concepts ... "
-    "https://help.talend.com/pages/viewpage.action?pageId=266309176","What is a preparation?"," ... preparation is what links a dataset and a recipe together: it is the final outcome that you want to achieve with your data. You can ... "
-    "https://help.talend.com/pages/viewpage.action?pageId=266309172","What is a function?"," ... applied on datasets, they do not modify the original data. Applied functions are recorded, in sequence, into recipes.    Related concepts  What is a dataset? https://help.talend.com/pages/viewpage.action?pageId=266309169 What is a preparation? https://help.talend.com/pages/viewpage.action?pageId=266309176 What is a recipe ... "
-    `;
+	const searchResults = {
+		results: [
+			{
+				mapId: 'BQeTe_Nh1Je0PGocPxyLRw',
+				mapTitle: 'Filtering values using charts',
+				occurrences: [
+					{
+						tocId: 'UcTCE_YnY9J3irxcTPX_VQ',
+						readerUrl: 'https://talend-rc.fluidtopics.net/#/reader/BQeTe_Nh1Je0PGocPxyLRw/UcTCE_YnY9J3irxcTPX_VQ',
+						breadcrumb: [
+							'Filtering values using charts',
+						],
+					},
+				],
+				contentId: 'U32fELq1VSICEDFjwK9tJg',
+				topicUrl: 'https://talend-rc.fluidtopics.net/api/khub/maps/BQeTe_Nh1Je0PGocPxyLRw/topics/U32fELq1VSICEDFjwK9tJg',
+				contentUrl: 'https://talend-rc.fluidtopics.net/api/khub/maps/BQeTe_Nh1Je0PGocPxyLRw/topics/U32fELq1VSICEDFjwK9tJg/content',
+				htmlTitle: '<span class=\"kwicstring\">Filtering values using </span><span class=\"kwicmatch\">charts</span>',
+				htmlExcerpt: '<span class=\"kwicstring\">The </span><span class=\"kwicmatch\">Chart</span><span class=\"kwicstring\"> tab shows a graphical representation of your data. It is also a quick and easy way to apply filter on your data. According to the type of data that you select, the type of graphical representation in the tab will be different: Vertical bar </span><span class=\"kwicmatch\">charts</span><span class=\"kwicstring\"> for numerical data Horizontal bar </span><span class=\"kwicmatch\">charts</span><span class=\"kwictruncate\">...</span>',
+			},
+			{
+				mapId: 'DLaNYicBDiA9S5hdjFK9LQ',
+				mapTitle: 'Vertical bar chart',
+				occurrences: [
+					{
+						tocId: 'pMwTjnd3xR7t~4egfVk3Nw',
+						readerUrl: 'https://talend-rc.fluidtopics.net/#/reader/DLaNYicBDiA9S5hdjFK9LQ/pMwTjnd3xR7t%7E4egfVk3Nw',
+						breadcrumb: [
+							'Vertical bar chart',
+						],
+					},
+				],
+				contentId: 'ZgrgZ3OR2ykx1wlL2Jr7JQ',
+				topicUrl: 'https://talend-rc.fluidtopics.net/api/khub/maps/DLaNYicBDiA9S5hdjFK9LQ/topics/ZgrgZ3OR2ykx1wlL2Jr7JQ',
+				contentUrl: 'https://talend-rc.fluidtopics.net/api/khub/maps/DLaNYicBDiA9S5hdjFK9LQ/topics/ZgrgZ3OR2ykx1wlL2Jr7JQ/content',
+				htmlTitle: '<span class=\"kwicstring\">Vertical bar </span><span class=\"kwicmatch\">chart</span>',
+				htmlExcerpt: '<span class=\"kwicstring\">The vertical bar </span><span class=\"kwicmatch\">chart</span><span class=\"kwicstring\"> is a histogram displayed in the </span><span class=\"kwicmatch\">Chart</span><span class=\"kwicstring\"> tab when the selected column contains numerical or date data. This</span><span class=\"kwictruncate\">...</span><span class=\"kwicstring\">displayed using the range slider. It is an interactive </span><span class=\"kwicmatch\">chart</span><span class=\"kwicstring\">: you can create a new filter by clicking one of the bars of the </span><span class=\"kwicmatch\">chart</span><span class=\"kwicstring\">. Also, if you point your mouse over one of</span><span class=\"kwictruncate\">...</span>',
+			},
+		],
+	};
+
+	const cleanedSearchResults = [
+		{
+			inventoryType: 'documentation',
+			description: 'The Chart tab shows a graphical representation of your data. It is also a quick and easy way to apply filter on your data. According to the type of data that you select, the type of graphical representation in the tab will be different: Vertical bar charts for numerical data Horizontal bar charts...',
+			name: 'Filtering values using charts',
+			url: 'https://talend-rc.fluidtopics.net/#/reader/BQeTe_Nh1Je0PGocPxyLRw/UcTCE_YnY9J3irxcTPX_VQ',
+			tooltipName: 'Filtering values using charts',
+		},
+		{
+			inventoryType: 'documentation',
+			description: 'The vertical bar chart is a histogram displayed in the Chart tab when the selected column contains numerical or date data. This...displayed using the range slider. It is an interactive chart: you can create a new filter by clicking one of the bars of the chart. Also, if you point your mouse over one of...',
+			name: 'Vertical bar chart',
+			url: 'https://talend-rc.fluidtopics.net/#/reader/DLaNYicBDiA9S5hdjFK9LQ/pMwTjnd3xR7t%7E4egfVk3Nw',
+			tooltipName: 'Vertical bar chart',
+		},
+	];
 
 	beforeEach(angular.mock.module('data-prep.services.search.documentation'));
 
 	beforeEach(inject(($q, SearchDocumentationRestService) => {
-		spyOn(SearchDocumentationRestService, 'search').and.returnValue($q.when({ data: thcResult }));
+		spyOn(SearchDocumentationRestService, 'search').and.returnValue($q.when({ data: searchResults }));
 	}));
 
 	it('should call documentation search rest service and process data', inject(($rootScope, SearchDocumentationService) => {
 		// given
 		let result = null;
-		const expectedResult = [
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309178',
-				name: 'What is a recipe?',
-				description: ' ... data, called datasets, and the directions are the set of functions applied to the dataset. recipe.png Visually, the recipe is the topdown sequence of functions in the left collapsible panel. A recipe is linked to the dataset through a preparation. Do not look for a save button: every update ...  ... ',
-				tooltipName: 'What is a recipe?',
-				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309061',
-				name: 'Export the results of your recipe',
-				description: ' ... Once your recipe is complete, you may want to export the sample dataset you have cleaned ... ',
-				tooltipName: 'Export the results of your recipe',
-				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309169',
-				name: 'What is a dataset?',
-				description: ' ... dataset holds the raw data that can be used as the raw material for one or more recipes. It is presented as a table on which you can apply recipes without affecting the original data. As they are not altered by the recipes, datasets can be reused across preparations.    Related concepts ... ',
-				tooltipName: 'What is a dataset?',
-				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309176',
-				name: 'What is a preparation?',
-				description: ' ... preparation is what links a dataset and a recipe together: it is the final outcome that you want to achieve with your data. You can ... ',
-				tooltipName: 'What is a preparation?',
-				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309172',
-				name: 'What is a function?',
-				description: ' ... applied on datasets, they do not modify the original data. Applied functions are recorded, in sequence, into recipes.    Related concepts  What is a dataset? https://help.talend.com/pages/viewpage.action?pageId=266309169 What is a preparation? https://help.talend.com/pages/viewpage.action?pageId=266309176 What is a recipe ... ',
-				tooltipName: 'What is a function?',
-				inventoryType: 'documentation',
-			},
-		];
 
 		// when
-		SearchDocumentationService.search('recipe').then(response => result = response);
+		SearchDocumentationService.search('chart').then(response => result = response);
 		$rootScope.$digest();
 
 		// then
-		expect(result).toEqual(expectedResult);
+		expect(result).toEqual(cleanedSearchResults);
 	}));
 
 	it('should call documentation search rest service and highlight data', inject(($rootScope, SearchDocumentationService) => {
 		// given
 		let result = null;
-		const expectedResult = [
+		const highlightedResult = [
 			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309178',
-				name: 'What is a <span class="highlighted">recipe</span>?',
-				description: ' ... data, called datasets, and the directions are the set of functions applied to the dataset. <span class="highlighted">recipe</span>.png Visually, the <span class="highlighted">recipe</span> is the topdown sequence of functions in the left collapsible panel. A <span class="highlighted">recipe</span> is linked to the dataset through a preparation. Do not look for a save button: every update ...  ... ',
-				tooltipName: 'What is a recipe?',
 				inventoryType: 'documentation',
+				description: 'The <span class="highlighted">Chart</span> tab shows a graphical representation of your data. It is also a quick and easy way to apply filter on your data. According to the type of data that you select, the type of graphical representation in the tab will be different: Vertical bar <span class="highlighted">chart</span>s for numerical data Horizontal bar <span class="highlighted">chart</span>s...',
+				name: 'Filtering values using <span class="highlighted">chart</span>s',
+				url: 'https://talend-rc.fluidtopics.net/#/reader/BQeTe_Nh1Je0PGocPxyLRw/UcTCE_YnY9J3irxcTPX_VQ',
+				tooltipName: 'Filtering values using charts',
 			},
 			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309061',
-				name: 'Export the results of your <span class="highlighted">recipe</span>',
-				description: ' ... Once your <span class="highlighted">recipe</span> is complete, you may want to export the sample dataset you have cleaned ... ',
-				tooltipName: 'Export the results of your recipe',
 				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309169',
-				name: 'What is a dataset?',
-				description: ' ... dataset holds the raw data that can be used as the raw material for one or more <span class="highlighted">recipe</span>s. It is presented as a table on which you can apply <span class="highlighted">recipe</span>s without affecting the original data. As they are not altered by the <span class="highlighted">recipe</span>s, datasets can be reused across preparations.    Related concepts ... ',
-				tooltipName: 'What is a dataset?',
-				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309176',
-				name: 'What is a preparation?',
-				description: ' ... preparation is what links a dataset and a <span class="highlighted">recipe</span> together: it is the final outcome that you want to achieve with your data. You can ... ',
-				tooltipName: 'What is a preparation?',
-				inventoryType: 'documentation',
-			},
-			{
-				url: 'https://help.talend.com/pages/viewpage.action?pageId=266309172',
-				name: 'What is a function?',
-				description: ' ... applied on datasets, they do not modify the original data. Applied functions are recorded, in sequence, into <span class="highlighted">recipe</span>s.    Related concepts  What is a dataset? https://help.talend.com/pages/viewpage.action?pageId=266309169 What is a preparation? https://help.talend.com/pages/viewpage.action?pageId=266309176 What is a <span class="highlighted">recipe</span> ... ',
-				tooltipName: 'What is a function?',
-				inventoryType: 'documentation',
+				description: 'The vertical bar <span class="highlighted">chart</span> is a histogram displayed in the <span class="highlighted">Chart</span> tab when the selected column contains numerical or date data. This...displayed using the range slider. It is an interactive <span class="highlighted">chart</span>: you can create a new filter by clicking one of the bars of the <span class="highlighted">chart</span>. Also, if you point your mouse over one of...',
+				name: 'Vertical bar <span class="highlighted">chart</span>',
+				url: 'https://talend-rc.fluidtopics.net/#/reader/DLaNYicBDiA9S5hdjFK9LQ/pMwTjnd3xR7t%7E4egfVk3Nw',
+				tooltipName: 'Vertical bar chart',
 			},
 		];
 
 		// when
-		SearchDocumentationService.searchAndHighlight('recipe').then(response => result = response);
+		SearchDocumentationService.searchAndHighlight('chart').then(response => result = response);
 		$rootScope.$digest();
 
 		// then
-		expect(result).toEqual(expectedResult);
+		expect(result).toEqual(highlightedResult);
 	}));
 });

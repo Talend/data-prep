@@ -104,7 +104,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
         assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
-                is("https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"));
+                is("https://talend-rc.fluidtopics.net/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.0%2522&utm_medium=dpdesktop&utm_source=header"));
 
         final ActionSettings inventoryCancelEdit = settings.getActions().get("inventory:cancel-edit");
         assertThat(inventoryCancelEdit.getName(), is("Cancel name edition"));

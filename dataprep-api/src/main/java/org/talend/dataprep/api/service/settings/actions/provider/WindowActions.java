@@ -55,7 +55,7 @@ public interface WindowActions {
             .icon("talend-question-circle")
             .type("@@external/OPEN_WINDOW")
             .payload(PAYLOAD_METHOD_KEY, "open")
-            .payload(PAYLOAD_ARGS_KEY, new String[]{"https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"})
+            .payload(PAYLOAD_ARGS_KEY, new String[]{"https://talend-rc.fluidtopics.net/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.0%2522&utm_medium=dpdesktop&utm_source=header"})
             .build();
 
     ActionSettings EXTERNAL_DOCUMENTATION = builder()

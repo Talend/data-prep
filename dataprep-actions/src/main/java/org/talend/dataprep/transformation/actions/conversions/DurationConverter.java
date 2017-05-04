@@ -125,7 +125,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
             try {
                 final org.talend.dataquality.converters.DurationConverter converter = context.get(CONVERTER_HELPER);
                 BigDecimal valueFrom = BigDecimalParser.toBigDecimal(colValue);
-                if (Double.POSITIVE_INFINITY == valueFrom.doubleValue() || Double.NEGATIVE_INFINITY == valueFrom.doubleValue()) {
+                if (Double.isInfinite(valueFrom.doubleValue())) {
                     valueToString = colValue;
                 } else {
                     double valueTo = converter.convert(valueFrom.doubleValue());

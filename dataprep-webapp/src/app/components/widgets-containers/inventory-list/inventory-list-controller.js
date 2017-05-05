@@ -17,13 +17,14 @@ const SPLITDROPDOWN_ACTION = 'splitDropdown';
 const ACTION_TYPE = 'actions';
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, appSettings, SettingsActionsService) {
+	constructor($element, $translate, appSettings, SettingsActionsService, state) {
 		'ngInject';
 
 		this.$element = $element;
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
+		this.state = state;
 
 		this.actionsDispatchers = [];
 		this.initToolbarProps();

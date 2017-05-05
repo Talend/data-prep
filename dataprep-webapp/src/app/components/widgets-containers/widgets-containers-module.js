@@ -33,6 +33,7 @@ import SidePanelContainer from './side-panel/side-panel-container';
 
 import SETTINGS_MODULE from '../../settings/settings-module';
 import STATE_MODULE from '../../services/state/state-module';
+import DATASET_UPLOAD_TILE_MODULE from '../dataset/upload-tile/dataset-upload-tile-module';
 
 const MODULE_NAME = 'react-talend-components.containers';
 
@@ -42,6 +43,7 @@ angular.module(MODULE_NAME,
 		'pascalprecht.translate',
 		SETTINGS_MODULE,
 		STATE_MODULE,
+		DATASET_UPLOAD_TILE_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])

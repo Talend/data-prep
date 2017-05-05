@@ -28,7 +28,6 @@ export default class PreparationCreatorFormCtrl {
 		this.enteredFilterText = '';
 		this.filteredDatasets = [];
 		this.baseDataset = null;
-		this.uploadingDataset = null;
 		this.userHasTypedName = false;
 		this.importDisabled = false;
 		this.isFetchingDatasets = false;
@@ -101,7 +100,7 @@ export default class PreparationCreatorFormCtrl {
 		};
 
 		const dataset = this.datasetService.createDatasetInfo(file, name);
-		this.uploadingDataset = dataset;
+		this.stateService.startUploadingDataset(dataset);
 
 		return this.datasetService.create(params, 'text/plain', file)
 			.progress((event) => {
@@ -110,7 +109,7 @@ export default class PreparationCreatorFormCtrl {
 			.then((event) => {
 				return this.datasetService.getDatasetById(event.data)
 					.then((dataset) => {
-						this.uploadingDataset = null;
+						this.stateService.finishUploadingDataset();
 						this.baseDataset = dataset;
 						if (!this.userHasTypedName) {
 							this._getUniquePrepName();

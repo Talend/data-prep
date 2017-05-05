@@ -14,7 +14,6 @@
 import angular from 'angular';
 import ABOUT_MODULE from '../about/about-module';
 import DATASET_IMPORT_MODULE from '../dataset/import/dataset-import.module';
-import DATASET_PROGRESS_MODULE from '../dataset/progress/dataset-progress-module';
 import DATASET_UPDLOAD_TILE_MODULE from '../dataset/upload-tile/dataset-upload-tile-module';
 import DATASET_XLS_PREVIEW_MODULE from '../dataset/preview/dataset-xls-preview-module';
 import FOLDER_CREATOR_MODULE from '../folder/creator/folder-creator-module';
@@ -43,7 +42,6 @@ export default MODULE_NAME;
  * @requires talend.widget
  * @requires data-prep.dataset-import
  * @requires data-prep.dataset-upload-tile
- * @requires data-prep.dataset-progress
  * @requires data-prep.preparation-creator
  * @requires data-prep.preparation-copy-move
  * @requires data-prep.services.dataset
@@ -56,7 +54,6 @@ angular.module(MODULE_NAME,
 		ABOUT_MODULE,
 		DATASET_UPDLOAD_TILE_MODULE,
 		DATASET_IMPORT_MODULE,
-		DATASET_PROGRESS_MODULE,
 		DATASET_XLS_PREVIEW_MODULE,
 		FOLDER_CREATOR_MODULE,
 		PREPARATION_CREATOR_MODULE,

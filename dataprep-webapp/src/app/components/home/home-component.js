@@ -25,7 +25,6 @@ const HomeComponent = {
 		<preparation-copy-move></preparation-copy-move>
 		<preparation-creator></preparation-creator>
 		<insertion-home></insertion-home>
-		<dataset-progress></dataset-progress>
 	`,
 	controller: HomeCtrl,
 };

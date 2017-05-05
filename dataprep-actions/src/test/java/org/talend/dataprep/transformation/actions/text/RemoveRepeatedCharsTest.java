@@ -79,6 +79,12 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
         assertThat(action.adapt(column), is(action));
+
+        column = column().name("myColumn").id(0).type(Type.INTEGER).build();
+        assertThat(action.adapt(column), is(action));
+
+        column = column().name("myColumn").id(0).type(Type.ANY).build();
+        assertThat(action.adapt(column), is(action));
     }
 
     @Test
@@ -113,67 +119,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_remove_repeated_tab() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "abc\t\t\td");
-        final DataSetRow row = new DataSetRow(values);
-        initParametersWhitespace();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("abc\td", row.get("0000"));
-    }
-
-    @Test
-    public void should_remove_repeated_return() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "abc\r\r\rd");
-        final DataSetRow row = new DataSetRow(values);
-        initParametersWhitespace();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("abc\rd", row.get("0000"));
-    }
-
-    @Test
-    public void should_remove_repeated_unicode_whitespace() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "\u2028\u2028abcd");
-        final DataSetRow row = new DataSetRow(values);
-        initParametersWhitespace();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("\u2028abcd", row.get("0000"));
-    }
-
-    @Test
-    public void should_remove_repeated_return_wrap() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "abc\r\n\r\nd");
-        final DataSetRow row = new DataSetRow(values);
-        initParametersWhitespace();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("abc\r\nd", row.get("0000"));
-    }
-
-    @Test
-    public void should_not_remove_null() {
+    public void should_not_remove_null_value() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", null);
@@ -188,40 +134,29 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_not_remove_empty_parameter() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "abcc");
+        final DataSetRow row = new DataSetRow(values);
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(RemoveRepeatedChars.REMOVE_TYPE, "");
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("abcc", row.get("0000"));
+    }
+
+    @Test
     public void should_remove_custom_value() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "haand");
         final DataSetRow row = new DataSetRow(values);
         initParameterCustom("a");
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("hand", row.get("0000"));
-    }
-
-    @Test
-    public void should_not_remove_custom_value() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "haand");
-        final DataSetRow row = new DataSetRow(values);
-        initParameterCustom("n");
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("haand", row.get("0000"));
-    }
-
-    @Test
-    public void should_not_remove_custom_string() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "hanand");
-        final DataSetRow row = new DataSetRow(values);
-        initParameterCustom("an");
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
@@ -246,14 +181,10 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
     @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.STRING)));
-    }
-
-    @Test
-    public void should_not_accept_column() {
-        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptField(getColumn(Type.DATE)));
-        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test

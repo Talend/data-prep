@@ -75,19 +75,6 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void testAdapt() throws Exception {
-        assertThat(action.adapt((ColumnMetadata) null), is(action));
-        ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(action.adapt(column), is(action));
-
-        column = column().name("myColumn").id(0).type(Type.INTEGER).build();
-        assertThat(action.adapt(column), is(action));
-
-        column = column().name("myColumn").id(0).type(Type.ANY).build();
-        assertThat(action.adapt(column), is(action));
-    }
-
-    @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
     }

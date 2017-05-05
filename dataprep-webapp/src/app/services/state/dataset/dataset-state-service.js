@@ -12,12 +12,11 @@
   ============================================================================*/
 
 export const datasetState = {
-	uploadingDatasets: [],
+	uploadingDataset: null,
 };
 
 export function DatasetStateService() {
 	return {
-        // uploading datasets
 		startUploadingDataset,
 		finishUploadingDataset,
 	};
@@ -26,10 +25,10 @@ export function DatasetStateService() {
     // ------------------------------------------UPLOADING DATASETS--------------------------------
     // --------------------------------------------------------------------------------------------
 	function startUploadingDataset(dataset) {
-		datasetState.uploadingDatasets.push(dataset);
+		datasetState.uploadingDataset = dataset;
 	}
 
-	function finishUploadingDataset(dataset) {
-		datasetState.uploadingDatasets.splice(datasetState.uploadingDatasets.indexOf(dataset), 1);
+	function finishUploadingDataset() {
+		datasetState.uploadingDataset = null;
 	}
 }

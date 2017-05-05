@@ -13,8 +13,8 @@
 const DatasetProgressComponent = {
 	template: `<pure-progress
 					id="dataset-progress-bar"
-					percent="$ctrl.state.dataset.uploadingDatasets.length ? $ctrl.state.dataset.uploadingDatasets[0].progress : 0"
-					tooltip="$ctrl.state.dataset.uploadingDatasets.length ? ('COLLECTING_DATA' | translate: {datasetName : $ctrl.state.dataset.uploadingDatasets[0].name}) : ''"/>
+					percent="$ctrl.state.dataset.uploadingDataset ? $ctrl.state.dataset.uploadingDataset.progress : 0"
+					tooltip="$ctrl.state.dataset.uploadingDataset ? ('COLLECTING_DATA' | translate: {datasetName : $ctrl.state.dataset.uploadingDataset.name}) : ''"/>
 				</pure-progress>`,
 	controller(state) {
 		'ngInject';

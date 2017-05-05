@@ -50,7 +50,7 @@ export default function UpdateWorkflowService(StateService, MessageService, Data
 				dataset.error = true;
 			})
 			.finally(function () {
-				StateService.finishUploadingDataset(dataset);
+				StateService.finishUploadingDataset();
 			});
 	};
 }

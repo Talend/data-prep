@@ -223,7 +223,7 @@ export default class ImportService {
 				dataset.error = true;
 			})
 			.finally(() => {
-				this.StateService.finishUploadingDataset(dataset);
+				this.StateService.finishUploadingDataset();
 			});
 	}
 

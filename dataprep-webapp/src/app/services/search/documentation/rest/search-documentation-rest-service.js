@@ -17,17 +17,7 @@ class SearchDocumentationRestService {
 		'ngInject';
 		this.$http = $http;
 		this.documentationSearchURL = documentationSearchURL;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name search
-	 * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
-	 * @description search documentation with keyword
-	 */
-	search(keyword) {
-		const parameters = {
-			query: keyword,
+		this.parameters = {
 			contentLocale: 'en',
 			filters: [
 				{
@@ -44,13 +34,24 @@ class SearchDocumentationRestService {
 				perPage: 5,
 			},
 		};
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name search
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
+	 * @description search documentation with keyword
+	 */
+	search(keyword) {
+		this.parameters.query = keyword;
 		return this.$http({
 			url: this.documentationSearchURL,
-			data: parameters,
+			data: this.parameters,
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			failSilently: true,
 		});
 	}
 }

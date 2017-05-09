@@ -30,7 +30,8 @@ class SearchDocumentationService {
 		return this.searchDocumentationRestService.search(keyword)
 			.then((response) => {
 				return response.data.results.map(this._createDocElement);
-			});
+			})
+			.catch(() => []);
 	}
 
 	/**

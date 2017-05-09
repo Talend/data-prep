@@ -24,24 +24,6 @@ describe('Search Documentation Rest Service', () => {
 		inject(($rootScope, SearchDocumentationRestService, documentationSearchURL) => {
 		// given
 		const keyword = 'chart';
-		const parameters = {
-			query: keyword,
-			contentLocale: 'en',
-			filters: [
-				{
-					key: 'version',
-					values: ['2.0'],
-				},
-				{
-					key: 'EnrichPlatform',
-					values: ['Talend Data Preparation'],
-				},
-			],
-			paging: {
-				page: 1,
-				perPage: 5,
-			},
-		};
 		const searchResults = {
 			results: [
 				{

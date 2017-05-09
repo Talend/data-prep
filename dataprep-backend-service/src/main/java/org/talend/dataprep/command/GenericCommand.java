@@ -189,7 +189,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         // insert all the provided headers in the request
         if (headers.size() > 0) {
-            headers.entrySet().forEach(entry -> request.addHeader(entry.getKey(), entry.getValue()));
+            headers.forEach(request::addHeader);
         }
         // update request header with security token
         if (StringUtils.isNotBlank(authenticationToken)) {

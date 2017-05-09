@@ -14,8 +14,13 @@
 package org.talend.dataprep.info;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.github.zafarkhaja.semver.ParseException;
 
 public class Version {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Version.class);
 
     private String versionId;
 
@@ -60,6 +65,18 @@ public class Version {
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
+
+    public static com.github.zafarkhaja.semver.Version fromInternal(Version internalVersion) {
+        String versionId = internalVersion.getVersionId();
+        final String versionAsString = StringUtils.substringBefore(versionId, "-");
+        try {
+            return com.github.zafarkhaja.semver.Version.valueOf(versionAsString);
+        } catch (IllegalArgumentException | ParseException e) {
+            LOGGER.info("Couldn't parse version {}. Message was: {}", versionId, e.getMessage());
+            return com.github.zafarkhaja.semver.Version.forIntegers(0);
+        }
+    }
+
 
     @Override
     public String toString() {

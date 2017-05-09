@@ -147,11 +147,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getDatasetByName(name) {
-		return $http(
-			{
-				url: `${RestURLs.searchUrl}?name=${encodeURIComponent(name)}&strict=true&filter=dataset`,
-				method: 'GET',
-			})
+		return $http.get(`${RestURLs.searchUrl}?name=${encodeURIComponent(name)}&strict=true&filter=datasets`)
             .then(resp => resp.data.datasets && resp.data.datasets[0]);
 	}
 

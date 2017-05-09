@@ -10,15 +10,17 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import template from './dataset-progress.html';
+
 const DatasetProgressComponent = {
-	template: `<pure-progress
-					id="dataset-progress-bar"
-					percent="$ctrl.state.dataset.uploadingDataset ? $ctrl.state.dataset.uploadingDataset.progress : 0"
-					tooltip="$ctrl.state.dataset.uploadingDataset ? ('COLLECTING_DATA' | translate: {datasetName : $ctrl.state.dataset.uploadingDataset.name}) : ''"/>
-				</pure-progress>`,
+	bindings: {
+		dataset: '=',
+	},
 	controller(state) {
 		'ngInject';
 		this.state = state;
 	},
+	templateUrl: template,
 };
 export default DatasetProgressComponent;

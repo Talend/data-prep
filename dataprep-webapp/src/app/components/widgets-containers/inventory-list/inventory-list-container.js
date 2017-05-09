@@ -19,13 +19,10 @@ import InventoryListCtrl from './inventory-list-controller';
  */
 const InventoryListContainer = {
 	template: `
-		<div class="dataset-upload-modal">
-			<dataset-upload-tile class="base-dataset-upload"
-				id="upload-base-dataset"
-				dataset="$ctrl.state.dataset.uploadingDataset">
-			</dataset-upload-tile>
+		<div class="dataset-upload-modal" ng-if="$ctrl.state.dataset.uploadingDataset">
+			<dataset-progress dataset="$ctrl.state.dataset.uploadingDataset">
+			</dataset-progress>
 		</div>
-
 		<div ng-if="false" class="fetch-loader">
 			<span class="fetch-loader-icon continuous-rotate"><icon name="'talend-dataprep'"></icon></span>
 			<span translate-once="LOADING"></span>

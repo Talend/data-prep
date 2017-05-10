@@ -20,7 +20,6 @@ export function DatasetStateService() {
         // uploading datasets
 		startUploadingDataset,
 		finishUploadingDataset,
-		reset,
 	};
 
     // --------------------------------------------------------------------------------------------
@@ -32,9 +31,5 @@ export function DatasetStateService() {
 
 	function finishUploadingDataset(dataset) {
 		datasetState.uploadingDatasets.splice(datasetState.uploadingDatasets.indexOf(dataset), 1);
-	}
-
-	function reset() {
-		datasetState.uploadingDatasets = [];
 	}
 }

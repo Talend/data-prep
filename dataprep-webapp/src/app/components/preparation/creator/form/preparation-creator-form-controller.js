@@ -14,7 +14,7 @@ import { PLAYGROUND_PREPARATION_ROUTE } from '../../../../index-route';
 
 export default class PreparationCreatorFormCtrl {
 	constructor($document, $state, $translate, state, StateService,
-				PreparationService, DatasetService, UploadWorkflowService) {
+				PreparationService, DatasetService, UploadWorkflowService, ImportService) {
 		'ngInject';
 
 		this.$document = $document;
@@ -24,6 +24,7 @@ export default class PreparationCreatorFormCtrl {
 		this.preparationService = PreparationService;
 		this.datasetService = DatasetService;
 		this.uploadWorkflowService = UploadWorkflowService;
+		this.importService = ImportService;
 
 		this.enteredFilterText = '';
 		this.filteredDatasets = [];
@@ -67,62 +68,45 @@ export default class PreparationCreatorFormCtrl {
 	 * @description imports the chosen dataset
 	 */
 	import() {
-		const file = this.datasetFile[0];
+		// const file = this.datasetFile[0];
 
-		// remove file extension and ask final name
-		let datasetName = file.name.replace(/\.[^/.]+$/, '');
-		this.importDisabled = true;
-		this.datasetService.checkNameAvailability(datasetName)
-			.catch(() => {
-				return this.datasetService.getUniqueName(datasetName)
-					.then((uniqueName) => {
-						datasetName = uniqueName;
-					});
-			})
-			.then(() => this._createDataset(file, datasetName))
-			.finally(() => {
-				this.importDisabled = false;
-			});
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name _createDataset
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
-	 * @description [PRIVATE] creates a dataset and manages the progress bar
-	 * @params {Object} file to create
-	 * @params {String} name of the dataset
-	 */
-	_createDataset(file, name) {
-		const params = {
-			datasetFile: '',
-			type: 'local',
-			name,
+		const defaultImport = {
+			locationType: 'local',
+			contentType: 'text/plain',
+			parameters: [
+				{
+					name: 'datasetFile',
+					type: 'file',
+					implicit: false,
+					canBeBlank: false,
+					placeHolder: '*.csv',
+					default: null,
+					description: 'File',
+					label: 'File',
+				},
+			],
+			dynamic: false,
+			defaultImport: true,
+			label: 'Local file',
+			title: 'Add local file dataset',
 		};
 
-		const dataset = this.datasetService.createDatasetInfo(file, name);
-		this.uploadingDatasets.push(dataset);
+		this.importService.importDatasetFile = this.datasetFile;
+		this.importService.currentInputType = defaultImport;
 
-		return this.datasetService.create(params, 'text/plain', file)
-			.progress((event) => {
-				dataset.progress = parseInt((100.0 * event.loaded) / event.total, 10);
-			})
-			.then((event) => {
-				return this.datasetService.getDatasetById(event.data)
-					.then((dataset) => {
-						this.uploadingDatasets = [];
-						this.baseDataset = dataset;
-						if (!this.userHasTypedName) {
-							this._getUniquePrepName();
-						}
+		const action = (dataset) => {
+			this.baseDataset = dataset;
+			if (!this.userHasTypedName) {
+				this._getUniquePrepName();
+			}
+			return this.createPreparation();
+		};
 
-						return this.createPreparation();
-					});
-			})
-			.catch(() => {
-				dataset.error = true;
-			});
+		this.importDisabled = true;
+		this.importService.import(defaultImport, action)
+			.finally(() => this.importDisabled = false);
 	}
+
 
 	/**
 	 * @ngdoc method

@@ -30,7 +30,6 @@ export default class PreparationCreatorFormCtrl {
 		this.filteredDatasets = [];
 		this.baseDataset = null;
 		this.userHasTypedName = false;
-		this.uploadingDatasets = [];
 		this.importDisabled = false;
 		this.isFetchingDatasets = false;
 		this.preparationSuffix = $translate.instant('PREPARATION');
@@ -68,8 +67,6 @@ export default class PreparationCreatorFormCtrl {
 	 * @description imports the chosen dataset
 	 */
 	import() {
-		// const file = this.datasetFile[0];
-
 		const defaultImport = {
 			locationType: 'local',
 			contentType: 'text/plain',
@@ -85,10 +82,6 @@ export default class PreparationCreatorFormCtrl {
 					label: 'File',
 				},
 			],
-			dynamic: false,
-			defaultImport: true,
-			label: 'Local file',
-			title: 'Add local file dataset',
 		};
 
 		this.importService.importDatasetFile = this.datasetFile;

@@ -17,6 +17,7 @@ import INVENTORY_ITEM_MODULE from '../../inventory/item/inventory-item-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../../services/dataset-workflow/dataset-workflow-module';
 import SERVICES_PREPARATION_MODULE from '../../../services/preparation/preparation-module';
+import SERVICES_IMPORT_MODULE from '../../../services/import/import-module';
 import SERVICES_UTILS_MODULE from '../../../services/utils/utils-module';
 
 import ThemeFiltersComponent from './theme-filters/theme-filters-component';
@@ -38,6 +39,7 @@ angular.module(MODULE_NAME,
 		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_PREPARATION_MODULE,
 		SERVICES_UTILS_MODULE,
+		SERVICES_IMPORT_MODULE,
 	])
 	.component('themeFilters', ThemeFiltersComponent)
     .component('preparationCreatorForm', PreparationCreatorFormComponent)

@@ -221,7 +221,7 @@ export default class ImportService {
 				return this.DatasetService.getDatasetById(event.data);
 			})
 			.then((data) => {
-				return this.currentPostImportAction(data);
+				return this.currentPostImportAction ? this.currentPostImportAction(data) : this.UploadWorkflowService.openDataset(data);
 			})
 			.catch(() => {
 				dataset.error = true;
@@ -247,13 +247,13 @@ export default class ImportService {
 
 		// remove file extension and ask final name
 		const name = datasetName.replace(/\.[^/.]+$/, '');
-		this.currentPostImportAction = postImportAction || this.UploadWorkflowService.openDataset;
+		this.currentPostImportAction = postImportAction;
 
 		return this.DatasetService
 			.checkNameAvailability(name)
 			// name available: we create the dataset
 			.then(() => {
-				return this.importDataset(file, name, importType, postImportAction);
+				return this.importDataset(file, name, importType);
 			})
 			// name is not available, we ask for a new name
 			.catch(() => {

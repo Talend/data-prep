@@ -421,6 +421,7 @@ describe('Import service', () => {
 
 			// when
 			ImportService.import(importTypes[0]);
+			uploadDefer.resolve({ data: dataset.id });
 			$rootScope.$apply();
 
 			// then
@@ -434,6 +435,7 @@ describe('Import service', () => {
 
 			// when
 			ImportService.import(importTypes[0]);
+			uploadDefer.resolve({ data: dataset.id });
 			$rootScope.$apply();
 
 			// then
@@ -450,10 +452,25 @@ describe('Import service', () => {
 
 			// when
 			ImportService.import(importTypes[0]);
+			uploadDefer.resolve({ data: dataset.id });
 			$rootScope.$apply();
 
 			// then
 			expect(StateService.hideImport).toHaveBeenCalled();
+		}));
+
+		it('should call a custom action after import', inject(($rootScope, $q, DatasetService, ImportService, StateService) => {
+			// given
+			spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.when());
+			const customAction = jasmine.createSpy('customAction');
+
+			// when
+			ImportService.import(importTypes[0], customAction);
+			uploadDefer.resolve({ data: dataset.id });
+			$rootScope.$apply();
+
+			// then
+			expect(customAction).toHaveBeenCalled();
 		}));
 	});
 

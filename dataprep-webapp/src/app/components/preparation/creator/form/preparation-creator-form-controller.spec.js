@@ -172,7 +172,6 @@ describe('Preparation Creator Form Controller', () => {
 				//when
 				ctrl.import();
 				scope.$digest();
-				uploadDefer.resolve({ data: dataset.id });
 
 				//then
 				expect(ImportService.datasetNameModal).toBeTruthy();
@@ -193,7 +192,6 @@ describe('Preparation Creator Form Controller', () => {
 				//when
 				ctrl.import();
 				scope.$digest();
-				uploadDefer.resolve({ data: dataset.id });
 
 				//then
 				expect(ImportService.import).toHaveBeenCalled();

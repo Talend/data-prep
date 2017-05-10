@@ -145,7 +145,7 @@ describe('Dataset Rest Service', () => {
 			let dataset = null;
 			const searchResult = {};
 			$httpBackend
-				.expectGET(`${RestURLs.searchUrl}?name=toto&strict=true&filter=dataset`)
+				.expectGET(`${RestURLs.searchUrl}?name=toto&strict=true&filter=datasets`)
 				.respond(200, searchResult);
 
 			//when

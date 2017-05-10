@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.service.command.dataset.SearchDataSets;
 import org.talend.dataprep.command.CommandHelper;
+import org.talend.dataprep.command.dataset.SearchDataSets;
 
 /**
  * A {@link SearchDelegate} implementation to search in datasets.

@@ -11,11 +11,13 @@
 
   ============================================================================*/
 
-// Utils scss only contains Variables, Functions, Mixins, ...
-
-@import "colors";
-@import "mixins";
-@import "menu_list";
-@import "animation";
-@import "onboarding";
-@import "watermark";
+.watermark {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}

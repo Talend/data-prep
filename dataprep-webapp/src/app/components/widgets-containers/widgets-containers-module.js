@@ -17,6 +17,7 @@ import AppHeaderBar from 'react-talend-components/lib/AppHeaderBar';
 import Breadcrumbs from 'react-talend-components/lib/Breadcrumbs';
 import CircularProgress from 'react-talend-components/lib/CircularProgress';
 import CollapsiblePanel from 'react-talend-components/lib/CollapsiblePanel';
+import HttpError from 'react-talend-components/lib/HttpError';
 import Icon from 'react-talend-components/lib/Icon';
 import IconsProvider from 'react-talend-components/lib/IconsProvider';
 import SidePanel from 'react-talend-components/lib/SidePanel';
@@ -56,6 +57,7 @@ angular.module(MODULE_NAME,
 	.directive('pureProgress', ['reactDirective', reactDirective => reactDirective(Progress)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('icon', ['reactDirective', reactDirective => reactDirective(Icon)])
+	.directive('httpError', ['reactDirective', reactDirective => reactDirective(HttpError)])
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)

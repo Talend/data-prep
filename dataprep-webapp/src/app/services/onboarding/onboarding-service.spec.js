@@ -12,6 +12,8 @@
  ============================================================================*/
 
 import {
+	HOME_403_ROUTE,
+	HOME_404_ROUTE,
 	HOME_DATASETS_ROUTE,
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
@@ -168,6 +170,32 @@ describe('Onboarding service', () => {
 
 		// then
 		expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
+	}));
+
+	it('should not start onboarding when 403', inject(($state, OnboardingService) => {
+		// given
+		$state.current = {
+			name: HOME_403_ROUTE,
+		};
+
+		// when
+		OnboardingService.startTour('preparation');
+
+		// then
+		expect($state.go).not.toHaveBeenCalled();
+	}));
+
+	it('should not start onboarding when 404', inject(($state, OnboardingService) => {
+		// given
+		$state.current = {
+			name: HOME_404_ROUTE,
+		};
+
+		// when
+		OnboardingService.startTour('preparation');
+
+		// then
+		expect($state.go).not.toHaveBeenCalled();
 	}));
 
 	it('should redirect to "preparations" before starting onboarding', inject(($state, OnboardingService) => {

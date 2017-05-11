@@ -12,7 +12,9 @@
  ============================================================================*/
 
 import angular from 'angular';
+
 import EASTER_EGG_MODULE from '../easter-eggs/easter-eggs-module';
+import ERRORS_MODULE from '../error/error-module';
 import FEEDBACK_MODULE from '../feedback/feedback-module';
 import UPGRADE_VERSION_MODULE from '../upgrade-version/upgrade-version-module';
 import WIDGET_CONTAINERS from '../widgets-containers/widgets-containers-module';
@@ -24,6 +26,7 @@ const MODULE_NAME = 'data-prep.app';
 angular.module(MODULE_NAME,
 	[
 		EASTER_EGG_MODULE,
+		ERRORS_MODULE,
 		FEEDBACK_MODULE,
 		UPGRADE_VERSION_MODULE,
 		WIDGET_CONTAINERS,

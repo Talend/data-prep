@@ -25,6 +25,7 @@ import SERVICES_DATASET_MODULE from './services/dataset/dataset-module';
 import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_STATE_MODULE from './services/state/state-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
+import SERVICES_ERRORS_MODULE from './services/errors/errors-module';
 import SETTINGS_MODULE from './settings/settings-module';
 
 import { routeConfig, routeInterceptor } from './index-route';
@@ -44,6 +45,7 @@ const app = angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE, // configuration: register constants (version, ...)
 		SETTINGS_MODULE, // configuration: get app settings
+		SERVICES_ERRORS_MODULE, // routing: common http errors management
 		HOME_MODULE, // routing: home components
 		PLAYGROUND_MODULE, // routing: playground component
 		APP_MODULE, // bootstrap: app root

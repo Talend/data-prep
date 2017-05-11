@@ -185,7 +185,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 					fetchStatistics.call(this);
 				}
 			})
-			.catch(() => errorGoBack(true, { type: 'dataset' }))
+			.catch(errorGoBack)
 			.finally(stopLoader);
 	}
 
@@ -219,7 +219,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 					fetchStatistics.call(this);
 				}
 			})
-			.catch(() => errorGoBack(true, { type: 'preparation' }))
+			.catch(errorGoBack)
 			.finally(stopLoader);
 	}
 
@@ -839,9 +839,10 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @name errorGoBack
 	 * @description go back to homePage when errors occur
 	 */
-	function errorGoBack(errorDisplay, errorOptions) {
-		if (errorDisplay) {
-			MessageService.error('PLAYGROUND_FILE_NOT_FOUND_TITLE', 'PLAYGROUND_FILE_NOT_FOUND', errorOptions);
+	function errorGoBack(err) {
+		const { status } = err;
+		if (status && [403, 404].includes(status)) {
+			return;
 		}
 		$state.go(state.route.previous, state.route.previousOptions);
 	}
@@ -870,10 +871,8 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			})
 			.then(preparation => DatasetService.getMetadata(preparation.dataSetId))
 			.then(dataset => StateService.setCurrentDataset(dataset))
-			.catch(() => {
-				stopLoader();
-				return errorGoBack(false);
-			});
+			.catch(errorGoBack)
+			.finally(stopLoader);
 	}
 
 	/**

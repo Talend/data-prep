@@ -11,6 +11,11 @@
 
  ============================================================================*/
 
+import {
+	HOME_403_ROUTE,
+	HOME_404_ROUTE,
+} from '../../index-route';
+
 describe('Home controller', () => {
 	let scope;
 	let createController;
@@ -29,7 +34,7 @@ describe('Home controller', () => {
 	describe('onboarding', () => {
 		it('should start onboarding', inject(($timeout, OnboardingService) => {
 			// given
-			$stateMock = { params: {} };
+			$stateMock = { params: {}, current: { name: '' } };
 			const ctrl = createController($stateMock);
 
 			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
@@ -44,7 +49,7 @@ describe('Home controller', () => {
 
 		it('should NOT start onboarding when a prepId is provided', inject(($timeout, OnboardingService) => {
 			// given
-			$stateMock = { params: { prepid: '123b9ca6749a75' } };
+			$stateMock = { params: { prepid: '123b9ca6749a75' }, current: { name: '' } };
 			const ctrl = createController($stateMock);
 
 			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
@@ -59,7 +64,7 @@ describe('Home controller', () => {
 
 		it('should NOT start onboarding when a datasetId is provided', inject(($timeout, OnboardingService) => {
 			// given
-			$stateMock = { params: { datasetid: '123b9ca6749a75' } };
+			$stateMock = { params: { datasetid: '123b9ca6749a75' }, current: { name: '' } };
 			const ctrl = createController($stateMock);
 
 			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
@@ -74,10 +79,40 @@ describe('Home controller', () => {
 
 		it('should NOT start onboarding when it is not required anymore', inject(($timeout, OnboardingService) => {
 			// given
-			$stateMock = { params: {} };
+			$stateMock = { params: {}, current: { name: '' } };
 			const ctrl = createController($stateMock);
 
 			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(false);
+
+			// when
+			ctrl.$onInit();
+			$timeout.flush();
+
+			// then
+			expect(OnboardingService.startTour).not.toHaveBeenCalled();
+		}));
+
+		it('should NOT start onboarding when 403', inject(($timeout, OnboardingService) => {
+			// given
+			$stateMock = { params: { datasetid: '123b9ca6749a75' }, current: { name: HOME_403_ROUTE } };
+			const ctrl = createController($stateMock);
+
+			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
+
+			// when
+			ctrl.$onInit();
+			$timeout.flush();
+
+			// then
+			expect(OnboardingService.startTour).not.toHaveBeenCalled();
+		}));
+
+		it('should NOT start onboarding when 404', inject(($timeout, OnboardingService) => {
+			// given
+			$stateMock = { params: { datasetid: '123b9ca6749a75' }, current: { name: HOME_404_ROUTE } };
+			const ctrl = createController($stateMock);
+
+			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
 
 			// when
 			ctrl.$onInit();
@@ -90,7 +125,7 @@ describe('Home controller', () => {
 
 	it('should configure side panel', inject((OnboardingService, StorageService, StateService) => {
 		// given
-		$stateMock = { params: {} };
+		$stateMock = { params: {}, current: { name: '' } };
 		const ctrl = createController($stateMock);
 
 		spyOn(OnboardingService, 'shouldStartTour').and.returnValue(false);

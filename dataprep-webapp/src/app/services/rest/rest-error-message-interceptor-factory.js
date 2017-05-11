@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+const excludedErrorCodes = [403, 404];
+
 /**
  * @ngdoc service
  * @name data-prep.services.rest.service:RestErrorMessageHandler
@@ -18,16 +20,23 @@
  * @requires data-prep.services.utils.service:MessageService
  */
 export default function RestErrorMessageHandler($q, MessageService) {
-	'ngInject';
+	/**
+	 * Dedicated pages instead of toast for certain error codes
+	 * @param errorCode http error code to test
+	 * @returns {boolean}
+	 */
+	function isExcluded(errorCode) {
+		return excludedErrorCodes.includes(errorCode);
+	}
 
 	return {
-        /**
-         * @ngdoc method
-         * @name responseError
-         * @methodOf data-prep.services.rest.service:RestErrorMessageHandler
-         * @param {object} rejection - the rejected promise
-         * @description Display the error message depending on the error status and error code
-         */
+		/**
+		 * @ngdoc method
+		 * @name responseError
+		 * @methodOf data-prep.services.rest.service:RestErrorMessageHandler
+		 * @param {object} rejection - the rejected promise
+		 * @description Display the error message depending on the error status and error code
+		 */
 		responseError(rejection) {
 			const config = rejection.config;
 
@@ -42,7 +51,7 @@ export default function RestErrorMessageHandler($q, MessageService) {
 			else if (rejection.status === 500) {
 				MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 			}
-			else if (rejection.data && rejection.data.messageTitle && rejection.data.message) {
+			else if (!isExcluded(rejection.status) && rejection.data && rejection.data.messageTitle && rejection.data.message) {
 				MessageService.error(rejection.data.messageTitle, rejection.data.message);
 			}
 

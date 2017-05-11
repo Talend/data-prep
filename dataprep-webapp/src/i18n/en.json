@@ -227,8 +227,6 @@
   "_comment": "Errors",
   "INVALID_DATASET_TITLE": "Invalid dataset",
   "INVALID_DATASET": "This dataset is not valid. Please import a correct CSV file to overwrite the data.",
-  "PLAYGROUND_FILE_NOT_FOUND_TITLE": "{{type}} load error",
-  "PLAYGROUND_FILE_NOT_FOUND": "The {{type}} with this id does not exist or is not accessible.",
   "PREPARATION_STEP_DELETE_MODE_NOT_AUTHORIZED_TITLE": "Delete action not authorized",
   "PREPARATION_STEP_DELETE_MODE_NOT_AUTHORIZED": "This action cannot be deleted because some following actions depends on it.",
   "GENERIC_ERROR": "Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation.",
@@ -409,5 +407,9 @@
   "SERVICE_NAME": "SERVICE",
   "BUILD_ID": "BUILD ID",
   "VERSION_ID": "VERSION ID",
-  "VERSION": "VERSION"
+  "VERSION": "VERSION",
+
+  "_comment": "404",
+  "ERROR_404_TITLE": "Oops ...",
+  "ERROR_404_MESSAGE": "The page you are looking for cannot be found"
 }

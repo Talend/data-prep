@@ -26,18 +26,15 @@ import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
-import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StandalonePreparationFactoryTest {
 
@@ -646,15 +643,13 @@ public class StandalonePreparationFactoryTest {
     @Test
     public void TDP_3518() throws Exception {
         // Given
-        StandalonePreparation standalonePreparation = new StandalonePreparation();
-
-        // When
-        String standalonePreparationJson = mapper.writeValueAsString(standalonePreparation);
-
-        // Then
-        ObjectNode objectNode = mapper.reader(ObjectNode.class).readValue(standalonePreparationJson);
-        String prep = objectNode.get("filterOut").asText();
-        Assert.assertEquals("", prep);
+        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
+        final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("empty_filter.json")) {
+            StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
+            function = recipeFunctionFactory.create(dataSetStream);
+        }
     }
 
     private static void assertSerializable(Function<IndexedRecord, IndexedRecord> function) {

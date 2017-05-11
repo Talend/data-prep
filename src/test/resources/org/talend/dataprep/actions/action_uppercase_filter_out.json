@@ -19,10 +19,5 @@
       }
     }
   ],
-  "filterOut": {
-    "eq": {
-      "field": "0000",
-      "value": "STRING"
-    }
-  }
+  "filterOut": "{\"eq\": {\"field\": \"0000\",\"value\": \"STRING\"}}"
 }

@@ -194,7 +194,8 @@ public class DataSetService extends BaseDataSetService {
                 predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
             }
             if (!StringUtils.isEmpty(name)) {
-                predicates.add("name contains '" + name + "'");
+                final String regex = "(?i)" + name;
+                predicates.add("name ~ '^.*" + regex + ".*$'");
             }
             final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
             LOG.debug("TQL Filter in use: {}", tqlFilter);

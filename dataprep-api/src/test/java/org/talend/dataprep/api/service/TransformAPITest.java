@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
@@ -17,6 +16,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -30,8 +30,14 @@ import org.apache.lucene.store.Directory;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
+import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
+import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,6 +49,11 @@ import com.jayway.restassured.response.Response;
  */
 public class TransformAPITest extends ApiServiceTestBase {
 
+    @Autowired
+    private ContentCache contentCache;
+
+    @Autowired
+    private CacheKeyGenerator cacheKeyGenerator;
 
     @Test
     public void testTransformOneAction() throws Exception {
@@ -385,5 +396,32 @@ public class TransformAPITest extends ApiServiceTestBase {
         assertNotNull(dictionaryDirectory);
         final Directory keywordDirectory = serviceDictionary.getKeyword().get(); // Test Lucene directory creation.
         assertNotNull(keywordDirectory);
+    }
+
+    @Test
+    public void testShouldEvictPreparationCacheOnDataSetUpdate() throws Exception {
+        // given
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-2165.csv", "testDataset",
+                "text/csv", home.getId());
+        testClient.applyAction(preparationId,
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), UTF_8));
+        given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/content?version=head", preparationId)
+                .asString();
+
+        final Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
+        final TransformationCacheKey transformationCacheKey = cacheKeyGenerator.generateContentKey(preparation.getDataSetId(), //
+                preparationId, //
+                preparation.getHeadId(), //
+                "JSON", //
+                HEAD);
+        assertTrue(contentCache.has(transformationCacheKey));
+
+        // when
+        context.publishEvent(new DataSetMetadataBeforeUpdateEvent(dataSetMetadataRepository.get(preparation.getDataSetId())));
+
+        // then
+        assertFalse(contentCache.has(transformationCacheKey));
     }
 }

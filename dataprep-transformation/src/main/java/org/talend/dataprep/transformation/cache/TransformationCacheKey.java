@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,14 +12,14 @@
 
 package org.talend.dataprep.transformation.cache;
 
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.ContentCacheKey;
-
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * Content cache key used to cache transformation.
@@ -101,13 +100,28 @@ public class TransformationCacheKey implements ContentCacheKey {
      */
     @Override
     public String getKey() {
-        return "transformation_" + preparationId + "_"
-                + DigestUtils.sha1Hex(datasetId + stepId + format + Objects.hash(parameters) + sourceType + userId);
+        return "transformation_" + preparationId + "_" + datasetId + "_"
+                + DigestUtils.sha1Hex(stepId + format + Objects.hash(parameters) + sourceType + userId);
     }
 
     @Override
     public Predicate<String> getMatcher() {
-        final String regex = "transformation_" + preparationId + "_.*";
+        // Build a regular expression using transformation and dataset ids.
+        String regex = "transformation_";
+        if (preparationId == null) {
+            regex += ".*";
+        } else {
+            regex += preparationId;
+        }
+        regex += "_";
+        if (datasetId == null) {
+            regex += ".*";
+        } else {
+            regex += datasetId;
+        }
+        regex += "_.*";
+
+        // Build regular expression matcher
         final Pattern pattern = Pattern.compile(regex);
         return str -> pattern.matcher(str).matches();
     }

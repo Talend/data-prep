@@ -1,28 +1,24 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.cache;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import org.junit.Test;
 import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.transformation.TransformationBaseTest;
 
 /**
  * Unit test for the TransformationCacheKey.
@@ -73,20 +69,22 @@ public class TransformationCacheKeyTest {
         final String keyStr = key.getKey();
 
         // then
-        assertThat(keyStr, is("transformation_prep1_223ec8d45bd185281992fae16a612fb60a9a0d16"));
+        assertThat(keyStr, is("transformation_prep1_dataset1_b6aa01425c31e1eed71d0c3cbc7763aad865d1b1"));
     }
 
     @Test
     public void getMatcher_should_return_matcher_for_partial_key() throws Exception {
         // given
         final ContentCacheKey prepKey = new TransformationCacheKey("prep1", null, null, null, null, null, null);
-
+        final ContentCacheKey dataSetKey = new TransformationCacheKey(null, "dataset1", null, null, null, null, null);
         final ContentCacheKey matchingKey = new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1");
         final ContentCacheKey nonMatchingKey = new TransformationCacheKey("prep2", "dataset2", "XLS", "step2", "param2", FILTER, "user2");
 
         // when / then
         assertThat(prepKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(dataSetKey.getMatcher().test(matchingKey.getKey()), is(true));
         assertThat(prepKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(dataSetKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
     }
 
     private TransformationCacheKey createTestDefaultKey() {

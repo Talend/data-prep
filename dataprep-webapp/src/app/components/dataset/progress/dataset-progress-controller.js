@@ -18,14 +18,17 @@ export default class DatasetProgressCtrl {
 	}
 
 	get isUploading() {
-		return !!this.state.dataset.uploadingDataset;
+		const state = this.state.dataset;
+		return !!(state && state.uploadingDataset);
 	}
 
 	get progression() {
-		return this.state.dataset.uploadingDataset && this.state.dataset.uploadingDataset.progress;
+		const state = this.state.dataset;
+		return state.uploadingDataset ? state.uploadingDataset.progress : 0;
 	}
 
 	get isUploadComplete() {
-		return this.state.dataset.uploadingDataset && this.state.dataset.uploadingDataset.progress === 100;
+		const state = this.state.dataset;
+		return !!(state.uploadingDataset && state.uploadingDataset.progress === 100);
 	}
 }

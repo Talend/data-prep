@@ -11,11 +11,21 @@
 
  ============================================================================*/
 
-import template from './dataset-progress.html';
-import DatasetProgressCtrl from './dataset-progress-controller';
+export default class DatasetProgressCtrl {
+	constructor(state) {
+		'ngInject';
+		this.state = state;
+	}
 
-const DatasetProgressComponent = {
-	controller: DatasetProgressCtrl,
-	templateUrl: template,
-};
-export default DatasetProgressComponent;
+	get isUploading() {
+		return !!this.state.dataset.uploadingDataset;
+	}
+
+	get progression() {
+		return this.state.dataset.uploadingDataset && this.state.dataset.uploadingDataset.progress;
+	}
+
+	get isUploadComplete() {
+		return this.state.dataset.uploadingDataset && this.state.dataset.uploadingDataset.progress === 100;
+	}
+}

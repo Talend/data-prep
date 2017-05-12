@@ -11,53 +11,80 @@
 
   ============================================================================*/
 
-dataset-progress {
-    background: rgba(255, 255, 255, 0.6);
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 999;
+$white-background: rgba(255, 255, 255, 0.7);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
 
-    > div {
-        border: 1px solid black;
-        background-color: white;
-        width: 800px;
-        height: 200px;
+#dataset-progress-modal {
+	.modal {
+		// modal style & reset
+		.modal-window {
+			background: $white-background;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
-        > ol.steps-list {
-            counter-reset: steps;
+			.modal-content {
+				box-shadow: none;
+				border: none;
+			}
+		}
 
-            li {
-                list-style-type: none;
-                counter-increment: steps;
-                margin-bottom: 10px;
 
-                &:before {
-                    content: counter(steps) ".";
-                    border-radius: 60px;
-                    font-weight: bold;
-                    margin-right: 5px;
-                }
-            }
-        }
+		.modal-content {
+			padding: 0;
+			width: 40%;
+			text-align: center;
+			background-color: white;
+			height: 130px;
 
-        > .progress {
-            border-radius: 0;
-            width: 100%;
-            height: 4px;
-            background-color: $light-gray;
-            box-shadow: inherit;
+			h1 {
+				font-size: 14px;
+				width: 100%;
+				text-align: center;
+				font-weight: bold;
+			}
 
-            > .progression {
-                height: 100%;
-                background-color: $green;
-                transition: width .3s;
-            }
-        }
-    }
+			ol.steps-list {
+				counter-reset: steps;
+				margin-bottom: 20px;
+				padding: 0;
+
+				li {
+					list-style-type: none;
+					counter-increment: steps;
+					margin-bottom: 10px;
+
+					&:before {
+						content: counter(steps) ".";
+						border-radius: 60px;
+						font-weight: bold;
+						margin-right: 5px;
+					}
+
+					span {
+						padding-right: 100px;
+					}
+					icon, pure-circular-progress {
+						margin-left: -1.6rem;
+					}
+				}
+			}
+
+
+			.progress {
+				border-radius: 0;
+				width: 100%;
+				height: 4px;
+				background-color: $light-gray;
+				box-shadow: inherit;
+				margin-bottom: 10px;
+
+				> .progression {
+					height: 100%;
+					background-color: $green;
+					transition: width .3s;
+				}
+			}
+		}
+	}
 }

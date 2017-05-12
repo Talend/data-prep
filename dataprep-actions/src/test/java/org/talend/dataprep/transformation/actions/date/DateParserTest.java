@@ -104,7 +104,8 @@ public class DateParserTest extends BaseDateTest {
     @Test
     public void shouldComputePatternFromDQ() {
         final ColumnMetadata column = ActionMetadataTestUtils.getColumn(Type.DATE);
-        assertEquals(new DatePattern("d/M/yyyy", 1), action.guessPattern("01/02/2015", column));
+        assertEquals(new DatePattern("dd/MM/yyyy", 1), action.guessPattern("01/02/2015", column));
+        assertEquals(new DatePattern("d/M/yyyy", 1), action.guessPattern("1/2/2015", column));
         assertEquals(new DatePattern("yyyy-MM-dd", 1), action.guessPattern("2015-01-02", column));
         assertEquals(new DatePattern("9999", 1), action.guessPattern("2015", column));
         assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("July 14 2015", column));
@@ -140,6 +141,6 @@ public class DateParserTest extends BaseDateTest {
         // then
         final List<PatternFrequency> actual = column.getStatistics().getPatternFrequencies();
         assertEquals(2, actual.size());
-        assertEquals(new PatternFrequency("d/M/yyyy", 1), actual.get(1));
+        assertEquals(new PatternFrequency("dd/MM/yyyy", 1), actual.get(1));
     }
 }

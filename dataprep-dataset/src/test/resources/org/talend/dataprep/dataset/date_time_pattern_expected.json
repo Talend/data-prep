@@ -33,10 +33,6 @@
   ],
   "patternFrequencyTable": [
     {
-      "pattern": "d/M/yyyy H:mm:ss",
-      "occurrences": 5
-    },
-    {
       "pattern": "dd/MM/yyyy HH:mm:ss",
       "occurrences": 5
     },
@@ -49,20 +45,24 @@
       "occurrences": 5
     },
     {
-      "pattern": "M/d/yyyy HH:mm:ss",
+      "pattern": "MM/dd/yyyy H:mm:ss",
       "occurrences": 5
+    },
+    {
+      "pattern": "d/M/yyyy H:mm:ss",
+      "occurrences": 2
+    },
+    {
+      "pattern": "M/d/yyyy HH:mm:ss",
+      "occurrences": 2
     },
     {
       "pattern": "M/d/yyyy H:mm:ss",
-      "occurrences": 5
+      "occurrences": 2
     },
     {
       "pattern": "d/M/yyyy HH:mm:ss",
-      "occurrences": 5
-    },
-    {
-      "pattern": "MM/dd/yyyy H:mm:ss",
-      "occurrences": 5
+      "occurrences": 2
     }
   ],
   "quantiles": {

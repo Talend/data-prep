@@ -64,12 +64,38 @@ $white-background: rgba(255, 255, 255, 0.7);
 					span {
 						padding-right: 100px;
 					}
-					icon, pure-circular-progress {
+					.complete-icon {
+						color: $green;
+					}
+					.progress-icon {
+						color: $blue;
+					}
+					.complete-icon, .progress-icon {
 						margin-left: -1.6rem;
+						visibility: hidden;
+					}
+
+
+					&.future {
+						opacity: .5;
+					}
+
+					&.in-progress {
+						.progress-icon {
+							visibility: visible;
+						}
+						> span:after {
+							content: " ...";
+						}
+					}
+
+					&.complete {
+						.complete-icon {
+							visibility: visible;
+						}
 					}
 				}
 			}
-
 
 			.progress {
 				border-radius: 0;

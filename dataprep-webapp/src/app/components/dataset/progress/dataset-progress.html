@@ -4,21 +4,21 @@
         state="$ctrl.isUploading"
         disable-enter="true">
 
-        <h1>Add new data set</h1>
+        <h1 translate-once="ADD_NEW_DATASET"></h1>
 
     	<div class="progress">
     		<div style="width: {{ $ctrl.progression }}%" class="progression"></div>
     	</div>
 
         <ol class="steps-list">
-    		<li ng-switch="$ctrl.isUploadComplete">
-                <span>Uploading file</span>
-                <icon ng-switch-when="true" name="'talend-check'"/>
-                <pure-circular-progress ng-switch-default></pure-circular-progress>
+    		<li class="upload-step" ng-class="{'in-progress': !$ctrl.isUploadComplete, 'complete': $ctrl.isUploadComplete}">
+                <span translate-once="UPLOADING_FILE"></span>
+                <icon class="complete-icon" name="'talend-check'"/>
+                <pure-circular-progress class="progress-icon"></pure-circular-progress>
             </li>
-    		<li ng-if="$ctrl.isUploadComplete">
-                <span>Profiling data ...</span>
-                <pure-circular-progress ng-if="$ctrl.isUploadComplete"></pure-circular-progress>
+    		<li class="processing-step" ng-class="{'in-progress': $ctrl.isUploadComplete, 'future': !$ctrl.isUploadComplete}">
+                <span translate-once="PROFILING_DATA"></span>
+                <pure-circular-progress class="progress-icon"></pure-circular-progress>
             </li>
     	</ol>
 </talend-modal>

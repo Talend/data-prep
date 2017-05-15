@@ -53,10 +53,10 @@ describe('Dataset Progress component', () => {
 
 			// then
 			expect(element.find('.upload-step').hasClass('in-progress')).toBe(true);
-			expect(element.find('.processing-step').hasClass('future')).toBe(true);
+			expect(element.find('.profiling-step').hasClass('future')).toBe(true);
 		}));
 
-		it('should indicates an in progress processing', inject(function ($rootScope) {
+		it('should indicates an in progress profiling', inject(function ($rootScope) {
 			// given
 			stateMock.dataset.uploadingDataset = { id: 'mock', name: 'Mock', progress: 100 };
 
@@ -65,7 +65,7 @@ describe('Dataset Progress component', () => {
 
 			// then
 			expect(element.find('.upload-step').hasClass('complete')).toBe(true);
-			expect(element.find('.processing-step').hasClass('in-progress')).toBe(true);
+			expect(element.find('.profiling-step').hasClass('in-progress')).toBe(true);
 		}));
 	});
 });

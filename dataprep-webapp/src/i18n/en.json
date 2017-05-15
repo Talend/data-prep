@@ -188,7 +188,7 @@
 
   "_comment": "Import a remote dataset",
   "ENTER_HTTP_DATASET_URL": "Enter the HTTP dataset URL",
-  "ADD_NEW_DATASET": "Add new data set",
+  "ADD_NEW_DATASET": "Add new dataset",
   "UPLOADING_FILE": "Uploading file",
   "PROFILING_DATA": "Processing data",
 

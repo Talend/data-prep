@@ -109,7 +109,6 @@ export default class PreparationCreatorFormCtrl {
 			.then((event) => {
 				return this.datasetService.getDatasetById(event.data)
 					.then((dataset) => {
-						this.stateService.finishUploadingDataset();
 						this.baseDataset = dataset;
 						if (!this.userHasTypedName) {
 							this._getUniquePrepName();
@@ -120,6 +119,9 @@ export default class PreparationCreatorFormCtrl {
 			})
 			.catch(() => {
 				dataset.error = true;
+			})
+			.finally(() => {
+				this.stateService.finishUploadingDataset();
 			});
 	}
 

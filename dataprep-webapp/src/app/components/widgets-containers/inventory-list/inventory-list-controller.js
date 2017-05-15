@@ -189,7 +189,7 @@ export default class InventoryListCtrl {
 			icon: actionSettings.icon,
 			label: actionSettings.name,
 			bsStyle: actionSettings.bsStyle,
-			tooltipLabel: actionSettings.toolTip ? actionSettings.toolTip : actionSettings.name,
+			tooltipLabel: actionSettings.toolTip || actionSettings.name,
 		};
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;

@@ -26,6 +26,8 @@ import java.util.Arrays;
 
 public class DateManipulator implements Serializable {
 
+    private DateManipulator() {}
+
     /**
      * Supported pace for date ranges
      */
@@ -71,7 +73,7 @@ public class DateManipulator implements Serializable {
      * @param maxNumberOfParts The maximum number of parts
      * @return The suitable pace to use in the range
      */
-    public DateManipulator.Pace getSuitablePace(final LocalDateTime min, final LocalDateTime max, final int maxNumberOfParts) {
+    public static DateManipulator.Pace getSuitablePace(final LocalDateTime min, final LocalDateTime max, final int maxNumberOfParts) {
         final long allRangeTimetamp = Duration.between(min, max).toMillis();
         return Arrays.stream(Pace.values()).filter(pace -> (allRangeTimetamp / pace.getTime()) < (maxNumberOfParts - 1))
                 .findFirst().orElse(null);
@@ -97,7 +99,7 @@ public class DateManipulator implements Serializable {
      * @param pace The pace representing the range
      * @return The starting range date
      */
-    public LocalDateTime getSuitableStartingDate(final LocalDateTime date, final DateManipulator.Pace pace) {
+    public static LocalDateTime getSuitableStartingDate(final LocalDateTime date, final DateManipulator.Pace pace) {
         switch (pace) {
         case CENTURY:
             return getFirstDayOfCentury(date);
@@ -125,7 +127,7 @@ public class DateManipulator implements Serializable {
      * @param pace The pace to add
      * @return The day = localDate + pace
      */
-    public LocalDateTime getNext(final LocalDateTime localDate, final Pace pace) {
+    public static LocalDateTime getNext(final LocalDateTime localDate, final Pace pace) {
         switch (pace) {
             case CENTURY:
                 return localDate.plus(100, ChronoUnit.YEARS);
@@ -154,7 +156,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date century
      */
-    private LocalDateTime getFirstDayOfCentury(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfCentury(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final int year = localDate.getYear() / 100 * 100;
             return LocalDate.from(temporal).withYear(year).atStartOfDay().with(TemporalAdjusters.firstDayOfYear());
@@ -167,7 +169,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date decade
      */
-    private LocalDateTime getFirstDayOfDecade(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfDecade(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final int year = localDate.getYear() / 10 * 10;
             return LocalDate.from(temporal).withYear(year).atStartOfDay().with(TemporalAdjusters.firstDayOfYear());
@@ -180,7 +182,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date year
      */
-    private LocalDateTime getFirstDayOfYear(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfYear(final LocalDateTime localDate) {
         return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfYear()));
     }
 
@@ -190,7 +192,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date half year
      */
-    private LocalDateTime getFirstDayOfHalfYear(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfHalfYear(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final Month semesterMonth = localDate.getMonth().getValue() < JULY.getValue() ? JANUARY : JULY;
             return LocalDate.from(temporal).withMonth(semesterMonth.getValue()).atStartOfDay()
@@ -204,7 +206,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date quarter
      */
-    private LocalDateTime getFirstDayOfQuarter(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfQuarter(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             int currentQuarter = YearMonth.from(temporal).get(QUARTER_OF_YEAR);
             switch (currentQuarter) {
@@ -229,7 +231,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date month
      */
-    private LocalDateTime getFirstDayOfMonth(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfMonth(final LocalDateTime localDate) {
         return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfMonth()));
     }
 
@@ -239,7 +241,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The first day of the date week
      */
-    private LocalDateTime getFirstDayOfWeek(final LocalDateTime localDate) {
+    private static LocalDateTime getFirstDayOfWeek(final LocalDateTime localDate) {
         return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(DayOfWeek.MONDAY));
     }
 
@@ -249,7 +251,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The reference date
      * @return The start of the provided date
      */
-    private LocalDateTime getStartOfDay(final LocalDateTime localDate) {
+    private static LocalDateTime getStartOfDay(final LocalDateTime localDate) {
         return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay());
     }
 
@@ -259,7 +261,7 @@ public class DateManipulator implements Serializable {
      * @param localDate The date to convert
      * @return The UTC epoch milliseconds
      */
-    public long getUTCEpochMilliseconds(final LocalDateTime localDate) {
+    public static long getUTCEpochMilliseconds(final LocalDateTime localDate) {
         return localDate.toEpochSecond(ZoneOffset.UTC) * 1000;
     }
 
@@ -270,7 +272,7 @@ public class DateManipulator implements Serializable {
      * @param epochMillis The epoch time in milliseconds
      * @return The local date that correspond to the epoch milliseconds minus the system offset
      */
-    public LocalDateTime fromEpochMillisecondsWithSystemOffset(final long epochMillis) {
+    public static LocalDateTime fromEpochMillisecondsWithSystemOffset(final long epochMillis) {
         // get the offset at the time
         final ZonedDateTime referenceUTC = ZonedDateTime.ofInstant(ofEpochMilli(epochMillis), systemDefault());
         final long offsetMillis = referenceUTC.getOffset().getTotalSeconds() * 1000;

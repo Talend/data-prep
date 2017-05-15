@@ -144,6 +144,9 @@ public class FileSystemFolderRepository implements FolderRepository {
     public Folder getFolderById(String folderId) {
         final FolderPath folderDpPath = fromId(folderId);
         final Path folderPath = pathsConverter.toPath(folderDpPath);
+        if (!Files.exists(folderPath)) {
+            return null;
+        }
         return toFolder(folderPath, security.getUserId());
     }
 

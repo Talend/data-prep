@@ -147,6 +147,15 @@ public class FolderServiceTest extends BasePreparationTest {
     }
 
     @Test
+    public void folderNotFoundShouldThrow404() {
+        // when
+        given() //
+                .expect().statusCode(404).log().ifError()//
+                .when() //
+                .get("/folders/mlkjmlkjmlkj");
+    }
+
+    @Test
     public void shouldRenameFolderAndItsChildren() throws Exception {
         // given
         createFolder(home.getId(), "foo");

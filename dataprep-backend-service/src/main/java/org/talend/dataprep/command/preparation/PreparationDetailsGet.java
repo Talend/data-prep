@@ -17,7 +17,6 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 import java.io.InputStream;
@@ -56,9 +55,6 @@ public class PreparationDetailsGet extends GenericCommand<InputStream> {
         super(PREPARATION_GROUP);
         execute(() -> onExecute(preparationId, stepId));
         on(HttpStatus.NO_CONTENT).then(emptyStream());
-        on(HttpStatus.NOT_FOUND).then((req, resp) -> {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
-        });
         on(HttpStatus.OK).then(pipeStream());
         onError(e -> new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId)));
     }

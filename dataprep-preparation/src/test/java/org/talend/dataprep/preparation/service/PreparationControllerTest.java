@@ -790,6 +790,14 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(response.asString(), sameJSONAs(expected).allowingExtraUnexpectedFields());
     }
 
+    @Test
+    public void preparationNotFoundShouldSend404() {
+        given() //
+                .when() //
+                .expect().statusCode(404).log().ifError() //
+                .get("/preparations/{id}", "should_not_be_found");
+    }
+
     // ------------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------LIFECYCLE----------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------

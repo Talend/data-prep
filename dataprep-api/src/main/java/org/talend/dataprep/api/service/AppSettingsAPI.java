@@ -15,8 +15,9 @@ package org.talend.dataprep.api.service;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.concurrent.Callable;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.service.settings.AppSettings;
@@ -26,13 +27,10 @@ import org.talend.dataprep.security.PublicAPI;
 
 import io.swagger.annotations.ApiOperation;
 
-import java.util.concurrent.Callable;
-
 /**
  * App settings API
  */
 @RestController
-@Scope("request")
 public class AppSettingsAPI extends APIService {
 
     @Autowired

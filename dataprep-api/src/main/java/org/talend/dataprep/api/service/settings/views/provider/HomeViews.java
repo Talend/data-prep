@@ -12,17 +12,17 @@
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
+import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.DATASET_OPEN;
+import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.*;
+import static org.talend.dataprep.api.service.settings.actions.provider.SearchActions.*;
+import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
+
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.LinkSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.SearchSettings;
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
-
-import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.*;
-import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.*;
-import static org.talend.dataprep.api.service.settings.actions.provider.SearchActions.*;
-import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
 
 /**
  * Home elements configuration
@@ -70,5 +70,6 @@ public interface HomeViews {
             .action(MENU_PREPARATIONS.getId())
             .action(MENU_DATASETS.getId())
             .build();
+
 }
 // @formatter:on

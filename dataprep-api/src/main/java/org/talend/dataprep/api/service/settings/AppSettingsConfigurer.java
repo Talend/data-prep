@@ -21,24 +21,30 @@ import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.security.Security;
 
 import com.netflix.hystrix.HystrixCommand;
 
 /**
  * Configurer that modify a Setting
- * 
+ *
  * @param <T> (ViewSettings | ActionSettings)
  */
 public abstract class AppSettingsConfigurer<T> {
 
+    /** The spring application context. */
     @Autowired
     private ApplicationContext context;
+
+    /** To get access to the current connected user. */
+    @Autowired
+    private Security security;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AppSettingsConfigurer.class);
 
     /**
      * Check if this AppSettingsConfigurer is applicable to the T setting.
-     * 
+     *
      * @param setting The setting to test.
      * @return true if it is applicable, false otherwise.
      */
@@ -46,14 +52,18 @@ public abstract class AppSettingsConfigurer<T> {
 
     /**
      * Apply custom configuration to the ActionSettings
-     * 
+     *
      * @param setting The settings to modify
      * @return The resulting T setting
      */
     public abstract T configure(final T setting);
 
+    /**
+     * @return true if the current user is allowed for this setting configuration
+     */
     public boolean isUserAuthorized() {
-        return true;
+        // default is TDP users
+        return security.isTDPUser();
     }
 
     /**

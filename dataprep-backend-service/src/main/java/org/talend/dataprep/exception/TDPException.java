@@ -32,6 +32,7 @@ import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 /**
  * Class for all business (TDP) exception.
@@ -50,6 +51,8 @@ public class TDPException extends TalendRuntimeException {
     public static void rethrowOrWrap(Throwable throwable) {
         if (throwable instanceof TDPException) {
             throw (TDPException) throwable;
+        } else if (throwable instanceof HystrixRuntimeException) {
+            throw TDPExceptionUtils.processHystrixException((HystrixRuntimeException) throwable);
         } else {
             throw new TDPException(UNEXPECTED_EXCEPTION, throwable);
         }

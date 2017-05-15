@@ -490,7 +490,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void getNotExistingDataset() throws Exception {
         int statusCode = when().get("/datasets/1234/content").getStatusCode();
-        assertTrue("statusCode is:" + statusCode, statusCode == HttpStatus.BAD_REQUEST.value());
+        assertTrue("statusCode is:" + statusCode, statusCode == HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -703,7 +703,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .when() //
                 .put("/datasets/{id}", "3d72677c-e2c9-4a34-8c58-959a56ec8643") //
                 .then() //
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -1086,7 +1086,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertNull(metadata);
         int statusCode = when().get("/datasets/{id}/metadata", "9876").statusCode();
 
-        assertThat(statusCode, is(HttpStatus.BAD_REQUEST.value()));
+        assertThat(statusCode, is(HttpStatus.NOT_FOUND.value()));
 
     }
 
@@ -1166,7 +1166,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .when() //
                 .put("/datasets/{id}/favorite", wrongDsId) //
                 .then() //
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.NOT_FOUND.value());
 
     }
 

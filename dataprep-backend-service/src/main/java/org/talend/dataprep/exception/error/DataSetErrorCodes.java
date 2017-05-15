@@ -54,7 +54,7 @@ public enum DataSetErrorCodes implements ErrorCode {
      * Error returned in case user tries to access to a data set that
      * does not exist (or no longer exists).
      */
-    DATASET_DOES_NOT_EXIST(BAD_REQUEST.value(), "id"),
+    DATASET_DOES_NOT_EXIST(NOT_FOUND.value(), "id"),
     /**
      * Error returned when the json that contains the dataset location
      * cannot be parsed.

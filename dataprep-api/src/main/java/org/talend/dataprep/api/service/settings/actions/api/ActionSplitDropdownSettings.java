@@ -22,11 +22,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * An action split dropdown is a mix of simple button and a dropdown.
- * see https://talend.github.io/react-talend-components/?selectedKind=ActionSplitDropdown&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
- * 
+ * see
+ * https://talend.github.io/react-talend-components/?selectedKind=ActionSplitDropdown&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ *
  * Button action
  * This part is configured with the ActionSettings properties. The whole items list will be passed to the action function.
- * 
+ *
  * Dropdown
  * The dropdown options are the items. They are the models the actions applies to. The action configuration is the one from simple
  * button configuration.
@@ -49,13 +50,19 @@ public class ActionSplitDropdownSettings extends ActionSettings {
         this.items = items;
     }
 
-    public String getDisplayMode() {
-        return displayMode;
-    }
-
+    /*
+     * public String getDisplayMode() {
+     * return displayMode;
+     * }
+     */
     public static Builder from(final ActionSplitDropdownSettings actionSettings) {
-        return splitDropdownBuilder().id(actionSettings.getId()).name(actionSettings.getName()).icon(actionSettings.getIcon())
-                .type(actionSettings.getType()).bsStyle(actionSettings.getBsStyle()).items(actionSettings.getItems());
+        return splitDropdownBuilder() //
+                .id(actionSettings.getId()) //
+                .name(actionSettings.getName()) //
+                .icon(actionSettings.getIcon()) //
+                .type(actionSettings.getType()) //
+                .bsStyle(actionSettings.getBsStyle()) //
+                .items(actionSettings.getItems());
     }
 
     public static Builder splitDropdownBuilder() {

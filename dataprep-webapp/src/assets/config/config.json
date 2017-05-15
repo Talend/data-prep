@@ -1,6 +1,6 @@
 {
-  "serverUrl": "http://10.42.10.99:8888",
-  "serverSignUrl": "http://10.42.10.99:8888",
+  "serverUrl": "http://10.42.10.99:9999",
+  "serverSignUrl": "http://10.42.10.99:9999",
   "serverKeepAliveUrl": "",
   "enableDebug": false,
   "version": "2.1.0-SNAPSHOT",

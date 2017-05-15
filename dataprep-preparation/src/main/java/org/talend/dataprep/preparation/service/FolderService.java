@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderInfo;
 import org.talend.dataprep.api.folder.FolderTreeNode;
@@ -106,6 +107,9 @@ public class FolderService {
     @Timed
     public FolderInfo getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
         final Folder folder = folderRepository.getFolderById(id);
+        if (folder == null) {
+            throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", id));
+        }
         final List<Folder> hierarchy = folderRepository.getHierarchy(folder);
 
         return new FolderInfo(folder, hierarchy);

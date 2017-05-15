@@ -106,8 +106,7 @@ public class EnrichedPreparationDetails extends GenericCommand<InputStream> {
      * Get preparation details from the right command
      */
     private ObjectNode getPreparationDetails() throws IOException {
-        final PreparationDetailsGet preparationDetails = context.getBean(PreparationDetailsGet.class, this.preparationId,
-                this.stepId);
+        final PreparationDetailsGet preparationDetails = context.getBean(PreparationDetailsGet.class, preparationId, stepId);
         return (ObjectNode) objectMapper.readTree(preparationDetails.execute());
     }
 

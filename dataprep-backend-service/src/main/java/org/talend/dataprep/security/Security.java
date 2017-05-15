@@ -1,14 +1,15 @@
-// ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  ============================================================================
 //
-// This source code is available under agreement available at
-// https://github.com/Talend/data-prep/blob/master/LICENSE
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-// ============================================================================
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
 
 package org.talend.dataprep.security;
 
@@ -45,4 +46,11 @@ public interface Security {
      * @return The id of the current tenant from context. Return "none" if no tenant information is available.
      */
     String getTenantId();
+
+    /**
+     * @return true if the current user is a valid and registered TDP user.
+     */
+    default boolean isTDPUser() {
+        return true;
+    }
 }

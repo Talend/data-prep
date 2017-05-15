@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,11 +37,10 @@ import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@Scope("request")
 public class VersionServiceAPI extends APIService {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @Value("${transformation.service.url}")
     protected String transformationServiceUrl;

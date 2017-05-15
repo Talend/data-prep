@@ -15,11 +15,14 @@ package org.talend.dataprep.api.service.settings.views.provider;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+import org.talend.dataprep.security.Security;
 
 /**
  * Default views settings provider
@@ -27,18 +30,26 @@ import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 @Component
 public class CommonViewsProvider implements AppSettingsProvider<ViewSettings> {
 
+    @Autowired
+    private Security security;
+
     @Override
     public List<ViewSettings> getSettings() {
-        // @formatter:off
-        return asList(
-                HomeViews.APP_HEADER_BAR,
-                HomeViews.BREADCRUMB,
-                HomeViews.SIDE_PANEL,
 
-                ListViews.FOLDERS_LIST,
-                ListViews.PREPARATIONS_LIST,
-                ListViews.DATASETS_LIST
-        );
-        // @formatter:on
+        List<ViewSettings> settings = new ArrayList<>(5);
+
+        if (security.isTDPUser()) {
+            settings.add(HomeViews.APP_HEADER_BAR);
+            settings.add(HomeViews.SIDE_PANEL);
+            settings.add(HomeViews.BREADCRUMB);
+        } else {
+            settings.add(HomeViewsForNonTDPUsers.APP_HEADER_BAR_FOR_NON_TDP_USERS);
+            settings.add(HomeViewsForNonTDPUsers.SIDE_PANEL);
+        }
+
+        settings.addAll(asList(ListViews.FOLDERS_LIST, ListViews.PREPARATIONS_LIST, ListViews.DATASETS_LIST));
+
+        return settings;
+
     }
 }

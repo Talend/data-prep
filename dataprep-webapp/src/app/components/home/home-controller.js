@@ -12,10 +12,11 @@
  ============================================================================*/
 
 export default class HomeCtrl {
-	constructor($state, $timeout, OnboardingService, StateService, StorageService) {
+	constructor($state, $timeout, OnboardingService, StateService, StorageService, state) {
 		'ngInject';
 		this.$state = $state;
 		this.$timeout = $timeout;
+		this.state = state;
 		this.OnboardingService = OnboardingService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;

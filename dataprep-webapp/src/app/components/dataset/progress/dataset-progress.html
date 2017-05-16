@@ -8,9 +8,12 @@
         <h1 translate-once="ADD_NEW_DATASET"></h1>
 
     	<div class="progress">
-            <div ng-if="!$ctrl.isUploadComplete" class="progression" ng-style="{width: $ctrl.progression + '%'}"></div>
-            <div ng-if="$ctrl.isUploadComplete" class="progression infinite-progression"></div>
-            <div ng-if="$ctrl.isUploadComplete" class="progression infinite-progression"></div>
+            <div
+                class="progression"
+                ng-style="{width: $ctrl.progression + '%'}"
+                ng-class="{'infinite': $ctrl.isUploadComplete}"
+            >
+            </div>
     	</div>
 
         <ol class="steps-list">

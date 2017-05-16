@@ -12,12 +12,11 @@
   ============================================================================*/
 
 $white-background: rgba(255, 255, 255, 0.7);
-$infinite-progression-width: 40%;
+$gradient-part-width: 100%/6;
 @keyframes infinite-progression-keyframes {
-	0% { left: -$infinite-progression-width; }
-	100% { left: 100% + $infinite-progression-width; }
+	0% { background-position-x: 100%; }
+	100% { background-position-x: 0%; }
 }
-
 
 #dataset-progress-modal {
 	.modal {
@@ -124,16 +123,24 @@ $infinite-progression-width: 40%;
 					position: absolute;
 					background-color: $green;
 					transition: width .3s;
-				}
 
-				.infinite-progression {
-					width: $infinite-progression-width;
-					animation: infinite-progression-keyframes 2s infinite;
-					animation-timing-function: linear;
-					left: -$infinite-progression-width;
+					&.infinite {
+						width: 100%;
+						animation: infinite-progression-keyframes 2s infinite;
+						animation-timing-function: linear;
+						animation-fill-mode: forwards;
+						background-size: 300%;
 
-					&:nth-of-type(2) {
-						-webkit-animation-delay: 1s;
+						background-image: linear-gradient(to right,
+							$green 0%, $green $gradient-part-width,
+							$light-gray $gradient-part-width, $light-gray 2*$gradient-part-width,
+
+							$green 2*$gradient-part-width, $green 3*$gradient-part-width,
+							$light-gray 3*$gradient-part-width, $light-gray 4*$gradient-part-width,
+
+							$green 4*$gradient-part-width, $green 5*$gradient-part-width,
+							$light-gray 5*$gradient-part-width, $light-gray 100%
+						);
 					}
 				}
 			}

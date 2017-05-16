@@ -357,6 +357,7 @@ describe('Playground controller', () => {
 			it('should call startLoader', inject((PlaygroundService) => {
 				// given
 				spyOn(PlaygroundService, 'startLoader');
+
 				// when
 				ctrl.discardSaveOnClose();
 
@@ -367,6 +368,7 @@ describe('Playground controller', () => {
 			it('should call stopLoader', inject((PlaygroundService) => {
 				// given
 				spyOn(PlaygroundService, 'stopLoader');
+
 				// when
 				ctrl.discardSaveOnClose();
 				scope.$digest();

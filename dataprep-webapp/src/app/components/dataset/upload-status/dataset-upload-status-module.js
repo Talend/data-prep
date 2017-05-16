@@ -13,16 +13,16 @@
 
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
-import DatasetUploadTile from './dataset-upload-tile-directive';
+import DatasetUploadStatus from './dataset-upload-status-directive';
 
-const MODULE_NAME = 'data-prep.dataset-upload-tile';
+const MODULE_NAME = 'data-prep.dataset-upload-status';
 
 /**
  * @ngdoc object
- * @name data-prep.dataset-upload-tile
+ * @name data-prep.dataset-upload-status
  * @description This module contains the entities to manage the dataset upload tile
  */
 angular.module(MODULE_NAME, [ngTranslate])
-	.directive('datasetUploadTile', DatasetUploadTile);
+	.directive('datasetUploadStatus', DatasetUploadStatus);
 
 export default MODULE_NAME;

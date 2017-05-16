@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import DATASET_UPDLOAD_TILE_MODULE from '../../dataset/upload-tile/dataset-upload-tile-module';
+import DATASET_UPDLOAD_TILE_MODULE from '../../dataset/upload-status/dataset-upload-status-module';
 import INVENTORY_ITEM_MODULE from '../../inventory/item/inventory-item-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../../services/dataset-workflow/dataset-workflow-module';

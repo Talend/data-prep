@@ -11,18 +11,18 @@
 
   ============================================================================*/
 
-import template from './dataset-upload-tile.html';
+import template from './dataset-upload-status.html';
 
 /**
  * @ngdoc directive
- * @name data-prep.dataset-upload-tile.directive:DatasetUploadList
+ * @name data-prep.dataset-upload-status.directive:DatasetUploadList
  * @description This dataset display the upload tile that had an upload error. Unlike the dataset tile which is
  * based on a service property for the dataset tile, this one is based on a given attribute value.
  * @restrict E
- * @usage <dataset-upload-tile datasets="datasets"></dataset-upload-tile>
+ * @usage <dataset-upload-status datasets="datasets"></dataset-upload-status>
  * @param {object[]} datasets The upload error datasets
  */
-export default function DatasetUploadTile() {
+export default function DatasetUploadStatus() {
 	return {
 		templateUrl: template,
 		restrict: 'E',
@@ -30,7 +30,7 @@ export default function DatasetUploadTile() {
 			dataset: '=',
 		},
 		bindToController: true,
-		controllerAs: 'uploadTileCtrl',
+		controllerAs: 'uploadStatusCtrl',
 		controller: () => {
 		},
 	};

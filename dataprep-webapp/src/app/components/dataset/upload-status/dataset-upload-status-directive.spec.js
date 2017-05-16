@@ -15,7 +15,7 @@ describe('Dataset upload tile directive', function () {
 	var scope;
 	var createElement;
 
-	beforeEach(angular.mock.module('data-prep.dataset-upload-tile'));
+	beforeEach(angular.mock.module('data-prep.dataset-upload-status'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
 		$translateProvider.translations('en', {
@@ -27,7 +27,7 @@ describe('Dataset upload tile directive', function () {
 	beforeEach(inject(function ($rootScope, $compile) {
 		scope = $rootScope.$new();
 		createElement = function (directiveScope) {
-			var element = angular.element('<dataset-upload-tile dataset="dataset"></dataset-upload-tile>');
+			var element = angular.element('<dataset-upload-status dataset="dataset"></dataset-upload-status>');
 			$compile(element)(directiveScope);
 			directiveScope.$digest();
 			return element;

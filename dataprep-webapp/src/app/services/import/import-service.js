@@ -14,7 +14,6 @@
  * @requires data-prep.services.import.service:ImportService
  */
 export default class ImportService {
-
 	constructor($document, $rootScope, state, DatasetService, ImportRestService, StateService, TalendConfirmService, UploadWorkflowService, UpdateWorkflowService) {
 		'ngInject';
 

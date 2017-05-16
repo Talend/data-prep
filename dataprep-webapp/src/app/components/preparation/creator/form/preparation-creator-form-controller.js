@@ -109,15 +109,14 @@ export default class PreparationCreatorFormCtrl {
 	 * @params {Number} index the index to increment
 	 */
 	_getUniquePrepName(index = 0) {
-		const suffix = index === 0 ?
-		' ' + this.preparationSuffix :
-		' ' + this.preparationSuffix + ' (' + index + ')';
+		let suffix = ` ${this.preparationSuffix}`;
+		if (index === 0) {
+			suffix += ` (${index})`;
+		}
+
 		this.enteredName = this.baseDataset.name + suffix;
-		const existingName = _.some(
-			this.state.inventory.folder.content.preparations,
-			{ name: this.enteredName }
-		);
-		if (existingName) {
+
+		if (this.state.inventory.folder.content.preparations.find(prep => prep.name === this.enteredName)) {
 			this._getUniquePrepName(index + 1);
 		}
 	}

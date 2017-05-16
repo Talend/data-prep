@@ -354,6 +354,27 @@ describe('Playground controller', () => {
 		});
 
 		describe('discard preparation', () => {
+			it('should call startLoader', inject((PlaygroundService) => {
+				// given
+				spyOn(PlaygroundService, 'startLoader');
+				// when
+				ctrl.discardSaveOnClose();
+
+				// then
+				expect(PlaygroundService.startLoader).toHaveBeenCalled();
+			}));
+
+			it('should call stopLoader', inject((PlaygroundService) => {
+				// given
+				spyOn(PlaygroundService, 'stopLoader');
+				// when
+				ctrl.discardSaveOnClose();
+				scope.$digest();
+
+				// then
+				expect(PlaygroundService.stopLoader).toHaveBeenCalled();
+			}));
+
 			it('should delete current preparation', inject((PreparationService) => {
 				// when
 				ctrl.discardSaveOnClose();

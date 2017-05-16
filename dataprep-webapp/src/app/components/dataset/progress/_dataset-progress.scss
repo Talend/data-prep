@@ -83,6 +83,7 @@ $gradient-part-width: 100%/6;
 						&.complete-icon {
 							color: $green;
 						}
+
 						&.progress-icon {
 							color: $blue;
 						}
@@ -97,6 +98,7 @@ $gradient-part-width: 100%/6;
 						.progress-icon {
 							visibility: visible;
 						}
+
 						> span:after {
 							content: " ...";
 						}

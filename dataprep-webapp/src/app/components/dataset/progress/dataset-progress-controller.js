@@ -24,11 +24,15 @@ export default class DatasetProgressCtrl {
 
 	get progression() {
 		const state = this.state.dataset;
-		return state.uploadingDataset ? state.uploadingDataset.progress : 0;
+
+		if (!state.uploadingDataset || state.uploadingDataset.progress < 0 || isNaN(state.uploadingDataset.progress)) {
+			return 0;
+		}
+		return state.uploadingDataset.progress > 100 ? 100 : state.uploadingDataset.progress;
 	}
 
 	get isUploadComplete() {
 		const state = this.state.dataset;
-		return !!(state.uploadingDataset && state.uploadingDataset.progress === 100);
+		return !!(state.uploadingDataset && this.progression === 100);
 	}
 }

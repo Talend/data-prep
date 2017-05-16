@@ -14,13 +14,14 @@
 describe('Dataset upload tile directive', function () {
 	var scope;
 	var createElement;
+	const translations = {
+		UPLOAD_PROCESSING: 'Profiling data, please wait...',
+	};
 
 	beforeEach(angular.mock.module('data-prep.dataset-upload-status'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
-		$translateProvider.translations('en', {
-			UPLOAD_PROCESSING: 'Profiling data, please wait...',
-		});
+		$translateProvider.translations('en', translations);
 		$translateProvider.preferredLanguage('en');
 	}));
 
@@ -68,7 +69,7 @@ describe('Dataset upload tile directive', function () {
 		var progress = element.find('.inventory-progress').first();
 
 		//then
-		expect(progress.text().trim()).toBe('Profiling data, please wait...');
+		expect(progress.text().trim()).toBe(translations.UPLOAD_PROCESSING);
 	});
 
 	it('should render progressing remote dataset import', function () {

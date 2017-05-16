@@ -66,6 +66,7 @@ describe('Dataset Progress component', () => {
 			// then
 			expect(element.find('.upload-step').hasClass('complete')).toBe(true);
 			expect(element.find('.profiling-step').hasClass('in-progress')).toBe(true);
+			expect(element.find('.upload-step').hasClass('future')).toBe(false);
 		}));
 	});
 });

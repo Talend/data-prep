@@ -219,10 +219,6 @@ describe('Inventory list container', () => {
 			expect(rows.eq(2).find('td').eq(0).text()).toBe('JSO prep 1');
 			expect(rows.eq(3).find('td').eq(0).text()).toBe('JSO prep 2');
 		});
-
-		it('should instantiate home dataset progress bar', () => {
-			expect(element.find('dataset-progress').length).toBe(1);
-		});
 	});
 
 	describe('folder actions', () => {

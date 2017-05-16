@@ -59,4 +59,8 @@ describe('Home component', () => {
 	it('should instantiate home about modal', () => {
 		expect(element.find('about').length).toBe(1);
 	});
+
+	it('should instantiate home dataset progress bar', () => {
+		expect(element.find('dataset-progress').length).toBe(1);
+	});
 });

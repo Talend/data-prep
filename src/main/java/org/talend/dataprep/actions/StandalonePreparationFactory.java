@@ -127,7 +127,7 @@ public class StandalonePreparationFactory {
     /**
      * Returns a {@link SerializableFunction} used to apply the preparation to an
      * {@link IndexedRecord}.
-     * 
+     *
      * @param inputStream a JSON object containing the preparation, the data sets that are used in lookup actions if
      * any, the dictionary used to apply the preparation.
      * @return

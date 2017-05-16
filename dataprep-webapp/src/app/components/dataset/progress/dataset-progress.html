@@ -8,18 +8,20 @@
         <h1 translate-once="ADD_NEW_DATASET"></h1>
 
     	<div class="progress">
-    		<div class="progression" ng-style="{width: $ctrl.progression + '%'}"></div>
+            <div ng-if="!$ctrl.isUploadComplete" class="progression" ng-style="{width: $ctrl.progression + '%'}"></div>
+            <div ng-if="$ctrl.isUploadComplete" class="progression infinite-progression"></div>
+            <div ng-if="$ctrl.isUploadComplete" class="progression infinite-progression"></div>
     	</div>
 
         <ol class="steps-list">
     		<li class="upload-step" ng-class="{'in-progress': !$ctrl.isUploadComplete, 'complete': $ctrl.isUploadComplete}">
                 <span translate-once="UPLOADING_FILE"></span>
-                <icon class="complete-icon" name="'talend-check'"/>
-                <pure-circular-progress class="progress-icon"></pure-circular-progress>
+                <icon class="step-icon complete-icon" name="'talend-check'"/>
+                <pure-circular-progress class="step-icon progress-icon"></pure-circular-progress>
             </li>
     		<li class="profiling-step" ng-class="{'in-progress': $ctrl.isUploadComplete, 'future': !$ctrl.isUploadComplete}">
                 <span translate-once="PROFILING_DATA"></span>
-                <pure-circular-progress class="progress-icon"></pure-circular-progress>
+                <pure-circular-progress class="step-icon progress-icon"></pure-circular-progress>
             </li>
     	</ol>
 </talend-modal>

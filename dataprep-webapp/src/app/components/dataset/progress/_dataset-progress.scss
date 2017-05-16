@@ -12,6 +12,11 @@
   ============================================================================*/
 
 $white-background: rgba(255, 255, 255, 0.7);
+$infinite-progression-width: 40%;
+@keyframes infinite-progression-keyframes {
+	0% { left: -$infinite-progression-width; }
+	100% { left: 100% + $infinite-progression-width; }
+}
 
 
 #dataset-progress-modal {
@@ -41,17 +46,21 @@ $white-background: rgba(255, 255, 255, 0.7);
 				width: 100%;
 				text-align: center;
 				font-weight: bold;
+				text-transform: inherit;
 			}
 
 			ol.steps-list {
 				counter-reset: steps;
 				margin-bottom: 20px;
+				display: inline-block;
+				text-align: left;
 				padding: 0;
 
 				li {
 					list-style-type: none;
 					counter-increment: steps;
 					margin-bottom: 10px;
+					position: relative;
 
 					&:before {
 						content: counter(steps) ".";
@@ -63,15 +72,21 @@ $white-background: rgba(255, 255, 255, 0.7);
 					span {
 						padding-right: 100px;
 					}
-					.complete-icon {
-						color: $green;
-					}
-					.progress-icon {
-						color: $blue;
-					}
-					.complete-icon, .progress-icon {
+
+					.step-icon {
+						position: absolute;
+						right: 0;
+						top: 0;
+						height: 25px;
 						margin-left: -1.6rem;
 						visibility: hidden;
+
+						&.complete-icon {
+							color: $green;
+						}
+						&.progress-icon {
+							color: $blue;
+						}
 					}
 
 
@@ -105,9 +120,21 @@ $white-background: rgba(255, 255, 255, 0.7);
 				margin-bottom: 10px;
 
 				> .progression {
-					height: 100%;
+					height: 4px;
+					position: absolute;
 					background-color: $green;
 					transition: width .3s;
+				}
+
+				.infinite-progression {
+					width: $infinite-progression-width;
+					animation: infinite-progression-keyframes 2s infinite;
+					animation-timing-function: linear;
+					left: -$infinite-progression-width;
+
+					&:nth-of-type(2) {
+						-webkit-animation-delay: 1s;
+					}
 				}
 			}
 		}

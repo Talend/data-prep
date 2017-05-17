@@ -61,15 +61,15 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     protected static final String FROM_MODE_BEST_GUESS = "unknown_separators";
 
-    protected static final String FROM_CALENDER_TYPE_PARAMETER = "from_calender_type";
+    protected static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
 
-    protected static final String TO_CALENDER_TYPE_PARAMETER = "to_calender_type";
+    protected static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
 
     private static final String FROM_DATE_PATTERNS_KEY = "from_date_patterns_key";
 
-    private static final String FROM_CALENDER_TYPE_KEY = "from_calender_type_key";
+    private static final String FROM_CALENDAR_TYPE_KEY = "from_calendar_type_key";
 
-    private static final String TO_CALENDER_TYPE_KEY = "to_calender_type_key";
+    private static final String TO_CALENDAR_TYPE_KEY = "to_calendar_type_key";
 
     private static final String FROM_LOCALE_KEY = "from_locale_key";
 
@@ -97,7 +97,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         //@formatter:off
         parameters.add(Builder.builder()
-                .name(FROM_CALENDER_TYPE_PARAMETER)
+                .name(FROM_CALENDAR_TYPE_PARAMETER)
                 .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString())
                 .item(ChronologyUnit.HIJRI.name(), ChronologyUnit.HIJRI.toString())
                 .item(ChronologyUnit.JAPANESE.name(), ChronologyUnit.JAPANESE.toString())
@@ -107,7 +107,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                 .build());
 
         parameters.add(Builder.builder()
-                .name(TO_CALENDER_TYPE_PARAMETER)
+                .name(TO_CALENDAR_TYPE_PARAMETER)
                 .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString())
                 .item(ChronologyUnit.HIJRI.name(), ChronologyUnit.HIJRI.toString())
                 .item(ChronologyUnit.JAPANESE.name(), ChronologyUnit.JAPANESE.toString())
@@ -125,17 +125,17 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
 
-            AbstractChronology fromCalenderType = ChronologyUnit
-                    .valueOf(actionContext.getParameters().get(FROM_CALENDER_TYPE_PARAMETER)).getCalendarType();
-            AbstractChronology toCalenderType = ChronologyUnit
-                    .valueOf(actionContext.getParameters().get(TO_CALENDER_TYPE_PARAMETER)).getCalendarType();
-            Locale fromLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(FROM_CALENDER_TYPE_PARAMETER))
+            AbstractChronology fromCalendarType = ChronologyUnit
+                    .valueOf(actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER)).getCalendarType();
+            AbstractChronology toCalendarType = ChronologyUnit
+                    .valueOf(actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER)).getCalendarType();
+            Locale fromLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER))
                     .getDefaultLocale();
-            Locale toLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(TO_CALENDER_TYPE_PARAMETER))
+            Locale toLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER))
                     .getDefaultLocale();
 
-            actionContext.get(FROM_CALENDER_TYPE_KEY, p -> fromCalenderType);
-            actionContext.get(TO_CALENDER_TYPE_KEY, p -> toCalenderType);
+            actionContext.get(FROM_CALENDAR_TYPE_KEY, p -> fromCalendarType);
+            actionContext.get(TO_CALENDAR_TYPE_KEY, p -> toCalendarType);
             actionContext.get(FROM_LOCALE_KEY, p -> fromLocale);
             actionContext.get(TO_LOCALE_KEY, p -> toLocale);
 
@@ -167,7 +167,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
 
-        // Change the date calender
+        // Change the date calendar
         final String value = row.get(columnId);
         if (StringUtils.isBlank(value)) {
             return;
@@ -175,12 +175,12 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         try {
             String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
-                    context.get(FROM_CALENDER_TYPE_KEY), context.get(FROM_LOCALE_KEY));
+                    context.get(FROM_CALENDAR_TYPE_KEY), context.get(FROM_LOCALE_KEY));
 
             if (fromPattern != null) {
 
                 org.talend.dataquality.converters.DateCalendarConverter date = new org.talend.dataquality.converters.DateCalendarConverter(
-                        fromPattern, fromPattern, context.get(FROM_CALENDER_TYPE_KEY), context.get(TO_CALENDER_TYPE_KEY),
+                        fromPattern, fromPattern, context.get(FROM_CALENDAR_TYPE_KEY), context.get(TO_CALENDAR_TYPE_KEY),
                         context.get(FROM_LOCALE_KEY), context.get(TO_LOCALE_KEY));
 
                 String newValue = date.convert(value);

@@ -77,7 +77,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("to_calender_type", "from_calender_type", "from_pattern_mode", "new_pattern", //$NON-NLS-3$ //$NON-NLS-4$
+        List<String> parameterNames = Arrays.asList("to_calendar_type", "from_calendar_type", "from_pattern_mode", "new_pattern", //$NON-NLS-3$ //$NON-NLS-4$
                 "column_id", "row_id", "scope", "filter");
 
         // when
@@ -189,8 +189,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
         parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0001");
-        parameters.put(DateCalendarConverter.FROM_CALENDER_TYPE_PARAMETER, DateCalendarConverter.ChronologyUnit.ISO.name());
-        parameters.put(DateCalendarConverter.TO_CALENDER_TYPE_PARAMETER, DateCalendarConverter.ChronologyUnit.HIJRI.name());
+        parameters.put(DateCalendarConverter.FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.ChronologyUnit.ISO.name());
+        parameters.put(DateCalendarConverter.TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.ChronologyUnit.HIJRI.name());
         parameters.put(DateCalendarConverter.FROM_MODE, DateCalendarConverter.FROM_MODE_BEST_GUESS);
 
         // when
@@ -330,8 +330,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
-        parameters.put("from_calender_type", fromUnit.name());
-        parameters.put("to_calender_type", toUnit.name());
+        parameters.put("from_calendar_type", fromUnit.name());
+        parameters.put("to_calendar_type", toUnit.name());
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));

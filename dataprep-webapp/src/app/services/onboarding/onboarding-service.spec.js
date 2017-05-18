@@ -185,19 +185,6 @@ describe('Onboarding service', () => {
 		expect($state.go).not.toHaveBeenCalled();
 	}));
 
-	it('should not start onboarding when 404', inject(($state, OnboardingService) => {
-		// given
-		$state.current = {
-			name: HOME_404_ROUTE,
-		};
-
-		// when
-		OnboardingService.startTour('preparation');
-
-		// then
-		expect($state.go).not.toHaveBeenCalled();
-	}));
-
 	it('should redirect to "preparations" before starting onboarding', inject(($state, OnboardingService) => {
 		// given
 		$state.current = {

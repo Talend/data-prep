@@ -15,7 +15,6 @@ import _ from 'lodash';
 import { introJs } from 'intro.js';
 import {
 	HOME_403_ROUTE,
-	HOME_404_ROUTE,
 	HOME_DATASETS_ROUTE,
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
@@ -119,7 +118,7 @@ export default class OnboardingService {
 	 * @description Configure and start an onboarding tour
 	 */
 	startTour(tour) {
-		if (this.$state.current.name === HOME_403_ROUTE || this.$state.current.name === HOME_404_ROUTE) {
+		if (this.$state.current.name === HOME_403_ROUTE) {
 			return;
 		}
 		const isOnDatasetsRoute = this.$state.current.name === HOME_DATASETS_ROUTE;

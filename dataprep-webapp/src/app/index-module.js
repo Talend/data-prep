@@ -40,15 +40,15 @@ const app = angular.module(MODULE_NAME,
 		ngSanitize,
 		ngTranslate,
 		uiRouter,
-		SERVICES_REST_MODULE, // configuration: rest interceptors
+		APP_MODULE, // bootstrap: app root
+		HOME_MODULE, // routing: home components
+		PLAYGROUND_MODULE, // routing: playground component
 		SERVICES_DATASET_MODULE, // configuration: refresh supported encodings
+		SERVICES_ERRORS_MODULE, // routing: common http errors management
+		SERVICES_REST_MODULE, // configuration: rest interceptors
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE, // configuration: register constants (version, ...)
 		SETTINGS_MODULE, // configuration: get app settings
-		SERVICES_ERRORS_MODULE, // routing: common http errors management
-		HOME_MODULE, // routing: home components
-		PLAYGROUND_MODULE, // routing: playground component
-		APP_MODULE, // bootstrap: app root
 	])
 // Performance config
 	.config(($httpProvider) => {

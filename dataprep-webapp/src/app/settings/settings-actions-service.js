@@ -21,6 +21,9 @@ export default class SettingsActionsService {
 
 	createDispatcher(action) {
 		return (event, model) => {
+			if (!action) {
+				return;
+			}
 			const adaptedAction = {
 				...action,
 				payload: {

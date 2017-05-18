@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-const excludedErrorCodes = [403, 404];
+const specialClientErrorCodes = [403, 404];
 
 /**
  * @ngdoc service
@@ -25,8 +25,8 @@ export default function RestErrorMessageHandler($q, MessageService) {
 	 * @param errorCode http error code to test
 	 * @returns {boolean}
 	 */
-	function isExcluded(errorCode) {
-		return excludedErrorCodes.includes(errorCode);
+	function hasSpecialCase(errorCode) {
+		return specialClientErrorCodes.includes(errorCode);
 	}
 
 	return {
@@ -45,13 +45,14 @@ export default function RestErrorMessageHandler($q, MessageService) {
 				return $q.reject(rejection);
 			}
 
-			if (rejection.status <= 0) {
+			const { status } = rejection;
+			if (status <= 0) {
 				MessageService.error('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 			}
-			else if (rejection.status === 500) {
+			else if (status === 500) {
 				MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 			}
-			else if (!isExcluded(rejection.status) && rejection.data && rejection.data.messageTitle && rejection.data.message) {
+			else if (!hasSpecialCase(status) && rejection.data && rejection.data.messageTitle && rejection.data.message) {
 				MessageService.error(rejection.data.messageTitle, rejection.data.message);
 			}
 

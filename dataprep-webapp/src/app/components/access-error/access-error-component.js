@@ -11,13 +11,13 @@
 
  ============================================================================*/
 
-import template from './error.html';
+import template from './access-error.html';
 
-const Error = {
+const AccessError = {
 	templateUrl: template,
 	bindings: {
 		status: '<',
 	},
 };
 
-export default Error;
+export default AccessError;

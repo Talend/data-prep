@@ -16,12 +16,12 @@ const i18n = {
 	ERROR_404_MESSAGE: 'The page you are looking for cannot be found',
 };
 
-describe('Error component', () => {
+describe('Http Error component', () => {
 	let scope;
 	let element;
 	let createElement;
 
-	beforeEach(angular.mock.module('data-prep.error'));
+	beforeEach(angular.mock.module('data-prep.access-error'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', i18n);
@@ -32,7 +32,7 @@ describe('Error component', () => {
 		scope = $rootScope.$new(true);
 
 		createElement = () => {
-			const html = `<error status="status"></error>`;
+			const html = `<access-error status="status"></access-error>`;
 			element = $compile(html)(scope);
 			scope.$digest();
 		};

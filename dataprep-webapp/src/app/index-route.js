@@ -26,7 +26,7 @@ export function routeConfig($stateProvider, $urlRouterProvider) {
 		})
 		.state(HOME_404_ROUTE, {
 			views: {
-				'home-content': { template: '<error status="404"></error>' },
+				'home-content': { template: '<access-error status="404"></access-error>' },
 			},
 		})
 		.state(HOME_PREPARATIONS_ROUTE, {

@@ -13,11 +13,11 @@
 
 import angular from 'angular';
 
-import Error from './error-component';
+import AccessError from './access-error-component';
 
-const MODULE_NAME = 'data-prep.error';
+const MODULE_NAME = 'data-prep.access-error';
 
 angular.module(MODULE_NAME, [])
-	.component('error', Error);
+	.component('accessError', AccessError);
 
 export default MODULE_NAME;

@@ -20,6 +20,9 @@ export default class BreadcrumbCtrl {
 	}
 
 	$onInit() {
+		if (!this.appSettings.views.breadcrumb) {
+			return;
+		}
 		this.maxItems = this.appSettings.views.breadcrumb.maxItems;
 	}
 
@@ -31,6 +34,9 @@ export default class BreadcrumbCtrl {
 	}
 
 	$onChanges() {
+		if (!this.appSettings.views.breadcrumb) {
+			return;
+		}
 		this.breadcrumbItems = this.adaptItems();
 	}
 

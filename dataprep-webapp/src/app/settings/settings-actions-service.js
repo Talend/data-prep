@@ -21,18 +21,17 @@ export default class SettingsActionsService {
 
 	createDispatcher(action) {
 		return (event, model) => {
-			if (!action) {
-				return;
+			if (action) {
+				const adaptedAction = {
+					...action,
+					payload: {
+						...action.payload,
+						...model,
+					},
+					event,
+				};
+				this.$timeout(this.dispatch(adaptedAction));
 			}
-			const adaptedAction = {
-				...action,
-				payload: {
-					...action.payload,
-					...model,
-				},
-				event,
-			};
-			this.$timeout(this.dispatch(adaptedAction));
 		};
 	}
 

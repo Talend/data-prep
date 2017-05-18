@@ -13,7 +13,6 @@
 
 import {
 	HOME_403_ROUTE,
-	HOME_404_ROUTE,
 } from '../../index-route';
 
 export default class HomeCtrl {
@@ -42,7 +41,6 @@ export default class HomeCtrl {
 
 		if (
 			this.$state.current.name === HOME_403_ROUTE ||
-			this.$state.current.name === HOME_404_ROUTE ||
 			this.$state.params.prepid ||
 			this.$state.params.datasetid ||
 			!this.OnboardingService.shouldStartTour(tourId)

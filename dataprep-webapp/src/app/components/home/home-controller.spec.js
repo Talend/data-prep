@@ -13,7 +13,6 @@
 
 import {
 	HOME_403_ROUTE,
-	HOME_404_ROUTE,
 } from '../../index-route';
 
 describe('Home controller', () => {
@@ -95,21 +94,6 @@ describe('Home controller', () => {
 		it('should NOT start onboarding when 403', inject(($timeout, OnboardingService) => {
 			// given
 			$stateMock = { params: { datasetid: '123b9ca6749a75' }, current: { name: HOME_403_ROUTE } };
-			const ctrl = createController($stateMock);
-
-			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
-
-			// when
-			ctrl.$onInit();
-			$timeout.flush();
-
-			// then
-			expect(OnboardingService.startTour).not.toHaveBeenCalled();
-		}));
-
-		it('should NOT start onboarding when 404', inject(($timeout, OnboardingService) => {
-			// given
-			$stateMock = { params: { datasetid: '123b9ca6749a75' }, current: { name: HOME_404_ROUTE } };
 			const ctrl = createController($stateMock);
 
 			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);

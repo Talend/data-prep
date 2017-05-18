@@ -841,7 +841,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 */
 	function errorGoBack(err) {
 		const { status } = err;
-		if (status && [403, 404].includes(status)) {
+		if ([403, 404].includes(status)) {
 			return;
 		}
 		$state.go(state.route.previous, state.route.previousOptions);

@@ -53,4 +53,9 @@ public class NoOpSecurity implements Security {
     public String getTenantId() {
         return "none";
     }
+
+    @Override
+    public boolean isTDPUser() {
+        return true;
+    }
 }

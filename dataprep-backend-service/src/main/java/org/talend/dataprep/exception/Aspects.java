@@ -42,7 +42,7 @@ class Aspects {
         } catch (TalendRuntimeException e) {
             throw e; // Let TDPException pass through (to be processed in correct HTTP code by controller advice).
         } catch (HystrixRuntimeException hre) {
-            throw (TDPExceptionUtils.processHystrixException(hre));
+            throw TDPExceptionUtils.processHystrixException(hre);
         } catch (Exception e) {
             LOG.error("Unexpected exception occurred in '" + pjp.getSignature().toShortString() + "'", e);
             final ExceptionContext context = ExceptionContext.build();

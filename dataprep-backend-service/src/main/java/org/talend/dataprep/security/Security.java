@@ -50,7 +50,5 @@ public interface Security {
     /**
      * @return true if the current user is a valid and registered TDP user.
      */
-    default boolean isTDPUser() {
-        return true;
-    }
+    boolean isTDPUser();
 }

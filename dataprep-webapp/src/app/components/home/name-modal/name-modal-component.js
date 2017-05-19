@@ -1,5 +1,3 @@
-import NameModalCtrl from './name-modal-controller';
-
 import template from './name-modal.html';
 /**
  * @ngdoc component
@@ -10,7 +8,10 @@ import template from './name-modal.html';
  */
 const NameModalComponent = {
 	templateUrl: template,
-	controller: NameModalCtrl,
+	controller(ImportService) {
+		'ngInject';
+		this.ImportService = ImportService;
+	},
 };
 
 export default NameModalComponent;

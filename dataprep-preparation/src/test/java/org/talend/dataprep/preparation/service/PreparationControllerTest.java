@@ -44,6 +44,7 @@ import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.lock.store.LockedResource;
 import org.talend.dataprep.preparation.BasePreparationTest;
+import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.test.MockTDPException;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.util.SortAndOrderHelper;
@@ -62,6 +63,9 @@ public class PreparationControllerTest extends BasePreparationTest {
 
     @Autowired
     private PreparationUtils preparationUtils;
+
+    @Autowired
+    private PreparationCleaner cleaner;
 
     @Test
     public void CORSHeaders() throws Exception {
@@ -790,14 +794,6 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(response.asString(), sameJSONAs(expected).allowingExtraUnexpectedFields());
     }
 
-    @Test
-    public void preparationNotFoundShouldSend404() {
-        given() //
-                .when() //
-                .expect().statusCode(404).log().ifError() //
-                .get("/preparations/{id}", "should_not_be_found");
-    }
-
     // ------------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------LIFECYCLE----------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
@@ -895,6 +891,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
+        cleaner.setFilterByContentIdKey("content");
         clientTest.deletePreparation(preparationId);
 
         // then
@@ -919,12 +916,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
+        cleaner.setFilterByContentIdKey("content");
         clientTest.deletePreparation(preparationId1);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));
         assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(1L));
+        assertThat(repository.list(PreparationActions.class).count(), is(2L));
     }
 
     @Test

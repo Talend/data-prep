@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
@@ -31,6 +32,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -64,6 +66,11 @@ public class PreparationCleaner {
 
     @Autowired
     private List<OrphanStepsFinder> orphanStepsFinders;
+
+    /**
+     * Only for test with in-memory repository, filter key changed.
+     */
+    private String filterByContentIdKey = "contentId";
 
     /**
      * @return all orphanSteps.
@@ -136,8 +143,16 @@ public class PreparationCleaner {
                 .forEach(s -> stepUsageCount.computeIfPresent(s, (step, usage) -> {
                     if (usage == 1) { // Step only used in to-be-deleted preparation,
                         final PreparationActions content = repository.get(step.getContent().id(), PreparationActions.class);
-                        LOGGER.info("Removing step content {}.", content.getId());
-                        repository.remove(content);
+                        // if this step re-use an existing actions we don't delete the actions
+                        List<PersistentStep> collect = repository
+                                .list(PersistentStep.class, filterByContentIdKey + "='" + step.getContent().id() + "'")
+                                .collect(Collectors.toList());
+                        if (collect.size() > 1) {
+                            LOGGER.info("Don't removing step content {} it still used by another step.", content.getId());
+                        } else {
+                            LOGGER.info("Removing step content {}.", content.getId());
+                            repository.remove(content);
+                        }
                         LOGGER.info("Removing step {}.", step.getId());
                         repository.remove(step);
                     } else {
@@ -161,4 +176,13 @@ public class PreparationCleaner {
             securityProxy.releaseIdentity();
         }
     }
+
+    public String getFilterByContentIdKey() {
+        return filterByContentIdKey;
+    }
+
+    public void setFilterByContentIdKey(String filterByContentIdKey) {
+        this.filterByContentIdKey = filterByContentIdKey;
+    }
+
 }

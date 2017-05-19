@@ -6,20 +6,21 @@
  along with this program; if not, write to Talend SA
  9 rue Pages 92150 Suresnes, France
  ============================================================================*/
-
 describe('Name Modal component', () => {
 	let scope;
 	let element;
 	let createElement;
 
+	const body = angular.element('body');
+
 	beforeEach(angular.mock.module('data-prep.home'));
 
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);
-
 		createElement = () => {
-			const html = '<name-modal></name-modal>';
-			element = $compile(html)(scope);
+			element = angular.element(`<name-modal></name-modal>`);
+			body.append(element);
+			$compile(element)(scope);
 			scope.$digest();
 		};
 	}));
@@ -30,6 +31,16 @@ describe('Name Modal component', () => {
 	});
 
 	describe('render', () => {
+		it('should NOT render name modal', inject((ImportService) => {
+			ImportService.datasetNameModal = false;
+
+			// when
+			createElement();
+
+			// then
+			expect(body.find('.form-control').length).toBe(0);
+		}));
+
 		it('should render name modal', inject((ImportService) => {
 			ImportService.datasetNameModal = true;
 
@@ -37,7 +48,7 @@ describe('Name Modal component', () => {
 			createElement();
 
 			// then
-			expect(element.find('#name-modal').length).toBe(1);
+			expect(body.find('.form-control').length).toBe(1);
 		}));
 	});
 });

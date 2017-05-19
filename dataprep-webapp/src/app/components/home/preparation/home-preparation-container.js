@@ -28,6 +28,7 @@ const HomePreparationContainer = {
 				view-key="'listview:preparations'"
 				folder-view-key="'listview:folders'"
 			></inventory-list>
+			<div insertion-home-preparation></div>
 		</div>
 	`,
 	controller(state) {

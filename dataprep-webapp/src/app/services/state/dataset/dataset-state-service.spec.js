@@ -12,37 +12,33 @@
   ============================================================================*/
 
 describe('dataset state service', function () {
-    let dataset = {};
+    var dataset = {};
     let stateMock;
 
     beforeEach(angular.mock.module('data-prep.services.state'));
-
     beforeEach(inject(datasetState => {
-        datasetState.uploadingDatasets = [];
+        datasetState.uploadingDataset = null;
     }));
 
-    it('should add 2 currently added datasets to be shown in the progress bar', inject((DatasetStateService, datasetState) => {
+    it('should add an uploading dataset', inject((DatasetStateService, datasetState) => {
         //given
-        expect(datasetState.uploadingDatasets.length).toBe(0);
+        expect(datasetState.uploadingDataset).toBe(null);
 
         //when
         DatasetStateService.startUploadingDataset(dataset);
-        DatasetStateService.startUploadingDataset(dataset);
 
         //then
-        expect(datasetState.uploadingDatasets.length).toBe(2);
+        expect(datasetState.uploadingDataset).toBe(dataset);
     }));
 
-    it('should remove 1 currently being added dataset among the 2 existing', inject((DatasetStateService, datasetState) => {
+    it('should remove the uploading dataset', inject((DatasetStateService, datasetState) => {
         //given
         DatasetStateService.startUploadingDataset(dataset);
-        DatasetStateService.startUploadingDataset(dataset);
-        expect(datasetState.uploadingDatasets.length).toBe(2);
 
         //when
         DatasetStateService.finishUploadingDataset(dataset);
 
         //then
-        expect(datasetState.uploadingDatasets.length).toBe(1);
+        expect(datasetState.uploadingDataset).toBe(null);
     }));
 });

@@ -166,4 +166,10 @@ public class MixedContentMap implements Map<String, String>, Serializable {
     public String toString() {
         return "MixedContentMap{" + "map=" + map + '}';
     }
+
+    public static MixedContentMap convert(Map<String, String> map) {
+        MixedContentMap result = new MixedContentMap();
+        result.putAll(map);
+        return result;
+    }
 }

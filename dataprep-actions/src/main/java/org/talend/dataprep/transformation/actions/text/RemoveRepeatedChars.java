@@ -115,7 +115,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType()));
+        return Type.STRING.isAssignableFrom(Type.get(column.getType()));
     }
 
 }

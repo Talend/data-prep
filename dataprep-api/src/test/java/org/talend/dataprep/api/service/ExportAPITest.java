@@ -216,7 +216,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csvSeparator", " ") //
+                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -239,7 +239,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export1 = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csvSeparator", ";") //
+                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -252,7 +252,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export2 = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csvSeparator", " ") //
+                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -267,7 +267,7 @@ public class ExportAPITest extends ApiServiceTestBase {
     public void testExportCsvWithBadBodyInput_noExportType() throws Exception {
         // when
         final Response response = given() //
-                .formParam("csvSeparator", ";") //
+                .formParam("csv_fields_delimiter", ";") //
                 .formParam("preparationId", "4552157454657") //
                 .formParam("stepId", "head") //
                 .when() //
@@ -280,7 +280,7 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvWithBadBodyInput_noPrepId_noDatasetId() throws Exception {
         // when
-        final Response response = given().formParam("exportType", "CSV").formParam("csvSeparator", ";")
+        final Response response = given().formParam("exportType", "CSV").formParam("csv_fields_delimiter", ";")
                 .formParam("stepId", "head").when().get("/api/export");
 
         // then
@@ -298,7 +298,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final Response export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csvSeparator", ";") //
+                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .formParam(ExportFormat.PREFIX + "fileName", fileName) //
@@ -323,7 +323,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final Response export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csvSeparator", ";") //
+                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //

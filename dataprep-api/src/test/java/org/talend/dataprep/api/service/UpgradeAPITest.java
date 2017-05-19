@@ -2,12 +2,20 @@ package org.talend.dataprep.api.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.talend.dataprep.info.Version.fromInternal;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.zafarkhaja.semver.Version;
+import com.jayway.restassured.RestAssured;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,13 +30,6 @@ import org.talend.daikon.token.TokenGenerator;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.service.upgrade.UpgradeServerVersion;
 import org.talend.dataprep.http.HttpResponseContext;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.zafarkhaja.semver.Version;
-import com.jayway.restassured.RestAssured;
 
 public class UpgradeAPITest extends ApiServiceTestBase {
 
@@ -45,7 +46,7 @@ public class UpgradeAPITest extends ApiServiceTestBase {
     VersionService versionService;
 
     private static Version computeNextVersion(VersionService versionService) {
-        final Version parsedVersion = UpgradeAPI.fromInternal(versionService.version());
+        final Version parsedVersion = fromInternal(versionService.version());
         return parsedVersion.incrementMajorVersion();
     }
 

@@ -10,7 +10,7 @@
   "title": "Export to CSV",
   "parameters": [
     {
-      "name": "csvSeparator",
+      "name": "csv_fields_delimiter",
       "type": "select",
       "implicit": false,
       "canBeBlank": true,

@@ -66,7 +66,8 @@ public abstract class ServiceBaseTest {
             MockPropertySource connectionInformation = new MockPropertySource()
                     .withProperty("dataset.service.url", "http://localhost:" + port)
                     .withProperty("transformation.service.url", "http://localhost:" + port)
-                    .withProperty("preparation.service.url", "http://localhost:" + port);
+                    .withProperty("preparation.service.url", "http://localhost:" + port)
+                    .withProperty("fullrun.service.url", "http://localhost:" + port);
             environment.getPropertySources().addFirst(connectionInformation);
             environmentSet = true;
         }

@@ -35,7 +35,16 @@ public enum PreparationErrorCodes implements ErrorCode {
     PREPARATION_NAME_ALREADY_USED(CONFLICT.value(), "id", "name", "folder"),
     PREPARATION_NOT_EMPTY(CONFLICT.value(), "id"),
     FORBIDDEN_PREPARATION_CREATION(FORBIDDEN.value()),
-    PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId");
+    PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId"),
+    EXPORTED_PREPARATION_VERSION_NOT_SUPPORTED(BAD_REQUEST.value()),
+    UNABLE_TO_READ_PREPARATIONS_EXPORT(BAD_REQUEST.value(), "importVersion", "dataPrepVersion"),
+    PREPARATION_ALL_READY_EXIST(
+            CONFLICT.value(),
+            "newPreparationId",
+            "oldPreparationId",
+            "newPreparationName",
+            "oldPreparationName");
+
 
     /** The http status to use. */
     private int httpStatus;

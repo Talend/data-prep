@@ -24,8 +24,6 @@ import org.junit.Test;
 
 public class DateManipulatorTest {
 
-    private final DateManipulator dateManipulator = new DateManipulator();
-
     //------------------------------------------------------------------------------------------------------------------
     //---------------------------------------------------getSuitablePace------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
@@ -44,7 +42,7 @@ public class DateManipulatorTest {
 
     private void testGetSuitablePaceWith(final LocalDateTime min, final LocalDateTime max, final int maxBins, final DateManipulator.Pace expectedPace) throws Exception {
         //when
-        final DateManipulator.Pace pace = dateManipulator.getSuitablePace(min, max, maxBins);
+        final DateManipulator.Pace pace = DateManipulator.getSuitablePace(min, max, maxBins);
 
         //then
         assertThat(pace, is(expectedPace));
@@ -67,7 +65,7 @@ public class DateManipulatorTest {
 
     private void testGetSuitableStartingDateWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
         //when
-        final LocalDateTime computedDate = dateManipulator.getSuitableStartingDate(date, pace);
+        final LocalDateTime computedDate = DateManipulator.getSuitableStartingDate(date, pace);
 
         //then
         assertThat(computedDate, is(expectedDate));
@@ -90,7 +88,7 @@ public class DateManipulatorTest {
 
     private void testGetNextWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
         //when
-        final LocalDateTime computedDate = dateManipulator.getNext(date, pace);
+        final LocalDateTime computedDate = DateManipulator.getNext(date, pace);
 
         //then
         assertThat(computedDate, is(expectedDate));
@@ -105,7 +103,7 @@ public class DateManipulatorTest {
         final LocalDateTime date = LocalDateTime.of(1970, JANUARY, 1, 0, 0);
 
         //when
-        final long epochMillis = dateManipulator.getUTCEpochMilliseconds(date);
+        final long epochMillis = DateManipulator.getUTCEpochMilliseconds(date);
 
         //then
         assertThat(epochMillis, is(0L));
@@ -117,7 +115,7 @@ public class DateManipulatorTest {
         final long utcEpochMillis = 0L;
 
         //when
-        final LocalDateTime date = dateManipulator.fromEpochMillisecondsWithSystemOffset(utcEpochMillis);
+        final LocalDateTime date = DateManipulator.fromEpochMillisecondsWithSystemOffset(utcEpochMillis);
 
         //then
         final LocalDateTime expectedDate = LocalDateTime.of(1970, JANUARY, 1, 0, 0); //local timezone

@@ -1,0 +1,30 @@
+<talend-modal id="dataset-progress-modal"
+        close-button="false"
+        ng-if="$ctrl.isUploading"
+        state="$ctrl.isUploading"
+        disable-enter="true"
+        disable-close-on-background-click="true">
+
+        <h1 translate-once="ADD_NEW_DATASET"></h1>
+
+    	<div class="progress">
+            <div
+                class="progression"
+                ng-style="{width: $ctrl.progression + '%'}"
+                ng-class="{'infinite': $ctrl.isUploadComplete}"
+            >
+            </div>
+    	</div>
+
+        <ol class="steps-list">
+    		<li class="upload-step" ng-class="{'in-progress': !$ctrl.isUploadComplete, 'complete': $ctrl.isUploadComplete}">
+                <span translate-once="UPLOADING_FILE"></span>
+                <icon class="step-icon complete-icon" name="'talend-check'"/>
+                <pure-circular-progress class="step-icon progress-icon"></pure-circular-progress>
+            </li>
+    		<li class="profiling-step" ng-class="{'in-progress': $ctrl.isUploadComplete, 'future': !$ctrl.isUploadComplete}">
+                <span translate-once="PROFILING_DATA"></span>
+                <pure-circular-progress class="step-icon progress-icon"></pure-circular-progress>
+            </li>
+    	</ol>
+</talend-modal>

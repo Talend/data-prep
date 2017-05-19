@@ -29,7 +29,7 @@ import org.talend.dataprep.exception.TDPException;
  */
 public interface FolderRepository {
 
-    /**root
+    /**
      * Return true if the given folder exists.
      * @param folderId the wanted folder folderId.
      * @return true if the given folder exists.
@@ -42,7 +42,6 @@ public interface FolderRepository {
      * @return the Home {@link Folder}.
      */
     Folder getHome();
-
 
     /**
      * Add a folder.
@@ -58,7 +57,6 @@ public interface FolderRepository {
      * @param folderId the parent folder in the format /ffo/blab/mm or <code>null</code> for root folder
      */
     Iterable<Folder> children(String folderId);
-
 
     /**
      * Remove folder and content recursively only if no entry is found. Throws a {@link TDPException} with

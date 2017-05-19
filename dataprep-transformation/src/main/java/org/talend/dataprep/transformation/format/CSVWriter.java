@@ -45,7 +45,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private static final Character DEFAULT_SEPARATOR = ',';
 
     /** Separator argument name. */
-    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csvSeparator";
+    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csv_fields_delimiter";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVWriter.class);
 

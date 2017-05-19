@@ -67,7 +67,7 @@ describe('Preparation creator form component', () => {
             createElement();
 
             //then
-            expect(element.find('.base-datasets-uploads').length).toBe(1);
+            expect(element.find('.base-dataset-upload').length).toBe(1);
             expect(element.find('.preparation-creator-header').length).toBe(1);
             expect(element.find('.filters-left-panel').length).toBe(1);
             expect(element.find('.import-button-panel').length).toBe(1);

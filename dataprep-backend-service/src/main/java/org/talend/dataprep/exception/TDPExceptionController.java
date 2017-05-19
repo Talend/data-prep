@@ -51,7 +51,9 @@ public class TDPExceptionController {
     @ExceptionHandler({ TalendRuntimeException.class })
     public ResponseEntity<String> handleError(TalendRuntimeException e) throws JsonProcessingException {
         if (e instanceof TDPException) {
-            LOGGER.error("An  error occurred", e);
+            LOGGER.error("An error occurred", e);
+        } else {
+            LOGGER.debug("Returning an exception to HTTP client.", e);
         }
         HttpHeaders httpStatus = new HttpHeaders();
         httpStatus.setContentType(MediaType.APPLICATION_JSON_UTF8);

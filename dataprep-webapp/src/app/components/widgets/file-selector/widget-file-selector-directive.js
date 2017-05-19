@@ -15,7 +15,7 @@ import template from './file-selector.html';
 
 /**
  * @ngdoc directive
- * @name talend.widget.directive:TalendLoading
+ * @name talend.widget.directive:TalendFileSelector
  * @description This directive create an icon that hide a file selector
  * @restrict E
  * @usage <talend-file-selector button-data-icon="icon"

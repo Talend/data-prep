@@ -1,21 +1,27 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.info;
 
+import com.github.zafarkhaja.semver.ParseException;
+
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Version {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Version.class);
 
     private String versionId;
 
@@ -61,13 +67,21 @@ public class Version {
         this.serviceName = serviceName;
     }
 
+    public static com.github.zafarkhaja.semver.Version fromInternal(Version internalVersion) {
+        String versionId = internalVersion.getVersionId();
+        final String versionAsString = StringUtils.substringBefore(versionId, "-");
+        try {
+            return com.github.zafarkhaja.semver.Version.valueOf(versionAsString);
+        } catch (IllegalArgumentException | ParseException e) {
+            LOGGER.info("Couldn't parse version {}. Message was: {}", versionId, e.getMessage());
+            return com.github.zafarkhaja.semver.Version.forIntegers(0);
+        }
+    }
+
     @Override
     public String toString() {
-        return "{" +
-                "versionId='" + versionId + '\'' +
-                ", buildId='" + buildId + '\'' +
-                ", serviceName='" + serviceName + '\'' +
-                '}';
+        return "{" + "versionId='" + versionId + '\'' + ", buildId='" + buildId + '\'' + ", serviceName='" + serviceName + '\''
+                + '}';
     }
 
     @Override

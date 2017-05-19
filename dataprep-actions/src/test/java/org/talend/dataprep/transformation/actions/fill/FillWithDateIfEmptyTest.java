@@ -75,7 +75,7 @@ public class FillWithDateIfEmptyTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("1/1/1970 10:00:00", row.get("0001"));
+        assertEquals("01/01/1970 10:00:00", row.get("0001"));
         assertEquals("David Bowie", row.get("0000"));
     }
 

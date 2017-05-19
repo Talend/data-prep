@@ -14,21 +14,21 @@
   -->
 
 <div class="actions-suggestions">
-    <div class="watermark"
+    <div class="empty-panel-msg"
          ng-if="!statsDetailsCtrl.state.playground.grid.selectedColumns.length"
          translate-once="SELECT_COLUMN_TO_DISPLAY_STATS">
     </div>
 
     <sc-tabs ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length">
         <sc-tabs-item class="tab-container" tab-title="{{'STATS_TAB_CHART' | translate}}" default="true">
-            <div class="watermark"
+            <div class="empty-panel-msg"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_CHART"></div>
             <column-profile class="stat-detail-tab-items"
                             ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1"></column-profile>
         </sc-tabs-item>
         <sc-tabs-item tab-title="{{'STATS_TAB_VALUE' | translate}}">
-            <div class="watermark"
+            <div class="empty-panel-msg"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_VALUE"></div>
             <div class="stat-detail-tab-items two-columns-values"
@@ -48,7 +48,7 @@
             </div>
         </sc-tabs-item>
         <sc-tabs-item tab-title="{{'STATS_TAB_PATTERN' | translate}}">
-            <div class="watermark"
+            <div class="empty-panel-msg"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_PATTERN"></div>
             <horizontal-barchart ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1"
@@ -74,13 +74,13 @@
             </horizontal-barchart>
         </sc-tabs-item>
         <sc-tabs-item tab-title="{{'STATS_TAB_ADVANCED' | translate}}">
-            <div class="watermark"
+            <div class="empty-panel-msg"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_ADVANCED_CHART"></div>
             <div class="stat-detail-tab-items"
                  ng-switch="!!statsDetailsCtrl.state.playground.statistics.boxPlot"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1">
-                <div class="watermark" ng-switch-when="false" translate-once="NO_ADVANCED_CHART"></div>
+                <div class="empty-panel-msg" ng-switch-when="false" translate-once="NO_ADVANCED_CHART"></div>
                 <boxplot-chart ng-switch-when="true"
                                id="boxplotId"
                                width="300"

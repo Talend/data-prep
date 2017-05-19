@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.api.service.command.dataset;
+package org.talend.dataprep.command.dataset;
 
 import static org.talend.dataprep.command.Defaults.pipeStream;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
@@ -37,7 +37,7 @@ public class SearchDataSets extends GenericCommand<InputStream> {
 
     /**
      * Default constructor.
-     * 
+     *
      * @param name the name to search.
      */
     // private constructor to ensure IoC

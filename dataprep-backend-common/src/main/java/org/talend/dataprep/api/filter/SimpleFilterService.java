@@ -75,8 +75,6 @@ public class SimpleFilterService implements FilterService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleFilterService.class);
 
-    private final DateManipulator dateManipulator = new DateManipulator();
-
     private DateParser dateParser;
 
     private static Predicate<DataSetRow> safeDate(Predicate<DataSetRow> inner) {
@@ -92,7 +90,7 @@ public class SimpleFilterService implements FilterService {
 
     @Override
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
-        if (isEmpty(filterAsString) || "\"\"".equals(filterAsString)) {
+        if (isEmpty(filterAsString)) {
             return r -> true;
         }
         try {
@@ -422,8 +420,8 @@ public class SimpleFilterService implements FilterService {
             final long minTimestamp = Long.parseLong(start);
             final long maxTimestamp = Long.parseLong(end);
 
-            final LocalDateTime minDate = dateManipulator.fromEpochMillisecondsWithSystemOffset(minTimestamp);
-            final LocalDateTime maxDate = dateManipulator.fromEpochMillisecondsWithSystemOffset(maxTimestamp);
+            final LocalDateTime minDate = DateManipulator.fromEpochMillisecondsWithSystemOffset(minTimestamp);
+            final LocalDateTime maxDate = DateManipulator.fromEpochMillisecondsWithSystemOffset(maxTimestamp);
 
             return safeDate(r -> {
                 final ColumnMetadata columnMetadata = rowMetadata.getById(columnId);

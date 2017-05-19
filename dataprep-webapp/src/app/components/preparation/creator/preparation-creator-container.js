@@ -26,6 +26,7 @@ export default {
 			close-button="true"
 			state="$ctrl.state.home.preparations.creator.isVisible"
 			ng-if="$ctrl.state.home.preparations.creator.isVisible"
+			before-close="$ctrl.canBeClosed()"
 			disable-enter="false">
 			<preparation-creator-form />
 		</talend-modal>
@@ -33,5 +34,9 @@ export default {
 	controller(state) {
 		'ngInject';
 		this.state = state;
+
+		this.canBeClosed = () => {
+			return !this.state.dataset.uploadingDataset;
+		};
 	},
 };

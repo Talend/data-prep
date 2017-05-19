@@ -177,7 +177,23 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * The dataset has too many column to process in DataPrep. This would cause memory issues.
      */
-    DATASET_HAS_TOO_MANY_COLUMNS(BAD_REQUEST.value(), "number-of-columns", "max-allowed")
+    DATASET_HAS_TOO_MANY_COLUMNS(BAD_REQUEST.value(), "number-of-columns", "max-allowed"),
+    /**
+     * A dataSet used by a preparation with a given name not found.
+     */
+    PREPARATION_DATASET_NOT_FOUND(NOT_FOUND.value(), "name"),
+    /**
+     * A lookup dataSet used by a preparation with a given name not found.
+     */
+    PREPARATION_LOOKUP_NOT_FOUND(NOT_FOUND.value(), "name"),
+    /**
+     * A dataSet used by a preparation with a given name have not the expected format.
+     */
+    PREPARATION_DATASET_BAD_FORMAT(NOT_FOUND.value(), "name"),
+    /**
+     * A lookup dataSet used by a preparation with a given name have not the expected format.
+     */
+    PREPARATION_LOOKUP_BAD_FORMAT(NOT_FOUND.value(), "name")
     ;
 
     /**

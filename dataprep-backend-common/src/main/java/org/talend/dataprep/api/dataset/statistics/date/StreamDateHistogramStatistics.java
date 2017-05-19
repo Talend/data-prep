@@ -57,11 +57,6 @@ public class StreamDateHistogramStatistics {
     private LocalDateTime max;
 
     /**
-     * A utility class to manipulate LocalDates
-     */
-    private final DateManipulator dateManipulator = new DateManipulator();
-
-    /**
      * Constructor.
      * It initialize the bins for each {@link DateManipulator.Pace}.
      */
@@ -97,11 +92,11 @@ public class StreamDateHistogramStatistics {
             return;
         }
 
-        final LocalDateTime startDate = dateManipulator.getSuitableStartingDate(date, pace);
-        final LocalDateTime endDate = dateManipulator.getNext(startDate, pace);
+        final LocalDateTime startDate = DateManipulator.getSuitableStartingDate(date, pace);
+        final LocalDateTime endDate = DateManipulator.getNext(startDate, pace);
 
-        final long startTimestamp = dateManipulator.getUTCEpochMilliseconds(startDate);
-        final long endTimestamp = dateManipulator.getUTCEpochMilliseconds(endDate);
+        final long startTimestamp = DateManipulator.getUTCEpochMilliseconds(startDate);
+        final long endTimestamp = DateManipulator.getUTCEpochMilliseconds(endDate);
 
         final Range range = new Range(startTimestamp, endTimestamp);
         final Long nbInBin = paceBins.get(range);
@@ -139,21 +134,21 @@ public class StreamDateHistogramStatistics {
             return histogram;
         }
 
-        final DateManipulator.Pace pace = dateManipulator.getSuitablePace(min, max, numberOfBins);
+        final DateManipulator.Pace pace = DateManipulator.getSuitablePace(min, max, numberOfBins);
         final Map<Range, Long> paceBin = bins.get(pace);
         if (paceBin == null) {
             return histogram;
         }
 
         histogram.setPace(pace);
-        LocalDateTime nextRangeStart = dateManipulator.getSuitableStartingDate(min, pace);
+        LocalDateTime nextRangeStart = DateManipulator.getSuitableStartingDate(min, pace);
 
         while (max.isAfter(nextRangeStart) || max.equals(nextRangeStart)) {
             final LocalDateTime rangeStart = nextRangeStart;
-            final LocalDateTime rangeEnd = dateManipulator.getNext(nextRangeStart, pace);
+            final LocalDateTime rangeEnd = DateManipulator.getNext(nextRangeStart, pace);
 
-            final long rangeStartTimestamp = dateManipulator.getUTCEpochMilliseconds(rangeStart);
-            final long rangeEndTimestamp = dateManipulator.getUTCEpochMilliseconds(rangeEnd);
+            final long rangeStartTimestamp = DateManipulator.getUTCEpochMilliseconds(rangeStart);
+            final long rangeEndTimestamp = DateManipulator.getUTCEpochMilliseconds(rangeEnd);
 
             final Range range = new Range(rangeStartTimestamp, rangeEndTimestamp);
             final Long rangeValue = paceBin.get(range);
@@ -189,7 +184,7 @@ public class StreamDateHistogramStatistics {
      * @return the minimum date added to this histogram (in milliseconds since EPOCH in UTC)
      */
     private long minUTCEpochMilliseconds() {
-        return dateManipulator.getUTCEpochMilliseconds(min);
+        return DateManipulator.getUTCEpochMilliseconds(min);
     }
 
     /**
@@ -197,6 +192,6 @@ public class StreamDateHistogramStatistics {
      * @return the maximum date added to this histogram (in milliseconds since EPOCH in UTC)
      */
     private long maxUTCEpochMilliseconds() {
-        return dateManipulator.getUTCEpochMilliseconds(max);
+        return DateManipulator.getUTCEpochMilliseconds(max);
     }
 }

@@ -1058,7 +1058,7 @@ public class SimpleFilterServiceTest {
     @Test
     public void TDP_3518_should_create_TRUE_predicate_on_double_quote() throws Exception {
         // given
-        final String filtersDefinition = "\"\"";
+        final String filtersDefinition = null;
 
         // when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);

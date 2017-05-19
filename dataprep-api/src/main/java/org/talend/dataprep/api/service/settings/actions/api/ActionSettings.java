@@ -53,6 +53,11 @@ public class ActionSettings {
     private String name;
 
     /**
+     * The action display toolTip
+     */
+    private String toolTip;
+
+    /**
      * The action icon that will appears next to the name
      */
     private String icon;
@@ -103,6 +108,10 @@ public class ActionSettings {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getToolTip() { return toolTip; }
+
+    public void setToolTip(String toolTip) { this.toolTip = toolTip; }
 
     public String getIcon() {
         return icon;
@@ -173,6 +182,8 @@ public class ActionSettings {
 
         private String id;
 
+        private String toolTip;
+
         private String name;
 
         private String icon;
@@ -196,6 +207,11 @@ public class ActionSettings {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder toolTip(String toolTip) {
+            this.toolTip = toolTip;
             return this;
         }
 
@@ -243,6 +259,7 @@ public class ActionSettings {
             final ActionSettings action = new ActionSettings();
             action.setId(this.id);
             action.setName(this.name);
+            action.setToolTip(this.toolTip);
             action.setIcon(this.icon);
             action.setType(this.type);
             action.setLink(this.link);

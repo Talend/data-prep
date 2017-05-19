@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import DATASET_UPDLOAD_LIST_MODULE from '../../dataset/upload-list/dataset-upload-list-module';
+import DATASET_UPDLOAD_TILE_MODULE from '../../dataset/upload-status/dataset-upload-status-module';
 import INVENTORY_ITEM_MODULE from '../../inventory/item/inventory-item-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../../services/dataset-workflow/dataset-workflow-module';
@@ -33,7 +33,7 @@ const MODULE_NAME = 'data-prep.preparation-creator';
  */
 angular.module(MODULE_NAME,
 	[
-		DATASET_UPDLOAD_LIST_MODULE,
+		DATASET_UPDLOAD_TILE_MODULE,
 		INVENTORY_ITEM_MODULE,
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,

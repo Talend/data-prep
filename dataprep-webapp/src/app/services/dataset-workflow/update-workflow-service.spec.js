@@ -83,7 +83,7 @@ describe('UploadWorkflow Service', function () {
         expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
         expect(StateService.resetPlayground).toHaveBeenCalled();
         expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset);
-        expect(StateService.finishUploadingDataset).toHaveBeenCalledWith(dataset);
+        expect(StateService.finishUploadingDataset).toHaveBeenCalled();
     }));
 
     it('should set error flag and show error toast when update fails', inject(function ($rootScope, UpdateWorkflowService, StateService, DatasetService) {
@@ -99,6 +99,6 @@ describe('UploadWorkflow Service', function () {
         expect(StateService.resetPlayground).not.toHaveBeenCalled();
         expect(DatasetService.update).toHaveBeenCalled();
         expect(dataset.error).toBe(true);
-        expect(StateService.finishUploadingDataset).toHaveBeenCalledWith(dataset);
+        expect(StateService.finishUploadingDataset).toHaveBeenCalled();
     }));
 });

@@ -41,7 +41,7 @@ public class WrapperProcessor implements BeanPostProcessor, ApplicationContextAw
         Object current = bean;
         for (Wrapper wrapper : wrappers.values()) {
             if (wrapper.wrapped().isAssignableFrom(bean.getClass())) {
-                current = wrapper.doWith(bean, beanName, applicationContext);
+                current = wrapper.doWith(current, beanName, applicationContext);
             }
         }
         return current;

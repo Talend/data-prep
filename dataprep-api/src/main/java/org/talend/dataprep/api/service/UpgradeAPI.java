@@ -14,6 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.info.Version.fromInternal;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,6 +22,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.zafarkhaja.semver.Version;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -40,11 +45,6 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.service.upgrade.UpgradeServerVersion;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.zafarkhaja.semver.ParseException;
-import com.github.zafarkhaja.semver.Version;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -69,17 +69,6 @@ public class UpgradeAPI extends APIService {
         }
         builder.append(']');
         return builder.toString();
-    }
-
-    static Version fromInternal(org.talend.dataprep.info.Version internalVersion) {
-        String versionId = internalVersion.getVersionId();
-        final String versionAsString = StringUtils.substringBefore(versionId, "-");
-        try {
-            return Version.valueOf(versionAsString);
-        } catch (IllegalArgumentException | ParseException e) {
-            LOGGER.info("Couldn't parse version {}. Message was: {}", versionId, e.getMessage());
-            return Version.forIntegers(0);
-        }
     }
 
     @PostConstruct

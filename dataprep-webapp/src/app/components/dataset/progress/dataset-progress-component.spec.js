@@ -14,14 +14,28 @@
 describe('Dataset Progress component', () => {
 	let scope;
 	let element;
+	let createElement;
+	let stateMock;
+	let controller;
 
-	beforeEach(angular.mock.module('data-prep.dataset-progress'));
+	beforeEach(angular.mock.module('data-prep.dataset-progress', ($provide) => {
+		stateMock = {
+			dataset: {
+				uploadingDataset:  null,
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);
-		element = angular.element('<dataset-progress></dataset-progress>');
-		$compile(element)(scope);
-		scope.$digest();
+
+		createElement = () => {
+			const html = `<dataset-progress></dataset-progress>`;
+			element = $compile(html)(scope);
+			scope.$digest();
+			controller = element.controller('dataset-progress');
+		};
 	}));
 
 	afterEach(() => {
@@ -29,7 +43,30 @@ describe('Dataset Progress component', () => {
 		element.remove();
 	});
 
-	it('should render dataset-progress', () => {
-		expect(element.find('pure-progress').length).toBe(1);
+	describe('render', () => {
+		it('should indicates an in progress upload', inject(function ($rootScope) {
+			// given
+			stateMock.dataset.uploadingDataset = { id: 'mock', name: 'Mock', progress: 50 };
+
+			// when
+			createElement();
+
+			// then
+			expect(element.find('.upload-step').hasClass('in-progress')).toBe(true);
+			expect(element.find('.profiling-step').hasClass('future')).toBe(true);
+		}));
+
+		it('should indicates an in progress profiling', inject(function ($rootScope) {
+			// given
+			stateMock.dataset.uploadingDataset = { id: 'mock', name: 'Mock', progress: 100 };
+
+			// when
+			createElement();
+
+			// then
+			expect(element.find('.upload-step').hasClass('complete')).toBe(true);
+			expect(element.find('.profiling-step').hasClass('in-progress')).toBe(true);
+			expect(element.find('.upload-step').hasClass('future')).toBe(false);
+		}));
 	});
 });

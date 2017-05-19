@@ -19,10 +19,9 @@ import InventoryListCtrl from './inventory-list-controller';
  */
 const InventoryListContainer = {
 	template: `
-		<div ng-if="$ctrl.isLoading"
-		     class="fetch-loader">
-	        <span class="fetch-loader-icon continuous-rotate"><icon name="'talend-dataprep'"></icon></span>
-	        <span translate-once="LOADING"></span>
+		<div ng-if="$ctrl.isLoading" class="fetch-loader">
+			<span class="fetch-loader-icon continuous-rotate"><icon name="'talend-dataprep'"></icon></span>
+			<span translate-once="LOADING"></span>
 		</div>
 		<pure-list
 			ng-if="!$ctrl.isLoading"

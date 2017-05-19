@@ -103,6 +103,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
+import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
 @RestController
 @Api(value = "transformations", basePath = "/transform", description = "Transformations on data")
@@ -692,23 +694,9 @@ public class TransformationService extends BaseTransformationService {
     @Timed
     public StreamingResponseBody getDictionary() {
         return outputStream -> {
-            final File dictionaryPath = new File(analyzerService.getIndexesLocation() + "/index/dictionary/default/");
-            LOG.debug("Returning dictionary at path '{}'", dictionaryPath.getAbsoluteFile());
-            final File keywordPath = new File(analyzerService.getIndexesLocation() + "/index/keyword/default/");
-            LOG.debug("Returning keywords at path '{}'", keywordPath.getAbsoluteFile());
-
-            // Read lucene directory and build BroadcastIndexObject instance
-            final BroadcastIndexObject dictionary, keyword;
-            try (FSDirectory directory = FSDirectory.open(dictionaryPath)) {
-                dictionary = new BroadcastIndexObject(directory);
-            }
-            try (FSDirectory directory = FSDirectory.open(keywordPath)) {
-                keyword = new BroadcastIndexObject(directory);
-            }
-
             // Serialize it to output
-            LOG.debug("Returning dictionaries '{}' / '{}'", dictionary, keyword);
-            Dictionaries result = new Dictionaries(dictionary, keyword);
+            LOG.debug("Returning DQ dictionaries");
+            TdqCategories result = TdqCategoriesFactory.createTdqCategories();
             try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(outputStream))) {
                 oos.writeObject(result);
             }

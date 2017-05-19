@@ -38,11 +38,11 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 /**
  * Unit test for Transformation API.
@@ -389,9 +389,9 @@ public class TransformAPITest extends ApiServiceTestBase {
         // then
         final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(dictionary));
         final Object object = ois.readObject();
-        Assert.assertEquals(Dictionaries.class, object.getClass());
+        Assert.assertEquals(TdqCategories.class, object.getClass());
 
-        final Dictionaries serviceDictionary = (Dictionaries) object;
+        final TdqCategories serviceDictionary = (TdqCategories) object;
         final Directory dictionaryDirectory = serviceDictionary.getDictionary().get(); // Test Lucene directory creation.
         assertNotNull(dictionaryDirectory);
         final Directory keywordDirectory = serviceDictionary.getKeyword().get(); // Test Lucene directory creation.

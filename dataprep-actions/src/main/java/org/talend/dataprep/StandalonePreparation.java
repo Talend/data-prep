@@ -19,31 +19,22 @@ import java.util.Map;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataquality.semantic.broadcast.BroadcastDocumentObject;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class StandalonePreparation extends PreparationMessage {
 
-    private List<BroadcastDocumentObject> dictionary = Collections.emptyList();
-
-    private List<BroadcastDocumentObject> keyword = Collections.emptyList();
+    private TdqCategories tdqCategories;
 
     private Map<String, LightweightExportableDataSet> lookupDataSets = Collections.emptyMap();
 
     private String filterOut;
 
-    public List<BroadcastDocumentObject> getDictionary() {
-        return dictionary;
+    public TdqCategories getTdqCategories() {
+        return tdqCategories;
     }
 
-    public void setDictionary(List<BroadcastDocumentObject> dictionary) {
-        this.dictionary = dictionary;
-    }
-
-    public List<BroadcastDocumentObject> getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(List<BroadcastDocumentObject> keyword) {
-        this.keyword = keyword;
+    public void setTdqCategories(TdqCategories tdqCategories) {
+        this.tdqCategories = tdqCategories;
     }
 
     public Map<String, LightweightExportableDataSet> getLookupDataSets() {

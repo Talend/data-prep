@@ -48,6 +48,7 @@ import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 /**
  * Integration tests on actions.
@@ -321,7 +322,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // then
         final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(dictionary));
         final Object object = ois.readObject();
-        assertEquals(Dictionaries.class, object.getClass());
+        assertEquals(TdqCategories.class, object.getClass());
     }
 
     @Test

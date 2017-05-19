@@ -63,7 +63,7 @@ $x-large-screen: 120em !default;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 50vh;
+	height: 50vh;
 
 	.fetch-loader-icon + span {
 		padding-left: 20px;

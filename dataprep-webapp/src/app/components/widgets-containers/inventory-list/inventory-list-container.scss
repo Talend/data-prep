@@ -60,12 +60,19 @@ $x-large-screen: 120em !default;
 }
 
 .fetch-loader {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 50vh;
+	&,
+	&-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-	.fetch-loader-icon + span {
+	&-wrapper {
+		flex-direction: column;
+		height: 100%;
+	}
+
+	&-icon + span {
 		padding-left: 20px;
 	}
 }

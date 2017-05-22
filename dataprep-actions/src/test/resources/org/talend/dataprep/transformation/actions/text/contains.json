@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "contains",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "name",
+        "scope": "column"
+      }
+    }
+  ]
+}

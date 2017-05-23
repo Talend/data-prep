@@ -13,6 +13,7 @@
 
 .grid-header {
 	$datagrid-header-color: $white;
+	$datagrid-header-height: 45px;
 	$datagrid-header-background: #666666;
 	$datagrid-header-background-active: darken($datagrid-header-background, 10%);
 
@@ -20,6 +21,7 @@
 	$datagrid-header-updated-background: #B3A666;
 	$datagrid-header-deleted-background: #9A6565;
 
+	height: $datagrid-header-height;
 	padding: 5px;
 	font-family: $sourcesanspro;
 	font-size: 1.3rem;

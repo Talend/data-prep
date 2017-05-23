@@ -13,11 +13,13 @@
 
 export const datasetState = {
 	uploadingDataset: null,
+	uploadingSteps: [],
 };
 
 export function DatasetStateService() {
 	return {
 		startUploadingDataset,
+		startProfilingDataset,
 		finishUploadingDataset,
 	};
 
@@ -26,9 +28,40 @@ export function DatasetStateService() {
     // --------------------------------------------------------------------------------------------
 	function startUploadingDataset(dataset) {
 		datasetState.uploadingDataset = dataset;
+		initSteps(dataset);
+	}
+
+	function startProfilingDataset() {
+		nextStep();
 	}
 
 	function finishUploadingDataset() {
 		datasetState.uploadingDataset = null;
+		nextStep();
+	}
+
+	function initSteps(dataset) {
+		datasetState.uploadingSteps = [
+			{
+				type: 'PROGRESSION',
+				state: 'IN_PROGRESS',
+				getValue: () => dataset.progress,
+			},
+			{
+				type: 'INFINITE',
+				state: 'FUTURE',
+			},
+		];
+	}
+
+	function nextStep() {
+		const index = datasetState.uploadingSteps.findIndex(step => step.state === 'IN_PROGRESS');
+		if (datasetState.uploadingSteps[index + 1]) {
+			datasetState.uploadingSteps[index].state = 'COMPLETE';
+			datasetState.uploadingSteps[index + 1].state = 'IN_PROGRESS';
+		}
+		else {
+			datasetState.uploadingSteps = [];
+		}
 	}
 }

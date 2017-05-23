@@ -16,7 +16,7 @@ describe('Dataset progress controller', () => {
     let scope;
     let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.dataset-progress', ($provide) => {
+    beforeEach(angular.mock.module('data-prep.step-progress', ($provide) => {
 		stateMock = {
 			dataset: {
 				uploadingDataset:  null,

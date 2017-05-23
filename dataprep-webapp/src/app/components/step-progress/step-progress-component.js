@@ -11,11 +11,14 @@
 
  ============================================================================*/
 
-import template from './dataset-progress.html';
-import DatasetProgressCtrl from './dataset-progress-controller';
+import template from './step-progress.html';
+import StepProgressCtrl from './step-progress-controller';
 
-const DatasetProgressComponent = {
-	controller: DatasetProgressCtrl,
+const StepProgressComponent = {
+	bindings: {
+		steps: '=',
+	},
+	controller: StepProgressCtrl,
 	templateUrl: template,
 };
-export default DatasetProgressComponent;
+export default StepProgressComponent;

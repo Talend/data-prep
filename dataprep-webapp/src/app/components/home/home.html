@@ -8,6 +8,8 @@
 <preparation-copy-move></preparation-copy-move>
 <preparation-creator></preparation-creator>
 <insertion-home></insertion-home>
-<dataset-progress ng-if="!$ctrl.state.home.preparations.creator.isVisible">
-</dataset-progress>
+<step-progress
+	ng-if="!$ctrl.state.home.preparations.creator.isVisible"
+	steps="$ctrl.state.dataset.uploadingSteps"
+></step-progress>
 <name-modal></name-modal>

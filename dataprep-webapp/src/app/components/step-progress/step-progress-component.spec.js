@@ -18,7 +18,7 @@ describe('Dataset Progress component', () => {
 	let stateMock;
 	let controller;
 
-	beforeEach(angular.mock.module('data-prep.dataset-progress', ($provide) => {
+	beforeEach(angular.mock.module('data-prep.step-progress', ($provide) => {
 		stateMock = {
 			dataset: {
 				uploadingDataset:  null,
@@ -31,10 +31,10 @@ describe('Dataset Progress component', () => {
 		scope = $rootScope.$new(true);
 
 		createElement = () => {
-			const html = `<dataset-progress></dataset-progress>`;
+			const html = `<progress></progress>`;
 			element = $compile(html)(scope);
 			scope.$digest();
-			controller = element.controller('dataset-progress');
+			controller = element.controller('progress');
 		};
 	}));
 

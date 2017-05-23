@@ -13,15 +13,12 @@
 
 import angular from 'angular';
 
-import SERVICES_STATE_MODULE from '../../../services/state/state-module';
-import DatasetProgress from './dataset-progress-component';
+import StepProgressComponent from './step-progress-component';
 
-const MODULE_NAME = 'data-prep.dataset-progress';
 
-angular.module(MODULE_NAME,
-	[
-		SERVICES_STATE_MODULE,
-	])
-    .component('datasetProgress', DatasetProgress);
+const MODULE_NAME = 'data-prep.step-progress';
+
+angular.module(MODULE_NAME, [])
+	.component('stepProgress', StepProgressComponent);
 
 export default MODULE_NAME;

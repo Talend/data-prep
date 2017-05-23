@@ -12,16 +12,8 @@
  ============================================================================*/
 
 export default class StepProgressCtrl {
-	constructor($translate) {
+	constructor() {
 		'ngInject';
-
-		this.translations = [
-			'UPLOADING_FILE',
-			'PROFILING_DATA',
-		];
-
-		$translate(this.translations)
-		.then(translations => this.translations = this.translations.map(t => translations[t]));
 	}
 
 	get currentStep() {

@@ -45,11 +45,13 @@ export function DatasetStateService() {
 			{
 				type: 'PROGRESSION',
 				state: 'IN_PROGRESS',
+				label: 'UPLOADING_FILE',
 				getValue: () => dataset.progress,
 			},
 			{
 				type: 'INFINITE',
 				state: 'FUTURE',
+				label: 'PROFILING_DATA',
 			},
 		];
 	}

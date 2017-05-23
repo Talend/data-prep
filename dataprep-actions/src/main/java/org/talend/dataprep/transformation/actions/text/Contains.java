@@ -57,6 +57,11 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
      */
     public static final String APPENDIX = "_contains_";
 
+    /**
+     * New column name context key.
+     */
+    public static final String NEW_COLUMN_NAME = "newColumnName";
+
     @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
@@ -100,6 +105,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
             final ColumnMetadata column = rowMetadata.getById(columnId);
             if (column != null) {
                 String newColumnName = evalNewColumnName(column.getName(), rowMetadata, context.getParameters());
+                context.get(NEW_COLUMN_NAME, p -> newColumnName);
 
                 context.column(newColumnName, r -> {
                     final ColumnMetadata c = ColumnMetadata.Builder //
@@ -126,8 +132,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         Map<String, String> parameters = context.getParameters();
 
         // create new column and append it after current column
-        String newColumnName = evalNewColumnName(column.getName(), rowMetadata, parameters);
-        final String containsColumn = context.column(newColumnName);
+        final String containsColumn = context.column(context.get(NEW_COLUMN_NAME));
 
         String value = row.get(context.getColumnId());
         String referenceValue;
@@ -144,7 +149,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
     }
 
     private String evalNewColumnName(String sourceColumnName, RowMetadata rowMetadata, Map<String, String> parameters) {
-        String prefix = "";
+        String prefix;
         if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
             final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             prefix = selectedColumn.getName();

@@ -33,7 +33,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -53,7 +52,10 @@ public class ContainsTest extends AbstractMetadataBaseTest {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(ContainsTest.class.getResourceAsStream("contains.json"));
+        parameters = new HashMap<>();
+        parameters.put("column_id", "0001");
+        parameters.put("column_name", "name");
+        parameters.put("scope", "column");
     }
 
     @Test
@@ -82,7 +84,8 @@ public class ContainsTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("name_contains_toubidou").type(Type.BOOLEAN).build();
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("name_contains_toubidou").type(Type.BOOLEAN)
+                .build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -103,7 +106,8 @@ public class ContainsTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("name_contains_source").type(Type.BOOLEAN).build();
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("name_contains_source").type(Type.BOOLEAN)
+                .build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -207,7 +211,6 @@ public class ContainsTest extends AbstractMetadataBaseTest {
         // then
         assertEquals(expectedValues, row.values());
     }
-
 
     @Test
     public void wrong_params_with_no_mode() {

@@ -208,6 +208,7 @@ public abstract class ExportStrategy {
 
     /**
      * @param preparationId the wanted preparation id.
+     * @param stepId the preparation step (might be different from head's to navigate through versions).
      * @return the preparation out of its id.
      */
     protected PreparationMessage getPreparation(String preparationId, String stepId) {

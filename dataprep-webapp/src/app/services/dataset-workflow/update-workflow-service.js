@@ -37,7 +37,11 @@ export default function UpdateWorkflowService(StateService, MessageService, Data
 
 		return DatasetService.update(dataset)
 			.progress(function (event) {
-				dataset.progress = parseInt(((100.0 * event.loaded) / event.total), 10);
+				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
+				if (dataset.progress !== progress && progress === 100) {
+					StateService.startProfilingDataset();
+				}
+				dataset.progress = progress;
 			})
 			.then(function () {
 				MessageService.success('DATASET_UPDATE_SUCCESS_TITLE', 'DATASET_UPDATE_SUCCESS', { dataset: dataset.name });

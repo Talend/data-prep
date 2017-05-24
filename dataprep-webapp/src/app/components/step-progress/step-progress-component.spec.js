@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-describe('Dataset Progress component', () => {
+describe('Step Progress component', () => {
 	let scope;
 	let element;
 	let createElement;
@@ -22,6 +22,7 @@ describe('Dataset Progress component', () => {
 		stateMock = {
 			dataset: {
 				uploadingDataset:  null,
+				uploadSteps: [],
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -31,10 +32,11 @@ describe('Dataset Progress component', () => {
 		scope = $rootScope.$new(true);
 
 		createElement = () => {
-			const html = `<progress></progress>`;
+			const html = `	<step-progress steps="steps">
+							</step-progress>`;
 			element = $compile(html)(scope);
 			scope.$digest();
-			controller = element.controller('progress');
+			controller = element.controller('step-progress');
 		};
 	}));
 
@@ -44,29 +46,68 @@ describe('Dataset Progress component', () => {
 	});
 
 	describe('render', () => {
-		it('should indicates an in progress upload', inject(function ($rootScope) {
+		it('should render 2 steps', inject(function ($rootScope) {
 			// given
-			stateMock.dataset.uploadingDataset = { id: 'mock', name: 'Mock', progress: 50 };
+			scope.steps = [
+				{ label: '1' },
+				{ label: '2' },
+			];
+			// when
+			createElement();
+			scope.$digest();
+
+			// then
+			expect(element.find('.step').length).toBe(2);
+		}));
+
+		it('should not render steps without label', inject(function ($rootScope) {
+			// given
+			scope.steps = [
+				{ label: '1' },
+				{},
+			];
 
 			// when
 			createElement();
+			scope.$digest();
 
 			// then
-			expect(element.find('.upload-step').hasClass('in-progress')).toBe(true);
-			expect(element.find('.profiling-step').hasClass('future')).toBe(true);
+			expect(element.find('.step').length).toBe(1);
+		}));
+
+		it('should indicates an in progress upload', inject(function ($rootScope) {
+			// given
+			scope.steps = [
+				{ id: 'mock', name: 'Mock', state: 'IN_PROGRESS', label: 'A', getValue: () => 50 },
+				{ id: 'mock', name: 'Mock', type: 'INFINITE', label: 'B', state: 'FUTURE' },
+			];
+
+			// when
+			createElement();
+			scope.$digest();
+
+			// then
+			const steps = element.find('.step');
+			expect(steps.eq(0).hasClass('in-progress')).toBe(true);
+			expect(steps.eq(1).hasClass('future')).toBe(true);
 		}));
 
 		it('should indicates an in progress profiling', inject(function ($rootScope) {
 			// given
-			stateMock.dataset.uploadingDataset = { id: 'mock', name: 'Mock', progress: 100 };
+			scope.steps = [
+				{ id: 'mock', name: 'Mock', state: 'COMPLETE', label: 'A' },
+				{ id: 'mock', name: 'Mock', type: 'INFINITE', state: 'IN_PROGRESS', label: 'B' },
+			];
 
 			// when
 			createElement();
+			scope.$digest();
 
 			// then
-			expect(element.find('.upload-step').hasClass('complete')).toBe(true);
-			expect(element.find('.profiling-step').hasClass('in-progress')).toBe(true);
-			expect(element.find('.upload-step').hasClass('future')).toBe(false);
+			const steps = element.find('.step');
+			expect(steps.eq(0).hasClass('complete')).toBe(true);
+			expect(steps.eq(1).hasClass('in-progress')).toBe(true);
+			expect(steps.eq(0).hasClass('future')).toBe(false);
 		}));
 	});
 });

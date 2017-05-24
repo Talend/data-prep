@@ -5,7 +5,7 @@
                 disable-enter="true"
                 disable-close-on-background-click="true">
 
-        <h1>{{ $ctrl.modalTitle | translate }}</h1>
+        <h1>{{ $ctrl.modalTitle }}</h1>
 
     	<div class="progress">
             <div
@@ -20,12 +20,13 @@
             <li
                 ng-repeat="step in $ctrl.steps track by $index"
                 ng-if="step.label"
+                class="step"
                 ng-class="{
                     'in-progress': step.state === 'IN_PROGRESS',
                     'complete': step.state === 'COMPLETE',
                     'future': step.state === 'FUTURE'
                 }">
-                <span>{{ step.label | translate }}</span>
+                <span>{{ step.label }}</span>
                 <pure-circular-progress  ng-if="step.state === 'IN_PROGRESS'" class="step-icon progress-icon"></pure-circular-progress>
                 <icon ng-if="step.state === 'COMPLETE'" class="step-icon complete-icon" name="'talend-check'"/>
             </li>

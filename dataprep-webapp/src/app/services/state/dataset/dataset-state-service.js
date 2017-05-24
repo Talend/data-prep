@@ -16,7 +16,7 @@ export const datasetState = {
 	uploadSteps: [],
 };
 
-export function DatasetStateService() {
+export function DatasetStateService($translate) {
 	return {
 		startUploadingDataset,
 		startProfilingDataset,
@@ -45,13 +45,13 @@ export function DatasetStateService() {
 			{
 				type: 'PROGRESSION',
 				state: 'IN_PROGRESS',
-				label: 'UPLOADING_FILE',
+				label: $translate.instant('UPLOADING_FILE'),
 				getValue: () => dataset.progress,
 			},
 			{
 				type: 'INFINITE',
 				state: 'FUTURE',
-				label: 'PROFILING_DATA',
+				label: $translate.instant('PROFILING_DATA'),
 			},
 		];
 	}

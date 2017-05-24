@@ -15,6 +15,13 @@ describe('dataset state service', function () {
 	var dataset = { progress: 66 };
 	let stateMock;
 
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
+			"UPLOADING_FILE": "UPLOADING_FILE_LABEL",
+			"PROFILING_DATA": "PROFILING_DATA_LABEL",
+		});
+		$translateProvider.preferredLanguage('en');
+	}));
 	beforeEach(angular.mock.module('data-prep.services.state'));
 	beforeEach(inject(datasetState => {
 		datasetState.uploadingDataset = null;
@@ -39,12 +46,12 @@ describe('dataset state service', function () {
 		//then
 		expect(datasetState.uploadSteps[0].type).toBe('PROGRESSION');
 		expect(datasetState.uploadSteps[0].state).toBe('IN_PROGRESS');
-		expect(datasetState.uploadSteps[0].label).toBe('UPLOADING_FILE');
+		expect(datasetState.uploadSteps[0].label).toBe('UPLOADING_FILE_LABEL');
 		expect(datasetState.uploadSteps[0].getValue()).toBe(66);
 
 		expect(datasetState.uploadSteps[1].type).toBe('INFINITE');
 		expect(datasetState.uploadSteps[1].state).toBe('FUTURE');
-		expect(datasetState.uploadSteps[1].label).toBe('PROFILING_DATA');
+		expect(datasetState.uploadSteps[1].label).toBe('PROFILING_DATA_LABEL');
 	}));
 
 	it('should build the proper steps when profiling', inject((DatasetStateService, datasetState) => {
@@ -55,11 +62,11 @@ describe('dataset state service', function () {
 		//then
 		expect(datasetState.uploadSteps[0].type).toBe('PROGRESSION');
 		expect(datasetState.uploadSteps[0].state).toBe('COMPLETE');
-		expect(datasetState.uploadSteps[0].label).toBe('UPLOADING_FILE');
+		expect(datasetState.uploadSteps[0].label).toBe('UPLOADING_FILE_LABEL');
 
 		expect(datasetState.uploadSteps[1].type).toBe('INFINITE');
 		expect(datasetState.uploadSteps[1].state).toBe('IN_PROGRESS');
-		expect(datasetState.uploadSteps[1].label).toBe('PROFILING_DATA');
+		expect(datasetState.uploadSteps[1].label).toBe('PROFILING_DATA_LABEL');
 	}));
 
 	it('should remove the uploading dataset', inject((DatasetStateService, datasetState) => {

@@ -36,6 +36,19 @@ public class StreamModuleTest extends ServiceBaseTest {
     ObjectMapper mapper;
 
     @Test
+    public void shouldStreamWithNullValues() throws Exception {
+        // Given
+        final Stream<String> stringStream = Stream.of(null, null);
+
+        // When
+        final StringWriter writer = new StringWriter();
+        mapper.writeValue(writer, stringStream);
+
+        // Then
+        assertThat(writer.toString(), sameJSONAs("[]"));
+    }
+
+    @Test
     public void shouldHandleEmptyStream() throws Exception {
         // Given
         final Stream<String> stringStream = Stream.empty();

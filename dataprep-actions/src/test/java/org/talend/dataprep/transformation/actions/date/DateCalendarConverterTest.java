@@ -123,58 +123,63 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     private static final String ThaiBuddhistStr2 = "2539-10-29";
 
+    private static final String JulianDay="2450386";
+    private static final String ModifiedJulianDay ="50385";
+    private static final String RataDie ="728961";
+    private static final String EpochDay ="9798";
+
     @Test
     public void testBlank_values() {
-        testConversion(null, DateCalendarConverter.ChronologyUnit.ISO, pattern, null,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion(null, DateCalendarConverter.CalendarUnit.ISO, pattern, null,
+                DateCalendarConverter.CalendarUnit.HIJRI);
 
-        testConversion("", DateCalendarConverter.ChronologyUnit.ISO, pattern, "",
-                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion("", DateCalendarConverter.CalendarUnit.ISO, pattern, "",
+                DateCalendarConverter.CalendarUnit.HIJRI);
     }
 
     @Test
     public void testConversion_all_custom_patterns() {
-        testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, HijrahStr,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
-        testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, JapaneseStr,
-                DateCalendarConverter.ChronologyUnit.JAPANESE);
-        testConversion(IsoStr1, DateCalendarConverter.ChronologyUnit.ISO, pattern1, MinguoStr1,
-                DateCalendarConverter.ChronologyUnit.MINGUO);
-        testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, ThaiBuddhistStr2,
-                DateCalendarConverter.ChronologyUnit.THAI_BUDDHIST);
-        testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, IsoStr2,
-                DateCalendarConverter.ChronologyUnit.ISO);
+        testConversion(IsoStr, DateCalendarConverter.CalendarUnit.ISO, pattern, HijrahStr,
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion(IsoStr, DateCalendarConverter.CalendarUnit.ISO, pattern, JapaneseStr,
+                DateCalendarConverter.CalendarUnit.JAPANESE);
+        testConversion(IsoStr1, DateCalendarConverter.CalendarUnit.ISO, pattern1, MinguoStr1,
+                DateCalendarConverter.CalendarUnit.MINGUO);
+        testConversion(IsoStr, DateCalendarConverter.CalendarUnit.ISO, pattern, ThaiBuddhistStr2,
+                DateCalendarConverter.CalendarUnit.THAI_BUDDHIST);
+        testConversion(IsoStr, DateCalendarConverter.CalendarUnit.ISO, pattern, IsoStr2,
+                DateCalendarConverter.CalendarUnit.ISO);
     }
 
     @Test
     public void testConversion_month() {
-        testConversion("01/09/2015", DateCalendarConverter.ChronologyUnit.ISO, "dd/MM/yyyy", "17/11/1436",
-                DateCalendarConverter.ChronologyUnit.HIJRI);
-        testConversion("01/Sep/2015", DateCalendarConverter.ChronologyUnit.ISO, "dd/MMM/yyyy", "17/ذو القعدة/1436",
-                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion("01/09/2015", DateCalendarConverter.CalendarUnit.ISO, "dd/MM/yyyy", "17/11/1436",
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion("01/Sep/2015", DateCalendarConverter.CalendarUnit.ISO, "dd/MMM/yyyy", "17/ذو القعدة/1436",
+                DateCalendarConverter.CalendarUnit.HIJRI);
     }
 
     @Test
     public void testConversion_out_of_range_calendar() {
-        testConversion("12/5/15", DateCalendarConverter.ChronologyUnit.ISO, "MM/dd/yyyy", "12/5/15",
-                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion("12/5/15", DateCalendarConverter.CalendarUnit.ISO, "MM/dd/yyyy", "12/5/15",
+                DateCalendarConverter.CalendarUnit.HIJRI);
     }
 
     @Test
     public void testConversion_only_input_custom() {
-        testConversion(IsoStr, DateCalendarConverter.ChronologyUnit.ISO, pattern, HijrahStr,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
-        testConversion(JapaneseStr1, DateCalendarConverter.ChronologyUnit.JAPANESE, pattern1, HijrahStr2,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
-        testConversion(MinguoStr1, DateCalendarConverter.ChronologyUnit.MINGUO, pattern1, HijrahStr2,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
-        testConversion(ThaiBuddhistStr1, DateCalendarConverter.ChronologyUnit.THAI_BUDDHIST, pattern1, HijrahStr2,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion(IsoStr, DateCalendarConverter.CalendarUnit.ISO, pattern, HijrahStr,
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion(JapaneseStr1, DateCalendarConverter.CalendarUnit.JAPANESE, pattern1, HijrahStr2,
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion(MinguoStr1, DateCalendarConverter.CalendarUnit.MINGUO, pattern1, HijrahStr2,
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion(ThaiBuddhistStr1, DateCalendarConverter.CalendarUnit.THAI_BUDDHIST, pattern1, HijrahStr2,
+                DateCalendarConverter.CalendarUnit.HIJRI);
 
-        testConversion(MinguoStr, DateCalendarConverter.ChronologyUnit.MINGUO, pattern, HijrahStr,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
-        testConversion(ThaiBuddhistStr, DateCalendarConverter.ChronologyUnit.THAI_BUDDHIST, pattern, HijrahStr,
-                DateCalendarConverter.ChronologyUnit.HIJRI);
+        testConversion(MinguoStr, DateCalendarConverter.CalendarUnit.MINGUO, pattern, HijrahStr,
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion(ThaiBuddhistStr, DateCalendarConverter.CalendarUnit.THAI_BUDDHIST, pattern, HijrahStr,
+                DateCalendarConverter.CalendarUnit.HIJRI);
     }
 
     @Test
@@ -189,8 +194,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
         parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0001");
-        parameters.put(DateCalendarConverter.FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.ChronologyUnit.ISO.name());
-        parameters.put(DateCalendarConverter.TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.ChronologyUnit.HIJRI.name());
+        parameters.put(DateCalendarConverter.FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put(DateCalendarConverter.TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.HIJRI.name());
         parameters.put(DateCalendarConverter.FROM_MODE, DateCalendarConverter.FROM_MODE_BEST_GUESS);
 
         // when
@@ -226,7 +231,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
         List<DatePattern> patterns = Arrays.asList(new DatePattern("M/d/yyyy"), new DatePattern("dd-MMM-yyyy"),
                 new DatePattern("MMMM d, yyyy"), new DatePattern("d MMMM yyyy"));
-        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        AbstractChronology chronology = DateCalendarConverter.CalendarUnit.ISO.getCalendarType();
 
         // given
         String valueWithMonthInCapital = "02-FEB-1978";
@@ -273,7 +278,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
         // given
         List<DatePattern> patterns = Arrays.asList(new DatePattern("M/d/yyyy"), new DatePattern("dd-MMM-yyyy"));
-        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        AbstractChronology chronology = DateCalendarConverter.CalendarUnit.ISO.getCalendarType();
         Locale locale = Locale.US;
 
         // then
@@ -287,7 +292,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
         // given
         String value = "02-Dec-197";
         List<DatePattern> patterns = new ArrayList<>();
-        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        AbstractChronology chronology = DateCalendarConverter.CalendarUnit.ISO.getCalendarType();
         Locale locale = Locale.US;
 
         // then
@@ -301,7 +306,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
         // given
         String value = "02-Dec-197";
         List<DatePattern> patterns = Arrays.asList(new DatePattern("a/bb/cccc"), new DatePattern("tt/zzz/fffff"));
-        AbstractChronology chronology = DateCalendarConverter.ChronologyUnit.ISO.getCalendarType();
+        AbstractChronology chronology = DateCalendarConverter.CalendarUnit.ISO.getCalendarType();
         Locale locale = Locale.US;
 
         // then
@@ -310,8 +315,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
     }
 
 
-    private void testConversion(String from, DateCalendarConverter.ChronologyUnit fromUnit, String fromPattern, String expected,
-                                DateCalendarConverter.ChronologyUnit toUnit) {
+    private void testConversion(String from, DateCalendarConverter.CalendarUnit fromUnit, String fromPattern, String expected,
+                                DateCalendarConverter.CalendarUnit toUnit) {
         // given
         // row 1
         Map<String, String> rowContent = new HashMap<>();
@@ -341,4 +346,49 @@ public class DateCalendarConverterTest extends BaseDateTest {
         assertEquals("foo", row2.get("0001"));
     }
 
+    @Test
+    public void testJulianDayToChronology(){
+        String ear=" AD";
+        testConversion(ModifiedJulianDay, DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY, null, IsoStr2+ear,
+                DateCalendarConverter.CalendarUnit.ISO);
+        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, JapaneseStr+" Heisei",
+                DateCalendarConverter.CalendarUnit.JAPANESE);
+
+        testConversion(RataDie, DateCalendarConverter.CalendarUnit.RATA_DIE, null, HijrahStr+" AH",
+                DateCalendarConverter.CalendarUnit.HIJRI);
+        testConversion(EpochDay, DateCalendarConverter.CalendarUnit.EPOCH_DAY, null, MinguoStr+" R.O.C.",
+                DateCalendarConverter.CalendarUnit.MINGUO);
+        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, ThaiBuddhistStr+" B.E.",
+                DateCalendarConverter.CalendarUnit.THAI_BUDDHIST);
+    }
+
+    @Test
+    public void testChronologyToJulianDay(){
+        testConversion(IsoStr2, DateCalendarConverter.CalendarUnit.ISO, pattern, JulianDay,
+                DateCalendarConverter.CalendarUnit.JULIAN_DAY);
+        testConversion(JapaneseStr, DateCalendarConverter.CalendarUnit.JAPANESE, pattern,ModifiedJulianDay ,
+                DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
+
+        testConversion(HijrahStr, DateCalendarConverter.CalendarUnit.HIJRI, pattern,EpochDay ,
+                DateCalendarConverter.CalendarUnit.EPOCH_DAY);
+        testConversion(MinguoStr, DateCalendarConverter.CalendarUnit.MINGUO, pattern,RataDie ,
+                DateCalendarConverter.CalendarUnit.RATA_DIE);
+        testConversion(ThaiBuddhistStr, DateCalendarConverter.CalendarUnit.THAI_BUDDHIST, pattern,JulianDay ,
+                DateCalendarConverter.CalendarUnit.JULIAN_DAY);
+    }
+    @Test
+    public void testJulianDayToEachother(){
+        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, RataDie,
+                DateCalendarConverter.CalendarUnit.RATA_DIE);
+        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, EpochDay,
+                DateCalendarConverter.CalendarUnit.EPOCH_DAY);
+        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, ModifiedJulianDay,
+                DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
+        testConversion(ModifiedJulianDay, DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY, null, JulianDay,
+                DateCalendarConverter.CalendarUnit.JULIAN_DAY);
+        testConversion(RataDie, DateCalendarConverter.CalendarUnit.RATA_DIE, null, EpochDay,
+                DateCalendarConverter.CalendarUnit.EPOCH_DAY);
+        testConversion(EpochDay, DateCalendarConverter.CalendarUnit.EPOCH_DAY, null, ModifiedJulianDay,
+                DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
+    }
 }

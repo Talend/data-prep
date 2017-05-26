@@ -101,6 +101,24 @@ public class ExportAPITest extends ApiServiceTestBase {
     }
 
     @Test
+    public void checkUTF8() throws Exception {
+        // given
+        final String datasetId = testClient.createDataset("export/_UTF-8 住所.csv", "_UTF-8 住所", "text/csv");
+
+        // when
+        final Response response = given() //
+                .formParam("exportType", "CSV") //
+                .formParam("datasetId", datasetId) //
+                .when() //
+                .get("/api/export");
+
+        // then
+        assertTrue(response.getContentType().startsWith("text/csv"));
+        // Expect URL encoded filename
+        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"_UTF-8%20%E4%BD%8F%E6%89%80.csv\"");
+    }
+
+    @Test
     public void testExportCsvFromPreparationStep() throws Exception {
         // given
         final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", "text/csv",

@@ -70,7 +70,7 @@ describe('Step Description Component', () => {
             scope.$digest();
 
             //then
-            expect(element.eq(0).text().trim().replace(/\s+/g, ' ')).toBe('3 Split on column COL1');
+            expect(element.eq(0).text().trim().replace(/\s+/g, ' ')).toBe('3 Split on column col1');
         });
     });
 

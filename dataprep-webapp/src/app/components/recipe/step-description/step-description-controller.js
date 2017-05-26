@@ -26,7 +26,7 @@ class StepDescriptionCtrl {
 			this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {
 				index: (this.index + 1),
 				label: this.step.transformation.label,
-				columnName: this.step.column.name.toUpperCase(),
+				columnName: this.step.column.name,
 			});
 			break;
 
@@ -54,7 +54,7 @@ class StepDescriptionCtrl {
 				this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {
 					index: (this.index + 1),
 					label: this.step.transformation.label,
-					columnName: this.step.column.name.toUpperCase(),
+					columnName: this.step.column.name,
 				});
 			}
 

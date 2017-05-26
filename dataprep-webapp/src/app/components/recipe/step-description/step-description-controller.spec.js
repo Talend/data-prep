@@ -66,7 +66,7 @@ describe('Step Description controller', () => {
 			scope.$digest();
 
 			//then
-			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on column <div class="step-scope" title="COL1">COL1</div>');
+			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on column <div class="step-scope" title="col1">col1</div>');
 		});
 
 		it('should translate description on scope: cell', () => {
@@ -137,7 +137,7 @@ describe('Step Description controller', () => {
 			expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">Delete Line</span> <span class="step-scope">#125</span>');
 		});
 
-		describe('translate description on scope: dataset, ', () => {
+		describe('translate description on scope: dataset,', () => {
 			describe('on lookup action', () => {
 				it('should translate description with 1 column', () => {
 					//given
@@ -320,7 +320,7 @@ describe('Step Description controller', () => {
 					scope.$digest();
 
 					//then
-					expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">Split</span> on column <div class="step-scope" title="COL1">COL1</div>');
+					expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">Split</span> on column <div class="step-scope" title="col1">col1</div>');
 				});
 			});
 		});

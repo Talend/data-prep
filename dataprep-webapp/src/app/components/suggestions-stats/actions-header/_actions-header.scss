@@ -15,6 +15,15 @@
 	border-left: 2px solid $super-light-gray;
 	display: flex;
 	flex-direction: column;
+	height: $navigation-height;
+	background-color: #F1F1F1;
+
+	.title {
+		@include ellipsis(320px);
+		font-size: 1.2em;
+		font-weight: 600;
+		padding: 15px 15px 15px 10px;
+	}
 
 	.introjs-showElement {
 		background: $white;

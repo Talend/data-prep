@@ -747,8 +747,8 @@ describe('Recipe component', () => {
 
 		// then
 		expect(element.find('.recipe ul sc-accordion-item').length).toBe(4);
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1 Split on column COL1');
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2 To uppercase on column COL2');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1 Split on column col1');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2 To uppercase on column col2');
 		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(2).text().trim().replace(/\s+/g, ' ')).toBe('3 Replace value on cell');
 		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(3).text().trim().replace(/\s+/g, ' ')).toBe('4 Delete Line #125');
 	});

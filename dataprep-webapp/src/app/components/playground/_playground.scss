@@ -165,19 +165,6 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 		@include suggestions-layout();
 
 		.playground-suggestions {
-			.suggestions-title {
-				height: $navigation-height;
-				background-color: #F1F1F1;
-
-				.title {
-					@include ellipsis(320px);
-					font-size: 1.2em;
-					font-weight: 600;
-					padding: 15px 15px 15px 10px;
-					text-transform: uppercase;
-				}
-			}
-
 			.suggestions-stats-content {
 				height: calc(#{$suggestions-stats-content-height});
 				width: 330px;

@@ -12,7 +12,7 @@
   ============================================================================*/
 const ActionsHeader = {
 	template: `
-		<div class="suggestions-title actions-header" ng-switch="actionsHeaderCtrl.state.playground.grid.selectedColumns.length > 1">
+		<div class="actions-header" ng-switch="actionsHeaderCtrl.state.playground.grid.selectedColumns.length > 1">
 			<span class="title"
 				  title="{{actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name}}"
 				  ng-switch-when="false"

@@ -16,18 +16,18 @@ import angular from 'angular';
 const configPath = '/assets/config/config.json';
 const settingsPath = '/api/settings';
 
-function getHelper(url) {
+function get(url) {
 	const initInjector = angular.injector(['ng']);
 	const $http = initInjector.get('$http');
 	return $http.get(url).then(response => response.data);
 }
 
 function getAppConfig() {
-	return getHelper(configPath);
+	return get(configPath);
 }
 
 function getAppSettings({ serverUrl }) {
-	return getHelper(serverUrl + settingsPath);
+	return get(serverUrl + settingsPath);
 }
 
 export default function getAppConfiguration() {

@@ -178,7 +178,7 @@ function addPlugins(config, options) {
 		 */
 		new CopyWebpackPlugin([
 			{ from: 'src/assets/images', to: 'assets/images' },
-			{ from: 'src/assets/config/config.json', to: 'src/assets/config' },
+			{ from: 'src/assets/config/config.json', to: 'assets/config' },
 			{
 				from: 'src/assets/config/config.mine.json',
 				to: 'assets/config/config.json',

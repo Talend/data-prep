@@ -4,7 +4,6 @@ const SASS_DATA = require('./sass.conf');
 
 const path = require('path');
 const webpack = require('webpack');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const autoprefixer = require('autoprefixer');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -114,10 +113,6 @@ function getSassLoaders(enableModules) {
 		loader: 'sass-loader',
 		options: { sourceMap: true, data: SASS_DATA }
 	});
-}
-
-function addDashboardPlugin(config) {
-	config.plugins.push(new DashboardPlugin());
 }
 
 function addProdEnvPlugin(config) {
@@ -276,7 +271,6 @@ function addLinterConfig(config) {
 /*
  {
  coverage: (true | false)            // configure coverage instrumenter
- dashboard: (true | false)           // enable webpack dashboard plugin
  devtool: 'inline-source-map',       // source map type
  devServer: (true | false),          // configure webpack-dev-server
  entryOutput: (true | false),        // configure entry and output files and plugins to generate full app. For example, test with karma doesn't need that, as the files are managed by karma.
@@ -292,10 +286,6 @@ module.exports = (options) => {
 
 	if (options.coverage) {
 		addCoverageConfig(config);
-	}
-
-	if (options.dashboard) {
-		addDashboardPlugin(config);
 	}
 
 	if (options.devServer) {

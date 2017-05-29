@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.DataSetDataReader;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
-import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 /**
  * A class that connects to a remote server based on a JWT-authentication and sends requests to retrieve data sets.
@@ -125,7 +125,7 @@ public class RemoteResourceGetter {
         return mapLookupDataSet(apiUrl, jwt, dataSetId, joinOnColumn);
     }
 
-    public Dictionaries retrieveDictionaries(String apiUrl, String login, String password) {
+    public TdqCategories retrieveDictionaries(String apiUrl, String login, String password) {
         String url = apiUrl + "/api/transform/dictionary";
         HttpGet request = new HttpGet(url);
         request.addHeader(login(apiUrl, login, password));
@@ -133,7 +133,7 @@ public class RemoteResourceGetter {
             handleError(response);
             final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(response.getEntity().getContent()));
             final Object object = ois.readObject();
-            return (Dictionaries) object;
+            return (TdqCategories) object;
         } catch (Exception e) {
             throw new RemoteConnectionException("Unable to retrieve dictionaries.", e);
         }

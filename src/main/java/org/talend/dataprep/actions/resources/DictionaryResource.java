@@ -14,27 +14,33 @@ package org.talend.dataprep.actions.resources;
 
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.service.Dictionaries;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
 
 public class DictionaryResource implements FunctionResource {
 
-    private final Dictionaries dictionaries;
+    private final TdqCategories tdqCategories;
 
-    public DictionaryResource(Dictionaries dictionaries) {
-        this.dictionaries = dictionaries;
+    public DictionaryResource(TdqCategories tdqCategories) {
+        this.tdqCategories = tdqCategories;
     }
 
     @Override
     public void register() {
         // Init Dictionaries
-        if (dictionaries != null) {
+        if (tdqCategories != null) {
             CategoryRecognizerBuilder builder = CategoryRecognizerBuilder.newBuilder().lucene();
-            if (dictionaries.getDictionary() != null) {
-                builder = builder.ddDirectory(dictionaries.getDictionary().get());
+            if (tdqCategories.getDictionary() != null) {
+                builder = builder.ddDirectory(tdqCategories.getDictionary().get());
             }
-            if (dictionaries.getKeyword() != null) {
-                builder = builder.kwDirectory(dictionaries.getKeyword().get());
+            if (tdqCategories.getKeyword() != null) {
+                builder = builder.kwDirectory(tdqCategories.getKeyword().get());
+            }
+            if (tdqCategories.getRegex() != null) {
+                builder = builder.regexClassifier(tdqCategories.getRegex().get());
+            }
+            if (tdqCategories.getCategoryMetadata() != null){
+                builder = builder.metadata(tdqCategories.getCategoryMetadata().get());
             }
             Providers.get(AnalyzerService.class, builder);
         }

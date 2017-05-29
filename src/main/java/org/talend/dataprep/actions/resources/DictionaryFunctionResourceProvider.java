@@ -23,7 +23,7 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
-import org.talend.dataprep.transformation.service.Dictionaries;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class DictionaryFunctionResourceProvider implements FunctionResourceProvider {
 
@@ -44,7 +44,7 @@ public class DictionaryFunctionResourceProvider implements FunctionResourceProvi
         this.password = password;
     }
 
-    private Dictionaries retrieveDictionaries(List<RunnableAction> actions) {
+    private TdqCategories retrieveDictionaries(List<RunnableAction> actions) {
         boolean requireDictionary = false;
         for (Action action : actions) {
             final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
@@ -58,7 +58,7 @@ public class DictionaryFunctionResourceProvider implements FunctionResourceProvi
         if (requireDictionary) {
             final RemoteResourceGetter getter = new RemoteResourceGetter();
             LOGGER.info("Retrieving dictionary from Data Prep...");
-            final Dictionaries dictionaries = getter.retrieveDictionaries(apiUrl, login, password);
+            final TdqCategories dictionaries = getter.retrieveDictionaries(apiUrl, login, password);
             LOGGER.info("Dictionary retrieved.");
             return dictionaries;
         } else {

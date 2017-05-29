@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.transformation.service.Dictionaries;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class DefaultActionParserTest {
 
@@ -71,7 +71,7 @@ public class DefaultActionParserTest {
         apiUrl = serverMock.getServerUrl();
         parser = new DefaultActionParser(apiUrl, login, password);
 
-        Dictionaries o = new Dictionaries(null, null);
+        TdqCategories o = new TdqCategories(null, null, null, null);
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(bos))) {
             oos.writeObject(o);

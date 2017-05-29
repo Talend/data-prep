@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class StandalonePreparationFactoryTest {
 
@@ -42,7 +42,7 @@ public class StandalonePreparationFactoryTest {
 
     private StandalonePreparationFactory factory = new StandalonePreparationFactory();
 
-    private static DictionaryResource dictionaryResource = new DictionaryResource(new Dictionaries(null, null));
+    private static DictionaryResource dictionaryResource = new DictionaryResource(new TdqCategories(null, null, null, null));
 
     private ObjectMapper mapper = new ObjectMapper();
 

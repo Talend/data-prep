@@ -28,7 +28,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
-import org.talend.dataprep.transformation.service.Dictionaries;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class RemoteResourceGetterTest {
 
@@ -165,7 +165,7 @@ public class RemoteResourceGetterTest {
     @Test
     public void testGetDictionaries() throws Exception {
         // Given
-        Dictionaries o = new Dictionaries(null, null);
+        TdqCategories o = new TdqCategories(null, null, null, null);
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(bos))) {
             oos.writeObject(o);
@@ -175,7 +175,7 @@ public class RemoteResourceGetterTest {
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
         // When
-        Dictionaries result = remoteResourceGetter.retrieveDictionaries(serverUrl, "Maximus", "Spanish");
+        TdqCategories result = remoteResourceGetter.retrieveDictionaries(serverUrl, "Maximus", "Spanish");
 
         // Then
         assertNotNull(result);

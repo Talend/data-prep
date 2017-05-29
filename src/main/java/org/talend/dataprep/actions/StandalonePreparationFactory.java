@@ -37,7 +37,8 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
-import org.talend.dataprep.transformation.service.Dictionaries;
+import org.talend.dataquality.semantic.broadcast.BroadcastRegexObject;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.BroadcastIndexObject;
 
 /**
@@ -135,9 +136,7 @@ public class StandalonePreparationFactory {
     public Function<IndexedRecord, IndexedRecord> create(final InputStream inputStream) {
         StandalonePreparation standalonePreparation = PreparationParser.parsePreparation(inputStream);
         FunctionResource lookup = new LookupResource(standalonePreparation.getLookupDataSets());
-        BroadcastIndexObject dictionaryIndexObject = new BroadcastIndexObject(standalonePreparation.getDictionary());
-        BroadcastIndexObject keywordIndexObject = new BroadcastIndexObject(standalonePreparation.getKeyword());
-        FunctionResource dictionary = new DictionaryResource(new Dictionaries(dictionaryIndexObject, keywordIndexObject));
+        FunctionResource dictionary = new DictionaryResource(standalonePreparation.getTdqCategories());
         return create(standalonePreparation, lookup, dictionary);
     }
 

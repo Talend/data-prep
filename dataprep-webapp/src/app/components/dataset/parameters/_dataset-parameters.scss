@@ -12,13 +12,8 @@
   ============================================================================*/
 
 .dataset-parameters {
-	background: $dark-gray;
-
 	.dataset-parameters-title {
-		border-bottom: 1px solid $white;
-		color: $white;
 		font-weight: bold;
-		padding: 10px;
 	}
 
 	.param {
@@ -26,55 +21,52 @@
 		flex-direction: column;
 		justify-content: flex-start;
 		align-items: stretch;
+		padding: 0;
 
 		.param-row {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
-			align-items: center;
+
+			&:nth-child(1) {
+				margin-bottom: 20px;
+			}
 
 			.param-row-item {
 				display: flex;
-				flex-direction: row;
+				flex-direction: column;
 				flex-wrap: wrap;
-				align-items: center;
 				flex-basis: 300px;
 				flex-grow: 1;
 
 				.param-name {
-					flex-basis: 75px;
 					flex-grow: 0;
-
-					color: $white;
+					color:$secondary-text;
+					flex-basis: 0;
 				}
 
 				.param-input {
-					flex-basis: 180px;
-					flex-grow: 0;
+					flex-basis: 0;
+
+					.form-control {
+						float: left;
+
+						&.custom-separator {
+							margin-left: 10px;
+						}
+					}
 
 					select {
+						width: 120px;
 						padding: 5px;
-						background-color: $white;
-					}
-
-					&.dataset-name {
-						@include ellipsis(250px);
-						flex-grow: 1;
-						font-weight: bold;
-						text-transform: uppercase;
-						color: $green;
-						padding-right: 10px;
 					}
 				}
-			}
-		}
 
-		.dataset-parameters-header {
-			.color-white {
-				color: $white;
-			}
-			.color-orange {
-				color: $orange;
+				.param-value {
+					@include ellipsis(250px);
+					flex-grow: 1;
+					padding-right: 10px;
+				}
 			}
 		}
 
@@ -86,10 +78,8 @@
 	}
 
 	.dataset-parameters-actions {
-		flex-basis: 30px;
-		flex-grow: 1;
-		flex-shrink: 1;
-		text-align: right;
-		padding: 0 10px 10px 0;
+		position: absolute;
+		bottom: 19px;
+		right: 19px;
 	}
 }

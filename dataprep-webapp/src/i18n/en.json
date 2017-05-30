@@ -391,8 +391,8 @@
   "DATASET_PARAMETERS_ENCODING": "Encoding",
   "DATASET_PARAMETERS_SEPARATOR": "Separator",
   "ACTION_HELP": "Learn more ...",
-  "NAME": "Name:",
-  "SIZE": "Size:",
+  "NAME": "Name",
+  "SIZE": "Size",
 
   "_comment": "Upgrade version parameters",
   "UPGRADE_VERSION_NEW_VERSION_AVAILABLE": "New version available",

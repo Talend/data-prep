@@ -17,6 +17,16 @@ export const datasetState = {
 };
 
 export function DatasetStateService($translate) {
+	const TYPES = {
+		PROGRESSION: 'PROGRESSION',
+		INFINITE: 'INFINITE',
+	};
+	const STATES = {
+		IN_PROGRESS: 'IN_PROGRESS',
+		FUTURE: 'FUTURE',
+		COMPLETE: 'COMPLETE',
+	};
+
 	return {
 		startUploadingDataset,
 		startProfilingDataset,
@@ -43,24 +53,24 @@ export function DatasetStateService($translate) {
 	function initSteps(dataset) {
 		datasetState.uploadSteps = [
 			{
-				type: 'PROGRESSION',
-				state: 'IN_PROGRESS',
+				type: TYPES.PROGRESSION,
+				state: STATES.IN_PROGRESS,
 				label: $translate.instant('UPLOADING_FILE'),
 				getValue: () => dataset.progress,
 			},
 			{
-				type: 'INFINITE',
-				state: 'FUTURE',
+				type: TYPES.INFINITE,
+				state: STATES.FUTURE,
 				label: $translate.instant('PROFILING_DATA'),
 			},
 		];
 	}
 
 	function nextStep() {
-		const index = datasetState.uploadSteps.findIndex(step => step.state === 'IN_PROGRESS');
+		const index = datasetState.uploadSteps.findIndex(step => step.state === STATES.IN_PROGRESS);
 		if (datasetState.uploadSteps[index + 1]) {
-			datasetState.uploadSteps[index].state = 'COMPLETE';
-			datasetState.uploadSteps[index + 1].state = 'IN_PROGRESS';
+			datasetState.uploadSteps[index].state = STATES.COMPLETE;
+			datasetState.uploadSteps[index + 1].state = STATES.IN_PROGRESS;
 		}
 		else {
 			datasetState.uploadSteps = [];

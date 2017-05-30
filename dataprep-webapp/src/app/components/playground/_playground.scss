@@ -60,7 +60,8 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 
 		#playground-dataset-parameters {
 			@include slidable-top(180px, 0px);
-			margin: 0 30px;
+			left: 30px;
+			right: 30px;
 			width: inherit;
 
 			box-sizing: border-box;
@@ -73,7 +74,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 			box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.25);
 
 			> .content {
-				margin: 19px;
+				margin: 20px;
 				display: flex;
 				flex-basis: 180px;
 				flex-grow: 1;

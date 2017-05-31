@@ -51,14 +51,22 @@ public class RowMetadataUtils {
         return toSchema(rowMetadata.getColumns());
     }
 
+    public static Schema toSchema(String name, RowMetadata rowMetadata) {
+        return toSchema(name, rowMetadata.getColumns());
+    }
+
     public static Schema toSchema(List<ColumnMetadata> columns) {
+        return toSchema("dataprep" + System.currentTimeMillis(), columns);
+    }
+
+    public static Schema toSchema(String name, List<ColumnMetadata> columns) {
 
         List<Schema.Field> fields = columns.stream() //
                 .map(RowMetadataUtils::toField) //
                 .collect(Collectors.toList());
 
         final Schema schema = Schema.createRecord( //
-                "dataprep" + System.currentTimeMillis(), //
+                name, //
                 "a dataprep preparation", //
                 "org.talend.dataprep", //
                 false //

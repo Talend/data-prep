@@ -191,7 +191,7 @@ describe('Dataset Rest Service', () => {
 				{ name: '顧客 (1K lines)' },
 			];
 			$httpBackend
-				.expectGET(RestURLs.datasetUrl + '?name=顧客')
+				.expectGET(RestURLs.datasetUrl + '?name=%E9%A1%A7%E5%AE%A2')
 				.respond(200, datasets);
 
 			//when

@@ -159,9 +159,13 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @description Get the dataset list respecting a filter passed in the params
      * @returns {Promise} The GET call promise
      */
-	function getFilteredDatasets(filterParameters) {
-		const url = `${RestURLs.datasetUrl}?${encodeURIComponent(filterParameters)}`;
-		return $http.get(url).then(resp => resp.data);
+	function getFilteredDatasets(filters) {
+		const params = Object.keys(filters).map((key) => {
+			return `${key}=${encodeURIComponent(filters[key])}`;
+		}).join('&');
+
+		return $http.get(`${RestURLs.datasetUrl}?${params}`)
+				.then(resp => resp.data);
 	}
 
     /**

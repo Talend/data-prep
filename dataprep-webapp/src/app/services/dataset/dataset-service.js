@@ -20,6 +20,13 @@ const filters = [
 		title: 'RECENT_DATASETS',
 		description: 'RECENT_DATASETS_DESCRIPTION',
 		getParameters: name => `sort=lastModificationDate&limit=true&name=${name}`,
+		getParametersMap: (name) => {
+			return {
+				sort: 'lastModificationDate',
+				limit: true,
+				name,
+			};
+		},
 	},
 	{
 		id: 'FAVORITE',
@@ -28,6 +35,12 @@ const filters = [
 		title: 'FAVORITE_DATASETS',
 		description: 'FAVORITE_DATASETS_DESCRIPTION',
 		getParameters: name => `favorite=true&name=${name}`,
+		getParametersMap: (name) => {
+			return {
+				favorite: true,
+				name,
+			};
+		},
 	},
 	{
 		id: 'ALL',
@@ -36,6 +49,11 @@ const filters = [
 		title: 'ALL_DATASETS',
 		description: 'ALL_DATASETS_DESCRIPTION',
 		getParameters: name => `name=${name}`,
+		getParametersMap: (name) => {
+			return {
+				name,
+			};
+		},
 	},
 ];
 
@@ -200,7 +218,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	 * @returns {promise} The GET promise
 	 */
 	function getFilteredDatasets(filter, name) {
-		return DatasetRestService.getFilteredDatasets(filter.getParameters(name));
+		return DatasetRestService.getFilteredDatasets(filter.getParametersMap(name));
 	}
 
 	/**

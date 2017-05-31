@@ -172,7 +172,7 @@ describe('Dataset Rest Service', () => {
 				.respond(200, datasets);
 
 			//when
-			DatasetRestService.getFilteredDatasets('name=Cust')
+			DatasetRestService.getFilteredDatasets({name: 'Cust'})
 				.then((response) => {
 					result = response;
 				});
@@ -195,7 +195,7 @@ describe('Dataset Rest Service', () => {
 				.respond(200, datasets);
 
 			//when
-			DatasetRestService.getFilteredDatasets('name=顧客')
+			DatasetRestService.getFilteredDatasets({name: '顧客'})
 				.then((response) => {
 					result = response;
 				});

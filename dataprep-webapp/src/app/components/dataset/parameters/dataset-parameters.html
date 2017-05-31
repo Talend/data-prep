@@ -18,7 +18,7 @@
 
     <div class="params">
         <div class="params-row">
-            <div class="form-group">
+            <div class="form-group dataset-name-group">
                 <label for="dataset-name" translate-once="NAME"></label>
                 <span  id="dataset-name"
                       class="param-value"
@@ -27,7 +27,7 @@
                 </span>
             </div>
 
-            <div class="dataset-parameters-encoding form-group">
+            <div class="form-group encodings-group">
                 <label for="encodings" translate-once="DATASET_PARAMETERS_ENCODING"></label>
                 <select id="encodings"
                         class="form-control"
@@ -40,7 +40,7 @@
         <div class="params-row">
             <div  ng-if="datasetParametersCtrl.displayNbLines"
                   ng-switch="!!datasetParametersCtrl.dataset.limit"
-                  class="form-group">
+                  class="form-group line-number-group">
                 <label for="line-number" translate-once="SIZE"></label>
                 <div  id="line-number"
                       class="param-value"
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="form-group"
+            <div class="form-group separator-group"
                  ng-if="datasetParametersCtrl.dataset.type === 'text/csv'">
                 <label for="separator" translate-once="DATASET_PARAMETERS_SEPARATOR"></label>
                 <div class="separator-inputs">

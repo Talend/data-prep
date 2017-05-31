@@ -25,8 +25,8 @@ describe('Dataset parameters directive', function () {
             DATASET_PARAMETERS_SEPARATOR: 'Separator',
             FILE_DETAILS_LINES: '{{records}} lines',
             FILE_DETAILS_LIMIT: 'cut at {{records}} lines',
-            NAME: 'Name :',
-            SIZE: 'Size :',
+            NAME: 'Name',
+            SIZE: 'Size',
             OTHER: 'Other',
         });
         $translateProvider.preferredLanguage('en');
@@ -78,7 +78,7 @@ describe('Dataset parameters directive', function () {
             expect(element.find('.dataset-parameters-title').eq(0).text()).toBe('Dataset parameters');
         });
 
-        it('should render dataset name and nb lines', () => {
+        it('should render dataset name', () => {
             //given
             scope.dataset = {
                 id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
@@ -91,10 +91,26 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            expect(element.find('.dataset-parameters-header').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Name : US States Size : 3 lines');
+            expect(element.find('.dataset-name-group').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Name US States');
         });
 
-        it('should render dataset name and cut lines number when dataset is truncated', () => {
+		it('should render nb lines', () => {
+			//given
+			scope.dataset = {
+				id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+				name: 'US States',
+				records: '3',
+			};
+			scope.displayNbLines = true;
+
+			//when
+			createElement();
+
+			//then
+			expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Size 3 lines');
+		});
+
+        it('should render cut lines number when dataset is truncated', () => {
             //given
             scope.dataset = {
                 id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
@@ -108,7 +124,7 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            expect(element.find('.dataset-parameters-header').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Name : US States Size : cut at 50 lines');
+            expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Size cut at 50 lines');
         });
 
         it('should not render dataset nb lines', () => {
@@ -125,7 +141,7 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            expect(element.find('.dataset-parameters-header').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Name : US States');
+            expect(element.find('#line-number').length).toBe(0);
         });
 
         it('should render encodings', function () {
@@ -133,10 +149,10 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            var encodingContainer = element.find('.dataset-parameters-encoding').eq(0);
-            expect(encodingContainer.find('.param-name').eq(0).text().trim()).toBe('Encoding :');
+            var encodingContainer = element.find('.encodings-group').eq(0);
+            expect(encodingContainer.find('label').eq(0).text().trim()).toBe('Encoding');
 
-            var encodingOptions = encodingContainer.find('.param-input > select > option');
+            var encodingOptions = encodingContainer.find('select > option');
             expect(encodingOptions.length).toBe(3);
             expect(encodingOptions.eq(0).attr('value')).toBe('string:UTF-8');
             expect(encodingOptions.eq(0).text()).toBe('UTF-8');
@@ -166,10 +182,10 @@ describe('Dataset parameters directive', function () {
                 createElement();
 
                 //then
-                var separatorContainer = element.find('.dataset-parameters-separator').eq(0);
-                expect(separatorContainer.find('.param-name').eq(0).text().trim()).toBe('Separator :');
+                var separatorContainer = element.find('.separator-group').eq(0);
+                expect(separatorContainer.find('label').eq(0).text().trim()).toBe('Separator');
 
-                var separatorOptions = separatorContainer.find('.param-input > select > option');
+                var separatorOptions = separatorContainer.find('select > option');
                 expect(separatorOptions.length).toBe(5);
                 expect(separatorOptions.eq(0).attr('value')).toBe('');
                 expect(separatorOptions.eq(0).text()).toBe('Other');
@@ -188,15 +204,15 @@ describe('Dataset parameters directive', function () {
                 scope.dataset = { type: 'text/csv' };
                 createElement();
 
-                var separatorContainer = element.find('.dataset-parameters-separator').eq(0);
-                expect(separatorContainer.find('.param-input').length).toBe(1);
+                var separatorContainer = element.find('.separator-group').eq(0);
+                expect(separatorContainer.find('select').length).toBe(1);
 
                 //when
                 scope.parameters.separator = '|';
                 scope.$digest();
 
                 //then
-                expect(separatorContainer.find('.small-input').length).toBe(1);
+                expect(separatorContainer.find('input').length).toBe(1);
             });
         });
 

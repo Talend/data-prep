@@ -16,64 +16,42 @@
 		font-weight: bold;
 	}
 
-	.param {
+	.params {
 		display: flex;
 		flex-direction: column;
-		justify-content: flex-start;
-		align-items: stretch;
-		padding: 0;
 
-		.param-row {
+		.params-row {
 			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
 
-			&:nth-child(1) {
-				margin-bottom: 20px;
-			}
+			.form-group {
+				flex-basis: 50%;
+				padding-top: 0;
 
-			.param-row-item {
-				display: flex;
-				flex-direction: column;
-				flex-wrap: wrap;
-				flex-basis: 300px;
-				flex-grow: 1;
-
-				.param-name {
-					flex-grow: 0;
-					color:$secondary-text;
-					flex-basis: 0;
+				label {
+					color: $secondary-text;
 				}
 
-				.param-input {
-					flex-basis: 0;
+				span {
+					display: block;
+				}
 
-					.form-control {
-						float: left;
+				select {
+					width: 120px;
+				}
 
-						&.custom-separator {
-							margin-left: 10px;
-						}
-					}
+				.separator-inputs {
+					display: flex;
 
 					select {
-						width: 120px;
-						padding: 5px;
+						flex: 0 0 120px;
+					}
+
+					input {
+						margin-left: 10px;
+						flex: 0 0 25px;
 					}
 				}
-
-				.param-value {
-					@include ellipsis(250px);
-					flex-grow: 1;
-					padding-right: 10px;
-				}
 			}
-		}
-
-		.small-input {
-			width: 40px;
-			margin: 0 1px;
-			padding: 5px;
 		}
 	}
 

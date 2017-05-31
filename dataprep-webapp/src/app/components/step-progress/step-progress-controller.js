@@ -11,17 +11,12 @@
 
  ============================================================================*/
 
-import angular from 'angular';
+export default class StepProgressCtrl {
+	constructor() {
+		'ngInject';
+	}
 
-import SERVICES_STATE_MODULE from '../../../services/state/state-module';
-import DatasetProgress from './dataset-progress-component';
-
-const MODULE_NAME = 'data-prep.dataset-progress';
-
-angular.module(MODULE_NAME,
-	[
-		SERVICES_STATE_MODULE,
-	])
-    .component('datasetProgress', DatasetProgress);
-
-export default MODULE_NAME;
+	get currentStep() {
+		return this.steps.find(step => step.state === 'IN_PROGRESS');
+	}
+}

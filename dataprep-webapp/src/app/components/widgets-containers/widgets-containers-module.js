@@ -35,7 +35,7 @@ import SidePanelContainer from './side-panel/side-panel-container';
 import SETTINGS_MODULE from '../../settings/settings-module';
 import STATE_MODULE from '../../services/state/state-module';
 import DATASET_UPLOAD_STATUS_MODULE from '../dataset/upload-status/dataset-upload-status-module';
-import DATASET_PROGRESS from '../dataset/progress/dataset-progress-module';
+import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
 
 const MODULE_NAME = 'react-talend-components.containers';
 
@@ -46,7 +46,7 @@ angular.module(MODULE_NAME,
 		SETTINGS_MODULE,
 		STATE_MODULE,
 		DATASET_UPLOAD_STATUS_MODULE,
-		DATASET_PROGRESS,
+		STEP_PROGRESS_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])

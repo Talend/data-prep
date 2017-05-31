@@ -214,7 +214,11 @@ export default class ImportService {
 		this.StateService.startUploadingDataset(dataset);
 		return this.DatasetService.create(params, importType.contentType, file)
 			.progress((event) => {
-				dataset.progress = parseInt((100.0 * event.loaded) / event.total, 10);
+				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
+				if (dataset.progress !== progress && progress === 100) {
+					this.StateService.startProfilingDataset();
+				}
+				dataset.progress = progress;
 			})
 			.then((event) => {
 				return this.DatasetService.getDatasetById(event.data);

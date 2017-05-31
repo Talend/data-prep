@@ -160,7 +160,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET call promise
      */
 	function getFilteredDatasets(filterParameters) {
-		const url = `${RestURLs.datasetUrl}?${filterParameters}`;
+		const url = `${RestURLs.datasetUrl}?${encodeURIComponent(filterParameters)}`;
 		return $http.get(url).then(resp => resp.data);
 	}
 

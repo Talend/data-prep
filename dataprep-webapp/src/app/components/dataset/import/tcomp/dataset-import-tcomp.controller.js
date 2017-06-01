@@ -149,6 +149,7 @@ export default class DatasetImportTcompCtrl {
 		this.importService
 			.refreshForm(propertyName, formData)
 			.then(({ data }) => {
+				this.datastoreForm = null;
 				this.$timeout(() => {
 					this.datastoreForm = data;
 				});
@@ -176,6 +177,7 @@ export default class DatasetImportTcompCtrl {
 				controlledSubmitPromise = this.importService
 					.refreshForms(this.currentPropertyName, formsData)
 					.then(({ data }) => {
+						this.datasetForm = null;
 						this.$timeout(() => {
 							this.datasetForm = data;
 						});

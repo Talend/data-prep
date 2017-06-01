@@ -92,8 +92,8 @@ export default class DatasetImportTcompCtrl {
 			.getDatasetForm(formData)
 			.then(({ data }) => {
 				this._getDatasetFormActions();
-					this.datasetForm = data;
-				});
+				this.datasetForm = data;
+			});
 	}
 
 	/**

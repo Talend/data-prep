@@ -94,6 +94,9 @@ public class FormatAnalysisTest extends DataSetBaseTest {
         assertThat(actual.getEncoding(), is("UTF-16LE"));
     }
 
+    /**
+     * see https://jira.talendforge.org/browse/TDP-2930.
+     */
     @Test
     public void testEncodingDetection_UTF16LE_WithoutBOM() throws Exception {
         final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();

@@ -50,19 +50,19 @@ import org.talend.dataprep.schema.*;
 @Component
 public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
-    public static final byte[] NO_BOM = {};
+    private static final byte[] NO_BOM = {};
 
-    public static final byte[] UTF_16_LE_BOM = { (byte) 0xFF, (byte) 0xFE };
+    private static final byte[] UTF_16_LE_BOM = { (byte) 0xFF, (byte) 0xFE };
 
-    public static final byte[] UTF_16_BE_BOM = { (byte) 0xFE, (byte) 0xFF };
+    private static final byte[] UTF_16_BE_BOM = { (byte) 0xFE, (byte) 0xFF };
 
-    public static final byte[] UTF_32_LE_BOM = { (byte) 0xFE, (byte) 0xFF, (byte) 0x00, (byte) 0x00 };
+    private static final byte[] UTF_32_LE_BOM = { (byte) 0xFE, (byte) 0xFF, (byte) 0x00, (byte) 0x00 };
 
-    public static final byte[] UTF_32_BE_BOM = { (byte) 0x00, (byte) 0x00, (byte) 0xFE, (byte) 0xFF };
+    private static final byte[] UTF_32_BE_BOM = { (byte) 0x00, (byte) 0x00, (byte) 0xFE, (byte) 0xFF };
 
-    public static final byte[] UTF_8_BOM = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+    private static final byte[] UTF_8_BOM = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
 
-    public static final byte[][] boms = { NO_BOM, UTF_16_LE_BOM, UTF_16_BE_BOM, UTF_32_LE_BOM, UTF_32_BE_BOM, UTF_8_BOM };
+    private static final byte[][] BOMS = { NO_BOM, UTF_16_LE_BOM, UTF_16_BE_BOM, UTF_32_LE_BOM, UTF_32_BE_BOM, UTF_8_BOM };
 
     /** This class' header. */
     private static final Logger LOG = LoggerFactory.getLogger(FormatAnalysis.class);
@@ -107,15 +107,14 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
             if (metadata != null) {
 
                 Format detectedFormat = null;
-                for (byte[] bom : boms) {
-                    if (detectedFormat == null || detectedFormat.getFormatFamily() instanceof UnsupportedFormatFamily) {
-                        try (InputStream content = store.getAsRaw(metadata, 10)) { // 10 line should be enough to detect format
+                for (byte[] bom : BOMS) {
+                    try (InputStream content = store.getAsRaw(metadata, 10)) { // 10 line should be enough to detect format
 
-                            detectedFormat = detector.detect(addBOM(content, bom));
-                        } catch (IOException e) {
-                            throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT, e);
-                        }
-                    } else {
+                        detectedFormat = detector.detect(addBOM(content, bom));
+                    } catch (IOException e) {
+                        throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT, e);
+                    }
+                    if (detectedFormat != null && !(detectedFormat.getFormatFamily() instanceof UnsupportedFormatFamily)) {
                         break;
                     }
                 }
@@ -238,6 +237,15 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
         return 0;
     }
 
+    /**
+     * Add a bom (Byte Order Mark) to the given input stream.
+     *
+     * see https://en.wikipedia.org/wiki/Byte_order_mark.
+     *
+     * @param stream the stream to prefix with the bom.
+     * @param bom the bom to prefix the stream with.
+     * @return the given stream prefixed with the given bom.
+     */
     private InputStream addBOM(InputStream stream, byte[] bom) {
         ByteArrayInputStream le = new ByteArrayInputStream(bom);
         return new SequenceInputStream(le, stream);

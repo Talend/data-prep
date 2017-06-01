@@ -18,7 +18,6 @@ import static com.jayway.restassured.path.json.JsonPath.from;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
@@ -37,7 +36,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
@@ -536,7 +534,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreateUnsupportedFormat() throws Exception {
         // given
-        final String datasetContent = IOUtils.toString(DataSetAPITest.class.getResourceAsStream("dataset/dataset.ods"),
+        final String datasetContent = IOUtils.toString(DataSetAPITest.class.getResourceAsStream("dataset/dataset.pdf"),
                 UTF_8);
         final int metadataCount = dataSetMetadataRepository.size();
         // then

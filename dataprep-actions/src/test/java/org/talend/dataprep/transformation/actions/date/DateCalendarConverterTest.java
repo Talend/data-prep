@@ -85,7 +85,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
         // then
         assertNotNull(parameters);
-        assertEquals(6, parameters.size()); // 4 implicit parameters + 4 specific
+        assertEquals(5, parameters.size()); // 4 implicit parameters + 4 specific
         final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
@@ -215,7 +215,6 @@ public class DateCalendarConverterTest extends BaseDateTest {
     public void should_not_accept_column() {
         assertFalse(action.acceptField(getColumn(Type.STRING)));
         assertFalse(action.acceptField(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptField(getColumn(Type.INTEGER)));
         assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
@@ -351,15 +350,6 @@ public class DateCalendarConverterTest extends BaseDateTest {
         String ear=" AD";
         testConversion(ModifiedJulianDay, DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY, null, IsoStr2+ear,
                 DateCalendarConverter.CalendarUnit.ISO);
-        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, JapaneseStr+" Heisei",
-                DateCalendarConverter.CalendarUnit.JAPANESE);
-
-        testConversion(RataDie, DateCalendarConverter.CalendarUnit.RATA_DIE, null, HijrahStr+" AH",
-                DateCalendarConverter.CalendarUnit.HIJRI);
-        testConversion(EpochDay, DateCalendarConverter.CalendarUnit.EPOCH_DAY, null, MinguoStr+" R.O.C.",
-                DateCalendarConverter.CalendarUnit.MINGUO);
-        testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, ThaiBuddhistStr+" B.E.",
-                DateCalendarConverter.CalendarUnit.THAI_BUDDHIST);
     }
 
     @Test

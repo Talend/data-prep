@@ -92,8 +92,8 @@ export default class DatasetImportTcompCtrl {
 			.getDatasetForm(formData)
 			.then(({ data }) => {
 				this._getDatasetFormActions();
-				this.datasetForm = data;
-			});
+					this.datasetForm = data;
+				});
 	}
 
 	/**
@@ -149,7 +149,9 @@ export default class DatasetImportTcompCtrl {
 		this.importService
 			.refreshForm(propertyName, formData)
 			.then(({ data }) => {
-				this.datastoreForm = data;
+				this.$timeout(() => {
+					this.datastoreForm = data;
+				});
 			});
 	}
 
@@ -173,8 +175,10 @@ export default class DatasetImportTcompCtrl {
 			if (this.currentPropertyName) {
 				controlledSubmitPromise = this.importService
 					.refreshForms(this.currentPropertyName, formsData)
-					.then((response) => {
-						this.datasetForm = response.data;
+					.then(({ data }) => {
+						this.$timeout(() => {
+							this.datasetForm = data;
+						});
 					});
 			}
 			// Dataset form submit

@@ -21,7 +21,8 @@
                      data="$ctrl.datastoreForm"
                      actions="$ctrl.datastoreFormActions"
                      on-trigger="$ctrl.onDatastoreFormChange"
-                     on-submit="$ctrl.onDatastoreFormSubmit"/>
+                     on-submit="$ctrl.onDatastoreFormSubmit"
+                     watch-depth="reference" />
     </div>
     <div id="dataset-form"
          class="dataset"
@@ -30,6 +31,7 @@
                      data="$ctrl.datasetForm"
                      actions="$ctrl.datasetFormActions"
                      on-trigger="$ctrl.onDatasetFormChange"
-                     on-submit="$ctrl.onDatasetFormSubmit"/>
+                     on-submit="$ctrl.onDatasetFormSubmit"
+                     watch-depth="reference" />
     </div>
 </div>

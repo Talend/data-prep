@@ -139,12 +139,13 @@ describe('Dataset Import TCOMP controller', () => {
 			};
 		}));
 
-		it('should refresh parameters', inject((ImportService, $q) => {
+		it('should refresh parameters', inject(($q, $timeout, ImportService) => {
 			// given
 			spyOn(ImportService, 'refreshForm').and.returnValue($q.when({ data: fakeData }));
 
 			// when
 			ctrl.onDatastoreFormChange(uiSpecs, definitionName, propertyName);
+			$timeout.flush();
 			scope.$digest();
 
 			// then

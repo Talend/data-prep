@@ -45,7 +45,7 @@
 				              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
 			</form>
 			<div ng-if="!actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length"
-			     class="empty-panel-msg"
+			     class="empty-tab-msg"
 			     translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
 		</sc-tabs-item>
 		<sc-tabs-item tab-title="{{'ACTIONS_TAB_ROW' | translate}}">
@@ -58,7 +58,7 @@
 				              ng-switch-when="true"
 				              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
 
-				<div class="empty-panel-msg"
+				<div class="empty-tab-msg"
 				     ng-switch-when="false"
 				     translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
 			</div>

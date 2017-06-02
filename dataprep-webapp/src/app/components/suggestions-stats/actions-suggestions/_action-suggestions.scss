@@ -50,12 +50,20 @@ $search-actions-height: 25px;
 
 		}
 
-		.action-suggestion-tab-items {
+		.action-suggestion-tab-items,
+		.empty-tab-msg {
 			height: calc(100% - #{$header-tabs-height});
 			overflow-y: auto;
 			overflow-x: hidden;
 			position: absolute;
 			width: 100%;
+		}
+
+		.empty-tab-msg {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
 		}
 
 		.search-input + .action-suggestion-tab-items {

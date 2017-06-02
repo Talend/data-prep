@@ -29,7 +29,7 @@
  </div>
  </div>
  <ul class="dropdown-menu">
- <li><a href="#">Hide Column {{ column.id | uppercase }}</a></li>
+ <li><a href="#">Hide Column {{ column.id }}</a></li>
  <li class="divider"></li>
  <li><a href="#">Split first Space</a></li>
  <li><a href="#">Uppercase</a></li>

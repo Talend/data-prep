@@ -54,7 +54,7 @@
              on-click="datagridHeaderCtrl.addFilter">
     <empty-menu-items>
         <li ng-click="datagridHeaderCtrl.addFilter('empty_records')">
-            <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
+            <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ ::datagridHeaderCtrl.column.name }}</a>
         </li>
         <li class="divider"></li>
         <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells track by $index"
@@ -65,7 +65,7 @@
 
     <invalid-menu-items>
         <li ng-click="datagridHeaderCtrl.addFilter('invalid_records')">
-            <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
+            <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ ::datagridHeaderCtrl.column.name }}</a>
         </li>
         <li class="divider"></li>
         <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForInvalidCells track by $index"

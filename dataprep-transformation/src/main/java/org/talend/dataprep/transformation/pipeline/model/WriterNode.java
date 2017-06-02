@@ -178,6 +178,13 @@ public class WriterNode extends BasicNode implements Monitored {
             totalTime += System.currentTimeMillis() - start;
         }
 
+        try {
+            // Signal writer the end of the data stream
+            writer.close();
+        } catch (IOException e) {
+            LOGGER.error("Unable to end writer.", e);
+        }
+
         // Cache computed metadata for later reuse
         try {
             metadataCacheWriter.write(metadataKey, lastRowMetadata);

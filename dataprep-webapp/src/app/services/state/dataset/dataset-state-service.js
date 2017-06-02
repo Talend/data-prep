@@ -18,7 +18,7 @@ export const datasetState = {
 
 export function DatasetStateService($translate) {
 	'ngInject';
-	
+
 	const TYPES = {
 		PROGRESSION: 'PROGRESSION',
 		INFINITE: 'INFINITE',

@@ -276,12 +276,12 @@ export default class DatasetImportTcompCtrl {
 	 * @private
 	 */
 	_reset() {
+		this.datastoreForm = null;
+		this.datasetForm = null;
+		this.datasetFormData = null;
+		this.submitLock = false;
+		this.currentPropertyName = null;
 		this.$timeout(() => {
-			this.datastoreForm = null;
-			this.datasetForm = null;
-			this.datasetFormData = null;
-			this.submitLock = false;
-			this.currentPropertyName = null;
 			this.importService.StateService.hideImport();
 			this.importService.StateService.setCurrentImportItem(null);
 		});

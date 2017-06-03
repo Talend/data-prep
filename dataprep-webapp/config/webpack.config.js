@@ -168,6 +168,22 @@ function addFilesConfig(config) {
 }
 
 function addPlugins(config, options) {
+	const copyWebpackPluginConfiguration = [
+		{ from: 'src/assets/images', to: 'assets/images' },
+		{ from: 'src/assets/config', to: 'assets/config' },
+		{ from: 'src/i18n', to: 'i18n' },
+	];
+
+	if (options.env === 'dev') {
+		copyWebpackPluginConfiguration.push(
+			{
+				from: 'src/assets/config/config.mine.json',
+				to: 'assets/config/config.json',
+				force: true,
+			}
+		);
+	}
+
 	config.plugins.push(
 		/*
 		 * Plugin: CopyWebpackPlugin
@@ -176,16 +192,7 @@ function addPlugins(config, options) {
 		 *
 		 * See: https://www.npmjs.com/package/copy-webpack-plugin
 		 */
-		new CopyWebpackPlugin([
-			{ from: 'src/assets/images', to: 'assets/images' },
-			{ from: 'src/assets/config/config.json', to: 'assets/config' },
-			{
-				from: 'src/assets/config/config.mine.json',
-				to: 'assets/config/config.json',
-				force: (options.env === 'dev'),
-			},
-			{ from: 'src/i18n', to: 'i18n' },
-		]),
+		new CopyWebpackPlugin(copyWebpackPluginConfiguration),
 
 		/*
 		 * Plugin: HtmlWebpackPlugin

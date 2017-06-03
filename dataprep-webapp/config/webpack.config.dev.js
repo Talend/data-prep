@@ -1,8 +1,7 @@
 const configure = require('./webpack.config');
 
-module.exports = function(env) {
+module.exports = function() {
 	return configure({
-		dashboard: env && env.dashboard,
 		env: 'dev',
 		entryOutput: true,
 		devServer: true,

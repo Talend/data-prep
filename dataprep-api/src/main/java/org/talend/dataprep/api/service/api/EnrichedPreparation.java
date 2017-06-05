@@ -16,7 +16,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.StepDiff;
@@ -32,6 +34,9 @@ public class EnrichedPreparation {
 
     private String dataSetId;
 
+    /** Metadata on which the preparation is based. **/
+    private RowMetadata rowMetadata;
+
     private String author;
 
     private String name;
@@ -43,6 +48,9 @@ public class EnrichedPreparation {
     private String headId;
 
     private List<String> steps;
+
+    /** List of action metadata (description) */
+    private List<ActionDefinition> metadata;
 
     private List<Action> actions;
 
@@ -169,6 +177,23 @@ public class EnrichedPreparation {
 
     public void setDiff(List<StepDiff> diff) {
         this.diff = diff;
+    }
+
+
+    public RowMetadata getRowMetadata() {
+        return rowMetadata;
+    }
+
+    public void setRowMetadata(RowMetadata rowMetadata) {
+        this.rowMetadata = rowMetadata;
+    }
+
+    public List<ActionDefinition> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(List<ActionDefinition> metadata) {
+        this.metadata = metadata;
     }
 
     @Override

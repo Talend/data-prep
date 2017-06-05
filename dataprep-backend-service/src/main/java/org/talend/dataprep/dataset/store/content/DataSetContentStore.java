@@ -133,12 +133,13 @@ public abstract class DataSetContentStore {
         final DataSetRowIterator iterator = new DataSetRowIterator(inputStream);
         final Iterable<DataSetRow> rowIterable = () -> iterator;
         Stream<DataSetRow> dataSetRowStream = StreamSupport.stream(rowIterable.spliterator(), false);
+
         // make sure to close the original input stream when closing this one
         AtomicLong tdpId = new AtomicLong(1);
         final List<ColumnMetadata> columns = dataSetMetadata.getRowMetadata().getColumns();
         final Analyzer<Analyzers.Result> analyzer = service.build(columns, AnalyzerService.Analysis.QUALITY);
 
-        dataSetRowStream = dataSetRowStream.map(r -> {
+        dataSetRowStream = dataSetRowStream.filter(r -> !r.isEmpty()).map(r -> {
             final String[] values = r.order(columns).toArray(DataSetRow.SKIP_TDP_ID);
             analyzer.analyze(values);
             return r;

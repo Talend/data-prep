@@ -270,7 +270,7 @@ export default function TalendModal($timeout) {
 									inputs.focus();
 									inputs.select();
 								}
-							}, 0, false);
+							}, 500, false);
 						}
 						else if (oldValue) {
 							ctrl.onClose();

@@ -24,6 +24,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.StepDiff;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.talend.dataprep.api.share.Owner;
 
 /**
  * Simple bean used to display a preparation and a summary of its related dataset and its location.
@@ -54,7 +55,8 @@ public class EnrichedPreparation {
 
     private List<Action> actions;
 
-    private String owner;
+    /** This preparation owner. */
+    private Owner owner;
 
     private boolean allowFullRun;
 
@@ -139,11 +141,11 @@ public class EnrichedPreparation {
         this.headId = headId;
     }
 
-    public String getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 

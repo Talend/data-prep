@@ -28,6 +28,10 @@ $search-actions-height: 25px;
 			margin-bottom: 0;
 		}
 
+		.empty-panel-msg {
+			top: $header-tabs-height;
+		}
+
 		.action-search-container {
 			box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
 
@@ -50,20 +54,12 @@ $search-actions-height: 25px;
 
 		}
 
-		.action-suggestion-tab-items,
-		.empty-tab-msg {
+		.action-suggestion-tab-items {
 			height: calc(100% - #{$header-tabs-height});
 			overflow-y: auto;
 			overflow-x: hidden;
 			position: absolute;
 			width: 100%;
-		}
-
-		.empty-tab-msg {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			text-align: center;
 		}
 
 		.search-input + .action-suggestion-tab-items {

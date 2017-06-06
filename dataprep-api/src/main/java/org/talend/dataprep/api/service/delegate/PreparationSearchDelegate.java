@@ -12,14 +12,15 @@
 
 package org.talend.dataprep.api.service.delegate;
 
+import static org.talend.dataprep.command.CommandHelper.toStream;
+
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
-import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByName;
-import org.talend.dataprep.command.CommandHelper;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.service.UserPreparation;
 
 /**
@@ -27,6 +28,9 @@ import org.talend.dataprep.preparation.service.UserPreparation;
  */
 @Component
 public class PreparationSearchDelegate extends AbstractSearchDelegate<EnrichedPreparation> {
+
+    @Autowired
+    private BeanConversionService beanConversionService;
 
     @Override
     public String getSearchCategory() {
@@ -46,19 +50,8 @@ public class PreparationSearchDelegate extends AbstractSearchDelegate<EnrichedPr
     @Override
     public Stream<EnrichedPreparation> search(String query, boolean strict) {
         final PreparationSearchByName command = getCommand(PreparationSearchByName.class, query, strict);
-        return CommandHelper.toStream(UserPreparation.class, mapper, command).map(this::locatePreparation);
-    }
-
-    /**
-     * Find where the preparation is located.
-     *
-     * @param preparation the preparation to locate.
-     * @return an enriched preparation with additional folder parameters.
-     */
-    private EnrichedPreparation locatePreparation(UserPreparation preparation) {
-        final LocatePreparation command = getCommand(LocatePreparation.class, preparation.id());
-        final Folder folder = command.execute();
-        return new EnrichedPreparation(preparation, folder);
+        return toStream(UserPreparation.class, mapper, command) //
+                .map(userPreparation -> beanConversionService.convert(userPreparation, EnrichedPreparation.class));
     }
 
 }

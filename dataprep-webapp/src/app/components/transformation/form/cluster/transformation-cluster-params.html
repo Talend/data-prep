@@ -19,12 +19,16 @@
             <thead>
             <tr class="cluster-line">
                 <th>
-                    <label>
-                        <input type="checkbox"
-                               ng-model="clusterParamsCtrl.allCheckboxState"
-                               ng-click="clusterParamsCtrl.refreshClusterState()"
-                               ng-disabled="!!clusterParamsCtrl.isReadonly"/>
-                    </label>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   ng-model="clusterParamsCtrl.allCheckboxState"
+                                   ng-click="clusterParamsCtrl.refreshClusterState()"
+                                   ng-disabled="!!clusterParamsCtrl.isReadonly"
+                            />
+                           <span></span>
+                        </label>
+                    </div>
                 </th>
                 <th ng-repeat="title in ::clusterParamsCtrl.details.titles track by $index">{{::title}}</th>
             </tr>
@@ -33,27 +37,32 @@
             <tr class="cluster-line"
                 ng-repeat="cluster in ::clusterParamsCtrl.details.clusters track by $index">
                 <td>
-                    <label>
-                        <input class="cluster-activation"
-                               ng-model="cluster.active"
-                               type="checkbox"
-                               ng-click="clusterParamsCtrl.refreshToggleCheckbox()"
-                               ng-disabled="!!clusterParamsCtrl.isReadonly"/>
-                    </label>
+                    <div class="checkbox">
+                        <label>
+                            <input class="cluster-activation"
+                                   ng-model="cluster.active"
+                                   type="checkbox"
+                                   ng-click="clusterParamsCtrl.refreshToggleCheckbox()"
+                                   ng-disabled="!!clusterParamsCtrl.isReadonly"/>
+                            <span></span>
+                        </label>
+                    </div>
                 </td>
                 <td>
                     <transform-simple-param ng-repeat="parameter in cluster.parameters"
                                             class="param-no-space"
                                             label="false"
                                             parameter="parameter"
-                                            is-readonly="clusterParamsCtrl.isReadonly"></transform-simple-param>
+                                            is-readonly="clusterParamsCtrl.isReadonly">
+                    </transform-simple-param>
                 </td>
                 <td>
                     <transform-simple-param class="param-no-space"
                                             label="false"
                                             editable-select="cluster.replace.list"
                                             parameter="cluster.replace"
-                                            is-readonly="clusterParamsCtrl.isReadonly"></transform-simple-param>
+                                            is-readonly="clusterParamsCtrl.isReadonly">
+                    </transform-simple-param>
                 </td>
             </tr>
             </tbody>

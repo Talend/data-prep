@@ -11,12 +11,14 @@
 
  ============================================================================*/
 
-import 'babel-polyfill';
+import angular from 'angular';
 
-import './src/vendor';
-import './src/app/index-module';
+import StepProgressComponent from './step-progress-component';
 
-import 'angular-mocks';
 
-const context = require.context('./src/', true, /\.spec\.js/);
-context.keys().forEach(context);
+const MODULE_NAME = 'data-prep.step-progress';
+
+angular.module(MODULE_NAME, [])
+	.component('stepProgress', StepProgressComponent);
+
+export default MODULE_NAME;

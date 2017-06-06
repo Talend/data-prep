@@ -94,6 +94,24 @@ public class FormatAnalysisTest extends DataSetBaseTest {
         assertThat(actual.getEncoding(), is("UTF-16LE"));
     }
 
+    /**
+     * see https://jira.talendforge.org/browse/TDP-2930.
+     */
+    @Test
+    public void testEncodingDetection_UTF16LE_WithoutBOM() throws Exception {
+        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+        dataSetMetadataRepository.save(metadata);
+        contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../utf16_LE_without_bom.txt"));
+
+        formatAnalysis.analyze("1234");
+        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        assertThat(actual, notNullValue());
+        assertThat(actual.getContent().getFormatFamilyId(), is(CSVFormatFamily.BEAN_ID));
+        assertThat(actual.getContent().getMediaType(), is("text/csv"));
+        assertThat(actual.getContent().getParameters().get("SEPARATOR"), is(","));
+        assertThat(actual.getEncoding(), is("UTF-16LE"));
+    }
+
     @Test
     public void test_TDP_690() throws Exception {
         final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();

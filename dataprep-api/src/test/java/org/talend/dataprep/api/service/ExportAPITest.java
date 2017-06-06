@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.format.export.ExportFormat;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -130,9 +131,9 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"),
                 UTF_8);
 
-        final PreparationMessageForTest preparationMessage = mapper.readValue(
+        final EnrichedPreparation preparationMessage = mapper.readValue(
                 given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
-                PreparationMessageForTest.class);
+                EnrichedPreparation.class);
         final List<String> steps = preparationMessage.getSteps();
 
         // when

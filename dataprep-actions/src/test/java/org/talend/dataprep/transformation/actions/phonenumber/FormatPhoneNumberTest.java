@@ -79,7 +79,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
         // Test on items label for TDP-2914:
         final SelectParameter useWithParam = (SelectParameter) parameters.get(4);
-        assertEquals("Constant", useWithParam.getItems().get(1).getLabel());
+        assertEquals("Value", useWithParam.getItems().get(1).getLabel());
 
         final SelectParameter regionsListParam =(SelectParameter) useWithParam.getItems().get(1).getParameters().get(0);
         assertEquals("American standard", regionsListParam.getItems().get(0).getLabel());

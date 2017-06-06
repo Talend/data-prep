@@ -188,7 +188,7 @@
 
   "_comment": "Import a remote dataset",
   "ENTER_HTTP_DATASET_URL": "Enter the HTTP dataset URL",
-  "ADD_NEW_DATASET": "Add new dataset",
+  "ADD_NEW_DATASET": "Adding new dataset",
   "UPLOADING_FILE": "Uploading file",
   "PROFILING_DATA": "Profiling data",
 
@@ -391,8 +391,8 @@
   "DATASET_PARAMETERS_ENCODING": "Encoding",
   "DATASET_PARAMETERS_SEPARATOR": "Separator",
   "ACTION_HELP": "Learn more ...",
-  "NAME": "Name:",
-  "SIZE": "Size:",
+  "NAME": "Name",
+  "SIZE": "Size",
 
   "_comment": "Upgrade version parameters",
   "UPGRADE_VERSION_NEW_VERSION_AVAILABLE": "New version available",

@@ -203,15 +203,23 @@ public abstract class ExportStrategy {
      * @return the preparation out of its id.
      */
     protected PreparationMessage getPreparation(String preparationId) {
+        return getPreparation(preparationId, null);
+    }
+
+    /**
+     * @param preparationId the wanted preparation id.
+     * @param stepId the preparation step (might be different from head's to navigate through versions).
+     * @return the preparation out of its id.
+     */
+    protected PreparationMessage getPreparation(String preparationId, String stepId) {
         final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
-                preparationId);
+                preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {
             return mapper.readerFor(PreparationMessage.class).readValue(details);
         } catch (Exception e) {
             LOGGER.error("Unable to read preparation {}", preparationId, e);
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }
-
     }
 
 }

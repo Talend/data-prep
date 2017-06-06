@@ -36,6 +36,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.security.Security;
@@ -140,6 +142,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getString("author"), is(security.getUserId()));
         assertThat(longFormat.getString("id"), is(preparationId));
         assertThat(longFormat.getList("actions").size(), is(0));
+
+        assertNotNull(longFormat.getMap("rowMetadata"));
+        assertNotNull(longFormat.getMap("rowMetadata").get("columns"));
+        ArrayList rowMetaData = (ArrayList) longFormat.getMap("rowMetadata").get("columns");
+        assertThat(rowMetaData.size(), is(6));
+
         assertThat(longFormat.getString("allowFullRun"), is("false"));
         final List<String> steps = longFormat.getList("steps"); // make sure the "steps" node is a string array
         assertThat(steps.size(), is(1));
@@ -384,15 +392,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname_firstname.json");
 
         // then : it should have appended 2 actions
-        final PreparationMessageForTest preparationMessage = getPreparationDetails(preparationId);
+        final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
         final List<String> steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(rootStep.id()));
     }
 
-    private PreparationMessageForTest getPreparationDetails(String preparationId) throws IOException {
+    private EnrichedPreparation getPreparationDetails(String preparationId) throws IOException {
         return mapper.readValue(given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
-                PreparationMessageForTest.class);
+                EnrichedPreparation.class);
     }
 
     @Test
@@ -477,7 +485,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .then().statusCode(is(200));
 
         // then
-        final PreparationMessageForTest preparation = getPreparationDetails(preparationId);
+        final EnrichedPreparation preparation = getPreparationDetails(preparationId);
         final List<String> createdColumns = preparation.getDiff().get(0).getCreatedColumns();
         assertThat(createdColumns, hasSize(1));
         assertThat(createdColumns, hasItem("0006"));
@@ -668,7 +676,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
                 "text/csv", home.getId());
-        PreparationMessageForTest preparation = getPreparationDetails(preparationId);
+        EnrichedPreparation preparation = getPreparationDetails(preparationId);
         List<String> steps = preparation.getSteps();
 
         assertThat(steps.size(), is(1));
@@ -678,7 +686,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         // then
-        final PreparationMessageForTest preparationMessage = getPreparationDetails(preparationId);
+        final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
         steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(rootStep.id()));
@@ -772,7 +780,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
 
-        final PreparationMessageForTest preparationMessage = getPreparationDetails(preparationId);
+        final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
         final List<String> steps = preparationMessage.getSteps();
         final String lastStep = steps.get(steps.size() - 1);
 
@@ -925,7 +933,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         appendStepsToPrep(testPrepId, appendStep);
 
         // Adding steps
-        PreparationMessageForTest testPrepDetails = getPreparationDetails(testPrepId);
+        EnrichedPreparation testPrepDetails = getPreparationDetails(testPrepId);
 
         List<String> stepsCreated = testPrepDetails.getSteps();
 
@@ -935,7 +943,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // changing steps order
         changePreparationStepsOrder(testPrepId, rootStep, secondStep);
 
-        PreparationMessageForTest testPrepDetailsAfter = getPreparationDetails(testPrepId);
+        EnrichedPreparation testPrepDetailsAfter = getPreparationDetails(testPrepId);
 
         assertEquals(testPrepDetailsAfter.getActions().get(0), testPrepDetails.getActions().get(1));
         assertEquals(testPrepDetailsAfter.getActions().get(1), testPrepDetails.getActions().get(0));
@@ -959,7 +967,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // Try to delete lookup dataset => fail because used
         expect().statusCode(CONFLICT.value()).when().delete("/api/datasets/{id}", lookupDataSetId);
 
-        PreparationMessageForTest preparationDetails = getPreparationDetails(carsPreparationId);
+        EnrichedPreparation preparationDetails = getPreparationDetails(carsPreparationId);
         String firstStepId = preparationDetails.getSteps().get(0);
 
         // Now undo

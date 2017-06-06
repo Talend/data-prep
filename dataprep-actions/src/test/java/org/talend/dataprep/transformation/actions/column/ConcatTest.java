@@ -80,7 +80,7 @@ public class ConcatTest extends AbstractMetadataBaseTest {
         // Test on items label for TDP-2943:
         final SelectParameter selectParameter = (SelectParameter) parameters.get(5);
         assertEquals("Other column", selectParameter.getItems().get(0).getLabel());
-        assertEquals("Constant", selectParameter.getItems().get(1).getLabel());
+        assertEquals("Value", selectParameter.getItems().get(1).getLabel());
     }
 
     @Test

@@ -173,7 +173,7 @@
                   "label": "Value"
                 }
               ],
-              "label": "Constant"
+              "label": "Value"
             },
             {
               "value": "other_column_mode",
@@ -196,7 +196,7 @@
         },
         "radio": false,
         "default": "constant_mode",
-        "description": "Select if you want to use a constant value or another column",
+        "description": "Select if you want to use a value or another column",
         "label": "Use with"
       }
     ],
@@ -325,7 +325,7 @@
                   "label": "Value"
                 }
               ],
-              "label": "Constant"
+              "label": "Value"
             },
             {
               "value": "other_column_mode",
@@ -348,7 +348,7 @@
         },
         "radio": false,
         "default": "constant_mode",
-        "description": "Select if you want to use a constant value or another column",
+        "description": "Select if you want to use a value or another column",
         "label": "Use with"
       }
     ],

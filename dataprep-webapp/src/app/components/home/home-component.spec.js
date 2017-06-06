@@ -61,6 +61,6 @@ describe('Home component', () => {
 	});
 
 	it('should instantiate home dataset progress bar', () => {
-		expect(element.find('dataset-progress').length).toBe(1);
+		expect(element.find('step-progress').length).toBe(1);
 	});
 });

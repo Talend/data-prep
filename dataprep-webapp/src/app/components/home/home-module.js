@@ -19,6 +19,7 @@ import DATASET_XLS_PREVIEW_MODULE from '../dataset/preview/dataset-xls-preview-m
 import FOLDER_CREATOR_MODULE from '../folder/creator/folder-creator-module';
 import PREPARATION_CREATOR_MODULE from '../preparation/creator/preparation-creator-module';
 import PREPARATION_COPY_MOVE_MODULE from '../preparation/copy-move/preparation-copy-move-module';
+import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
 import SERVICES_DATASET_MODULE from '../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../services/dataset-workflow/dataset-workflow-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
@@ -45,6 +46,7 @@ export default MODULE_NAME;
  * @requires data-prep.dataset-upload-status
  * @requires data-prep.preparation-creator
  * @requires data-prep.preparation-copy-move
+ * @requires data-prep.step-progress
  * @requires data-prep.services.dataset
  * @requires data-prep.services.datasetWorkflowService
  * @requires data-prep.services.state
@@ -61,6 +63,7 @@ angular.module(MODULE_NAME,
 		PREPARATION_COPY_MOVE_MODULE,
 		TALEND_WIDGET_MODULE,
 		WIDGETS_CONTAINERS_MODULE,
+		STEP_PROGRESS_MODULE,
 
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,

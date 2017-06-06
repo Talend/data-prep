@@ -23,7 +23,7 @@
 
 			<div class="inventory-progress" ng-switch-when="false" ng-switch="uploadStatusCtrl.dataset.type">
 				<div class="progress-bar" ng-switch-when="file">
-				<span class="meter" style="width: {{ uploadStatusCtrl.dataset.progress }}%" ng-switch="uploadStatusCtrl.dataset.progress">
+				<span class="meter" ng-style="{width: uploadStatusCtrl.dataset.progress + '%'}" ng-switch="uploadStatusCtrl.dataset.progress">
 					<p ng-switch-when="100"><span translate-once="UPLOAD_PROCESSING"></span></p>
 					<p ng-switch-default="">{{ uploadStatusCtrl.dataset.progress }} %</p>
 				</span>

@@ -11,90 +11,90 @@
 
   ============================================================================*/
 
-describe('Dataset parameters directive', function () {
-    'use strict';
+describe('Dataset parameters directive', () => {
+	'use strict';
 
-    var scope;
-    var createElement;
-    var element;
+	let scope;
+	let createElement;
+	let element;
 	const translations = {
-        DATASET_PARAMETERS: 'Dataset parameters',
-        DATASET_PARAMETERS_ENCODING: 'Encoding',
-        DATASET_PARAMETERS_SEPARATOR: 'Separator',
-        FILE_DETAILS_LINES: '{{records}} lines',
-        FILE_DETAILS_LIMIT: 'cut at {{records}} lines',
-        NAME: 'Name',
-        SIZE: 'Size',
-        OTHER: 'Other',
-    };
+		DATASET_PARAMETERS: 'Dataset parameters',
+		DATASET_PARAMETERS_ENCODING: 'Encoding',
+		DATASET_PARAMETERS_SEPARATOR: 'Separator',
+		FILE_DETAILS_LINES: '{{records}} lines',
+		FILE_DETAILS_LIMIT: 'cut at {{records}} lines',
+		NAME: 'Name',
+		SIZE: 'Size',
+		OTHER: 'Other',
+	};
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
-        $translateProvider.translations('en', translations);
-        $translateProvider.preferredLanguage('en');
-    }));
+	beforeEach(angular.mock.module('pascalprecht.translate', $translateProvider => {
+		$translateProvider.translations('en', translations);
+		$translateProvider.preferredLanguage('en');
+	}));
 
-    beforeEach(angular.mock.module('data-prep.dataset-parameters'));
+	beforeEach(angular.mock.module('data-prep.dataset-parameters'));
 
-    beforeEach(inject(function ($rootScope, $compile) {
-        scope = $rootScope.$new();
-        scope.validate = jasmine.createSpy('validation');
-        scope.configuration = {
-            separators: [
-                { label: ';', value: ';' },
-                { label: ',', value: ',' },
-                { label: '<space>', value: ' ' },
-                { label: '<tab>', value: '\t' },
-            ],
-            encodings: ['UTF-8', 'UTF-16', 'ISO-8859-1'],
-        };
-        scope.parameters = { separator: ';', encoding: 'UTF-8' };
+	beforeEach(inject(($rootScope, $compile) => {
+		scope = $rootScope.$new();
+		scope.validate = jasmine.createSpy('validation');
+		scope.configuration = {
+			separators: [
+				{ label: ';', value: ';' },
+				{ label: ',', value: ',' },
+				{ label: '<space>', value: ' ' },
+				{ label: '<tab>', value: '\t' },
+			],
+			encodings: ['UTF-8', 'UTF-16', 'ISO-8859-1'],
+		};
+		scope.parameters = { separator: ';', encoding: 'UTF-8' };
 
-        createElement = function () {
-            var html = '<dataset-parameters ' +
-                'processing="processing" ' +
-                'dataset="dataset" ' +
-                'on-parameters-change="validate(dataset, parameters)" ' +
-                'configuration="configuration" ' +
-                'parameters="parameters"' +
-                'display-nb-lines="displayNbLines"></dataset-parameters>';
+		createElement = () => {
+			const html = '<dataset-parameters ' +
+				'processing="processing" ' +
+				'dataset="dataset" ' +
+				'on-parameters-change="validate(dataset, parameters)" ' +
+				'configuration="configuration" ' +
+				'parameters="parameters"' +
+				'display-nb-lines="displayNbLines"></dataset-parameters>';
 
-            element = angular.element(html);
-            $compile(element)(scope);
-            scope.$digest();
-            return element;
-        };
-    }));
+			element = angular.element(html);
+			$compile(element)(scope);
+			scope.$digest();
+			return element;
+		};
+	}));
 
-    afterEach(function () {
-        scope.$destroy();
-        element.remove();
-    });
+	afterEach(() => {
+		scope.$destroy();
+		element.remove();
+	});
 
-    describe('render', function () {
-        it('should render title', function () {
-            //when
-            createElement();
+	describe('render', () => {
+		it('should render title', () => {
+			//when
+			createElement();
 
-            //then
-            expect(element.find('.dataset-parameters-title').eq(0).text()).toBe(translations.DATASET_PARAMETERS);
-        });
+			//then
+			expect(element.find('.dataset-parameters-title').eq(0).text()).toBe(translations.DATASET_PARAMETERS);
+		});
 
-        it('should render dataset name', () => {
-            //given
-            scope.dataset = {
-                id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
-                name: 'US States',
-                records: '3',
-            };
-            scope.displayNbLines = true;
+		it('should render dataset name', () => {
+			//given
+			scope.dataset = {
+				id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+				name: 'US States',
+				records: '3',
+			};
+			scope.displayNbLines = true;
 
-            //when
-            createElement();
+			//when
+			createElement();
 
-            //then
-            expect(element.find('.dataset-name-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
+			//then
+			expect(element.find('.dataset-name-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
 				.toBe(`${translations.NAME} ${scope.dataset.name}`);
-        });
+		});
 
 		it('should render nb lines', () => {
 			//given
@@ -113,156 +113,156 @@ describe('Dataset parameters directive', function () {
 				.toBe(`${translations.SIZE} ${translations.FILE_DETAILS_LINES.replace('{{records}}', scope.dataset.records)}`);
 		});
 
-        it('should render cut lines number when dataset is truncated', () => {
-            //given
-            scope.dataset = {
-                id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
-                name: 'US States',
-                records: '3',
-                limit: 50,
-            };
-            scope.displayNbLines = true;
+		it('should render cut lines number when dataset is truncated', () => {
+			//given
+			scope.dataset = {
+				id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+				name: 'US States',
+				records: '3',
+				limit: 50,
+			};
+			scope.displayNbLines = true;
 
-            //when
-            createElement();
+			//when
+			createElement();
 
-            //then
-            expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
+			//then
+			expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
 				.toBe(`${translations.SIZE} ${translations.FILE_DETAILS_LIMIT.replace('{{records}}', scope.dataset.limit)}`);
-        });
+		});
 
-        it('should not render dataset nb lines', () => {
-            //given
-            scope.dataset = {
-                id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
-                name: 'US States',
-                records: '3',
-                limit: 50,
-            };
-            scope.displayNbLines = false;
+		it('should not render dataset nb lines', () => {
+			//given
+			scope.dataset = {
+				id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+				name: 'US States',
+				records: '3',
+				limit: 50,
+			};
+			scope.displayNbLines = false;
 
-            //when
-            createElement();
+			//when
+			createElement();
 
-            //then
-            expect(element.find('#line-number').length).toBe(0);
-        });
+			//then
+			expect(element.find('#line-number').length).toBe(0);
+		});
 
-        it('should render encodings', function () {
-            //when
-            createElement();
+		it('should render encodings', () => {
+			//when
+			createElement();
 
-            //then
-            var encodingContainer = element.find('.encodings-group').eq(0);
-            expect(encodingContainer.find('label').eq(0).text().trim()).toBe(translations.DATASET_PARAMETERS_ENCODING);
+			//then
+			const encodingContainer = element.find('.encodings-group').eq(0);
+			expect(encodingContainer.find('label').eq(0).text().trim()).toBe(translations.DATASET_PARAMETERS_ENCODING);
 
-            var encodingOptions = encodingContainer.find('select > option');
-            expect(encodingOptions.length).toBe(3);
-            expect(encodingOptions.eq(0).attr('value')).toBe('string:UTF-8');
-            expect(encodingOptions.eq(0).text()).toBe('UTF-8');
-            expect(encodingOptions.eq(1).attr('value')).toBe('string:UTF-16');
-            expect(encodingOptions.eq(1).text()).toBe('UTF-16');
-            expect(encodingOptions.eq(2).attr('value')).toBe('string:ISO-8859-1');
-            expect(encodingOptions.eq(2).text()).toBe('ISO-8859-1');
-        });
+			const encodingOptions = encodingContainer.find('select > option');
+			expect(encodingOptions.length).toBe(3);
+			expect(encodingOptions.eq(0).attr('value')).toBe('string:UTF-8');
+			expect(encodingOptions.eq(0).text()).toBe('UTF-8');
+			expect(encodingOptions.eq(1).attr('value')).toBe('string:UTF-16');
+			expect(encodingOptions.eq(1).text()).toBe('UTF-16');
+			expect(encodingOptions.eq(2).attr('value')).toBe('string:ISO-8859-1');
+			expect(encodingOptions.eq(2).text()).toBe('ISO-8859-1');
+		});
 
-        describe('separator', function () {
-            it('should NOT render separators on NON csv', function () {
-                //given
-                scope.dataset = { type: 'other' };
+		describe('separator', () => {
+			it('should NOT render separators on NON csv', () => {
+				//given
+				scope.dataset = { type: 'other' };
 
-                //when
-                createElement();
+				//when
+				createElement();
 
-                //then
-                expect(element.find('.dataset-parameters-separator').length).toBe(0);
-            });
+				//then
+				expect(element.find('.dataset-parameters-separator').length).toBe(0);
+			});
 
-            it('should render separators on csv dataset', function () {
-                //given
-                scope.dataset = { type: 'text/csv' };
+			it('should render separators on csv dataset', () => {
+				//given
+				scope.dataset = { type: 'text/csv' };
 
-                //when
-                createElement();
+				//when
+				createElement();
 
-                //then
-                var separatorContainer = element.find('.separator-group').eq(0);
-                expect(separatorContainer.find('label').eq(0).text().trim()).toBe(translations.DATASET_PARAMETERS_SEPARATOR);
+				//then
+				const separatorContainer = element.find('.separator-group').eq(0);
+				expect(separatorContainer.find('label').eq(0).text().trim()).toBe(translations.DATASET_PARAMETERS_SEPARATOR);
 
-                var separatorOptions = separatorContainer.find('select > option');
-                expect(separatorOptions.length).toBe(5);
-                expect(separatorOptions.eq(0).attr('value')).toBe('');
-                expect(separatorOptions.eq(0).text()).toBe(translations.OTHER);
-                expect(separatorOptions.eq(1).attr('value')).toBe('string:;');
-                expect(separatorOptions.eq(1).text()).toBe(';');
-                expect(separatorOptions.eq(2).attr('value')).toBe('string:,');
-                expect(separatorOptions.eq(2).text()).toBe(',');
-                expect(separatorOptions.eq(3).attr('value')).toBe('string: ');
-                expect(separatorOptions.eq(3).text()).toBe('<space>');
-                expect(separatorOptions.eq(4).attr('value')).toBe('string:\t');
-                expect(separatorOptions.eq(4).text()).toBe('<tab>');
-            });
+				const separatorOptions = separatorContainer.find('select > option');
+				expect(separatorOptions.length).toBe(5);
+				expect(separatorOptions.eq(0).attr('value')).toBe('');
+				expect(separatorOptions.eq(0).text()).toBe(translations.OTHER);
+				expect(separatorOptions.eq(1).attr('value')).toBe('string:;');
+				expect(separatorOptions.eq(1).text()).toBe(';');
+				expect(separatorOptions.eq(2).attr('value')).toBe('string:,');
+				expect(separatorOptions.eq(2).text()).toBe(',');
+				expect(separatorOptions.eq(3).attr('value')).toBe('string: ');
+				expect(separatorOptions.eq(3).text()).toBe('<space>');
+				expect(separatorOptions.eq(4).attr('value')).toBe('string:\t');
+				expect(separatorOptions.eq(4).text()).toBe('<tab>');
+			});
 
-            it('should render custom separator input only when separator is not in the configuration list', function () {
-                //given
-                scope.dataset = { type: 'text/csv' };
-                createElement();
+			it('should render custom separator input only when separator is not in the configuration list', () => {
+				//given
+				scope.dataset = { type: 'text/csv' };
+				createElement();
 
-                var separatorContainer = element.find('.separator-group').eq(0);
-                expect(separatorContainer.find('select').length).toBe(1);
+				const separatorContainer = element.find('.separator-group').eq(0);
+				expect(separatorContainer.find('select').length).toBe(1);
 
-                //when
-                scope.parameters.separator = '|';
-                scope.$digest();
+				//when
+				scope.parameters.separator = '|';
+				scope.$digest();
 
-                //then
-                expect(separatorContainer.find('input').length).toBe(1);
-            });
-        });
+				//then
+				expect(separatorContainer.find('input').length).toBe(1);
+			});
+		});
 
-        describe('button', function () {
-            it('should enable button when processing is falsy', function () {
-                //given
-                scope.processing = false;
+		describe('button', () => {
+			it('should enable button when processing is falsy', () => {
+				//given
+				scope.processing = false;
 
-                //when
-                createElement();
+				//when
+				createElement();
 
-                //then
-                expect(element.find('button').attr('disabled')).toBeFalsy();
-            });
+				//then
+				expect(element.find('button').attr('disabled')).toBeFalsy();
+			});
 
-            it('should disable button when processing is truthy', function () {
-                //given
-                scope.processing = true;
+			it('should disable button when processing is truthy', () => {
+				//given
+				scope.processing = true;
 
-                //when
-                createElement();
+				//when
+				createElement();
 
-                //then
-                expect(element.find('button').attr('disabled')).toBeTruthy();
-            });
-        });
-    });
+				//then
+				expect(element.find('button').attr('disabled')).toBeTruthy();
+			});
+		});
+	});
 
-    describe('validation', function () {
-        it('should call validation callback on form submit', function () {
-            //given
-            scope.dataset = { id: '54a146cf854b54', type: 'text/csv' };
-            scope.parameters.separator = '|';
-            scope.parameters.encoding = 'UTF-16';
-            createElement();
+	describe('validation', () => {
+		it('should call validation callback on form submit', () => {
+			//given
+			scope.dataset = { id: '54a146cf854b54', type: 'text/csv' };
+			scope.parameters.separator = '|';
+			scope.parameters.encoding = 'UTF-16';
+			createElement();
 
-            expect(scope.validate).not.toHaveBeenCalled();
+			expect(scope.validate).not.toHaveBeenCalled();
 
-            //when
-            element.find('button').click();
+			//when
+			element.find('button').click();
 
-            //then
-            expect(scope.validate).toHaveBeenCalledWith(
-                { id: '54a146cf854b54', type: 'text/csv' },
-                { separator: '|', encoding: 'UTF-16' }
-            );
-        });
-    });
+			//then
+			expect(scope.validate).toHaveBeenCalledWith(
+				{ id: '54a146cf854b54', type: 'text/csv' },
+				{ separator: '|', encoding: 'UTF-16' }
+			);
+		});
+	});
 });

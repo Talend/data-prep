@@ -13,12 +13,10 @@
 package org.talend.dataprep;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataquality.semantic.broadcast.BroadcastDocumentObject;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class StandalonePreparation extends PreparationMessage {

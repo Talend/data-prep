@@ -4,12 +4,11 @@ const SASS_DATA = require('./sass.conf');
 
 const path = require('path');
 const webpack = require('webpack');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const autoprefixer = require('autoprefixer');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const SassLintPlugin = require('sasslint-webpack-plugin');
+// const SassLintPlugin = require('sasslint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' });
@@ -51,7 +50,11 @@ function getDefaultConfig(options) {
 					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders(true)),
 					include: /react-talend-/,
 				},
-				{ test: /\.(png|jpg|jpeg|gif)$/, loader: isTestMode ? 'null-loader' : 'url-loader', options: { mimetype: 'image/png' } },
+				{
+					test: /\.(png|jpg|jpeg|gif)$/,
+					loader: isTestMode ? 'null-loader' : 'url-loader',
+					options: { mimetype: 'image/png' }
+				},
 				{
 					test: /\.html$/,
 					use: [
@@ -60,8 +63,16 @@ function getDefaultConfig(options) {
 					],
 					exclude: INDEX_TEMPLATE_PATH,
 				},
-				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: isTestMode ? 'null-loader' : 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' } },
-				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: isTestMode ? 'null-loader' : 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' } },
+				{
+					test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,
+					loader: isTestMode ? 'null-loader' : 'url-loader',
+					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' }
+				},
+				{
+					test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+					loader: isTestMode ? 'null-loader' : 'url-loader',
+					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' }
+				},
 			]
 		},
 		plugins: [
@@ -98,11 +109,10 @@ function getCommonStyleLoaders(enableModules) {
 }
 
 function getSassLoaders(enableModules) {
-	return getCommonStyleLoaders(enableModules).concat({ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } });
-}
-
-function addDashboardPlugin(config) {
-	config.plugins.push(new DashboardPlugin());
+	return getCommonStyleLoaders(enableModules).concat({
+		loader: 'sass-loader',
+		options: { sourceMap: true, data: SASS_DATA }
+	});
 }
 
 function addProdEnvPlugin(config) {
@@ -144,7 +154,10 @@ function addDevServerConfig(config) {
 
 function addFilesConfig(config) {
 	config.entry = {
-		vendor: VENDOR_PATH,
+		vendor: [
+			'babel-polyfill',
+			VENDOR_PATH,
+		],
 		style: STYLE_PATH,
 		app: INDEX_PATH,
 	};
@@ -155,6 +168,22 @@ function addFilesConfig(config) {
 }
 
 function addPlugins(config, options) {
+	const copyWebpackPluginConfiguration = [
+		{ from: 'src/assets/images', to: 'assets/images' },
+		{ from: 'src/assets/config/config.json', to: 'assets/config' },
+		{ from: 'src/i18n', to: 'i18n' },
+	];
+
+	if (options.env === 'dev') {
+		copyWebpackPluginConfiguration.push(
+			{
+				from: 'src/assets/config/config.mine.json',
+				to: 'assets/config/config.json',
+				force: true,
+			}
+		);
+	}
+
 	config.plugins.push(
 		/*
 		 * Plugin: CopyWebpackPlugin
@@ -163,15 +192,7 @@ function addPlugins(config, options) {
 		 *
 		 * See: https://www.npmjs.com/package/copy-webpack-plugin
 		 */
-		new CopyWebpackPlugin([
-			{ from: 'src/assets', to: 'assets' },
-			{
-				from: 'src/assets/config/config.mine.json',
-				to: 'assets/config/config.json',
-				force: (options.env === 'dev'),
-			},
-			{ from: 'src/i18n', to: 'i18n' },
-		]),
+		new CopyWebpackPlugin(copyWebpackPluginConfiguration),
 
 		/*
 		 * Plugin: HtmlWebpackPlugin
@@ -257,7 +278,6 @@ function addLinterConfig(config) {
 /*
  {
  coverage: (true | false)            // configure coverage instrumenter
- dashboard: (true | false)           // enable webpack dashboard plugin
  devtool: 'inline-source-map',       // source map type
  devServer: (true | false),          // configure webpack-dev-server
  entryOutput: (true | false),        // configure entry and output files and plugins to generate full app. For example, test with karma doesn't need that, as the files are managed by karma.
@@ -273,10 +293,6 @@ module.exports = (options) => {
 
 	if (options.coverage) {
 		addCoverageConfig(config);
-	}
-
-	if (options.dashboard) {
-		addDashboardPlugin(config);
 	}
 
 	if (options.devServer) {

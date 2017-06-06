@@ -51,7 +51,10 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
-        final String export = given().formParam("exportType", "CSV").formParam("datasetId", datasetId).when().get("/api/export")
+        final String export = given()
+                .formParam("exportType", "CSV")
+                .formParam("datasetId", datasetId)
+                .when().get("/api/export")
                 .asString();
 
         // then

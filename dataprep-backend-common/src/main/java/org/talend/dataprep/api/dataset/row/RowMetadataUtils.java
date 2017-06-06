@@ -89,7 +89,7 @@ public class RowMetadataUtils {
         return field;
     }
 
-    private static String toAvroFieldName(ColumnMetadata column) {
+    public static String toAvroFieldName(ColumnMetadata column) {
         final char[] chars = column.getName().toCharArray();
         final StringBuilder columnName = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {

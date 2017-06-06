@@ -32,6 +32,7 @@
 				}
 
 				span {
+					@include ellipsis(250px);
 					display: block;
 				}
 

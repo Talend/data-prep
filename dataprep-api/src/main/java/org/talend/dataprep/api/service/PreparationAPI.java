@@ -39,10 +39,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 import org.talend.dataprep.api.service.api.PreviewDiffParameters;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
@@ -243,17 +241,20 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/details", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
-    public ResponseEntity<StreamingResponseBody> getPreparation( //
+    public EnrichedPreparation getPreparation(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
-            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId", value = "optional step id", defaultValue = "head") String stepId //
-    ) {
+            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId", value = "optional step id", defaultValue = "head") String stepId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation details (pool: {} )...", getConnectionStats());
         }
 
-        final EnrichedPreparationDetails enrichPreparation = getCommand(EnrichedPreparationDetails.class, preparationId, stepId);
+        final PreparationDetailsGet enrichPreparation = getCommand(PreparationDetailsGet.class, preparationId, stepId);
         try {
-            return CommandHelper.toStreaming(enrichPreparation);
+            PreparationMessage preparationMessage = mapper.readerFor(PreparationMessage.class).readValue(enrichPreparation.execute());
+            return beanConversionService.convert(preparationMessage, EnrichedPreparation.class);
+        } catch (Exception e) {
+            LOG.error("Unable to get preparation {}", preparationId, e);
+            throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Retrieved preparation details (pool: {} )...", getConnectionStats());

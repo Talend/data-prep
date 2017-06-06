@@ -293,6 +293,6 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 	 * @description Get all filters names
 	 */
 	function getAllFiltersNames(stepFilters) {
-		return '(' + _.pluck(stepFilters, 'colName').join(', ').toUpperCase() + ')';
+		return '(' + _.pluck(stepFilters, 'colName').join(', ') + ')';
 	}
 }

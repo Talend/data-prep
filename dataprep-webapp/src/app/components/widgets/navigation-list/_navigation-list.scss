@@ -99,7 +99,6 @@
 		.item-label {
 			@include ellipsis();
 			cursor: pointer;
-			text-transform: uppercase;
 			padding: 0 10px 2px 8px;
 			border: 1px solid $shadow-gray;
 			width: 200px;

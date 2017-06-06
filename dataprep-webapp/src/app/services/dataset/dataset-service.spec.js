@@ -71,7 +71,7 @@ describe('Dataset Service', () => {
         beforeEach(inject(($q) => {
             refreshMock.and.returnValue($q.when(datasets));
         }));
-        
+
         it('should set the datasets sort when there is a saved one', inject((StateService, StorageService, DatasetService) => {
             // given
             const savedSort = {
@@ -117,7 +117,7 @@ describe('Dataset Service', () => {
             beforeEach(inject(($q) => {
                 refreshMock.and.returnValue($q.when(datasets));
             }));
-            
+
             it('should get a promise that resolve the existing datasets if already fetched', inject(($q, $rootScope, DatasetService, DatasetListService) => {
                 // given
                 spyOn(DatasetListService, 'hasDatasetsPromise').and.returnValue(true);
@@ -174,7 +174,11 @@ describe('Dataset Service', () => {
                 DatasetService.getFilteredDatasets(filter, 'toto');
 
                 // then
-                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('sort=lastModificationDate&limit=true&name=toto' );
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith({
+					sort: 'lastModificationDate',
+					limit: true,
+					name: 'toto',
+				});
             }));
 
             it('should fetch favorite datasets', inject((DatasetService, DatasetRestService) => {
@@ -186,7 +190,10 @@ describe('Dataset Service', () => {
                 DatasetService.getFilteredDatasets(filter, 'toto');
 
                 // then
-                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('favorite=true&name=toto');
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith({
+					favorite: true,
+					name: 'toto',
+				});
             }));
 
             it('should fetch all datasets', inject((DatasetService, DatasetRestService) => {
@@ -198,7 +205,7 @@ describe('Dataset Service', () => {
                 DatasetService.getFilteredDatasets(filter, 'toto');
 
                 // then
-                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('name=toto');
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith({name: 'toto'});
             }));
         });
 

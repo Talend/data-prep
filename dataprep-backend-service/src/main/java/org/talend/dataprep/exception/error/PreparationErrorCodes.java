@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -38,7 +37,7 @@ public enum PreparationErrorCodes implements ErrorCode {
     PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId"),
     EXPORTED_PREPARATION_VERSION_NOT_SUPPORTED(BAD_REQUEST.value()),
     UNABLE_TO_READ_PREPARATIONS_EXPORT(BAD_REQUEST.value(), "importVersion", "dataPrepVersion"),
-    PREPARATION_ALL_READY_EXIST(
+    PREPARATION_ALREADY_EXIST(
             CONFLICT.value(),
             "newPreparationId",
             "oldPreparationId",

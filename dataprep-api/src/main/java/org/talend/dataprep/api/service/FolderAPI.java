@@ -15,14 +15,12 @@ package org.talend.dataprep.api.service;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.command.CommandHelper.toPublisher;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.netflix.hystrix.HystrixCommand;
 
 import org.apache.commons.lang.StringUtils;
 import org.reactivestreams.Subscriber;
@@ -36,7 +34,6 @@ import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.folder.*;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationListByFolder;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.exception.TDPException;
@@ -46,6 +43,9 @@ import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -183,31 +183,14 @@ public class FolderAPI extends APIService {
                 generator.writeStartObject();
                 // Folder list
                 final FolderChildrenList commandListFolders = getCommand(FolderChildrenList.class, id, sort, order);
-                final Flux<Folder> folders = Flux.from(CommandHelper.toPublisher(Folder.class, mapper, commandListFolders));
+                final Flux<Folder> folders = Flux.from(toPublisher(Folder.class, mapper, commandListFolders));
                 writeFluxToJsonArray(folders, "folders", generator);
                 // Preparation list
                 final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
 
-                final Flux<UserPreparation> preparations = Flux
-                        .from(CommandHelper.toPublisher(UserPreparation.class, mapper, listPreparations)) // From preparation list
-                        .map(preparation -> {
-                            UserPreparation ep;
-                            if (preparation.getDataSetId() == null) {
-                                ep = preparation;
-                            } else {
-                                // get the dataset metadata
-                                try {
-                                    securityProxy.asTechnicalUser(); // because dataset are not shared
-                                    ep = new EnrichedPreparation(preparation, getCommand(DataSetGetMetadata.class, preparation.getDataSetId()).execute());
-                                } catch (Exception e) {
-                                    ep = preparation;
-                                    LOG.debug("error reading dataset metadata {} : {}", preparation.getId(), e);
-                                } finally {
-                                    securityProxy.releaseIdentity();
-                                }
-                            }
-                            return ep;
-                        });
+                final Flux<EnrichedPreparation> preparations = Flux
+                        .from(toPublisher(UserPreparation.class, mapper, listPreparations)) // From preparation list
+                        .map(preparation -> beanConversionService.convert(preparation, EnrichedPreparation.class));
                 writeFluxToJsonArray(preparations, "preparations", generator);
                 generator.writeEndObject();
             } catch (EOFException e) {

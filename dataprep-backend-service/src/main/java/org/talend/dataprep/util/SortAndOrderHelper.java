@@ -20,10 +20,12 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
@@ -246,7 +248,7 @@ public final class SortAndOrderHelper {
             // In case of API call error, default to NAME sort
             case NB_RECORDS:
             case NAME:
-                keyExtractor = preparation -> preparation.getName().toUpperCase();
+                keyExtractor = preparation -> Optional.ofNullable(preparation).map(p -> p.getName().toUpperCase()).orElse(StringUtils.EMPTY);
                 break;
             case AUTHOR:
                 keyExtractor = preparation -> ((UserPreparation) preparation).getOwner().getDisplayName().toUpperCase();

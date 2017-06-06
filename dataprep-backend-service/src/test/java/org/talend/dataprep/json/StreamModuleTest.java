@@ -36,6 +36,19 @@ public class StreamModuleTest extends ServiceBaseTest {
     ObjectMapper mapper;
 
     @Test
+    public void shouldStreamWithNullValues() throws Exception {
+        // Given
+        final Stream<String> stringStream = Stream.of(null, null);
+
+        // When
+        final StringWriter writer = new StringWriter();
+        mapper.writeValue(writer, stringStream);
+
+        // Then
+        assertThat(writer.toString(), sameJSONAs("[]"));
+    }
+
+    @Test
     public void shouldHandleEmptyStream() throws Exception {
         // Given
         final Stream<String> stringStream = Stream.empty();
@@ -68,6 +81,19 @@ public class StreamModuleTest extends ServiceBaseTest {
     public void shouldIteratorOverValues() throws Exception {
         // Given
         final Stream<String> stringStream = Stream.of("string1", "string2");
+
+        // When
+        final StringWriter writer = new StringWriter();
+        mapper.writeValue(writer, stringStream);
+
+        // Then
+        assertThat(writer.toString(), sameJSONAs("[\"string1\",\"string2\"]"));
+    }
+
+    @Test
+    public void null_value_works() throws Exception {
+        // Given
+        final Stream<String> stringStream = Stream.of(null, "string1", "string2");
 
         // When
         final StringWriter writer = new StringWriter();

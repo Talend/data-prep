@@ -52,10 +52,14 @@ export default class DatasetImportTcompCtrl {
 				.then(({ data }) => {
 					const { dataStoreFormData, dataSetFormData } = data;
 					const { properties } = dataStoreFormData;
+					this.datastoreForm = null;
+					this.datasetForm = null;
 					this._getDatastoreFormActions(properties);
-					this.datastoreForm = dataStoreFormData;
 					this._getDatasetFormActions();
-					this.datasetForm = dataSetFormData;
+					this.$timeout(() => {
+						this.datastoreForm = dataStoreFormData;
+						this.datasetForm = dataSetFormData;
+					});
 				})
 				.catch(this._reset);
 		}
@@ -64,8 +68,11 @@ export default class DatasetImportTcompCtrl {
 				.importParameters(locationType)
 				.then(({ data }) => {
 					const { properties } = data;
+					this.datastoreForm = null;
 					this._getDatastoreFormActions(properties);
-					this.datastoreForm = data;
+					this.$timeout(() => {
+						this.datastoreForm = data;
+					});
 					return properties;
 				})
 				.then((formData) => {
@@ -91,8 +98,11 @@ export default class DatasetImportTcompCtrl {
 		return this.importService
 			.getDatasetForm(formData)
 			.then(({ data }) => {
+				this.datasetForm = null;
 				this._getDatasetFormActions();
-				this.datasetForm = data;
+				this.$timeout(() => {
+					this.datasetForm = data;
+				});
 			});
 	}
 
@@ -276,12 +286,12 @@ export default class DatasetImportTcompCtrl {
 	 * @private
 	 */
 	_reset() {
-		this.datastoreForm = null;
-		this.datasetForm = null;
-		this.datasetFormData = null;
-		this.submitLock = false;
-		this.currentPropertyName = null;
 		this.$timeout(() => {
+			this.datastoreForm = null;
+			this.datasetForm = null;
+			this.datasetFormData = null;
+			this.submitLock = false;
+			this.currentPropertyName = null;
 			this.importService.StateService.hideImport();
 			this.importService.StateService.setCurrentImportItem(null);
 		});

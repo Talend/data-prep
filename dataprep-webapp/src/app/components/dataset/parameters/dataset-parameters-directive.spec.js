@@ -17,18 +17,19 @@ describe('Dataset parameters directive', function () {
     var scope;
     var createElement;
     var element;
+	const translations = {
+        DATASET_PARAMETERS: 'Dataset parameters',
+        DATASET_PARAMETERS_ENCODING: 'Encoding',
+        DATASET_PARAMETERS_SEPARATOR: 'Separator',
+        FILE_DETAILS_LINES: '{{records}} lines',
+        FILE_DETAILS_LIMIT: 'cut at {{records}} lines',
+        NAME: 'Name',
+        SIZE: 'Size',
+        OTHER: 'Other',
+    };
 
     beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
-        $translateProvider.translations('en', {
-            DATASET_PARAMETERS: 'Dataset parameters',
-            DATASET_PARAMETERS_ENCODING: 'Encoding',
-            DATASET_PARAMETERS_SEPARATOR: 'Separator',
-            FILE_DETAILS_LINES: '{{records}} lines',
-            FILE_DETAILS_LIMIT: 'cut at {{records}} lines',
-            NAME: 'Name',
-            SIZE: 'Size',
-            OTHER: 'Other',
-        });
+        $translateProvider.translations('en', translations);
         $translateProvider.preferredLanguage('en');
     }));
 
@@ -75,7 +76,7 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            expect(element.find('.dataset-parameters-title').eq(0).text()).toBe('Dataset parameters');
+            expect(element.find('.dataset-parameters-title').eq(0).text()).toBe(translations.DATASET_PARAMETERS);
         });
 
         it('should render dataset name', () => {
@@ -91,7 +92,8 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            expect(element.find('.dataset-name-group').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Name US States');
+            expect(element.find('.dataset-name-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
+				.toBe(`${translations.NAME} ${scope.dataset.name}`);
         });
 
 		it('should render nb lines', () => {
@@ -107,7 +109,8 @@ describe('Dataset parameters directive', function () {
 			createElement();
 
 			//then
-			expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Size 3 lines');
+			expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
+				.toBe(`${translations.SIZE} ${translations.FILE_DETAILS_LINES.replace('{{records}}', scope.dataset.records)}`);
 		});
 
         it('should render cut lines number when dataset is truncated', () => {
@@ -124,7 +127,8 @@ describe('Dataset parameters directive', function () {
             createElement();
 
             //then
-            expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' ')).toBe('Size cut at 50 lines');
+            expect(element.find('.line-number-group').eq(0).text().trim().replace(/[\s]+/g, ' '))
+				.toBe(`${translations.SIZE} ${translations.FILE_DETAILS_LIMIT.replace('{{records}}', scope.dataset.limit)}`);
         });
 
         it('should not render dataset nb lines', () => {
@@ -150,7 +154,7 @@ describe('Dataset parameters directive', function () {
 
             //then
             var encodingContainer = element.find('.encodings-group').eq(0);
-            expect(encodingContainer.find('label').eq(0).text().trim()).toBe('Encoding');
+            expect(encodingContainer.find('label').eq(0).text().trim()).toBe(translations.DATASET_PARAMETERS_ENCODING);
 
             var encodingOptions = encodingContainer.find('select > option');
             expect(encodingOptions.length).toBe(3);
@@ -183,12 +187,12 @@ describe('Dataset parameters directive', function () {
 
                 //then
                 var separatorContainer = element.find('.separator-group').eq(0);
-                expect(separatorContainer.find('label').eq(0).text().trim()).toBe('Separator');
+                expect(separatorContainer.find('label').eq(0).text().trim()).toBe(translations.DATASET_PARAMETERS_SEPARATOR);
 
                 var separatorOptions = separatorContainer.find('select > option');
                 expect(separatorOptions.length).toBe(5);
                 expect(separatorOptions.eq(0).attr('value')).toBe('');
-                expect(separatorOptions.eq(0).text()).toBe('Other');
+                expect(separatorOptions.eq(0).text()).toBe(translations.OTHER);
                 expect(separatorOptions.eq(1).attr('value')).toBe('string:;');
                 expect(separatorOptions.eq(1).text()).toBe(';');
                 expect(separatorOptions.eq(2).attr('value')).toBe('string:,');

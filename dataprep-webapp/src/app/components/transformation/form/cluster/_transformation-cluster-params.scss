@@ -100,6 +100,11 @@
 			th {
 				@include column-border($border-color);
 				padding: $cell-vertical-space $cell-horizontal-space;
+
+				.checkbox {
+					border-collapse: separate;
+					margin-bottom: 0px;
+				}
 			}
 		}
 
@@ -109,6 +114,8 @@
 			top: 0;
 			display: table;
 			width: 100%;
+			z-index: 2;
+
 			th {
 				@include column-sizes();
 

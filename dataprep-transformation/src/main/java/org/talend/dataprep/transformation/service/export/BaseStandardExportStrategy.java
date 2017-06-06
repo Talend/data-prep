@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 
-public abstract class StandardExportStrategy extends ExportStrategy {
+public abstract class BaseStandardExportStrategy extends BaseExportStrategy implements SampleExportStrategy {
 }

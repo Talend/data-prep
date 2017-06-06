@@ -25,16 +25,16 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
 /**
- * A {@link ExportStrategy strategy} to export a data set, without using a preparation.
+ * A {@link BaseExportStrategy strategy} to export a data set, without using a preparation.
  */
 @Component
-public class DataSetExportStrategy extends StandardExportStrategy {
+public class DataSetExportStrategy extends BaseStandardExportStrategy {
 
     @Override
     public boolean accept(ExportParameters parameters) {

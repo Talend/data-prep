@@ -40,17 +40,17 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
 /**
- * A {@link ExportStrategy strategy} to export a preparation (using its default data set), using any information
+ * A {@link BaseExportStrategy strategy} to export a preparation (using its default data set), using any information
  * available in cache (metadata and content).
  */
 @Component
-public class OptimizedExportStrategy extends StandardExportStrategy {
+public class OptimizedExportStrategy extends BaseStandardExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OptimizedExportStrategy.class);
 

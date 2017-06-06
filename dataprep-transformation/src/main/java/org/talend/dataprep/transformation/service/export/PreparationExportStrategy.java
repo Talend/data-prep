@@ -37,16 +37,16 @@ import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
 /**
- * A {@link ExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
+ * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
  */
 @Component
-public class PreparationExportStrategy extends StandardExportStrategy {
+public class PreparationExportStrategy extends BaseStandardExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationExportStrategy.class);
 

@@ -14,8 +14,6 @@ package org.talend.dataprep.transformation.service.export;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.util.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -25,17 +23,15 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 /**
- * A {@link ExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
+ * A {@link BaseExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
  * {@link #accept(ExportParameters)} returns <code>false</code>).
  */
 @Component
-public class CachedExportStrategy extends StandardExportStrategy {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CachedExportStrategy.class);
+public class CachedExportStrategy extends BaseStandardExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;

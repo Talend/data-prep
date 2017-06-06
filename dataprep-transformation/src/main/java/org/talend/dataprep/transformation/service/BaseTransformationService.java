@@ -27,7 +27,7 @@ import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
-import org.talend.dataprep.transformation.service.export.StandardExportStrategy;
+import org.talend.dataprep.transformation.service.export.SampleExportStrategy;
 import org.talend.dataprep.util.OrderedBeans;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,7 +69,7 @@ public abstract class BaseTransformationService {
     protected ApplicationContext applicationContext;
 
     @Autowired
-    protected OrderedBeans<StandardExportStrategy> sampleExportStrategies;
+    protected OrderedBeans<SampleExportStrategy> sampleExportStrategies;
 
     /**
      * Return the format that matches the given name or throw an error if the format is unknown.

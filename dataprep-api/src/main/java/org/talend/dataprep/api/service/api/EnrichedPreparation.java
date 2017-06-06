@@ -22,9 +22,9 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.share.Owner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.talend.dataprep.api.share.Owner;
 
 /**
  * Simple bean used to display a preparation and a summary of its related dataset and its location.

@@ -13,9 +13,11 @@
   ~ ============================================================================
   -->
 
-<http-error
-        ng-if="$ctrl.status"
-        status="{{::$ctrl.status}}"
-        title="'{{::'ERROR_'+$ctrl.status+'_TITLE' | translate }}'"
-        message="'{{::'ERROR_'+$ctrl.status+'_MESSAGE' | translate }}'"
-></http-error>
+<div class="http-error-wrapper">
+    <http-error
+            ng-if="$ctrl.status"
+            status="{{::$ctrl.status}}"
+            title="'{{::'ERROR_'+$ctrl.status+'_TITLE' | translate }}'"
+            message="'{{::'ERROR_'+$ctrl.status+'_MESSAGE' | translate }}'"
+    ></http-error>
+</div>

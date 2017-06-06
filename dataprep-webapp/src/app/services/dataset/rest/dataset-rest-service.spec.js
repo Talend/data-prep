@@ -172,7 +172,30 @@ describe('Dataset Rest Service', () => {
 				.respond(200, datasets);
 
 			//when
-			DatasetRestService.getFilteredDatasets('name=Cust')
+			DatasetRestService.getFilteredDatasets({name: 'Cust'})
+				.then((response) => {
+					result = response;
+				});
+			$httpBackend.flush();
+			$rootScope.$digest();
+
+			//then
+			expect(result).toEqual(datasets);
+		}));
+
+		it('should call dataset list with a filter on the name in Japanese', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
+			//given
+			let result = null;
+			const datasets = [
+				{ name: '顧客 (50 lines)' },
+				{ name: '顧客 (1K lines)' },
+			];
+			$httpBackend
+				.expectGET(RestURLs.datasetUrl + '?name=%E9%A1%A7%E5%AE%A2')
+				.respond(200, datasets);
+
+			//when
+			DatasetRestService.getFilteredDatasets({name: '顧客'})
 				.then((response) => {
 					result = response;
 				});

@@ -970,7 +970,7 @@ describe('Recipe service', function () {
         ];
         it('should display all filter name on hover', inject((RecipeService) => {
             // then
-            expect(RecipeService.getAllFiltersNames(filters)).toBe('(NAME, ID)');
+            expect(RecipeService.getAllFiltersNames(filters)).toBe('(name, id)');
         }));
     });
 

@@ -64,10 +64,12 @@ public class StreamModule extends SimpleModule {
                             jsonGenerator.writeStartArray();
                             startedResultArray = true;
                         }
-                        if (objectWriter == null || !previous.getClass().equals(next.getClass())) {
+                        if (next != null && (objectWriter == null || !previous.getClass().equals(next.getClass()))) {
                             objectWriter = mapper.writerFor(next.getClass());
                         }
-                        objectWriter.writeValue(jsonGenerator, next);
+                        if (objectWriter != null && next != null) {
+                            objectWriter.writeValue(jsonGenerator, next);
+                        }
                         previous = next;
                     }
                     // Ends input (and handle empty iterators).

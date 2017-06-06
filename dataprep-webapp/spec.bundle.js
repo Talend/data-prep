@@ -11,9 +11,11 @@
 
  ============================================================================*/
 
+import 'babel-polyfill';
 
 import './src/vendor';
 import './src/app/index-module';
+
 import 'angular-mocks';
 
 const context = require.context('./src/', true, /\.spec\.js/);

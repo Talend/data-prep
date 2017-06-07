@@ -12,11 +12,18 @@
   ============================================================================*/
 
 .tcomp {
+	.panel.panel-danger {
+		display: none;
+	}
+
 	.datastore,
 	.dataset {
 		fieldset {
-			margin: 0 auto;
-			width: 75%;
+			&,
+			& + div {
+				margin: 0 auto;
+				width: 75%;
+			}
 
 			legend {
 				display: none;

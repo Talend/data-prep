@@ -134,6 +134,10 @@
 		}
 	}
 
+	.modal-dialog {
+		max-height: none;
+	}
+
 	.modal-inner {
 		background: $modal-background;
 		border-radius: $base-border-radius;

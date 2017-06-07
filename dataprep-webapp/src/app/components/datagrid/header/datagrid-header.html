@@ -33,7 +33,7 @@
              ng-show="datagridHeaderCtrl.state.playground.isReadOnly || !datagridHeaderCtrl.isEditMode"
              title="{{ datagridHeaderCtrl.column.name }}">{{ datagridHeaderCtrl.column.name }}
         </div>
-        <form name="datagridHeaderCtrl.columnNameEdition"  ng-show="!datagridHeaderCtrl.state.playground.isReadOnly && datagridHeaderCtrl.isEditMode">
+        <form name="datagridHeaderCtrl.columnNameEdition" class="grid-header-title-form" ng-show="!datagridHeaderCtrl.state.playground.isReadOnly && datagridHeaderCtrl.isEditMode">
             <input class="form-control grid-header-title-input"
                type="text"
                ng-model="datagridHeaderCtrl.newName"

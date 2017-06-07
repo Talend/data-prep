@@ -573,8 +573,8 @@ export default function StatisticsService($q, $log, $filter, state, StateService
     //--------------------------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
-     * @name adaptPatternToGridConstraints
-     * @description adapt a sing pattern to the grid constraints
+     * @name adaptPatternsToGridConstraints
+     * @description adapt pattern list to the grid constraints by adding a new 'formattedPattern' field
      */
 	function adaptPatternsToGridConstraints(items) {
 		return items && items.length ? items.map((item) => {

@@ -77,7 +77,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("to_calendar_type", "from_calendar_type", "from_pattern_mode", "new_pattern", //$NON-NLS-3$ //$NON-NLS-4$
+        List<String> parameterNames = Arrays.asList("to_calendar_type", "from_calendar_type", "from_pattern_mode", "new_pattern",
                 "column_id", "row_id", "scope", "filter");
 
         // when
@@ -85,8 +85,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
         // then
         assertNotNull(parameters);
-        assertEquals(5, parameters.size()); // 4 implicit parameters + 4 specific
-        final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName) //
+        assertEquals(5, parameters.size());
+        final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName)
                 .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
     }
@@ -365,6 +365,16 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 DateCalendarConverter.CalendarUnit.RATA_DIE);
         testConversion(ThaiBuddhistStr, DateCalendarConverter.CalendarUnit.THAI_BUDDHIST, pattern,JulianDay ,
                 DateCalendarConverter.CalendarUnit.JULIAN_DAY);
+        testConversion("1858-11-18", DateCalendarConverter.CalendarUnit.ISO, pattern, "1",
+                DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
+        testConversion("1858-11-18", DateCalendarConverter.CalendarUnit.ISO, pattern, "2400002",
+                DateCalendarConverter.CalendarUnit.JULIAN_DAY);
+        testConversion("1970-01-01", DateCalendarConverter.CalendarUnit.ISO, pattern, "0",
+                DateCalendarConverter.CalendarUnit.EPOCH_DAY);
+        testConversion("0001-01-01", DateCalendarConverter.CalendarUnit.ISO, pattern, "1",
+                DateCalendarConverter.CalendarUnit.RATA_DIE);
+        testConversion("1970-01-01 AD", DateCalendarConverter.CalendarUnit.ISO, "yyyy-MM-dd G", "0",
+                DateCalendarConverter.CalendarUnit.EPOCH_DAY);
     }
     @Test
     public void testJulianDayToEachother(){
@@ -380,5 +390,13 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 DateCalendarConverter.CalendarUnit.EPOCH_DAY);
         testConversion(EpochDay, DateCalendarConverter.CalendarUnit.EPOCH_DAY, null, ModifiedJulianDay,
                 DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
+        testConversion("1", DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, "-2400000",
+                DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
+        testConversion("1", DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY, null, "678577",
+                DateCalendarConverter.CalendarUnit.RATA_DIE);
+        testConversion("1", DateCalendarConverter.CalendarUnit.EPOCH_DAY, null, "2440589",
+                DateCalendarConverter.CalendarUnit.JULIAN_DAY);
+        testConversion("1", DateCalendarConverter.CalendarUnit.RATA_DIE, null, "1721426",
+                DateCalendarConverter.CalendarUnit.JULIAN_DAY);
     }
 }

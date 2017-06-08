@@ -45,7 +45,7 @@ import com.fasterxml.jackson.core.JsonParser;
  * in the preparation).
  */
 @Component
-public class ApplyPreparationExportStrategy extends BaseStandardExportStrategy {
+public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplyPreparationExportStrategy.class);
 

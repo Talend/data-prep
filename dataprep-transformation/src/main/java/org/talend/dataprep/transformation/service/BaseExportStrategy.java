@@ -48,7 +48,7 @@ import org.talend.dataprep.transformation.format.FormatRegistrationService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class BaseExportStrategy implements ExportStrategy {
+public abstract class BaseExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseExportStrategy.class);
 
@@ -98,6 +98,7 @@ public abstract class BaseExportStrategy implements ExportStrategy {
         }
         return format;
     }
+
 
     /**
      * Return the real step id in case of "head" or empty

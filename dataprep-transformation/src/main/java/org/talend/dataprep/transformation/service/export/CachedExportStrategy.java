@@ -31,7 +31,7 @@ import org.talend.dataprep.transformation.service.ExportUtils;
  * {@link #accept(ExportParameters)} returns <code>false</code>).
  */
 @Component
-public class CachedExportStrategy extends BaseStandardExportStrategy {
+public class CachedExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;

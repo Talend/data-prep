@@ -46,7 +46,7 @@ import com.fasterxml.jackson.core.JsonParser;
  * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
  */
 @Component
-public class PreparationExportStrategy extends BaseStandardExportStrategy {
+public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationExportStrategy.class);
 

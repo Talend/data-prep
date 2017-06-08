@@ -16,4 +16,5 @@ import org.talend.dataprep.transformation.service.ExportStrategy;
 /**
  * Tagging interface for export strategies that can be used for sampling.
  */
-public interface SampleExportStrategy extends ExportStrategy {}
+public interface SampleExportStrategy extends ExportStrategy {
+}

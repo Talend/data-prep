@@ -50,7 +50,7 @@ import com.fasterxml.jackson.core.JsonParser;
  * available in cache (metadata and content).
  */
 @Component
-public class OptimizedExportStrategy extends BaseStandardExportStrategy {
+public class OptimizedExportStrategy extends BaseSampleExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OptimizedExportStrategy.class);
 

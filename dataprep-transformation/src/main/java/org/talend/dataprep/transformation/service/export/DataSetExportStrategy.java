@@ -34,7 +34,7 @@ import com.fasterxml.jackson.core.JsonParser;
  * A {@link BaseExportStrategy strategy} to export a data set, without using a preparation.
  */
 @Component
-public class DataSetExportStrategy extends BaseStandardExportStrategy {
+public class DataSetExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public boolean accept(ExportParameters parameters) {

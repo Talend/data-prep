@@ -229,7 +229,7 @@ const settingsMock = {
 			payload: {
 				method: 'open',
 				args: [
-					'https://talend-rc.fluidtopics.net/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.0%2522&utm_medium=dpdesktop&utm_source=header',
+					'https://help.talend.com/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.1%2522&utm_medium=dpdesktop&utm_source=header',
 				],
 			},
 		},

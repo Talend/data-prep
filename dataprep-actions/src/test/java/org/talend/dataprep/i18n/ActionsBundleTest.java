@@ -32,7 +32,7 @@ public class ActionsBundleTest {
 
     @Test
     public void actionDocUrl() throws Exception {
-        assertEquals("https://talend-rc.fluidtopics.net/access/sources/dita/map?pageid=regular_expressions&EnrichPlatform=Talend+Data+Preparation&afs:lang=en&EnrichVersion=2.0&utm_medium=dpdesktop&utm_source=func", ActionsBundle.INSTANCE.actionDocUrl(this, Locale.US, "replace_on_value"));
+        assertEquals("https://help.talend.com/access/sources/TDP_21/map?pageid=regular_expressions&EnrichPlatform=Talend+Data+Preparation&afs:lang=en&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func", ActionsBundle.INSTANCE.actionDocUrl(this, Locale.US, "replace_on_value"));
     }
 
     @Test

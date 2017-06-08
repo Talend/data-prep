@@ -48,9 +48,6 @@ class SearchDocumentationRestService {
 			url: this.documentationSearchURL,
 			data: this.parameters,
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
 			failSilently: true,
 		});
 	}

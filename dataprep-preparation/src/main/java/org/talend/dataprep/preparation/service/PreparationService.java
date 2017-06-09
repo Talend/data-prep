@@ -455,8 +455,8 @@ public class PreparationService {
         }
         // Ensure that the preparation is not locked elsewhere
         lock(id);
-        preparationCleaner.removePreparationOrphanSteps(preparationToDelete.getId());
         preparationRepository.remove(preparationToDelete);
+        preparationCleaner.removeOrphanSteps();
 
         // delete the associated folder entries
         // TODO make this async?
@@ -706,7 +706,7 @@ public class PreparationService {
 
         // Rebuild history from modified step
         final Step stepToModify = getStep(stepToModifyId);
-        replaceHistory(preparation, stepToModify.getParent().getId(), actionsSteps);
+        replaceHistory(preparation, stepToModify.getParent(), actionsSteps);
         log.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
     }
 
@@ -867,7 +867,7 @@ public class PreparationService {
      * @return The list of actions
      */
     private List<Action> getActions(final Step step) {
-        return new ArrayList<>(preparationRepository.get(step.getContent().id(), PreparationActions.class).getActions());
+        return new ArrayList<>(preparationRepository.get(step.getContent(), PreparationActions.class).getActions());
     }
 
     /**
@@ -1187,12 +1187,18 @@ public class PreparationService {
      */
     private void appendStepToHead(final Preparation preparation, final AppendStep appendStep) {
         // Add new actions after head
-        final Step head = preparationRepository.get(preparation.getHeadId(), Step.class);
-        final PreparationActions newContent = head.getContent().append(appendStep.getActions());
+        final String headId = preparation.getHeadId();
+        final Step head = preparationRepository.get(headId, Step.class);
+        final PreparationActions headActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+        final PreparationActions newContent = new PreparationActions();
+        final List<Action> newActions = new ArrayList<>(headActions.getActions());
+        newActions.addAll(appendStep.getActions());
+        newContent.setActions(newActions);
 
         // Create new step from new content
-        final Step newHead = new Step(head, newContent, versionService.version().getVersionId(), appendStep.getDiff());
+        final Step newHead = new Step(headId, newContent.id(), versionService.version().getVersionId(), appendStep.getDiff());
         preparationRepository.add(newHead);
+        preparationRepository.add(newContent);
 
         // TODO Could we get the new step id?
         // Update preparation head step
@@ -1224,7 +1230,7 @@ public class PreparationService {
 
         // rewrite history
         final Step stepToDelete = getStep(stepToDeleteId);
-        replaceHistory(preparation, stepToDelete.getParent().id(), actions);
+        replaceHistory(preparation, stepToDelete.getParent(), actions);
     }
 
     /**

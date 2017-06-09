@@ -87,8 +87,7 @@ public class PreparationAPI extends APIService {
     @ApiOperation(value = "Get all preparations.", notes = "Returns the list of preparations the current user is allowed to see.")
     @Timed
     public StreamingResponseBody listPreparations(
-            @ApiParam(name = "format", value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.")
-            @RequestParam(value = "format", defaultValue = "summary") String format) {
+            @ApiParam(name = "format", value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.") @RequestParam(value = "format", defaultValue = "summary") String format) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
@@ -112,8 +111,8 @@ public class PreparationAPI extends APIService {
      * of the preparation with id <tt>preparationId</tt> is never returned in the list.
      *
      * @param preparationId the specified preparation id
-     * @param sort          the sort criterion: either name or date.
-     * @param order         the sorting order: either asc or desc
+     * @param sort the sort criterion: either name or date.
+     * @param order the sorting order: either asc or desc
      */
     @RequestMapping(value = "/api/preparations/{id}/basedatasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all data sets that are compatible with a preparation.", notes = "Returns the list of data sets the current user is allowed to see and that are compatible with the preparation.")
@@ -203,9 +202,9 @@ public class PreparationAPI extends APIService {
     /**
      * Copy a preparation from the given id
      *
-     * @param id          the preparation id to copy
+     * @param id the preparation id to copy
      * @param destination where to copy the preparation to.
-     * @param newName     optional new name for the preparation.
+     * @param newName optional new name for the preparation.
      * @return The copied preparation id.
      */
     //@formatter:off
@@ -218,7 +217,8 @@ public class PreparationAPI extends APIService {
     //@formatter:on
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Copying preparation {} to '{}' with new name '{}' (pool: {} )...", id, destination, newName, getConnectionStats());
+            LOG.debug("Copying preparation {} to '{}' with new name '{}' (pool: {} )...", id, destination, newName,
+                    getConnectionStats());
         }
 
         HystrixCommand<String> copy = getCommand(PreparationCopy.class, id, destination, newName);
@@ -232,10 +232,10 @@ public class PreparationAPI extends APIService {
     /**
      * Move a preparation to another folder.
      *
-     * @param id          the preparation id to move.
-     * @param folder      where to find the preparation.
+     * @param id the preparation id to move.
+     * @param folder where to find the preparation.
      * @param destination where to move the preparation.
-     * @param newName     optional new preparation name.
+     * @param newName optional new preparation name.
      */
     //@formatter:off
     @RequestMapping(value = "/api/preparations/{id}/move", method = PUT, produces = TEXT_PLAIN_VALUE)
@@ -303,14 +303,18 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/actions", method = POST, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Adds an action at the end of preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void addPreparationAction(@ApiParam(name = "id", value = "Preparation id.") @PathVariable(value = "id")  final String preparationId,
-                                     @ApiParam("Action to add at end of the preparation.") @RequestBody final AppendStep actionsContainer) {
+    public void addPreparationAction(@ApiParam(name = "id", value = "Preparation id.")
+    @PathVariable(value = "id")
+    final String preparationId, @ApiParam("Action to add at end of the preparation.")
+    @RequestBody
+    final AppendStep actionsContainer) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding action to preparation (pool: {} )...", getConnectionStats());
         }
 
-        // This trick is to keep the API taking and unrolling ONE AppendStep until the codefreeze but this must not stay that way
+        // This trick is to keep the API taking and unrolling ONE AppendStep until the codefreeze but this must not stay
+        // that way
         List<AppendStep> stepsToAppend = actionsContainer.getActions().stream().map(a -> {
             AppendStep s = new AppendStep();
             s.setActions(singletonList(a));
@@ -362,9 +366,11 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/actions/{stepId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Delete an action in the preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void deletePreparationAction(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") final String preparationId,
-            @PathVariable(value = "stepId") @ApiParam(name = "stepId", value = "Step id to delete.") final String stepId) {
+    public void deletePreparationAction(@PathVariable(value = "id")
+    @ApiParam(name = "id", value = "Preparation id.")
+    final String preparationId, @PathVariable(value = "stepId")
+    @ApiParam(name = "stepId", value = "Step id to delete.")
+    final String stepId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleting preparation action at step #{} (pool: {} ) ...", stepId, //
                     getConnectionStats());
@@ -394,7 +400,7 @@ public class PreparationAPI extends APIService {
         Step step = getCommand(FindStep.class, headId).execute();
         if (step == null) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST);
-        } else if (isHeadStepDependingOnDeletedDataSet(step)) {
+        } else if (isHeadStepDependingOnDeletedDataSet(preparationId, headId)) {
             final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, preparationId, headId);
             command.execute();
         } else {
@@ -409,8 +415,9 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{preparationId}/lock", method = PUT, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Mark a preparation as locked by a user.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void lockPreparation(
-            @PathVariable(value = "preparationId") @ApiParam(name = "preparationId", value = "Preparation id.") final String preparationId) {
+    public void lockPreparation(@PathVariable(value = "preparationId")
+    @ApiParam(name = "preparationId", value = "Preparation id.")
+    final String preparationId) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Locking preparation #{}...", preparationId);
@@ -427,8 +434,9 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{preparationId}/unlock", method = PUT, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Mark a preparation as unlocked by a user.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void unlockPreparation(
-            @PathVariable(value = "preparationId") @ApiParam(name = "preparationId", value = "Preparation id.") final String preparationId) {
+    public void unlockPreparation(@PathVariable(value = "preparationId")
+    @ApiParam(name = "preparationId", value = "Preparation id.")
+    final String preparationId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Locking preparation #{}...", preparationId);
         }
@@ -446,7 +454,7 @@ public class PreparationAPI extends APIService {
      * <p>
      * This is only allowed if this preparation has no steps.
      *
-     * @param id   the preparation id to update.
+     * @param id the preparation id to update.
      * @param from the preparation id to copy the steps from.
      */
     //@formatter:off
@@ -466,19 +474,21 @@ public class PreparationAPI extends APIService {
     }
 
     /**
-     * Moves the step of specified id <i>stepId</i> after step of specified id <i>parentId</i> within the specified preparation.
+     * Moves the step of specified id <i>stepId</i> after step of specified id <i>parentId</i> within the specified
+     * preparation.
      *
      * @param preparationId the Id of the specified preparation
-     * @param stepId        the Id of the specified step to move
-     * @param parentStepId  the Id of the specified step which will become the parent of the step to move
+     * @param stepId the Id of the specified step to move
+     * @param parentStepId the Id of the specified step which will become the parent of the step to move
      */
     // formatter:off
     @RequestMapping(value = "/api/preparations/{preparationId}/steps/{stepId}/order", method = POST, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Moves a step within a preparation just after the specified <i>parentStepId</i>", notes = "Moves a step within a preparation.")
     @Timed
-    public void moveStep(@PathVariable("preparationId") final String preparationId,
-                         @ApiParam(value = "The current index of the action we want to move.") @PathVariable("stepId") String stepId,
-                         @ApiParam(value = "The current index of the action we want to move.") @RequestParam String parentStepId) {
+    public void moveStep(@PathVariable("preparationId")
+    final String preparationId,
+            @ApiParam(value = "The current index of the action we want to move.") @PathVariable("stepId") String stepId,
+            @ApiParam(value = "The current index of the action we want to move.") @RequestParam String parentStepId) {
         //@formatter:on
 
         LOG.info("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
@@ -548,7 +558,6 @@ public class PreparationAPI extends APIService {
         return CommandHelper.toStreaming(transformation);
     }
 
-
     /**
      * Return the semantic types for a given preparation / column.
      *
@@ -584,7 +593,7 @@ public class PreparationAPI extends APIService {
      * Helper method used to retrieve preparation actions via a hystrix command.
      *
      * @param preparationId the preparation id to get the actions from.
-     * @param stepId        the preparation version.
+     * @param stepId the preparation version.
      * @return the preparation actions.
      */
     private List<Action> internalGetActions(String preparationId, String stepId) {
@@ -613,30 +622,23 @@ public class PreparationAPI extends APIService {
         }
     }
 
-    private boolean isHeadStepDependingOnDeletedDataSet(Step step) {
-        final boolean valid;
-        // If root
-        if (step.getParent() == null) {
-            valid = true;
-        } else {
-            List<Action> actions = step.getContent().getActions();
-            boolean oneActionRefersToNonexistentDataset = actions.stream() //
-                    .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
-                    .map(action -> action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey())) //
-                    .anyMatch(dsId -> {
-                        boolean hasNoDataset;
-                        try {
-                            hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
-                        } catch (TDPException e) {
-                            // Dataset could not be retrieved => Main reason is not present
-                            LOG.debug("The data set could not be retrieved: "+e);
-                            hasNoDataset = true;
-                        }
-                        return hasNoDataset;
-                    });
-            valid = !oneActionRefersToNonexistentDataset && isHeadStepDependingOnDeletedDataSet(step.getParent());
-        }
-        return valid;
+    private boolean isHeadStepDependingOnDeletedDataSet(String preparationId, String stepId) {
+        List<Action> actions = internalGetActions(preparationId, stepId);
+        boolean oneActionRefersToNonexistentDataset = actions.stream() //
+                .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
+                .map(action -> action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey())) //
+                .anyMatch(dsId -> {
+                    boolean hasNoDataset;
+                    try {
+                        hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
+                    } catch (TDPException e) {
+                        // Dataset could not be retrieved => Main reason is not present
+                        LOG.debug("The data set could not be retrieved: " + e);
+                        hasNoDataset = true;
+                    }
+                    return hasNoDataset;
+                });
+        return !oneActionRefersToNonexistentDataset;
     }
 
 }

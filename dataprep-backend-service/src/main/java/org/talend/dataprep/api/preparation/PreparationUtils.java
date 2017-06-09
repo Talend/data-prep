@@ -53,10 +53,10 @@ public class PreparationUtils {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
             writer.append("\t\tStep (").append(step.id()).append(")").append("\n");
             writer.flush();
-            PreparationActions blob = repository.get(step.getContent().id(), PreparationActions.class);
+            PreparationActions blob = repository.get(step.getContent(), PreparationActions.class);
             prettyPrint(blob, out);
             if (step.getParent() != null) {
-                prettyPrint(repository, step.getParent().id(), out);
+                prettyPrint(repository, step.getParent(), out);
             }
         } catch (IOException e) {
             throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
@@ -137,7 +137,7 @@ public class PreparationUtils {
             return;
         }
         if (step.getParent() != null) {
-            __listSteps(steps, limit, repository.get(step.getParent().id(), Step.class), repository);
+            __listSteps(steps, limit, repository.get(step.getParent(), Step.class), repository);
         }
     }
 

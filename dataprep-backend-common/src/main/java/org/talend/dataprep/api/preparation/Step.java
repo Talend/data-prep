@@ -33,10 +33,10 @@ public class Step extends Identifiable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The parent step. */
-    private Step parent;
+    private String parent;
 
     /** The default preparation actions is the root actions. */
-    private PreparationActions preparationActions = ROOT_ACTIONS;
+    private String preparationActions = ROOT_ACTIONS.id();
 
     /** The app version. */
     @JsonProperty("app-version")
@@ -71,7 +71,7 @@ public class Step extends Identifiable implements Serializable {
      * @param content the step content.
      * @param appVersion the app version.
      */
-    public Step(final Step parent, final PreparationActions content, final String appVersion) {
+    public Step(final String parent, final String content, final String appVersion) {
         this(parent, content, appVersion, null);
     }
 
@@ -83,7 +83,7 @@ public class Step extends Identifiable implements Serializable {
      * @param appVersion the app version.
      * @param diff the step diff.
      */
-    public Step(final Step parent, final PreparationActions content, final String appVersion, final StepDiff diff) {
+    public Step(final String parent, final String content, final String appVersion, final StepDiff diff) {
         this.id = UUID.randomUUID().toString();
         this.parent = parent;
         this.preparationActions = content;
@@ -91,11 +91,11 @@ public class Step extends Identifiable implements Serializable {
         this.diff = diff;
     }
 
-    public Step getParent() {
+    public String getParent() {
         return parent;
     }
 
-    public void setParent(Step parent) {
+    public void setParent(String parent) {
         this.parent = parent;
     }
 
@@ -126,11 +126,11 @@ public class Step extends Identifiable implements Serializable {
         this.id = id;
     }
 
-    public PreparationActions getContent() {
-        return preparationActions == null ? PreparationActions.ROOT_ACTIONS : preparationActions;
+    public String getContent() {
+        return preparationActions == null ? PreparationActions.ROOT_ACTIONS.id() : preparationActions;
     }
 
-    public void setContent(PreparationActions preparationActions) {
+    public void setContent(String preparationActions) {
         this.preparationActions = preparationActions;
     }
 
@@ -154,7 +154,7 @@ public class Step extends Identifiable implements Serializable {
     public String toString() {
         String result = "Step{parentId='";
         if (parent != null) {
-            result += parent.id();
+            result += parent;
         } else {
             result += "null";
         }

@@ -123,15 +123,18 @@ public class PreparationSerializationTest extends ServiceBaseTests {
         final List<Action> actions = PreparationTest.getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent1 = rootContent.append(actions);
         repository.add(newContent1);
-        final Step s1 = new Step(rootStep, newContent1, version);
+        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
         repository.add(s1);
         // Use it in preparation
         Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
         preparation.setCreationDate(0L);
+        repository.add(preparation);
+
+        final Preparation storedPreparation = repository.get(preparation.id(), Preparation.class);
 
         // when
         final StringWriter output = new StringWriter();
-        mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
+        mapper.writer().writeValue(output, conversionService.convert(storedPreparation, PreparationMessage.class));
 
         // then
         final PreparationMessage actual = mapper.readerFor(PreparationMessage.class).readValue(output.toString());

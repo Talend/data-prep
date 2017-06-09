@@ -16,6 +16,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class UpdatedStepVisitorTest {
     @Test
     public void testUpdatedStepsWithOk() throws Exception {
         // Given
-        final Step step = new Step(Step.ROOT_STEP, new PreparationActions(), "0.0");
+        final Step step = new Step(ROOT_STEP.id(), new PreparationActions().id(), "0.0");
         final Node stepNode = NodeBuilder.from(new StepNode(step, entryNode, new BasicNode())).to(new BasicNode()).build();
         final UpdatedStepVisitor visitor = new UpdatedStepVisitor();
         actionContext.setActionStatus(ActionContext.ActionStatus.OK); // OK action!
@@ -70,7 +71,7 @@ public class UpdatedStepVisitorTest {
     @Test
     public void testUpdatedStepsWithKO() throws Exception {
         // Given
-        final Step step = new Step(Step.ROOT_STEP, new PreparationActions(), "0.0");
+        final Step step = new Step(ROOT_STEP.id(), new PreparationActions().id(), "0.0");
         final Node stepNode = NodeBuilder.from(new StepNode(step, entryNode, new BasicNode())).to(new BasicNode()).build();
         final UpdatedStepVisitor visitor = new UpdatedStepVisitor();
         actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED); // Canceled action!

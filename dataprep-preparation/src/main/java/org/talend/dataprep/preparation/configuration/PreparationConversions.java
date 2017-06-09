@@ -113,48 +113,52 @@ public class PreparationConversions {
         }
 
         private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target) {
-            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
             final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
             final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
-            final List<Step> steps = preparationUtils.listSteps(source.getHeadId(), preparationRepository);
-            target.setSteps(steps);
-
             // Steps diff metadata
-            final List<StepDiff> diffs = steps.stream() //
+            final List<StepDiff> diffs = source.getSteps().stream() //
                     .filter(step -> !Step.ROOT_STEP.id().equals(step.id())) //
                     .map(Step::getDiff) //
                     .collect(toList());
             target.setDiff(diffs);
 
             // Actions
-            final Step head = preparationRepository.get(source.getHeadId(), Step.class);
-            if (head != null && head.getContent() != null) {
+            if (source.getHeadId() != null) {
                 // Get preparation actions
-                PreparationActions prepActions = preparationRepository.get(head.getContent().id(), PreparationActions.class);
-                target.setActions(prepActions.getActions());
-                List<Action> actions = prepActions.getActions();
+                final String headId = source.getHeadId();
+                final Step head = preparationRepository.get(headId, Step.class);
+                if (head != null) {
+                    final PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+                    final List<Action> actions = prepActions.getActions();
+                    target.setActions(prepActions.getActions());
 
-                // Allow distributed run
-                boolean allowDistributedRun = true;
-                for (Action action : actions) {
-                    final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                    if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
-                        allowDistributedRun = false;
-                        break;
+                    // Allow distributed run
+                    boolean allowDistributedRun = true;
+                    for (Action action : actions) {
+                        final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
+                        if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                            allowDistributedRun = false;
+                            break;
+                        }
                     }
-                }
-                target.setAllowDistributedRun(allowDistributedRun);
+                    target.setAllowDistributedRun(allowDistributedRun);
 
-                // Actions metadata
-                if (actionRegistry == null) {
-                    LOGGER.debug("No action metadata available, unable to serialize action metadata for preparation {}.",
-                            source.id());
+                    // Actions metadata
+                    if (actionRegistry == null) {
+                        LOGGER.debug("No action metadata available, unable to serialize action metadata for preparation {}.",
+                                source.id());
+                    } else {
+                        List<ActionDefinition> actionDefinitions = actions.stream() //
+                                .map(a -> actionRegistry.get(a.getName())) //
+                                .collect(Collectors.toList());
+                        target.setMetadata(actionDefinitions);
+                    }
                 } else {
-                    List<ActionDefinition> actionDefinitions = actions.stream() //
-                            .map(a -> actionRegistry.get(a.getName())) //
-                            .collect(Collectors.toList());
-                    target.setMetadata(actionDefinitions);
+                    LOGGER.warn("Head step #{} for preparation #{} does not exist.", headId, source.id());
+                    target.setActions(Collections.emptyList());
+                    target.setSteps(Collections.singletonList(Step.ROOT_STEP));
+                    target.setMetadata(Collections.emptyList());
                 }
             } else {
                 target.setActions(Collections.emptyList());

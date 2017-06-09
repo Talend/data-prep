@@ -377,6 +377,44 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 DateCalendarConverter.CalendarUnit.EPOCH_DAY);
     }
     @Test
+    /**
+     * row1 and row2 should use one instance DateCalendarConverter.Just cover the test code and no assert the Mpa 'dateCalendarConverterMap'.
+     * Because the Map is private.
+     */
+    public void testChronologyToJulianDaySameInstance() {
+        Map<String, String> rowContent = new HashMap<>();
+        //row1
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "1970-01-01");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
+                .add(new PatternFrequency("yyyy-MM-dd", 1));
+
+        // row 2
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "0001-01-01");
+        final DataSetRow row2 = new DataSetRow(rowContent);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("2440588", row1.get("0001"));
+        assertEquals("1721426", row2.get("0001"));
+    }
+    @Test
+    public void should_not_chronologyToJulianDay() {
+        testConversion("1970-01-01", DateCalendarConverter.CalendarUnit.ISO, null, "1970-01-01",
+                DateCalendarConverter.CalendarUnit.EPOCH_DAY);
+    }
+    @Test
     public void testJulianDayToEachother(){
         testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, RataDie,
                 DateCalendarConverter.CalendarUnit.RATA_DIE);

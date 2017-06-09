@@ -22,6 +22,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.parameters.SelectParameter.Builder;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -30,7 +31,6 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.JulianDayConverter;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-import org.talend.dataprep.parameters.SelectParameter;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -45,6 +45,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 import static java.util.Collections.emptyList;
 import static org.talend.dataprep.api.type.Type.DATE;
@@ -83,6 +85,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     private static final String JULIAN_DAY_CONVERT_KEY = "julian_day_convert_key";
 
     private static final String DEFAULT_OUTPUT_PATTERN = "yyyy-MM-dd G";
+
+    private static Map<String,org.talend.dataquality.converters.DateCalendarConverter> dateCalendarConverterMap =null;
 
     /**
      * if it converts from Chronology
@@ -158,6 +162,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+            dateCalendarConverterMap =new HashMap();
             String fromCalendarParameter = actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER);
             String toCalendarParameter = actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER);
             isFromChronology = CalendarUnit
@@ -239,17 +244,9 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                 Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
                 String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
                         fromCalendarTypeKey, fromLocaleKey);
-                if (StringUtils.isEmpty(fromPattern)) {
-                    return;
-                }
-                if (isToChronology) {//Chronology->Chronology
-                    org.talend.dataquality.converters.DateCalendarConverter date = new org.talend.dataquality.converters.DateCalendarConverter(
-                            fromPattern, fromPattern, fromCalendarTypeKey, context.get(TO_CALENDAR_TYPE_KEY),
-                            fromLocaleKey, context.get(TO_LOCALE_KEY));
-                    newValue = date.convert(value);
-                } else {//JulianDay->Chronology
-                    JulianDayConverter julianDayConvert = new JulianDayConverter(fromCalendarTypeKey, fromPattern, fromLocaleKey, context.get(TO_CALENDAR_TYPE_KEY));
-                    newValue = julianDayConvert.convert(value);
+                org.talend.dataquality.converters.DateCalendarConverter dateConverter =getDateCalendarConverterInstance(fromPattern,context);
+                if(dateConverter!=null){
+                    newValue = dateConverter.convert(value);
                 }
             } else {//it is From JulianDay.JulianDay->Chronology OR JulianDay->JulianDay
                 JulianDayConverter julianDayConvert = (JulianDayConverter) context.get(JULIAN_DAY_CONVERT_KEY);
@@ -261,6 +258,35 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
             LOGGER.debug("Unable to parse date {}.", value);
+        }
+    }
+
+    /**
+     * Create instance DateCalendarConverter only once for each pattern. It is used to covert from Chronology.
+     * @param fromPattern
+     * @param context
+     * @return
+     */
+    private org.talend.dataquality.converters.DateCalendarConverter getDateCalendarConverterInstance(String fromPattern,ActionContext context) {
+        if (!isFromChronology || StringUtils.isEmpty(fromPattern)) {
+            return null;
+        }
+        org.talend.dataquality.converters.DateCalendarConverter dateConvert=dateCalendarConverterMap.get(fromPattern);
+        if (dateConvert != null) {
+            return dateConvert;
+        }
+        AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
+        Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
+        if (isToChronology) {//Chronology->Chronology
+            dateConvert = new org.talend.dataquality.converters.DateCalendarConverter(
+                    fromPattern, fromPattern, fromCalendarTypeKey, context.get(TO_CALENDAR_TYPE_KEY),
+                    fromLocaleKey, context.get(TO_LOCALE_KEY));
+            dateCalendarConverterMap.put(fromPattern, dateConvert);
+            return dateConvert;
+        } else {//Chronology->TemporalField
+            JulianDayConverter julianDayConvert = new JulianDayConverter(fromCalendarTypeKey, fromPattern, fromLocaleKey, context.get(TO_CALENDAR_TYPE_KEY));
+            dateCalendarConverterMap.put(fromPattern, julianDayConvert);
+            return julianDayConvert;
         }
     }
 

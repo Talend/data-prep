@@ -121,7 +121,9 @@ window.fetchConfiguration = function fetchConfiguration() {
 			angular.module(SERVICES_UTILS_MODULE)
 				.value('version', config.version)
 				.value('copyRights', config.copyRights)
-				.value('documentationSearchURL', config.documentationSearchURL);
+				.value('documentationSearchURL', config.documentationSearchURL)
+				.value('documentationSearchVersion', config.documentationSearchVersion)
+				.value('documentationSearchLanguage', config.documentationSearchLanguage);
 		});
 };
 

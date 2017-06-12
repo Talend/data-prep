@@ -36,10 +36,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -47,6 +44,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.AppendStep;
@@ -996,4 +995,61 @@ public class PreparationAPITest extends ApiServiceTestBase {
             assertTrue(type.has("frequency"));
         }
     }
+
+    /**
+     * Test presence of a bug that allow the reuse of the same column ID twice in the same preparation.
+     * <p>
+     *     This bug is allowed by OptimizedStrategy that does not apply some actions on RowMetadata and thus RowMetadata.nextId is
+     *     not properly updated.
+     * </p>
+     */
+    @Test
+    public void test_add_preparation_TDP3927() throws Exception {
+        // given
+        final String preparationId = testClient.createPreparationFromFile(
+                "/org/talend/dataprep/api/service/dataset/bug_TDP-3927_import-col-not-deleted_truncated.csv",
+                "bug_TDP-3927_import-col-not-deleted",
+                "text/csv", home.getId());
+
+        Map<String, String> copyIdParameters = new HashMap<>();
+        copyIdParameters.put("column_id", "0000");
+        copyIdParameters.put("column_name", "id");
+        copyIdParameters.put("scope", "column");
+        testClient.applyAction(preparationId, "copy", copyIdParameters);
+
+        RowMetadata preparationContent = testClient.getPreparationContent(preparationId);
+        ColumnMetadata idCopyColumn = getColumnByName(preparationContent, "id_copy");
+
+        Map<String, String> deleteIdCopyParameters = new HashMap<>();
+        deleteIdCopyParameters.put("column_id", "0008");
+        deleteIdCopyParameters.put("column_name", "id_copy");
+        deleteIdCopyParameters.put("scope", "column");
+        testClient.applyAction(preparationId, "delete_column", deleteIdCopyParameters);
+
+        // force export to update cache
+        testClient.getPreparationContent(preparationId);
+
+        // when
+        Map<String, String> copyFirstNameParameters = new HashMap<>();
+        copyFirstNameParameters.put("column_id", "0001");
+        copyFirstNameParameters.put("column_name", "first_name");
+        copyFirstNameParameters.put("scope", "column");
+        testClient.applyAction(preparationId, "copy", copyFirstNameParameters);
+
+        // then
+        preparationContent = testClient.getPreparationContent(preparationId);
+        assertNotNull(preparationContent);
+        ColumnMetadata firstNameColumn = getColumnByName(preparationContent, "first_name_copy");
+        assertNotEquals(idCopyColumn.getId(), firstNameColumn.getId());
+    }
+
+    private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {
+        Optional<ColumnMetadata> firstNameColumn = preparationContent.getColumns()
+                .stream()
+                .filter(c -> columnName.equals(c.getName()))
+                .findAny();
+        assertTrue(firstNameColumn.isPresent());
+        return firstNameColumn.get();
+    }
+
 }

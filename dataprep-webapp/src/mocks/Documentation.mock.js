@@ -49,6 +49,24 @@ const docSearchResults = {
 			htmlTitle: '<span class=\"kwicstring\">Vertical bar </span><span class=\"kwicmatch\">chart</span>',
 			htmlExcerpt: '<span class=\"kwicstring\">The vertical bar </span><span class=\"kwicmatch\">chart</span><span class=\"kwicstring\"> is a histogram displayed in the </span><span class=\"kwicmatch\">Chart</span><span class=\"kwicstring\"> tab when the selected column contains numerical or date data. This</span><span class=\"kwictruncate\">...</span><span class=\"kwicstring\">displayed using the range slider. It is an interactive </span><span class=\"kwicmatch\">chart</span><span class=\"kwicstring\">: you can create a new filter by clicking one of the bars of the </span><span class=\"kwicmatch\">chart</span><span class=\"kwicstring\">. Also, if you point your mouse over one of</span><span class=\"kwictruncate\">...</span>',
 		},
+		{
+			mapId: 'DLaNYicBDiA9S5hdjFK9AA',
+			mapTitle: 'Pattern Chart',
+			occurrences: [
+				{
+					tocId: 'DLaNYicBDiA9S5hdjFK9AA',
+					readerUrl: 'https://help.talend.com/reader/DLaNYicBDiA9S5hdjFK9LQ/DLaNYicBDiA9S5hdjFK9AA',
+					breadcrumb: [
+						'Pattern Chart',
+					],
+				},
+			],
+			contentId: 'DLaNYicBDiA9S5hdjFK9AA',
+			topicUrl: 'https://help.talend.com/api/khub/maps/DLaNYicBDiA9S5hdjFK9LQ/topics/DLaNYicBDiA9S5hdjFK9AA',
+			contentUrl: 'https://help.talend.com/api/khub/maps/DLaNYicBDiA9S5hdjFK9LQ/topics/DLaNYicBDiA9S5hdjFK9AA/content',
+			htmlTitle: '<span class=\"kwicstring\"> Row &gt; Main link</span><span class=\"kwictruncate\">...</span>chart',
+			htmlExcerpt: '<span class=\"kwicstring\">&lt; Row &gt; Main link</span><span class=\"kwictruncate\">...</span>chart',
+		},
 	],
 };
 

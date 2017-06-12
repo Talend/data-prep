@@ -29,6 +29,13 @@ describe('Search Documentation Service', () => {
 			url: 'https://help.talend.com/reader/DLaNYicBDiA9S5hdjFK9LQ/pMwTjnd3xR7t%7E4egfVk3Nw',
 			tooltipName: 'Vertical bar chart',
 		},
+		{
+			inventoryType: 'documentation',
+			description: '< Row > Main link...chart',
+			name: ' Row > Main link...chart',
+			url: 'https://help.talend.com/reader/DLaNYicBDiA9S5hdjFK9LQ/DLaNYicBDiA9S5hdjFK9AA',
+			tooltipName: ' Row > Main link...chart',
+		},
 	];
 
 	beforeEach(angular.mock.module('data-prep.services.search.documentation'));
@@ -67,6 +74,13 @@ describe('Search Documentation Service', () => {
 					name: 'Vertical bar <span class="highlighted">chart</span>',
 					url: 'https://help.talend.com/reader/DLaNYicBDiA9S5hdjFK9LQ/pMwTjnd3xR7t%7E4egfVk3Nw',
 					tooltipName: 'Vertical bar chart',
+				},
+				{
+					inventoryType: 'documentation',
+					description: '< Row > Main link...<span class="highlighted">chart</span>',
+					name: ' Row > Main link...<span class="highlighted">chart</span>',
+					url: 'https://help.talend.com/reader/DLaNYicBDiA9S5hdjFK9LQ/DLaNYicBDiA9S5hdjFK9AA',
+					tooltipName: ' Row > Main link...chart',
 				},
 			];
 

@@ -62,8 +62,8 @@ class SearchDocumentationService {
 	_createDocElement(topic) {
 		const doc = {
 			inventoryType: 'documentation',
-			description: topic.htmlExcerpt.replace(/(<[^>]*>)/g, ''),
-			name: topic.htmlTitle.replace(/(<[^>]*>)/g, ''),
+			description: topic.htmlExcerpt.replace(/(<[^>]*>)/g, '').replace('&lt;', '<').replace('&gt;', '>'),
+			name: topic.htmlTitle.replace(/(<[^>]*>)/g, '').replace('&lt;', '<').replace('&gt;', '>'),
 			url: topic.occurrences[0].readerUrl,
 		};
 		doc.tooltipName = doc.name;

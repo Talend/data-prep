@@ -9,7 +9,15 @@
  along with this program; if not, write to Talend SA
  9 rue Pages 92150 Suresnes, France
 
-============================================================================*/
+ ============================================================================*/
 
-const DEFAULT_DOCUMENTATION_SEARCH_URL = 'https://www.talendforge.org/find/api/THC.php';
-export default DEFAULT_DOCUMENTATION_SEARCH_URL;
+describe('Documentation search language service', () => {
+	'use strict';
+
+	beforeEach(angular.mock.module('data-prep.services.utils'));
+
+	it('should set value by default', inject((documentationSearchLanguage)=> {
+		//then
+		expect(documentationSearchLanguage).toBe('en');
+	}));
+});

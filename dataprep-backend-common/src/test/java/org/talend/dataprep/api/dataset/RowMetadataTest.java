@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.type.Type;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit test for the RowMetadata class.
@@ -306,6 +307,24 @@ public class RowMetadataTest {
     @Test
     public void shouldReturnTrueForRowMetadata() throws Exception {
         assertThat(RowMetadata.class, isSerializable());
+    }
+
+    @Test
+    public void shouldSerializeNextId_TDP3927() throws Exception {
+
+        RowMetadata value = new RowMetadata();
+        value.addColumn(getColumnMetadata("toto"));
+        value.deleteColumnById("0000");
+
+        ObjectMapper mapper = new ObjectMapper();
+        String valueAsString = mapper.writeValueAsString(value);
+        value = mapper.readValue(valueAsString, RowMetadata.class);
+
+        ColumnMetadata addedColumn = new ColumnMetadata();
+        addedColumn.setName("added_column");
+        value.addColumn(addedColumn);
+
+        assertEquals("0001", addedColumn.getId());
     }
 
     /**

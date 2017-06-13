@@ -53,6 +53,7 @@ public class RowMetadata implements Serializable {
     @JsonDeserialize(using = ColumnContextDeserializer.class)
     private final List<ColumnMetadata> columns = new ArrayList<>();
 
+    @JsonProperty("nextId")
     private int nextId = 0;
 
     /**

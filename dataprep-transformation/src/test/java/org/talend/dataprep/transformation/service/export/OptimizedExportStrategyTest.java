@@ -80,7 +80,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTests 
     public void testAcceptKO_preparationNotExist() throws Exception {
         // Given
         ExportParameters exportParameters = new ExportParameters();
-        exportParameters.setPreparationId("1234");
+        exportParameters.setPreparationId("123456");
 
         // Then
         assertFalse(optimizedExportStrategy.accept(exportParameters));

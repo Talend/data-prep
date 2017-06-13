@@ -19,17 +19,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 /**
  * This service provides methods to convert beans to other beans (DTOs, transient beans...). This service helps code to
@@ -81,11 +77,11 @@ public class BeanConversionService implements ConversionService {
     }
 
     public void register(Registration registration) {
-        final Registration existingRegistration = registrations.get(registration.modelClass);
+        final Registration existingRegistration = registrations.get(registration.getModelClass());
         if (existingRegistration != null) {
-            registrations.put(registration.modelClass, existingRegistration.merge(registration));
+            registrations.put(registration.getModelClass(), existingRegistration.merge(registration));
         } else {
-            registrations.put(registration.modelClass, registration);
+            registrations.put(registration.getModelClass(), registration);
         }
     }
 
@@ -104,8 +100,8 @@ public class BeanConversionService implements ConversionService {
 
     @Override
     public boolean canConvert(Class<?> aClass, Class<?> aClass1) {
-        return ObjectUtils.nullSafeEquals(aClass, aClass1) || has(aClass) && of(registrations.get(aClass))
-                .anyMatch(registration -> of(registration.convertedClasses).anyMatch(aClass1::equals));
+        return Objects.equals(aClass, aClass1) || has(aClass) && of(registrations.get(aClass))
+                .anyMatch(registration -> registration.getConvertedClasses().stream().anyMatch(aClass1::equals));
     }
 
     /**
@@ -121,9 +117,8 @@ public class BeanConversionService implements ConversionService {
      */
     public <U, T> T convert(U source, Class<T> aClass, BiFunction<U, T, T> onTheFlyConvert) {
         try {
-            T converted = aClass.newInstance();
-            BeanUtils.copyProperties(source, converted);
-            return onTheFlyConvert.apply(source, converted);
+            T convert = convert(source, aClass);
+            return onTheFlyConvert.apply(source, convert);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -149,9 +144,9 @@ public class BeanConversionService implements ConversionService {
             // Use registration
             if (registration != null) {
                 List<BiFunction<Object, Object, Object>> customs = new ArrayList<>();
-                Class currentClass = targetClass;
+                Class<? super T> currentClass = targetClass;
                 while (currentClass != null) {
-                    final BiFunction<Object, Object, Object> custom = registration.customs.get(currentClass);
+                    final BiFunction<Object, Object, Object> custom = registration.getCustom(currentClass);
                     if (custom != null) {
                         customs.add(custom);
                     }
@@ -176,51 +171,90 @@ public class BeanConversionService implements ConversionService {
         return convert(o, typeDescriptor1.getObjectType());
     }
 
-    private static class Registration<T> {
+    public interface Registration<T> {
+
+        Class<T> getModelClass();
+
+        BiFunction<Object, Object, Object> getCustom(Class<?> targetClass);
+
+        List<Class<?>> getConvertedClasses();
+
+        /**
+         * Merge another {@link RegistrationImpl registration} (and merge same conversions into a single custom rule).
+         *
+         * @param other The other {@link RegistrationImpl registration} to merge with. Please note {@link RegistrationImpl#modelClass}
+         * <b>MUST</b> be the same (in {@link #equals(Object)} sense).
+         * @return The current registration with all custom merged from other's.
+         */
+        default Registration<T> merge(Registration<T> other) {
+
+            return new Registration<T>() {
+
+                private ArrayList<Class<?>> convertedClasses = new ArrayList<>(Registration.this.getConvertedClasses());
+
+                {
+                    convertedClasses.addAll(other.getConvertedClasses());
+                }
+
+                @Override
+                public Class<T> getModelClass() {
+                    return Registration.this.getModelClass();
+                }
+
+                @Override
+                public BiFunction<Object, Object, Object> getCustom(Class<?> targetClass) {
+                    BiFunction<Object, Object, Object> firstCustom = Registration.this.getCustom(targetClass);
+                    BiFunction<Object, Object, Object> otherCustom = other.getCustom(targetClass);
+                    BiFunction<Object, Object, Object> merge;
+                    if (firstCustom != null && otherCustom != null) {
+                        merge = (o, o2) -> {
+                            final Object initial = firstCustom.apply(o, o2);
+                            return otherCustom.apply(o, initial);
+                        };
+                    } else if (firstCustom != null) {
+                        merge = firstCustom;
+                    } else {
+                        merge = otherCustom;
+                    }
+                    return merge;
+                }
+
+                @Override
+                public List<Class<?>> getConvertedClasses() {
+                    return convertedClasses;
+                }
+            };
+        }
+    }
+
+    private static class RegistrationImpl<T> implements Registration<T> {
 
         private final Class<T> modelClass;
 
         private final Map<Class<?>, BiFunction<Object, Object, Object>> customs;
 
-        private Class<?>[] convertedClasses;
+        private List<Class<?>> convertedClasses;
 
-        private Registration(Class<T> modelClass, Class<?>[] convertedClasses,
-                Map<Class<?>, BiFunction<Object, Object, Object>> customs) {
+        private RegistrationImpl(Class<T> modelClass, Class<?>[] convertedClasses,
+                                 Map<Class<?>, BiFunction<Object, Object, Object>> customs) {
             this.modelClass = modelClass;
-            this.convertedClasses = convertedClasses;
+            this.convertedClasses = Arrays.asList(convertedClasses);
             this.customs = customs;
         }
 
-        /**
-         * Merge another {@link Registration registration} (and merge same conversions into a single custom rule).
-         *
-         * @param other The other {@link Registration registration} to merge with. Please note {@link Registration#modelClass}
-         * <b>MUST</b> be the same (in {@link #equals(Object)} sense).
-         * @return The current registration with all custom merged from other's.
-         */
-        public Registration<T> merge(Registration<T> other) {
-            if (!other.modelClass.equals(this.modelClass)) {
-                throw new IllegalArgumentException("Cannot merge incompatible model registration (" + other.modelClass
-                        + " is not equal to " + this.modelClass + ")");
-            }
-            this.convertedClasses = Stream.of(ArrayUtils.addAll(this.convertedClasses, other.convertedClasses)) //
-                    .collect(Collectors.toSet()) //
-                    .toArray(new Class<?>[0]);
-            for (Map.Entry<Class<?>, BiFunction<Object, Object, Object>> entry : other.customs.entrySet()) {
-                if (customs.containsKey(entry.getKey())) {
-                    // Group custom rule from other registration with existing (can't use andThen() due to type issue).
-                    final BiFunction<Object, Object, Object> otherCustom = entry.getValue();
-                    final BiFunction<Object, Object, Object> currentCustom = customs.get(entry.getKey());
-                    final BiFunction<Object, Object, Object> mergedCustom = (o, o2) -> {
-                        final Object initial = currentCustom.apply(o, o2);
-                        return otherCustom.apply(o, initial);
-                    };
-                    this.customs.put(entry.getKey(), mergedCustom);
-                } else {
-                    this.customs.put(entry.getKey(), entry.getValue());
-                }
-            }
-            return this;
+        @Override
+        public Class<T> getModelClass() {
+            return modelClass;
+        }
+
+        @Override
+        public BiFunction<Object, Object, Object> getCustom(Class<?> targetClass) {
+            return customs.get(targetClass);
+        }
+
+        @Override
+        public List<Class<?>> getConvertedClasses() {
+            return convertedClasses;
         }
     }
 
@@ -251,7 +285,7 @@ public class BeanConversionService implements ConversionService {
         }
 
         public Registration<T> build() {
-            return new Registration<>(source, destinations.toArray(new Class<?>[destinations.size()]), customs);
+            return new RegistrationImpl<>(source, destinations.toArray(new Class<?>[destinations.size()]), customs);
         }
 
     }

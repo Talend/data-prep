@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.test;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPITest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -178,6 +180,22 @@ public class APIClientTest {
         given().contentType(JSON.withCharset(UTF_8)).content(actions) //
                 .when().post("/api/preparations/{id}/actions", preparationId) //
                 .then().statusCode(is(200));
+    }
+
+    /**
+     * Fetch the preparation metadata.
+     *
+     * @param preparationId id of the preparation to fetch
+     * @return the preparation details
+     * @throws IOException if a connexion or parsing error happen
+     */
+    public Preparation getPreparation(String preparationId) throws IOException {
+        String json = //
+                expect() //
+                        .statusCode(200).log().ifValidationFails() //
+                        .when() //
+                        .get("/api/preparations/{id}/details", new Object[] { preparationId }).asString();
+        return mapper.readerFor(Preparation.class).readValue(json);
     }
 
     /**

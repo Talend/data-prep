@@ -14,17 +14,20 @@ package org.talend.dataprep.configuration;
 
 import static org.talend.dataprep.conversions.BeanConversionService.RegistrationBuilder.fromBean;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -77,101 +80,98 @@ public class PreparationRepositoryConfiguration {
                 ApplicationContext applicationContext) {
             // Preparation -> PersistentPreparation
             conversionService.register(fromBean(Preparation.class) //
-                    .toBeans(PersistentPreparation.class) //
+                    .toBeans(PersistentPreparation.class).using(PersistentPreparation.class, (preparation, persistentPreparation) -> {
+                        final List<Step> steps = preparation.getSteps();
+                        final List<String> stepIds = steps.stream().map(Step::getId).collect(Collectors.toList());
+
+                        if (stepIds.contains(preparation.getHeadId())) {
+                            // Easy case: new head is part of previous steps, create a sub list of steps
+                            final List<String> stepIdSubList = new ArrayList<>();
+                            for (String currentStepId : stepIds) {
+                                stepIdSubList.add(currentStepId);
+                                if (currentStepId.equals(preparation.getHeadId())) {
+                                    break;
+                                }
+                            }
+                            persistentPreparation.setSteps(stepIdSubList);
+                        } else if (!stepIds.contains(preparation.getHeadId()) && StringUtils.equals(preparation.getHeadId(), stepIds.get(stepIds.size() - 1))) {
+                            // Complete override of steps, set them as is (as long as it exists).
+                            persistentPreparation.setSteps(stepIds);
+                        } else {
+                                /*
+                                 * More complex: new head is *not* part of previous steps, delegate to PreparationUtils
+                                 * Warning: doing so has some performance impacts (list may perform many getById calls
+                                 * depending on preparation size)
+                                 */
+                            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
+                            final PreparationRepository repository = applicationContext.getBean(PreparationRepository.class);
+                            if (preparation.getHeadId() != null) {
+                                final List<String> storageSteps = preparationUtils.listStepsIds(preparation.getHeadId(),
+                                        repository);
+                                persistentPreparation.setSteps(storageSteps);
+                            }
+
+                        }
+                        return persistentPreparation;
+                    }) //
                     .build());
             // PersistentPreparation -> Preparation
             conversionService.register(fromBean(PersistentPreparation.class) //
                     .toBeans(Preparation.class) //
-                    .using(Preparation.class, toPreparation(conversionService, applicationContext)) //
+                    .using(Preparation.class, (persistentPreparation, preparation) -> {
+                        final PreparationRepository repository = getPreparationRepository(applicationContext);
+                        final List<String> preparationSteps = persistentPreparation.getSteps();
+
+                        if (preparationSteps != null) {
+                            if (preparationSteps.isEmpty()) {
+                                preparation.setSteps(Collections.singletonList(Step.ROOT_STEP));
+                            } else {
+                                final String stepIds = preparationSteps.stream() //
+                                        .map(id -> "'" + id + "'") //
+                                        .collect(Collectors.joining(","));
+                                final Stream<PersistentStep> stream = repository
+                                        .list(PersistentStep.class, "id in [" + stepIds + "]")
+                                        .sorted(Comparator.comparingInt(o -> preparationSteps.indexOf(o.getId())));
+                                final List<Step> steps = stream.map(s -> conversionService.convert(s, Step.class)) //
+                                        .collect(Collectors.toList());
+                                preparation.setSteps(steps);
+                            }
+                        } else {
+                            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
+                            final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+
+                            final List<Step> steps = stepIds.stream() //
+                                    .map(stepId -> repository.get(stepId, Step.class)) //
+                                    .collect(Collectors.toList());
+                            preparation.setSteps(steps);
+                        }
+
+                        return preparation;
+                    }) //
                     .build());
             // Step -> PersistentStep
             conversionService.register(fromBean(Step.class) //
                     .toBeans(PersistentStep.class) //
-                    .using(PersistentStep.class, toPersistentStep()) //
+                    .using(PersistentStep.class, (step, persistentStep) -> {
+                        persistentStep.setParentId(step.getParent());
+                        return persistentStep;
+                    }) //
                     .build());
             // PersistentStep -> Step
             conversionService.register(fromBean(PersistentStep.class) //
                     .toBeans(Step.class) //
-                    .using(Step.class, toStep(conversionService, applicationContext)) //
+                    .using(Step.class, (persistentStep, step) -> {
+                        step.setParent(persistentStep.getParentId());
+                        return step;
+                    }) //
                     .build());
             return conversionService;
-        }
-
-        /**
-         * Return a {@link BiFunction} that convert a PersistentStep into a Step.
-         *
-         * @param converter the famous conversionService.
-         * @param context the spring application context.
-         * @return a {@link BiFunction} that convert a PersistentStep into a Step.
-         */
-        private BiFunction<PersistentStep, Step, Step> toStep(BeanConversionService converter, ApplicationContext context) {
-            return (persistentStep, step) -> {
-
-                // PersistentStep to Step will trigger recursive calls to build the full step hierarchy up to the root step
-
-                final PreparationRepository repository = getPreparationRepository(context);
-                if (!Step.ROOT_STEP.getId().equals(persistentStep.getId())) {
-                    step.setParent(
-                            converter.convert(repository.get(persistentStep.getParentId(), PersistentStep.class), Step.class));
-                }
-                final PreparationActions content = repository.get(persistentStep.getContent(), PreparationActions.class);
-                step.setContent(content);
-                return step;
-            };
-        }
-
-        /**
-         * @return a {@link BiFunction} In charge of converting steps to PersistentStep.
-         */
-        private BiFunction<Step, PersistentStep, PersistentStep> toPersistentStep() {
-            return (step, persistentStep) -> {
-                if (step.getParent() != null) {
-                    persistentStep.setParentId(step.getParent().getId());
-                } else {
-                    final String rootStepId = Step.ROOT_STEP.getId();
-                    if (!rootStepId.equals(step.getId())) {
-                        persistentStep.setParentId(rootStepId);
-                    }
-                }
-                persistentStep.setContent(step.getContent().getId());
-                return persistentStep;
-            };
-        }
-
-        /**
-         * {@link BiFunction} in charge of converting PersistentPreparation to Preparation.
-         *
-         * @param converter the conversion service.
-         * @param context the one and only application context.
-         * @return the {@link BiFunction} that converts PersistentPreparation to Preparation.
-         */
-        private BiFunction<PersistentPreparation, Preparation, Preparation> toPreparation(BeanConversionService converter,
-                ApplicationContext context) {
-
-            return (persistentPreparation, preparation) -> {
-                final PreparationRepository repository = getPreparationRepository(context);
-                final PreparationUtils utils = getPreparationUtils(context);
-
-                // PersistentStep to Step will trigger recursive calls to build the full step hierarchy up to the root step
-
-                final List<String> stepsIds = utils.listStepsIds(preparation.getHeadId(), repository);
-                if (stepsIds != null) {
-                    final List<Step> steps = stepsIds.stream() //
-                            .map(step -> converter.convert(repository.get(step, PersistentStep.class), Step.class)) //
-                            .collect(Collectors.toList());
-                    preparation.setSteps(steps);
-                }
-                return preparation;
-            };
         }
 
         private PreparationRepository getPreparationRepository(ApplicationContext applicationContext) {
             return applicationContext.getBean(PreparationRepository.class);
         }
 
-        private PreparationUtils getPreparationUtils(ApplicationContext applicationContext) {
-            return applicationContext.getBean(PreparationUtils.class);
-        }
     }
 
 }

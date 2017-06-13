@@ -117,7 +117,7 @@ public class PreparationTest extends ServiceBaseTest {
         final PreparationActions newContent = new PreparationActions(actions, version);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep, newContent, version);
+        final Step s = new Step(rootStep.id(), newContent.id(), version);
         repository.add(s);
 
         Preparation preparation = new Preparation("#48368", "1234", s.id(), version);
@@ -135,7 +135,7 @@ public class PreparationTest extends ServiceBaseTest {
         final PreparationActions newContent = rootContent.append(actions);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep, newContent, version);
+        final Step s = new Step(rootStep.id(), newContent.id(), version);
         repository.add(s);
 
         final Preparation preparation = new Preparation("#5438743", "1234", s.id(), version);
@@ -156,10 +156,10 @@ public class PreparationTest extends ServiceBaseTest {
         repository.add(newContent2);
 
         // Steps
-        final Step s1 = new Step(rootStep, newContent1, version);
+        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
         repository.add(s1);
 
-        final Step s2 = new Step(s1, newContent2, version);
+        final Step s2 = new Step(s1.id(), newContent2.id(), version);
         repository.add(s2);
 
         // Preparation

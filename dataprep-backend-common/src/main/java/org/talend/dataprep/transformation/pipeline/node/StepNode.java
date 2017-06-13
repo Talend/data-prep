@@ -12,10 +12,6 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Step;
@@ -23,8 +19,8 @@ import org.talend.dataprep.transformation.pipeline.*;
 
 /**
  * <p>
- * This node is dedicated to execution when a preparation is available. This node is used to group together nodes that correspond
- * to a step.
+ * This node is dedicated to execution when a preparation is available. This node is used to group together nodes that
+ * correspond to a step.
  * </p>
  * <p>
  * This allows code to reuse row metadata contained in step instead of provided one.
@@ -34,16 +30,19 @@ import org.talend.dataprep.transformation.pipeline.*;
  */
 public class StepNode extends BasicNode {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StepNode.class);
-
     private final Step step;
 
     private final Node entryNode;
 
     private final Node lastNode;
 
-    public StepNode(Step step, Node entryNode, Node lastNode) {
+    private RowMetadata lastRowMetadata;
+
+    private RowMetadata stepRowMetadata;
+
+    public StepNode(Step step, RowMetadata stepRowMetadata, Node entryNode, Node lastNode) {
         this.step = step;
+        this.stepRowMetadata = stepRowMetadata;
         this.entryNode = entryNode;
         this.lastNode = lastNode;
     }
@@ -58,14 +57,10 @@ public class StepNode extends BasicNode {
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
-        Optional<RowMetadata> stepMetadata = Optional.ofNullable(step.getRowMetadata());
-        final RowMetadata rowMetadata = stepMetadata.isPresent() ? stepMetadata.get() : metadata;
-        if (!stepMetadata.isPresent()) {
-            if (Step.ROOT_STEP.getId().equals(step.getId())) {
-                LOGGER.warn("Trying to update row metadata on root step.");
-            } else {
-                step.setRowMetadata(rowMetadata);
-            }
+        RowMetadata processingRowMetadata = metadata;
+        if (stepRowMetadata != null) {
+            // Step node has associated metadata, use it instead of supplied one.
+            processingRowMetadata = stepRowMetadata;
         }
 
         // make sure the last node (ActionNode) link is set to after the StepNode
@@ -73,7 +68,8 @@ public class StepNode extends BasicNode {
             final RuntimeLink stepLink = getLink().exec();
             lastNode.setLink(new StepLink(stepLink));
         }
-        entryNode.exec().receive(row, rowMetadata);
+        lastRowMetadata = processingRowMetadata;
+        entryNode.exec().receive(row, processingRowMetadata);
     }
 
     @Override
@@ -83,7 +79,15 @@ public class StepNode extends BasicNode {
 
     @Override
     public Node copyShallow() {
-        return new StepNode(step, entryNode, lastNode);
+        return new StepNode(step, stepRowMetadata, entryNode, lastNode);
+    }
+
+    /**
+     * @return The last row metadata used in {@link #receive(DataSetRow, RowMetadata)}. Might be step's metadata (if
+     * any) or supplied metadata.
+     */
+    public RowMetadata getRowMetadata() {
+        return lastRowMetadata;
     }
 
     private static class StepLink implements Link {

@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.preparation.store;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.StepDiff;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,7 +41,7 @@ public class PersistentStep extends PersistentIdentifiable {
     private StepDiff diff;
 
     /** The step row metadata. */
-    private RowMetadata rowMetadata;
+    private String rowMetadata;
 
     /**
      * Default empty constructor;
@@ -97,7 +96,7 @@ public class PersistentStep extends PersistentIdentifiable {
     /**
      * @return The row metadata linked to this step. Might be <code>null</code> to indicate no row metadata is present.
      */
-    public RowMetadata getRowMetadata() {
+    public String getRowMetadata() {
         return rowMetadata;
     }
 
@@ -106,7 +105,7 @@ public class PersistentStep extends PersistentIdentifiable {
      *
      * @param rowMetadata The row metadata to set for this step.
      */
-    public void setRowMetadata(RowMetadata rowMetadata) {
+    public void setRowMetadata(String rowMetadata) {
         this.rowMetadata = rowMetadata;
     }
 

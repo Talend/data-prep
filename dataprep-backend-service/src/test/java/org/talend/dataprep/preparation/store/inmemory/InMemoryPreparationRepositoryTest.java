@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -26,8 +25,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.preparation.FixedIdPreparationContent;
-import org.talend.dataprep.preparation.FixedIdStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepositoryTest;
 
@@ -49,7 +46,7 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
         String version = "1.0";
         final PreparationActions rootContent = new PreparationActions(Collections.emptyList(), version);
         ReflectionTestUtils.setField(repository, "rootContent", rootContent);
-        ReflectionTestUtils.setField(repository, "rootStep", new Step(null, rootContent, version));
+        ReflectionTestUtils.setField(repository, "rootStep", new Step(null, rootContent.id(), version));
     }
 
     /**
@@ -101,7 +98,7 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
      * Helper method that only generates a step but simplify code.
      */
     private Step getStep(String rootName) {
-        return new Step(new FixedIdStep(rootName + "_parent"), new FixedIdPreparationContent(rootName + "_content"), "1.0.PE");
+        return new Step(rootName + "_parent", rootName + "_content", "1.0.PE");
     }
 
     /**

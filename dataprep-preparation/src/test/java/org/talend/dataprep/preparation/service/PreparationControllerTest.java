@@ -891,7 +891,6 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
-        cleaner.setFilterByContentIdKey("content");
         clientTest.deletePreparation(preparationId);
 
         // then
@@ -916,13 +915,12 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
-        cleaner.setFilterByContentIdKey("content");
         clientTest.deletePreparation(preparationId1);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));
         assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(2L));
+        assertThat(repository.list(PreparationActions.class).count(), is(1L));
     }
 
     @Test
@@ -1037,7 +1035,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
 
         final Step head = repository.get(preparation.getHeadId(), Step.class);
-        final PreparationActions headAction = repository.get(head.getContent().id(), PreparationActions.class);
+        final PreparationActions headAction = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headAction.getActions(), hasSize(1));
         assertThat(headAction.getActions().get(0).getName(), is("copy"));
     }
@@ -1059,9 +1057,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
 
         final Step head = repository.get(preparation.getHeadId(), Step.class);
-        final Step lastBeforeHead = repository.get(head.getParent().id(), Step.class);
-        final PreparationActions headAction = repository.get(head.getContent().id(), PreparationActions.class);
-        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent().id(),
+        final Step lastBeforeHead = repository.get(head.getParent(), Step.class);
+        final PreparationActions headAction = repository.get(head.getContent(), PreparationActions.class);
+        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent(),
                 PreparationActions.class);
 
         // first step : contains only uppercase on lastname
@@ -1094,7 +1092,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
 
         final Step head = repository.get(preparation.getHeadId(), Step.class);
-        final PreparationActions headAction = repository.get(head.getContent().id(), PreparationActions.class);
+        final PreparationActions headAction = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headAction.getActions(), hasSize(1));
         final Action copyAction = headAction.getActions().get(0);
         assertThat(copyAction.getName(), is("copy"));
@@ -1115,13 +1113,13 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         Optional<Step> first = repository.list(Step.class) //
-                .filter(s -> s.getParent() != null && Objects.equals(s.getParent().id(), rootStep.getId())) //
+                .filter(s -> s.getParent() != null && Objects.equals(s.getParent(), rootStep.getId())) //
                 .findFirst();
 
         assertTrue(first.isPresent());
 
         final Step head = first.get();
-        assertThat(head.getParent().id(), is(rootStep.getId()));
+        assertThat(head.getParent(), is(rootStep.getId()));
         assertThat(head.getDiff().getCreatedColumns(), hasSize(1));
         assertThat(head.getDiff().getCreatedColumns(), hasItem("0004"));
     }
@@ -1171,7 +1169,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
 
         final Step head = repository.get(preparation.getHeadId(), Step.class);
-        assertThat(head.getParent().id(), is(rootStep.getId()));
+        assertThat(head.getParent(), is(rootStep.getId()));
     }
 
     @Test
@@ -1194,7 +1192,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
 
         final Step head = repository.get(preparation.getHeadId(), Step.class);
-        assertThat(head.getParent().id(), is(firstStepId));
+        assertThat(head.getParent(), is(firstStepId));
     }
 
     @Test
@@ -1219,10 +1217,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getLastModificationDate(), is(greaterThanOrEqualTo(oldModificationDate)));
 
         final Step head = repository.get(secondStepId, Step.class);
-        assertThat(head.getParent().id(), is(firstStepId));
+        assertThat(head.getParent(), is(firstStepId));
 
         final Step first = repository.get(firstStepId, Step.class);
-        assertThat(first.getParent().id(), is(rootStep.getId()));
+        assertThat(first.getParent(), is(rootStep.getId()));
     }
 
     @Test
@@ -1288,7 +1286,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String secondStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
 
         Step head = repository.get(secondStepId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(2));
         assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
         assertThat(headActions.getActions().get(1).getName(), is("lowercase"));
@@ -1303,7 +1301,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String headId = preparation.getHeadId();
 
         head = repository.get(headId, Step.class);
-        headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(1));
         assertThat(headActions.getActions().get(0).getName(), is("lowercase"));
     }
@@ -1351,7 +1349,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Preparation preparationAfter = repository.get(preparationId, Preparation.class);
         final String headId = preparationAfter.getHeadId();
         Step head = repository.get(headId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(2));
         Action secondCopyAction = headActions.getActions().get(0);
         assertThat(secondCopyAction.getName(), is("copy"));
@@ -1446,7 +1444,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
 
         Step head = repository.get(headStepId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(4));
         assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
         assertThat(headActions.getActions().get(1).getName(), is("copy"));
@@ -1465,7 +1463,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String newHeadStepId = preparation.getHeadId();
 
         head = repository.get(newHeadStepId, Step.class);
-        headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(4));
         assertThat(headActions.getActions().get(0).getName(), is("copy"));
         assertThat(headActions.getActions().get(1).getName(), is("uppercase"));
@@ -1483,7 +1481,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
 
         Step head = repository.get(headStepId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(4));
         assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
         assertThat(headActions.getActions().get(1).getName(), is("copy"));
@@ -1504,7 +1502,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String newHeadStepId = preparation.getHeadId();
 
         head = repository.get(newHeadStepId, Step.class);
-        headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(4));
 
         assertThat(headActions.getActions().get(0).getName(), is("copy"));
@@ -1523,7 +1521,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
 
         Step head = repository.get(headStepId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(4));
         assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
         assertThat(headActions.getActions().get(1).getName(), is("copy"));
@@ -1544,7 +1542,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String newHeadStepId = preparation.getHeadId();
 
         head = repository.get(newHeadStepId, Step.class);
-        headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(4));
 
         assertThat(headActions.getActions().get(0).getName(), is("copy"));
@@ -1575,7 +1573,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String newHeadStepId = preparationAfter.getHeadId();
 
         Step head = repository.get(newHeadStepId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(3));
 
         assertThat(headActions.getActions().get(0).getName(), is("copy"));
@@ -1604,7 +1602,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String newHeadStepId = preparationAfter.getHeadId();
 
         Step head = repository.get(newHeadStepId, Step.class);
-        PreparationActions headActions = repository.get(head.getContent().id(), PreparationActions.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
         assertThat(headActions.getActions(), hasSize(2));
 
         assertThat(headActions.getActions().get(0).getName(), is("uppercase"));

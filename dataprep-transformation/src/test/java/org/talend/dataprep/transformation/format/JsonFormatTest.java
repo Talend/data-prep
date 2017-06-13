@@ -31,6 +31,7 @@ public class JsonFormatTest extends BaseFormatTest {
 
     @Before
     public void setUp() {
+        super.setUp();
         format = new JsonFormat();
     }
 

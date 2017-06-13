@@ -13,14 +13,15 @@
 package org.talend.dataprep.transformation.api.transformer.json;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-
-import java.util.List;
+import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.PreparationActions;
@@ -34,7 +35,9 @@ import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
+import org.talend.dataprep.transformation.service.StepMetadataRepository;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UpdatedStepVisitorTest {
 
     private final RowMetadata metadata = new RowMetadata(singletonList(column().type(Type.STRING).name("original").build()));
@@ -42,6 +45,9 @@ public class UpdatedStepVisitorTest {
     private ActionNode entryNode;
 
     private ActionContext actionContext;
+
+    @Mock
+    StepMetadataRepository stepMetadataRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -52,9 +58,10 @@ public class UpdatedStepVisitorTest {
     @Test
     public void testUpdatedStepsWithOk() throws Exception {
         // Given
-        final Step step = new Step(Step.ROOT_STEP, new PreparationActions(), "0.0");
-        final Node stepNode = NodeBuilder.from(new StepNode(step, entryNode, new BasicNode())).to(new BasicNode()).build();
-        final UpdatedStepVisitor visitor = new UpdatedStepVisitor();
+        final Step step = new Step(ROOT_STEP.id(), new PreparationActions().id(), "0.0");
+        final RowMetadata stepRowMetadata = new RowMetadata();
+        final Node stepNode = NodeBuilder.from(new StepNode(step, stepRowMetadata, entryNode, new BasicNode())).to(new BasicNode()).build();
+        final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
         actionContext.setActionStatus(ActionContext.ActionStatus.OK); // OK action!
 
         // When
@@ -62,17 +69,16 @@ public class UpdatedStepVisitorTest {
 
         // Then
         stepNode.accept(visitor);
-        final List<Step> updatedSteps = visitor.getUpdatedSteps();
-        assertEquals(1, updatedSteps.size());
-        assertEquals(metadata, updatedSteps.get(0).getRowMetadata());
+        verify(stepMetadataRepository).update(step.id(), stepRowMetadata);
     }
 
     @Test
     public void testUpdatedStepsWithKO() throws Exception {
         // Given
-        final Step step = new Step(Step.ROOT_STEP, new PreparationActions(), "0.0");
-        final Node stepNode = NodeBuilder.from(new StepNode(step, entryNode, new BasicNode())).to(new BasicNode()).build();
-        final UpdatedStepVisitor visitor = new UpdatedStepVisitor();
+        final Step step = new Step(ROOT_STEP.id(), new PreparationActions().id(), "0.0");
+        final RowMetadata stepRowMetadata = new RowMetadata();
+        final Node stepNode = NodeBuilder.from(new StepNode(step, stepRowMetadata, entryNode, new BasicNode())).to(new BasicNode()).build();
+        final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
         actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED); // Canceled action!
 
         // When
@@ -80,8 +86,6 @@ public class UpdatedStepVisitorTest {
 
         // Then
         stepNode.accept(visitor);
-        final List<Step> updatedSteps = visitor.getUpdatedSteps();
-        assertEquals(1, updatedSteps.size());
-        assertNull(updatedSteps.get(0).getRowMetadata());
+        verify(stepMetadataRepository).update(step.id(), stepRowMetadata);
     }
 }

@@ -55,7 +55,6 @@ public class PreparationActions extends Identifiable implements Serializable {
         // needed for serialization
     }
 
-
     /**
      * Create the PreparationActions with the given actions.
      *

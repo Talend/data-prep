@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.*;
@@ -37,7 +36,7 @@ public class StepNodeTransformerTest {
 
     @Before
     public void setUp() throws Exception {
-        STEP.setRowMetadata(new RowMetadata());
+        STEP.setRowMetadata("rowMetadata");
         INVALID_STEP.setRowMetadata(null);
     }
 
@@ -47,7 +46,7 @@ public class StepNodeTransformerTest {
         Node node = NodeBuilder.from(new TestNode()).build();
 
         // when
-        final Node processed = StepNodeTransformer.transform(node, emptyList());
+        final Node processed = StepNodeTransformer.transform(node, emptyList(), s -> null);
 
         // then
         assertEquals(SourceNode.class, processed.getClass());
@@ -63,7 +62,7 @@ public class StepNodeTransformerTest {
                 .build();
 
         // when
-        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP));
+        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP), s -> null);
 
         // then
         final Class[] expectedClasses = { SourceNode.class, StepNode.class };
@@ -83,7 +82,7 @@ public class StepNodeTransformerTest {
                 .build();
 
         // when
-        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, INVALID_STEP));
+        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, INVALID_STEP), s -> null);
 
         // then
         final Class[] expectedClasses = { SourceNode.class, CompileNode.class, ActionNode.class};
@@ -103,7 +102,7 @@ public class StepNodeTransformerTest {
                 .build();
 
         // when
-        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP));
+        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP), s -> null);
 
         // then
         final Class[] expectedClasses = { SourceNode.class, TestNode.class, StepNode.class, BasicNode.class };
@@ -125,7 +124,7 @@ public class StepNodeTransformerTest {
                 .build();
 
         // when
-        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP, STEP));
+        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP, STEP), s -> null);
 
         // then
         final AtomicInteger stepNodeCount = new AtomicInteger();
@@ -149,7 +148,7 @@ public class StepNodeTransformerTest {
                 .build();
 
         // then
-        StepNodeTransformer.transform(node, emptyList());
+        StepNodeTransformer.transform(node, emptyList(), s -> null);
     }
 
     @Test
@@ -161,7 +160,7 @@ public class StepNodeTransformerTest {
                 .build();
 
         // when
-        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP, STEP));
+        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, STEP, STEP), s -> null);
 
         // then
         final Class[] expectedClasses = { SourceNode.class, StepNode.class };

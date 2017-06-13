@@ -525,7 +525,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String firstStep = steps.get(1);
 
         // when
-        given().delete("/api/preparations/{preparation}/actions/{action}", preparationId, firstStep) //
+        given().delete("/api/preparations/{preparation}/actions/{step}", preparationId, firstStep) //
                 .then() //
                 .statusCode(is(200));
 
@@ -552,7 +552,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent().getId();
+        final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent();
 
         //when
         given().when()//

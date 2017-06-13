@@ -18,22 +18,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.talend.dataprep.command.Defaults.asString;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
-import java.util.List;
-
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
- * Hystrix command used to update a step row etadata.
+ * Hystrix command used to update a step row metadata.
  */
 @Component
 @Scope("prototype")
@@ -42,19 +40,19 @@ public class UpdateStepRowMetadata extends GenericCommand<String> {
     /**
      * Private constructor to ensure the IoC.
      *
-     * @param preparationId the preparation id to update the step from.
-     * @param steps the steps to update.
+     * @param stepId the step id to update .
+     * @param rowMetadata the row metadata to associate with step.
      */
-    private UpdateStepRowMetadata(String preparationId, List<Step> steps) {
+    private UpdateStepRowMetadata(String stepId, RowMetadata rowMetadata) {
         super(PREPARATION_GROUP);
-        execute(() -> onExecute(preparationId, steps));
+        execute(() -> onExecute(stepId, rowMetadata));
         on(HttpStatus.OK).then(asString());
     }
 
-    private HttpRequestBase onExecute(String preparationId, List<Step> steps) {
+    private HttpRequestBase onExecute(String stepId, RowMetadata rowMetadata) {
         try {
-            final String stepsAsJson = objectMapper.writeValueAsString(steps);
-            final HttpPut updater = new HttpPut(preparationServiceUrl + "/preparations/" + preparationId + "/steps");
+            final String stepsAsJson = objectMapper.writeValueAsString(rowMetadata);
+            final HttpPut updater = new HttpPut(preparationServiceUrl + "/preparations/steps/" + stepId + "/metadata");
             updater.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
             updater.setEntity(new StringEntity(stepsAsJson, APPLICATION_JSON));
             return updater;

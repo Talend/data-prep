@@ -18,6 +18,6 @@ describe('Documentation search version service', () => {
 
 	it('should set value by default', inject((documentationSearchVersion)=> {
 		//then
-		expect(documentationSearchVersion).toBe('2.0');
+		expect(documentationSearchVersion).toBe('2.1');
 	}));
 });

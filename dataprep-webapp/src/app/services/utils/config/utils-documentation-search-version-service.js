@@ -11,5 +11,5 @@
 
  ============================================================================*/
 
-const DEFAULT_DOCUMENTATION_SEARCH_VERSION = '2.0';
+const DEFAULT_DOCUMENTATION_SEARCH_VERSION = '2.1';
 export default DEFAULT_DOCUMENTATION_SEARCH_VERSION;

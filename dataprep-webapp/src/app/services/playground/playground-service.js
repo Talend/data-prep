@@ -177,7 +177,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then(data => reset.call(this, data.metadata, data))
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
-					$timeout(OnboardingService.startTour('playground'), 300, false);
+					OnboardingService.startTour('playground', 1500);
 				}
 			})
 			.then(() => {
@@ -214,6 +214,11 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 				preparation,
 				sampleType
 			))
+			.then(() => {
+				if (OnboardingService.shouldStartTour('playground')) {
+					OnboardingService.startTour('playground', 1500);
+				}
+			})
 			.then(() => {
 				if (shouldFetchStatistics()) {
 					fetchStatistics.call(this);

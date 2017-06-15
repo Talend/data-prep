@@ -311,7 +311,7 @@ describe('Playground Service', () => {
 
 			// then
 			expect(OnboardingService.shouldStartTour).toHaveBeenCalledWith('playground');
-			expect(OnboardingService.startTour).toHaveBeenCalledWith('playground');
+			expect(OnboardingService.startTour).toHaveBeenCalledWith('playground', 1500);
 		}));
 
 		it('should NOT start playground unboarding tour', inject(($rootScope, $timeout, PlaygroundService, OnboardingService) => {
@@ -425,6 +425,25 @@ describe('Playground Service', () => {
 
 				// then
 				assertDatasetLoadInitialized({ id: '1' }, data);
+			})
+		);
+
+		it('should start preparation tour',
+			inject(($rootScope, $timeout, OnboardingService, PlaygroundService) => {
+				// given
+				spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
+				spyOn(OnboardingService, 'startTour').and.returnValue();
+
+				stateMock.playground.preparation = { id: '5746518486846' };
+
+				// when
+				PlaygroundService.loadPreparation(preparation);
+				$rootScope.$apply();
+				$timeout.flush(1500);
+
+				// then
+				expect(OnboardingService.shouldStartTour).toHaveBeenCalledWith('playground');
+				expect(OnboardingService.startTour).toHaveBeenCalledWith('playground', 1500);
 			})
 		);
 

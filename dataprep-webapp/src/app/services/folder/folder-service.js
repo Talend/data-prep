@@ -22,7 +22,7 @@ import moment from 'moment';
  * @requires data-prep.services.folder.service:FolderRestService
  * @requires data-prep.services.utils.service:StorageService
  */
-export default function FolderService($q, state, StateService, FolderRestService, StorageService) {
+export default function FolderService($q, $state, $timeout, state, StateService, FolderRestService, OnboardingService, StorageService) {
 	'ngInject';
 
 	return {
@@ -44,6 +44,19 @@ export default function FolderService($q, state, StateService, FolderRestService
 
 	/**
 	 * @ngdoc method
+	 * @name startOnboarding
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description launch onboarding
+	 */
+	function startOnboarding() {
+		const tourId = 'preparation';
+		if (OnboardingService.shouldStartTour(tourId)) {
+			OnboardingService.startTour(tourId);
+		}
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name init
 	 * @methodOf data-prep.services.folder.service:FolderService
 	 * @param {string} id The folder id to init
@@ -51,7 +64,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 */
 	function init(id) {
 		refreshPreparationsSort();
-		return this.refresh(id);
+		return this.refresh(id).then(startOnboarding);
 	}
 
 	/**

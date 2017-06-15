@@ -163,6 +163,21 @@ describe('Folder services', () => {
 	});
 
 	describe('init', () => {
+		it('should start onboarding', inject(($rootScope, $q, $timeout, FolderService, OnboardingService) => {
+			// given
+			spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
+			spyOn(OnboardingService, 'startTour');
+			spyOn(FolderService, 'refresh').and.returnValue($q.when());
+
+			// when
+			FolderService.init('/my/path');
+			$rootScope.$digest();
+			$timeout.flush(1000);
+
+			// then
+			expect(OnboardingService.startTour).toHaveBeenCalledWith('preparation');
+		}));
+
 		it('should set the preparation sort when there is a saved one',
 			inject((StateService, StorageService, FolderService) => {
 				// given

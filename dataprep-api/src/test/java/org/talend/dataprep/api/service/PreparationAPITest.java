@@ -44,6 +44,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
@@ -80,9 +81,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
 
-    //------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------GETTER-------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------GETTER-------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     @Test
     public void testEmptyPreparationList() throws Exception {
         assertThat(when().get("/api/preparations").asString(), sameJSONAs("[]"));
@@ -159,7 +160,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2", "text/csv");
         final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible", "text/csv");
         final String preparationId = testClient.createPreparationFromDataset(dataSetId, "testPreparation", home.getId());
-
 
         // when
         final String compatibleDatasetList = when().get("/api/preparations/{id}/basedatasets", preparationId).asString();
@@ -276,9 +276,32 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertEquals(404, response.getStatusCode());
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    //----------------------------------------------------LIFECYCLE-----------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     * @see <a href="https://jira.talendforge.org/browse/TDP-3965">TDP-3965</a>
+     */
+    @Test
+    public void ensureThatPreparationDetailsCanBeParsedAsStandalonePreparation() throws Exception {
+        // when
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
+
+        // when
+        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
+        InputStream inputStream = given().expect().statusCode(200).get("/api/preparations/{preparation}/details", preparationId)
+                .asInputStream();
+
+        // then
+        try {
+            mapper.readerFor(StandalonePreparation.class).readValue(inputStream);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------LIFECYCLE-----------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     @Test
     public void testPreparationUpdate() throws Exception {
         // given
@@ -328,21 +351,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String list = when().get("/api/preparations").asString();
         assertThat(list.contains(preparationId), is(true));
 
-        final ContentCacheKey metadataKey = cacheKeyGenerator
-                .metadataBuilder()
-                .preparationId(preparationId)
-                .stepId("step1")
-                .sourceType(FILTER)
-                .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator
-                .contentBuilder()
-                .datasetId("datasetId")
-                .preparationId(preparationId)
-                .stepId("step1")
-                .format(JSON)
-                .parameters(emptyMap())
-                .sourceType(FILTER)
-                .build();
+        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder().preparationId(preparationId).stepId("step1")
+                .sourceType(FILTER).build();
+        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder().datasetId("datasetId").preparationId(preparationId)
+                .stepId("step1").format(JSON).parameters(emptyMap()).sourceType(FILTER).build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
             entry.write("metadata".getBytes());
             entry.flush();
@@ -363,9 +375,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Assert.assertThat(contentCache.has(contentKey), is(false));
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------STEPS-------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------STEPS-------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     @Test
     public void should_append_action_after_actual_head() throws Exception {
         // when
@@ -421,8 +433,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_fail_properly_on_append_error() throws Exception {
         // given
-        final String missingScopeAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"),
-                UTF_8);
+        final String missingScopeAction = IOUtils.toString(
+                PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), UTF_8);
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
                 home.getId());
 
@@ -432,7 +444,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .when()//
                 .post("/api/preparations/{id}/actions", preparationId);
 
-        //then
+        // then
         request.then()//
                 .statusCode(400)//
                 .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
@@ -450,13 +462,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(rootStep.id()));
 
-        // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59") with another action
-        final String actionContent3 = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"), UTF_8);
-        given().contentType(ContentType.JSON)
-                .body(actionContent3)
-                .put("/api/preparations/{preparation}/actions/{action}", preparationId,
-                        steps.get(1))
-                .then().statusCode(is(200));
+        // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59") with
+        // another action
+        final String actionContent3 = IOUtils
+                .toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"), UTF_8);
+        given().contentType(ContentType.JSON).body(actionContent3)
+                .put("/api/preparations/{preparation}/actions/{action}", preparationId, steps.get(1)).then().statusCode(is(200));
 
         // then : Steps id should have changed due to update
         steps = getPreparationDetails(preparationId).getSteps();
@@ -476,12 +487,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59")
         // with another action that create a column
-        final String updateAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"), UTF_8);
-        given().contentType(ContentType.JSON)
-                .body(updateAction)
-                .put("/api/preparations/{preparation}/actions/{action}", preparationId,
-                        steps.get(1))
-                .then().statusCode(is(200));
+        final String updateAction = IOUtils
+                .toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"), UTF_8);
+        given().contentType(ContentType.JSON).body(updateAction)
+                .put("/api/preparations/{preparation}/actions/{action}", preparationId, steps.get(1)).then().statusCode(is(200));
 
         // then
         final EnrichedPreparation preparation = getPreparationDetails(preparationId);
@@ -493,8 +502,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_fail_properly_on_update_error() throws Exception {
         // given
-        final String missingScopeAction = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), UTF_8);
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv", home.getId());
+        final String missingScopeAction = IOUtils.toString(
+                PreparationAPITest.class.getResourceAsStream("transformation/upper_case_firstname_without_scope.json"), UTF_8);
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
@@ -538,15 +549,16 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void should_throw_error_when_preparation_does_not_exist_on_delete() throws Exception {
         // when : delete unknown preparation action
-        final Response response = given().delete("/api/preparations/{preparation}/actions/{action}", "unknown_prep", "unkown_step");
+        final Response response = given().delete("/api/preparations/{preparation}/actions/{action}", "unknown_prep",
+                "unkown_step");
 
-        //then : should have preparation service error
+        // then : should have preparation service error
         response.then().statusCode(is(404)).body("code", is("TDP_PS_PREPARATION_DOES_NOT_EXIST"));
     }
 
     @Test
     public void should_change_preparation_head() throws Exception {
-        //given
+        // given
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
                 home.getId());
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
@@ -554,28 +566,28 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
         final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent();
 
-        //when
+        // when
         given().when()//
                 .put("/api/preparations/{id}/head/{stepId}", preparationId, newHead)//
                 .then()//
                 .statusCode(200);
 
-        //then
+        // then
         preparation = preparationRepository.get(preparationId, Preparation.class);
         assertThat(preparation.getHeadId(), is(newHead));
     }
 
     @Test
     public void should_throw_exception_on_preparation_head_change_with_unknown_step() throws Exception {
-        //given
+        // given
         String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
         final String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
 
-        //when
+        // when
         final Response response = given().when()//
                 .put("/api/preparations/{id}/head/{stepId}", preparationId, "unknown_step_id");
 
-        //then
+        // then
         response.then()//
                 .statusCode(404)//
                 .assertThat()//
@@ -606,10 +618,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertEquals(reference.getHeadId(), preparation.getHeadId());
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    //----------------------------------------------------CONTENT------------------------------------------------------
-    //-------------------------------------------------------------------------------------------------------------------
-
+    // ------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------CONTENT------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------------
 
     @Test
     public void shouldCreatePreparationInDefaultFolder() throws Exception {
@@ -654,7 +665,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertFalse(entries.hasNext());
     }
 
-
     @Test
     public void testPreparationInitialContent() throws Exception {
         // given
@@ -691,14 +701,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(rootStep.id()));
 
         // Request preparation content at different versions (preparation has 2 steps -> Root + Upper Case).
-        assertThat(when().get("/api/preparations/{id}/content", preparationId).asString(),
-                sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=head", preparationId).asString(),
-                sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
+        assertThat(when().get("/api/preparations/{id}/content", preparationId).asString(), sameJSONAsFile(
+                PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
+        assertThat(when().get("/api/preparations/{id}/content?version=head", preparationId).asString(), sameJSONAsFile(
+                PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
         assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(0), preparationId).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(1), preparationId).asString(),
-                sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
+        assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(1), preparationId).asString(), sameJSONAsFile(
+                PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
         assertThat(when().get("/api/preparations/{id}/content?version=origin", preparationId).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
         assertThat(when().get("/api/preparations/{id}/content?version=" + rootStep.id(), preparationId).asString(),
@@ -736,9 +746,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(records.size(), is(100));
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------PREVIEW------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------PREVIEW------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     @Test
     public void testPreparationDiffPreview() throws Exception {
         // given
@@ -759,8 +769,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 + "   \"tdpIds\": [2, 4, 6]" //
                 + "}";
 
-        final InputStream expectedDiffStream = PreparationAPITest.class
-                .getResourceAsStream("preview/expected_diff_preview.json");
+        final InputStream expectedDiffStream = PreparationAPITest.class.getResourceAsStream("preview/expected_diff_preview.json");
 
         // when
         final String diff = given().contentType(ContentType.JSON).body(input).when().post("/api/preparations/preview/diff")
@@ -821,13 +830,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String input = "{" //
                 + "   \"preparationId\": \"" + preparationId + "\",\n" //
                 + "   \"tdpIds\": [2, 4, 6],\n" //
-                + "   \"actions\": [{\n"
-                + "         \"action\": \"uppercase\",\n"
-                + "         \"parameters\": {\n"
-                + "             \"column_id\": \"0005\",\n"
-                + "             \"column_name\": \"alive\"\n,"
-                + "             \"scope\": \"column\"\n"
-                + "         }\n" //
+                + "   \"actions\": [{\n" + "         \"action\": \"uppercase\",\n" + "         \"parameters\": {\n"
+                + "             \"column_id\": \"0005\",\n" + "             \"column_name\": \"alive\"\n,"
+                + "             \"scope\": \"column\"\n" + "         }\n" //
                 + "    }]\n" //
                 + "}";
         final InputStream expectedPreviewStream = getClass().getResourceAsStream("preview/expected_add_preview.json");
@@ -853,13 +858,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String input = "{" //
                 + "   \"datasetId\": \"" + datasetId + "\",\n" //
                 + "   \"tdpIds\": [2, 4, 6],\n" //
-                + "   \"actions\": [{\n"
-                + "         \"action\": \"uppercase\",\n"
-                + "         \"parameters\": {\n"
-                + "             \"column_id\": \"0005\",\n"
-                + "             \"column_name\": \"alive\"\n,"
-                + "             \"scope\": \"column\"\n"
-                + "         }\n" //
+                + "   \"actions\": [{\n" + "         \"action\": \"uppercase\",\n" + "         \"parameters\": {\n"
+                + "             \"column_id\": \"0005\",\n" + "             \"column_name\": \"alive\"\n,"
+                + "             \"scope\": \"column\"\n" + "         }\n" //
                 + "    }]\n" //
                 + "}";
         final InputStream expectedPreviewStream = PreparationAPITest.class
@@ -885,24 +886,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String input = "{" //
                 + "   \"preparationId\": \"" + preparationId + "\",\n" //
                 + "   \"tdpIds\": [2, 4, 6],\n" //
-                + "   \"actions\": ["
-                + "         {\n"
-                + "             \"action\": \"uppercase\",\n"
-                + "             \"parameters\": {\n"
-                + "                 \"column_id\": \"0005\",\n"
-                + "                 \"column_name\": \"alive\"\n,"
-                + "                 \"scope\": \"column\"\n"
+                + "   \"actions\": [" + "         {\n" + "             \"action\": \"uppercase\",\n"
+                + "             \"parameters\": {\n" + "                 \"column_id\": \"0005\",\n"
+                + "                 \"column_name\": \"alive\"\n," + "                 \"scope\": \"column\"\n"
                 + "             }\n" //
-                + "         },\n"
-                + "         {\n"
-                + "             \"action\": \"uppercase\",\n"
-                + "             \"parameters\": {\n"
-                + "                 \"column_id\": \"0006\",\n"
-                + "                 \"column_name\": \"city\"\n,"
-                + "                 \"scope\": \"column\"\n"
+                + "         },\n" + "         {\n" + "             \"action\": \"uppercase\",\n"
+                + "             \"parameters\": {\n" + "                 \"column_id\": \"0006\",\n"
+                + "                 \"column_name\": \"city\"\n," + "                 \"scope\": \"column\"\n"
                 + "             }\n" //
-                + "         }\n"
-                + "    ]\n" //
+                + "         }\n" + "    ]\n" //
                 + "}";
         final InputStream expectedPreviewStream = getClass().getResourceAsStream("preview/expected_multi_add_preview.json");
 
@@ -928,7 +920,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         AppendStep appendStep = new AppendStep();
         appendStep.setActions(Arrays.asList(
                 buildAction("uppercase", buildParametersMap("column_id", "0002", "column_name", "lastname", "scope", "column")),
-                buildAction("uppercase", buildParametersMap("column_id", "0001", "column_name", "firstname", "scope", "column"))));
+                buildAction("uppercase",
+                        buildParametersMap("column_id", "0001", "column_name", "firstname", "scope", "column"))));
         appendStepsToPrep(testPrepId, appendStep);
 
         // Adding steps
@@ -999,8 +992,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     /**
      * Test presence of a bug that allow the reuse of the same column ID twice in the same preparation.
      * <p>
-     *     This bug is allowed by OptimizedStrategy that does not apply some actions on RowMetadata and thus RowMetadata.nextId is
-     *     not properly updated.
+     * This bug is allowed by OptimizedStrategy that does not apply some actions on RowMetadata and thus RowMetadata.nextId is
+     * not properly updated.
      * </p>
      */
     @Test
@@ -1008,8 +1001,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         final String preparationId = testClient.createPreparationFromFile(
                 "/org/talend/dataprep/api/service/dataset/bug_TDP-3927_import-col-not-deleted_truncated.csv",
-                "bug_TDP-3927_import-col-not-deleted",
-                "text/csv", home.getId());
+                "bug_TDP-3927_import-col-not-deleted", "text/csv", home.getId());
 
         Map<String, String> copyIdParameters = new HashMap<>();
         copyIdParameters.put("column_id", "0000");
@@ -1044,10 +1036,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {
-        Optional<ColumnMetadata> firstNameColumn = preparationContent.getColumns()
-                .stream()
-                .filter(c -> columnName.equals(c.getName()))
-                .findAny();
+        Optional<ColumnMetadata> firstNameColumn = preparationContent.getColumns().stream()
+                .filter(c -> columnName.equals(c.getName())).findAny();
         assertTrue(firstNameColumn.isPresent());
         return firstNameColumn.get();
     }

@@ -281,7 +281,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
      * @see <a href="https://jira.talendforge.org/browse/TDP-3965">TDP-3965</a>
      */
     @Test
-    public void ensureThatPreparationDetailsCanBeParsedAsStandalonePreparation() throws Exception {
+    public void ensureThatPreparationDetailsCanBeParsedAsStandalonePreparation_TDP_3965() throws Exception {
         // when
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", "text/csv",
                 home.getId());

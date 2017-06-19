@@ -105,7 +105,7 @@ export default class AppHeaderBarCtrl {
 		const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
 		const onBlurActionDispatcher = onBlurAction && this.settingsActionsService.createDispatcher(onBlurAction);
 		this.searchOnBlur = (event) => {
-			if (onBlurActionDispatcher && !this.searchInput) {
+			if (onBlurActionDispatcher) {
 				onBlurActionDispatcher(event);
 			}
 		};
@@ -139,7 +139,6 @@ export default class AppHeaderBarCtrl {
 			const selectedCategory = this.adaptedSearchResults[sectionIndex];
 			const selectedItem = selectedCategory && selectedCategory.suggestions[itemIndex];
 			const onSelectDispatcher = onSelectDispatcherByType[selectedItem.inventoryType];
-			this.searchOnToggle();
 			if (onSelectDispatcher) {
 				return onSelectDispatcher(event, selectedItem);
 			}

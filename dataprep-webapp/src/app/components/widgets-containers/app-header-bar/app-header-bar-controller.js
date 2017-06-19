@@ -10,9 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-
 const NAV_ITEM = 'navItem';
-const DROPDOWN = 'dropdown';
 
 export default class AppHeaderBarCtrl {
 	constructor($element, $translate, state, appSettings, SettingsActionsService) {
@@ -26,8 +24,8 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onInit() {
-		this.initApp();
-		this.adaptBrandLink();
+		this.initLogo();
+		this.adaptBrand();
 		this.adaptContent();
 	}
 
@@ -39,9 +37,8 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onChanges(changes) {
-		if (this.content) {
-			const updatedContent = this.content.slice();
-			const searchConfiguration = updatedContent[1].search;
+		if (this.search) {
+			const searchConfiguration =  {...this.search};
 			if (changes.searching) {
 				const searching = changes.searching.currentValue;
 				searchConfiguration.searching = searching;
@@ -77,19 +74,19 @@ export default class AppHeaderBarCtrl {
 				this.adaptedSearchResults = searchResults && this._adaptSearchResults(searchResults);
 				searchConfiguration.items = this.adaptedSearchResults;
 			}
-			this.content = updatedContent;
+			this.search = searchConfiguration;
 		}
 	}
 
-	initApp() {
-		this.app = this.appSettings.views.appheaderbar.app;
+	initLogo() {
+		this.logo = this.appSettings.views.appheaderbar.logo;
 	}
 
-	adaptBrandLink() {
-		const settingsBrandLink = this.appSettings.views.appheaderbar.brandLink;
-		const clickAction = this.appSettings.actions[settingsBrandLink.onClick];
-		this.brandLink = {
-			...settingsBrandLink,
+	adaptBrand() {
+		const settingsBrand = this.appSettings.views.appheaderbar.brand;
+		const clickAction = this.appSettings.actions[settingsBrand.onClick];
+		this.brand = {
+			...settingsBrand,
 			onClick: this.settingsActionsService.createDispatcher(clickAction),
 		};
 	}
@@ -222,27 +219,15 @@ export default class AppHeaderBarCtrl {
 	}
 
 	adaptContent() {
-		const search = this.appSettings.views.appheaderbar.search ?
+		this.search = this.appSettings.views.appheaderbar.search ?
 			this.adaptSearch() :
 			null;
-		const navItems = this.appSettings.views.appheaderbar.actions ?
-			this.adaptActions() :
-			[];
-		const userMenu = this.appSettings.views.appheaderbar.userMenu ?
+		//this.navItems = this.appSettings.views.appheaderbar.actions ?
+		//	this.adaptActions() :
+		//	[];
+		this.user = this.appSettings.views.appheaderbar.userMenu ?
 			this.adaptUserMenu() :
 			[];
-
-		this.content = [
-			{
-				navs: [{
-					nav: { pullRight: true },
-					navItems: navItems.concat(userMenu),
-				}],
-			},
-			{
-				search,
-			},
-		];
 	}
 
 	adaptActions() {
@@ -271,22 +256,16 @@ export default class AppHeaderBarCtrl {
 		const { id, name, icon, staticActions } = this.appSettings.actions[userMenu];
 
 		return {
-			type: DROPDOWN,
-			item: {
-				dropdown: {
-					id,
-					icon,
-					title: name,
-				},
-				items: staticActions
-					.map(actionName => this.appSettings.actions[actionName])
-					.map(action => ({
-						id: action.id,
-						icon: action.icon,
-						name: action.name,
-						onClick: this.settingsActionsService.createDispatcher(action),
-					})),
-			},
+			id,
+			name,
+			items: staticActions
+				.map(actionName => this.appSettings.actions[actionName])
+				.map(action => ({
+					id: action.id,
+					icon: action.icon,
+					label: action.name,
+					onClick: this.settingsActionsService.createDispatcher(action),
+				})),
 		};
 	}
 }

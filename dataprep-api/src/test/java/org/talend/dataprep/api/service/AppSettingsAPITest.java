@@ -246,9 +246,9 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         // then
         final AppHeaderBarSettings ahb = (AppHeaderBarSettings) settings.getViews().get("appheaderbar");
-        assertThat(ahb.getApp(), is("Data Preparation"));
-        assertThat(ahb.getBrandLink().getTitle(), is("Talend Data Preparation"));
-        assertThat(ahb.getBrandLink().getOnClick(), is("menu:preparations"));
+        assertThat(ahb.getLogo(), is("Data Preparation"));
+        assertThat(ahb.getBrand().getTitle(), is("Talend Data Preparation"));
+        assertThat(ahb.getBrand().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getSearch().getDebounceTimeout(), is(300));
         assertThat(ahb.getSearch().getPlaceholder(), is("Search Talend Data Preparation and Documentation"));
         assertThat(ahb.getSearch().getOnBlur(), is("search:toggle"));

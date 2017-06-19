@@ -31,13 +31,16 @@ import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSet
 public interface HomeViews {
     ViewSettings APP_HEADER_BAR = AppHeaderBarSettings.builder()
             .id("appheaderbar")
-            .app("Data Preparation")
-            .brandLink(
+            .brand(
                     LinkSettings.builder()
-                            .title("Talend Data Preparation")
+                            .name("Data Preparation")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build()
             )
+            .logo(
+                    LinkSettings.builder()
+                    .onClick(MENU_PREPARATIONS.getId())
+                    .build())
             .search(
                     SearchSettings.builder()
                             .debounceTimeout(300)

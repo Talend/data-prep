@@ -14,12 +14,16 @@ package org.talend.dataprep.preparation.task;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -29,6 +33,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.preparation.configuration.PreparationConversions;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
@@ -40,6 +45,8 @@ import org.talend.dataprep.security.SecurityProxy;
 @Component
 @EnableScheduling
 public class PreparationCleaner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
 
     @Autowired
     private PreparationRepository repository;
@@ -56,6 +63,8 @@ public class PreparationCleaner {
 
     @Autowired
     private PreparationUtils preparationUtils;
+
+    private String filterByContentIdKey = "contentId";
 
     /**
      * Get all the step ids that belong to a preparation
@@ -94,12 +103,27 @@ public class PreparationCleaner {
                 repository.remove(stepToRemove);
 
                 // Remove actions linked to step
-                final PreparationActions preparationActionsToRemove = new PreparationActions();
-                preparationActionsToRemove.setId(step.getContent());
-                repository.remove(preparationActionsToRemove);
+                List<PersistentStep> collect = repository
+                        .list(PersistentStep.class, filterByContentIdKey + "='" + step.getContent() + "'")
+                        .collect(Collectors.toList());
+                if (collect.size() > 0) {
+                    LOGGER.info("Don't removing step content {} it still used by another step.", step.getContent());
+                } else {
+                    final PreparationActions preparationActionsToRemove = new PreparationActions();
+                    preparationActionsToRemove.setId(step.getContent());
+                    repository.remove(preparationActionsToRemove);
+                }
             });
         } finally {
             securityProxy.releaseIdentity();
         }
+    }
+
+    public String getFilterByContentIdKey() {
+        return filterByContentIdKey;
+    }
+
+    public void setFilterByContentIdKey(String filterByContentIdKey) {
+        this.filterByContentIdKey = filterByContentIdKey;
     }
 }

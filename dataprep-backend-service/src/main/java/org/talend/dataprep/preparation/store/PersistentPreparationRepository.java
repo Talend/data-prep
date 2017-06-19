@@ -27,13 +27,20 @@ import org.talend.dataprep.conversions.BeanConversionService;
  */
 public class PersistentPreparationRepository implements PreparationRepository {
 
+    private Step rootStep;
+
+    private PreparationActions rootContent;
+
     private final BeanConversionService beanConversionService;
 
     private final PreparationRepository delegate;
 
-    public PersistentPreparationRepository(PreparationRepository delegate, BeanConversionService beanConversionService) {
+    public PersistentPreparationRepository(PreparationRepository delegate, BeanConversionService beanConversionService,
+            Step rootStep, PreparationActions rootContent) {
         this.delegate = delegate;
         this.beanConversionService = beanConversionService;
+        this.rootContent = rootContent;
+        this.rootStep = rootStep;
     }
 
     private static Class<? extends Identifiable> selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
@@ -69,34 +76,31 @@ public class PersistentPreparationRepository implements PreparationRepository {
     public void add(Identifiable object) {
         final Collection<Identifiable> identifiableList = PreparationUtils.scatter(object);
         for (Identifiable identifiable : identifiableList) {
-            if(identifiable instanceof Step) {
-                final String parent = ((Step) identifiable).getParent();
-                if (parent != null && parent.equals(Step.ROOT_STEP.id())) {
-                    // Ensure root step is present
-                    delegate.add(beanConversionService.convert(Step.ROOT_STEP, PersistentStep.class));
-                }
+            if (!(rootStep.equals(identifiable) || rootContent.equals(identifiable))) {
+                final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());
+                final Identifiable storedIdentifiable = beanConversionService.convert(identifiable, targetClass);
+                delegate.add(storedIdentifiable);
             }
-            if(identifiable instanceof PreparationActions) {
-                delegate.add(beanConversionService.convert(PreparationActions.ROOT_ACTIONS, PreparationActions.class));
-            }
-
-            final Class<? extends Identifiable> persistentClass = selectPersistentClass(identifiable.getClass());
-            final Identifiable storedIdentifiable = beanConversionService.convert(identifiable, persistentClass);
-            delegate.add(storedIdentifiable);
         }
     }
 
     @Override
     public <T extends Identifiable> T get(String id, Class<T> clazz) {
         final Class<T> targetClass = (Class<T>) selectPersistentClass(clazz);
-        return beanConversionService.convert(delegate.get(id, targetClass), clazz);
+        Object beanToConvert;
+        if (clazz.equals(PersistentStep.class) && rootStep.getId().equals(id)) {
+            beanToConvert = rootStep;
+        } else if (clazz.equals(PreparationActions.class) && rootContent.getId().equals(id)) {
+            beanToConvert = rootContent;
+        } else {
+            beanToConvert = delegate.get(id, targetClass);
+        }
+        return beanConversionService.convert(beanToConvert, clazz);
     }
 
     @Override
     public void clear() {
         delegate.clear();
-        add(Step.ROOT_STEP);
-        add(PreparationActions.ROOT_ACTIONS);
     }
 
     @Override

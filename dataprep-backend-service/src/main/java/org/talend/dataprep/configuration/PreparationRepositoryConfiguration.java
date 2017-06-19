@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -54,6 +57,14 @@ public class PreparationRepositoryConfiguration {
     @Component
     public class PreparationRepositoryPostProcessor implements Wrapper<PreparationRepository> {
 
+        /** The root step. */
+        @Resource(name = "rootStep")
+        private Step rootStep;
+
+        /** The default root content. */
+        @Resource(name = "rootContent")
+        private PreparationActions rootContent;
+
         @Override
         public Class<PreparationRepository> wrapped() {
             return PreparationRepository.class;
@@ -68,7 +79,7 @@ public class PreparationRepositoryConfiguration {
             }
             LOGGER.info("Wrapping '{}' ({})...", instance.getClass(), beanName);
             final BeanConversionService beanConversionService = applicationContext.getBean(BeanConversionService.class);
-            return new PersistentPreparationRepository(instance, beanConversionService);
+            return new PersistentPreparationRepository(instance, beanConversionService, rootStep, rootContent);
         }
     }
 

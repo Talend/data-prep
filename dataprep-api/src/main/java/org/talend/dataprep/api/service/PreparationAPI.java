@@ -380,7 +380,7 @@ public class PreparationAPI extends APIService {
         Step step = getCommand(FindStep.class, headId).execute();
         if (step == null) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST);
-        } else if (isHeadStepDependingOnDeletedDataSet(step)) {
+        } else if (isHeadStepDependingOnDeletedDataSet(preparationId, step.id())) {
             final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, preparationId, headId);
             command.execute();
         } else {
@@ -599,30 +599,22 @@ public class PreparationAPI extends APIService {
         }
     }
 
-    private boolean isHeadStepDependingOnDeletedDataSet(Step step) {
-        final boolean valid;
-        // If root
-        if (step.getParent() == null) {
-            valid = true;
-        } else {
-            List<Action> actions = step.getContent().getActions();
-            boolean oneActionRefersToNonexistentDataset = actions.stream() //
-                    .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
-                    .map(action -> action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey())) //
-                    .anyMatch(dsId -> {
-                        boolean hasNoDataset;
-                        try {
-                            hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
-                        } catch (TDPException e) {
-                            // Dataset could not be retrieved => Main reason is not present
-                            LOG.debug("The data set could not be retrieved: "+e);
-                            hasNoDataset = true;
-                        }
-                        return hasNoDataset;
-                    });
-            valid = !oneActionRefersToNonexistentDataset && isHeadStepDependingOnDeletedDataSet(step.getParent());
-        }
-        return valid;
+    private boolean isHeadStepDependingOnDeletedDataSet(String preparationId, String stepId) {
+        List<Action> actions = internalGetActions(preparationId, stepId);
+        boolean oneActionRefersToNonexistentDataset = actions.stream() //
+                .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
+                .map(action -> action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey())) //
+                .anyMatch(dsId -> {
+                    boolean hasNoDataset;
+                    try {
+                        hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
+                    } catch (TDPException e) {
+                        // Dataset could not be retrieved => Main reason is not present
+                        LOG.debug("The data set could not be retrieved: " + e);
+                        hasNoDataset = true;
+                    }
+                    return hasNoDataset;
+                });
+        return !oneActionRefersToNonexistentDataset;
     }
-
 }

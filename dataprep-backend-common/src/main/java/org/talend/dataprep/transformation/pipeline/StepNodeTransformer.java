@@ -13,7 +13,9 @@
 package org.talend.dataprep.transformation.pipeline;
 
 import java.util.List;
+import java.util.function.Function;
 
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Step;
 
 /**
@@ -31,11 +33,12 @@ public class StepNodeTransformer {
      *
      * @param node The pipeline (as {@link Node}) to transform.
      * @param steps The {@link Step steps} to use when creating group nodes.
+     * @param rowMetadataSupplier A function that allows visitor code to associate a row metadata with a step.
      * @return The transformed pipeline, based on copies of the original <code>node</code> (no modification done on the pipeline
      * reachable from <code>node/code>).
      */
-    public static Node transform(Node node, List<Step> steps) {
-        final StepNodeTransformation visitor = new StepNodeTransformation(steps);
+    public static Node transform(Node node, List<Step> steps, Function<Step, RowMetadata> rowMetadataSupplier) {
+        final StepNodeTransformation visitor = new StepNodeTransformation(steps, rowMetadataSupplier);
         node.accept(visitor);
         return visitor.getTransformedNode();
     }

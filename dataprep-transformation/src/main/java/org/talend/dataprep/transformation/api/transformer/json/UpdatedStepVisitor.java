@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.transformation.api.transformer.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.preparation.Step;
@@ -22,6 +19,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
+import org.talend.dataprep.transformation.service.StepMetadataRepository;
 
 /**
  * <p>
@@ -36,7 +34,11 @@ class UpdatedStepVisitor extends Visitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdatedStepVisitor.class);
 
-    private final List<Step> stepsToUpdate = new ArrayList<>();
+    private final StepMetadataRepository preparationUpdater;
+
+    public UpdatedStepVisitor(StepMetadataRepository preparationUpdater) {
+        this.preparationUpdater = preparationUpdater;
+    }
 
     @Override
     public void visitStepNode(StepNode stepNode) {
@@ -57,13 +59,10 @@ class UpdatedStepVisitor extends Visitor {
                     LOGGER.debug("Keeping metadata {} (action ended with status {}).", step.getId(), status);
                     break;
                 }
-                stepsToUpdate.add(step);
+
+                preparationUpdater.update(step.id(), stepNode.getRowMetadata());
             }
         });
         super.visitStepNode(stepNode);
-    }
-
-    List<Step> getUpdatedSteps() {
-        return stepsToUpdate;
     }
 }

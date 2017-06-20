@@ -12,14 +12,13 @@
 
 package org.talend.dataprep.transformation.service;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.command.preparation.GetStepRowMetadata;
 import org.talend.dataprep.command.preparation.UpdateStepRowMetadata;
 
 /**
@@ -27,25 +26,34 @@ import org.talend.dataprep.command.preparation.UpdateStepRowMetadata;
  * service wants to update step's metadata once a transformation is over.
  */
 @Service
-public class PreparationUpdater {
+public class StepMetadataRepository {
 
-    /** This class' logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationUpdater.class);
+    /**
+     * This class' logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(StepMetadataRepository.class);
 
     @Autowired
     private ApplicationContext context;
 
     /**
-     * Update a preparation step's metadata.
+     * Get a preparation step's metadata.
      *
-     * @param preparationId the preparation id to update the step from.
-     * @param steps the steps to update.
+     * @param stepId the preparation step to retrieve metadata from.
      */
-    public void update(String preparationId, List<Step> steps) {
-
-        LOGGER.debug("updating steps for preparation #{} : \n\t{}", preparationId, steps);
-
-        context.getBean(UpdateStepRowMetadata.class, preparationId, steps).execute();
+    public RowMetadata get(String stepId) {
+        LOGGER.debug("getting step {} metadata", stepId);
+        return context.getBean(GetStepRowMetadata.class, stepId).execute();
     }
 
+    /**
+     * Update a preparation step's metadata.
+     *
+     * @param stepId the preparation step to update.
+     * @param rowMetadata the row metadata to associate with step.
+     */
+    public void update(String stepId, RowMetadata rowMetadata) {
+        LOGGER.debug("updating step {} metadata", stepId);
+        context.getBean(UpdateStepRowMetadata.class, stepId, rowMetadata).execute();
+    }
 }

@@ -12,8 +12,9 @@
  ============================================================================*/
 
 export default class HomeCtrl {
-	constructor(StateService, StorageService) {
+	constructor(state, StateService, StorageService) {
 		'ngInject';
+		this.state = state;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
 	}

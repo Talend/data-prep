@@ -1,6 +1,5 @@
 // ============================================================================
-//
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -159,7 +158,7 @@ public class APIPreparationConversionsTest {
         List<Step> steps = new ArrayList<>(12);
         Step parentStep = preparation.getSteps().get(0);
         for (int i = 0; i < 12; i++) {
-            final Step step = new Step(parentStep, new PreparationActions(), "2.1");
+            final Step step = new Step(parentStep.id(), new PreparationActions().id(), "2.1");
             steps.add(step);
             parentStep = step;
         }

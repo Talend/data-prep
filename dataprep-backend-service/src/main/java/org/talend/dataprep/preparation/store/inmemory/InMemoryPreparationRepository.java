@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.preparation.store.inmemory;
 
@@ -27,6 +26,7 @@ import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
+import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 /**
@@ -35,12 +35,6 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 @Component
 @ConditionalOnProperty(name = "preparation.store", havingValue = "in-memory", matchIfMissing = true)
 public class InMemoryPreparationRepository extends ObjectPreparationRepository {
-
-    /**
-     * The root step.
-     */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     /**
      * The default root content.
@@ -59,7 +53,9 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
     @PostConstruct
     private void initRootContent() {
         add(rootContent);
-        add(rootStep);
+        final PersistentStep persistentStep = new PersistentStep();
+        persistentStep.setId(Step.ROOT_STEP.id());
+        add(persistentStep);
     }
 
     /**
@@ -72,7 +68,7 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
 
     @Override
     public <T extends Identifiable> Stream<T> source(Class<T> clazz) {
-        return store.entrySet().stream() //
+        return new HashMap<>(store).entrySet().stream() //
                 .filter(entry -> clazz.isAssignableFrom(entry.getValue().getClass())) //
                 .map(entry -> (T) entry.getValue());
     }
@@ -104,8 +100,7 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
     @Override
     public void clear() {
         store.clear();
-        add(rootContent);
-        add(rootStep);
+        initRootContent();
     }
 
     /**

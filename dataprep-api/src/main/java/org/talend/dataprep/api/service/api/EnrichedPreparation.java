@@ -25,6 +25,7 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.share.Owner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Simple bean used to display a preparation and a summary of its related dataset and its location.
@@ -51,6 +52,7 @@ public class EnrichedPreparation {
     private List<String> steps;
 
     /** List of action metadata (description) */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class")
     private List<ActionDefinition> metadata;
 
     private List<Action> actions;
@@ -180,7 +182,6 @@ public class EnrichedPreparation {
     public void setDiff(List<StepDiff> diff) {
         this.diff = diff;
     }
-
 
     public RowMetadata getRowMetadata() {
         return rowMetadata;

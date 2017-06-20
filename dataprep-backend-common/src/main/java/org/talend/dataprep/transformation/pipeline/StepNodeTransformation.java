@@ -18,9 +18,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
@@ -38,26 +40,30 @@ class StepNodeTransformation extends Visitor {
 
     private final Iterator<Step> steps;
 
-    private final State DISPATCH = new Dispatch();
+    private final Function<Step, RowMetadata> rowMetadataSupplier;
 
-    private final State DEFAULT = new DefaultState();
+    private State DISPATCH = new Dispatch();
+
+    private State DEFAULT = new DefaultState();
 
     private State state = DISPATCH;
 
     private NodeBuilder builder = NodeBuilder.source();
 
     /**
-     * Build a new visitor to transform nodes into new node pipeline which will eventually use {@link StepNode} if applicable. For
-     * each new {@link StepNode}, one of the <code>steps</code> is consumed.
+     * Build a new visitor to transform nodes into new node pipeline which will eventually use {@link StepNode} if
+     * applicable. For each new {@link StepNode}, one of the <code>steps</code> is consumed.
      *
      * @param steps The {@link Step steps} to be used when creating new {@link StepNode}.
+     * @param rowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
      */
-    StepNodeTransformation(List<Step> steps) {
+    StepNodeTransformation(List<Step> steps, Function<Step, RowMetadata> rowMetadataSupplier) {
         if (!steps.isEmpty() && !Step.ROOT_STEP.getId().equals(steps.get(0).getId())) {
             // Code expects root step to be located at the beginning of iterator.
             Collections.reverse(steps);
         }
         this.steps = steps.iterator();
+        this.rowMetadataSupplier = rowMetadataSupplier;
     }
 
     Node getTransformedNode() {
@@ -177,7 +183,7 @@ class StepNodeTransformation extends Visitor {
                 final NodeCopy copy = new NodeCopy();
                 node.accept(copy);
 
-                final StepNode stepNode = new StepNode(step, copy.getCopy(), copy.getLastNode());
+                final StepNode stepNode = new StepNode(step, rowMetadataSupplier.apply(step), copy.getCopy(), copy.getLastNode());
                 // and plug the previous link to the new StepNode
                 ofNullable(previous).ifPresent(n -> n.setLink(new BasicLink(stepNode)));
                 builder.to(stepNode);

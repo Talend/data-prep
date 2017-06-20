@@ -79,7 +79,12 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initLogo() {
-		this.logo = this.appSettings.views.appheaderbar.logo;
+		const settingsLogo = this.appSettings.views.appheaderbar.logo;
+		const clickAction = this.appSettings.actions[settingsLogo.onClick];
+		this.logo = {
+			...settingsLogo,
+			onClick: this.settingsActionsService.createDispatcher(clickAction),
+		};
 	}
 
 	adaptBrand() {

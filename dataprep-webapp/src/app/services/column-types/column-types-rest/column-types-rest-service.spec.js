@@ -34,7 +34,7 @@ describe('Column types rest service', () => {
 	beforeEach(angular.mock.module('data-prep.services.column-types'));
 
 	beforeEach(inject(($rootScope, $injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' }, settings);
+		RestURLs.register('', settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

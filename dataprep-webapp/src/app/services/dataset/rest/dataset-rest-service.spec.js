@@ -21,7 +21,7 @@ describe('Dataset Rest Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.dataset'));
 
 	beforeEach(inject(($rootScope, $injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' }, settings);
+		RestURLs.register('', settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 
 		spyOn($rootScope, '$emit').and.returnValue();

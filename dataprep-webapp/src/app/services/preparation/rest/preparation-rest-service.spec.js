@@ -103,7 +103,7 @@ describe('Preparation REST Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.preparation'));
 
 	beforeEach(inject(($injector, RestURLs) => {
-		RestURLs.setConfig({ serverUrl: '' }, settings);
+		RestURLs.register('', settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

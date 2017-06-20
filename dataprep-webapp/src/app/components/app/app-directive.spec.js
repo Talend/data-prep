@@ -34,7 +34,7 @@ describe('App directive', () => {
 	}));
 
 	beforeEach(inject(($injector, $q, RestURLs, AboutService, UpgradeVersionService) => {
-		RestURLs.setConfig({ serverUrl: '' }, settings);
+		RestURLs.register('', settings.uris);
 
 		const $httpBackend = $injector.get('$httpBackend');
 		$httpBackend

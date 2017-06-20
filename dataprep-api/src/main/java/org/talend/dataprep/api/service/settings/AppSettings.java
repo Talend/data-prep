@@ -41,6 +41,12 @@ public class AppSettings {
     private final Map<String, String> uris = new HashMap<>();
 
     /**
+     * The documentation settings dictionary
+     */
+    private final Map<String, String> documentation = new HashMap<>();
+
+
+    /**
      * Getters
      */
     public Map<String, ViewSettings> getViews() {
@@ -53,5 +59,9 @@ public class AppSettings {
 
     public Map<String, String> getUris() {
         return uris;
+    }
+
+    public Map<String, String> getDocumentation() {
+        return documentation;
     }
 }

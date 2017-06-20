@@ -577,6 +577,11 @@ const settingsMock = {
 		apiUpgradeCheck: '/api/upgrade/check',
 		apiVersion: '/api/version',
 	},
+	documentation: {
+		url: 'documentationUrl',
+		version: 'documentationVersion',
+		language: 'documentationLanguage',
+	},
 };
 
 export default settingsMock;

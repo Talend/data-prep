@@ -11,6 +11,7 @@ export const appSettings = {
 	actions: [],
 	views: [],
 	uris: [],
+	documentation: {},
 };
 
 export function SettingsService($http, RestURLs) {
@@ -37,5 +38,6 @@ export function SettingsService($http, RestURLs) {
 		appSettings.views = [];
 		appSettings.actions = [];
 		appSettings.uris = [];
+		appSettings.documentation = {};
 	}
 }

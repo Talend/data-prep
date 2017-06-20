@@ -13,16 +13,20 @@
 
 class SearchDocumentationRestService {
 
-	constructor($http, documentationSearchURL, documentationSearchVersion, documentationSearchLanguage) {
+	constructor($http, DocumentationService) {
 		'ngInject';
 		this.$http = $http;
-		this.documentationSearchURL = documentationSearchURL;
+		this.DocumentationService = DocumentationService;
+
+		const { url, version, language } = this.DocumentationService;
+
+		this.documentationSearchURL = url;
 		this.parameters = {
-			contentLocale: documentationSearchLanguage,
+			contentLocale: language,
 			filters: [
 				{
 					key: 'version',
-					values: [documentationSearchVersion],
+					values: [version],
 				},
 				{
 					key: 'EnrichPlatform',

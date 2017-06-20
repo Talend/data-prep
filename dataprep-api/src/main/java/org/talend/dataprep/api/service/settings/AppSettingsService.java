@@ -13,17 +13,18 @@
 
 package org.talend.dataprep.api.service.settings;
 
-import static java.util.Arrays.stream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.documentation.api.DocumentationSettings;
+import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
+import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
-import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+import static java.util.Arrays.stream;
 
 /**
  * App settings service
@@ -48,6 +49,12 @@ public class AppSettingsService {
 
     @Autowired(required = false)
     private AppSettingsConfigurer<UriSettings>[] urisConfigurers;
+
+    @Autowired
+    private AppSettingsProvider<DocumentationSettings>[] documentationProviders;
+
+    @Autowired(required = false)
+    private AppSettingsConfigurer<DocumentationSettings>[] documentationConfigurers;
 
     public AppSettingsConfigurer<ActionSettings>[] getActionsConfigurers() {
         return actionsConfigurers;
@@ -76,6 +83,10 @@ public class AppSettingsService {
         getSettingsStream(urisProviders, urisConfigurers) //
                 .forEach(uri -> appSettings.getUris().put(uri.getId(), uri.getUri()));
 
+        // populate appSettings documentation (key: documentationProperty, value: documentationValue)
+        getSettingsStream(documentationProviders, documentationConfigurers) //
+                .forEach(documentation -> appSettings.getDocumentation().put(documentation.getId(), documentation.getValue()));
+
         return appSettings;
     }
 
@@ -101,13 +112,13 @@ public class AppSettingsService {
     /**
      * Get all the configured settings as a stream
      *
-     * @param providers The array of settings providers
+     * @param providers   The array of settings providers
      * @param configurers The array of settings configurers
      * @param <T> ActionSettings | ViewSettings
      * @return The stream of configured settings
      */
     private <T> Stream<T> getSettingsStream(final AppSettingsProvider<T>[] providers,
-            final AppSettingsConfigurer<T>[] configurers) {
+                                            final AppSettingsConfigurer<T>[] configurers) {
         // build a stream
         // * from static actions
         // * each action goes through all the actions configurers

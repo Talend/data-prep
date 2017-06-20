@@ -19,15 +19,13 @@
 export default function RestURLs() {
 	/**
 	 * @ngdoc method
-	 * @name setConfig
+	 * @name register
 	 * @propertyOf data-prep.services.utils.service:RestURLs
 	 * @description Init the api urls with a provided URLs configuration
-	 * @param {Object} config The URLs configration
+	 * @param {String} serverUrl The host and port to define API urls
+	 * @param {Object} uris All URIs to be consumed
 	 */
-	this.setConfig = function setConfig(config, settings) {
-		const { serverUrl } = config;
-		const { uris } = settings;
-
+	this.register = function register(serverUrl, uris) {
 		this.aggregationUrl = serverUrl + uris.apiAggregate;
 		this.datasetUrl = serverUrl + uris.apiDatasets;
 		this.uploadDatasetUrl = serverUrl + uris.apiUploadDatasets;

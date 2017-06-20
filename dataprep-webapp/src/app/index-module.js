@@ -93,9 +93,9 @@ window.fetchConfiguration = function fetchConfiguration() {
 					SettingsService.setSettings(appSettings);
 				})
 				// Configure server api urls and refresh supported encoding
-				.run((RestURLs, DatasetService) => {
+				.run((ConfigService, DatasetService) => {
 					'ngInject';
-					RestURLs.setConfig(config, appSettings);
+					ConfigService.setConfig(config, appSettings);
 					// dataset encodings
 					DatasetService.refreshSupportedEncodings();
 				})
@@ -120,10 +120,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 
 			angular.module(SERVICES_UTILS_MODULE)
 				.value('version', config.version)
-				.value('copyRights', config.copyRights)
-				.value('documentationSearchURL', config.documentationSearchURL)
-				.value('documentationSearchVersion', config.documentationSearchVersion)
-				.value('documentationSearchLanguage', config.documentationSearchLanguage);
+				.value('copyRights', config.copyRights);
 		});
 };
 

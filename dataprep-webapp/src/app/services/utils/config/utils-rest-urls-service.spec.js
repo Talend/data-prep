@@ -18,7 +18,7 @@ describe('REST urls service', () => {
 
 	it('should init api urls with empty server url (same url by default)', inject((RestURLs) => {
 		// when
-		RestURLs.setConfig({ serverUrl: ''}, settings);
+		RestURLs.register('', settings.uris);
 
 		// then
 		expect(RestURLs.datasetUrl).toBe('/api/datasets');
@@ -39,7 +39,7 @@ describe('REST urls service', () => {
 
 	it('should change api url with provided server url', inject((RestURLs) => {
 		// when
-		RestURLs.setConfig({ serverUrl: 'http://10.10.10.10:8888' }, settings);
+		RestURLs.register('http://10.10.10.10:8888', settings.uris);
 
 		// then
 		expect(RestURLs.datasetUrl).toBe('http://10.10.10.10:8888/api/datasets');

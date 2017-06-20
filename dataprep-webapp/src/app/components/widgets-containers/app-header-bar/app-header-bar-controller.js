@@ -213,8 +213,8 @@ export default class AppHeaderBarCtrl {
 					suggestions: suggestions.map((result) => {
 						return {
 							...result,
-							title: result.name,
-							description: result.description,
+							title: result.name || '',
+							description: result.description || '',
 						};
 					}),
 				};

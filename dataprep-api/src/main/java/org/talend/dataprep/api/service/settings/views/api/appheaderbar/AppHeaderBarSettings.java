@@ -54,9 +54,9 @@ public class AppHeaderBarSettings implements ViewSettings {
     private SearchSettings search;
 
     /**
-     * The list of actions to display as a list of icons
+     * The help configuration
      */
-    private List<String> actions;
+    private String help;
 
     /**
      * The user dropdown action
@@ -96,12 +96,12 @@ public class AppHeaderBarSettings implements ViewSettings {
         this.search = search;
     }
 
-    public List<String> getActions() {
-        return actions;
+    public String getHelp() {
+        return help;
     }
 
-    public void setActions(List<String> actions) {
-        this.actions = actions;
+    public void setHelp(String help) {
+        this.help = help;
     }
 
     public String getUserMenu() {
@@ -122,7 +122,7 @@ public class AppHeaderBarSettings implements ViewSettings {
                 .logo(viewSettings.getLogo()) //
                 .brand(viewSettings.getBrand()) //
                 .search(viewSettings.getSearch()) //
-                .actions(viewSettings.getActions()) //
+                .help(viewSettings.getHelp()) //
                 .userMenu(viewSettings.getUserMenu());
     }
 
@@ -136,7 +136,7 @@ public class AppHeaderBarSettings implements ViewSettings {
 
         private SearchSettings search;
 
-        private List<String> actions = new ArrayList<>();
+        private String help;
 
         private String userMenu;
 
@@ -160,18 +160,13 @@ public class AppHeaderBarSettings implements ViewSettings {
             return this;
         }
 
-        public Builder action(final String action) {
-            this.actions.add(action);
+        public Builder help(final String help) {
+            this.help = help;
             return this;
         }
 
-        public Builder actions(final List<String> actions) {
-            this.actions.addAll(actions);
-            return this;
-        }
-
-        public Builder clearActions() {
-            this.actions.clear();
+        public Builder removeHelp() {
+            this.help = null;
             return this;
         }
 
@@ -186,7 +181,7 @@ public class AppHeaderBarSettings implements ViewSettings {
             settings.setLogo(this.logo);
             settings.setBrand(this.brand);
             settings.setSearch(this.search);
-            settings.setActions(this.actions);
+            settings.setHelp(this.help);
             settings.setUserMenu(this.userMenu);
             return settings;
         }

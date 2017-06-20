@@ -55,10 +55,7 @@ public interface HomeViews {
                             .placeholder("Search Talend Data Preparation and Documentation")
                             .build()
             )
-            .action(ONBOARDING_PREPARATION.getId())
-            .action(MODAL_FEEDBACK.getId())
-            .action(EXTERNAL_HELP.getId())
-            .action(MODAL_ABOUT.getId())
+            .help(EXTERNAL_HELP.getId())
             .build();
 
     ViewSettings BREADCRUMB = BreadcrumbSettings.builder()

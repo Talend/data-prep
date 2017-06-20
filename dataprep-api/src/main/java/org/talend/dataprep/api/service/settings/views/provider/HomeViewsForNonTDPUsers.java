@@ -34,10 +34,9 @@ public interface HomeViewsForNonTDPUsers {
         )
         .brand(
                 LinkSettings.builder()
-                        .title("Talend Data Preparation")
+                        .title("Data Preparation")
                         .build()
         )
-        .action(MODAL_ABOUT.getId())
         .build();
 
     ViewSettings SIDE_PANEL = SidePanelSettings.builder()

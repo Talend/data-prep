@@ -25,7 +25,8 @@ export default class AppHeaderBarCtrl {
 
 	$onInit() {
 		this.initLogo();
-		this.adaptBrand();
+		this.initBrand();
+		this.initHelp();
 		this.adaptContent();
 	}
 
@@ -87,12 +88,20 @@ export default class AppHeaderBarCtrl {
 		};
 	}
 
-	adaptBrand() {
+	initBrand() {
 		const settingsBrand = this.appSettings.views.appheaderbar.brand;
 		const clickAction = this.appSettings.actions[settingsBrand.onClick];
 		this.brand = {
 			...settingsBrand,
 			onClick: this.settingsActionsService.createDispatcher(clickAction),
+		};
+	}
+
+	initHelp() {
+		const helpAction = this.appSettings.actions[this.appSettings.views.appheaderbar.help];
+		this.help = {
+			...helpAction,
+			onClick: this.settingsActionsService.createDispatcher(helpAction),
 		};
 	}
 
@@ -227,9 +236,6 @@ export default class AppHeaderBarCtrl {
 		this.search = this.appSettings.views.appheaderbar.search ?
 			this.adaptSearch() :
 			null;
-		//this.navItems = this.appSettings.views.appheaderbar.actions ?
-		//	this.adaptActions() :
-		//	[];
 		this.user = this.appSettings.views.appheaderbar.userMenu ?
 			this.adaptUserMenu() :
 			[];

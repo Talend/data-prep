@@ -259,7 +259,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
         assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("dataset:open"));
         assertThat(ahb.getSearch().getOnSelect().get("preparation"), is("menu:playground:preparation"));
-        assertThat(ahb.getActions(), contains("onboarding:preparation", "modal:feedback", "external:help", "modal:about"));
+        assertThat(ahb.getHelp(), is("external:help"));
     }
 
     @Test

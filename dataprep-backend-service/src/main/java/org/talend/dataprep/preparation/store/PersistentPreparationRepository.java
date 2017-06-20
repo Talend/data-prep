@@ -63,13 +63,23 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz));
+        return Stream.concat(delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz));
+    }
+
+    private <T extends Identifiable> Stream<T> getRootElement(Class<T> clazz) {
+        if (PersistentStep.class.isAssignableFrom(clazz)) {
+            return Stream.of((T) beanConversionService.convert(rootStep, clazz));
+        } else if (PreparationActions.class.isAssignableFrom(clazz)) {
+            return Stream.of((T) rootContent);
+        } else {
+            return Stream.empty();
+        }
     }
 
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, String filter) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return delegate.list(persistentClass, filter).map(i -> beanConversionService.convert(i, clazz));
+        return Stream.concat(delegate.list(persistentClass, filter).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz));
     }
 
     @Override

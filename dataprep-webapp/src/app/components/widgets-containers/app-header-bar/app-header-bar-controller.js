@@ -108,7 +108,7 @@ export default class AppHeaderBarCtrl {
 
 		this.help = {
 			id: helpActionSplitDropdown.id,
-			onClick: this.settingsActionsService.createDispatcher(helpActionSplitDropdown.action),
+			onClick: this.settingsActionsService.createDispatcher(this.appSettings.actions[helpActionSplitDropdown.action]),
 			items,
 		};
 	}

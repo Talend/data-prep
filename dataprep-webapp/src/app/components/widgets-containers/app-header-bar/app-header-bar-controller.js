@@ -10,8 +10,6 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-const NAV_ITEM = 'navItem';
-
 export default class AppHeaderBarCtrl {
 	constructor($element, $translate, state, appSettings, SettingsActionsService) {
 		'ngInject';
@@ -98,10 +96,20 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initHelp() {
-		const helpAction = this.appSettings.actions[this.appSettings.views.appheaderbar.help];
+		const helpActionSplitDropdown = this.appSettings.actions[this.appSettings.views.appheaderbar.help];
+		const items = helpActionSplitDropdown
+			.items
+			.map(actionName => this.appSettings.actions[actionName])
+			.map(action => ({
+				id: action.id,
+				label: action.name,
+				onClick: this.settingsActionsService.createDispatcher(action),
+			}));
+
 		this.help = {
-			...helpAction,
-			onClick: this.settingsActionsService.createDispatcher(helpAction),
+			id: helpActionSplitDropdown.id,
+			onClick: this.settingsActionsService.createDispatcher(helpActionSplitDropdown.action),
+			items,
 		};
 	}
 
@@ -238,25 +246,7 @@ export default class AppHeaderBarCtrl {
 			null;
 		this.user = this.appSettings.views.appheaderbar.userMenu ?
 			this.adaptUserMenu() :
-			[];
-	}
-
-	adaptActions() {
-		return this.appSettings
-			.views
-			.appheaderbar
-			.actions
-			.map(actionName => this.appSettings.actions[actionName])
-			.map(action => ({
-				type: NAV_ITEM,
-				item: {
-					id: action.id,
-					name: this.$translate.instant(action.name),
-					icon: action.icon,
-					onClick: this.settingsActionsService.createDispatcher(action),
-					tooltipPlacement: 'bottom',
-				},
-			}));
+			null;
 	}
 
 	adaptUserMenu() {

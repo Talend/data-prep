@@ -39,8 +39,9 @@ public interface HomeViews {
             )
             .logo(
                     LinkSettings.builder()
-                    .onClick(MENU_PREPARATIONS.getId())
-                    .build())
+                            .name("Talend")
+                            .onClick(MENU_PREPARATIONS.getId())
+                            .build())
             .search(
                     SearchSettings.builder()
                             .debounceTimeout(300)
@@ -55,7 +56,7 @@ public interface HomeViews {
                             .placeholder("Search Talend Data Preparation and Documentation")
                             .build()
             )
-            .help(EXTERNAL_HELP.getId())
+            .help(HEADERBAR_HELP.getId())
             .build();
 
     ViewSettings BREADCRUMB = BreadcrumbSettings.builder()

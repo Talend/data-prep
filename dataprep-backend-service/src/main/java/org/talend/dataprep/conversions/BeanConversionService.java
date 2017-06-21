@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BeanConversionService implements ConversionService {
 
-    private final Map<Class<?>, Registration> registrations = new HashMap<>();
+    private final Map<Class<?>, Registration<Object>> registrations = new HashMap<>();
 
     /**
      * The {@link BeanUtils#copyProperties(java.lang.Object, java.lang.Object)} method does <b>NOT</b> check if parametrized type
@@ -76,13 +76,12 @@ public class BeanConversionService implements ConversionService {
         BeanUtils.copyProperties(source, converted, discardedProperties.toArray(new String[discardedProperties.size()]));
     }
 
-    public void register(Registration registration) {
-        final Registration existingRegistration = registrations.get(registration.getModelClass());
-        if (existingRegistration != null) {
-            registrations.put(registration.getModelClass(), existingRegistration.merge(registration));
-        } else {
-            registrations.put(registration.getModelClass(), registration);
-        }
+    public static <T> RegistrationBuilder<T> fromBean(Class<T> source) {
+        return new RegistrationBuilder<>(source);
+    }
+
+    public  void register(Registration<?> registration) {
+        registrations.merge(registration.getModelClass(), (Registration<Object>) registration, Registration::merge);
     }
 
     public boolean has(Class<?> modelClass) {
@@ -125,169 +124,61 @@ public class BeanConversionService implements ConversionService {
     }
 
     @Override
-    public <T> T convert(Object source, Class<T> targetClass) {
+    public <U> U convert(Object source, Class<U> targetClass) {
         if (source == null) {
             return null;
         }
         try {
-            T converted = targetClass.newInstance();
+            U converted = targetClass.newInstance();
             copyBean(source, converted);
 
             // Find registration
-            Registration<T> registration = null;
+
+            List<Registration<Object>> registrationsFound = new ArrayList<>();
+
             Class<?> currentSourceClass = source.getClass();
-            while (registration == null && !Object.class.equals(currentSourceClass)) {
-                registration = registrations.get(currentSourceClass);
-                currentSourceClass = currentSourceClass.getSuperclass();
+
+            for (Map.Entry<Class<?>, Registration<Object>> availableRegistration : registrations.entrySet()) {
+                if (availableRegistration.getKey().isAssignableFrom(currentSourceClass)) {
+                    registrationsFound.add(availableRegistration.getValue());
+                }
             }
 
             // Use registration
-            if (registration != null) {
-                List<BiFunction<Object, Object, Object>> customs = new ArrayList<>();
-                Class<? super T> currentClass = targetClass;
-                while (currentClass != null) {
-                    final BiFunction<Object, Object, Object> custom = registration.getCustom(currentClass);
-                    if (custom != null) {
-                        customs.add(custom);
-                    }
-                    currentClass = currentClass.getSuperclass();
-                }
+            U result = converted;
+            List<BiFunction<? super Object, U, U>> customs = new ArrayList<>();
 
-                T result = converted;
-                for (BiFunction<Object, Object, Object> current : customs) {
-                    result = (T) current.apply(source, converted);
-                }
-                return result;
-            } else {
-                return converted;
+            for (Registration<Object> registrationFound : registrationsFound) {
+                customs.addAll(getRegistrationFunctions(targetClass, registrationFound));
             }
+
+            for (BiFunction<Object, U, U> current : customs) {
+                result = current.apply(source, converted);
+            }
+
+            return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    private <T, U> List<BiFunction<? super T, U, U>> getRegistrationFunctions(Class<U> targetClass,
+                                                                                  Registration<T> registration) {
+        List<BiFunction<? super T, U, U>> customs = new ArrayList<>();
+        Class<U> currentClass = targetClass;
+        while (currentClass != null) {
+            final BiFunction<? super T, U, U> custom = registration.getCustom(currentClass);
+            if (custom != null) {
+                customs.add(custom);
+            }
+            currentClass = (Class<U>) currentClass.getSuperclass();
+        }
+        return customs;
+    }
+
     @Override
     public Object convert(Object o, TypeDescriptor typeDescriptor, TypeDescriptor typeDescriptor1) {
         return convert(o, typeDescriptor1.getObjectType());
-    }
-
-    public interface Registration<T> {
-
-        Class<T> getModelClass();
-
-        BiFunction<Object, Object, Object> getCustom(Class<?> targetClass);
-
-        List<Class<?>> getConvertedClasses();
-
-        /**
-         * Merge another {@link RegistrationImpl registration} (and merge same conversions into a single custom rule).
-         *
-         * @param other The other {@link RegistrationImpl registration} to merge with. Please note {@link RegistrationImpl#modelClass}
-         * <b>MUST</b> be the same (in {@link #equals(Object)} sense).
-         * @return The current registration with all custom merged from other's.
-         */
-        default Registration<T> merge(Registration<T> other) {
-
-            return new Registration<T>() {
-
-                private ArrayList<Class<?>> convertedClasses = new ArrayList<>(Registration.this.getConvertedClasses());
-
-                {
-                    convertedClasses.addAll(other.getConvertedClasses());
-                }
-
-                @Override
-                public Class<T> getModelClass() {
-                    return Registration.this.getModelClass();
-                }
-
-                @Override
-                public BiFunction<Object, Object, Object> getCustom(Class<?> targetClass) {
-                    BiFunction<Object, Object, Object> firstCustom = Registration.this.getCustom(targetClass);
-                    BiFunction<Object, Object, Object> otherCustom = other.getCustom(targetClass);
-                    BiFunction<Object, Object, Object> merge;
-                    if (firstCustom != null && otherCustom != null) {
-                        merge = (o, o2) -> {
-                            final Object initial = firstCustom.apply(o, o2);
-                            return otherCustom.apply(o, initial);
-                        };
-                    } else if (firstCustom != null) {
-                        merge = firstCustom;
-                    } else {
-                        merge = otherCustom;
-                    }
-                    return merge;
-                }
-
-                @Override
-                public List<Class<?>> getConvertedClasses() {
-                    return convertedClasses;
-                }
-            };
-        }
-    }
-
-    private static class RegistrationImpl<T> implements Registration<T> {
-
-        private final Class<T> modelClass;
-
-        private final Map<Class<?>, BiFunction<Object, Object, Object>> customs;
-
-        private List<Class<?>> convertedClasses;
-
-        private RegistrationImpl(Class<T> modelClass, Class<?>[] convertedClasses,
-                                 Map<Class<?>, BiFunction<Object, Object, Object>> customs) {
-            this.modelClass = modelClass;
-            this.convertedClasses = Arrays.asList(convertedClasses);
-            this.customs = customs;
-        }
-
-        @Override
-        public Class<T> getModelClass() {
-            return modelClass;
-        }
-
-        @Override
-        public BiFunction<Object, Object, Object> getCustom(Class<?> targetClass) {
-            return customs.get(targetClass);
-        }
-
-        @Override
-        public List<Class<?>> getConvertedClasses() {
-            return convertedClasses;
-        }
-    }
-
-    public static class RegistrationBuilder<T> {
-
-        private final List<Class<?>> destinations = new ArrayList<>();
-
-        private final Class<T> source;
-
-        private final Map<Class<?>, BiFunction<Object, Object, Object>> customs = new HashMap<>();
-
-        private RegistrationBuilder(Class<T> source) {
-            this.source = source;
-        }
-
-        public static <T> RegistrationBuilder<T> fromBean(Class<T> source) {
-            return new RegistrationBuilder<>(source);
-        }
-
-        public RegistrationBuilder<T> toBeans(Class<?>... destinations) {
-            Collections.addAll(this.destinations, destinations);
-            return this;
-        }
-
-        public <U> RegistrationBuilder<T> using(Class<U> destination, BiFunction<T, U, U> custom) {
-            customs.put(destination, (BiFunction<Object, Object, Object>) custom);
-            return this;
-        }
-
-        public Registration<T> build() {
-            return new RegistrationImpl<>(source, destinations.toArray(new Class<?>[destinations.size()]), customs);
-        }
-
     }
 
 }

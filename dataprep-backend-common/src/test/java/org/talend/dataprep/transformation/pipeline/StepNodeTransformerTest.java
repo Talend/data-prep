@@ -24,7 +24,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
-import org.talend.dataprep.transformation.pipeline.node.*;
+import org.talend.dataprep.transformation.pipeline.node.ActionNode;
+import org.talend.dataprep.transformation.pipeline.node.BasicNode;
+import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.SourceNode;
+import org.talend.dataprep.transformation.pipeline.node.StepNode;
 
 public class StepNodeTransformerTest {
 
@@ -70,25 +74,6 @@ public class StepNodeTransformerTest {
         processed.accept(visitor);
         assertThat(visitor.traversedClasses, hasItems(expectedClasses));
 
-    }
-
-    @Test
-    public void shouldNotCreateStepNodeWhenSurroundedAndNoMetadata() throws Exception {
-        // given
-        Node node = NodeBuilder //
-                .from(new CompileNode(null, null)) //
-                .to(new ActionNode(null, null)) //
-                .to(new BasicNode()) //
-                .build();
-
-        // when
-        final Node processed = StepNodeTransformer.transform(node, asList(ROOT, INVALID_STEP), s -> null);
-
-        // then
-        final Class[] expectedClasses = { SourceNode.class, CompileNode.class, ActionNode.class};
-        final NodeClassVisitor visitor = new NodeClassVisitor();
-        processed.accept(visitor);
-        assertThat(visitor.traversedClasses, hasItems(expectedClasses));
     }
 
     @Test

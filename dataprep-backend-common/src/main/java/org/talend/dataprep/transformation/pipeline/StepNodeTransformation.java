@@ -143,17 +143,17 @@ class StepNodeTransformation extends Visitor {
                         nextStep = steps.next();
                     } else {
                         LOGGER.error("Unable to use root step as first step and no remaining steps.");
+                        nextStep = null;
                     }
                 }
 
-                // Check if Step has actual metadata
-                if (nextStep.getRowMetadata() == null) {
-                    LOGGER.warn("Previous execution for step '{}' saved no metadata.", nextStep);
-                    newState = DEFAULT;
-                } else {
+                if (nextStep != null) {
                     ofNullable(previous).ifPresent(n -> n.setLink(null));
                     newState = new StepState(previous, nextStep);
+                } else {
+                    newState = DEFAULT;
                 }
+
             } else {
                 newState = DEFAULT;
             }

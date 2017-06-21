@@ -1,25 +1,38 @@
 package org.talend.dataprep.command;
 
-import com.netflix.hystrix.HystrixCommand;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.http.HttpResponseContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.netflix.hystrix.HystrixCommand;
 
 public class CommandHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandHelper.class);
 
     private CommandHelper() {
     }
 
     public static StreamingResponseBody toStreaming(final HystrixCommand<InputStream> command) {
         return outputStream -> {
-            IOUtils.copyLarge(command.execute(), outputStream);
-            outputStream.flush();
+            final InputStream commandResult = command.execute();
+            try {
+                IOUtils.copyLarge(commandResult, outputStream);
+                outputStream.flush();
+            } catch (IOException ioe) {
+                try {
+                    commandResult.close();
+                } catch (IOException closingException) {
+                    LOGGER.warn("could not close command result, a http connection may be leaked !", closingException);
+                }
+                LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), ioe);
+            }
         };
     }
 
@@ -30,8 +43,17 @@ public class CommandHelper {
             HttpResponseContext.header(header.getName(), header.getValue());
         }
         return outputStream -> {
-            IOUtils.copyLarge(stream, outputStream);
-            outputStream.flush();
+            try {
+                IOUtils.copyLarge(stream, outputStream);
+                outputStream.flush();
+            } catch (IOException ioe) {
+                try {
+                    stream.close();
+                } catch (IOException closingException) {
+                    LOGGER.warn("could not close command result, a http connection may be leaked !", closingException);
+                }
+                LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), ioe);
+            }
         };
     }
 }

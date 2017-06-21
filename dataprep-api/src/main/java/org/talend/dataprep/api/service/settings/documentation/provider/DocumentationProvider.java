@@ -13,10 +13,11 @@
 
 package org.talend.dataprep.api.service.settings.documentation.provider;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.documentation.api.DocumentationSettings;
+import org.talend.dataprep.help.Help;
 
 import java.util.List;
 
@@ -28,35 +29,27 @@ import static java.util.Arrays.asList;
 @Component
 public class DocumentationProvider implements AppSettingsProvider<DocumentationSettings> {
 
-    @Value("${documentation.url:https://www.talendforge.org/find/api/THC.php}")
-    private String url;
-
-    @Value("${documentation.version:2.1}")
-    private String version;
-
-    @Value("${documentation.language:en}")
-    private String language;
+    @Autowired
+    private Help help;
 
     @Override
     public List<DocumentationSettings> getSettings() {
 
-        // @formatter:off
         return asList(
                 DocumentationSettings.builder()
-                        .id("url")
-                        .value(url)
+                        .id("searchUrl")
+                        .value(help.getSearchUrl())
                         .build(),
 
                 DocumentationSettings.builder()
-                        .id("version")
-                        .value(version)
+                        .id("fuzzyUrl")
+                        .value(help.getFuzzyUrl())
                         .build(),
 
                 DocumentationSettings.builder()
-                        .id("language")
-                        .value(language)
+                        .id("exactUrl")
+                        .value(help.getExactUrl())
                         .build()
         );
-        // @formatter:on
     }
 }

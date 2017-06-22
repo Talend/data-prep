@@ -267,7 +267,6 @@ export default class AppHeaderBarCtrl {
 				.map(actionName => this.appSettings.actions[actionName])
 				.map(action => ({
 					id: action.id,
-					icon: action.icon,
 					label: action.name,
 					onClick: this.settingsActionsService.createDispatcher(action),
 				})),

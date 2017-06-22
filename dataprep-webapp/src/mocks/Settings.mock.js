@@ -15,11 +15,11 @@ const settingsMock = {
 	views: {
 		appheaderbar: {
 			logo: {
-				title: 'Talend',
+				name: 'Talend',
 				onClick: 'menu:home',
 			},
 			brand: {
-				title: 'Data Preparation',
+				name: 'Data Preparation',
 				onClick: 'menu:home',
 			},
 			search: {
@@ -490,28 +490,28 @@ const settingsMock = {
 				method: 'go',
 			},
 		},
-		"headerbar:help":{
-			"displayMode":"splitDropdown",
-			"id":"headerbar:help",
-			"name":"Help",
-			"icon":"talend-question-circle",
-			"type":"@@external/HELP",
-			"items":[
-				"external:help",
-				"onboarding:preparation",
-				"modal:about"
+		'headerbar:help': {
+			displayMode: 'splitDropdown',
+			id: 'headerbar:help',
+			name: 'Help',
+			icon: 'talend-question-circle',
+			type: '@@external/HELP',
+			items: [
+				'modal:feedback',
+				'onboarding:preparation',
+				'modal:about',
 			],
-			"action":"external:help"
+			action: 'external:help',
 		},
-		"modal:about":{
-			"displayMode":"ActionSettings",
-			"id":"modal:about",
-			"name":"About Data Preparation",
-			"icon":"talend-info-circle",
-			"type":"@@modal/SHOW",
-			"payload":{
-				"method":"toggleAbout"
-			}
+		'modal:about': {
+			displayMode: 'ActionSettings',
+			id: 'modal:about',
+			name: 'About Data Preparation',
+			icon: 'talend-info-circle',
+			type: '@@modal/SHOW',
+			payload: {
+				method: 'toggleAbout',
+			},
 		},
 	},
 	uris: {

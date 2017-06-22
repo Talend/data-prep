@@ -36,7 +36,7 @@ export default function LookupCtrl($timeout, state, StateService,
 	vm.addLookupDatasetModal = false;
 	vm.HelpService = HelpService;
 
-		/**
+	/**
 	 * @ngdoc method
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
 	 * @name load

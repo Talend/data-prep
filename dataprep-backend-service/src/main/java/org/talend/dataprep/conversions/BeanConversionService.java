@@ -132,36 +132,36 @@ public class BeanConversionService implements ConversionService {
             U converted = targetClass.newInstance();
             copyBean(source, converted);
 
-            // Find registration
+            List<Registration<Object>> registrationsFound = getRegistrationsForSourceClass(source.getClass());
 
-            List<Registration<Object>> registrationsFound = new ArrayList<>();
-
-            Class<?> currentSourceClass = source.getClass();
-
-            for (Map.Entry<Class<?>, Registration<Object>> availableRegistration : registrations.entrySet()) {
-                if (availableRegistration.getKey().isAssignableFrom(currentSourceClass)) {
-                    registrationsFound.add(availableRegistration.getValue());
-                }
-            }
-
-            // Use registration
-            U result = converted;
             List<BiFunction<? super Object, U, U>> customs = new ArrayList<>();
-
             for (Registration<Object> registrationFound : registrationsFound) {
                 customs.addAll(getRegistrationFunctions(targetClass, registrationFound));
             }
 
+            U result = converted;
             for (BiFunction<Object, U, U> current : customs) {
                 result = current.apply(source, converted);
             }
 
             return result;
-        } catch (Exception e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /** Find all registrations that can convert this type of source. */
+    private List<Registration<Object>> getRegistrationsForSourceClass(Class<?> currentSourceClass) {
+        List<Registration<Object>> registrationsFound = new ArrayList<>();
+        for (Map.Entry<Class<?>, Registration<Object>> availableRegistration : registrations.entrySet()) {
+            if (availableRegistration.getKey().isAssignableFrom(currentSourceClass)) {
+                registrationsFound.add(availableRegistration.getValue());
+            }
+        }
+        return registrationsFound;
+    }
+
+    /** Get all available transformations in this registration. */
     private <T, U> List<BiFunction<? super T, U, U>> getRegistrationFunctions(Class<U> targetClass,
                                                                                   Registration<T> registration) {
         List<BiFunction<? super T, U, U>> customs = new ArrayList<>();

@@ -37,7 +37,7 @@ export default class AppHeaderBarCtrl {
 
 	$onChanges(changes) {
 		if (this.search) {
-			const searchConfiguration =  {...this.search};
+			const searchConfiguration = { ...this.search };
 			if (changes.searching) {
 				const searching = changes.searching.currentValue;
 				searchConfiguration.searching = searching;
@@ -254,7 +254,7 @@ export default class AppHeaderBarCtrl {
 			.views
 			.appheaderbar
 			.userMenu;
-		const { id, name, icon, staticActions } = this.appSettings.actions[userMenu];
+		const { id, name, staticActions } = this.appSettings.actions[userMenu];
 
 		return {
 			id,

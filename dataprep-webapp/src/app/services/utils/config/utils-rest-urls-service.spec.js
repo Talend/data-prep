@@ -22,6 +22,7 @@ describe('REST urls service', () => {
 
 		// then
 		expect(RestURLs.datasetUrl).toBe('/api/datasets');
+		expect(RestURLs.uploadDatasetUrl).toBe('/upload/api/datasets');
 		expect(RestURLs.transformUrl).toBe('/api/transform');
 		expect(RestURLs.preparationUrl).toBe('/api/preparations');
 		expect(RestURLs.previewUrl).toBe('/api/preparations/preview');
@@ -42,6 +43,7 @@ describe('REST urls service', () => {
 
 		// then
 		expect(RestURLs.datasetUrl).toBe('http://10.10.10.10:8888/api/datasets');
+		expect(RestURLs.uploadDatasetUrl).toBe('http://10.10.10.10:8888/upload/api/datasets');
 		expect(RestURLs.transformUrl).toBe('http://10.10.10.10:8888/api/transform');
 		expect(RestURLs.preparationUrl).toBe('http://10.10.10.10:8888/api/preparations');
 		expect(RestURLs.previewUrl).toBe('http://10.10.10.10:8888/api/preparations/preview');

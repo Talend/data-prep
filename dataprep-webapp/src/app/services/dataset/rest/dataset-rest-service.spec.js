@@ -214,7 +214,7 @@ describe('Dataset Rest Service', () => {
 			const dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false };
 
 			$httpBackend
-				.expectPOST(RestURLs.datasetUrl + '?name=my%20dataset')
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=my%20dataset')
 				.respond(200, 'e85afAa78556d5425bc2');
 
 			//when
@@ -244,7 +244,7 @@ describe('Dataset Rest Service', () => {
 			};
 
 			$httpBackend
-				.expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset', file, headers)
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=greatremotedataset', file, headers)
 
 				.respond(200, 'e85afAa78556d5425bc2');
 
@@ -265,7 +265,7 @@ describe('Dataset Rest Service', () => {
 			var dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false };
 
 			$httpBackend
-				.expectPOST(RestURLs.datasetUrl + '?name=my%20dataset')
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=my%20dataset')
 
 				.respond(200, 'e85afAa78556d5425bc2');
 
@@ -296,7 +296,7 @@ describe('Dataset Rest Service', () => {
 			};
 
 			$httpBackend
-				.expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset', importParameters, headers)
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=greatremotedataset', importParameters, headers)
 
 				.respond(200, 'e85afAa78556d5425bc2');
 
@@ -323,7 +323,7 @@ describe('Dataset Rest Service', () => {
 			};
 
 			$httpBackend
-				.expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?name=my%20dataset')
+				.expectPUT(RestURLs.uploadDatasetUrl + '/e85afAa78556d5425bc2?name=my%20dataset')
 				.respond(200);
 
 			//when

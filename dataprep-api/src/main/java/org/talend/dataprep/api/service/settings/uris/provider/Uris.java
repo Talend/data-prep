@@ -34,6 +34,12 @@ public interface Uris {
                     .uri("/api/datasets")
                     .build();
 
+    UriSettings API_UPLOAD_DATASETS_URI =
+            UriSettings.builder()
+                    .id("apiUploadDatasets")
+                    .uri("/upload/api/datasets")
+                    .build();
+
     UriSettings API_EXPORT_URI =
             UriSettings.builder()
                     .id("apiExport")

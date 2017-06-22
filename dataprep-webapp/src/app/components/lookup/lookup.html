@@ -39,7 +39,7 @@
                 <div class="lookup-step" translate-once="LOOKUP_STEPS_2"></div>
                 <div class="lookup-step" translate-once="LOOKUP_STEPS_3"></div>
                 <a target='_blank'
-                   href='https://help.talend.com/access/sources/TDP_21/map?pageid=use_lookup&EnrichPlatform=Talend+Data+Preparation&afs:lang=en&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func'
+                   href='{{::lookupCtrl.HelpService.exactUrl}}func&pageid=use_lookup'
                    translate-once="ACTION_HELP"></a>
             </div>
 
@@ -52,7 +52,7 @@
                     ng-mouseenter="lookupCtrl.hoverSubmitBtn()"
                     ng-mouseleave="lookupCtrl.cancelEarlyPreview()"
                     translate-once="CONFIRM_LOOKUP"
-                    >
+            >
             </button>
         </div>
     </div>

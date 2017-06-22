@@ -57,9 +57,10 @@ const PlaygroundHeader = {
 		nameEditionMode: '<',
 		confirmNameEdition: '=',
 	},
-	controller(state) {
+	controller(state, HelpService) {
 		'ngInject';
 		this.state = state;
+		this.HelpService = HelpService;
 	},
 };
 

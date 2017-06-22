@@ -36,16 +36,19 @@ const template =
  */
 export default class OnboardingService {
 
-	constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour, StorageService) {
+	constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour, HelpService, StorageService) {
 		'ngInject';
 
 		this.$timeout = $timeout;
 		this.$state = $state;
 		this.$window = $window;
+
 		this.state = state;
 		this.recipeTour = recipeTour;
 		this.playgroundTour = playgroundTour;
 		this.preparationTour = preparationTour;
+
+		this.HelpService = HelpService;
 		this.StorageService = StorageService;
 	}
 
@@ -61,7 +64,7 @@ export default class OnboardingService {
 		return _.map(configs, config => ({
 			element: config.element,
 			position: config.position,
-			intro: _.template(template)(config),
+			intro: _.template(template)(config).replace(new RegExp('%%HELP_FUZZY_URL%%', 'g'), this.HelpService.fuzzyUrl),
 		}));
 	}
 

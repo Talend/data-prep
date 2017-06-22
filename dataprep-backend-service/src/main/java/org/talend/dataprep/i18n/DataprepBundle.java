@@ -17,7 +17,7 @@ public class DataprepBundle extends SpringBundle {
     private static final DataprepBundle INSTANCE = new DataprepBundle();
 
     private DataprepBundle() {
-        super("org.talend.dataprep.messages", "org.talend.dataprep.error_messages");
+        super("org.talend.dataprep.messages", "org.talend.dataprep.error_messages", "org.talend.dataprep.i18n.actions_messages");
     }
 
     /**

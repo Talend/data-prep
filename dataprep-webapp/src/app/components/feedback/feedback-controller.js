@@ -11,12 +11,13 @@
 
  ============================================================================*/
 
-export default function FeedbackCtrl(state, $translate, FeedbackRestService, MessageService, StateService, StorageService) {
+export default function FeedbackCtrl(state, $translate, HelpService, FeedbackRestService, MessageService, StateService, StorageService) {
 	'ngInject';
 
 	const vm = this;
 	vm.isSendingFeedback = false;
 	vm.state = state;
+	vm.HelpService = HelpService;
 
 	$translate(
 		[
@@ -27,18 +28,18 @@ export default function FeedbackCtrl(state, $translate, FeedbackRestService, Mes
 			'FEEDBACK_SEVERITY_MINOR',
 			'FEEDBACK_SEVERITY_TRIVIAL',
 		])
-        .then((translations) => {
-	vm.feedbackTypes = [
-                { name: translations.FEEDBACK_TYPE_BUG, value: 'BUG' },
-                { name: translations.FEEDBACK_TYPE_IMPROVEMENT, value: 'IMPROVEMENT' },
-	];
-	vm.feedbackSeverities = [
-                { name: translations.FEEDBACK_SEVERITY_CRITICAL, value: 'CRITICAL' },
-                { name: translations.FEEDBACK_SEVERITY_MAJOR, value: 'MAJOR' },
-                { name: translations.FEEDBACK_SEVERITY_MINOR, value: 'MINOR' },
-                { name: translations.FEEDBACK_SEVERITY_TRIVIAL, value: 'TRIVIAL' },
-	];
-});
+		.then((translations) => {
+			vm.feedbackTypes = [
+				{ name: translations.FEEDBACK_TYPE_BUG, value: 'BUG' },
+				{ name: translations.FEEDBACK_TYPE_IMPROVEMENT, value: 'IMPROVEMENT' },
+			];
+			vm.feedbackSeverities = [
+				{ name: translations.FEEDBACK_SEVERITY_CRITICAL, value: 'CRITICAL' },
+				{ name: translations.FEEDBACK_SEVERITY_MAJOR, value: 'MAJOR' },
+				{ name: translations.FEEDBACK_SEVERITY_MINOR, value: 'MINOR' },
+				{ name: translations.FEEDBACK_SEVERITY_TRIVIAL, value: 'TRIVIAL' },
+			];
+		});
 
 	resetForm();
 
@@ -56,14 +57,14 @@ export default function FeedbackCtrl(state, $translate, FeedbackRestService, Mes
 		vm.feedbackForm.$commitViewValue();
 		vm.isSendingFeedback = true;
 		FeedbackRestService.sendFeedback(vm.feedback)
-            .then(() => {
-	StorageService.saveFeedbackUserMail(vm.feedback.mail);
-	resetForm();
-	StateService.hideFeedback();
-	MessageService.success('FEEDBACK_SENT_TITLE', 'FEEDBACK_SENT_CONTENT');
-})
-            .finally(() => {
-	vm.isSendingFeedback = false;
-});
+			.then(() => {
+				StorageService.saveFeedbackUserMail(vm.feedback.mail);
+				resetForm();
+				StateService.hideFeedback();
+				MessageService.success('FEEDBACK_SENT_TITLE', 'FEEDBACK_SENT_CONTENT');
+			})
+			.finally(() => {
+				vm.isSendingFeedback = false;
+			});
 	};
 }

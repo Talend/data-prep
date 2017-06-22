@@ -577,10 +577,12 @@ const settingsMock = {
 		apiUpgradeCheck: '/api/upgrade/check',
 		apiVersion: '/api/version',
 	},
-	documentation: {
-		url: 'documentationUrl',
-		version: 'documentationVersion',
-		language: 'documentationLanguage',
+	help: {
+		versionFacet: 'HELP_VERSION_FACET',
+		languageFacet: 'HELP_LANGUAGE_FACET',
+		searchUrl: 'HELP_SEARCH_URL',
+		fuzzyUrl: 'HELP_FUZZY_URL',
+		exactUrl: 'HELP_EXACT_URL',
 	},
 };
 

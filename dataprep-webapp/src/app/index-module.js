@@ -93,9 +93,16 @@ window.fetchConfiguration = function fetchConfiguration() {
 					SettingsService.setSettings(appSettings);
 				})
 				// Configure server api urls and refresh supported encoding
-				.run((ConfigService, DatasetService) => {
+				.run((DatasetService, HelpService, RestURLs) => {
 					'ngInject';
-					ConfigService.setConfig(config, appSettings);
+
+					const { help } = appSettings;
+					if (help) {
+						HelpService.register(help);
+					}
+
+					RestURLs.register(config.serverUrl, appSettings.uris);
+
 					// dataset encodings
 					DatasetService.refreshSupportedEncodings();
 				})

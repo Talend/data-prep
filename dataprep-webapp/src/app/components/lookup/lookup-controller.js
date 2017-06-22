@@ -24,7 +24,7 @@
  * @requires data-prep.services.utils.service:StorageService
  */
 export default function LookupCtrl($timeout, state, StateService,
-                                   LookupService, PlaygroundService,
+                                   HelpService, LookupService, PlaygroundService,
                                    EarlyPreviewService, PreviewService, StorageService) {
 	'ngInject';
 
@@ -34,8 +34,9 @@ export default function LookupCtrl($timeout, state, StateService,
 	vm.fetchLookupDatasetContent = LookupService.fetchLookupDatasetContent;
 	vm.loadFromAction = LookupService.loadFromAction;
 	vm.addLookupDatasetModal = false;
+	vm.HelpService = HelpService;
 
-	/**
+		/**
 	 * @ngdoc method
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
 	 * @name load

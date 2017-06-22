@@ -6,14 +6,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class Help {
 
-    @Value("${help.documentation.search.url:https://www.talendforge.org/find/api/THC.php}")
+    @Value("${help.facets.version:}")
+    private String versionFacet;
+
+    @Value("${help.facets.language:}")
+    private String languageFacet;
+
+    @Value("${help.search.url:https://www.talendforge.org/find/api/THC.php}")
     private String searchUrl;
 
-    @Value("${help.documentation.fuzzy.url:}")
+    @Value("${help.fuzzy.url:}")
     private String fuzzyUrl;
 
-    @Value("${help.documentation.exact.url:}")
+    @Value("${help.exact.url:}")
     private String exactUrl;
+
+    public String getVersionFacet() {
+        return versionFacet;
+    }
+
+    public String getLanguageFacet() {
+        return languageFacet;
+    }
 
     public String getSearchUrl() {
         return searchUrl;

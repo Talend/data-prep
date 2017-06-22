@@ -21,9 +21,8 @@ import TDPMoment from './moment/moment-filter';
 import RestURLs from './config/utils-rest-urls-service';
 import ConverterService from './converter/converter-service';
 import DateService from './date/date-service';
-import DocumentationService from './config/utils-documentation-service';
+import HelpService from './config/utils-help-service';
 import MessageService from './message/message-service';
-import ConfigService from './config/utils-config-service';
 import StepUtilsService from './step/step-utils-service';
 import StorageService from './storage/storage-service';
 import TextFormatService from './text-format/text-format-service';
@@ -46,10 +45,9 @@ angular.module(MODULE_NAME,
 	.value('version', version)
 	.filter('TDPMoment', TDPMoment)
 	.service('RestURLs', RestURLs)
-	.service('ConfigService', ConfigService)
 	.service('ConverterService', ConverterService)
 	.service('DateService', DateService)
-	.service('DocumentationService', DocumentationService)
+	.service('HelpService', HelpService)
 	.service('MessageService', MessageService)
 	.service('StepUtilsService', StepUtilsService)
 	.service('StorageService', StorageService)

@@ -4,8 +4,5 @@
   "serverKeepAliveUrl": "",
   "enableDebug": false,
   "version": "2.2.0-SNAPSHOT",
-  "copyRights": "© 2017 Talend. All Rights Reserved",
-  "documentationSearchURL" : "https://www.talendforge.org/find/api/THC.php",
-  "documentationSearchVersion": "2.1",
-  "documentationSearchLanguage": "en"
+  "copyRights": "© 2017 Talend. All Rights Reserved"
 }

@@ -14,7 +14,7 @@ import docSearchResults from '../../../../../mocks/Documentation.mock';
 
 import settings from '../../../../../mocks/Settings.mock';
 
-const { url } = settings.documentation;
+const { help } = settings;
 
 describe('Search Documentation Rest Service', () => {
 	let $httpBackend;
@@ -25,17 +25,17 @@ describe('Search Documentation Rest Service', () => {
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 
-	beforeEach(inject((DocumentationService) => {
-		DocumentationService.setUrl(url);
+	beforeEach(inject((HelpService) => {
+		HelpService.register(help);
 	}));
 
 	it('should call external documentation rest service ',
-		inject(($rootScope, SearchDocumentationRestService, DocumentationService) => {
+		inject(($rootScope, SearchDocumentationRestService, HelpService) => {
 		// given
 		const keyword = 'chart';
 		let result = null;
 		$httpBackend
-			.expectPOST(DocumentationService.url)
+			.expectPOST(HelpService.searchUrl)
 			.respond(200, docSearchResults);
 
 		// when

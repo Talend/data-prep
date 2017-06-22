@@ -16,7 +16,7 @@ package org.talend.dataprep.api.service.settings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-import org.talend.dataprep.api.service.settings.documentation.api.DocumentationSettings;
+import org.talend.dataprep.api.service.settings.help.api.HelpSettings;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
@@ -51,10 +51,10 @@ public class AppSettingsService {
     private AppSettingsConfigurer<UriSettings>[] urisConfigurers;
 
     @Autowired
-    private AppSettingsProvider<DocumentationSettings>[] documentationProviders;
+    private AppSettingsProvider<HelpSettings>[] helpProviders;
 
     @Autowired(required = false)
-    private AppSettingsConfigurer<DocumentationSettings>[] documentationConfigurers;
+    private AppSettingsConfigurer<HelpSettings>[] helpConfigurers;
 
     public AppSettingsConfigurer<ActionSettings>[] getActionsConfigurers() {
         return actionsConfigurers;
@@ -84,8 +84,8 @@ public class AppSettingsService {
                 .forEach(uri -> appSettings.getUris().put(uri.getId(), uri.getUri()));
 
         // populate appSettings documentation (key: documentationProperty, value: documentationValue)
-        getSettingsStream(documentationProviders, documentationConfigurers) //
-                .forEach(documentation -> appSettings.getDocumentation().put(documentation.getId(), documentation.getValue()));
+        getSettingsStream(helpProviders, helpConfigurers) //
+                .forEach(help -> appSettings.getHelp().put(help.getId(), help.getValue()));
 
         return appSettings;
     }

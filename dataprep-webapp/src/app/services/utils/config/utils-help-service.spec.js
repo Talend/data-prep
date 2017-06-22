@@ -13,35 +13,21 @@
 
 import settings from '../../../../mocks/Settings.mock';
 
-const { url, version, language } = settings.documentation;
+const { help } = settings;
 
 describe('Documentation search service', () => {
 
 	beforeEach(angular.mock.module('data-prep.services.utils'));
 
-	it('should set url', inject((DocumentationService) => {
+	it('should register', inject((HelpService) => {
 		// when
-		DocumentationService.setUrl(url);
+		HelpService.register(help);
 
 		//then
-		expect(DocumentationService.url).toBe(url);
-	}));
-
-
-	it('should set version', inject((DocumentationService) => {
-		// when
-		DocumentationService.setVersion(version);
-
-		//then
-		expect(DocumentationService.version).toBe(version);
-	}));
-
-
-	it('should set language', inject((DocumentationService) => {
-		// when
-		DocumentationService.setLanguage(language);
-
-		//then
-		expect(DocumentationService.language).toBe(language);
+		expect(HelpService.versionFacet).toBe(help.versionFacet);
+		expect(HelpService.languageFacet).toBe(help.languageFacet);
+		expect(HelpService.searchUrl).toBe(help.searchUrl);
+		expect(HelpService.fuzzyUrl).toBe(help.fuzzyUrl);
+		expect(HelpService.exactUrl).toBe(help.exactUrl);
 	}));
 });

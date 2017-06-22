@@ -25,7 +25,8 @@ export default class AppHeaderBarCtrl {
 		this.initLogo();
 		this.initBrand();
 		this.initHelp();
-		this.adaptContent();
+		this.initSearch();
+		this.initUserMenu();
 	}
 
 	$postLink() {
@@ -111,6 +112,18 @@ export default class AppHeaderBarCtrl {
 			onClick: this.settingsActionsService.createDispatcher(this.appSettings.actions[helpActionSplitDropdown.action]),
 			items,
 		};
+	}
+
+	initSearch() {
+		this.search = this.appSettings.views.appheaderbar.search ?
+			this.adaptSearch() :
+			null;
+	}
+
+	initUserMenu() {
+		this.user = this.appSettings.views.appheaderbar.userMenu ?
+			this.adaptUserMenu() :
+			null;
 	}
 
 	adaptSearch() {
@@ -238,15 +251,6 @@ export default class AppHeaderBarCtrl {
 					}),
 				};
 			});
-	}
-
-	adaptContent() {
-		this.search = this.appSettings.views.appheaderbar.search ?
-			this.adaptSearch() :
-			null;
-		this.user = this.appSettings.views.appheaderbar.userMenu ?
-			this.adaptUserMenu() :
-			null;
 	}
 
 	adaptUserMenu() {

@@ -383,6 +383,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
 
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Error received {}", content);
+                }
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
                 TDPException cause = conversionService.convert(exceptionDto, TDPException.class);
                 ErrorCode code = cause.getCode();

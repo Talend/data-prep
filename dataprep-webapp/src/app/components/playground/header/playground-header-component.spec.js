@@ -11,6 +11,10 @@
 
  ============================================================================*/
 
+import settings from '../../../../mocks/Settings.mock';
+
+const { help } = settings;
+
 describe('Playground header component', () => {
 	'use strict';
 
@@ -19,6 +23,10 @@ describe('Playground header component', () => {
 	let element;
 
 	beforeEach(angular.mock.module('data-prep.playground'));
+
+	beforeEach(inject((HelpService) => {
+		HelpService.register(help);
+	}));
 
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);

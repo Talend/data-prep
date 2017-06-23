@@ -62,7 +62,7 @@ public interface WindowActions {
             .id("headerbar:help")
             .name("Help")
             .icon("talend-question-circle")
-            .type("@@external/HELP")
+            .type("@@headerbar/HELP")
             .action("external:help")
             .build();
 

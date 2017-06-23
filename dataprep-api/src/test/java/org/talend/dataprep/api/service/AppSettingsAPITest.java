@@ -237,6 +237,13 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(sidepanelToggle.getIcon(), is("talend-arrow-left"));
         assertThat(sidepanelToggle.getType(), is("@@sidepanel/TOGGLE"));
         assertThat(sidepanelToggle.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleHomeSidepanel"));
+
+        final ActionSplitDropdownSettings headerHelp = (ActionSplitDropdownSettings) settings.getActions().get("headerbar:help");
+        assertThat(headerHelp.getName(), is("Help"));
+        assertThat(headerHelp.getIcon(), is("talend-question-circle"));
+        assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
+        assertThat(headerHelp.getAction(), is("external:help"));
+        assertThat(headerHelp.getItems(), contains("external:help", "onboarding:preparation", "modal:about", "modal:feedback"));
     }
 
     @Test

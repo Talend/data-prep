@@ -14,12 +14,13 @@
 export const PLACEHOLDER_DELIMITER = '%%';
 
 const delimiterMatcher = new RegExp(PLACEHOLDER_DELIMITER, 'g');
+
 const placeholderMatcher = new RegExp(`${PLACEHOLDER_DELIMITER}\\w+${PLACEHOLDER_DELIMITER}`, 'g');
 
 /**
  * @ngdoc service
  * @name data-prep.services.utils.service:HelpService
- * @description
+ * @description Help configuration from settings
  */
 export default function HelpService() {
 	/**
@@ -27,7 +28,7 @@ export default function HelpService() {
 	 * @name register
 	 * @propertyOf data-prep.services.utils.service:HelpService
 	 * @description Register help configuration from app settings
-	 * @param {Object} helpSettings All documentation settings to be consumed
+	 * @param {Object} helpSettings All help settings to be consumed
 	 */
 	this.register = function register(helpSettings) {
 		this.languageFacet = helpSettings.languageFacet;
@@ -39,7 +40,7 @@ export default function HelpService() {
 
 	/**
 	 * Identify placeholders in
-	 * @param text
+	 * @param text content with placeholders or not
 	 */
 	this.hasPlaceholders = function (text) {
 		return text.includes(PLACEHOLDER_DELIMITER);

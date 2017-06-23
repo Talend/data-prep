@@ -17,7 +17,27 @@ class SearchDocumentationRestService {
 		'ngInject';
 
 		this.$http = $http;
-		this.HelpService = HelpService;
+
+		const { searchUrl, versionFacet, languageFacet } = HelpService;
+		this.url = searchUrl;
+		this.parameters = {
+			contentLocale: languageFacet,
+			filters: [
+				{
+					key: 'version',
+					values: [versionFacet],
+				},
+				{
+					key: 'EnrichPlatform',
+					values: ['Talend Data Preparation'],
+				},
+			],
+			paging: {
+				page: 1,
+				perPage: 5,
+			},
+
+		};
 	}
 
 	/**
@@ -27,25 +47,10 @@ class SearchDocumentationRestService {
 	 * @description search documentation with keyword
 	 */
 	search(keyword) {
-		const { searchUrl, versionFacet, languageFacet } = this.HelpService;
 		return this.$http({
-			url: searchUrl,
+			url: this.url,
 			data: {
-				contentLocale: languageFacet,
-				filters: [
-					{
-						key: 'version',
-						values: [versionFacet],
-					},
-					{
-						key: 'EnrichPlatform',
-						values: ['Talend Data Preparation'],
-					},
-				],
-				paging: {
-					page: 1,
-					perPage: 5,
-				},
+				...this.parameters,
 				query: keyword,
 			},
 			method: 'POST',

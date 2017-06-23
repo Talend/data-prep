@@ -11,19 +11,12 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
 import { introJs } from 'intro.js';
 import {
 	HOME_403_ROUTE,
 	HOME_DATASETS_ROUTE,
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
-/**
- * The step template with title and content
- */
-const template =
-	'<div class="introjs-tooltiptitle"><%= title %></div>' +
-	'<div class="introjs-tooltipcontent"><%= content %></div>';
 
 /**
  * @ngdoc service
@@ -61,11 +54,18 @@ export default class OnboardingService {
 	 * @returns {Array} The Intro.js steps
 	 */
 	createIntroSteps(configs) {
-		return _.map(configs, config => ({
-			element: config.element,
-			position: config.position,
-			intro: _.template(template)(config).replace(new RegExp('%%HELP_FUZZY_URL%%', 'g'), this.HelpService.fuzzyUrl),
-		}));
+		return configs.map((config) => {
+			const step = {
+				element: config.element,
+				position: config.position,
+				intro: `<div class="introjs-tooltiptitle">${config.title}</div><div class="introjs-tooltipcontent">${config.content}</div>`,
+			};
+			const { intro } = step;
+			if (this.HelpService.hasPlaceholders(intro)) {
+				step.intro = this.HelpService.replacePlaceholders(intro);
+			}
+			return step;
+		});
 	}
 
 	/**

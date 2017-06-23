@@ -11,6 +11,11 @@
 
  ============================================================================*/
 
+export const PLACEHOLDER_DELIMITER = '%%';
+
+const delimiterMatcher = new RegExp(PLACEHOLDER_DELIMITER, 'g');
+const placeholderMatcher = new RegExp(`${PLACEHOLDER_DELIMITER}\\w+${PLACEHOLDER_DELIMITER}`, 'g');
+
 /**
  * @ngdoc service
  * @name data-prep.services.utils.service:HelpService
@@ -30,5 +35,24 @@ export default function HelpService() {
 		this.searchUrl = helpSettings.searchUrl;
 		this.exactUrl = helpSettings.exactUrl;
 		this.fuzzyUrl = helpSettings.fuzzyUrl;
+	};
+
+	/**
+	 * Identify placeholders in
+	 * @param text
+	 */
+	this.hasPlaceholders = function (text) {
+		return text.includes(PLACEHOLDER_DELIMITER);
+	};
+
+	/**
+	 * Replace some placeholders in order to use registered values
+	 * @param text content with placeholders
+	 */
+	this.replacePlaceholders = function (text) {
+		return text.replace(placeholderMatcher, (placeholder) => {
+			const property = placeholder.replace(delimiterMatcher, '');
+			return this[property] || property;
+		});
 	};
 }

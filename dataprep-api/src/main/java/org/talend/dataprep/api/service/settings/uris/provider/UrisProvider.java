@@ -34,6 +34,7 @@ public class UrisProvider implements AppSettingsProvider<UriSettings> {
         return asList(
                 Uris.API_AGGREGATE_URI,
                 Uris.API_DATASETS_URI,
+                Uris.API_UPLOAD_DATASETS_URI,
                 Uris.API_EXPORT_URI,
                 Uris.API_FOLDERS_URI,
                 Uris.API_MAIL_URI,

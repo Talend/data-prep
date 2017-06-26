@@ -35,7 +35,7 @@ public class UrisProviderTest extends ApiServiceTestBase {
         List<UriSettings> listUriSettings = urisProvider.getSettings();
 
         // then
-        assertThat(listUriSettings.size(), is(14));
+        assertThat(listUriSettings.size(), is(15));
     }
 
 }

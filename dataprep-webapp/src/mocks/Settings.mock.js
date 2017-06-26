@@ -492,6 +492,7 @@ const settingsMock = {
 		api: '/api',
 		apiAggregate: '/api/aggregate',
 		apiDatasets: '/api/datasets',
+		apiUploadDatasets: '/upload/api/datasets',
 		apiExport: '/api/export',
 		apiFolders: '/api/folders',
 		apiMail: '/api/mail',

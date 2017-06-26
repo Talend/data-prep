@@ -96,8 +96,14 @@ export default class TypeTransformMenuCtrl {
 	 * @description Refreshes current domain and simplified domain variables
 	 */
 	_refreshCurrentDomain() {
-		this.currentDomain = this.column.domain ? this.column.domain : this.column.type.toUpperCase();
-		this.currentSimplifiedDomain = this.column.domain ? this.column.domain : this.ConverterService.simplifyType(this.column.type);
+		if (this.column.domain && this.column.domainLabel) {
+			this.currentDomain = this.column.domainLabel;
+			this.currentSimplifiedDomain = this.column.domainLabel;
+		}
+		else {
+			this.currentDomain = this.column.type.toUpperCase();
+			this.currentSimplifiedDomain = this.ConverterService.simplifyType(this.column.type);
+		}
 	}
 
 	/**

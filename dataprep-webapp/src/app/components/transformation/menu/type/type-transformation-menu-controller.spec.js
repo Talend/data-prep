@@ -88,14 +88,14 @@ describe('Type transform menu controller', () => {
 			ctrl.$onChanges({ column: nextColumn });
 
 			// then
-			expect(ctrl.currentDomain).toBe('airport');
-			expect(ctrl.currentSimplifiedDomain).toBe('airport');
+			expect(ctrl.currentDomain).toBe('AIRPORT');
+			expect(ctrl.currentSimplifiedDomain).toBe('AIRPORT');
 		});
 
 		it('should refresh current domain from column domain', () => {
 			// given
 			const ctrl = createController();
-			
+
 			expect(ctrl.currentDomain).toBeFalsy();
 			expect(ctrl.currentSimplifiedDomain).toBeFalsy();
 

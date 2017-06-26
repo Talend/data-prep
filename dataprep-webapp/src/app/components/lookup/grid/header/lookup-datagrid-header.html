@@ -19,8 +19,8 @@
             <div class="grid-header-title" title="{{ lookupDatagridHeaderCtrl.column.name }}">{{ lookupDatagridHeaderCtrl.column.name }}</div>
         </div>
 
-        <div class="grid-header-type" ng-if="lookupDatagridHeaderCtrl.column.domain">{{ lookupDatagridHeaderCtrl.column.domain }}</div>
-        <div class="grid-header-type" ng-if="(!lookupDatagridHeaderCtrl.column.domain)">{{ lookupDatagridHeaderCtrl.converterService.simplifyType(lookupDatagridHeaderCtrl.column.type) }}</div>
+        <div class="grid-header-type" ng-if="lookupDatagridHeaderCtrl.column.domainLabel">{{ lookupDatagridHeaderCtrl.column.domainLabel }}</div>
+        <div class="grid-header-type" ng-if="(!lookupDatagridHeaderCtrl.column.domainLabel)">{{ lookupDatagridHeaderCtrl.converterService.simplifyType(lookupDatagridHeaderCtrl.column.type) }}</div>
     </div>
 
     <div class="add-to-lookup">

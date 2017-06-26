@@ -22,7 +22,7 @@
             <input type="radio" value="{{ ::semanticDomain.id}}" ng-model="$ctrl.currentDomain"/>
             {{ ::semanticDomain.label | translate }} {{ semanticDomain.frequency }} %
         </li>
-        <li class="divider"></li>
+        <li ng-if="$ctrl.domains.length > 0" class="divider"></li>
         <li ng-repeat="type in $ctrl.types track by type.id"
             ng-click="$ctrl.changeType(type)">
             <input type="radio" value="{{ ::type.id}}" ng-model="$ctrl.currentDomain"

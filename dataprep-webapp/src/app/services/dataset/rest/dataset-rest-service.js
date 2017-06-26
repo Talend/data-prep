@@ -58,7 +58,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function create(parameters, contentType, file) {
 		const req = {
-			url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name),
+			url: RestURLs.uploadDatasetUrl + '?name=' + encodeURIComponent(parameters.name),
 			headers: {
 				'Content-Type': contentType,
 			},
@@ -77,7 +77,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function update(dataset) {
 		return $upload.http({
-			url: RestURLs.datasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name),
+			url: RestURLs.uploadDatasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name),
 			method: 'PUT',
 			headers: { 'Content-Type': 'text/plain' },
 			data: dataset.file,

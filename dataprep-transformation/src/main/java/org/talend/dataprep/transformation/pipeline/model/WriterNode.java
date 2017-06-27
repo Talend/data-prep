@@ -24,7 +24,11 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.transformation.api.transformer.ConfiguredCacheWriter;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
-import org.talend.dataprep.transformation.pipeline.*;
+import org.talend.dataprep.transformation.pipeline.Monitored;
+import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RuntimeNode;
+import org.talend.dataprep.transformation.pipeline.Signal;
+import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 public class WriterNode extends BasicNode implements Monitored {
@@ -181,7 +185,6 @@ public class WriterNode extends BasicNode implements Monitored {
         // Cache computed metadata for later reuse
         try {
             metadataCacheWriter.write(metadataKey, lastRowMetadata);
-            writer.flush();
         } catch (IOException e) {
             LOGGER.error("Unable to cache metadata for preparation #{} @ step #{}", metadataKey.getKey());
             LOGGER.debug("Unable to cache metadata due to exception.", e);

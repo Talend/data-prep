@@ -40,6 +40,7 @@ public interface HomeViews {
             .logo(
                     LinkSettings.builder()
                             .name("Talend")
+                            .label("Go to home")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build())
             .search(

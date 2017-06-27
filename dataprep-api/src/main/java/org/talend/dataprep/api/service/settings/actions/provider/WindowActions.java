@@ -33,6 +33,15 @@ public interface WindowActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"preparation"})
             .build();
 
+    ActionSettings ONBOARDING_PLAYGROUND = builder()
+            .id("onboarding:preparation")
+            .name("Guided tour")
+            .icon("talend-board")
+            .type("@@onboarding/START_TOUR")
+            .payload(PAYLOAD_METHOD_KEY, "startTour")
+            .payload(PAYLOAD_ARGS_KEY, new String[]{"playground"})
+            .build();
+
     ActionSettings MODAL_ABOUT = builder()
             .id("modal:about")
             .name("About Data Preparation")
@@ -60,6 +69,14 @@ public interface WindowActions {
 
     ActionSettings HEADERBAR_HELP = splitDropdownBuilder()
             .id("headerbar:help")
+            .name("Help")
+            .icon("talend-question-circle")
+            .type("@@headerbar/HELP")
+            .action("external:help")
+            .build();
+
+    ActionSettings PLAYGROUND_HEADERBAR_HELP = splitDropdownBuilder()
+            .id("playground:headerbar:help")
             .name("Help")
             .icon("talend-question-circle")
             .type("@@headerbar/HELP")

@@ -22,6 +22,7 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onInit() {
+	    this.viewKey = this.viewKey ? this.viewKey : 'appheaderbar';
 		this.initLogo();
 		this.initBrand();
 		this.initHelp();
@@ -79,7 +80,7 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initLogo() {
-		const settingsLogo = this.appSettings.views.appheaderbar.logo;
+		const settingsLogo = this.appSettings.views[this.viewKey].logo;
 		const clickAction = this.appSettings.actions[settingsLogo.onClick];
 		this.logo = {
 			...settingsLogo,
@@ -88,7 +89,7 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initBrand() {
-		const settingsBrand = this.appSettings.views.appheaderbar.brand;
+		const settingsBrand = this.appSettings.views[this.viewKey].brand;
 		const clickAction = this.appSettings.actions[settingsBrand.onClick];
 		this.brand = {
 			...settingsBrand,
@@ -97,7 +98,7 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initHelp() {
-		const helpActionSplitDropdown = this.appSettings.actions[this.appSettings.views.appheaderbar.help];
+		const helpActionSplitDropdown = this.appSettings.actions[this.appSettings.views[this.viewKey].help];
 		const items = helpActionSplitDropdown
 			.items
 			.map(actionName => this.appSettings.actions[actionName])
@@ -115,19 +116,19 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initSearch() {
-		this.search = this.appSettings.views.appheaderbar.search ?
+		this.search = this.appSettings.views[this.viewKey].search ?
 			this.adaptSearch() :
 			null;
 	}
 
 	initUserMenu() {
-		this.user = this.appSettings.views.appheaderbar.userMenu ?
+		this.user = this.appSettings.views[this.viewKey].userMenu ?
 			this.adaptUserMenu() :
 			null;
 	}
 
 	adaptSearch() {
-		const searchSettings = this.appSettings.views.appheaderbar.search;
+		const searchSettings = this.appSettings.views[this.viewKey].search;
 
 		// onToggle
 		const onToggleAction = this.appSettings.actions[searchSettings.onToggle];
@@ -256,7 +257,7 @@ export default class AppHeaderBarCtrl {
 	adaptUserMenu() {
 		const userMenu = this.appSettings
 			.views
-			.appheaderbar
+			[this.viewKey]
 			.userMenu;
 		const { id, name, staticActions } = this.appSettings.actions[userMenu];
 

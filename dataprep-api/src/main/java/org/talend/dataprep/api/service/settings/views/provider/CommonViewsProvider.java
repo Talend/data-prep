@@ -42,6 +42,7 @@ public class CommonViewsProvider implements AppSettingsProvider<ViewSettings> {
             settings.add(HomeViews.APP_HEADER_BAR);
             settings.add(HomeViews.SIDE_PANEL);
             settings.add(HomeViews.BREADCRUMB);
+            settings.add(PlaygroundViews.PLAYGROUND_APP_HEADER_BAR);
         } else {
             settings.add(HomeViewsForNonTDPUsers.APP_HEADER_BAR_FOR_NON_TDP_USERS);
             settings.add(HomeViewsForNonTDPUsers.SIDE_PANEL);

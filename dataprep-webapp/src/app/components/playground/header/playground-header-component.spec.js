@@ -28,14 +28,11 @@ describe('Playground header component', () => {
 			<playground-header
                     preview="preview"
                     lookup-visible="lookupVisible"
-                    feedback-visible="feedbackVisible"
                     preparation-picker="preparationPicker"
                     parameters-visible="parametersVisible"
                     enable-export="enableExport"
                     on-parameters="onParameters()"
                     on-lookup="onLookup()"
-                    on-onboarding="onOnboarding()"
-                    on-feedback="onFeedback()"
                     on-close="onClose()"
                     on-preparation-picker="showPreparationPicker()"
 					preparation-name="preparationName"
@@ -176,36 +173,6 @@ describe('Playground header component', () => {
 			expect(scope.onLookup).toHaveBeenCalled();
 		});
 
-		it('should call onboarding callback', () => {
-			// given
-			scope.onOnboarding = jasmine.createSpy('onOnboarding');
-			createElement();
-
-			// when
-			element.find('#playground-onboarding-icon').eq(0).click();
-
-			// then
-			expect(scope.onOnboarding).toHaveBeenCalled();
-		});
-
-		it('should not render feedback icon', () => {
-			// when
-			scope.feedbackVisible = false;
-			createElement();
-
-			// then
-			expect(element.find('#playground-feedback-icon').length).toBe(0);
-		});
-
-		it('should render feedback icon', () => {
-			// when
-			scope.feedbackVisible = true;
-			createElement();
-
-			// then
-			expect(element.find('#playground-feedback-icon').length).toBe(1);
-		});
-
 		it('should render preparation picker icon', () => {
 			// when
 			scope.preparationPicker = true;
@@ -227,19 +194,6 @@ describe('Playground header component', () => {
 
 			// then
 			expect(scope.showPreparationPicker).toHaveBeenCalled();
-		});
-
-		it('should call feedback callback', () => {
-			// given
-			scope.onFeedback = jasmine.createSpy('onFeedback');
-			scope.feedbackVisible = true;
-			createElement();
-
-			// when
-			element.find('#playground-feedback-icon').eq(0).click();
-
-			// then
-			expect(scope.onFeedback).toHaveBeenCalled();
 		});
 
 		it('should call close callback', () => {

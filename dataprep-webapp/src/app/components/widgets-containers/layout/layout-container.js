@@ -20,8 +20,7 @@ const LayoutContainer = {
 		 						search-input="$ctrl.state.search.searchInput"
 		 						search-results="$ctrl.state.search.searchResults"
 		 						search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
-		 						search-focused-item-index="$ctrl.state.search.focusedItemIndex"
-				><app-header-bar/>
+		 						search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
 			</div>
 			<div class="content">
 				<div class="sidemenu">

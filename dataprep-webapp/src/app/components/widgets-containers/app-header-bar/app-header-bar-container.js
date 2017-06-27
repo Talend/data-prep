@@ -23,6 +23,7 @@ const AppHeaderBarContainer = {
 		/>`,
 	controller: AppHeaderBarCtrl,
 	bindings: {
+		viewKey:  '<',
 		searchToggle: '<',
 		searchInput: '<',
 		searchResults: '<',

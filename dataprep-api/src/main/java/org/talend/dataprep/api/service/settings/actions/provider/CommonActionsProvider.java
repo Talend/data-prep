@@ -71,7 +71,9 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 WindowActions.MODAL_ABOUT,
                 WindowActions.MODAL_FEEDBACK,
                 WindowActions.ONBOARDING_PREPARATION,
-                WindowActions.HEADERBAR_HELP
+                WindowActions.ONBOARDING_PLAYGROUND,
+                WindowActions.HEADERBAR_HELP,
+                WindowActions.PLAYGROUND_HEADERBAR_HELP
         );
         // @formatter:on
     }

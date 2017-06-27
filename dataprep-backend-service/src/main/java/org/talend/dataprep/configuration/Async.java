@@ -26,7 +26,11 @@ import org.talend.dataprep.processor.Wrapper;
 @EnableAsync
 public class Async implements Wrapper<RequestMappingHandlerAdapter> {
 
-    static final String EXECUTOR = "requestMappingHandlerMapping#executor";
+    /**
+     * Constant for the {@link org.springframework.core.task.TaskExecutor} to be picked up by Spring (based on naming
+     * conventions).
+     */
+    static final String EXECUTOR = "taskExecutor";
 
     @Override
     public Class<RequestMappingHandlerAdapter> wrapped() {

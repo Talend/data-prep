@@ -41,10 +41,16 @@ public class TaskExecution {
     }
 
     /**
+     * <p>
+     * <b>Important note</b> Naming of the executor is very important, code relies on documentation naming conventions
+     * for async task executor injection.
+     * </p>
+     *
      * @return A {@link TaskExecutor} for non-blocking HTTP request execution.
      * @see Async
+     * @see org.springframework.scheduling.annotation.EnableAsync
      */
-    @Bean("requestMappingHandlerMapping#executor")
+    @Bean(Async.EXECUTOR)
     public TaskExecutor asyncTaskExecutor() {
         return new SimpleAsyncTaskExecutor();
     }

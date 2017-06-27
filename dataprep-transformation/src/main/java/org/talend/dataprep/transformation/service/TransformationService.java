@@ -483,13 +483,12 @@ public class TransformationService extends BaseTransformationService {
         final DataSetGetMetadata dataSetGetMetadata = context.getBean(DataSetGetMetadata.class, previewParameters.getDataSetId());
         DataSetMetadata dataSetMetadata = dataSetGetMetadata.execute();
         StepDiff stepDiff;
-        TransformationContext context = new TransformationContext();
         if (dataSetGetMetadata.isSuccessfulExecution() && dataSetMetadata != null) {
             RowMetadata metadataBase = dataSetMetadata.getRowMetadata();
             RowMetadata metadataAfter = metadataBase.clone();
 
-            applyActionsOnMetadata(context, metadataBase, previewParameters.getBaseActions());
-            applyActionsOnMetadata(context, metadataAfter, previewParameters.getNewActions());
+            applyActionsOnMetadata(metadataBase, previewParameters.getBaseActions());
+            applyActionsOnMetadata(metadataAfter, previewParameters.getNewActions());
 
             metadataAfter.diff(metadataBase);
 
@@ -507,12 +506,17 @@ public class TransformationService extends BaseTransformationService {
         return stepDiff;
     }
 
-    private void applyActionsOnMetadata(TransformationContext context, RowMetadata metadata, String actionsAsJson) {
+    private void applyActionsOnMetadata(RowMetadata metadata, String actionsAsJson) {
         List<RunnableAction> actions = actionParser.parse(actionsAsJson);
-        ActionContext contextWithMetadata = new ActionContext(context, metadata);
-        for (RunnableAction action : actions) {
-            action.getRowAction().compile(contextWithMetadata);
-
+        TransformationContext context = new TransformationContext();
+        try {
+            for (RunnableAction action : actions) {
+                final ActionContext actionContext = context.create(action.getRowAction(), metadata);
+                action.getRowAction().compile(actionContext);
+            }
+        } finally {
+            // cleanup the transformation context is REALLY important as it can close open http connections
+            context.cleanup();
         }
     }
 

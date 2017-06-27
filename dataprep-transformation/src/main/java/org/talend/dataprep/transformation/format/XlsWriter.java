@@ -13,12 +13,21 @@
 
 package org.talend.dataprep.transformation.format;
 
+import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNABLE_TO_PERFORM_EXPORT;
 import static org.talend.dataprep.transformation.format.XlsFormat.XLSX;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -147,11 +156,42 @@ public class XlsWriter extends AbstractTransformerWriter {
 
     @Override
     public void flush() throws IOException {
-        this.workbook.write(outputStream);
+
+        // because workbook.write(out) close the given output (the http response), another temporary file is created to
+        // to fully flush the xlsx result and the copy the content of the file to the http response
+
+        // create a temp file
+        final File yetAnotherTempFile = File.createTempFile("xlsWriter", "-2.csv");
         try {
-            FilesHelper.delete(bufferFile);
-        } catch (IOException e) {
-            LOGGER.warn("Unable to delete temporary file '{}'", bufferFile, e);
+            try (final FileOutputStream fileOutputStream = new FileOutputStream(yetAnotherTempFile)) {
+                this.workbook.write(fileOutputStream);
+                this.workbook.close();
+            } catch (IOException ioe) {
+                LOGGER.error("Could not write temp file with xls export", ioe);
+                throw new TDPException(UNABLE_TO_PERFORM_EXPORT, ioe);
+            }
+
+            // copy the content of the temp file to the http response
+            try (final FileInputStream fileInputStream = new FileInputStream(yetAnotherTempFile)) {
+                IOUtils.copyLarge(fileInputStream, outputStream);
+            } catch (IOException e) {
+                LOGGER.error("Error sending the xls export content", e);
+                throw new TDPException(UNABLE_TO_PERFORM_EXPORT, e);
+            }
+
+        } finally {
+            // clean up the buffer file
+            try {
+                FilesHelper.delete(bufferFile);
+            } catch (IOException e) {
+                LOGGER.warn("Unable to delete temporary file '{}'", bufferFile, e);
+            }
+            // clean up temp file
+            try {
+                FilesHelper.delete(yetAnotherTempFile);
+            } catch (IOException ioe) {
+                LOGGER.warn("Unable to delete temporary file '{}'", yetAnotherTempFile, ioe);
+            }
         }
     }
 

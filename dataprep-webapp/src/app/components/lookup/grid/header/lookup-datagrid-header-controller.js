@@ -50,4 +50,17 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
 	vm.updateColsToAdd = function updateColsToAdd() {
 		StateService.updateLookupColumnsToAdd();
 	};
+
+	/**
+     * @ngdoc method
+     * @name getTypeLabel
+     * @methodOf data-prep.lookup-datagrid-header.controller:LookupDatagridHeaderCtrl
+     * @description returns the type label
+     */
+	vm.getTypeLabel = function () {
+		if (vm.column.domainLabel) {
+			return vm.column.domainLabel;
+		}
+		return vm.converterService.simplifyType(vm.column.type);
+	};
 }

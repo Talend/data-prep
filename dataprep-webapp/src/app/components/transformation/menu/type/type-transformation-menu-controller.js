@@ -97,8 +97,9 @@ export default class TypeTransformMenuCtrl {
 	 */
 	_refreshCurrentDomain() {
 		if (this.column.domain && this.column.domainLabel) {
-			this.currentDomain = this.column.domainLabel;
-			this.currentSimplifiedDomain = this.column.domainLabel;
+			const label = this.column.domainLabel;
+			this.currentDomain = label;
+			this.currentSimplifiedDomain = label;
 		}
 		else {
 			this.currentDomain = this.column.type.toUpperCase();

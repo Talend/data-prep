@@ -21,14 +21,14 @@ public class SpringActionRegistry implements ActionRegistry { // NOSONAR
     @Autowired(required = false)
     private List<ActionDefinition> actions;
 
-    @Autowired
+    @Autowired(required = false)
     private Help help;
 
     @Override
     public ActionDefinition get(String name) {
         for (ActionDefinition action : actions) {
             if (action.getName().equals(name)) {
-                return new ActionWithHelpLinkDefinition(action);
+                return help != null ? new ActionWithHelpLinkDefinition(action) : action;
             }
         }
         return null;
@@ -42,6 +42,14 @@ public class SpringActionRegistry implements ActionRegistry { // NOSONAR
 
         ActionWithHelpLinkDefinition(ActionDefinition actionDefinition) {
             this.actionDefinition = actionDefinition;
+        }
+
+        public Class<? extends ActionDefinition> getActionDefinitionClassName() {
+            return actionDefinition.getClass();
+        }
+
+        public ActionDefinition getActionDefinition() {
+            return actionDefinition;
         }
 
         @Override

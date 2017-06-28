@@ -41,7 +41,7 @@ public class ActionDefinitionDeserializer extends JsonDeserializer<List<ActionDe
             final TreeNode tree = jsonParser.readValueAsTree();
             for (int i = 0; i < tree.size(); i++) {
                 try {
-                    final String className = ((TextNode) tree.get(i).get("class")).asText();
+                    final String className = ((TextNode) tree.get(i).get("actionDefinitionClassName")).asText();
                     final Class<?> clazz = Class.forName(className);
                     final ActionDefinition actionInstance = Providers.get((Class<? extends ActionDefinition>) clazz);
                     actions.add(actionInstance);

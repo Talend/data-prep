@@ -44,6 +44,8 @@ public class ActionsBundle implements MessagesBundle {
 
     private static final String URL_SUFFIX = ".url";
 
+    private static final String URL_PARAMETERS_SUFFIX = ".url_parameter";
+
     private static final String LABEL_SUFFIX = ".label";
 
     private static final String PARAMETER_PREFIX = "parameter.";
@@ -56,6 +58,9 @@ public class ActionsBundle implements MessagesBundle {
     private final Class fallBackKey;
 
     private final Map<Class, ResourceBundle> actionToResourceBundle = new ConcurrentHashMap<>();
+
+    /** Base URL of the documentation portal. */
+    private String documentationUrlBase;
 
     private ActionsBundle() {
         fallBackKey = this.getClass();
@@ -166,10 +171,15 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String actionDocUrl(Object action, Locale locale, String actionName) {
         final String actionDocUrlKey = ACTION_PREFIX + actionName + URL_SUFFIX;
-        final String docUrl = getOptionalMessage(action, locale, actionDocUrlKey);
+        String docUrl = getOptionalMessage(action, locale, actionDocUrlKey);
 
         if (docUrl == null) {
-            return StringUtils.EMPTY;
+            String docParameters = getOptionalMessage(action, locale, ACTION_PREFIX + actionName + URL_PARAMETERS_SUFFIX);
+            if (documentationUrlBase != null && docParameters != null) {
+                return documentationUrlBase + docParameters;
+            } else {
+                return StringUtils.EMPTY;
+            }
         }
         return docUrl;
     }
@@ -216,4 +226,11 @@ public class ActionsBundle implements MessagesBundle {
         return getMandatoryMessage(fallBackKey, locale, code, args);
     }
 
+    public void setDocumentationUrlBase(String documentationUrlBase) {
+        this.documentationUrlBase = documentationUrlBase;
+    }
+
+    public String getDocumentationUrlBase() {
+        return documentationUrlBase;
+    }
 }

@@ -1,12 +1,16 @@
 package org.talend.dataprep.configuration;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.filter.SimpleFilterService;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
@@ -21,13 +25,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Import(ActionsImport.class)
 public class Actions {
 
-    @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+
+    private ApplicationContext context;
 
     @Autowired
-    ApplicationContext context;
-
-    public Actions() {
+    public Actions(ObjectMapper objectMapper, ApplicationContext context, @Value("${help.exact.url:#{null}}") String docBaseUrl) {
+        this.objectMapper = objectMapper;
+        this.context = context;
+        if (isNotBlank(docBaseUrl)) ActionsBundle.INSTANCE.setDocumentationUrlBase(docBaseUrl);
         Providers.setProvider(new SpringProvider());
     }
 

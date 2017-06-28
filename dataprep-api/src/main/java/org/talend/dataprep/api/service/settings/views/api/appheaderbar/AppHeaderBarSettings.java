@@ -63,6 +63,11 @@ public class AppHeaderBarSettings implements ViewSettings {
      */
     private String userMenu;
 
+    /**
+     * The products dropdown action
+     */
+    private String products;
+
     @Override
     public String getId() {
         return id;
@@ -112,6 +117,14 @@ public class AppHeaderBarSettings implements ViewSettings {
         this.userMenu = userMenu;
     }
 
+    public String getProducts() {
+        return products;
+    }
+
+    public void setProducts(String products) {
+        this.products = products;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -123,7 +136,8 @@ public class AppHeaderBarSettings implements ViewSettings {
                 .brand(viewSettings.getBrand()) //
                 .search(viewSettings.getSearch()) //
                 .help(viewSettings.getHelp()) //
-                .userMenu(viewSettings.getUserMenu());
+                .userMenu(viewSettings.getUserMenu()) //
+                .products(viewSettings.getProducts());
     }
 
     public static class Builder {
@@ -139,6 +153,8 @@ public class AppHeaderBarSettings implements ViewSettings {
         private String help;
 
         private String userMenu;
+
+        private String products;
 
         public Builder id(final String id) {
             this.id = id;
@@ -175,6 +191,11 @@ public class AppHeaderBarSettings implements ViewSettings {
             return this;
         }
 
+        public Builder products(final String products) {
+            this.products = products;
+            return this;
+        }
+
         public AppHeaderBarSettings build() {
             final AppHeaderBarSettings settings = new AppHeaderBarSettings();
             settings.setId(this.id);
@@ -183,6 +204,7 @@ public class AppHeaderBarSettings implements ViewSettings {
             settings.setSearch(this.search);
             settings.setHelp(this.help);
             settings.setUserMenu(this.userMenu);
+            settings.setProducts(this.products);
             return settings;
         }
     }

@@ -27,6 +27,7 @@ export default class AppHeaderBarCtrl {
 		this.initHelp();
 		this.initSearch();
 		this.initUserMenu();
+		this.initProducts();
 	}
 
 	$postLink() {
@@ -124,6 +125,13 @@ export default class AppHeaderBarCtrl {
 		this.user = this.appSettings.views.appheaderbar.userMenu ?
 			this.adaptUserMenu() :
 			null;
+	}
+
+	initProducts() {
+		this.products = this.adaptProducts();
+		// this.products = this.appSettings.views.appheaderbar.products ?
+		// 	this.adaptProducts() :
+		// 	null;
 	}
 
 	adaptSearch() {
@@ -271,5 +279,53 @@ export default class AppHeaderBarCtrl {
 					onClick: this.settingsActionsService.createDispatcher(action),
 				})),
 		};
+	}
+
+	adaptProducts() {
+		// const productsMenu = this.appSettings
+		// 	.views
+		// 	.appheaderbar
+		// 	.productsMenu;
+		// const { id, name, staticActions } = this.appSettings.actions[productsMenu];
+
+		const act = {
+			displayMode: 'ActionSettings',
+			icon: 'talend-question-circle',
+			id: 'external:documentation',
+			name: 'Documentation',
+			payload: {
+				method: 'open',
+			},
+			method: 'open',
+			type: '@@external/OPEN_WINDOW',
+		};
+
+		const mock = {
+			id: 'header-products',
+			items: [
+				{
+					icon: 'talend-logo-dp',
+					key: 'tdp',
+					label: 'Data Preparation',
+				},
+				{
+					icon: 'talend-logo-ic',
+					key: 'tic',
+					label: 'Integration Cloud',
+				},
+				{
+					icon: 'talend-logo-mc',
+					key: 'tmc',
+					label: 'Management Console',
+				},
+			],
+			onSelect: (a, b, c) => {
+				console.log('[NC] a: ', a);
+				console.log('[NC] b: ', b);
+				console.log('[NC] c: ', c);
+			},
+		};
+
+		return mock;
 	}
 }

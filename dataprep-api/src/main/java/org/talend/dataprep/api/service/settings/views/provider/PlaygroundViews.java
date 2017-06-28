@@ -38,7 +38,7 @@ public interface PlaygroundViews {
             .logo(
                     LinkSettings.builder()
                             .name("Talend")
-                            .label("Go to home")
+                            .label("Go to home page")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build())
             .search(

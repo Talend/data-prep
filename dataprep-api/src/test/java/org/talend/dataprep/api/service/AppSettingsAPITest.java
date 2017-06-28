@@ -173,6 +173,13 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(onboardingPreparation.getPayload().get(PAYLOAD_METHOD_KEY), is("startTour"));
         assertThat(((List<String>) onboardingPreparation.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("preparation"));
 
+        final ActionSettings onboardingPlayground = settings.getActions().get("onboarding:playground");
+        assertThat(onboardingPlayground.getName(), is("Guided tour"));
+        assertThat(onboardingPlayground.getIcon(), is("talend-board"));
+        assertThat(onboardingPlayground.getType(), is("@@onboarding/START_TOUR"));
+        assertThat(onboardingPlayground.getPayload().get(PAYLOAD_METHOD_KEY), is("startTour"));
+        assertThat(((List<String>) onboardingPlayground.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("playground"));
+
         final ActionSettings preparationCopyMove = settings.getActions().get("preparation:copy-move");
         assertThat(preparationCopyMove.getName(), is("Copy/Move preparation"));
         assertThat(preparationCopyMove.getIcon(), is("talend-files-o"));
@@ -244,6 +251,13 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
         assertThat(headerHelp.getAction(), is("external:help"));
         assertThat(headerHelp.getItems(), contains("external:help", "onboarding:preparation", "modal:about", "modal:feedback"));
+
+        final ActionSplitDropdownSettings playgroundHeaderHelp = (ActionSplitDropdownSettings) settings.getActions().get("playground:headerbar:help");
+        assertThat(playgroundHeaderHelp.getName(), is("Help"));
+        assertThat(playgroundHeaderHelp.getIcon(), is("talend-question-circle"));
+        assertThat(playgroundHeaderHelp.getType(), is("@@headerbar/HELP"));
+        assertThat(playgroundHeaderHelp.getAction(), is("external:help"));
+        assertThat(playgroundHeaderHelp.getItems(), contains("external:help", "onboarding:playground", "modal:about", "modal:feedback"));
     }
 
     @Test
@@ -269,6 +283,28 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("dataset:open"));
         assertThat(ahb.getSearch().getOnSelect().get("preparation"), is("menu:playground:preparation"));
         assertThat(ahb.getHelp(), is("headerbar:help"));
+    }
+
+    @Test
+    public void shouldCreatePlaygroundAppHeaderBarViewSettings() throws Exception {
+        // when
+        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
+
+        // then
+        final AppHeaderBarSettings ahb = (AppHeaderBarSettings) settings.getViews().get("appheaderbar:playground");
+        assertThat(ahb.getLogo().getName(), is("Talend"));
+        assertThat(ahb.getLogo().getOnClick(), is("menu:preparations"));
+        assertThat(ahb.getLogo().getLabel(), is("Go to home page"));
+        assertThat(ahb.getBrand().getName(), is("Data Preparation"));
+        assertThat(ahb.getBrand().getOnClick(), is("menu:preparations"));
+        assertThat(ahb.getSearch().getDebounceTimeout(), is(300));
+        assertThat(ahb.getSearch().getPlaceholder(), is("Search Documentation"));
+        assertThat(ahb.getSearch().getOnBlur(), is("search:toggle"));
+        assertThat(ahb.getSearch().getOnChange(), is("search:all"));
+        assertThat(ahb.getSearch().getOnKeyDown(), is("search:focus"));
+        assertThat(ahb.getSearch().getOnToggle(), is("search:toggle"));
+        assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
+        assertThat(ahb.getHelp(), is("playground:headerbar:help"));
     }
 
     @Test

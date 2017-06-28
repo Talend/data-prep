@@ -34,7 +34,7 @@ public interface WindowActions {
             .build();
 
     ActionSettings ONBOARDING_PLAYGROUND = builder()
-            .id("onboarding:preparation")
+            .id("onboarding:playground")
             .name("Guided tour")
             .icon("talend-board")
             .type("@@onboarding/START_TOUR")

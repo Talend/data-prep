@@ -22,7 +22,7 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onInit() {
-	    this.viewKey = this.viewKey ? this.viewKey : 'appheaderbar';
+		this.viewKey = this.viewKey ? this.viewKey : 'appheaderbar';
 		this.initLogo();
 		this.initBrand();
 		this.initHelp();
@@ -256,8 +256,7 @@ export default class AppHeaderBarCtrl {
 
 	adaptUserMenu() {
 		const userMenu = this.appSettings
-			.views
-			[this.viewKey]
+			.views[this.viewKey]
 			.userMenu;
 		const { id, name, staticActions } = this.appSettings.actions[userMenu];
 

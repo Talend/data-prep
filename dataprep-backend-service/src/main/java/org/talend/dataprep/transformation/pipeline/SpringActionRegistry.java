@@ -5,9 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.help.Help;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.CellAction;
+import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.actions.common.DataSetAction;
+import org.talend.dataprep.transformation.actions.common.RowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import java.util.List;
@@ -37,7 +42,7 @@ public class SpringActionRegistry implements ActionRegistry { // NOSONAR
     /**
      * ActionDefinition decorator in order construct help links (depending of TDP version)
      */
-    class ActionWithHelpLinkDefinition implements ActionDefinition {
+    class ActionWithHelpLinkDefinition implements ActionDefinition, CellAction, RowAction, ColumnAction, DataSetAction {
         private final ActionDefinition actionDefinition;
 
         ActionWithHelpLinkDefinition(ActionDefinition actionDefinition) {
@@ -120,6 +125,34 @@ public class SpringActionRegistry implements ActionRegistry { // NOSONAR
         @Override
         public boolean implicitFilter() {
             return actionDefinition.implicitFilter();
+        }
+
+        @Override
+        public void applyOnLine(DataSetRow row, ActionContext context) {
+            if (actionDefinition instanceof RowAction) {
+                ((RowAction) actionDefinition).applyOnLine(row, context);
+            }
+        }
+
+        @Override
+        public void applyOnCell(DataSetRow row, ActionContext context) {
+            if (actionDefinition instanceof CellAction) {
+                ((CellAction) actionDefinition).applyOnCell(row, context);
+            }
+        }
+
+        @Override
+        public void applyOnColumn(DataSetRow row, ActionContext context) {
+            if (actionDefinition instanceof ColumnAction) {
+                ((ColumnAction) actionDefinition).applyOnColumn(row, context);
+            }
+        }
+
+        @Override
+        public void applyOnDataSet(DataSetRow row, ActionContext context) {
+            if (actionDefinition instanceof DataSetAction) {
+                ((DataSetAction) actionDefinition).applyOnDataSet(row, context);
+            }
         }
     }
 

@@ -28,6 +28,7 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -48,6 +49,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +112,7 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.semantic.broadcast.BroadcastIndexObject;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -365,8 +368,8 @@ public class TransformationService extends BaseTransformationService {
         );
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
-            final InputStream content = contentCache.get(contentKey); //
-            final JsonParser contentParser = mapper.getFactory().createParser(content)) {
+                final InputStream content = contentCache.get(contentKey); //
+                final JsonParser contentParser = mapper.getFactory().createParser(content)) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);

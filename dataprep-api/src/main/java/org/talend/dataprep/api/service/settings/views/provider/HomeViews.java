@@ -31,13 +31,18 @@ import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSet
 public interface HomeViews {
     ViewSettings APP_HEADER_BAR = AppHeaderBarSettings.builder()
             .id("appheaderbar")
-            .app("Data Preparation")
-            .brandLink(
+            .brand(
                     LinkSettings.builder()
-                            .title("Talend Data Preparation")
+                            .name("Data Preparation")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build()
             )
+            .logo(
+                    LinkSettings.builder()
+                            .name("Talend")
+                            .label("Go to home page")
+                            .onClick(MENU_PREPARATIONS.getId())
+                            .build())
             .search(
                     SearchSettings.builder()
                             .debounceTimeout(300)
@@ -52,10 +57,7 @@ public interface HomeViews {
                             .placeholder("Search Talend Data Preparation and Documentation")
                             .build()
             )
-            .action(ONBOARDING_PREPARATION.getId())
-            .action(MODAL_FEEDBACK.getId())
-            .action(EXTERNAL_HELP.getId())
-            .action(MODAL_ABOUT.getId())
+            .help(HEADERBAR_HELP.getId())
             .build();
 
     ViewSettings BREADCRUMB = BreadcrumbSettings.builder()

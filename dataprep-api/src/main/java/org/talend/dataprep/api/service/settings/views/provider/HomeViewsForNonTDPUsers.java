@@ -27,13 +27,16 @@ public interface HomeViewsForNonTDPUsers {
 
     ViewSettings APP_HEADER_BAR_FOR_NON_TDP_USERS = AppHeaderBarSettings.builder()
         .id("appheaderbar")
-        .app("Data Preparation")
-        .brandLink(
+        .logo(
                 LinkSettings.builder()
-                        .title("Talend Data Preparation")
+                .name("Talend")
+                .build()
+        )
+        .brand(
+                LinkSettings.builder()
+                        .name("Data Preparation")
                         .build()
         )
-        .action(MODAL_ABOUT.getId())
         .build();
 
     ViewSettings SIDE_PANEL = SidePanelSettings.builder()

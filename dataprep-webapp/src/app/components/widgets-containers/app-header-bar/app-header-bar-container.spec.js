@@ -56,9 +56,8 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const brand = element.find('.navbar-brand');
+			const brand = element.find('.tc-header-bar > ul').eq(0).find('li').eq(1).find('.btn');
 			expect(brand.text()).toBe('Data Preparation');
-			expect(brand.attr('title')).toBe('Talend Data Preparation');
 		});
 
 		it('should create search icon', () => {
@@ -77,8 +76,7 @@ describe('App header bar container', () => {
 
 			// then
 			const onboardingIcon = element.find('#onboarding\\:preparation');
-			expect(onboardingIcon.attr('name')).toBe('Click here to discover the application');
-			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-board');
+			expect(onboardingIcon.attr('label')).toBe('Click here to discover the application');
 		});
 
 		it('should create feedback icon', () => {
@@ -86,19 +84,8 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const onboardingIcon = element.find('#modal\\:feedback');
-			expect(onboardingIcon.attr('name')).toBe('Send feedback to Talend');
-			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-bubbles');
-		});
-
-		it('should create help icon', () => {
-			// when
-			createElement();
-
-			// then
-			const onboardingIcon = element.find('#external\\:help');
-			expect(onboardingIcon.attr('name')).toBe('Open Online Help');
-			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-question-circle');
+			const feedbackIcon = element.find('#modal\\:feedback');
+			expect(feedbackIcon.attr('label')).toBe('Send feedback to Talend');
 		});
 
 		it('should create user menu', () => {
@@ -145,17 +132,17 @@ describe('App header bar container', () => {
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@modal/SHOW');
 		}));
 
-		it('should dispatch help icon click', inject((SettingsActionsService) => {
+		it('should dispatch feedback icon click', inject((SettingsActionsService) => {
 			// given
 			createElement();
 
 			// when
-			const helpIcon = element.find('#external\\:help');
-			helpIcon[0].click();
+			const feedbackIcon = element.find('#modal\\:feedback');
+			feedbackIcon[0].click();
 
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@external/OPEN_WINDOW');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@modal/SHOW');
 		}));
 	});
 });

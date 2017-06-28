@@ -42,6 +42,20 @@ public class ActionSplitDropdownSettings extends ActionSettings {
      */
     private List<Object> items;
 
+    /**
+     * Action on button of the ActionSplitDropdown
+     */
+    private Object action;
+
+
+    public Object getAction() {
+        return action;
+    }
+
+    public void setAction(Object action) {
+        this.action = action;
+    }
+
     public List<Object> getItems() {
         return items;
     }
@@ -62,7 +76,8 @@ public class ActionSplitDropdownSettings extends ActionSettings {
                 .icon(actionSettings.getIcon()) //
                 .type(actionSettings.getType()) //
                 .bsStyle(actionSettings.getBsStyle()) //
-                .items(actionSettings.getItems());
+                .items(actionSettings.getItems())
+                .action(actionSettings.getAction());
     }
 
     public static Builder splitDropdownBuilder() {
@@ -80,6 +95,8 @@ public class ActionSplitDropdownSettings extends ActionSettings {
         private String type;
 
         private String bsStyle;
+
+        private Object action;
 
         private List<Object> items = new ArrayList<>();
 
@@ -113,6 +130,11 @@ public class ActionSplitDropdownSettings extends ActionSettings {
             return this;
         }
 
+        public Builder action(final Object action) {
+            this.action = action;
+            return this;
+        }
+
         public ActionSplitDropdownSettings build() {
             final ActionSplitDropdownSettings action = new ActionSplitDropdownSettings();
             action.setId(this.id);
@@ -121,6 +143,7 @@ public class ActionSplitDropdownSettings extends ActionSettings {
             action.setType(this.type);
             action.setBsStyle(this.bsStyle);
             action.setItems(this.items);
+            action.setAction(this.action);
             return action;
         }
     }

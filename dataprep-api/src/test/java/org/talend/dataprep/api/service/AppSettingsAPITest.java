@@ -99,7 +99,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalDocumentation.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
 
         final ActionSettings externalHelp = settings.getActions().get("external:help");
-        assertThat(externalHelp.getName(), is("Open Online Help"));
+        assertThat(externalHelp.getName(), is("Help"));
         assertThat(externalHelp.getIcon(), is("talend-question-circle"));
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
@@ -153,7 +153,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(modalAbout.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleAbout"));
 
         final ActionSettings modalFeedback = settings.getActions().get("modal:feedback");
-        assertThat(modalFeedback.getName(), is("Send feedback to Talend"));
+        assertThat(modalFeedback.getName(), is("Feedback"));
         assertThat(modalFeedback.getIcon(), is("talend-bubbles"));
         assertThat(modalFeedback.getType(), is("@@modal/SHOW"));
         assertThat(modalFeedback.getPayload().get(PAYLOAD_METHOD_KEY), is("showFeedback"));
@@ -167,7 +167,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(listDatasetPreparations.getStaticActions().iterator().next(), is("dataset:open"));
 
         final ActionSettings onboardingPreparation = settings.getActions().get("onboarding:preparation");
-        assertThat(onboardingPreparation.getName(), is("Click here to discover the application"));
+        assertThat(onboardingPreparation.getName(), is("Guided tour"));
         assertThat(onboardingPreparation.getIcon(), is("talend-board"));
         assertThat(onboardingPreparation.getType(), is("@@onboarding/START_TOUR"));
         assertThat(onboardingPreparation.getPayload().get(PAYLOAD_METHOD_KEY), is("startTour"));
@@ -237,6 +237,13 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(sidepanelToggle.getIcon(), is("talend-arrow-left"));
         assertThat(sidepanelToggle.getType(), is("@@sidepanel/TOGGLE"));
         assertThat(sidepanelToggle.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleHomeSidepanel"));
+
+        final ActionSplitDropdownSettings headerHelp = (ActionSplitDropdownSettings) settings.getActions().get("headerbar:help");
+        assertThat(headerHelp.getName(), is("Help"));
+        assertThat(headerHelp.getIcon(), is("talend-question-circle"));
+        assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
+        assertThat(headerHelp.getAction(), is("external:help"));
+        assertThat(headerHelp.getItems(), contains("external:help", "onboarding:preparation", "modal:about", "modal:feedback"));
     }
 
     @Test
@@ -246,9 +253,11 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         // then
         final AppHeaderBarSettings ahb = (AppHeaderBarSettings) settings.getViews().get("appheaderbar");
-        assertThat(ahb.getApp(), is("Data Preparation"));
-        assertThat(ahb.getBrandLink().getTitle(), is("Talend Data Preparation"));
-        assertThat(ahb.getBrandLink().getOnClick(), is("menu:preparations"));
+        assertThat(ahb.getLogo().getName(), is("Talend"));
+        assertThat(ahb.getLogo().getOnClick(), is("menu:preparations"));
+        assertThat(ahb.getLogo().getLabel(), is("Go to home page"));
+        assertThat(ahb.getBrand().getName(), is("Data Preparation"));
+        assertThat(ahb.getBrand().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getSearch().getDebounceTimeout(), is(300));
         assertThat(ahb.getSearch().getPlaceholder(), is("Search Talend Data Preparation and Documentation"));
         assertThat(ahb.getSearch().getOnBlur(), is("search:toggle"));
@@ -259,7 +268,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
         assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("dataset:open"));
         assertThat(ahb.getSearch().getOnSelect().get("preparation"), is("menu:playground:preparation"));
-        assertThat(ahb.getActions(), contains("onboarding:preparation", "modal:feedback", "external:help", "modal:about"));
+        assertThat(ahb.getHelp(), is("headerbar:help"));
     }
 
     @Test

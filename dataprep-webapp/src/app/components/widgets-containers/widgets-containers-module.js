@@ -13,7 +13,7 @@
 
 import angular from 'angular';
 
-import AppHeaderBar from 'react-talend-components/lib/AppHeaderBar';
+import AppHeaderBar from 'react-talend-components/lib/HeaderBar';
 import Breadcrumbs from 'react-talend-components/lib/Breadcrumbs';
 import CircularProgress from 'react-talend-components/lib/CircularProgress';
 import CollapsiblePanel from 'react-talend-components/lib/CollapsiblePanel';

@@ -552,7 +552,7 @@ public class TransformationService extends BaseTransformationService {
                                 .build() //
                 ) //
                 .build();
-        factory.get(configuration).transform(dataSet, configuration);
+        factory.get(configuration).buildExecutable(dataSet, configuration).execute();
     }
 
     /**

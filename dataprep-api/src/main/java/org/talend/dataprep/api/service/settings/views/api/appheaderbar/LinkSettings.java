@@ -29,6 +29,16 @@ public class LinkSettings {
     private String title;
 
     /**
+     * The display name
+     */
+    private String name;
+
+    /**
+     * The display label
+     */
+    private String label;
+
+    /**
      * The action identifier
      */
     private String onClick;
@@ -53,14 +63,44 @@ public class LinkSettings {
         return new Builder();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     public static class Builder {
 
         private String title;
+
+        private String name;
+
+        private String label;
 
         private String onClick;
 
         public Builder title(final String title) {
             this.title = title;
+            return this;
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder label(final String label) {
+            this.label = label;
             return this;
         }
 
@@ -72,7 +112,9 @@ public class LinkSettings {
         public LinkSettings build() {
             final LinkSettings link = new LinkSettings();
             link.setTitle(this.title);
+            link.setName(this.name);
             link.setOnClick(this.onClick);
+            link.setLabel(this.label);
             return link;
         }
     }

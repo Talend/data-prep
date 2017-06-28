@@ -34,15 +34,9 @@ const preparationTour = [
 		tooltipPosition: 'right',
 	},
 	{
-		element: '#onboarding\\:preparation',
-		title: '<center>Guided tour</center>',
-		content: 'Click here to play this tour again.',
-		position: 'left',
-	},
-	{
-		element: '#external\\:help',
-		title: '<center>Online Documentation</center>',
-		content: 'Click here to access the <a href="https://help.talend.com/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.1%2522&utm_medium=dpdesktop&utm_source=on_boarding" target="_blank">online help</a>.',
+		element: '#headerbar\\:help',
+		title: '<center>Help</center>',
+		content: 'Click here to get some help (Online Documentation, Guided tour, About Data Preparation)',
 		position: 'left',
 	},
 ];

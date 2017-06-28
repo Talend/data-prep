@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -123,10 +124,13 @@ public class CloseableResourceWatch implements Condition {
 
         Closeable getCloseable();
 
+        String getId();
+
         default String format() {
             StringWriter writer = new StringWriter();
             writer.append('\n').append("------------").append('\n');
             writer.append("Closeable: ").append(getCloseable().getClass().getSimpleName()).append('\n');
+            writer.append("Id: ").append(getId()).append('\n');
             writer.append("Age: ").append(String.valueOf(System.currentTimeMillis() - getCreation())).append('\n');
             getCaller().printStackTrace(new PrintWriter(writer)); // NOSONAR
             writer.append("------------").append('\n');
@@ -140,10 +144,17 @@ public class CloseableResourceWatch implements Condition {
 
         private final RuntimeException caller = new RuntimeException(); // NOSONAR
 
+        private String id = UUID.randomUUID().toString();
+
         private final long creation = System.currentTimeMillis();
 
         private InputStreamHandler(InputStream delegate) {
             this.delegate = delegate;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override
@@ -222,10 +233,17 @@ public class CloseableResourceWatch implements Condition {
 
         private final RuntimeException caller = new RuntimeException(); // NOSONAR
 
+        private String id = UUID.randomUUID().toString();
+
         private final long creation = System.currentTimeMillis();
 
         public OutputStreamHandler(OutputStream delegate) {
             this.delegate = delegate;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override

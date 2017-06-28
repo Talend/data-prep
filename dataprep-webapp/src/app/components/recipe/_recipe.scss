@@ -23,14 +23,17 @@ $recipe-step-draggable-background-color: #808080 !default;
   padding-right: 10px;
   padding-bottom: 10px;
   width: 100%;
+  position: relative;
 
   .empty-message {
+    position: absolute;
     display: flex;
-    align-items: center;
-    height: 100%;
-    width: 100%;
     justify-content: center;
-    padding: 20px;
+    align-items: center;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
   }
 
   .step-container {

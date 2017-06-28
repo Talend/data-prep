@@ -69,7 +69,7 @@ public class DataSetExportStrategy extends StandardExportStrategy {
                             .volume(Configuration.Volume.SMALL) //
                             .output(outputStream) //
                             .build();
-                    factory.get(configuration).transform(dataSet, configuration);
+                    factory.get(configuration).buildExecutable(dataSet, configuration).execute();
                 }
             } catch (TDPException e) {
                 throw e;

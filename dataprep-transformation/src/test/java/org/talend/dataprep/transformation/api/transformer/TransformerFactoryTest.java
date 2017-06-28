@@ -58,7 +58,7 @@ public class TransformerFactoryTest extends TransformationBaseTest {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
 
             // when
-            transformer.transform(dataSet, configuration);
+            transformer.buildExecutable(dataSet, configuration).execute();
             // then
             assertThat(outputStream.toString()).isEqualTo(expectedCsv);
         }

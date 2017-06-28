@@ -10,10 +10,6 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-
-const NAV_ITEM = 'navItem';
-const DROPDOWN = 'dropdown';
-
 export default class AppHeaderBarCtrl {
 	constructor($element, $translate, state, appSettings, SettingsActionsService) {
 		'ngInject';
@@ -26,9 +22,11 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onInit() {
-		this.initApp();
-		this.adaptBrandLink();
-		this.adaptContent();
+		this.initLogo();
+		this.initBrand();
+		this.initHelp();
+		this.initSearch();
+		this.initUserMenu();
 	}
 
 	$postLink() {
@@ -39,9 +37,8 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onChanges(changes) {
-		if (this.content) {
-			const updatedContent = this.content.slice();
-			const searchConfiguration = updatedContent[1].search;
+		if (this.search) {
+			const searchConfiguration = { ...this.search };
 			if (changes.searching) {
 				const searching = changes.searching.currentValue;
 				searchConfiguration.searching = searching;
@@ -77,21 +74,56 @@ export default class AppHeaderBarCtrl {
 				this.adaptedSearchResults = searchResults && this._adaptSearchResults(searchResults);
 				searchConfiguration.items = this.adaptedSearchResults;
 			}
-			this.content = updatedContent;
+			this.search = searchConfiguration;
 		}
 	}
 
-	initApp() {
-		this.app = this.appSettings.views.appheaderbar.app;
-	}
-
-	adaptBrandLink() {
-		const settingsBrandLink = this.appSettings.views.appheaderbar.brandLink;
-		const clickAction = this.appSettings.actions[settingsBrandLink.onClick];
-		this.brandLink = {
-			...settingsBrandLink,
+	initLogo() {
+		const settingsLogo = this.appSettings.views.appheaderbar.logo;
+		const clickAction = this.appSettings.actions[settingsLogo.onClick];
+		this.logo = {
+			...settingsLogo,
 			onClick: this.settingsActionsService.createDispatcher(clickAction),
 		};
+	}
+
+	initBrand() {
+		const settingsBrand = this.appSettings.views.appheaderbar.brand;
+		const clickAction = this.appSettings.actions[settingsBrand.onClick];
+		this.brand = {
+			...settingsBrand,
+			onClick: this.settingsActionsService.createDispatcher(clickAction),
+		};
+	}
+
+	initHelp() {
+		const helpActionSplitDropdown = this.appSettings.actions[this.appSettings.views.appheaderbar.help];
+		const items = helpActionSplitDropdown
+			.items
+			.map(actionName => this.appSettings.actions[actionName])
+			.map(action => ({
+				id: action.id,
+				label: action.name,
+				onClick: this.settingsActionsService.createDispatcher(action),
+			}));
+
+		this.help = {
+			id: helpActionSplitDropdown.id,
+			onClick: this.settingsActionsService.createDispatcher(this.appSettings.actions[helpActionSplitDropdown.action]),
+			items,
+		};
+	}
+
+	initSearch() {
+		this.search = this.appSettings.views.appheaderbar.search ?
+			this.adaptSearch() :
+			null;
+	}
+
+	initUserMenu() {
+		this.user = this.appSettings.views.appheaderbar.userMenu ?
+			this.adaptUserMenu() :
+			null;
 	}
 
 	adaptSearch() {
@@ -221,72 +253,23 @@ export default class AppHeaderBarCtrl {
 			});
 	}
 
-	adaptContent() {
-		const search = this.appSettings.views.appheaderbar.search ?
-			this.adaptSearch() :
-			null;
-		const navItems = this.appSettings.views.appheaderbar.actions ?
-			this.adaptActions() :
-			[];
-		const userMenu = this.appSettings.views.appheaderbar.userMenu ?
-			this.adaptUserMenu() :
-			[];
-
-		this.content = [
-			{
-				navs: [{
-					nav: { pullRight: true },
-					navItems: navItems.concat(userMenu),
-				}],
-			},
-			{
-				search,
-			},
-		];
-	}
-
-	adaptActions() {
-		return this.appSettings
-			.views
-			.appheaderbar
-			.actions
-			.map(actionName => this.appSettings.actions[actionName])
-			.map(action => ({
-				type: NAV_ITEM,
-				item: {
-					id: action.id,
-					name: this.$translate.instant(action.name),
-					icon: action.icon,
-					onClick: this.settingsActionsService.createDispatcher(action),
-					tooltipPlacement: 'bottom',
-				},
-			}));
-	}
-
 	adaptUserMenu() {
 		const userMenu = this.appSettings
 			.views
 			.appheaderbar
 			.userMenu;
-		const { id, name, icon, staticActions } = this.appSettings.actions[userMenu];
+		const { id, name, staticActions } = this.appSettings.actions[userMenu];
 
 		return {
-			type: DROPDOWN,
-			item: {
-				dropdown: {
-					id,
-					icon,
-					title: name,
-				},
-				items: staticActions
-					.map(actionName => this.appSettings.actions[actionName])
-					.map(action => ({
-						id: action.id,
-						icon: action.icon,
-						name: action.name,
-						onClick: this.settingsActionsService.createDispatcher(action),
-					})),
-			},
+			id,
+			name,
+			items: staticActions
+				.map(actionName => this.appSettings.actions[actionName])
+				.map(action => ({
+					id: action.id,
+					label: action.name,
+					onClick: this.settingsActionsService.createDispatcher(action),
+				})),
 		};
 	}
 }

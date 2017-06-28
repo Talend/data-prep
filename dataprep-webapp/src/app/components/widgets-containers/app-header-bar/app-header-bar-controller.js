@@ -128,10 +128,9 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initProducts() {
-		this.products = this.adaptProducts();
-		// this.products = this.appSettings.views.appheaderbar.products ?
-		// 	this.adaptProducts() :
-		// 	null;
+		this.products = this.appSettings.views.appheaderbar.products ?
+			this.adaptProducts() :
+			null;
 	}
 
 	adaptSearch() {
@@ -262,11 +261,15 @@ export default class AppHeaderBarCtrl {
 	}
 
 	adaptUserMenu() {
-		const userMenu = this.appSettings
-			.views
-			.appheaderbar
-			.userMenu;
-		const { id, name, staticActions } = this.appSettings.actions[userMenu];
+		return this._adaptDropdown(this.appSettings.views.appheaderbar.userMenu);
+	}
+
+	adaptProducts() {
+		return this._adaptDropdown(this.appSettings.views.appheaderbar.products, true);
+	}
+
+	_adaptDropdown(menu, showIcons) {
+		const { id, name, staticActions } = this.appSettings.actions[menu];
 
 		return {
 			id,
@@ -275,57 +278,10 @@ export default class AppHeaderBarCtrl {
 				.map(actionName => this.appSettings.actions[actionName])
 				.map(action => ({
 					id: action.id,
+					icon: showIcons && action.icon,
 					label: action.name,
 					onClick: this.settingsActionsService.createDispatcher(action),
 				})),
 		};
-	}
-
-	adaptProducts() {
-		// const productsMenu = this.appSettings
-		// 	.views
-		// 	.appheaderbar
-		// 	.productsMenu;
-		// const { id, name, staticActions } = this.appSettings.actions[productsMenu];
-
-		const act = {
-			displayMode: 'ActionSettings',
-			icon: 'talend-question-circle',
-			id: 'external:documentation',
-			name: 'Documentation',
-			payload: {
-				method: 'open',
-			},
-			method: 'open',
-			type: '@@external/OPEN_WINDOW',
-		};
-
-		const mock = {
-			id: 'header-products',
-			items: [
-				{
-					icon: 'talend-logo-dp',
-					key: 'tdp',
-					label: 'Data Preparation',
-				},
-				{
-					icon: 'talend-logo-ic',
-					key: 'tic',
-					label: 'Integration Cloud',
-				},
-				{
-					icon: 'talend-logo-mc',
-					key: 'tmc',
-					label: 'Management Console',
-				},
-			],
-			onSelect: (a, b, c) => {
-				console.log('[NC] a: ', a);
-				console.log('[NC] b: ', b);
-				console.log('[NC] c: ', c);
-			},
-		};
-
-		return mock;
 	}
 }

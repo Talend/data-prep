@@ -282,16 +282,10 @@ public class OptimizedExportStrategy extends StandardExportStrategy {
             );
             LOGGER.debug("Previous content cache key: " + transformationCacheKey.getKey());
             LOGGER.debug("Previous content cache key details: " + transformationCacheKey.toString());
-            final InputStream inputStream = contentCache.get(transformationCacheKey);
-            try {
-                if (inputStream == null) {
-                    LOGGER.debug("No content cached for previous version '{}'", previousVersion);
-                    return null;
-                }
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+
+            if (!contentCache.has(transformationCacheKey)) {
+                LOGGER.debug("No content cached for previous version '{}'", previousVersion);
+                return null;
             }
             return this;
         }

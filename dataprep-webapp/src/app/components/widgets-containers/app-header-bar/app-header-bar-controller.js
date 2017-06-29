@@ -22,7 +22,7 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onInit() {
-		this.viewKey = this.viewKey ? this.viewKey : 'appheaderbar';
+		this.viewKey = this.viewKey || 'appheaderbar';
 		this.initLogo();
 		this.initBrand();
 		this.initHelp();

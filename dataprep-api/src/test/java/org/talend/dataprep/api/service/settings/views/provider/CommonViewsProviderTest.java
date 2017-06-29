@@ -50,13 +50,14 @@ public class CommonViewsProviderTest {
 
         // then
         assertNotNull(settings);
-        assertEquals(settings.size(), 6);
+        assertEquals(settings.size(), 7);
         assertTrue(settings.contains(HomeViews.APP_HEADER_BAR));
         assertTrue(settings.contains(HomeViews.SIDE_PANEL));
         assertTrue(settings.contains(HomeViews.BREADCRUMB));
         assertTrue(settings.contains(ListViews.FOLDERS_LIST));
         assertTrue(settings.contains(ListViews.PREPARATIONS_LIST));
         assertTrue(settings.contains(ListViews.DATASETS_LIST));
+        assertTrue(settings.contains(PlaygroundViews.PLAYGROUND_APP_HEADER_BAR));
     }
 
     @Test

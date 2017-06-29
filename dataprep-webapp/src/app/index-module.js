@@ -101,7 +101,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 						HelpService.register(help);
 					}
 
-					RestURLs.register(config.serverUrl, appSettings.uris);
+					RestURLs.register(config, appSettings.uris);
 
 					// dataset encodings
 					DatasetService.refreshSupportedEncodings();

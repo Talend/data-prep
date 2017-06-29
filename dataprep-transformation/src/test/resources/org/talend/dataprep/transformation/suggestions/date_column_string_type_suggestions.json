@@ -521,7 +521,7 @@
     "description": "Change the date format to use in a date column",
     "label": "Change date format",
     "actionScope": [],
-    "docUrl": "func&pageid=date_formats"
+    "docUrl": ""
   },
   {
     "name": "compute_time_since",
@@ -898,6 +898,6 @@
     "description": "Replace the cells that have a specific value",
     "label": "Replace the cells that match",
     "actionScope": [],
-    "docUrl": "func&pageid=regular_expressions"
+    "docUrl": ""
   }
 ]

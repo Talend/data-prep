@@ -44,7 +44,7 @@ public class ActionsBundle implements MessagesBundle {
 
     private static final String URL_SUFFIX = ".url";
 
-    private static final String URL_PARAMETERS_SUFFIX = ".url_parameter";
+    private static final String URL_PARAMETERS_SUFFIX = ".url_parameters";
 
     private static final String LABEL_SUFFIX = ".label";
 
@@ -89,7 +89,7 @@ public class ActionsBundle implements MessagesBundle {
      * {@code actions_messages.properties} file.
      * </p>
      */
-    public static void setGlocalDocumentationUrlBase(String documentationUrlBase) {
+    public static void setGlobalDocumentationUrlBase(String documentationUrlBase) {
         INSTANCE.setDocumentationUrlBase(documentationUrlBase);
     }
 
@@ -100,7 +100,7 @@ public class ActionsBundle implements MessagesBundle {
      * {@code actions_messages.properties} file.
      * </p>
      */
-    public static String getGlocalDocumentationUrlBase() {
+    public static String getGlobalDocumentationUrlBase() {
         return INSTANCE.getDocumentationUrlBase();
     }
 
@@ -196,15 +196,14 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String actionDocUrl(Object action, Locale locale, String actionName) {
         final String actionDocUrlKey = ACTION_PREFIX + actionName + URL_SUFFIX;
-        String docUrl = getOptionalMessage(action, locale, actionDocUrlKey);
+        final String docUrl = getOptionalMessage(action, locale, actionDocUrlKey);
 
         if (docUrl == null) {
-            String docParameters = getOptionalMessage(action, locale, ACTION_PREFIX + actionName + URL_PARAMETERS_SUFFIX);
+            final String docParameters = getOptionalMessage(action, locale, ACTION_PREFIX + actionName + URL_PARAMETERS_SUFFIX);
             if (documentationUrlBase != null && docParameters != null) {
                 return documentationUrlBase + docParameters;
-            } else {
-                return StringUtils.EMPTY;
             }
+            return StringUtils.EMPTY;
         }
         return docUrl;
     }

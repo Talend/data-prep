@@ -31,11 +31,6 @@ public class ActionsBundleTest {
     }
 
     @Test
-    public void actionDocUrl() throws Exception {
-        assertEquals("func&pageid=regular_expressions", ActionsBundle.INSTANCE.actionDocUrl(this, Locale.US, "replace_on_value"));
-    }
-
-    @Test
     public void emptyActionDocUrl() throws Exception {
         assertEquals("", ActionsBundle.INSTANCE.actionDocUrl(this, Locale.US, "uppercase"));
     }

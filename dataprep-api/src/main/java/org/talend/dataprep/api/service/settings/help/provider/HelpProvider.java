@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.help.api.HelpSettings;
-import org.talend.dataprep.help.Help;
+import org.talend.dataprep.help.DocumentationLinksManager;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
 public class HelpProvider implements AppSettingsProvider<HelpSettings> {
 
     @Autowired
-    private Help help;
+    private DocumentationLinksManager documentationLinksManager;
 
     @Override
     public List<HelpSettings> getSettings() {
@@ -38,27 +38,27 @@ public class HelpProvider implements AppSettingsProvider<HelpSettings> {
         return asList(
                 HelpSettings.builder()
                         .id("versionFacet")
-                        .value(help.getVersionFacet())
+                        .value(documentationLinksManager.getVersionFacet())
                         .build(),
 
                 HelpSettings.builder()
                         .id("languageFacet")
-                        .value(help.getLanguageFacet())
+                        .value(documentationLinksManager.getLanguageFacet())
                         .build(),
 
                 HelpSettings.builder()
                         .id("searchUrl")
-                        .value(help.getSearchUrl())
+                        .value(documentationLinksManager.getSearchUrl())
                         .build(),
 
                 HelpSettings.builder()
                         .id("fuzzyUrl")
-                        .value(help.getFuzzyUrl())
+                        .value(documentationLinksManager.getFuzzyUrl())
                         .build(),
 
                 HelpSettings.builder()
                         .id("exactUrl")
-                        .value(help.getExactUrl())
+                        .value(documentationLinksManager.getExactUrl())
                         .build()
         );
     }

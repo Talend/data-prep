@@ -159,10 +159,7 @@ export default function DatagridHeaderCtrl($scope, state,
 	 * @description returns the type label
 	 */
 	vm.getTypeLabel = () => {
-		if (vm.column.domainLabel) {
-			return vm.column.domainLabel;
-		}
-		return vm.converterService.simplifyType(vm.column.type);
+		return vm.column.domainLabel || vm.converterService.simplifyType(vm.column.type);
 	};
 
 	/**

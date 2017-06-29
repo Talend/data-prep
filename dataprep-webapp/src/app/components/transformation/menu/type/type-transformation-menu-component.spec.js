@@ -131,14 +131,16 @@ describe('Transformation menu component', () => {
 
 		//then
 		const items = element.find('ul.submenu >li');
-		expect(items.length).toBe(8);
+		const offset = 3;
 
+		expect(items.length).toBe(8);
 		expect(items.eq(2).hasClass('divider')).toBe(true);
 
-		for (let i = 3; i < 7; i++) {
-			expect(items.eq(i).find('span').eq(0).text().trim()).toBe(TRANSLATIONS.COLUMN_TYPE_SET);
-			expect(items.eq(i).find('span').eq(1).text().trim()).toBe(types[i - 3]);
-		}
+		types.forEach((type, index) => {
+			const item = items.eq(index + offset).find('span');
+			expect(item.eq(0).text().trim()).toBe(TRANSLATIONS.COLUMN_TYPE_SET);
+			expect(item.eq(1).text().trim()).toBe(type);
+		});
 	});
 
 	it('should NOT show divider if there is no domains', () => {

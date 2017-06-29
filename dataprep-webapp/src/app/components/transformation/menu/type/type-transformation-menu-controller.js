@@ -102,7 +102,7 @@ export default class TypeTransformMenuCtrl {
 			this.currentSimplifiedDomain = label;
 		}
 		else {
-			this.currentDomain = this.column.type.toUpperCase();
+			this.currentDomain = this.column.type;
 			this.currentSimplifiedDomain = this.ConverterService.simplifyType(this.column.type);
 		}
 	}

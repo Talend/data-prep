@@ -186,11 +186,13 @@ export default class InventoryListCtrl {
 		const actionSettings = this.appSettings.actions[actionName];
 		const baseAction = {
 			id: actionSettings.id,
-			icon: !isDropdownItem && actionSettings.icon,
 			label: actionSettings.name,
 			bsStyle: actionSettings.bsStyle,
 			tooltipLabel: actionSettings.toolTip || actionSettings.name,
 		};
+		if (!isDropdownItem) {
+			baseAction.icon = actionSettings.icon;
+		}
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
 		}

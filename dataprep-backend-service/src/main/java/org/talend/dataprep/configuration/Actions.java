@@ -33,7 +33,7 @@ public class Actions {
     public Actions(ObjectMapper objectMapper, ApplicationContext context, @Value("${help.exact.url:#{null}}") String docBaseUrl) {
         this.objectMapper = objectMapper;
         this.context = context;
-        if (isNotBlank(docBaseUrl)) ActionsBundle.INSTANCE.setDocumentationUrlBase(docBaseUrl);
+        if (isNotBlank(docBaseUrl)) ActionsBundle.setGlocalDocumentationUrlBase(docBaseUrl);
         Providers.setProvider(new SpringProvider());
     }
 

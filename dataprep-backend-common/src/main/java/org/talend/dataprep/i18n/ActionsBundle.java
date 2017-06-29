@@ -60,6 +60,8 @@ public class ActionsBundle implements MessagesBundle {
     private final Map<Class, ResourceBundle> actionToResourceBundle = new ConcurrentHashMap<>();
 
     /** Base URL of the documentation portal. */
+    // Documentation URL is not thread safe. It is acceptable while it is only changed at the application startup.
+    // If more changes is to happen, there should be a thread safety mechanism
     private String documentationUrlBase;
 
     private ActionsBundle() {
@@ -77,6 +79,29 @@ public class ActionsBundle implements MessagesBundle {
      */
     public static List<Parameter> attachToAction(List<Parameter> parameters, Object parent) {
         return parameters.stream().map(p -> p.attach(parent)).collect(Collectors.toList());
+    }
+
+    /**
+     * Set global Documentation portal URL.
+     *
+     * <p>
+     * Actions can specify the documentation URL parameters with the {@link #URL_PARAMETERS_SUFFIX} suffix in the
+     * {@code actions_messages.properties} file.
+     * </p>
+     */
+    public static void setGlocalDocumentationUrlBase(String documentationUrlBase) {
+        INSTANCE.setDocumentationUrlBase(documentationUrlBase);
+    }
+
+    /**
+     * Get global Documentation portal URL.
+     * <p>
+     * Actions can specify the documentation URL parameters with the {@link #URL_PARAMETERS_SUFFIX} suffix in the
+     * {@code actions_messages.properties} file.
+     * </p>
+     */
+    public static String getGlocalDocumentationUrlBase() {
+        return INSTANCE.getDocumentationUrlBase();
     }
 
     /**
@@ -226,11 +251,11 @@ public class ActionsBundle implements MessagesBundle {
         return getMandatoryMessage(fallBackKey, locale, code, args);
     }
 
-    public void setDocumentationUrlBase(String documentationUrlBase) {
+    private void setDocumentationUrlBase(String documentationUrlBase) {
         this.documentationUrlBase = documentationUrlBase;
     }
 
-    public String getDocumentationUrlBase() {
+    private String getDocumentationUrlBase() {
         return documentationUrlBase;
     }
 }

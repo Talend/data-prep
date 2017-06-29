@@ -24,7 +24,6 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 	return {
 		searchAll,
 		searchDocumentation,
-		searchDocumentationAndHighlight,
 		searchInventory,
 	};
 
@@ -34,10 +33,6 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 
 	function searchDocumentation(searchInput) {
 		return SearchDocumentationService.search(searchInput);
-	}
-
-	function searchDocumentationAndHighlight(searchInput) {
-		return SearchDocumentationService.searchAndHighlight(searchInput);
 	}
 
 	function searchAll(searchInput) {

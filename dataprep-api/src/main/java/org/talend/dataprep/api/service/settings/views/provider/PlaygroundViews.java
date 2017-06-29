@@ -45,7 +45,7 @@ public interface PlaygroundViews {
                     SearchSettings.builder()
                             .debounceTimeout(300)
                             .onBlur(SEARCH_TOGGLE.getId())
-                            .onChange(SEARCH_ALL.getId())
+                            .onChange(SEARCH_DOC.getId())
                             .onKeyDown(SEARCH_FOCUS.getId())
                             .onToggle(SEARCH_TOGGLE.getId())
                             .onSelect("documentation", EXTERNAL_DOCUMENTATION.getId())

@@ -161,5 +161,35 @@ describe('Search actions service', () => {
 			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(null);
 			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
 		}));
+
+
+		it('should search doc if search input is not empty', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
+			// given
+			const action = {
+				type: '@@search/DOC',
+				payload: {
+					searchInput,
+				},
+			};
+			spyOn(StateService, 'setSearching').and.returnValue();
+			spyOn(StateService, 'setSearchInput').and.returnValue();
+			spyOn(StateService, 'setSearchResults').and.returnValue();
+			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(['a', 'b', 'c']));
+			spyOn(StateService, 'setFocusedSectionIndex').and.returnValue();
+			spyOn(StateService, 'setFocusedItemIndex').and.returnValue();
+
+			// when
+			SearchActionsService.dispatch(action);
+			expect(StateService.setSearching).toHaveBeenCalledWith(true);
+			expect(StateService.setSearchInput).toHaveBeenCalledWith(searchInput);
+			$rootScope.$digest();
+
+			// then
+			expect(SearchService.searchDocumentation).toHaveBeenCalledWith(searchInput);
+			expect(StateService.setSearchResults).toHaveBeenCalledWith(['a', 'b', 'c']);
+			expect(StateService.setSearching).toHaveBeenCalledWith(false);
+			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
+		}));
 	});
 });

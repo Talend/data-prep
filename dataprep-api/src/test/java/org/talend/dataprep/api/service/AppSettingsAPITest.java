@@ -231,6 +231,9 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final ActionSettings searchAll = settings.getActions().get("search:all");
         assertThat(searchAll.getType(), is("@@search/ALL"));
 
+        final ActionSettings searchDoc = settings.getActions().get("search:doc");
+        assertThat(searchDoc.getType(), is("@@search/DOC"));
+
         final ActionSettings searchFocus = settings.getActions().get("search:focus");
         assertThat(searchFocus.getType(), is("@@search/FOCUS"));
 
@@ -300,7 +303,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getDebounceTimeout(), is(300));
         assertThat(ahb.getSearch().getPlaceholder(), is("Search Documentation"));
         assertThat(ahb.getSearch().getOnBlur(), is("search:toggle"));
-        assertThat(ahb.getSearch().getOnChange(), is("search:all"));
+        assertThat(ahb.getSearch().getOnChange(), is("search:doc"));
         assertThat(ahb.getSearch().getOnKeyDown(), is("search:focus"));
         assertThat(ahb.getSearch().getOnToggle(), is("search:toggle"));
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));

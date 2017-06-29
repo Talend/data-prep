@@ -39,20 +39,6 @@ describe('Search service', () => {
 		}));
 	});
 
-	describe('searchDocumentationAndHighlight', () => {
-		it('should call documentation service and highlight results', inject(($rootScope, SearchService, SearchDocumentationService) => {
-			// given
-			spyOn(SearchDocumentationService, 'searchAndHighlight');
-
-			// when
-			SearchService.searchDocumentationAndHighlight(searchInput);
-			$rootScope.$digest();
-
-			// then
-			expect(SearchDocumentationService.searchAndHighlight).toHaveBeenCalledWith(searchInput);
-		}));
-	});
-
 	describe('searchInventory', () => {
 		it('should call inventory service', inject(($rootScope, SearchService, SearchInventoryService) => {
 			// given

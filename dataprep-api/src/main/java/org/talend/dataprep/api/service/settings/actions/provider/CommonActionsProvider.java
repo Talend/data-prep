@@ -63,6 +63,7 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 PreparationActions.PREPARATION_SORT,
 
                 SearchActions.SEARCH_ALL,
+                SearchActions.SEARCH_DOC,
                 SearchActions.SEARCH_FOCUS,
                 SearchActions.SEARCH_TOGGLE,
 

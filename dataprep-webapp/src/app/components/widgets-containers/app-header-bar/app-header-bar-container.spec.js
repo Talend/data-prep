@@ -98,6 +98,19 @@ describe('App header bar container', () => {
 			const logoutMenuItem = element.find('#user\\:logout');
 			expect(logoutMenuItem.text()).toBe('Logout');
 		});
+
+		it('should create products menu', () => {
+			// when
+			createElement();
+
+			// then
+			const productsToggle = element.find('#products\\:menu');
+			expect(productsToggle.text().trim()).toBe('Apps');
+
+			expect(element.find('#product\\:producta').text()).toBe('Product A');
+			expect(element.find('#product\\:productb').text()).toBe('Product B');
+			expect(element.find('#product\\:productc').text()).toBe('Product C');
+		});
 	});
 
 	describe('onClick', () => {

@@ -37,6 +37,7 @@ const settingsMock = {
 			},
 			userMenu: 'user:menu',
 			help: 'headerbar:help',
+			products: 'products:menu',
 		},
 		breadcrumb: {
 			maxItems: 5,
@@ -244,6 +245,50 @@ const settingsMock = {
 			payload: {
 				method: 'logout',
 			},
+		},
+		'product:producta': {
+			displayMode: 'ActionSettings',
+			id: 'product:producta',
+			name: 'Product A',
+			icon: 'talend-logo-a',
+			type: '@@external/OPEN_WINDOW',
+			payload: {
+				args: ['https://producta.tlnd'],
+				method: 'open',
+			},
+		},
+		'product:productb': {
+			displayMode: 'ActionSettings',
+			id: 'product:productb',
+			name: 'Product B',
+			icon: 'talend-logo-b',
+			type: '@@external/OPEN_WINDOW',
+			payload: {
+				args: ['https://productb.tlnd'],
+				method: 'open',
+			},
+		},
+		'product:productc': {
+			displayMode: 'ActionSettings',
+			id: 'product:productc',
+			name: 'Product C',
+			icon: 'talend-logo-c',
+			type: '@@external/OPEN_WINDOW',
+			payload: {
+				args: ['https://productc.tlnd'],
+				method: 'open',
+			},
+		},
+		'products:menu': {
+			displayMode: 'dropdown',
+			id: 'products:menu',
+			name: 'Apps',
+			icon: 'talend-launcher',
+			staticActions: [
+				'product:producta',
+				'product:productb',
+				'product:productc'
+			]
 		},
 		'dataset:open': {
 			id: 'dataset:open',

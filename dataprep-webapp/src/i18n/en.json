@@ -277,12 +277,6 @@
   "MOVE_UP": "Move up",
   "MOVE_DOWN": "Move down",
 
-  "_comment": "Search",
-  "TOGGLE_SEARCH": "Toggle search input",
-  "SEARCH": "Search Talend Data Preparation and Documentation",
-  "SEARCHING": "Searching ...",
-  "PLAYGROUND_SEARCH": "Search Documentation",
-
   "_comment": "Statistics",
   "COUNT": "Count",
   "DISTINCT_COUNT": "Distinct",

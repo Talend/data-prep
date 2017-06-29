@@ -55,7 +55,7 @@ export default class AppHeaderBarCtrl {
 				const searchToggle = changes.searchToggle.currentValue;
 				if (searchToggle) {
 					searchConfiguration.onToggle = this.searchOnToggle;
-					searchConfiguration.value = '';
+					delete searchConfiguration.value;
 					searchConfiguration.items = null;
 				}
 				else {

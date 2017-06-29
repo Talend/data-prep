@@ -21,7 +21,7 @@ describe('Feedback Rest Service', function () {
 	beforeEach(angular.mock.module('data-prep.services.feedback'));
 
 	beforeEach(inject(function ($rootScope, $injector, RestURLs) {
-		RestURLs.register('', settings.uris);
+		RestURLs.register({ serverUrl: '' }, settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

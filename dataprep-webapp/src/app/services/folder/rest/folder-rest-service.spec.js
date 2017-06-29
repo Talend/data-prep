@@ -21,7 +21,7 @@ describe('Folder Rest Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.folder'));
 
 	beforeEach(inject(($rootScope, $injector, RestURLs) => {
-		RestURLs.register('', settings.uris);
+		RestURLs.register({ serverUrl: '' }, settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

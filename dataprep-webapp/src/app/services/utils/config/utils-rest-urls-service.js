@@ -22,10 +22,11 @@ export default function RestURLs() {
 	 * @name register
 	 * @propertyOf data-prep.services.utils.service:RestURLs
 	 * @description Init the api urls with a provided URLs configuration
-	 * @param {String} serverUrl The host and port to define API urls
+	 * @param {Object} config Contains the host and port to define API urls
 	 * @param {Object} uris All URIs to be consumed
 	 */
-	this.register = function register(serverUrl, uris) {
+	this.register = function register(config, uris) {
+		const { serverUrl } = config;
 		this.aggregationUrl = serverUrl + uris.apiAggregate;
 		this.datasetUrl = serverUrl + uris.apiDatasets;
 		this.uploadDatasetUrl = serverUrl + uris.apiUploadDatasets;

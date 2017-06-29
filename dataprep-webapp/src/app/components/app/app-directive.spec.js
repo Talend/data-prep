@@ -34,7 +34,7 @@ describe('App directive', () => {
 	}));
 
 	beforeEach(inject(($injector, $q, RestURLs, AboutService, UpgradeVersionService) => {
-		RestURLs.register('', settings.uris);
+		RestURLs.register({ serverUrl: '' }, settings.uris);
 
 		const $httpBackend = $injector.get('$httpBackend');
 		$httpBackend
@@ -80,13 +80,5 @@ describe('App directive', () => {
 
 		//then
 		expect(element.find('ui-view.main-layout').length).toBe(1);
-	});
-
-	it('should render about modal', () => {
-		//when
-		createElement();
-
-		//then
-		expect(element.find('about').length).toBe(1);
 	});
 });

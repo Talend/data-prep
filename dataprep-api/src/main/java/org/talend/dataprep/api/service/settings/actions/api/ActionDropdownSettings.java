@@ -146,7 +146,9 @@ public class ActionDropdownSettings extends ActionSettings {
         }
 
         public Builder staticActions(final List<String> staticActions) {
-            this.staticActions.addAll(staticActions);
+            if (staticActions != null) {
+                this.staticActions.addAll(staticActions);
+            }
             return this;
         }
 

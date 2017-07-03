@@ -16,6 +16,8 @@ import angular from 'angular';
 import FilterValueCtrl from './filter-value-controller';
 import FilterValueComponent from './filter-value-component';
 
+import SERVICES_UTILS_MODULE from '../../../../services/utils/utils-module';
+
 const MODULE_NAME = 'data-prep.filter-item-value';
 
 /**
@@ -24,7 +26,7 @@ const MODULE_NAME = 'data-prep.filter-item-value';
  * @description This module contains the component to display filter item value
  */
 angular
-    .module(MODULE_NAME, [])
+    .module(MODULE_NAME, [SERVICES_UTILS_MODULE])
     .controller('FilterValueCtrl', FilterValueCtrl)
     .component('filterValue', FilterValueComponent);
 

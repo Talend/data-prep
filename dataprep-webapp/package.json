@@ -38,7 +38,7 @@
     "angular-ui-router": "^0.2.15",
     "angularjs-toaster": "^0.4.10",
     "animate.css": "^3.5.1",
-    "bootstrap-talend-theme": "0.87.0",
+    "bootstrap-talend-theme": "0.88.0",
     "d3": "^3.5.5",
     "d3-tip": "^0.6.7",
     "intro.js": "^1.1.1",
@@ -58,10 +58,10 @@
     "react-bootstrap": "^0.30.3",
     "react-css-transition": "^0.7.4",
     "react-dom": "^15.4.2",
-    "react-talend-components": "0.87.0",
-    "react-talend-forms": "0.87.0",
+    "react-talend-components": "0.88.0",
+    "react-talend-forms": "0.88.0",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#2.0.0",
-    "talend-icons": "0.87.0",
+    "talend-icons": "0.88.0",
     "uuid": "^2.0.3"
   },
   "devDependencies": {

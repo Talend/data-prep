@@ -573,6 +573,20 @@ export default function StatisticsService($q, $log, $filter, state, StateService
     //--------------------------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
+     * @name adaptPatternsToGridConstraints
+     * @description adapt pattern list to the grid constraints by adding a new 'formattedPattern' field
+     */
+	function adaptPatternsToGridConstraints(items) {
+		return items && items.length ? items.map((item) => {
+			return {
+				...item,
+				formattedPattern: TextFormatService.adaptToGridConstraints(item.pattern),
+			};
+		}) : [];
+	}
+
+    /**
+     * @ngdoc method
      * @name createFilteredPatternsFrequency
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description update patterns statistics
@@ -580,11 +594,11 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 	function initPatternsFrequency() {
 		const patternFrequency = state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable;
 		if (patternFrequency) {
-			StateService.setStatisticsPatterns(patternFrequency);
+			StateService.setStatisticsPatterns(adaptPatternsToGridConstraints(patternFrequency));
 			createFilteredPatternsFrequency()
-                .then((filteredPatternFrequency) => {
-	StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-});
+			.then((filteredPatternFrequency) => {
+				StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
+			});
 		}
 	}
 
@@ -605,7 +619,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		const defer = $q.defer();
 		service.patternWorker = new PatternOccurrenceWorker();
 		service.patternWorker.onmessage = (event) => {
-			defer.resolve(event.data);
+			defer.resolve(adaptPatternsToGridConstraints(event.data));
 		};
 
 		service.patternWorker.onerror = (error) => {

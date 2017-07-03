@@ -956,6 +956,7 @@ describe('Statistics service', () => {
                 {
                     pattern: '',
                     occurrences: 1,
+                    formattedPattern: '',
                 },
             ]);
         }));
@@ -987,10 +988,12 @@ describe('Statistics service', () => {
                 {
                     pattern: 'd-M-yyyy',
                     occurrences: 1,
+                    formattedPattern: 'd-M-yyyy',
                 },
                 {
                     pattern: 'yyyy-M-d',
                     occurrences: 2,
+                    formattedPattern: 'yyyy-M-d',
                 },
             ]);
         }));
@@ -1022,10 +1025,40 @@ describe('Statistics service', () => {
                 {
                     pattern: 'Aa,/',
                     occurrences: 3,
+                    formattedPattern: 'Aa,/',
                 },
                 {
                     pattern: '99/99-99',
                     occurrences: 4,
+                    formattedPattern: '99/99-99',
+                },
+            ]);
+        }));
+
+
+        it('should format pattern according to grid constraints', inject(function ($rootScope, StatisticsService, StateService) {
+            //given
+            stateMock.playground.grid.selectedColumns[0].statistics.patternFrequencyTable = [
+                {
+                    pattern: ' aaaa ',
+                    occurrences: 1,
+                },
+            ];
+            stateMock.playground.filter.gridFilters = [{}];
+            stateMock.playground.grid.filteredRecords = [{
+                '0001': 'toto',
+            },];
+
+            //when
+            StatisticsService.updateStatistics();
+            $rootScope.$digest();
+
+            //then
+            expect(StateService.setStatisticsPatterns).toHaveBeenCalledWith([
+                {
+                    pattern: ' aaaa ',
+                    occurrences: 1,
+                    formattedPattern: '<span class="hiddenChars"> </span>aaaa<span class="hiddenChars"> </span>',
                 },
             ]);
         }));
@@ -1054,10 +1087,12 @@ describe('Statistics service', () => {
                 {
                     pattern: 'Aa,/',
                     occurrences: 3,
+                    formattedPattern: 'Aa,/',
                 },
                 {
                     pattern: '99/99-99',
                     occurrences: 4,
+                    formattedPattern: '99/99-99',
                 },
             ]);
         }));
@@ -2852,6 +2887,7 @@ describe('Statistics service', () => {
                         pattern: '',
                         occurrences: 1,
                         filteredOccurrences: 1,
+                        formattedPattern: '',
                     },]);
                     done();
                 });

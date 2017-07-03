@@ -53,4 +53,23 @@ describe('Editable select directive', function () {
         expect(select.options[1].value).toBe('string:val2');
         expect(select.options[2].value).toBe('string:val3');
     });
+
+    it('should add the selected value in the input and reset the select', function () {
+        //given
+        scope.selectValues = ['val1', 'val2', 'val3'];
+
+        //when
+        createElement();
+
+        var select = element.find('select').eq(0);
+        var input = element.find('input').eq(0);
+
+        select.prop('selectedIndex', 2);
+        select.triggerHandler('change');
+        scope.$digest();
+
+        //then
+        expect(input.val()).toBe('val2');
+        expect(select.val()).toBeNull();
+    });
 });

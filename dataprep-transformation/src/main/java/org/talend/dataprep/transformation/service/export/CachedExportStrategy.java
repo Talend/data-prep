@@ -12,10 +12,10 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import java.io.InputStream;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.util.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -25,17 +25,15 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 /**
- * A {@link ExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
+ * A {@link BaseExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
  * {@link #accept(ExportParameters)} returns <code>false</code>).
  */
 @Component
-public class CachedExportStrategy extends StandardExportStrategy {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CachedExportStrategy.class);
+public class CachedExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
@@ -66,7 +64,11 @@ public class CachedExportStrategy extends StandardExportStrategy {
     public StreamingResponseBody execute(ExportParameters parameters) {
         final TransformationCacheKey contentKey = getCacheKey(parameters);
         ExportUtils.setExportHeaders(parameters.getExportName(), getFormat(parameters.getExportType()));
-        return outputStream -> IOUtils.copy(contentCache.get(contentKey), outputStream);
+        return outputStream -> {
+            try (InputStream cachedContent = contentCache.get(contentKey)) {
+                IOUtils.copy(cachedContent, outputStream);
+            }
+        };
     }
 
     private TransformationCacheKey getCacheKey(ExportParameters parameters) {

@@ -34,9 +34,21 @@ export default function EditableSelect() {
 			value: '=ngModel',
 		},
 		bindToController: true,
-		controller: () => {
-		},
-
 		controllerAs: 'editableSelectCtrl',
+		controller: () => {},
+		link: {
+			post(scope, iElement, ctrl) {
+				const select = iElement.find('select');
+				const input = iElement.find('input');
+
+				function setValue() {
+					input.value = select.val();
+					select.prop('selectedIndex', -1);
+				}
+
+				select.change(setValue);
+				scope.$watch(() => ctrl.list, setValue);
+			},
+		},
 	};
 }

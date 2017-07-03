@@ -14,9 +14,11 @@ import AppHeaderBarCtrl from './app-header-bar-controller';
 
 const AppHeaderBarContainer = {
 	template: `<pure-app-header-bar
-		 	app="$ctrl.app"
-		 	brand-link="$ctrl.brandLink"
-		 	content="$ctrl.content"
+		 	brand="$ctrl.brand"
+		 	logo="$ctrl.logo"
+		 	search="$ctrl.search"
+		 	help="$ctrl.help"
+		 	user="$ctrl.user"
 		 	watch-depth="reference"
 		/>`,
 	controller: AppHeaderBarCtrl,

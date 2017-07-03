@@ -1,28 +1,34 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.dataset.DataSetBaseTest;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
@@ -72,7 +78,9 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testAnalysisWithLimit() {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("3548").build();
+        final DataSetMetadata metadata = createMetadata("3548",
+                Arrays.asList("id", "first_name", "last_name", "email", "gender", "ip_address"));
+        metadataBuilder.metadata().id("3548").build();
         createCsvDataSet(metadata, "100_lines.csv");
 
         final Long newLimit = 16L;
@@ -111,5 +119,13 @@ public class ContentAnalysisTest extends DataSetBaseTest {
         metadata.getContent().addParameter(CSVFormatFamily.SEPARATOR_PARAMETER, ",");
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, this.getClass().getResourceAsStream(source));
+    }
+
+    private DataSetMetadata createMetadata(String id, List<String> header) {
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
+        List<ColumnMetadata> columns = header.stream().map(s -> ColumnMetadata.Builder.column().name(s).type(Type.STRING).build())
+                .collect(Collectors.toList());
+        metadata.setRowMetadata(new RowMetadata(columns));
+        return metadata;
     }
 }

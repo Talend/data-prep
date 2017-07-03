@@ -23,7 +23,10 @@ import org.talend.daikon.documentation.DocumentationController;
 @SpringBootApplication
 @Configuration("org.talend.dataprep.preparation.Application")
 @Profile("standalone")
-@ComponentScan(basePackages = { "org.talend.dataprep", "org.talend.daikon" }, excludeFilters = @ComponentScan.Filter(value = DocumentationController.class, type = FilterType.ASSIGNABLE_TYPE))
+@ComponentScan( //
+        value = { "org.talend.dataprep", "org.talend.daikon" }, //
+        excludeFilters = @ComponentScan.Filter(value = DocumentationController.class, type = FilterType.ASSIGNABLE_TYPE) //
+)
 public class Application {
 
     public static void main(String[] args) {

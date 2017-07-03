@@ -13,22 +13,40 @@
 
 class SearchDocumentationRestService {
 
-	constructor($http, documentationSearchURL) {
+	constructor($http, documentationSearchURL, documentationSearchVersion, documentationSearchLanguage) {
 		'ngInject';
 		this.$http = $http;
 		this.documentationSearchURL = documentationSearchURL;
+		this.parameters = {
+			contentLocale: documentationSearchLanguage,
+			filters: [
+				{
+					key: 'version',
+					values: [documentationSearchVersion],
+				},
+				{
+					key: 'EnrichPlatform',
+					values: ['Talend Data Preparation'],
+				},
+			],
+			paging: {
+				page: 1,
+				perPage: 5,
+			},
+		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name search
-     * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
-     * @description search documentation with keyword
-     */
+	/**
+	 * @ngdoc method
+	 * @name search
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
+	 * @description search documentation with keyword
+	 */
 	search(keyword) {
 		return this.$http({
-			method: 'GET',
-			url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword),
+			url: this.documentationSearchURL,
+			data: { ...this.parameters, query: keyword },
+			method: 'POST',
 			failSilently: true,
 			withCredentials: false,
 		});

@@ -3,7 +3,9 @@
   "serverSignUrl": "http://10.42.10.99:8888",
   "serverKeepAliveUrl": "",
   "enableDebug": false,
-  "version": "2.1.0-SNAPSHOT",
+  "version": "2.2.0-SNAPSHOT",
   "copyRights": "© 2017 Talend. All Rights Reserved",
-  "documentationSearchURL" : "https://www.talendforge.org/find/api/index.php?source=DATA%20PREP&condition=AND&max=5"
+  "documentationSearchURL" : "https://www.talendforge.org/find/api/THC.php",
+  "documentationSearchVersion": "2.1",
+  "documentationSearchLanguage": "en"
 }

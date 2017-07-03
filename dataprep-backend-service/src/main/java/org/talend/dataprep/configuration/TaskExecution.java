@@ -41,18 +41,18 @@ public class TaskExecution {
     }
 
     /**
+     * <p>
+     * <b>Important note</b> Naming of the executor is very important, code relies on documentation naming conventions
+     * for async task executor injection.
+     * </p>
+     *
      * @return A {@link TaskExecutor} for non-blocking HTTP request execution.
      * @see Async
+     * @see org.springframework.scheduling.annotation.EnableAsync
      */
-    @Bean("requestMappingHandlerMapping#executor")
+    @Bean(Async.EXECUTOR)
     public TaskExecutor asyncTaskExecutor() {
-        SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
-        // Set async thread pool
-        final ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setQueueCapacity(50);
-        threadPoolTaskExecutor.setMaxPoolSize(50);
-        threadPoolTaskExecutor.initialize();
-        return asyncTaskExecutor;
+        return new SimpleAsyncTaskExecutor();
     }
 
     /**

@@ -697,6 +697,18 @@ describe('Recipe component', () => {
 		},
 	];
 
+	const TRANSLATIONS = {
+		RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
+		RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
+		RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
+		LOOKUP_STEP_DESCRIPTION: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> done with dataset <div class="step-scope" title="{{lookupDsName}}">{{lookupDsName}}</div>. Join has been set between <div class="step-scope" title="{{mainColName}}">{{mainColName}}</div> and <div class="step-scope" title="{{lookupColName}}">{{lookupColName}}</div>. ',
+		ONLY_1_ADDED_COL: 'The column <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> has been added.',
+		ONLY_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> have been added.',
+		MORE_THEN_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="{{restOfCols}}">{{restOfColsNbr}}</span> other(s) have been added.',
+		OTHER: 'other',
+		NO_PREPARATION_STEPS: 'No preparation steps',
+	};
+
 	beforeEach(angular.mock.module('data-prep.recipe', ($provide) => {
 		stateMock = {
 			playground: {
@@ -707,21 +719,11 @@ describe('Recipe component', () => {
 	}));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
-			RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
-			RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
-			LOOKUP_STEP_DESCRIPTION: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> done with dataset <div class="step-scope" title="{{lookupDsName}}">{{lookupDsName}}</div>. Join has been set between <div class="step-scope" title="{{mainColName}}">{{mainColName}}</div> and <div class="step-scope" title="{{lookupColName}}">{{lookupColName}}</div>. ',
-			ONLY_1_ADDED_COL: 'The column <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> has been added.',
-			ONLY_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> have been added.',
-			MORE_THEN_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="{{restOfCols}}">{{restOfColsNbr}}</span> other(s) have been added.',
-			OTHER: 'other',
-		});
+		$translateProvider.translations('en', TRANSLATIONS);
 		$translateProvider.preferredLanguage('en');
 	}));
 
 	beforeEach(inject(($rootScope, $compile) => {
-
 		scope = $rootScope.$new();
 		element = angular.element('<recipe></recipe>');
 		$compile(element)(scope);
@@ -751,6 +753,28 @@ describe('Recipe component', () => {
 		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2 To uppercase on column col2');
 		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(2).text().trim().replace(/\s+/g, ' ')).toBe('3 Replace value on cell');
 		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(3).text().trim().replace(/\s+/g, ' ')).toBe('4 Delete Line #125');
+	});
+
+
+	it('should display a message when there is no steps', () => {
+		// when
+		stateMock.playground.recipe.current.steps = [];
+		stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
+		scope.$digest();
+
+		// then
+		expect(element.find('.recipe > .empty-message').length).toBe(1);
+		expect(element.find('.recipe > .empty-message').eq(0).text()).toBe(TRANSLATIONS.NO_PREPARATION_STEPS);
+	});
+
+	it('should NOT display empty message when there is at least one step in the recipe', () => {
+		// when
+		stateMock.playground.recipe.current.steps = [steps[0]];
+		stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
+		scope.$digest();
+
+		// then
+		expect(element.find('.recipe > .empty-message').length).toBe(0);
 	});
 
 	it('should render recipe Lookup entry', () => {

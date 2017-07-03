@@ -75,7 +75,7 @@ public class BaseContent {
      */
     @Bean(name = "rootStep")
     public Step getRootStep(PreparationActions rootContent) {
-        final Step step = new Step(null, rootContent, versionService.version().getVersionId());
+        final Step step = new Step(null, rootContent.id(), versionService.version().getVersionId());
         step.setId(ROOT_STEP.id());
         return step;
     }

@@ -51,6 +51,7 @@ import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -383,6 +384,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
 
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Error received {}", content);
+                }
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
                 TDPException cause = conversionService.convert(exceptionDto, TDPException.class);
                 ErrorCode code = cause.getCode();
@@ -390,8 +394,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     ((ErrorCodeDto) code).setHttpStatus(statusCode);
                 }
                 throw onError.apply(cause);
-            } catch (JsonMappingException e) {
-                LOGGER.debug("Cannot parse response content as JSON.", e);
+            } catch (JsonProcessingException e) {
+                LOGGER.debug("Cannot parse response content as JSON with content '" + content + "'", e);
                 // Failed to parse JSON error, returns an unexpected code with returned HTTP code
                 final TDPException exception = new TDPException(new JsonErrorCode() {
 

@@ -521,7 +521,7 @@
     "description": "Change the date format to use in a date column",
     "label": "Change date format",
     "actionScope": [],
-    "docUrl": "https://help.talend.com/pages/viewpage.action?pageId=266307181&utm_medium=dpdesktop&utm_source=func"
+    "docUrl": "https://help.talend.com/access/sources/TDP_21/map?pageid=date_formats&EnrichPlatform=Talend+Data+Preparation&afs:lang=en&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func"
   },
   {
     "name": "compute_time_since",
@@ -898,6 +898,6 @@
     "description": "Replace the cells that have a specific value",
     "label": "Replace the cells that match",
     "actionScope": [],
-    "docUrl": "https://help.talend.com/pages/viewpage.action?pageId=266307174&utm_medium=dpdesktop&utm_source=func"
+    "docUrl": "https://help.talend.com/access/sources/TDP_21/map?pageid=regular_expressions&EnrichPlatform=Talend+Data+Preparation&afs:lang=en&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func"
   }
 ]

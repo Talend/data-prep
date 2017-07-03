@@ -12,17 +12,27 @@
 
 package org.talend.dataprep.io;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -62,7 +72,7 @@ public class CloseableResourceWatch implements Condition {
                 entries.add(handler);
                 return handler;
             } else {
-                LOGGER.warn("No watch for '{}'.", proceed.getClass());
+                LOGGER.warn("No watch for '{}'.", proceed);
                 return proceed;
             }
         } catch (Exception e) {
@@ -114,10 +124,13 @@ public class CloseableResourceWatch implements Condition {
 
         Closeable getCloseable();
 
+        String getId();
+
         default String format() {
             StringWriter writer = new StringWriter();
             writer.append('\n').append("------------").append('\n');
-            writer.append("Closeable: ").append(getCloseable().toString()).append('\n');
+            writer.append("Closeable: ").append(getCloseable().getClass().getSimpleName()).append('\n');
+            writer.append("Id: ").append(getId()).append('\n');
             writer.append("Age: ").append(String.valueOf(System.currentTimeMillis() - getCreation())).append('\n');
             getCaller().printStackTrace(new PrintWriter(writer)); // NOSONAR
             writer.append("------------").append('\n');
@@ -131,10 +144,17 @@ public class CloseableResourceWatch implements Condition {
 
         private final RuntimeException caller = new RuntimeException(); // NOSONAR
 
+        private String id = UUID.randomUUID().toString();
+
         private final long creation = System.currentTimeMillis();
 
         private InputStreamHandler(InputStream delegate) {
             this.delegate = delegate;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override
@@ -213,10 +233,17 @@ public class CloseableResourceWatch implements Condition {
 
         private final RuntimeException caller = new RuntimeException(); // NOSONAR
 
+        private String id = UUID.randomUUID().toString();
+
         private final long creation = System.currentTimeMillis();
 
         public OutputStreamHandler(OutputStream delegate) {
             this.delegate = delegate;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override

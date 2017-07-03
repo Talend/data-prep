@@ -157,11 +157,13 @@ public class BeanConversionServiceTest {
         // Given
         conversionService.register(fromBean(ModelA.class).toBeans(ModelA1.class, ModelA2.class).build());
 
-        // Then
+        // When
         final ModelA1 convert = conversionService.convert(new ModelA("test"), ModelA1.class, (modelA, modelA1) -> {
             modelA1.setProperty("On the fly modified value");
             return modelA1;
         });
+
+        // Then
         assertEquals(ModelA1.class, convert.getClass());
         assertEquals("On the fly modified value", convert.getProperty());
     }
@@ -199,6 +201,5 @@ public class BeanConversionServiceTest {
         assertEquals("test", modelA2.getProperty());
         assertEquals("custom", modelA2.getCustom());
     }
-
 
 }

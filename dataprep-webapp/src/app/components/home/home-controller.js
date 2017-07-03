@@ -11,43 +11,20 @@
 
  ============================================================================*/
 
-import {
-	HOME_403_ROUTE,
-} from '../../index-route';
-
 export default class HomeCtrl {
-	constructor($state, $timeout, OnboardingService, StateService, StorageService, state) {
+	constructor(state, StateService, StorageService) {
 		'ngInject';
-		this.$state = $state;
-		this.$timeout = $timeout;
 		this.state = state;
-		this.OnboardingService = OnboardingService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
 	}
 
 	$onInit() {
 		this.configureSidePanel();
-		this.startOnboarding();
 	}
 
 	configureSidePanel() {
 		const docked = this.StorageService.getSidePanelDock();
 		this.StateService.setHomeSidePanelDock(docked);
-	}
-
-	startOnboarding() {
-		const tourId = 'preparation';
-
-		if (
-			this.$state.current.name === HOME_403_ROUTE ||
-			this.$state.params.prepid ||
-			this.$state.params.datasetid ||
-			!this.OnboardingService.shouldStartTour(tourId)
-		) {
-			return;
-		}
-
-		this.$timeout(() => this.OnboardingService.startTour(tourId), 1000, false);
 	}
 }

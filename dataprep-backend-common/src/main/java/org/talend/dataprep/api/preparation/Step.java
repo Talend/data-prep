@@ -18,8 +18,6 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -33,10 +31,10 @@ public class Step extends Identifiable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The parent step. */
-    private Step parent;
+    private String parent;
 
     /** The default preparation actions is the root actions. */
-    private PreparationActions preparationActions = ROOT_ACTIONS;
+    private String preparationActions = ROOT_ACTIONS.id();
 
     /** The app version. */
     @JsonProperty("app-version")
@@ -46,7 +44,7 @@ public class Step extends Identifiable implements Serializable {
     private StepDiff diff;
 
     /** The step row metadata. */
-    private RowMetadata rowMetadata;
+    private String rowMetadata;
 
     /**
      * Default empty constructor;
@@ -71,7 +69,7 @@ public class Step extends Identifiable implements Serializable {
      * @param content the step content.
      * @param appVersion the app version.
      */
-    public Step(final Step parent, final PreparationActions content, final String appVersion) {
+    public Step(final String parent, final String content, final String appVersion) {
         this(parent, content, appVersion, null);
     }
 
@@ -83,7 +81,7 @@ public class Step extends Identifiable implements Serializable {
      * @param appVersion the app version.
      * @param diff the step diff.
      */
-    public Step(final Step parent, final PreparationActions content, final String appVersion, final StepDiff diff) {
+    public Step(final String parent, final String content, final String appVersion, final StepDiff diff) {
         this.id = UUID.randomUUID().toString();
         this.parent = parent;
         this.preparationActions = content;
@@ -91,11 +89,11 @@ public class Step extends Identifiable implements Serializable {
         this.diff = diff;
     }
 
-    public Step getParent() {
+    public String getParent() {
         return parent;
     }
 
-    public void setParent(Step parent) {
+    public void setParent(String parent) {
         this.parent = parent;
     }
 
@@ -126,18 +124,21 @@ public class Step extends Identifiable implements Serializable {
         this.id = id;
     }
 
-    public PreparationActions getContent() {
-        return preparationActions == null ? PreparationActions.ROOT_ACTIONS : preparationActions;
+    public String getContent() {
+        return preparationActions == null ? PreparationActions.ROOT_ACTIONS.id() : preparationActions;
     }
 
-    public void setContent(PreparationActions preparationActions) {
+    public void setContent(String preparationActions) {
+        if (Step.ROOT_STEP.id().equals(id) && !PreparationActions.ROOT_ACTIONS.id().equals(preparationActions)) {
+            throw new IllegalArgumentException("Preparation action '" + preparationActions + "' is not valid for root step.");
+        }
         this.preparationActions = preparationActions;
     }
 
     /**
      * @return The row metadata linked to this step. Might be <code>null</code> to indicate no row metadata is present.
      */
-    public RowMetadata getRowMetadata() {
+    public String getRowMetadata() {
         return rowMetadata;
     }
 
@@ -146,7 +147,7 @@ public class Step extends Identifiable implements Serializable {
      *
      * @param rowMetadata The row metadata to set for this step.
      */
-    public void setRowMetadata(RowMetadata rowMetadata) {
+    public void setRowMetadata(String rowMetadata) {
         this.rowMetadata = rowMetadata;
     }
 
@@ -154,7 +155,7 @@ public class Step extends Identifiable implements Serializable {
     public String toString() {
         String result = "Step{parentId='";
         if (parent != null) {
-            result += parent.id();
+            result += parent;
         } else {
             result += "null";
         }

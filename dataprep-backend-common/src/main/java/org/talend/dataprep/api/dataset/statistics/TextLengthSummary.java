@@ -22,6 +22,9 @@ public class TextLengthSummary implements Serializable {
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
+    public TextLengthSummary() {
+    }
+
     @JsonProperty("minimalLength")
     private double minimalLength = Double.NaN;
 

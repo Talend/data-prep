@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import docSearchResults from '../../../../../mocks/Documentation.mock';
 
 describe('Search Documentation Rest Service', () => {
 	let $httpBackend;
@@ -20,22 +21,23 @@ describe('Search Documentation Rest Service', () => {
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 
-	it('should call Documentation rest service ', inject(($rootScope, SearchDocumentationRestService, documentationSearchURL) => {
+	it('should call external documentation rest service ',
+		inject(($rootScope, SearchDocumentationRestService, documentationSearchURL) => {
 		// given
+		const keyword = 'chart';
 		let result = null;
-		const docs = '"url, name, description"\n"url, name, description"';
 		$httpBackend
-			.expectGET(documentationSearchURL + '&keywords=n')
-			.respond(200, docs);
+			.expectPOST(documentationSearchURL)
+			.respond(200, docSearchResults);
 
 		// when
-		SearchDocumentationRestService.search('n').then((response) => {
+		SearchDocumentationRestService.search(keyword).then((response) => {
 			result = response.data;
 		});
 		$httpBackend.flush();
 		$rootScope.$digest();
 
 		// then
-		expect(result).toEqual(docs);
+		expect(result).toEqual(docSearchResults);
 	}));
 });

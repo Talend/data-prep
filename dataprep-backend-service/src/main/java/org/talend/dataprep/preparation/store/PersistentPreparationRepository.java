@@ -34,13 +34,6 @@ public class PersistentPreparationRepository implements PreparationRepository {
     public PersistentPreparationRepository(PreparationRepository delegate, BeanConversionService beanConversionService) {
         this.delegate = delegate;
         this.beanConversionService = beanConversionService;
-        initContent();
-    }
-
-    // Populate underlying repository with expected initial content (root step & root content).
-    private void initContent() {
-        add(Step.ROOT_STEP);
-        add(PreparationActions.ROOT_ACTIONS);
     }
 
     private static Class<? extends Identifiable> selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
@@ -62,24 +55,33 @@ public class PersistentPreparationRepository implements PreparationRepository {
 
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz) {
-        final Class<T> targetClass = (Class<T>) selectPersistentClass(clazz);
-        return delegate.list(targetClass) //
-                .map(i -> beanConversionService.convert(delegate.get(i.getId(), targetClass), clazz));
+        final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
+        return delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz));
     }
 
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, String filter) {
-        final Class<T> targetClass = (Class<T>) selectPersistentClass(clazz);
-        return delegate.list(targetClass, filter) //
-                .map(i -> beanConversionService.convert(delegate.get(i.getId(), targetClass), clazz));
+        final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
+        return delegate.list(persistentClass, filter).map(i -> beanConversionService.convert(i, clazz));
     }
 
     @Override
     public void add(Identifiable object) {
         final Collection<Identifiable> identifiableList = PreparationUtils.scatter(object);
         for (Identifiable identifiable : identifiableList) {
-            final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());
-            final Identifiable storedIdentifiable = beanConversionService.convert(identifiable, targetClass);
+            if(identifiable instanceof Step) {
+                final String parent = ((Step) identifiable).getParent();
+                if (parent != null && parent.equals(Step.ROOT_STEP.id())) {
+                    // Ensure root step is present
+                    delegate.add(beanConversionService.convert(Step.ROOT_STEP, PersistentStep.class));
+                }
+            }
+            if(identifiable instanceof PreparationActions) {
+                delegate.add(beanConversionService.convert(PreparationActions.ROOT_ACTIONS, PreparationActions.class));
+            }
+
+            final Class<? extends Identifiable> persistentClass = selectPersistentClass(identifiable.getClass());
+            final Identifiable storedIdentifiable = beanConversionService.convert(identifiable, persistentClass);
             delegate.add(storedIdentifiable);
         }
     }
@@ -93,7 +95,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public void clear() {
         delegate.clear();
-        initContent();
+        add(Step.ROOT_STEP);
+        add(PreparationActions.ROOT_ACTIONS);
     }
 
     @Override

@@ -46,6 +46,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
 
     @Before
     public void setUp() {
+        super.setUp();
         serializer = context.getBean(CSVSerializer.class);
     }
 

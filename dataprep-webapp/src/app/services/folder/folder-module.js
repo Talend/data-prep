@@ -16,6 +16,7 @@ import uiRouter from 'angular-ui-router';
 import SERVICES_DATASET_MODULE from '../dataset/dataset-module';
 import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
+import SERVICES_ONBOARDING_MODULE from '../../services/onboarding/onboarding-module';
 
 import FolderService from './folder-service';
 import FolderRestService from './rest/folder-rest-service';
@@ -31,6 +32,7 @@ angular.module(MODULE_NAME,
 	[
 		uiRouter,
 		SERVICES_DATASET_MODULE,
+		SERVICES_ONBOARDING_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])

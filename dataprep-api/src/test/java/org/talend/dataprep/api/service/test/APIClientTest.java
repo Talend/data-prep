@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.api.service.test;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.http.ContentType.JSON;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
@@ -23,16 +26,22 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.MixedContentMap;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPITest;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 
@@ -62,7 +71,7 @@ public class APIClientTest {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, "UTF-8");
         final Response post = given() //
-                .contentType(ContentType.JSON) //
+                .contentType(JSON) //
                 .body(datasetContent) //
                 .queryParam("Content-Type", type) //
                 .when() //
@@ -109,7 +118,7 @@ public class APIClientTest {
             throws IOException {
 
         RequestSpecification request = given() //
-                .contentType(ContentType.JSON) //
+                .contentType(JSON) //
                 .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\"}");
 
         if (folderId != null) {
@@ -150,8 +159,61 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(ContentType.JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then()
+        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then()
                 .statusCode(is(200));
+    }
+
+    /**
+     * Add a step to a preparation.
+     *
+     * @param preparationId the preparation id.
+     * @param actionName action name
+     * @param parameters action parameters
+     * @throws IOException sh*t happens.
+     */
+    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters) throws IOException {
+        org.talend.dataprep.api.preparation.Actions actions = new org.talend.dataprep.api.preparation.Actions();
+        Action action = new Action();
+        action.setName(actionName);
+        action.setParameters(MixedContentMap.convert(parameters));
+        actions.setActions(Collections.singletonList(action));
+        given().contentType(JSON.withCharset(UTF_8)).content(actions) //
+                .when().post("/api/preparations/{id}/actions", preparationId) //
+                .then().statusCode(is(200));
+    }
+
+    /**
+     * Fetch the preparation metadata.
+     *
+     * @param preparationId id of the preparation to fetch
+     * @return the preparation details
+     * @throws IOException if a connexion or parsing error happen
+     */
+    public Preparation getPreparation(String preparationId) throws IOException {
+        String json = //
+                expect() //
+                        .statusCode(200).log().ifValidationFails() //
+                        .when() //
+                        .get("/api/preparations/{id}/details", new Object[] { preparationId }).asString();
+        return mapper.readerFor(Preparation.class).readValue(json);
+    }
+
+    /**
+     * Fetch preparation results and extract metadata produced by the preparation.
+     *
+     * @param id preparation ID
+     * @return metadata produced by the application of the preparation
+     */
+    public RowMetadata getPreparationContent(String id) throws IOException {
+        InputStream inputStream = given().get("/api/preparations/{prepId}/content?version={version}&from={stepId}", id, "head",
+                "HEAD").asInputStream();
+
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return mapper.readValue(inputStream, Data.class).metadata;
+    }
+
+    private static class Data {
+        public RowMetadata metadata;
     }
 
 }

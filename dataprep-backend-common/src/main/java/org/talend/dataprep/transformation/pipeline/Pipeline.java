@@ -33,6 +33,7 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
@@ -209,8 +210,15 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private PreparationMessage preparation;
 
+        private Function<Step, RowMetadata> rowMetadataSupplier = s -> null;
+
         public static Builder builder() {
             return new Builder();
+        }
+
+        public Builder withStepMetadataSupplier(Function<Step, RowMetadata> rowMetadataSupplier) {
+            this.rowMetadataSupplier = rowMetadataSupplier;
+            return this;
         }
 
         public Builder withAnalyzerService(AnalyzerService analyzerService) {
@@ -326,7 +334,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps());
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), rowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {

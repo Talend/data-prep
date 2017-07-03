@@ -53,6 +53,11 @@ public class CommandHelper {
                     IOUtils.copyLarge(inputStream, outputStream);
                     outputStream.flush();
                 } catch (IOException e) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException closingException) {
+                        LOGGER.warn("could not close command result, a http connection may be leaked !", closingException);
+                    }
                     LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), e);
                 }
             }, TDPException::rethrowOrWrap);
@@ -82,6 +87,11 @@ public class CommandHelper {
                     IOUtils.copyLarge(is, outputStream);
                     outputStream.flush();
                 } catch (IOException e) {
+                    try {
+                        is.close();
+                    } catch (IOException closingException) {
+                        LOGGER.warn("could not close command result, a http connection may be leaked !", closingException);
+                    }
                     LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), e);
                 }
             };

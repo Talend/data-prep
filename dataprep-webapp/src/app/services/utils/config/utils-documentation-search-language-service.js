@@ -11,20 +11,5 @@
 
  ============================================================================*/
 
-@keyframes fadeIn {
-	from { opacity: 0; }
-	to   { opacity: 1; }
-}
-
-.navbar [role='search'] {
-	.form-control {
-		margin-bottom: 0;
-		animation: fadeIn 0.2s;
-		background: $white;
-	}
-
-	> div > div,
-	.form-control {
-		width: 400px;
-	}
-}
+const DEFAULT_DOCUMENTATION_SEARCH_LANGUAGE = 'en';
+export default DEFAULT_DOCUMENTATION_SEARCH_LANGUAGE;

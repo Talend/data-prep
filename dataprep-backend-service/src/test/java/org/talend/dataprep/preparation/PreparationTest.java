@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import org.hamcrest.core.Is;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.ServiceBaseTest;
@@ -49,6 +50,13 @@ public class PreparationTest extends ServiceBaseTest {
     /** The default root content. */
     @Resource(name = "rootContent")
     private PreparationActions rootContent;
+
+    @Override
+    @Before
+    public void setUp() {
+        super.setUp();
+        repository.clear();
+    }
 
     @Test
     public void testDefaultPreparation() throws Exception {
@@ -109,7 +117,7 @@ public class PreparationTest extends ServiceBaseTest {
         final PreparationActions newContent = new PreparationActions(actions, version);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep, newContent, version);
+        final Step s = new Step(rootStep.id(), newContent.id(), version);
         repository.add(s);
 
         Preparation preparation = new Preparation("#48368", "1234", s.id(), version);
@@ -127,7 +135,7 @@ public class PreparationTest extends ServiceBaseTest {
         final PreparationActions newContent = rootContent.append(actions);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep, newContent, version);
+        final Step s = new Step(rootStep.id(), newContent.id(), version);
         repository.add(s);
 
         final Preparation preparation = new Preparation("#5438743", "1234", s.id(), version);
@@ -148,10 +156,10 @@ public class PreparationTest extends ServiceBaseTest {
         repository.add(newContent2);
 
         // Steps
-        final Step s1 = new Step(rootStep, newContent1, version);
+        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
         repository.add(s1);
 
-        final Step s2 = new Step(s1, newContent2, version);
+        final Step s2 = new Step(s1.id(), newContent2.id(), version);
         repository.add(s2);
 
         // Preparation

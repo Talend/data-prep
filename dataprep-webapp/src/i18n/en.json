@@ -91,6 +91,7 @@
   "PREPARATION_COPYING_SUCCESS": "The preparation has been copied.",
   "PREPARATION_MOVING_SUCCESS_TITLE": "Preparation moved",
   "PREPARATION_MOVING_SUCCESS": "The preparation has been moved.",
+  "NO_PREPARATION_STEPS": "No preparation steps",
 
   "_comment": "Preparations_creator",
   "EXISTING_DATASETS": "Existing datasets",
@@ -391,8 +392,8 @@
   "DATASET_PARAMETERS_ENCODING": "Encoding",
   "DATASET_PARAMETERS_SEPARATOR": "Separator",
   "ACTION_HELP": "Learn more ...",
-  "NAME": "Name:",
-  "SIZE": "Size:",
+  "NAME": "Name",
+  "SIZE": "Size",
 
   "_comment": "Upgrade version parameters",
   "UPGRADE_VERSION_NEW_VERSION_AVAILABLE": "New version available",

@@ -24,10 +24,10 @@ public class ClassPathActionRegistry implements ActionRegistry {
     public ClassPathActionRegistry(String... actionPackages) {
         synchronized (lock) { // Reflections is not thread safe (see https://github.com/ronmamo/reflections/issues/81).
             for (String actionPackage : actionPackages) {
-                LOGGER.info("Scanning classpath @ '{}'", actionPackage);
+                LOGGER.debug("Scanning classpath @ '{}'", actionPackage);
                 Reflections reflections = new Reflections(actionPackage);
                 final Set<Class<? extends ActionDefinition>> allActions = reflections.getSubTypesOf(ActionDefinition.class);
-                LOGGER.info("Found {} possible action class(es) in '{}'", allActions.size(), actionPackage);
+                LOGGER.debug("Found {} possible action class(es) in '{}'", allActions.size(), actionPackage);
                 for (Class<? extends ActionDefinition> action : allActions) {
                     try {
                         if (!Modifier.isAbstract(action.getModifiers())) {
@@ -40,7 +40,7 @@ public class ClassPathActionRegistry implements ActionRegistry {
                                 }
                             }
                         } else {
-                            LOGGER.info("Skip class '{}' (abstract class).", action.getName());
+                            LOGGER.debug("Skip class '{}' (abstract class).", action.getName());
                         }
                     } catch (Exception e) {
                         LOGGER.error("Unable to register action '{}'", action.getName(), e);

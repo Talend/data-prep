@@ -12,20 +12,6 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Collections.emptyList;
-import static org.talend.dataprep.api.type.Type.DATE;
-
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.chrono.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.TemporalAccessor;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +22,34 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.parameters.SelectParameter.Builder;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.converters.JulianDayConverter;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.chrono.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.time.temporal.JulianFields;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+
+import static java.util.Collections.emptyList;
+import static org.talend.dataprep.api.type.Type.DATE;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DateCalendarConverter.ACTION_NAME)
 public class DateCalendarConverter extends AbstractActionMetadata implements ColumnAction {
@@ -75,6 +82,22 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     private static final String TO_LOCALE_KEY = "to_locale_key";
 
+    private static final String JULIAN_DAY_CONVERT_KEY = "julian_day_convert_key";
+
+    private static final String DEFAULT_OUTPUT_PATTERN = "yyyy-MM-dd G";
+
+    private static Map<String,org.talend.dataquality.converters.DateCalendarConverter> dateCalendarConverterMap =null;
+
+    /**
+     * if it converts from Chronology
+     */
+    private boolean isFromChronology ;
+
+    /**
+     * if it converts to Chronology
+     */
+    private boolean isToChronology ;
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -88,32 +111,47 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     @Override
     public boolean acceptField(ColumnMetadata column) {
         final String domain = column.getDomain().toUpperCase();
-        return DATE.equals(Type.get(column.getType())) || SemanticCategoryEnum.DATE.name().equals(domain);
+        return DATE.equals(Type.get(column.getType())) || SemanticCategoryEnum.DATE.name().equals(domain) || Type.INTEGER.isAssignableFrom(Type.get(column.getType()));
     }
 
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-
+        final Parameter toJulianDayOrISOParameters = SelectParameter.Builder.builder()
+                .name(TO_CALENDAR_TYPE_PARAMETER)
+                .item(CalendarUnit.ISO.name(), CalendarUnit.ISO.toString())
+                .item(CalendarUnit.JULIAN_DAY.name(), CalendarUnit.JULIAN_DAY.toString())
+                .item(CalendarUnit.MODIFIED_JULIAN_DAY.name(), CalendarUnit.MODIFIED_JULIAN_DAY.toString())
+                .item(CalendarUnit.RATA_DIE.name(), CalendarUnit.RATA_DIE.toString())
+                .item(CalendarUnit.EPOCH_DAY.name(), CalendarUnit.EPOCH_DAY.toString())
+                .defaultValue(CalendarUnit.ISO.name())
+                .build();
+        final Parameter toCompleteParameters = SelectParameter.Builder.builder()
+                .name(TO_CALENDAR_TYPE_PARAMETER)
+                .item(CalendarUnit.ISO.name(), CalendarUnit.ISO.toString())
+                .item(CalendarUnit.HIJRI.name(), CalendarUnit.HIJRI.toString())
+                .item(CalendarUnit.JAPANESE.name(), CalendarUnit.JAPANESE.toString())
+                .item(CalendarUnit.MINGUO.name(), CalendarUnit.MINGUO.toString())
+                .item(CalendarUnit.THAI_BUDDHIST.name(), CalendarUnit.THAI_BUDDHIST.toString())
+                .item(CalendarUnit.JULIAN_DAY.name(), CalendarUnit.JULIAN_DAY.toString())
+                .item(CalendarUnit.MODIFIED_JULIAN_DAY.name(), CalendarUnit.MODIFIED_JULIAN_DAY.toString())
+                .item(CalendarUnit.RATA_DIE.name(), CalendarUnit.RATA_DIE.toString())
+                .item(CalendarUnit.EPOCH_DAY.name(), CalendarUnit.EPOCH_DAY.toString())
+                .defaultValue(CalendarUnit.MINGUO.name())
+                .build();
         //@formatter:off
         parameters.add(Builder.builder()
                 .name(FROM_CALENDAR_TYPE_PARAMETER)
-                .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString())
-                .item(ChronologyUnit.HIJRI.name(), ChronologyUnit.HIJRI.toString())
-                .item(ChronologyUnit.JAPANESE.name(), ChronologyUnit.JAPANESE.toString())
-                .item(ChronologyUnit.MINGUO.name(), ChronologyUnit.MINGUO.toString())
-                .item(ChronologyUnit.THAI_BUDDHIST.name(), ChronologyUnit.THAI_BUDDHIST.toString())
-                .defaultValue(ChronologyUnit.ISO.name())
-                .build());
-
-        parameters.add(Builder.builder()
-                .name(TO_CALENDAR_TYPE_PARAMETER)
-                .item(ChronologyUnit.ISO.name(), ChronologyUnit.ISO.toString())
-                .item(ChronologyUnit.HIJRI.name(), ChronologyUnit.HIJRI.toString())
-                .item(ChronologyUnit.JAPANESE.name(), ChronologyUnit.JAPANESE.toString())
-                .item(ChronologyUnit.MINGUO.name(), ChronologyUnit.MINGUO.toString())
-                .item(ChronologyUnit.THAI_BUDDHIST.name(), ChronologyUnit.THAI_BUDDHIST.toString())
-                .defaultValue(ChronologyUnit.MINGUO.name())
+                .item(CalendarUnit.ISO.name(), CalendarUnit.ISO.toString(), toCompleteParameters)
+                .item(CalendarUnit.HIJRI.name(), CalendarUnit.HIJRI.toString(), toCompleteParameters)
+                .item(CalendarUnit.JAPANESE.name(), CalendarUnit.JAPANESE.toString(), toCompleteParameters)
+                .item(CalendarUnit.MINGUO.name(), CalendarUnit.MINGUO.toString(), toCompleteParameters)
+                .item(CalendarUnit.THAI_BUDDHIST.name(), CalendarUnit.THAI_BUDDHIST.toString(), toCompleteParameters)
+                .item(CalendarUnit.JULIAN_DAY.name(), CalendarUnit.JULIAN_DAY.toString(), toJulianDayOrISOParameters)
+                .item(CalendarUnit.MODIFIED_JULIAN_DAY.name(), CalendarUnit.MODIFIED_JULIAN_DAY.toString(), toJulianDayOrISOParameters)
+                .item(CalendarUnit.RATA_DIE.name(), CalendarUnit.RATA_DIE.toString(), toJulianDayOrISOParameters)
+                .item(CalendarUnit.EPOCH_DAY.name(), CalendarUnit.EPOCH_DAY.toString(), toJulianDayOrISOParameters)
+                .defaultValue(CalendarUnit.ISO.name())
                 .build());
         //@formatter:on
 
@@ -124,28 +162,55 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+            dateCalendarConverterMap =new HashMap();
+            String fromCalendarParameter = actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER);
+            String toCalendarParameter = actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER);
+            isFromChronology = CalendarUnit
+                    .valueOf(fromCalendarParameter).isChronology();
+            isToChronology = CalendarUnit
+                    .valueOf(toCalendarParameter).isChronology();
+            if (isFromChronology) {
+                AbstractChronology fromCalendarType = CalendarUnit
+                        .valueOf(fromCalendarParameter).getCalendarType();
+                Locale fromLocale = CalendarUnit.valueOf(fromCalendarParameter)
+                        .getDefaultLocale();
+                actionContext.get(FROM_CALENDAR_TYPE_KEY, p -> fromCalendarType);
+                actionContext.get(FROM_LOCALE_KEY, p -> fromLocale);
+                actionContext.get(FROM_DATE_PATTERNS_KEY, p -> compileFromDatePattern(actionContext));
+            } else {//from JulianDay,no need to input pattern and Locale
+                TemporalField fromTemporalField = CalendarUnit
+                        .valueOf(fromCalendarParameter).getTemporalField();
+                actionContext.get(FROM_CALENDAR_TYPE_KEY, p -> fromTemporalField);
+            }
 
-            AbstractChronology fromCalendarType = ChronologyUnit
-                    .valueOf(actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER)).getCalendarType();
-            AbstractChronology toCalendarType = ChronologyUnit
-                    .valueOf(actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER)).getCalendarType();
-            Locale fromLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER))
-                    .getDefaultLocale();
-            Locale toLocale = ChronologyUnit.valueOf(actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER))
-                    .getDefaultLocale();
+            if (isToChronology) {
+                AbstractChronology toCalendarType = CalendarUnit
+                        .valueOf(toCalendarParameter).getCalendarType();
+                Locale toLocale = CalendarUnit.valueOf(toCalendarParameter)
+                        .getDefaultLocale();
+                actionContext.get(TO_CALENDAR_TYPE_KEY, p -> toCalendarType);
+                actionContext.get(TO_LOCALE_KEY, p -> toLocale);
+            } else {//to JulianDay,no need to output pattern and Locale
+                TemporalField toTemporalField = CalendarUnit
+                        .valueOf(toCalendarParameter).getTemporalField();
+                actionContext.get(TO_CALENDAR_TYPE_KEY, p -> toTemporalField);
+            }
 
-            actionContext.get(FROM_CALENDAR_TYPE_KEY, p -> fromCalendarType);
-            actionContext.get(TO_CALENDAR_TYPE_KEY, p -> toCalendarType);
-            actionContext.get(FROM_LOCALE_KEY, p -> fromLocale);
-            actionContext.get(TO_LOCALE_KEY, p -> toLocale);
-
+            //init an instance 'JulianDayConverter' when the converter is from JulianDay
+            if (!isFromChronology) {
+                JulianDayConverter julianDayConvert;
+                if (isToChronology) {//convert JulianDay to ISO Calendar and use default output pattern.
+                    julianDayConvert = new JulianDayConverter(actionContext.get(FROM_CALENDAR_TYPE_KEY), actionContext.get(TO_CALENDAR_TYPE_KEY), DEFAULT_OUTPUT_PATTERN, CalendarUnit.ISO.getDefaultLocale());
+                } else {
+                    julianDayConvert = new JulianDayConverter((TemporalField) actionContext.get(FROM_CALENDAR_TYPE_KEY), (TemporalField) actionContext.get(TO_CALENDAR_TYPE_KEY));
+                }
+                actionContext.get(JULIAN_DAY_CONVERT_KEY, p -> julianDayConvert);
+            }
             // register the new pattern in column stats as most used pattern, to be able to process date action more
             // efficiently later
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final String columnId = actionContext.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
-
-            actionContext.get(FROM_DATE_PATTERNS_KEY, p -> compileFromDatePattern(actionContext));
 
             rowMetadata.update(columnId, column);
         }
@@ -166,7 +231,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
-
         // Change the date calendar
         final String value = row.get(columnId);
         if (StringUtils.isBlank(value)) {
@@ -174,25 +238,55 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
 
         try {
-            String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
-                    context.get(FROM_CALENDAR_TYPE_KEY), context.get(FROM_LOCALE_KEY));
-
-            if (fromPattern != null) {
-
-                org.talend.dataquality.converters.DateCalendarConverter date = new org.talend.dataquality.converters.DateCalendarConverter(
-                        fromPattern, fromPattern, context.get(FROM_CALENDAR_TYPE_KEY), context.get(TO_CALENDAR_TYPE_KEY),
-                        context.get(FROM_LOCALE_KEY), context.get(TO_LOCALE_KEY));
-
-                String newValue = date.convert(value);
-
-                if (StringUtils.isNotEmpty(newValue) && StringUtils.isNotBlank(newValue)) {
-                    row.set(columnId, newValue);
+            String newValue = null;
+            if (isFromChronology) {//it is From Chronology
+                AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
+                Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
+                String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
+                        fromCalendarTypeKey, fromLocaleKey);
+                org.talend.dataquality.converters.DateCalendarConverter dateConverter =getDateCalendarConverterInstance(fromPattern,context);
+                if(dateConverter!=null){
+                    newValue = dateConverter.convert(value);
                 }
-
+            } else {//it is From JulianDay.JulianDay->Chronology OR JulianDay->JulianDay
+                JulianDayConverter julianDayConvert = (JulianDayConverter) context.get(JULIAN_DAY_CONVERT_KEY);
+                newValue = julianDayConvert.convert(value);
+            }
+            if (StringUtils.isNotEmpty(newValue) && StringUtils.isNotBlank(newValue)) {
+                row.set(columnId, newValue);
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
             LOGGER.debug("Unable to parse date {}.", value);
+        }
+    }
+
+    /**
+     * Create instance DateCalendarConverter only once for each pattern. It is used to covert from Chronology.
+     * @param fromPattern
+     * @param context
+     * @return
+     */
+    private org.talend.dataquality.converters.DateCalendarConverter getDateCalendarConverterInstance(String fromPattern,ActionContext context) {
+        if (!isFromChronology || StringUtils.isEmpty(fromPattern)) {
+            return null;
+        }
+        org.talend.dataquality.converters.DateCalendarConverter dateConvert=dateCalendarConverterMap.get(fromPattern);
+        if (dateConvert != null) {
+            return dateConvert;
+        }
+        AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
+        Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
+        if (isToChronology) {//Chronology->Chronology
+            dateConvert = new org.talend.dataquality.converters.DateCalendarConverter(
+                    fromPattern, fromPattern, fromCalendarTypeKey, context.get(TO_CALENDAR_TYPE_KEY),
+                    fromLocaleKey, context.get(TO_LOCALE_KEY));
+            dateCalendarConverterMap.put(fromPattern, dateConvert);
+            return dateConvert;
+        } else {//Chronology->TemporalField
+            JulianDayConverter julianDayConvert = new JulianDayConverter(fromCalendarTypeKey, fromPattern, fromLocaleKey, context.get(TO_CALENDAR_TYPE_KEY));
+            dateCalendarConverterMap.put(fromPattern, julianDayConvert);
+            return julianDayConvert;
         }
     }
 
@@ -204,13 +298,13 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     /**
      * Parse the date from the given patterns and chronology.
      *
-     * @param value the text to parse.
-     * @param patterns the patterns to use.
+     * @param value      the text to parse.
+     * @param patterns   the patterns to use.
      * @param chronology
      * @return the parsed date pattern
      */
     public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology,
-            Locale locale) {
+                                               Locale locale) {
 
         // take care of the null value
         if (value == null) {
@@ -233,25 +327,48 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     }
 
     /**
-     * enum Chronology.
+     * Enum CalendarUnit.There are 2 types of Calendar which are Chronology and TemporalField.
      */
-    public enum ChronologyUnit {
-        ISO("IsoChronology", IsoChronology.INSTANCE, Locale.US),
-        HIJRI("HijrahChronology", HijrahChronology.INSTANCE, new Locale("ar")),
-        JAPANESE("JapaneseChronology", JapaneseChronology.INSTANCE, Locale.JAPANESE),
-        MINGUO("MinguoChronology", MinguoChronology.INSTANCE, Locale.CHINESE),
-        THAI_BUDDHIST("ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE, new Locale("th"));
+    public enum CalendarUnit {
+        //Chronology date.
+        ISO(true, "IsoChronology", IsoChronology.INSTANCE, Locale.US),
+        HIJRI(true, "HijrahChronology", HijrahChronology.INSTANCE, new Locale("ar")),
+        JAPANESE(true, "JapaneseChronology", JapaneseChronology.INSTANCE, Locale.JAPANESE),
+        MINGUO(true, "MinguoChronology", MinguoChronology.INSTANCE, Locale.CHINESE),
+        THAI_BUDDHIST(true, "ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE, new Locale("th")),
+        //Julian day.
+        JULIAN_DAY(false, "JulianDay", JulianFields.JULIAN_DAY),
+        MODIFIED_JULIAN_DAY(false, "ModifiedJulianDay", JulianFields.MODIFIED_JULIAN_DAY),
+        RATA_DIE(false, "RataDie", JulianFields.RATA_DIE),
+        EPOCH_DAY(false, "EpochDay", ChronoField.EPOCH_DAY);
 
-        private final String displayName;
+        private String displayName;
 
-        private final transient AbstractChronology chronologyType;
+        private transient AbstractChronology chronologyType;
 
-        private final Locale defaultLocale;
+        private Locale defaultLocale;
 
-        ChronologyUnit(String displayName, AbstractChronology calendarType, Locale defaultLocale) {
+        /**
+         * TemporalField includes JulianDay,ModifiedJulianDay,RataDie,EpochDay in current.
+         */
+        private transient TemporalField temporalField;
+
+        /**
+         * It is a Chronology or a TemporalField instance.
+         */
+        private boolean isChronology;
+
+        CalendarUnit(boolean isChronology, String displayName, AbstractChronology calendarType, Locale defaultLocale) {
             this.displayName = displayName;
             this.chronologyType = calendarType;
             this.defaultLocale = defaultLocale;
+            this.isChronology = isChronology;
+        }
+
+        CalendarUnit(boolean isChronology, String displayName, TemporalField temporalField) {
+            this.displayName = displayName;
+            this.temporalField = temporalField;
+            this.isChronology = isChronology;
         }
 
         @Override
@@ -263,9 +380,13 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
             return chronologyType;
         }
 
-        public Locale getDefaultLocale() {
-            return defaultLocale;
+        public TemporalField getTemporalField() {
+            return temporalField;
         }
+
+        public Locale getDefaultLocale() { return defaultLocale; }
+
+        public boolean isChronology() {  return isChronology;  }
     }
 
 }

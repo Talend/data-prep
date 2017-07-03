@@ -115,9 +115,10 @@ export default class OnboardingService {
 	 * @name startTour
 	 * @methodOf data-prep.services.onboarding.service:OnboardingService
 	 * @param {String} tour The tour Id
+	 * @param {Integer} timeout The timeout
 	 * @description Configure and start an onboarding tour
 	 */
-	startTour(tour) {
+	startTour(tour, timeout = 200) {
 		if (this.$state.current.name === HOME_403_ROUTE) {
 			return;
 		}
@@ -133,7 +134,6 @@ export default class OnboardingService {
 
 			this.currentTour = null;
 		};
-
 		this.$timeout(() => {
 			this.currentTour = introJs()
 				.setOptions({
@@ -146,6 +146,6 @@ export default class OnboardingService {
 				.oncomplete(onTourDone)
 				.onexit(onTourDone);
 			this.currentTour.start();
-		}, 200, false);
+		}, timeout, false);
 	}
 }

@@ -36,7 +36,7 @@ describe('Dataset Import TCOMP controller', () => {
 		}));
 
 		describe('with location type', () => {
-			it('should get data store form', inject(($q, ImportService) => {
+			it('should get data store form', inject(($q, $timeout, ImportService) => {
 				// given
 				const dataStoreFormData = {};
 				spyOn(ImportService, 'importParameters').and.returnValue($q.when({
@@ -50,13 +50,14 @@ describe('Dataset Import TCOMP controller', () => {
 					},
 				});
 				scope.$digest();
+				$timeout.flush();
 
 				// then
 				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
 				expect(ctrl.datasetForm).toBeUndefined();
 			}));
 
-			it('should get data set form if test connection button is disabled', inject(($q, ImportService) => {
+			it('should get data set form if test connection button is disabled', inject(($q, $timeout, ImportService) => {
 				// given
 				const dataStoreFormData = {
 					properties: {
@@ -80,6 +81,7 @@ describe('Dataset Import TCOMP controller', () => {
 					},
 				});
 				scope.$digest();
+				$timeout.flush();
 
 				// then
 				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
@@ -88,7 +90,7 @@ describe('Dataset Import TCOMP controller', () => {
 		});
 
 		describe('with item', () => {
-			it('should retrieve forms', inject(($q, ImportService) => {
+			it('should retrieve forms', inject(($q, $timeout, ImportService) => {
 				// given
 				const dataStoreFormData = {};
 				const dataSetFormData = {};
@@ -109,6 +111,7 @@ describe('Dataset Import TCOMP controller', () => {
 					},
 				});
 				scope.$digest();
+				$timeout.flush();
 
 				// then
 				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
@@ -139,12 +142,13 @@ describe('Dataset Import TCOMP controller', () => {
 			};
 		}));
 
-		it('should refresh parameters', inject((ImportService, $q) => {
+		it('should refresh parameters', inject(($q, $timeout, ImportService) => {
 			// given
 			spyOn(ImportService, 'refreshForm').and.returnValue($q.when({ data: fakeData }));
 
 			// when
 			ctrl.onDatastoreFormChange(uiSpecs, definitionName, propertyName);
+			$timeout.flush();
 			scope.$digest();
 
 			// then
@@ -197,7 +201,7 @@ describe('Dataset Import TCOMP controller', () => {
 			};
 		}));
 
-		it('should test connection ok', inject(($q, ImportService, MessageService) => {
+		it('should test connection ok', inject(($q, $timeout, ImportService, MessageService) => {
 			// given
 			spyOn(ImportService, 'testConnection').and.returnValue($q.when());
 			spyOn(MessageService, 'success').and.returnValue($q.when());
@@ -206,6 +210,7 @@ describe('Dataset Import TCOMP controller', () => {
 			// when
 			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
 			scope.$digest();
+			$timeout.flush();
 
 			// then
 			const { formData } = uiSpecs;

@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -201,19 +202,30 @@ public class PreparationController {
     /**
      * Update a preparation steps.
      *
-     * @param preparationId the preparation id (mainly for to check).
-     * @param steps the steps to update.
-     * @return the updated preparation id.
+     * @param stepId the step to update.
+     * @param rowMetadata the row metadata to associate with step.
+     * @return the updated step id.
      */
-    @RequestMapping(value = "/preparations/{preparationId}/steps", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/preparations/steps/{stepId}/metadata", method = PUT, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
     @Timed
-    public String updateStepMetadata(@ApiParam("preparationId") @PathVariable("preparationId") String preparationId,
-                                     @RequestBody @ApiParam("rowMetadata") final List<Step> steps) {
+    public String updateStepMetadata(@ApiParam("stepId") @PathVariable("stepId") String stepId,
+                                     @RequestBody @ApiParam("rowMetadata") final RowMetadata rowMetadata) {
+        preparationService.updatePreparationStep(stepId, rowMetadata);
+        return stepId;
+    }
 
-        preparationService.updatePreparationSteps(preparationId, steps);
-
-        return preparationId;
+    /**
+     * Get a preparation step metadata.
+     *
+     * @param stepId the steps to get metadata from.
+     * @return the row metadata associated with step.
+     */
+    @RequestMapping(value = "/preparations/steps/{stepId}/metadata", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
+    @Timed
+    public RowMetadata getStepMetadata(@ApiParam("stepId") @PathVariable("stepId") String stepId) {
+        return preparationService.getPreparationStep(stepId);
     }
 
     /**

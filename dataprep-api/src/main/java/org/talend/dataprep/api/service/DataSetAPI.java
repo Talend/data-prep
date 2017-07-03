@@ -274,6 +274,7 @@ public class DataSetAPI extends APIService {
             GenericCommand<InputStream> listDataSets = getCommand(DataSetList.class, sort, order, name, certified, favorite, limit);
             return Flux.from(CommandHelper.toPublisher(UserDataSetMetadata.class, mapper, listDataSets)) //
                     .map(m -> {
+                        LOG.debug("found dataset {} in the summary list" + m.getName());
                         // Add the related preparations list to the given dataset metadata.
                         final PreparationSearchByDataSetId getPreparations = getCommand(PreparationSearchByDataSetId.class,
                                 m.getId());

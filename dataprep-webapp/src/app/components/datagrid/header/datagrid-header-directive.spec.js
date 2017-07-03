@@ -375,7 +375,7 @@ describe('Datagrid header directive', () => {
 				// then
 				expect(element.find('quality-bar empty-menu-items > li').length).toBe(3);
 				expect(element.find('quality-bar empty-menu-items > li').eq(0).text().trim())
-					.toBe('Select rows with empty values for  MOSTPOPULOUSCITY');
+					.toBe('Select rows with empty values for MostPopulousCity');
 				expect(element.find('quality-bar empty-menu-items > li').eq(2).text().trim())
 					.toBe(emptyCellsTransfo.label);
 			});
@@ -411,7 +411,7 @@ describe('Datagrid header directive', () => {
 				// then
 				expect(element.find('quality-bar invalid-menu-items > li').length).toBe(3);
 				expect(element.find('quality-bar invalid-menu-items > li').eq(0).text().trim())
-					.toBe('Select rows with invalid values for  MOSTPOPULOUSCITY');
+					.toBe('Select rows with invalid values for MostPopulousCity');
 				expect(element.find('quality-bar invalid-menu-items > li').eq(2).text().trim())
 					.toBe(invalidCellsTransfo.label);
 			});

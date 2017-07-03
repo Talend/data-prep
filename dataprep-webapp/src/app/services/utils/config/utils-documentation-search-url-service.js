@@ -11,5 +11,5 @@
 
 ============================================================================*/
 
-const DEFAULT_DOCUMENTATION_SEARCH_URL = 'https://www.talendforge.org/find/api/index.php?source=DATA%20PREP&condition=AND&max=5';
+const DEFAULT_DOCUMENTATION_SEARCH_URL = 'https://www.talendforge.org/find/api/THC.php';
 export default DEFAULT_DOCUMENTATION_SEARCH_URL;

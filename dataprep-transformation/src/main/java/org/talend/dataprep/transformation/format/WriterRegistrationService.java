@@ -26,6 +26,8 @@ import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 
+import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNABLE_TO_USE_EXPORT;
+
 /**
  * Service in charge of writers.
  */
@@ -38,7 +40,7 @@ public class WriterRegistrationService {
 
     @Autowired
     private FormatRegistrationService formatRegistrationService;
-    
+
     /**
      * Return a TransformWriter that match the given format.
      *
@@ -49,10 +51,9 @@ public class WriterRegistrationService {
     public TransformerWriter getWriter(String format, OutputStream output, Map<String, String> parameters) {
         try {
             // Sanity check -> ensures format is actually enabled before using it.
-            final ExportFormat formatByNam = formatRegistrationService.getByName(format);
-            if (formatByNam == null || !formatByNam.isEnabled()) {
-                throw new TDPException(TransformationErrorCodes.UNABLE_TO_USE_EXPORT,
-                        ExceptionContext.build().put("format", format));
+            final ExportFormat formatByName = formatRegistrationService.getByName(format);
+            if (formatByName == null || !formatByName.isEnabled()) {
+                throw new TDPException(UNABLE_TO_USE_EXPORT, ExceptionContext.build().put("format", format));
             }
             if (parameters.isEmpty()) {
                 return (TransformerWriter) context.getBean("writer#" + format, output);

@@ -51,14 +51,22 @@ public class RowMetadataUtils {
         return toSchema(rowMetadata.getColumns());
     }
 
+    public static Schema toSchema(String name, RowMetadata rowMetadata) {
+        return toSchema(name, rowMetadata.getColumns());
+    }
+
     public static Schema toSchema(List<ColumnMetadata> columns) {
+        return toSchema("dataprep" + System.currentTimeMillis(), columns);
+    }
+
+    public static Schema toSchema(String name, List<ColumnMetadata> columns) {
 
         List<Schema.Field> fields = columns.stream() //
                 .map(RowMetadataUtils::toField) //
                 .collect(Collectors.toList());
 
         final Schema schema = Schema.createRecord( //
-                "dataprep" + System.currentTimeMillis(), //
+                name, //
                 "a dataprep preparation", //
                 "org.talend.dataprep", //
                 false //
@@ -81,7 +89,7 @@ public class RowMetadataUtils {
         return field;
     }
 
-    private static String toAvroFieldName(ColumnMetadata column) {
+    public static String toAvroFieldName(ColumnMetadata column) {
         final char[] chars = column.getName().toCharArray();
         final StringBuilder columnName = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {

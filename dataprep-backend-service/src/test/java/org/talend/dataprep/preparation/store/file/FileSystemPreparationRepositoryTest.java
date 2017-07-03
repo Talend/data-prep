@@ -25,15 +25,12 @@ import javax.annotation.Resource;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.info.VersionService;
-import org.talend.dataprep.preparation.FixedIdPreparationContent;
 import org.talend.dataprep.preparation.PreparationTest;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepositoryTest;
@@ -84,7 +81,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
 
     @Test
     public void shouldGetStepThatWasAdded() {
-        final Step expected = new Step(rootStep, new FixedIdPreparationContent("684fdqs638"), versionService.version().getVersionId());
+        final Step expected = new Step(rootStep.id(), "684fdqs638", versionService.version().getVersionId());
         repository.add(expected);
         final Step actual = repository.get(expected.id(), Step.class);
         assertEquals(expected, actual);
@@ -102,7 +99,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
 
     @Test
     public void shouldGetOnlyWantedClass() {
-        final Step expected = new Step(rootStep, new FixedIdPreparationContent("8rq4868"), versionService.version().getVersionId());
+        final Step expected = new Step(rootStep.id(), "8rq4868", versionService.version().getVersionId());
         repository.add(expected);
         assertNull(repository.get(expected.id(), Preparation.class));
         assertNull(repository.get(expected.id(), PreparationActions.class));
@@ -139,7 +136,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         preparations.forEach(prep -> repository.add(prep));
 
         // and some steps to add some noise
-        ids.stream().map(i -> new Step(rootStep, new FixedIdPreparationContent("step" + i), versionService.version().getVersionId())) //
+        ids.stream().map(i -> new Step(rootStep.id(), "step" + i, versionService.version().getVersionId())) //
                 .forEach(step -> repository.add(step));
 
         // get some preparation by dataset id
@@ -165,7 +162,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         preparations.forEach(prep -> repository.add(prep));
 
         // and some steps to add some noise
-        ids.stream().map(i -> new Step(rootStep, new FixedIdPreparationContent("step" + i), versionService.version().getVersionId())) //
+        ids.stream().map(i -> new Step(rootStep.id(), "step" + i, versionService.version().getVersionId())) //
                 .forEach(step -> repository.add(step));
 
         // get some preparation by dataset id

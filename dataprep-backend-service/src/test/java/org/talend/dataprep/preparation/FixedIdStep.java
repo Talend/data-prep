@@ -23,11 +23,6 @@ public class FixedIdStep extends Step {
         this.fixedId = fixedId;
     }
 
-    public FixedIdStep(String fixedId, Step parent) {
-        super(parent, null, null);
-        this.fixedId = fixedId;
-    }
-
     @Override
     public String id() {
         return fixedId;

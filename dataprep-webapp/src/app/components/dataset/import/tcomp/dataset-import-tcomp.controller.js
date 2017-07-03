@@ -52,10 +52,14 @@ export default class DatasetImportTcompCtrl {
 				.then(({ data }) => {
 					const { dataStoreFormData, dataSetFormData } = data;
 					const { properties } = dataStoreFormData;
+					this.datastoreForm = null;
+					this.datasetForm = null;
 					this._getDatastoreFormActions(properties);
-					this.datastoreForm = dataStoreFormData;
 					this._getDatasetFormActions();
-					this.datasetForm = dataSetFormData;
+					this.$timeout(() => {
+						this.datastoreForm = dataStoreFormData;
+						this.datasetForm = dataSetFormData;
+					});
 				})
 				.catch(this._reset);
 		}
@@ -64,8 +68,11 @@ export default class DatasetImportTcompCtrl {
 				.importParameters(locationType)
 				.then(({ data }) => {
 					const { properties } = data;
+					this.datastoreForm = null;
 					this._getDatastoreFormActions(properties);
-					this.datastoreForm = data;
+					this.$timeout(() => {
+						this.datastoreForm = data;
+					});
 					return properties;
 				})
 				.then((formData) => {
@@ -91,8 +98,11 @@ export default class DatasetImportTcompCtrl {
 		return this.importService
 			.getDatasetForm(formData)
 			.then(({ data }) => {
+				this.datasetForm = null;
 				this._getDatasetFormActions();
-				this.datasetForm = data;
+				this.$timeout(() => {
+					this.datasetForm = data;
+				});
 			});
 	}
 
@@ -149,7 +159,10 @@ export default class DatasetImportTcompCtrl {
 		this.importService
 			.refreshForm(propertyName, formData)
 			.then(({ data }) => {
-				this.datastoreForm = data;
+				this.datastoreForm = null;
+				this.$timeout(() => {
+					this.datastoreForm = data;
+				});
 			});
 	}
 
@@ -173,8 +186,11 @@ export default class DatasetImportTcompCtrl {
 			if (this.currentPropertyName) {
 				controlledSubmitPromise = this.importService
 					.refreshForms(this.currentPropertyName, formsData)
-					.then((response) => {
-						this.datasetForm = response.data;
+					.then(({ data }) => {
+						this.datasetForm = null;
+						this.$timeout(() => {
+							this.datasetForm = data;
+						});
 					});
 			}
 			// Dataset form submit

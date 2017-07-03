@@ -89,7 +89,7 @@ describe('Breadcrumb container', () => {
 			expect(parentFolder.find('button').eq(0).text()).toBe('HOME');
 			expect(parentFolder.find('button').eq(0).attr('title')).toBe('HOME');
 
-			const currentFolder = element.find('.breadcrumb > li').eq(1);
+			const currentFolder = element.find('.breadcrumb > li').eq(2);
 			expect(currentFolder.find('span').eq(0).text()).toBe('CHARLES');
 		});
 
@@ -99,9 +99,9 @@ describe('Breadcrumb container', () => {
 
 			// then
 			const parentFolder = element.find('.breadcrumb > li').eq(0);
-			expect(parentFolder.find('button').eq(0).text()).toBe('…');
+			expect(parentFolder.find('button').eq(0).text()).toBe('...');
 
-			const currentFolder = element.find('.breadcrumb > li').eq(1);
+			const currentFolder = element.find('.breadcrumb > li').eq(2);
 			expect(currentFolder.find('button').eq(0).text()).toBe('CHARLES');
 		});
 

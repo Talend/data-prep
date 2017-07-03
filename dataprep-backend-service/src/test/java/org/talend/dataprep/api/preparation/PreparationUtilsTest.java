@@ -59,8 +59,8 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep, newContent1, version);
-        final Step step2 = new Step(step1, newContent2, version);
+        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -92,8 +92,8 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep, newContent1, version);
-        final Step step2 = new Step(step1, newContent2, version);
+        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -125,8 +125,8 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep, newContent1, version);
-        final Step step2 = new Step(step1, newContent2, version);
+        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -158,8 +158,8 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep, newContent1, version);
-        final Step step2 = new Step(step1, newContent2, version);
+        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -207,7 +207,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final String version = versionService.version().getVersionId();
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent = new PreparationActions(actions, version);
-        final Step step = new Step(rootStep, newContent, version);
+        final Step step = new Step(rootStep.id(), newContent.id(), version);
         final Preparation preparation = new Preparation("#15325878", "1234", step.id(), version);
 
         repository.add(newContent);
@@ -223,7 +223,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     @Test
     public void scatterNull() throws Exception {
         // When
-        final Collection<Identifiable> identifiableList = preparationUtils.scatter(null);
+        final Collection<Identifiable> identifiableList = PreparationUtils.scatter(null);
 
         // Then
         assertEquals(0, identifiableList.size());
@@ -238,10 +238,9 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final Collection<Identifiable> identifiableList = PreparationUtils.scatter(step);
 
         // Then
-        assertEquals(2, identifiableList.size());
+        assertEquals(1, identifiableList.size());
         final Iterator<Identifiable> iterator = identifiableList.iterator();
         assertEquals(step, iterator.next());
-        assertEquals(PreparationActions.ROOT_ACTIONS, iterator.next());
     }
 
     @Test
@@ -263,10 +262,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final Preparation preparation = new Preparation();
         final Step step1 = new FixedIdStep("step-1234");
         final Step step2 = new FixedIdStep("step-5678");
-        final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
-        final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
-        step1.setContent(actions1);
-        step2.setContent(actions2);
         preparation.setSteps(Arrays.asList(step1, step2));
         repository.add(preparation);
 
@@ -274,13 +269,11 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final Collection<Identifiable> identifiableList = PreparationUtils.scatter(preparation);
 
         // Then
-        assertEquals(5, identifiableList.size());
+        assertEquals(3, identifiableList.size());
         final Iterator<Identifiable> iterator = identifiableList.iterator();
         assertEquals(preparation, iterator.next());
         assertEquals(step1, iterator.next());
-        assertEquals(actions1, iterator.next());
         assertEquals(step2, iterator.next());
-        assertEquals(actions2, iterator.next());
     }
 
     @Test
@@ -289,10 +282,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final Preparation preparation = new Preparation();
         final Step step1 = new FixedIdStep("step-1234");
         final Step step2 = new FixedIdStep("step-5678");
-        final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
-        final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
-        step1.setContent(actions1);
-        step2.setContent(actions2);
         preparation.setSteps(Arrays.asList(step1, step2));
 
         // When
@@ -302,8 +291,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         assertEquals(PersistentPreparationRepository.class, repository.getClass());
         assertTrue(repository.exist(Step.class, "id='step-1234'"));
         assertTrue(repository.exist(Step.class, "id='step-5678'"));
-        assertTrue(repository.exist(PreparationActions.class, "id='actions-1234'"));
-        assertTrue(repository.exist(PreparationActions.class, "id='actions-5678'"));
     }
 
     @Test
@@ -311,28 +298,36 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         // Given
         final Preparation preparation = new Preparation();
         preparation.setId("prep-1234");
-        final Step step1 = new FixedIdStep("step-1234", rootStep);
-        final Step step2 = new FixedIdStep("step-5678", step1);
+        final Step step1 = new FixedIdStep("step-1234");
+        final Step step2 = new FixedIdStep("step-5678");
         final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
         final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
-        step1.setContent(actions1);
-        step2.setContent(actions2);
+        step1.setContent(actions1.id());
+        step2.setContent(actions2.id());
+        preparation.setHeadId(step2.id());
         final List<Step> expectedSteps = Arrays.asList(rootStep, step1, step2);
         preparation.setSteps(expectedSteps);
         preparation.setHeadId(step2.getId());
 
         // When
+        repository.add(actions1);
+        repository.add(actions2);
         repository.add(preparation);
         final Preparation savedPreparation = repository.get("prep-1234", Preparation.class);
 
         // Then
         assertEquals(PersistentPreparationRepository.class, repository.getClass());
         assertEquals(preparation.getId(), savedPreparation.getId());
-        final List<Step> actualSteps = savedPreparation.getSteps();
-        assertEquals(expectedSteps.size(), actualSteps.size());
-        assertEquals(rootStep, actualSteps.get(0));
-        assertEquals(step1.getId(), actualSteps.get(1).getId());
-        assertEquals(step2.getId(), actualSteps.get(2).getId());
+        assertEquals(3, savedPreparation.getSteps().size());
+        assertEquals(Step.ROOT_STEP.id(), savedPreparation.getSteps().get(0).getId());
+        assertEquals("step-1234", savedPreparation.getSteps().get(1).getId());
+        assertEquals("step-5678", savedPreparation.getSteps().get(2).getId());
+        assertNotNull(savedPreparation.getSteps().get(0).getContent());
+        assertNotNull(savedPreparation.getSteps().get(1).getContent());
+        assertNotNull(savedPreparation.getSteps().get(2).getContent());
+        assertEquals(PreparationActions.ROOT_ACTIONS.id(), savedPreparation.getSteps().get(0).getContent());
+        assertEquals("actions-1234", savedPreparation.getSteps().get(1).getContent());
+        assertEquals("actions-5678", savedPreparation.getSteps().get(2).getContent());
     }
 
 

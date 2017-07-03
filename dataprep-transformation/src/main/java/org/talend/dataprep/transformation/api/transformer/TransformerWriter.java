@@ -22,7 +22,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
  * Writer used to write transformed datasets. This interface provides an common abstraction of the output format (JSON,
  * CSV, Excel...).
  */
-public interface TransformerWriter {
+public interface TransformerWriter extends AutoCloseable {
 
     /**
      * Write the given RowMetadata.
@@ -91,6 +91,15 @@ public interface TransformerWriter {
      * @throws IOException if an unexpected error occurs.
      */
     default void flush() throws IOException {
+        // default implementation to ease implementations development
+    }
+
+    /**
+     * Close the data stream properly when all data is written or a stop signal is received. Not meant to cloase the OutputStream.
+     *
+     * @throws IOException
+     */
+    default void close() throws IOException {
         // default implementation to ease implementations development
     }
 

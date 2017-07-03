@@ -16,12 +16,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.share.Owner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Simple bean used to display a preparation and a summary of its related dataset and its location.
@@ -31,6 +35,9 @@ public class EnrichedPreparation {
     private String id;
 
     private String dataSetId;
+
+    /** Metadata on which the preparation is based. **/
+    private RowMetadata rowMetadata;
 
     private String author;
 
@@ -44,9 +51,14 @@ public class EnrichedPreparation {
 
     private List<String> steps;
 
+    /** List of action metadata (description) */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class")
+    private List<ActionDefinition> metadata;
+
     private List<Action> actions;
 
-    private String owner;
+    /** This preparation owner. */
+    private Owner owner;
 
     private boolean allowFullRun;
 
@@ -131,11 +143,11 @@ public class EnrichedPreparation {
         this.headId = headId;
     }
 
-    public String getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 
@@ -169,6 +181,22 @@ public class EnrichedPreparation {
 
     public void setDiff(List<StepDiff> diff) {
         this.diff = diff;
+    }
+
+    public RowMetadata getRowMetadata() {
+        return rowMetadata;
+    }
+
+    public void setRowMetadata(RowMetadata rowMetadata) {
+        this.rowMetadata = rowMetadata;
+    }
+
+    public List<ActionDefinition> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(List<ActionDefinition> metadata) {
+        this.metadata = metadata;
     }
 
     @Override

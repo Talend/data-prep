@@ -168,48 +168,47 @@ public class DataSetService extends BaseDataSetService {
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed
-    public Callable<Stream<UserDataSetMetadata>> list(
+    public Stream<UserDataSetMetadata> list(
             @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(defaultValue = "desc") Order order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Only return a limited number of data sets") @RequestParam(defaultValue = "false") boolean limit) {
-        return () -> {
-            // Build filter for data sets
-            String userId = security.getUserId();
-            final UserData userData = userDataRepository.get(userId);
-            final List<String> predicates = new ArrayList<>();
-            predicates.add("lifecycle.importing = false");
-            if (favorite) {
-                if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
-                    predicates.add("id in [" + userData.getFavoritesDatasets().stream().map(ds -> '\'' + ds + '\'')
-                            .collect(Collectors.joining(",")) + "]");
-                } else {
-                    // Wants favorites but user has no favorite
-                    return Stream.empty();
-                }
+        // Build filter for data sets
+        String userId = security.getUserId();
+        final UserData userData = userDataRepository.get(userId);
+        final List<String> predicates = new ArrayList<>();
+        predicates.add("lifecycle.importing = false");
+        if (favorite) {
+            if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
+                predicates.add("id in ["
+                        + userData.getFavoritesDatasets().stream().map(ds -> '\'' + ds + '\'').collect(Collectors.joining(","))
+                        + "]");
+            } else {
+                // Wants favorites but user has no favorite
+                return Stream.empty();
             }
-            if (certified) {
-                predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
-            }
-            if (!StringUtils.isEmpty(name)) {
-                final String regex = "(?i)" + name;
-                predicates.add("name ~ '^.*" + regex + ".*$'");
-            }
-            final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
-            LOG.debug("TQL Filter in use: {}", tqlFilter);
+        }
+        if (certified) {
+            predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
+        }
+        if (!StringUtils.isEmpty(name)) {
+            final String regex = "(?i)" + name;
+            predicates.add("name ~ '^.*" + regex + ".*$'");
+        }
+        final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
+        LOG.debug("TQL Filter in use: {}", tqlFilter);
 
-            // Get all data sets according to filter
-            try (Stream<DataSetMetadata> stream = dataSetMetadataRepository.list(tqlFilter, sort, order)) {
-                Stream<UserDataSetMetadata> userDataSetMetadataStream = stream
-                        .map(m -> conversionService.convert(m, UserDataSetMetadata.class));
-                if (sort == Sort.AUTHOR || sort == Sort.NAME) { // As theses are not well handled by mongo repository
-                    userDataSetMetadataStream = userDataSetMetadataStream.sorted(getDataSetMetadataComparator(sort, order));
-                }
-                return userDataSetMetadataStream.limit(limit ? datasetListLimit : Long.MAX_VALUE);
+        // Get all data sets according to filter
+        try (Stream<DataSetMetadata> stream = dataSetMetadataRepository.list(tqlFilter, sort, order)) {
+            Stream<UserDataSetMetadata> userDataSetMetadataStream = stream
+                    .map(m -> conversionService.convert(m, UserDataSetMetadata.class));
+            if (sort == Sort.AUTHOR || sort == Sort.NAME) { // As theses are not well handled by mongo repository
+                userDataSetMetadataStream = userDataSetMetadataStream.sorted(getDataSetMetadataComparator(sort, order));
             }
-        };
+            return userDataSetMetadataStream.limit(limit ? datasetListLimit : Long.MAX_VALUE);
+        }
     }
 
     /**

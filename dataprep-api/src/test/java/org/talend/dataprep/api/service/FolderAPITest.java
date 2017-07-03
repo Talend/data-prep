@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import com.fasterxml.jackson.databind.node.NullNode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -159,6 +160,7 @@ public class FolderAPITest extends ApiServiceTestBase {
             assertTrue(dataset.has("dataSetNbRow"));
             // check for owner
             assertTrue(preparation.has("owner"));
+            assertFalse(preparation.get("owner").isNull());
         }
     }
 

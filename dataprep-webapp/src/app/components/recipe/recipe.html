@@ -24,6 +24,10 @@
      top-delta="0"
      while-dragging="$ctrl.isDragStart"
 >
+    <div class="empty-message"
+         ng-if="$ctrl.state.playground.recipe.current.reorderedSteps.length === 0"
+         translate-once="NO_PREPARATION_STEPS">
+    </div>
     <sc-accordion>
         <li ng-repeat="step in $ctrl.state.playground.recipe.current.reorderedSteps track by step.transformation.stepId"
             as-sortable-item>

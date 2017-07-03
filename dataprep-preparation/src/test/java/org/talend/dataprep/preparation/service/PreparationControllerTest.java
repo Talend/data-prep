@@ -920,7 +920,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));
         assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(1L));
+        assertThat(repository.list(PreparationActions.class).count(), is(2L));
     }
 
     @Test

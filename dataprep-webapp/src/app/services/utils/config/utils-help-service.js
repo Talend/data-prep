@@ -31,11 +31,13 @@ export default function HelpService() {
 	 * @param {Object} helpSettings All help settings to be consumed
 	 */
 	this.register = function register(helpSettings) {
-		this.languageFacet = helpSettings.languageFacet;
-		this.versionFacet = helpSettings.versionFacet;
-		this.searchUrl = helpSettings.searchUrl;
-		this.exactUrl = helpSettings.exactUrl;
-		this.fuzzyUrl = helpSettings.fuzzyUrl;
+		const { languageFacet, versionFacet, searchUrl, exactUrl, fuzzyUrl } = helpSettings;
+
+		this.languageFacet = languageFacet;
+		this.versionFacet = versionFacet;
+		this.searchUrl = searchUrl;
+		this.exactUrl = exactUrl;
+		this.fuzzyUrl = fuzzyUrl;
 	};
 
 	/**

@@ -16,7 +16,6 @@ import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
 import DATAGRID_MODULE from '../datagrid/datagrid-module';
 import DATASET_PARAMETERS_MODULE from '../dataset/parameters/dataset-parameters-module';
-import DOCUMENTATION_SEARCH_MODULE from '../search/documentation/documentation-search-module';
 import EXPORT_MODULE from '../export/export-module';
 import FILTER_BAR from '../filter/bar/filter-bar-module';
 import HISTORY_CONTROL from '../history-control/history-control-module';
@@ -47,7 +46,6 @@ const MODULE_NAME = 'data-prep.playground';
  * @requires ui.router
  * @requires data-prep.datagrid
  * @requires data-prep.dataset-parameters
- * @requires data-prep.documentation-search
  * @requires data-prep.export
  * @requires data-prep.filter-bar
  * @requires data-prep.history-control
@@ -66,7 +64,6 @@ angular.module(MODULE_NAME,
 		uiRouter,
 		DATAGRID_MODULE,
 		DATASET_PARAMETERS_MODULE,
-		DOCUMENTATION_SEARCH_MODULE,
 		EXPORT_MODULE,
 		FILTER_BAR,
 		HISTORY_CONTROL,

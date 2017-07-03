@@ -182,15 +182,17 @@ export default class InventoryListCtrl {
 		return this.SettingsActionsService.createDispatcher(action);
 	}
 
-	createBaseAction(actionName) {
+	createBaseAction(actionName, isDropdownItem) {
 		const actionSettings = this.appSettings.actions[actionName];
 		const baseAction = {
 			id: actionSettings.id,
-			icon: actionSettings.icon,
 			label: actionSettings.name,
 			bsStyle: actionSettings.bsStyle,
 			tooltipLabel: actionSettings.toolTip || actionSettings.name,
 		};
+		if (!isDropdownItem) {
+			baseAction.icon = actionSettings.icon;
+		}
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
 		}
@@ -199,7 +201,7 @@ export default class InventoryListCtrl {
 
 	createDropdownItemAction(item, actionName) {
 		const itemOnClick = this.getActionDispatcher(actionName);
-		const itemAction = this.createBaseAction(actionName);
+		const itemAction = this.createBaseAction(actionName, true);
 		itemAction.onClick = event => itemOnClick(event, item);
 		return itemAction;
 	}

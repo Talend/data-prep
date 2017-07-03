@@ -21,6 +21,30 @@ export default class SearchActionsService {
 		this.stateService = StateService;
 	}
 
+	searchAction(action, search) {
+		const searchInput =
+			action.payload &&
+			action.payload.searchInput;
+		this.stateService.setSearchInput(searchInput);
+		if (searchInput) {
+			this.stateService.setSearching(true);
+			search(searchInput)
+				.then((results) => {
+					if (this.state.search.searchInput === searchInput) {
+						this.stateService.setSearchResults(results);
+					}
+				})
+				.finally(() => {
+					this.stateService.setSearching(false);
+				});
+		}
+		else {
+			this.stateService.setSearching(false);
+			this.stateService.setSearchResults(null);
+		}
+		this.stateService.setFocusedSectionIndex(null);
+		this.stateService.setFocusedItemIndex(null);
+	}
 	dispatch(action) {
 		switch (action.type) {
 		case '@@search/TOGGLE': {
@@ -41,29 +65,11 @@ export default class SearchActionsService {
 			break;
 		}
 		case '@@search/ALL': {
-			const searchInput =
-				action.payload &&
-				action.payload.searchInput;
-			this.stateService.setSearchInput(searchInput);
-			if (searchInput) {
-				this.stateService.setSearching(true);
-				this.searchService
-					.searchAll(searchInput)
-					.then((results) => {
-						if (this.state.search.searchInput === searchInput) {
-							this.stateService.setSearchResults(results);
-						}
-					})
-					.finally(() => {
-						this.stateService.setSearching(false);
-					});
-			}
-			else {
-				this.stateService.setSearching(false);
-				this.stateService.setSearchResults(null);
-			}
-			this.stateService.setFocusedSectionIndex(null);
-			this.stateService.setFocusedItemIndex(null);
+			this.searchAction(action, this.searchService.searchAll);
+			break;
+		}
+		case '@@search/DOC': {
+			this.searchAction(action, this.searchService.searchDocumentation);
 			break;
 		}
 		}

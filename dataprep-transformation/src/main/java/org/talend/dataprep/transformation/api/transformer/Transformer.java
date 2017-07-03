@@ -22,12 +22,13 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 public interface Transformer {
 
     /**
-     * Transform (apply preparations to) data content.
-     * 
+     * Build the executable transformer.
+     *
      * @param input the dataset content.
      * @param configuration Configuration of the transformation (format format...).
+     * @return the executable transformer.
      */
-    void transform(DataSet input, Configuration configuration);
+    ExecutableTransformer buildExecutable(DataSet input, Configuration configuration);
 
     /**
      * @param configuration Configuration of a transformation (format format...).

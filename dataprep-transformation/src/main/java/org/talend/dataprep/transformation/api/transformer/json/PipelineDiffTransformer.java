@@ -27,6 +27,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.api.action.ActionParser;
+import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
@@ -71,7 +72,7 @@ class PipelineDiffTransformer implements Transformer {
      * @param configuration The {@link Configuration configuration} for this transformation.
      */
     @Override
-    public void transform(DataSet input, Configuration configuration) {
+    public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
         Validate.notNull(input, "Input cannot be null.");
         final PreviewConfiguration previewConfiguration = (PreviewConfiguration) configuration;
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
@@ -100,16 +101,29 @@ class PipelineDiffTransformer implements Transformer {
                 .dispatchTo(referencePipeline, previewPipeline) //
                 .zipTo(diffWriterNode) //
                 .build();
-        // Run diff
-        try {
-            // Print pipeline before execution (for debug purposes).
-            diffPipeline.logStatus(LOGGER, "Before execution: {}");
-            input.getRecords().forEach(r -> diffPipeline.exec().receive(r, rowMetadata));
-            diffPipeline.exec().signal(Signal.END_OF_STREAM);
-        } finally {
-            // Print pipeline after execution (for debug purposes).
-            diffPipeline.logStatus(LOGGER, "After execution: {}");
-        }
+
+        // wrap this transformer into an ExecutableTransformer
+        return new ExecutableTransformer() {
+
+            @Override
+            public void execute() {
+                // Run diff
+                try {
+                    // Print pipeline before execution (for debug purposes).
+                    diffPipeline.logStatus(LOGGER, "Before execution: {}");
+                    input.getRecords().forEach(r -> diffPipeline.exec().receive(r, rowMetadata));
+                    diffPipeline.exec().signal(Signal.END_OF_STREAM);
+                } finally {
+                    // Print pipeline after execution (for debug purposes).
+                    diffPipeline.logStatus(LOGGER, "After execution: {}");
+                }
+            }
+
+            @Override
+            public void signal(Signal signal) {
+                diffPipeline.exec().signal(signal);
+            }
+        };
     }
 
     private Pipeline buildPipeline(RowMetadata rowMetadata, String actions) {

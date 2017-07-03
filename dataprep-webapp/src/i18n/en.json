@@ -91,6 +91,7 @@
   "PREPARATION_COPYING_SUCCESS": "The preparation has been copied.",
   "PREPARATION_MOVING_SUCCESS_TITLE": "Preparation moved",
   "PREPARATION_MOVING_SUCCESS": "The preparation has been moved.",
+  "NO_PREPARATION_STEPS": "No preparation steps",
 
   "_comment": "Preparations_creator",
   "EXISTING_DATASETS": "Existing datasets",
@@ -276,12 +277,6 @@
   "REMOVE_STEP": "Remove step",
   "MOVE_UP": "Move up",
   "MOVE_DOWN": "Move down",
-
-  "_comment": "Search",
-  "TOGGLE_SEARCH": "Toggle search input",
-  "SEARCH": "Search Talend Data Preparation and Documentation",
-  "SEARCHING": "Searching ...",
-  "PLAYGROUND_SEARCH": "Search Documentation",
 
   "_comment": "Statistics",
   "COUNT": "Count",

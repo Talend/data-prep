@@ -42,7 +42,7 @@ import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * Unit test for the XlsWriter.
- * 
+ *
  * @see XlsWriter
  */
 public class XlsWriterTest extends AbstractTransformerWriterTest {
@@ -75,7 +75,7 @@ public class XlsWriterTest extends AbstractTransformerWriterTest {
             final InputStream inputStream = XlsWriterTest.class.getResourceAsStream("export_dataset.json");
             try (JsonParser parser = mapper.getFactory().createParser(inputStream)) {
                 final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-                exporter.transform(dataSet, configuration);
+                exporter.buildExecutable(dataSet, configuration).execute();
             }
         }
         DataSetMetadata metadata = metadataBuilder.metadata().id("123").build();
@@ -153,7 +153,7 @@ public class XlsWriterTest extends AbstractTransformerWriterTest {
             final InputStream inputStream = XlsWriterTest.class.getResourceAsStream("tdp_1528_backslash_not_exported.json");
             try (JsonParser parser = mapper.getFactory().createParser(inputStream)) {
                 final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-                exporter.transform(dataSet, configuration);
+                exporter.buildExecutable(dataSet, configuration).execute();
             }
         }
         DataSetMetadata metadata = metadataBuilder.metadata().id("1528").build();

@@ -37,23 +37,6 @@ class SearchDocumentationService {
 
 	/**
 	 * @ngdoc method
-	 * @name searchAndHighlight
-	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
-	 * @description search documentation with keyword and highlight terms
-	 */
-	searchAndHighlight(keyword) {
-		return this.search(keyword)
-			.then((results) => {
-				return results.map((item) => {
-					this.textFormatService.highlight(item, 'name', keyword, 'highlighted');
-					this.textFormatService.highlight(item, 'description', keyword, 'highlighted');
-					return item;
-				});
-			});
-	}
-
-	/**
-	 * @ngdoc method
 	 * @name _createDocElement
 	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
 	 * @description Creates a document element following the Typeahead props

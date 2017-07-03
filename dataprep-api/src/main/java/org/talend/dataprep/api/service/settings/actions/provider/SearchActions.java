@@ -34,6 +34,11 @@ public interface SearchActions {
             .type("@@search/ALL")
             .build();
 
+    ActionSettings SEARCH_DOC = builder()
+            .id("search:doc")
+            .type("@@search/DOC")
+            .build();
+
     ActionSettings SEARCH_FOCUS = builder()
             .id("search:focus")
             .type("@@search/FOCUS")

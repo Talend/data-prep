@@ -21,12 +21,9 @@ import template from './playground-header.html';
  * @usage
  <playground-header
          enable-export="true"
-         feedback-visible="true"
          lookup-visible="lookupInProgress"
          on-close="close()"
-         on-feedback="openFeedback()"
          on-lookup="toggleLookup()"
-         on-onboarding="startOnBoarding(')"
          on-parameters="toggleParameters()"
          on-preparation-picker="onPreparationPicker()"
          parameters-visible="hasParametersVisible"
@@ -34,12 +31,9 @@ import template from './playground-header.html';
          preview="previewInProgress"
  ></playground-header>
  * @param {boolean} enableExport show export component
- * @param {boolean} feedbackVisible feedback form is visible
  * @param {boolean} lookupVisible A lookup is in progress
  * @param {function} onClose Callback on close icon click
- * @param {function} onFeedback Callback on feedback icon click
  * @param {function} onLookup Callback on lookup icon click
- * @param {function} onOnboarding Callback on onboarding icon click
  * @param {function} onParameters Callback on gear icon click
  * @param {function} onPreparationPicker Callback on open preparation picker
  * @param {boolean} parametersVisible Dataset parameters window is visible
@@ -50,12 +44,9 @@ const PlaygroundHeader = {
 	templateUrl: template,
 	bindings: {
 		enableExport: '<',
-		feedbackVisible: '<',
 		lookupVisible: '<',
 		onClose: '&',
-		onFeedback: '&',
 		onLookup: '&',
-		onOnboarding: '&',
 		onParameters: '&',
 		onPreparationPicker: '&',
 		parametersVisible: '<',
@@ -65,6 +56,10 @@ const PlaygroundHeader = {
 		preparationName: '<',
 		nameEditionMode: '<',
 		confirmNameEdition: '=',
+	},
+	controller(state) {
+		'ngInject';
+		this.state = state;
 	},
 };
 

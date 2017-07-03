@@ -41,8 +41,8 @@ export default function HelpService() {
 	};
 
 	/**
-	 * Identify placeholders in
-	 * @param text content with placeholders or not
+	 * Identify placeholders in specified content
+	 * @param text content with/without placeholders
 	 */
 	this.hasPlaceholders = function (text) {
 		return text.includes(PLACEHOLDER_DELIMITER);

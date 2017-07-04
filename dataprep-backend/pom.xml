@@ -518,6 +518,11 @@
                 <artifactId>guava</artifactId>
                 <version>21.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>logging-event-layout</artifactId>
+                <version>${org.talend.daikon.version}</version>
+            </dependency>
             <!-- SWAGGER DEPENDENCIES -->
             <dependency>
                 <groupId>io.springfox</groupId>

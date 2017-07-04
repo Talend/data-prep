@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import ngSanitize from 'angular-sanitize';
 
 import FilterValueCtrl from './filter-value-controller';
 import FilterValueComponent from './filter-value-component';
@@ -26,8 +27,12 @@ const MODULE_NAME = 'data-prep.filter-item-value';
  * @description This module contains the component to display filter item value
  */
 angular
-    .module(MODULE_NAME, [SERVICES_UTILS_MODULE])
-    .controller('FilterValueCtrl', FilterValueCtrl)
-    .component('filterValue', FilterValueComponent);
+	.module(MODULE_NAME,
+	[
+		ngSanitize,
+		SERVICES_UTILS_MODULE,
+	])
+	.controller('FilterValueCtrl', FilterValueCtrl)
+	.component('filterValue', FilterValueComponent);
 
 export default MODULE_NAME;

@@ -107,7 +107,7 @@ describe('Filter item value controller', () => {
 
         //then
         expect(ctrl.valueWithInvisibleChars).toBe(
-            '<span class="hiddenChars"> </span>TEST<span class="hiddenChars"> </span><span class="hiddenChars"> </span>'
+            '<span class="hiddenChars"> </span>TEST<span class="hiddenChars">  </span>'
         );
     });
 });

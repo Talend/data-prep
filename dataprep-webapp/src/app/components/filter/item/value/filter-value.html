@@ -28,9 +28,9 @@
     />
 
     <span ng-class="{'empty': $ctrl.valueToDisplay === 'empty records'}"
-          ng-switch-default>
-        {{$ctrl.valueToDisplay}}
-    </span>
+          ng-switch-default
+          ng-bind-html="$ctrl.valueWithInvisibleChars"
+    />
 
     <a class="filter-value-btn-remove"
        ng-show="$ctrl.removable"

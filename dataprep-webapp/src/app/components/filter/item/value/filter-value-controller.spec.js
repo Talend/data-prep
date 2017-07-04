@@ -97,4 +97,17 @@ describe('Filter item value controller', () => {
         //then
         expect(onEditFn).not.toHaveBeenCalled();
     });
+
+    it('should return value with grid constraints', () => {
+        //given
+        const ctrl = createController();
+
+        //when
+        ctrl.valueToDisplay = ' TEST  ';
+
+        //then
+        expect(ctrl.valueWithInvisibleChars).toBe(
+            '<span class="hiddenChars"> </span>TEST<span class="hiddenChars">  </span>'
+        );
+    });
 });

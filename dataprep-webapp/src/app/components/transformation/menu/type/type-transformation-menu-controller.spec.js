@@ -120,7 +120,7 @@ describe('Type transform menu controller', () => {
 			ctrl._refreshCurrentDomain();
 
 			// then
-			expect(ctrl.currentDomain).toBe('FLOAT');
+			expect(ctrl.currentDomain).toBe('float');
 			expect(ctrl.currentSimplifiedDomain).toBe('decimal');
 		});
 	});
@@ -198,7 +198,7 @@ describe('Type transform menu controller', () => {
 			expect(ctrl.column.domain).toBe('');
 			expect(ctrl.column.domainLabel).toBe('');
 			expect(ctrl.column.domainFrequency).toBe(0);
-			expect(ctrl.currentDomain).toBe('INTEGER');
+			expect(ctrl.currentDomain).toBe('integer');
 			expect(ctrl.currentSimplifiedDomain).toBe('integer');
 
 			const expectedParams = [{

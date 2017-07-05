@@ -31,16 +31,16 @@ public class DictionaryResource implements FunctionResource {
         if (tdqCategories != null) {
             CategoryRecognizerBuilder builder = CategoryRecognizerBuilder.newBuilder().lucene();
             if (tdqCategories.getDictionary() != null) {
-                builder = builder.ddDirectory(tdqCategories.getDictionary().get());
+                builder = builder.ddDirectory(tdqCategories.getDictionary().asDirectory());
             }
             if (tdqCategories.getKeyword() != null) {
-                builder = builder.kwDirectory(tdqCategories.getKeyword().get());
+                builder = builder.kwDirectory(tdqCategories.getKeyword().asDirectory());
             }
             if (tdqCategories.getRegex() != null) {
-                builder = builder.regexClassifier(tdqCategories.getRegex().get());
+                builder = builder.regexClassifier(tdqCategories.getRegex().getRegexClassifier());
             }
             if (tdqCategories.getCategoryMetadata() != null){
-                builder = builder.metadata(tdqCategories.getCategoryMetadata().get());
+                builder = builder.metadata(tdqCategories.getCategoryMetadata().getMetadata());
             }
             Providers.get(AnalyzerService.class, builder);
         }

@@ -35,7 +35,7 @@ public interface UserDataRepository<U extends UserData> {
      *
      * @param userData the {@link UserData} to store
      */
-    void save(U userData);
+    <S extends U> void save(S userData);
 
     /**
      * remove the userData associated with the userId

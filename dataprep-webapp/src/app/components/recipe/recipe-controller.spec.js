@@ -154,6 +154,43 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
 		}));
 
+		it('should return true if recipe has steps', inject((PlaygroundService) => {
+			// given
+			const ctrl = createController();
+
+
+			// when
+			stateMock.playground.recipe.current.reorderedSteps = steps;
+			const hasSteps = ctrl.hasSteps();
+
+			// then
+			expect(hasSteps).toBeTruthy();
+		}));
+
+		it('should return false if recipe has no steps', inject((PlaygroundService) => {
+			// given
+			const ctrl = createController();
+
+			// when
+			stateMock.playground.recipe.current.reorderedSteps = [];
+			const hasSteps = ctrl.hasSteps();
+
+			// then
+			expect(hasSteps).toBeFalsy();
+		}));
+
+		it('should return false if reorderedSteps in not defined', inject((PlaygroundService) => {
+			// given
+			const ctrl = createController();
+
+			// when
+			stateMock.playground.recipe.current = null;
+			const hasSteps = ctrl.hasSteps();
+
+			// then
+			expect(hasSteps).toBeFalsy();
+		}));
+
 		describe('preview', () => {
 			it('should do nothing on update preview if the step is inactive', inject(($rootScope, PreviewService) => {
 				// given

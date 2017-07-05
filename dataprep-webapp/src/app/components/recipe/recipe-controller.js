@@ -231,7 +231,7 @@ export default class RecipeCtrl {
 	 * @methodOf data-prep.recipe.controller:RecipeCtrl
 	 * @description Return if the recipe has steps
 	 */
-	hasParameters() {
+	hasSteps() {
 		const current = this.state.playground.recipe.current;
 		return current && current.reorderedSteps && current.reorderedSteps.length > 0;
 	}

@@ -12,6 +12,20 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.util.Collections.emptyList;
+import static org.talend.dataprep.api.type.Type.DATE;
+
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.chrono.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.time.temporal.JulianFields;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,25 +45,6 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.JulianDayConverter;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.chrono.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
-import java.time.temporal.JulianFields;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalField;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-
-import static java.util.Collections.emptyList;
-import static org.talend.dataprep.api.type.Type.DATE;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DateCalendarConverter.ACTION_NAME)
 public class DateCalendarConverter extends AbstractActionMetadata implements ColumnAction {
@@ -162,7 +157,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            dateCalendarConverterMap =new HashMap();
+            dateCalendarConverterMap = new HashMap<>();
             String fromCalendarParameter = actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER);
             String toCalendarParameter = actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER);
             isFromChronology = CalendarUnit

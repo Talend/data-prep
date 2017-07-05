@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +43,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "preparation.store=file",
         "preparation.store.file.location=target/test/store/preparation" })
 public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTest {
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     @Autowired
     private VersionService versionService;
@@ -81,7 +75,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
 
     @Test
     public void shouldGetStepThatWasAdded() {
-        final Step expected = new Step(rootStep.id(), "684fdqs638", versionService.version().getVersionId());
+        final Step expected = new Step(Step.ROOT_STEP.id(), "684fdqs638", versionService.version().getVersionId());
         repository.add(expected);
         final Step actual = repository.get(expected.id(), Step.class);
         assertEquals(expected, actual);
@@ -99,7 +93,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
 
     @Test
     public void shouldGetOnlyWantedClass() {
-        final Step expected = new Step(rootStep.id(), "8rq4868", versionService.version().getVersionId());
+        final Step expected = new Step(Step.ROOT_STEP.id(), "8rq4868", versionService.version().getVersionId());
         repository.add(expected);
         assertNull(repository.get(expected.id(), Preparation.class));
         assertNull(repository.get(expected.id(), PreparationActions.class));
@@ -136,7 +130,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         preparations.forEach(prep -> repository.add(prep));
 
         // and some steps to add some noise
-        ids.stream().map(i -> new Step(rootStep.id(), "step" + i, versionService.version().getVersionId())) //
+        ids.stream().map(i -> new Step(Step.ROOT_STEP.id(), "step" + i, versionService.version().getVersionId())) //
                 .forEach(step -> repository.add(step));
 
         // get some preparation by dataset id
@@ -162,7 +156,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         preparations.forEach(prep -> repository.add(prep));
 
         // and some steps to add some noise
-        ids.stream().map(i -> new Step(rootStep.id(), "step" + i, versionService.version().getVersionId())) //
+        ids.stream().map(i -> new Step(Step.ROOT_STEP.id(), "step" + i, versionService.version().getVersionId())) //
                 .forEach(step -> repository.add(step));
 
         // get some preparation by dataset id
@@ -180,7 +174,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
      */
     @Override
     protected Preparation getPreparation(String datasetId) {
-        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setName("prep-" + datasetId);
         return preparation;
     }

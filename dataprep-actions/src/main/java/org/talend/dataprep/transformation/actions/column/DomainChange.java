@@ -43,6 +43,8 @@ public class DomainChange extends AbstractActionMetadata implements ColumnAction
 
     public static final String NEW_DOMAIN_ID_PARAMETER_KEY = "new_domain_id";
 
+    public static final String NEW_DOMAIN_LABEL_PARAMETER_KEY = "new_domain_label";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DomainChange.class);
 
     @Override
@@ -73,6 +75,7 @@ public class DomainChange extends AbstractActionMetadata implements ColumnAction
         final String newDomainId = parameters.get(NEW_DOMAIN_ID_PARAMETER_KEY);
         if (StringUtils.isNotEmpty(newDomainId)) {
             columnMetadata.setDomain(newDomainId);
+            columnMetadata.setDomainLabel(parameters.get(NEW_DOMAIN_LABEL_PARAMETER_KEY));
             columnMetadata.setDomainFrequency(0);
             columnMetadata.setDomainForced(true);
         }

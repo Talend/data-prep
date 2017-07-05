@@ -30,14 +30,16 @@ describe('Transformation menu component', () => {
 		{ id: 'AIRPORT', label: 'Airport', frequency: 3.03 },
 	];
 
+	const TRANSLATIONS = {
+		COLUMN_TYPE_IS: 'This column is a ',
+		COLUMN_TYPE_SET: 'Set as',
+		FLOAT: 'DECIMAL',
+	};
+
 	beforeEach(angular.mock.module('data-prep.type-transformation-menu'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			COLUMN_TYPE_IS: 'This column is a ',
-			COLUMN_TYPE_SET: 'Set as',
-			FLOAT: 'DECIMAL',
-		});
+		$translateProvider.translations('en', TRANSLATIONS);
 		$translateProvider.preferredLanguage('en');
 	}));
 
@@ -116,20 +118,39 @@ describe('Transformation menu component', () => {
 	});
 
 	it('should render primitive types', () => {
+		const types = [
+			'STRING',
+			'INTEGER',
+			'DECIMAL',
+			'BOOLEAN',
+			'DATE',
+		];
+
 		//when
 		createElement();
 
 		//then
 		const items = element.find('ul.submenu >li');
-		expect(items.length).toBe(8);
+		const offset = 3;
 
+		expect(items.length).toBe(8);
 		expect(items.eq(2).hasClass('divider')).toBe(true);
 
-		expect(items.eq(3).text().trim()).toBe('Set as STRING');
-		expect(items.eq(4).text().trim()).toBe('Set as INTEGER');
-		expect(items.eq(5).text().trim()).toBe('Set as DECIMAL');
-		expect(items.eq(6).text().trim()).toBe('Set as BOOLEAN');
-		expect(items.eq(7).text().trim()).toBe('Set as DATE');
+		types.forEach((type, index) => {
+			const item = items.eq(index + offset).find('span');
+			expect(item.eq(0).text().trim()).toBe(TRANSLATIONS.COLUMN_TYPE_SET);
+			expect(item.eq(1).text().trim()).toBe(type);
+		});
+	});
+
+	it('should NOT show divider if there is no domains', () => {
+		// given
+		scope.domains = [];
+		createElement();
+
+		// then
+		const items = element.find('ul.submenu >li');
+		expect(items.eq(0).hasClass('divider')).toBe(false)
 	});
 
 	describe('clicks', () => {

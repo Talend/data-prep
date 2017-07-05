@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,10 +52,6 @@ public abstract class BaseExportStrategy {
 
     @Autowired
     protected ApplicationContext applicationContext;
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    protected Step rootStep;
 
     @Autowired
     protected ObjectMapper mapper;
@@ -148,7 +142,7 @@ public abstract class BaseExportStrategy {
      * @see org.talend.dataprep.transformation.api.action.ActionParser
      */
     protected String getActions(String preparationId, String startStepId, String endStepId) {
-        if (rootStep.id().equals(startStepId)) {
+        if (Step.ROOT_STEP.id().equals(startStepId)) {
             return getActions(preparationId, endStepId);
         }
         String actions;

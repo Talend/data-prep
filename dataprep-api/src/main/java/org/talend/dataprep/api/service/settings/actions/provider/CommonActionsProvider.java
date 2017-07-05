@@ -63,6 +63,7 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 PreparationActions.PREPARATION_SORT,
 
                 SearchActions.SEARCH_ALL,
+                SearchActions.SEARCH_DOC,
                 SearchActions.SEARCH_FOCUS,
                 SearchActions.SEARCH_TOGGLE,
 
@@ -71,7 +72,9 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 WindowActions.MODAL_ABOUT,
                 WindowActions.MODAL_FEEDBACK,
                 WindowActions.ONBOARDING_PREPARATION,
-                WindowActions.HEADERBAR_HELP
+                WindowActions.ONBOARDING_PLAYGROUND,
+                WindowActions.HEADERBAR_HELP,
+                WindowActions.PLAYGROUND_HEADERBAR_HELP
         );
         // @formatter:on
     }

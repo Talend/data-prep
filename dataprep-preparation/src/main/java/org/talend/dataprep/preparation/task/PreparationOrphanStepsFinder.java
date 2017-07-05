@@ -1,6 +1,5 @@
 // ============================================================================
-//
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -19,8 +18,6 @@ import static java.util.stream.Collectors.toSet;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,17 +38,13 @@ public class PreparationOrphanStepsFinder implements OrphanStepsFinder {
     @Autowired
     private PreparationUtils preparationUtils;
 
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
     @Override
     public Set<Step> getOrphanSteps() {
 
         final Collection<Step> steps = repository.list(Step.class).collect(toList());
         final Set<String> preparationStepIds = getUsedSteps();
 
-        final Predicate<Step> isNotRootStep = step -> !rootStep.getId().equals(step.getId());
+        final Predicate<Step> isNotRootStep = step -> !Step.ROOT_STEP.getId().equals(step.getId());
         final Predicate<Step> isOrphan = step -> !preparationStepIds.contains(step.getId());
 
         return steps.stream().filter(isNotRootStep).filter(isOrphan).collect(toSet());

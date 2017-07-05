@@ -15,9 +15,7 @@ package org.talend.dataprep.transformation.service;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
@@ -28,17 +26,8 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -53,13 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
@@ -189,12 +172,6 @@ public class TransformationService extends BaseTransformationService {
 
     @Autowired
     private StatisticsAdapter statisticsAdapter;
-
-    /**
-     * The root step.
-     */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters", notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
@@ -362,14 +339,14 @@ public class TransformationService extends BaseTransformationService {
     private void executeDiffOnSample(final PreviewParameters previewParameters, final OutputStream output) {
         final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
                 previewParameters.getPreparationId(), //
-                rootStep.id(), //
+                Step.ROOT_STEP.id(), //
                 previewParameters.getSourceType() //
         );
 
         final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
                 previewParameters.getDataSetId(), //
                 previewParameters.getPreparationId(), //
-                rootStep.id(), //
+                Step.ROOT_STEP.id(), //
                 JSON, //
                 previewParameters.getSourceType() //
         );
@@ -435,14 +412,14 @@ public class TransformationService extends BaseTransformationService {
         if (previewParameters.getSourceType() != HEAD && previewParameters.getPreparationId() != null) {
             final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
                     previewParameters.getPreparationId(), //
-                    rootStep.id(), //
+                    Step.ROOT_STEP.id(), //
                     previewParameters.getSourceType() //
             );
 
             final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
                     previewParameters.getDataSetId(), //
                     previewParameters.getPreparationId(), //
-                    rootStep.id(), //
+                    Step.ROOT_STEP.id(), //
                     JSON, //
                     previewParameters.getSourceType() //
             );

@@ -33,12 +33,8 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
      * @description show/hide the checkbox responsible for adding the columns to the lookup action
      */
 	vm.showCheckbox = function showCheckbox() {
-		if (vm.state.playground.lookup.selectedColumn) {
-			return vm.column.id !== vm.state.playground.lookup.selectedColumn.id;
-		}
-		else {
-			return false;
-		}
+		const column = vm.state.playground.lookup.selectedColumn;
+		return column && (vm.column.id !== column.id);
 	};
 
     /**
@@ -49,5 +45,15 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
      */
 	vm.updateColsToAdd = function updateColsToAdd() {
 		StateService.updateLookupColumnsToAdd();
+	};
+
+	/**
+     * @ngdoc method
+     * @name getTypeLabel
+     * @methodOf data-prep.lookup-datagrid-header.controller:LookupDatagridHeaderCtrl
+     * @description returns the type label
+     */
+	vm.getTypeLabel = function () {
+		return vm.column.domainLabel || vm.converterService.simplifyType(vm.column.type);
 	};
 }

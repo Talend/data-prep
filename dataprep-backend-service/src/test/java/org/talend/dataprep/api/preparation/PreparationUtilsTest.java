@@ -20,8 +20,6 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +38,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     @Autowired
     private VersionService versionService;
 
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
-    /** The default root content. */
-    @Resource(name = "rootContent")
-    private PreparationActions rootContent;
-
     @Autowired
     private PreparationUtils preparationUtils;
 
@@ -55,11 +45,11 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     public void should_list_steps_ids_history_from_root() {
         // given
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
-        final PreparationActions newContent1 = rootContent.append(actions);
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
@@ -71,7 +61,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         List<String> ids = preparationUtils.listStepsIds(step1.id(), repository);
 
         // then
-        assertThat(ids, hasItem(rootStep.id()));
+        assertThat(ids, hasItem(Step.ROOT_STEP.id()));
         assertThat(ids, hasItem(step1.id()));
         assertThat(ids, not(hasItem(step2.id())));
 
@@ -79,7 +69,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         ids = preparationUtils.listStepsIds(step2.id(), repository);
 
         // then
-        assertThat(ids, hasItem(rootStep.id()));
+        assertThat(ids, hasItem(Step.ROOT_STEP.id()));
         assertThat(ids, hasItem(step1.id()));
         assertThat(ids, hasItem(step2.id()));
     }
@@ -88,11 +78,11 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     public void should_list_steps_ids_history_from_limit() {
         // given
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
-        final PreparationActions newContent1 = rootContent.append(actions);
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
@@ -104,7 +94,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         List<String> ids = preparationUtils.listStepsIds(step2.id(), step1.getId(), repository);
 
         // then
-        assertThat(ids, not(hasItem(rootStep.id())));
+        assertThat(ids, not(hasItem(Step.ROOT_STEP.id())));
         assertThat(ids, hasItem(step1.id()));
         assertThat(ids, hasItem(step2.id()));
 
@@ -112,7 +102,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         ids = preparationUtils.listStepsIds(step2.id(), step2.getId(), repository);
 
         // then
-        assertThat(ids, not(hasItem(rootStep.id())));
+        assertThat(ids, not(hasItem(Step.ROOT_STEP.id())));
         assertThat(ids, not(hasItem(step1.id())));
         assertThat(ids, hasItem(step2.id()));
     }
@@ -121,11 +111,11 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     public void should_list_steps_history_from_root() {
         // given
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
-        final PreparationActions newContent1 = rootContent.append(actions);
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
@@ -137,7 +127,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         List<Step> steps = preparationUtils.listSteps(step1.id(), repository);
 
         // then
-        assertThat(steps, hasItem(rootStep));
+        assertThat(steps, hasItem(Step.ROOT_STEP));
         assertThat(steps, hasItem(step1));
         assertThat(steps, not(hasItem(step2)));
 
@@ -145,7 +135,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         steps = preparationUtils.listSteps(step2.id(), repository);
 
         // then
-        assertThat(steps, hasItem(rootStep));
+        assertThat(steps, hasItem(Step.ROOT_STEP));
         assertThat(steps, hasItem(step1));
         assertThat(steps, hasItem(step2));
     }
@@ -154,11 +144,11 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     public void should_list_steps_history_from_limit() {
         // given
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
-        final PreparationActions newContent1 = rootContent.append(actions);
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step step1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         final Step step2 = new Step(step1.id(), newContent2.id(), version);
 
         repository.add(newContent1);
@@ -170,7 +160,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         List<Step> steps = preparationUtils.listSteps(step2, step1.getId(), repository);
 
         // then
-        assertThat(steps, not(hasItem(rootStep)));
+        assertThat(steps, not(hasItem(Step.ROOT_STEP)));
         assertThat(steps, hasItem(step1));
         assertThat(steps, hasItem(step2));
 
@@ -178,7 +168,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         steps = preparationUtils.listSteps(step2, step2.getId(), repository);
 
         // then
-        assertThat(steps, not(hasItem(rootStep)));
+        assertThat(steps, not(hasItem(Step.ROOT_STEP)));
         assertThat(steps, not(hasItem(step1)));
         assertThat(steps, hasItem(step2));
     }
@@ -195,7 +185,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception_with_null_limit() throws Exception {
         // when
-        preparationUtils.listSteps(rootStep, null, repository);
+        preparationUtils.listSteps(Step.ROOT_STEP, null, repository);
 
         // then
         fail("Should have thrown IllegalArgumentException because limit step is null");
@@ -207,7 +197,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final String version = versionService.version().getVersionId();
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent = new PreparationActions(actions, version);
-        final Step step = new Step(rootStep.id(), newContent.id(), version);
+        final Step step = new Step(Step.ROOT_STEP.id(), newContent.id(), version);
         final Preparation preparation = new Preparation("#15325878", "1234", step.id(), version);
 
         repository.add(newContent);
@@ -305,7 +295,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         step1.setContent(actions1.id());
         step2.setContent(actions2.id());
         preparation.setHeadId(step2.id());
-        final List<Step> expectedSteps = Arrays.asList(rootStep, step1, step2);
+        final List<Step> expectedSteps = Arrays.asList(Step.ROOT_STEP, step1, step2);
         preparation.setSteps(expectedSteps);
         preparation.setHeadId(step2.getId());
 

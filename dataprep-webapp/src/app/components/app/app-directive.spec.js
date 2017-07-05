@@ -33,7 +33,7 @@ describe('App directive', () => {
 		};
 	}));
 
-	beforeEach(inject(($injector, $q, RestURLs, UpgradeVersionService) => {
+	beforeEach(inject(($injector, $q, RestURLs, AboutService, UpgradeVersionService) => {
 		RestURLs.setConfig({ serverUrl: '' }, settings);
 
 		const $httpBackend = $injector.get('$httpBackend');
@@ -42,6 +42,7 @@ describe('App directive', () => {
 			.respond(200, {});
 
 		spyOn(UpgradeVersionService, 'retrieveNewVersions').and.returnValue($q.when([]));
+		spyOn(AboutService, 'loadBuilds').and.returnValue();
 	}));
 
 	afterEach(() => {
@@ -79,5 +80,13 @@ describe('App directive', () => {
 
 		//then
 		expect(element.find('ui-view.main-layout').length).toBe(1);
+	});
+
+	it('should render about modal', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('about').length).toBe(1);
 	});
 });

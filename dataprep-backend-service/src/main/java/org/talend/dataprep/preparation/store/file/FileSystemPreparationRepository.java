@@ -25,7 +25,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,8 +36,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Identifiable;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
@@ -63,14 +60,6 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
     @Autowired
     private ObjectMapper mapper;
 
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
-    /** The default root content. */
-    @Resource(name = "rootContent")
-    private PreparationActions rootContent;
-
     /** Where to store the dataset metadata */
     @Value("${preparation.store.file.location}")
     private String preparationsLocation;
@@ -85,8 +74,6 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
     @PostConstruct
     private void init() {
         getRootFolder().mkdirs();
-        add(rootContent);
-        add(rootStep);
     }
 
     /**
@@ -170,10 +157,6 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
                 FilesHelper.deleteQuietly(file);
             }
         }
-
-        // add the default files
-        add(rootContent);
-        add(rootStep);
 
         LOG.debug("preparation repository cleared");
     }

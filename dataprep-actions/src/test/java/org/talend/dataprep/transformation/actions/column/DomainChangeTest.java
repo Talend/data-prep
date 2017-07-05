@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.column.DomainChange.NEW_DOMAIN_ID_PARAMETER_KEY;
+import static org.talend.dataprep.transformation.actions.column.DomainChange.NEW_DOMAIN_LABEL_PARAMETER_KEY;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class DomainChangeTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
         parameters.put(NEW_DOMAIN_ID_PARAMETER_KEY, "AUS_BEER");
+        parameters.put(NEW_DOMAIN_LABEL_PARAMETER_KEY, "Australian Beer");
     }
 
     @Test
@@ -69,6 +71,7 @@ public class DomainChangeTest extends AbstractMetadataBaseTest {
         // then
         final ColumnMetadata column = row.getRowMetadata().getById("0002");
         assertThat(column.getDomain()).isEqualTo("AUS_BEER");
+        assertThat(column.getDomainLabel()).isEqualTo("Australian Beer");
     }
 
     @Test

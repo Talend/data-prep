@@ -29,6 +29,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.io.ReleasableInputStream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -175,5 +176,24 @@ public class Defaults {
             }
         };
     }
+
+    /**
+     * Read content from HTTP response and convert response to a {@link JsonNode}.
+     *
+     * @param mapper The mapper to use for creating the JSON tree.
+     * @return The response converted as a {@link JsonNode tree}.
+     */
+    public static BiFunction<HttpRequestBase, HttpResponse, JsonNode> toJson(ObjectMapper mapper) {
+        return (request, response) -> {
+            try {
+                return mapper.readTree(response.getEntity().getContent());
+            } catch (Exception e) {
+                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            } finally {
+                request.releaseConnection();
+            }
+        };
+    }
+
 
 }

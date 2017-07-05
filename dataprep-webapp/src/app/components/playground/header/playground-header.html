@@ -12,53 +12,15 @@
   ~
   ~ ============================================================================
   -->
-<nav class="playground-header navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" ng-click="isPGNavCollapsed = !isPGNavCollapsed">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand"><span class="sr-only">Talend</span>Data Preparation</a>
-        </div>
-        <div class="collapse navbar-collapse" uib-collapse="isPGNavCollapsed" insertion-playground-left-header>
-            <ul class="nav navbar-nav navbar-right">
-                <li  ng-if="!$ctrl.isReadonly">
-                    <a id="playground-onboarding-icon"
-                       role="button"
-                       translate-once-title="ONBOARDING"
-                       ng-click="$ctrl.onOnboarding()">
-                        <icon name="'talend-board'" />
-                    </a>
-                </li>
-                <li ng-if="$ctrl.feedbackVisible">
-                    <a id="playground-feedback-icon"
-                       role="button"
-                       ng-click="$ctrl.onFeedback()"
-                       translate-once-title="FEEDBACK_TOOLTIP">
-                        <icon name="'talend-bubbles'" />
-                    </a>
-                </li>
-                <li>
-                    <a id="playground-online-help-icon"
-                       translate-once-title="ONLINE_HELP_TOOLTIP"
-                       href="https://help.talend.com/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.1%2522&utm_medium=dpdesktop&utm_source=header"
-                       target="_blank">
-                        <icon name="'talend-question-circle'" />
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li id="documentation-search-container">
-                    <documentation-search translate-once-title="TOGGLE_SEARCH">
-                    </documentation-search>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div class="playground-header">
+    <app-header-bar view-key="'appheaderbar:playground'"
+                    search-toggle="$ctrl.state.search.searchToggle"
+                    searching="$ctrl.state.search.searching"
+                    search-input="$ctrl.state.search.searchInput"
+                    search-results="$ctrl.state.search.searchResults"
+                    search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
+                    search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
+</div>
 <nav class="playground-sub-header navbar">
     <ul class="playground-sub-header-left nav navbar-nav">
         <li ng-switch="!!$ctrl.isReadonly">

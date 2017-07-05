@@ -33,8 +33,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,12 +97,6 @@ public class PreparationService {
     private ActionMetadataValidation validator;
 
     /**
-     * The root step.
-     */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
-    /**
      * DataPrep abstraction to the underlying security (whether it's enabled or not).
      */
     @Autowired
@@ -155,7 +147,7 @@ public class PreparationService {
         LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
 
         Preparation toCreate = new Preparation(UUID.randomUUID().toString(), versionService.version().getVersionId());
-        toCreate.setHeadId(rootStep.id());
+        toCreate.setHeadId(Step.ROOT_STEP.id());
         toCreate.setAuthor(security.getUserId());
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
@@ -493,7 +485,7 @@ public class PreparationService {
         }
 
         // if the preparation is not empty (head != root step) --> 409
-        if (!StringUtils.equals(preparation.getHeadId(), rootStep.id())) {
+        if (!StringUtils.equals(preparation.getHeadId(), Step.ROOT_STEP.id())) {
             LOGGER.error("cannot update {} steps --> preparation has already steps.");
             throw new TDPException(PREPARATION_NOT_EMPTY, build().put("id", id));
         }
@@ -723,7 +715,7 @@ public class PreparationService {
      * @param stepToDeleteId the step id to delete.
      */
     public void deleteAction(final String id, final String stepToDeleteId) {
-        if (rootStep.getId().equals(stepToDeleteId)) {
+        if (Step.ROOT_STEP.getId().equals(stepToDeleteId)) {
             throw new TDPException(PREPARATION_ROOT_STEP_CANNOT_BE_DELETED);
         }
 
@@ -854,7 +846,7 @@ public class PreparationService {
         if ("head".equalsIgnoreCase(version)) { //$NON-NLS-1$
             return preparation.getHeadId();
         } else if ("origin".equalsIgnoreCase(version)) { //$NON-NLS-1$
-            return rootStep.id();
+            return Step.ROOT_STEP.id();
         }
         return version;
     }
@@ -1255,7 +1247,7 @@ public class PreparationService {
      * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     private void reorderSteps(final Preparation preparation, final String stepId, final String parentStepId) {
-        final List<String> steps = extractSteps(preparation, rootStep.getId());
+        final List<String> steps = extractSteps(preparation, Step.ROOT_STEP.getId());
 
         // extract all appendStep
         final List<AppendStep> allAppendSteps = extractActionsAfterStep(steps, steps.get(0));

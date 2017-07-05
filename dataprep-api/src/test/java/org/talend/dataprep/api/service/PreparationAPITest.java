@@ -38,8 +38,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -65,12 +63,6 @@ import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 
 public class PreparationAPITest extends ApiServiceTestBase {
-
-    /**
-     * The root step.
-     */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     @Autowired
     private Security security;
@@ -390,7 +382,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         final List<String> steps = getPreparationDetails(preparationId).getSteps();
         assertThat(steps.size(), is(2));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
     }
 
     @Test
@@ -406,7 +398,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
         final List<String> steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(3));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
     }
 
     private EnrichedPreparation getPreparationDetails(String preparationId) throws IOException {
@@ -460,7 +452,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         List<String> steps = getPreparationDetails(preparationId).getSteps();
         assertThat(steps.size(), is(3));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59") with
         // another action
@@ -472,7 +464,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then : Steps id should have changed due to update
         steps = getPreparationDetails(preparationId).getSteps();
         assertThat(steps.size(), is(3));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
     }
 
     @Test
@@ -543,7 +535,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then : Steps id should have changed due to update
         steps = getPreparationDetails(preparationId).getSteps();
         assertThat(steps.size(), is(2));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
     }
 
     @Test
@@ -689,7 +681,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         List<String> steps = preparation.getSteps();
 
         assertThat(steps.size(), is(1));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // when
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
@@ -698,7 +690,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
         steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(2));
-        assertThat(steps.get(0), is(rootStep.id()));
+        assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // Request preparation content at different versions (preparation has 2 steps -> Root + Upper Case).
         assertThat(when().get("/api/preparations/{id}/content", preparationId).asString(), sameJSONAsFile(
@@ -711,7 +703,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
         assertThat(when().get("/api/preparations/{id}/content?version=origin", preparationId).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + rootStep.id(), preparationId).asString(),
+        assertThat(when().get("/api/preparations/{id}/content?version=" + Step.ROOT_STEP.id(), preparationId).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
     }
 

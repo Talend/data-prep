@@ -48,7 +48,6 @@ import TalendSearchInput from './search/widget-search-input-directive';
 import TalendSlidable from './slidable/widget-slidable-directive';
 import TalendTooltipCtrl from './tooltip/widget-tooltip-controller';
 import TalendTooltip from './tooltip/widget-tooltip-directive';
-import Typeahead from './typeahead/typeahead-directive';
 import ListItemHandler from './list-item-handler/list-item-handler-component';
 import AutoScroll from './auto-scroll/auto-scroll-directive';
 
@@ -113,7 +112,6 @@ angular.module(MODULE_NAME, [
 
     .controller('TalendTooltipCtrl', TalendTooltipCtrl)
     .directive('talendTooltip', TalendTooltip)
-    .directive('typeahead', Typeahead)
     .component('listItemHandler', ListItemHandler)
     .directive('autoScroll', AutoScroll);
 

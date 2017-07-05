@@ -153,6 +153,16 @@ export default function DatagridHeaderCtrl($scope, state,
 	};
 
 	/**
+	 * @ngdoc method
+	 * @name getTypeLabel
+	 * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
+	 * @description returns the type label
+	 */
+	vm.getTypeLabel = () => {
+		return vm.column.domainLabel || vm.converterService.simplifyType(vm.column.type);
+	};
+
+	/**
 	 * Invalidate transformations if a column has been modified
 	 * e.g. its name
 	 */

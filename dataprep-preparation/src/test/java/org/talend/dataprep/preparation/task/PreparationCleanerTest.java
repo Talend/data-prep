@@ -47,7 +47,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
     public void removeOrphanSteps_should_remove_orphan_step_after_at_least_X_hours() {
         //given
         final String version = versionService.version().getVersionId();
-        final Step firstStep = new Step(rootStep.id(), "first", version);
+        final Step firstStep = new Step(Step.ROOT_STEP.id(), "first", version);
         final Step secondStep = new Step(firstStep.id(), "second", version);
         final Step orphanStep = new Step(secondStep.id(), "orphan", version);
         final Preparation preparation = new Preparation("#123", "1", secondStep.id(), version);
@@ -70,7 +70,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
     public void removeOrphanSteps_should_not_remove_step_that_still_belongs_to_a_preparation() {
         //given
         final String version = versionService.version().getVersionId();
-        final Step firstStep = new Step(rootStep.id(), "first", version);
+        final Step firstStep = new Step(Step.ROOT_STEP.id(), "first", version);
         final Step secondStep = new Step(firstStep.id(), "second", version);
         final Step thirdStep = new Step(secondStep.id(), "third", version);
 
@@ -96,13 +96,13 @@ public class PreparationCleanerTest extends BasePreparationTest {
     public void removeOrphanSteps_should_not_remove_root_step() {
         //given
         repository.clear();
-        assertNotNull(repository.get(rootStep.getId(), Step.class));
+        assertNotNull(repository.get(Step.ROOT_STEP.getId(), Step.class));
 
         //when
         cleaner.removeOrphanSteps();
 
         //then
-        assertNotNull(repository.get(rootStep.getId(), Step.class));
+        assertNotNull(repository.get(Step.ROOT_STEP.getId(), Step.class));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
         final String version = versionService.version().getVersionId();
         final PreparationActions content = new PreparationActions();
         content.setAppVersion(version);
-        final Step step = new Step(rootStep.id(), content.id(), version);
+        final Step step = new Step(Step.ROOT_STEP.id(), content.id(), version);
 
         repository.add(step);
         repository.add(content);

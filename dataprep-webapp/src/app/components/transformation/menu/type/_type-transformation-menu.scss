@@ -1,0 +1,9 @@
+.more {
+	.set-type-label:after {
+		content: ' ';
+	}
+
+	.type {
+		text-transform: uppercase;
+	}
+}

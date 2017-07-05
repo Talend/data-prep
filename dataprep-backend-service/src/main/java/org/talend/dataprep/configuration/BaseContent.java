@@ -12,18 +12,12 @@
 
 package org.talend.dataprep.configuration;
 
-import static org.talend.dataprep.api.preparation.PreparationActions.ROOT_ACTIONS;
-import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
-
 import java.io.IOException;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -57,26 +51,4 @@ public class BaseContent {
         };
     }
 
-    /**
-     * @return the preparation root content (no actions).
-     */
-    @Bean(name = "rootContent")
-    public PreparationActions initRootContent() {
-        PreparationActions preparationActions = new PreparationActions( //
-                Collections.emptyList(), //
-                versionService.version().getVersionId() //
-        );
-        preparationActions.setId(ROOT_ACTIONS.id());
-        return preparationActions;
-    }
-
-    /**
-     * @return the default root step.
-     */
-    @Bean(name = "rootStep")
-    public Step getRootStep(PreparationActions rootContent) {
-        final Step step = new Step(null, rootContent.id(), versionService.version().getVersionId());
-        step.setId(ROOT_STEP.id());
-        return step;
-    }
 }

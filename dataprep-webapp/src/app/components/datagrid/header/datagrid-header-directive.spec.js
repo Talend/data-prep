@@ -138,6 +138,7 @@ describe('Datagrid header directive', () => {
 			},
 			type: 'string',
 			domain: 'city',
+			domainLabel: 'City',
 		};
 
 		//when
@@ -145,7 +146,7 @@ describe('Datagrid header directive', () => {
 
 		//then
 		expect(element.find('.grid-header-title').text().trim()).toBe('MostPopulousCity');
-		expect(element.find('.grid-header-type').text()).toBe('city');
+		expect(element.find('.grid-header-type').text()).toBe('City');
 	});
 
 	it('should display column title and type when there is no domain', () => {

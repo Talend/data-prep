@@ -31,6 +31,7 @@ import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.transformer.ConfiguredCacheWriter;
+import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
@@ -39,6 +40,7 @@ import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
+import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
 import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
@@ -76,7 +78,7 @@ public class PipelineTransformer implements Transformer {
     private StepMetadataRepository preparationUpdater;
 
     @Override
-    public void transform(DataSet input, Configuration configuration) {
+    public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
 
         // prepare the fallback row metadata
@@ -105,17 +107,30 @@ public class PipelineTransformer implements Transformer {
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();
-        try {
-            LOGGER.debug("Before transformation: {}", pipeline);
-            pipeline.execute(input);
-        } finally {
-            LOGGER.debug("After transformation: {}", pipeline);
-        }
 
-        if (preparation != null) {
-            final UpdatedStepVisitor visitor = new UpdatedStepVisitor(preparationUpdater);
-            pipeline.accept(visitor);
-        }
+        // wrap this transformer into an executable transformer
+        return new ExecutableTransformer() {
+
+            @Override
+            public void execute() {
+                try {
+                    LOGGER.debug("Before transformation: {}", pipeline);
+                    pipeline.execute(input);
+                } finally {
+                    LOGGER.debug("After transformation: {}", pipeline);
+                }
+
+                if (preparation != null) {
+                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(preparationUpdater);
+                    pipeline.accept(visitor);
+                }
+            }
+
+            @Override
+            public void signal(Signal signal) {
+                pipeline.signal(signal);
+            }
+        };
     }
 
     @Override

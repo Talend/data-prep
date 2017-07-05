@@ -184,7 +184,6 @@ public class WriterNode extends BasicNode implements Monitored {
         // Cache computed metadata for later reuse
         try {
             metadataCacheWriter.write(metadataKey, lastRowMetadata);
-            writer.flush();
         } catch (IOException e) {
             LOGGER.error("Unable to cache metadata for preparation #{} @ step #{}", metadataKey.getKey());
             LOGGER.debug("Unable to cache metadata due to exception.", e);

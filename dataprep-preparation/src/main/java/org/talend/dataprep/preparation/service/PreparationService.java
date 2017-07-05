@@ -518,6 +518,8 @@ public class PreparationService {
             throw new TDPException(PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", id));
         }
 
+        ensurePreparationConsistency(preparation);
+
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
             // just make sure the step does exist
@@ -533,6 +535,36 @@ public class PreparationService {
         final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
         LOGGER.info("returning details for {} -> {}", id, details);
         return details;
+    }
+
+    /**
+     * This method ensures the consistency of a preparation .i.e. makes sure that a non-empty head step of a preparation
+     * has its corresponding actions available. If it is not the case, we walk recursively on the steps from the current head
+     * to the root step until we reach a step having its actions accessible or we reach the root step.
+     *
+     * @param preparation the specified preparation
+     */
+    private void ensurePreparationConsistency(Preparation preparation) {
+        final String headId = preparation.getHeadId();
+        Step head = preparationRepository.get(headId, Step.class);
+        if (head != null) {
+            PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            boolean inconsistentPreparation = false;
+            while (prepActions == null && head != Step.ROOT_STEP) {
+                LOGGER.info(
+                        "Head step {} is inconsistent. Its corresponding action is unavailable. for the sake of safety new head is set to {}",
+                        head.getId(), head.getParent());
+
+                inconsistentPreparation = true;
+                deleteAction(preparation, head.getId());
+                head = preparationRepository.get(head.getParent(), Step.class);
+                prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            }
+
+            if (inconsistentPreparation) {
+                setPreparationHead(preparation, head);
+            }
+        }
     }
 
     /**
@@ -731,7 +763,8 @@ public class PreparationService {
             final String stepId = getStepId(version, preparation);
             final Step step = getStep(stepId);
             if (step == null) {
-                LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId, preparation.getId(), version);
+                LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId, preparation.getId(),
+                        version);
             }
             return getActions(step);
         } else {
@@ -1158,7 +1191,13 @@ public class PreparationService {
         final Step head = preparationRepository.get(headId, Step.class);
         final PreparationActions headActions = preparationRepository.get(head.getContent(), PreparationActions.class);
         final PreparationActions newContent = new PreparationActions();
+
+        if (headActions == null) {
+            LOGGER.info("Cannot retrieve the action corresponding to step {}. Therefore it will be skipped.", head);
+            return;
+        }
         final List<Action> newActions = new ArrayList<>(headActions.getActions());
+
         newActions.addAll(appendStep.getActions());
         newContent.setActions(newActions);
 

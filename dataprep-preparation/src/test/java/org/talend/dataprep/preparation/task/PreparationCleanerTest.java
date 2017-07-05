@@ -12,19 +12,22 @@
 
 package org.talend.dataprep.preparation.task;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.WebApplicationContext;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.BasePreparationTest;
-
 
 @TestPropertySource(properties={"dataset.metadata.store: in-memory"})
 public class PreparationCleanerTest extends BasePreparationTest {
@@ -117,5 +120,46 @@ public class PreparationCleanerTest extends BasePreparationTest {
         //then
         assertNull(repository.get(step.getId(), Step.class));
         assertNull(repository.get(content.getId(), PreparationActions.class));
+    }
+
+    @Test
+    public void test_clean_preparation_dont_remove_mutualized_actions() throws Exception {
+        // given
+        final String version = versionService.version().getVersionId();
+        final PreparationActions content = new PreparationActions();
+        List<Action> actions = new ArrayList<>();
+        content.append(actions);
+        content.setAppVersion(version);
+        repository.add(content);
+
+        final Step stepFirstPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
+        final Step stepSecondPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
+
+        repository.add(stepFirstPreparation);
+        repository.add(stepSecondPreparation);
+
+        Preparation firstPreparation = new Preparation("1", null, stepFirstPreparation.getId(), version);
+        Preparation secondPreparation = new Preparation("2", null, stepSecondPreparation.getId(), version);
+
+        repository.add(firstPreparation);
+        repository.add(secondPreparation);
+
+        int expectedNbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
+
+        // when
+        repository.remove(firstPreparation);
+        cleaner.removeOrphanSteps();
+
+        // then
+        int nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
+        assertEquals(expectedNbActions, nbActions);
+
+        // when
+        repository.remove(secondPreparation);
+        cleaner.removeOrphanSteps();
+
+        // then
+        nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
+        assertEquals(1, nbActions);
     }
 }

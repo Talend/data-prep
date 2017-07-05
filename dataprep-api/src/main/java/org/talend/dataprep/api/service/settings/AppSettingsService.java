@@ -49,6 +49,14 @@ public class AppSettingsService {
     @Autowired(required = false)
     private AppSettingsConfigurer<UriSettings>[] urisConfigurers;
 
+    public AppSettingsConfigurer<ActionSettings>[] getActionsConfigurers() {
+        return actionsConfigurers;
+    }
+
+    public void setActionsConfigurers(AppSettingsConfigurer<ActionSettings>... actionsConfigurers) {
+        this.actionsConfigurers = actionsConfigurers;
+    }
+
     /**
      * Generate the app settings
      */
@@ -72,7 +80,7 @@ public class AppSettingsService {
 
     /**
      * Build a Setting mapper Function from a given AppSettingsConfigurer
-     * 
+     *
      * @param configurer The setting configurer
      * @return The function
      */
@@ -82,7 +90,7 @@ public class AppSettingsService {
 
     /**
      * Get all the static settings as a stream
-     * 
+     *
      * @return Stream that will process all static settings
      */
     private <T> Stream<T> getStaticSettingsStream(final AppSettingsProvider<T>[] providers) {
@@ -91,7 +99,7 @@ public class AppSettingsService {
 
     /**
      * Get all the configured settings as a stream
-     * 
+     *
      * @param providers The array of settings providers
      * @param configurers The array of settings configurers
      * @param <T> ActionSettings | ViewSettings

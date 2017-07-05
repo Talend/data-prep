@@ -30,7 +30,6 @@ export default function RestURLs() {
 
 		this.aggregationUrl = serverUrl + uris.apiAggregate;
 		this.datasetUrl = serverUrl + uris.apiDatasets;
-		this.uploadDatasetUrl = serverUrl + uris.apiUploadDatasets;
 		this.exportUrl = serverUrl + uris.apiExport;
 		this.folderUrl = serverUrl + uris.apiFolders;
 		this.mailUrl = serverUrl + uris.apiMail;

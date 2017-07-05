@@ -920,7 +920,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));
         assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(1L));
+        assertThat(repository.list(PreparationActions.class).count(), is(2L));
     }
 
     @Test
@@ -1059,8 +1059,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Step head = repository.get(preparation.getHeadId(), Step.class);
         final Step lastBeforeHead = repository.get(head.getParent(), Step.class);
         final PreparationActions headAction = repository.get(head.getContent(), PreparationActions.class);
-        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent(),
-                PreparationActions.class);
+        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent(), PreparationActions.class);
 
         // first step : contains only uppercase on lastname
         assertThat(lastBeforeHeadAction.getActions(), hasSize(1));
@@ -1403,6 +1402,35 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         preparation = repository.get(preparation.id(), Preparation.class);
         assertThat(oldModificationDate, lessThan(preparation.getLastModificationDate()));
+    }
+
+    @Test
+    public void shouldTurnInconsistentPreparationToConsistentState() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "My preparation");
+        clientTest.addStep(preparationId, step(null, action("copy", paramsColAction("0001", "lastname"))));
+        clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
+        clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
+
+        final Preparation preparation = repository.get(preparationId, Preparation.class);
+        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        assertEquals(4, stepIds.size());
+        final Step step4 = repository.get(stepIds.get(3), Step.class);
+        final Step step3 = repository.get(stepIds.get(2), Step.class);
+        final PreparationActions actionStep4 = repository.get(step4.getContent(), PreparationActions.class);
+        final PreparationActions actionStep3 = repository.get(step3.getContent(), PreparationActions.class);
+        repository.remove(actionStep4);
+        repository.remove(actionStep3);
+
+        // when
+        Response response = when().get("/preparations/{id}/details", preparationId);
+
+        // then
+        assertNotNull(response.path("metadata"));
+        response.then().assertThat().body("metadata[0].name", is("copy"));
+        Preparation newPreparation = repository.get(preparationId, Preparation.class);
+        String newHead = stepIds.get(1);
+        assertEquals(newHead, newPreparation.getHeadId());
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -57,7 +57,7 @@ describe('Breadcrumb container', () => {
 			name: 'folderI'
 		}
 	];
-	beforeEach(angular.mock.module('react-talend-components.containers'));
+	beforeEach(angular.mock.module('@talend/react-components.containers'));
 
 	beforeEach(inject(($rootScope, $compile, SettingsService) => {
 		scope = $rootScope.$new();

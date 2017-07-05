@@ -58,7 +58,7 @@ describe('CollapsiblePanel container', () => {
 	let createElement;
 	let element;
 
-	beforeEach(angular.mock.module('react-talend-components.containers'));
+	beforeEach(angular.mock.module('@talend/react-components.containers'));
 
 	afterEach(inject(() => {
 		scope.$destroy();

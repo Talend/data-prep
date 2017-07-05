@@ -20,7 +20,7 @@ describe('Side Panel container', () => {
 	let element;
 	const body = angular.element('body');
 
-	beforeEach(angular.mock.module('react-talend-components.containers'));
+	beforeEach(angular.mock.module('@talend/react-components.containers'));
 
 	beforeEach(inject(($rootScope, $compile, SettingsService) => {
 		scope = $rootScope.$new();

@@ -13,17 +13,17 @@
 
 import angular from 'angular';
 
-import AppHeaderBar from 'react-talend-components/lib/HeaderBar';
-import Breadcrumbs from 'react-talend-components/lib/Breadcrumbs';
-import CircularProgress from 'react-talend-components/lib/CircularProgress';
-import CollapsiblePanel from 'react-talend-components/lib/CollapsiblePanel';
-import HttpError from 'react-talend-components/lib/HttpError';
-import Icon from 'react-talend-components/lib/Icon';
-import IconsProvider from 'react-talend-components/lib/IconsProvider';
-import SidePanel from 'react-talend-components/lib/SidePanel';
-import List from 'react-talend-components/lib/List';
-import Progress from 'react-talend-components/lib/Progress';
-import Form from 'react-talend-forms';
+import AppHeaderBar from '@talend/react-components/lib/HeaderBar';
+import Breadcrumbs from '@talend/react-components/lib/Breadcrumbs';
+import CircularProgress from '@talend/react-components/lib/CircularProgress';
+import CollapsiblePanel from '@talend/react-components/lib/CollapsiblePanel';
+import HttpError from '@talend/react-components/lib/HttpError';
+import Icon from '@talend/react-components/lib/Icon';
+import IconsProvider from '@talend/react-components/lib/IconsProvider';
+import SidePanel from '@talend/react-components/lib/SidePanel';
+import List from '@talend/react-components/lib/List';
+import Progress from '@talend/react-components/lib/Progress';
+import Form from '@talend/react-forms';
 
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
@@ -37,7 +37,7 @@ import STATE_MODULE from '../../services/state/state-module';
 import DATASET_UPLOAD_STATUS_MODULE from '../dataset/upload-status/dataset-upload-status-module';
 import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
 
-const MODULE_NAME = 'react-talend-components.containers';
+const MODULE_NAME = '@talend/react-components.containers';
 
 angular.module(MODULE_NAME,
 	[

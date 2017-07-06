@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Actions settings are the configuration for a simple button.
- * see https://talend.github.io/react-talend-components/?selectedKind=Action&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * see
+ * https://talend.github.io/react-talend-components/?selectedKind=Action&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "displayMode")
@@ -93,6 +94,8 @@ public class ActionSettings {
      */
     private Map<String, Object> payload;
 
+    private Boolean filtered = false;
+
     public String getId() {
         return id;
     }
@@ -109,9 +112,13 @@ public class ActionSettings {
         this.name = name;
     }
 
-    public String getToolTip() { return toolTip; }
+    public String getToolTip() {
+        return toolTip;
+    }
 
-    public void setToolTip(String toolTip) { this.toolTip = toolTip; }
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
+    }
 
     public String getIcon() {
         return icon;
@@ -169,6 +176,14 @@ public class ActionSettings {
         this.payload = payload;
     }
 
+    public Boolean getFiltered() {
+        return filtered;
+    }
+
+    public void setFiltered(Boolean filtered) {
+        this.filtered = filtered;
+    }
+
     public static Builder from(final ActionSettings actionSettings) {
         return builder().id(actionSettings.getId()).name(actionSettings.getName()).icon(actionSettings.getIcon())
                 .type(actionSettings.getType()).bsStyle(actionSettings.getBsStyle()).payload(actionSettings.getPayload());
@@ -199,6 +214,8 @@ public class ActionSettings {
         private String bsSize;
 
         private Map<String, Object> payload = new HashMap<>();
+
+        private Boolean filtered;
 
         public Builder id(final String id) {
             this.id = id;
@@ -255,6 +272,11 @@ public class ActionSettings {
             return this;
         }
 
+        public Builder filtered(final Boolean filtered) {
+            this.filtered = filtered;
+            return this;
+        }
+
         public ActionSettings build() {
             final ActionSettings action = new ActionSettings();
             action.setId(this.id);
@@ -267,6 +289,7 @@ public class ActionSettings {
             action.setBsStyle(this.bsStyle);
             action.setBsSize(this.bsSize);
             action.setPayload(this.payload.isEmpty() ? null : this.payload);
+            action.setFiltered(this.filtered);
             return action;
         }
     }

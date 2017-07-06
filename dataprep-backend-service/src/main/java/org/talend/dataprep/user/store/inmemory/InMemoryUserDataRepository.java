@@ -42,7 +42,7 @@ public class InMemoryUserDataRepository<U extends UserData> implements UserDataR
      * @see UserDataRepository#save(UserData)
      */
     @Override
-    public void save(U userData) {
+    public <S extends U>  void save(S userData) {
         store.put(userData.getUserId(), userData);
     }
 

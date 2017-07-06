@@ -65,9 +65,7 @@ public class AppSettingsService {
 
         // populate appSettings actions dictionary (key: actionId, value: action)
         getSettingsStream(actionsProviders, actionsConfigurers) //
-                .filter(actionSettings ->
-                        actionSettings.getFiltered() == null
-                                || !actionSettings.getFiltered())
+                .filter(actionSettings -> actionSettings.getFiltered() == null || !actionSettings.getFiltered())
                 .forEach(action -> appSettings.getActions().put(action.getId(), action));
 
         // populate appSettings views dictionary (key: viewId, value: view)

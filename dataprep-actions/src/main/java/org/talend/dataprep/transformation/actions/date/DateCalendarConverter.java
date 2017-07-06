@@ -329,7 +329,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         ISO(true, "IsoChronology", IsoChronology.INSTANCE, Locale.US),
         HIJRI(true, "HijrahChronology", HijrahChronology.INSTANCE, new Locale("ar")),
         JAPANESE(true, "JapaneseChronology", JapaneseChronology.INSTANCE, Locale.JAPANESE),
-        MINGUO(true, "MinguoChronology", MinguoChronology.INSTANCE, Locale.CHINESE),
+        MINGUO(true, "MinguoChronology", MinguoChronology.INSTANCE, Locale.TRADITIONAL_CHINESE),
         THAI_BUDDHIST(true, "ThaiBuddhistChronology", ThaiBuddhistChronology.INSTANCE, new Locale("th")),
         //Julian day.
         JULIAN_DAY(false, "JulianDay", JulianFields.JULIAN_DAY),

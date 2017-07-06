@@ -435,6 +435,10 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(mapUriSettings.get("apiAggregate"), is("/api/aggregate"));
 
         // then
+        assertThat(mapUriSettings.containsKey("apiUploadDatasets"), is(true));
+        assertThat(mapUriSettings.get("apiUploadDatasets"), is("/api/datasets"));
+
+        // then
         assertThat(mapUriSettings.containsKey("apiDatasets"), is(true));
         assertThat(mapUriSettings.get("apiDatasets"), is("/api/datasets"));
 

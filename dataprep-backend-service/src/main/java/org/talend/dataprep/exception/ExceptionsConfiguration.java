@@ -15,7 +15,7 @@ package org.talend.dataprep.exception;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.talend.daikon.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.conversions.BeanConversionService.RegistrationBuilder.fromBean;
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 import java.util.HashMap;
 import java.util.Map;

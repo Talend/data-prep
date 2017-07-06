@@ -13,7 +13,7 @@
 package org.talend.dataprep.preparation.configuration;
 
 import static java.util.stream.Collectors.toList;
-import static org.talend.dataprep.conversions.BeanConversionService.RegistrationBuilder.fromBean;
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 import java.util.Collections;
 import java.util.List;

@@ -13,7 +13,7 @@
 package org.talend.dataprep.conversions;
 
 import static org.junit.Assert.*;
-import static org.talend.dataprep.conversions.BeanConversionService.RegistrationBuilder.fromBean;
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 import org.junit.After;
 import org.junit.Test;

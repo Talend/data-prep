@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.dataset.configuration;
 
-import static org.talend.dataprep.conversions.BeanConversionService.RegistrationBuilder.fromBean;
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationContext;

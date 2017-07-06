@@ -14,17 +14,17 @@ package org.talend.dataprep.preparation.store.inmemory;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.preparation.store.PersistentPreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepositoryTest;
 
@@ -38,21 +38,15 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
     /** The preparation repository to test. */
     private PreparationRepository repository;
 
-    /**
-     * Default constructor.
-     */
-    public InMemoryPreparationRepositoryTest() {
-        repository = new InMemoryPreparationRepository();
-        String version = "1.0";
-        final PreparationActions rootContent = new PreparationActions(Collections.emptyList(), version);
-        ReflectionTestUtils.setField(repository, "rootContent", rootContent);
-    }
+    @Autowired
+    private BeanConversionService beanConversionService;
 
     /**
      *
      */
     @Before
     public void before() {
+        repository = new PersistentPreparationRepository(new InMemoryPreparationRepository(), beanConversionService);
         repository.clear();
     }
 

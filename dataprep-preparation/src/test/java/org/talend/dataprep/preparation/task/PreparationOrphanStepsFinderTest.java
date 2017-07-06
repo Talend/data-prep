@@ -43,7 +43,7 @@ public class PreparationOrphanStepsFinderTest extends BasePreparationTest {
     public void shouldListOrphanSteps() {
 
         // given
-        final Step firstStep = new Step(rootStep.id(), "first", "2.1");
+        final Step firstStep = new Step(Step.ROOT_STEP.id(), "first", "2.1");
         final Step secondStep = new Step(firstStep.id(), "second", "2.1");
         final Preparation preparation = new Preparation("#123", "1", secondStep.id(), "2.1");
 
@@ -51,7 +51,7 @@ public class PreparationOrphanStepsFinderTest extends BasePreparationTest {
         repository.add(secondStep);
         repository.add(preparation);
 
-        final Step orphanStep = new Step(rootStep.id(), "orphan", "2.1");
+        final Step orphanStep = new Step(Step.ROOT_STEP.id(), "orphan", "2.1");
         repository.add(orphanStep);
 
         // when

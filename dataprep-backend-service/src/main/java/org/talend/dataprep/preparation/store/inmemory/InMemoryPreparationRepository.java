@@ -17,16 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Identifiable;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
-import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 /**
@@ -37,26 +31,9 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 public class InMemoryPreparationRepository extends ObjectPreparationRepository {
 
     /**
-     * The default root content.
-     */
-    @Resource(name = "rootContent")
-    private PreparationActions rootContent;
-
-    /**
      * Map where preparations are stored.
      */
     private final Map<String, Identifiable> store = new HashMap<>();
-
-    /**
-     * Initialize root content.
-     */
-    @PostConstruct
-    private void initRootContent() {
-        add(rootContent);
-        final PersistentStep persistentStep = new PersistentStep();
-        persistentStep.setId(Step.ROOT_STEP.id());
-        add(persistentStep);
-    }
 
     /**
      * @see PreparationRepository#add(Identifiable)
@@ -100,7 +77,6 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
     @Override
     public void clear() {
         store.clear();
-        initRootContent();
     }
 
     /**

@@ -58,7 +58,16 @@ angular.module(MODULE_NAME,
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('icon', ['reactDirective', reactDirective => reactDirective(Icon)])
 	.directive('httpError', ['reactDirective', reactDirective => reactDirective(HttpError)])
-	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
+	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form, [
+		// We need to declare each used props in order to pass them to React component in prod mode
+		// @see https://github.com/ngReact/ngReact/issues/193
+		'autocomplete',
+		'data',
+		'actions',
+		'onTrigger',
+		'onSubmit',
+		'showErrorList',
+	])])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
 	.component('collapsiblePanel', CollapsiblePanelContainer)

@@ -225,6 +225,17 @@ export default class RecipeCtrl {
 		this.PlaygroundService.toggleStep(step);
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name hasSteps
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Return if the recipe has steps
+	 */
+	hasSteps() {
+		const current = this.state.playground.recipe.current;
+		return current && current.reorderedSteps && current.reorderedSteps.length > 0;
+	}
+
 	//---------------------------------------------------------------------------------------------
 	// --------------------------------------------REORDER----------------------------------------
 	//---------------------------------------------------------------------------------------------

@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,14 +41,6 @@ public class PreparationTest extends ServiceBaseTest {
     @Autowired
     private VersionService versionService;
 
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
-    /** The default root content. */
-    @Resource(name = "rootContent")
-    private PreparationActions rootContent;
-
     @Override
     @Before
     public void setUp() {
@@ -61,28 +51,28 @@ public class PreparationTest extends ServiceBaseTest {
     @Test
     public void testDefaultPreparation() throws Exception {
 
-        final Preparation preparation = new Preparation("#123", "12345", rootStep.id(), versionService.version().getVersionId());
+        final Preparation preparation = new Preparation("#123", "12345", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0L);
 
         assertThat(preparation.id(), is("#123"));
-        assertThat(preparation.getHeadId(), is(rootStep.id()));
+        assertThat(preparation.getHeadId(), is(Step.ROOT_STEP.id()));
     }
 
     @Test
     public void rootObjects() throws Exception {
-        assertThat(repository.get(rootContent.getId(), PreparationActions.class), notNullValue());
-        assertThat(repository.get(rootContent.getId(), PreparationActions.class).getId(),
+        assertThat(repository.get(PreparationActions.ROOT_ACTIONS.getId(), PreparationActions.class), notNullValue());
+        assertThat(repository.get(PreparationActions.ROOT_ACTIONS.getId(), PreparationActions.class).getId(),
                 is("cdcd5c9a3a475f2298b5ee3f4258f8207ba10879"));
-        assertThat(repository.get(rootContent.getId(), Step.class), nullValue());
+        assertThat(repository.get(PreparationActions.ROOT_ACTIONS.getId(), Step.class), nullValue());
 
-        assertThat(repository.get(rootStep.getId(), PreparationActions.class), nullValue());
-        assertThat(repository.get(rootStep.getId(), Step.class), notNullValue());
-        assertThat(repository.get(rootStep.getId(), Step.class).getId(), is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
+        assertThat(repository.get(Step.ROOT_STEP.getId(), PreparationActions.class), nullValue());
+        assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class), notNullValue());
+        assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class).getId(), is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
     }
 
     @Test
     public void testTimestamp() throws Exception {
-        Preparation preparation = new Preparation("#584284", "1234", rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation("#584284", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         final long time0 = preparation.getLastModificationDate();
         TimeUnit.MILLISECONDS.sleep(50);
         preparation.updateLastModificationDate();
@@ -93,7 +83,7 @@ public class PreparationTest extends ServiceBaseTest {
     @Test
     public void testId_withName() throws Exception {
         // Preparation id with name
-        Preparation preparation = new Preparation("#87374", "1234", rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation("#87374", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setName("My Preparation");
         preparation.setCreationDate(0L);
         final String id0 = preparation.getId();
@@ -117,7 +107,7 @@ public class PreparationTest extends ServiceBaseTest {
         final PreparationActions newContent = new PreparationActions(actions, version);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep.id(), newContent.id(), version);
+        final Step s = new Step(Step.ROOT_STEP.id(), newContent.id(), version);
         repository.add(s);
 
         Preparation preparation = new Preparation("#48368", "1234", s.id(), version);
@@ -132,10 +122,10 @@ public class PreparationTest extends ServiceBaseTest {
         final String version = versionService.version().getVersionId();
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
 
-        final PreparationActions newContent = rootContent.append(actions);
+        final PreparationActions newContent = PreparationActions.ROOT_ACTIONS.append(actions);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep.id(), newContent.id(), version);
+        final Step s = new Step(Step.ROOT_STEP.id(), newContent.id(), version);
         repository.add(s);
 
         final Preparation preparation = new Preparation("#5438743", "1234", s.id(), version);
@@ -150,13 +140,13 @@ public class PreparationTest extends ServiceBaseTest {
         final String version = versionService.version().getVersionId();
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
 
-        final PreparationActions newContent1 = rootContent.append(actions);
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
         repository.add(newContent1);
         final PreparationActions newContent2 = newContent1.append(actions);
         repository.add(newContent2);
 
         // Steps
-        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step s1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         repository.add(s1);
 
         final Step s2 = new Step(s1.id(), newContent2.id(), version);
@@ -180,7 +170,7 @@ public class PreparationTest extends ServiceBaseTest {
         theOtherOne.setDataSetId("ds#123456");
         theOtherOne.setLastModificationDate(theOtherOne.getCreationDate() + 12345682);
         theOtherOne.setName("my preparation name");
-        theOtherOne.setHeadId(rootStep.id());
+        theOtherOne.setHeadId(Step.ROOT_STEP.id());
 
         Preparation actual = source.merge(theOtherOne);
 
@@ -197,7 +187,7 @@ public class PreparationTest extends ServiceBaseTest {
         source.setDataSetId("ds#65478");
         source.setLastModificationDate(source.getCreationDate() + 2658483);
         source.setName("banquet");
-        source.setHeadId(rootStep.id());
+        source.setHeadId(Step.ROOT_STEP.id());
 
         Preparation actual = source.merge(theOtherOne);
 

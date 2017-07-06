@@ -31,7 +31,7 @@ public class Step extends Identifiable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The parent step. */
-    private String parent;
+    private String parent = "f6e172c33bdacbc69bca9d32b2bd78174712a171";
 
     /** The default preparation actions is the root actions. */
     private String preparationActions = ROOT_ACTIONS.id();
@@ -45,6 +45,10 @@ public class Step extends Identifiable implements Serializable {
 
     /** The step row metadata. */
     private String rowMetadata;
+
+    static {
+        ROOT_STEP.parent = null;
+    }
 
     /**
      * Default empty constructor;

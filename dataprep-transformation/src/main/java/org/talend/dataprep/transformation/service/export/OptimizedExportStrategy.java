@@ -253,7 +253,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             }
             // head is not allowed as step id
             version = stepId;
-            previousVersion = rootStep.getId();
+            previousVersion = Step.ROOT_STEP.getId();
             final List<String> steps = preparation.getSteps().stream().map(Step::id).collect(Collectors.toList());
             if (steps.size() <= 2) {
                 LOGGER.debug("Not enough steps ({}) in preparation.", steps.size());

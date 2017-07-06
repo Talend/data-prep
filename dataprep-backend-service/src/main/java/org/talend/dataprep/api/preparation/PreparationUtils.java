@@ -25,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -39,10 +37,6 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 public class PreparationUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationUtils.class);
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     private static void prettyPrint(PreparationRepository repository, String stepId, OutputStream out) {
         if (stepId == null) {
@@ -149,7 +143,7 @@ public class PreparationUtils {
      * @return The list of step ids from root to step
      */
     public List<String> listStepsIds(final String stepId, final PreparationRepository repository) {
-        return listStepsIds(stepId, rootStep.getId(), repository);
+        return listStepsIds(stepId, Step.ROOT_STEP.getId(), repository);
     }
 
     /**
@@ -180,7 +174,7 @@ public class PreparationUtils {
      * @see Step#getParent()
      */
     public List<Step> listSteps(String headStepId, PreparationRepository repository) {
-        return listSteps(repository.get(headStepId, Step.class), rootStep.getId(), repository);
+        return listSteps(repository.get(headStepId, Step.class), Step.ROOT_STEP.getId(), repository);
     }
 
     /**

@@ -33,8 +33,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,12 +97,6 @@ public class PreparationService {
     private ActionMetadataValidation validator;
 
     /**
-     * The root step.
-     */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
-    /**
      * DataPrep abstraction to the underlying security (whether it's enabled or not).
      */
     @Autowired
@@ -155,7 +147,7 @@ public class PreparationService {
         LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
 
         Preparation toCreate = new Preparation(UUID.randomUUID().toString(), versionService.version().getVersionId());
-        toCreate.setHeadId(rootStep.id());
+        toCreate.setHeadId(Step.ROOT_STEP.id());
         toCreate.setAuthor(security.getUserId());
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
@@ -493,7 +485,7 @@ public class PreparationService {
         }
 
         // if the preparation is not empty (head != root step) --> 409
-        if (!StringUtils.equals(preparation.getHeadId(), rootStep.id())) {
+        if (!StringUtils.equals(preparation.getHeadId(), Step.ROOT_STEP.id())) {
             LOGGER.error("cannot update {} steps --> preparation has already steps.");
             throw new TDPException(PREPARATION_NOT_EMPTY, build().put("id", id));
         }
@@ -526,6 +518,8 @@ public class PreparationService {
             throw new TDPException(PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", id));
         }
 
+        ensurePreparationConsistency(preparation);
+
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
             // just make sure the step does exist
@@ -541,6 +535,36 @@ public class PreparationService {
         final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
         LOGGER.info("returning details for {} -> {}", id, details);
         return details;
+    }
+
+    /**
+     * This method ensures the consistency of a preparation .i.e. makes sure that a non-empty head step of a preparation
+     * has its corresponding actions available. If it is not the case, we walk recursively on the steps from the current head
+     * to the root step until we reach a step having its actions accessible or we reach the root step.
+     *
+     * @param preparation the specified preparation
+     */
+    private void ensurePreparationConsistency(Preparation preparation) {
+        final String headId = preparation.getHeadId();
+        Step head = preparationRepository.get(headId, Step.class);
+        if (head != null) {
+            PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            boolean inconsistentPreparation = false;
+            while (prepActions == null && head != Step.ROOT_STEP) {
+                LOGGER.info(
+                        "Head step {} is inconsistent. Its corresponding action is unavailable. for the sake of safety new head is set to {}",
+                        head.getId(), head.getParent());
+
+                inconsistentPreparation = true;
+                deleteAction(preparation, head.getId());
+                head = preparationRepository.get(head.getParent(), Step.class);
+                prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            }
+
+            if (inconsistentPreparation) {
+                setPreparationHead(preparation, head);
+            }
+        }
     }
 
     /**
@@ -691,7 +715,7 @@ public class PreparationService {
      * @param stepToDeleteId the step id to delete.
      */
     public void deleteAction(final String id, final String stepToDeleteId) {
-        if (rootStep.getId().equals(stepToDeleteId)) {
+        if (Step.ROOT_STEP.getId().equals(stepToDeleteId)) {
             throw new TDPException(PREPARATION_ROOT_STEP_CANNOT_BE_DELETED);
         }
 
@@ -739,7 +763,8 @@ public class PreparationService {
             final String stepId = getStepId(version, preparation);
             final Step step = getStep(stepId);
             if (step == null) {
-                LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId, preparation.getId(), version);
+                LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId, preparation.getId(),
+                        version);
             }
             return getActions(step);
         } else {
@@ -821,7 +846,7 @@ public class PreparationService {
         if ("head".equalsIgnoreCase(version)) { //$NON-NLS-1$
             return preparation.getHeadId();
         } else if ("origin".equalsIgnoreCase(version)) { //$NON-NLS-1$
-            return rootStep.id();
+            return Step.ROOT_STEP.id();
         }
         return version;
     }
@@ -1166,7 +1191,13 @@ public class PreparationService {
         final Step head = preparationRepository.get(headId, Step.class);
         final PreparationActions headActions = preparationRepository.get(head.getContent(), PreparationActions.class);
         final PreparationActions newContent = new PreparationActions();
+
+        if (headActions == null) {
+            LOGGER.info("Cannot retrieve the action corresponding to step {}. Therefore it will be skipped.", head);
+            return;
+        }
         final List<Action> newActions = new ArrayList<>(headActions.getActions());
+
         newActions.addAll(appendStep.getActions());
         newContent.setActions(newActions);
 
@@ -1216,7 +1247,7 @@ public class PreparationService {
      * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     private void reorderSteps(final Preparation preparation, final String stepId, final String parentStepId) {
-        final List<String> steps = extractSteps(preparation, rootStep.getId());
+        final List<String> steps = extractSteps(preparation, Step.ROOT_STEP.getId());
 
         // extract all appendStep
         final List<AppendStep> allAppendSteps = extractActionsAfterStep(steps, steps.get(0));

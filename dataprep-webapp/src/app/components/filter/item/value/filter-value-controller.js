@@ -17,6 +17,11 @@
  * @description FilterItemValue controller.
  */
 export default class FilterValueCtrl {
+	constructor(TextFormatService) {
+		'ngInject';
+
+		this.TextFormatService = TextFormatService;
+	}
 
 	$onInit() {
 		this.filterValue = this.value;
@@ -52,5 +57,9 @@ export default class FilterValueCtrl {
 			});
 			event.stopPropagation();
 		}
+	}
+
+	get valueWithInvisibleChars() {
+		return this.TextFormatService.adaptToGridConstraints(this.valueToDisplay);
 	}
 }

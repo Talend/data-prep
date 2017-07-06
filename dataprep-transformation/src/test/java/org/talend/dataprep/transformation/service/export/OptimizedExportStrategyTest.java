@@ -18,8 +18,6 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import java.io.OutputStream;
 
-import javax.annotation.Resource;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +33,6 @@ import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.service.TransformationServiceBaseTest;
 
 public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     @Autowired
     OptimizedExportStrategy optimizedExportStrategy;
@@ -91,7 +85,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
     @Test
     public void testAcceptKO_noStepId() throws Exception {
         // Given
-        preparationRepository.add(new Preparation("prep-1234", "1234", rootStep.id(), "0.1"));
+        preparationRepository.add(new Preparation("prep-1234", "1234", Step.ROOT_STEP.id(), "0.1"));
         ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId("prep-1234");
 

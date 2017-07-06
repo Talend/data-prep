@@ -18,8 +18,6 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.UUID;
 
-import javax.annotation.Resource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +40,6 @@ import com.jayway.restassured.response.Response;
  * Base class for all Preparation unit/integration tests.
  */
 public abstract class BasePreparationTest extends ServiceBaseTest {
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    protected Step rootStep;
 
     @Autowired
     protected PreparationRepository repository;
@@ -117,7 +111,7 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
      * @return The preparation id
      */
     protected String createPreparationFromService(final String datasetId, final String name, int numberOfColumns) {
-        final Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, rootStep.id(),
+        final Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, Step.ROOT_STEP.id(),
                 versionService.version().getVersionId());
         preparation.setName(name);
         preparation.setCreationDate(0);

@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.ServiceBaseTest;
@@ -43,14 +41,6 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Autowired
     private VersionService versionService;
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
-
-    /** The default root content. */
-    @Resource(name = "rootContent")
-    private PreparationActions rootContent;
 
     @Autowired
     private BeanConversionService conversionService;
@@ -105,7 +95,7 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationDetailsSteps() throws Exception {
-        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345", rootStep.id(),
+        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345", Step.ROOT_STEP.id(),
                 versionService.version().getVersionId());
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
@@ -121,9 +111,9 @@ public class PreparationSerializationTest extends ServiceBaseTest {
         final String version = versionService.version().getVersionId();
         // Add a step
         final List<Action> actions = PreparationTest.getSimpleAction("uppercase", "column_name", "lastname");
-        final PreparationActions newContent1 = rootContent.append(actions);
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
         repository.add(newContent1);
-        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step s1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         repository.add(s1);
         // Use it in preparation
         Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);

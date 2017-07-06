@@ -25,7 +25,7 @@
      while-dragging="$ctrl.isDragStart"
 >
     <div class="empty-message"
-         ng-if="$ctrl.state.playground.recipe.current.reorderedSteps.length === 0"
+         ng-if="!$ctrl.hasSteps()"
          translate-once="NO_PREPARATION_STEPS">
     </div>
     <sc-accordion>

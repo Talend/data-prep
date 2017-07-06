@@ -19,8 +19,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import javax.annotation.Resource;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -39,15 +39,13 @@ import org.talend.dataprep.security.SecurityProxy;
 @EnableScheduling
 public class PreparationCleaner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
+
     @Autowired
     private PreparationRepository repository;
 
     @Value("${preparation.store.remove.hours:24}")
     private int orphanTime;
-
-    /** The root step. */
-    @Resource(name = "rootStep")
-    private Step rootStep;
 
     @Autowired
     private SecurityProxy securityProxy;
@@ -66,6 +64,7 @@ public class PreparationCleaner {
      *
      * @return The step ids
      */
+
     private Set<String> getPreparationStepIds() {
         return repository.list(Preparation.class) //
                 .flatMap(p -> p.getSteps().stream().map(Step::getId)) //
@@ -79,7 +78,7 @@ public class PreparationCleaner {
      */
     private Stream<PersistentStep> getCurrentOrphanSteps() {
         final Set<String> preparationStepIds = getPreparationStepIds();
-        final Predicate<PersistentStep> isNotRootStep = step -> !rootStep.getId().equals(step.getId());
+        final Predicate<PersistentStep> isNotRootStep = step -> !Step.ROOT_STEP.getId().equals(step.getId());
         final Predicate<PersistentStep> isOrphan = step -> !preparationStepIds.contains(step.getId());
         return repository.list(PersistentStep.class).filter(isNotRootStep).filter(isOrphan);
     }
@@ -99,9 +98,16 @@ public class PreparationCleaner {
                     repository.remove(stepToRemove);
 
                     // Remove actions linked to step
-                    final PreparationActions preparationActionsToRemove = new PreparationActions();
-                    preparationActionsToRemove.setId(step.getContent());
-                    repository.remove(preparationActionsToRemove);
+                    // if this step re-use an existing actions we don't delete the actions
+                    boolean criterion = repository.exist(PersistentStep.class, "content" + "='" + step.getContent() + "'");
+                    if (criterion) {
+                        LOGGER.info("Don't removing step content {} it still used by another step.", step.getContent());
+                    } else {
+                        LOGGER.info("Removing step content {}.", step.getContent());
+                        final PreparationActions preparationActionsToRemove = new PreparationActions();
+                        preparationActionsToRemove.setId(step.getContent());
+                        repository.remove(preparationActionsToRemove);
+                    }
 
                     // Remove metadata linked to step
                     final StepRowMetadata stepRowMetadataToRemove = new StepRowMetadata();

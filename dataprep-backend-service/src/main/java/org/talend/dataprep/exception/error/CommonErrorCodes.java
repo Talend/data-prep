@@ -57,9 +57,13 @@ public enum CommonErrorCodes implements ErrorCode {
      */
     UNABLE_TO_CONNECT_TO_TAC(BAD_GATEWAY.value()),
     /**
+     * Unable to connect TIC: address specified in configuration is most likely incorrect and leads to a connection timeout.
+     */
+    UNABLE_TO_CONNECT_TO_TIC(BAD_GATEWAY.value()),
+    /**
      * Error thrown when data prep fails to list available tasks (for running remote jobs).
      */
-                                                   UNABLE_TO_LIST_REMOTE_TASKS(INTERNAL_SERVER_ERROR.value(), "error"),
+    UNABLE_TO_LIST_REMOTE_TASKS(INTERNAL_SERVER_ERROR.value(), "error"),
     /**
      * Invalid credentials: TAC doesn't recognize the user/password as valid ones.
      */
@@ -76,6 +80,12 @@ public enum CommonErrorCodes implements ErrorCode {
      * Error thrown when receiving content from a job takes too long.
      */
     NO_DATA_RECEIVED_FROM_TAC(BAD_GATEWAY.value()),
+    /**
+     * Error thrown when receiving content from a flow takes too long.
+     */
+    NO_DATA_RECEIVED_FROM_TIC(BAD_GATEWAY.value()),
+    UNABLE_TO_LIST_REMOTE_EXECUTABLES(INTERNAL_SERVER_ERROR.value()),
+    UNABLE_TO_EXECUTE_REMOTE_EXECUTABLE(INTERNAL_SERVER_ERROR.value()),
     /**
      * Job is already running: TAC only allows one run of the task.
      */

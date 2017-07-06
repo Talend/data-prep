@@ -193,7 +193,8 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * A lookup dataSet used by a preparation with a given name have not the expected format.
      */
-    PREPARATION_LOOKUP_BAD_FORMAT(NOT_FOUND.value(), "name")
+    PREPARATION_LOOKUP_BAD_FORMAT(NOT_FOUND.value(), "name"),
+    UNAUTHORIZED_ACCESS_TO_TIC(UNAUTHORIZED.value())
     ;
 
     /**

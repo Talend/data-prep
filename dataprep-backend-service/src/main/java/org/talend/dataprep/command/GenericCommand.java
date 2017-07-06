@@ -203,8 +203,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             headers.forEach(request::addHeader);
         }
         // update request header with security token
-        if (StringUtils.isNotBlank(authenticationToken)) {
-            request.addHeader(AUTHORIZATION, authenticationToken);
+            if (StringUtils.isNotBlank(getAuthenticationToken())) {
+            request.addHeader(AUTHORIZATION, getAuthenticationToken());
         }
 
         final HttpResponse response;
@@ -400,7 +400,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             } catch (JsonProcessingException e) {
                 LOGGER.debug("Cannot parse response content as JSON with content '" + content + "'", e);
                 // Failed to parse JSON error, returns an unexpected code with returned HTTP code
-                final TDPException exception = new TDPException(new JsonErrorCode() {
+                    final TDPException exception = new TDPException(new JsonErrorCode() {
 
                     @Override
                     public String getProduct() {
@@ -451,4 +451,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             return builder.toString();
         }
     }
+
+    public void setClient(HttpClient client) {
+        this.client = client;
+    }
+
+    public String getAuthenticationToken() {
+        return authenticationToken;
+    }
+
 }

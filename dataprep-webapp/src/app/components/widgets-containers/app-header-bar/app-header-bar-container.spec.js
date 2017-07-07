@@ -105,7 +105,7 @@ describe('App header bar container', () => {
 
 			// then
 			const productsToggle = element.find('#products\\:menu');
-			expect(productsToggle.text().trim()).toBe('Apps');
+			expect(productsToggle.text()).toBeFalsy();
 
 			expect(element.find('#product\\:producta').text()).toBe('Product A');
 			expect(element.find('#product\\:productb').text()).toBe('Product B');

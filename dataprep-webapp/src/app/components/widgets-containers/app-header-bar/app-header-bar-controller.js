@@ -270,9 +270,13 @@ export default class AppHeaderBarCtrl {
 	}
 
 	_adaptDropdown(menu, showIcons) {
-		const { id, name, staticActions } = this.appSettings.actions[menu];
+		const action = this.appSettings.actions[menu];
+		if (!action || !action.staticActions) {
+			return null;
+		}
 
-		return staticActions ? {
+		const { id, name, staticActions } = action;
+		return {
 			id,
 			name,
 			items: staticActions
@@ -283,6 +287,6 @@ export default class AppHeaderBarCtrl {
 					label: action.name,
 					onClick: this.settingsActionsService.createDispatcher(action),
 				})),
-		} : null;
+		};
 	}
 }

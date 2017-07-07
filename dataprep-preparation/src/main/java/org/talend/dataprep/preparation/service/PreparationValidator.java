@@ -21,14 +21,16 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.TDPException;
 
-public class PreparationValidator {
+class PreparationValidator {
+
+    private PreparationValidator() {}
 
     /**
      * Runs validation on this preparation and if any violation is found, it throws an exception else it returns.
      *
      * @param preparation the preparation to validate
      */
-    public static void validateOrthrowException(Preparation preparation) {
+    public static void validateOrThrowException(Preparation preparation) {
         Set<Violation> validation = validate(preparation);
         if (!validation.isEmpty()) {
             StringBuilder message = new StringBuilder();

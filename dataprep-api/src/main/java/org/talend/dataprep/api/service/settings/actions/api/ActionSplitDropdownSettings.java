@@ -47,7 +47,6 @@ public class ActionSplitDropdownSettings extends ActionSettings {
      */
     private Object action;
 
-
     public Object getAction() {
         return action;
     }
@@ -64,11 +63,6 @@ public class ActionSplitDropdownSettings extends ActionSettings {
         this.items = items;
     }
 
-    /*
-     * public String getDisplayMode() {
-     * return displayMode;
-     * }
-     */
     public static Builder from(final ActionSplitDropdownSettings actionSettings) {
         return splitDropdownBuilder() //
                 .id(actionSettings.getId()) //
@@ -76,8 +70,9 @@ public class ActionSplitDropdownSettings extends ActionSettings {
                 .icon(actionSettings.getIcon()) //
                 .type(actionSettings.getType()) //
                 .bsStyle(actionSettings.getBsStyle()) //
-                .items(actionSettings.getItems())
-                .action(actionSettings.getAction());
+                .items(actionSettings.getItems()) //
+                .action(actionSettings.getAction()) //
+                .enabled(actionSettings.isEnabled());
     }
 
     public static Builder splitDropdownBuilder() {
@@ -97,6 +92,8 @@ public class ActionSplitDropdownSettings extends ActionSettings {
         private String bsStyle;
 
         private Object action;
+
+        private boolean enabled = true;
 
         private List<Object> items = new ArrayList<>();
 
@@ -130,6 +127,11 @@ public class ActionSplitDropdownSettings extends ActionSettings {
             return this;
         }
 
+        public Builder enabled(boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
         public Builder action(final Object action) {
             this.action = action;
             return this;
@@ -144,6 +146,7 @@ public class ActionSplitDropdownSettings extends ActionSettings {
             action.setBsStyle(this.bsStyle);
             action.setItems(this.items);
             action.setAction(this.action);
+            action.setEnabled(this.enabled);
             return action;
         }
     }

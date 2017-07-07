@@ -94,7 +94,7 @@ public class ActionSettings {
      */
     private Map<String, Object> payload;
 
-    private Boolean filtered = false;
+    private boolean enabled;
 
     public String getId() {
         return id;
@@ -176,12 +176,12 @@ public class ActionSettings {
         this.payload = payload;
     }
 
-    public Boolean getFiltered() {
-        return filtered;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public void setFiltered(Boolean filtered) {
-        this.filtered = filtered;
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public static Builder from(final ActionSettings actionSettings) {
@@ -215,7 +215,7 @@ public class ActionSettings {
 
         private Map<String, Object> payload = new HashMap<>();
 
-        private Boolean filtered;
+        private boolean enabled = true;
 
         public Builder id(final String id) {
             this.id = id;
@@ -272,8 +272,8 @@ public class ActionSettings {
             return this;
         }
 
-        public Builder filtered(final Boolean filtered) {
-            this.filtered = filtered;
+        public Builder enabled(final boolean enabled) {
+            this.enabled = enabled;
             return this;
         }
 
@@ -289,7 +289,7 @@ public class ActionSettings {
             action.setBsStyle(this.bsStyle);
             action.setBsSize(this.bsSize);
             action.setPayload(this.payload.isEmpty() ? null : this.payload);
-            action.setFiltered(this.filtered);
+            action.setEnabled(this.enabled);
             return action;
         }
     }

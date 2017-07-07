@@ -42,7 +42,8 @@ public enum PreparationErrorCodes implements ErrorCode {
             "newPreparationId",
             "oldPreparationId",
             "newPreparationName",
-            "oldPreparationName");
+            "oldPreparationName"),
+    INVALID_PREPARATION(BAD_REQUEST.value(), "message");
 
 
     /** The http status to use. */

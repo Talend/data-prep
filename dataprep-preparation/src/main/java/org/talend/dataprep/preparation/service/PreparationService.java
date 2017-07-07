@@ -143,6 +143,7 @@ public class PreparationService {
      * @return the created preparation id.
      */
     public String create(final Preparation preparation, String folderId) {
+        PreparationValidator.validate(preparation);
 
         LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
 
@@ -442,7 +443,7 @@ public class PreparationService {
      * @return the updated preparation id.
      */
     public String update(String id, final Preparation preparation) {
-
+        PreparationValidator.validate(preparation);
         Preparation previousPreparation = preparationRepository.get(id, Preparation.class);
 
         // no preparation found

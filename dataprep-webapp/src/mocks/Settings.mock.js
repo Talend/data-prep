@@ -287,8 +287,8 @@ const settingsMock = {
 			staticActions: [
 				'product:producta',
 				'product:productb',
-				'product:productc'
-			]
+				'product:productc',
+			],
 		},
 		'dataset:open': {
 			id: 'dataset:open',

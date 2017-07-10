@@ -14,16 +14,21 @@
 $export-btn-height: 32px !default;
 
 #export-button {
-	.disabled,
-	.disabled:hover {
-		color: $dark-gray;
-		cursor: not-allowed;
-	}
 	.btn {
 		height: $export-btn-height;
 		min-height: $export-btn-height;
 	}
+
 	li > a {
 		width: 100%;
+		color: $dark-gray;
+
+		&.disabled {
+			color: $medium-gray;
+
+			&:hover {
+				cursor: not-allowed;
+			}
+		}
 	}
 }

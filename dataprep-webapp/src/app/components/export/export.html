@@ -26,7 +26,7 @@
         aria-labelledby="export-button">
         <li role="menuitem"
             ng-repeat="exportType in exportCtrl.state.export.exportTypes track by exportType.id">
-            <a ng-class="{'disabled' : !exportType.enabled}"
+            <a href ng-class="{'disabled' : !exportType.enabled}"
                ng-click="exportCtrl.selectType(exportType)">
                 {{exportType.name}}<span ng-if="!exportType.enabled"> - {{exportType.disableReason}}</span>
             </a>

@@ -46,9 +46,11 @@ export default class ExportCtrl {
      * @description Init parameters and display the params modal
      */
 	selectType(type) {
-		this._initExportParameters(type);
-		this.selectedType = type;
-		this.showModal = true;
+		if (type.enabled) {
+			this._initExportParameters(type);
+			this.selectedType = type;
+			this.showModal = true;
+		}
 	}
 
     /**

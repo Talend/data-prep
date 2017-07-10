@@ -35,6 +35,10 @@ $folder-tree-node-btn-click-area: 10px !default;
 			border-left: 6px solid transparent
 		}
 
+		&:not(.caret) {
+			width: 14px;
+		}
+
 		&.closed {
 			transform: rotate(-90deg);
 		}

@@ -14,7 +14,7 @@
   -->
 
 <div class="folder-tree-node"
-     style="padding-left:{{$ctrl.level * 20}}px"
+     ng-style="{'padding-left': $ctrl.level * 20 + 'px'}"
      ng-class="{'folder-selected': $ctrl.isSelected}"
      ng-dblclick="$ctrl.onToggle()" >
 

@@ -15,7 +15,8 @@ package org.talend.dataprep.preparation.service;
 import static com.jayway.restassured.RestAssured.given;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,13 +24,14 @@ import java.util.stream.StreamSupport;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderInfo;
 import org.talend.dataprep.api.folder.FolderTreeNode;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.preparation.BasePreparationTest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -60,7 +62,11 @@ public class FolderServiceTest extends BasePreparationTest {
 
         long expectedNbPreparations = 12;
         for (int i = 0; i < expectedNbPreparations; i++) {
-            createPreparationWithAPI("{\"name\": \"prep_" + i + "\", \"dataSetId\": \"1234\"}", fooFolder.getId());
+            Preparation preparation = new Preparation();
+            preparation.setName("prep_" + i);
+            preparation.setDataSetId("1234");
+            preparation.setRowMetadata(new RowMetadata());
+            clientTest.createPreparation(preparation, fooFolder.getId());
         }
 
         // when
@@ -108,7 +114,11 @@ public class FolderServiceTest extends BasePreparationTest {
         // given
         createFolder(home.getId(), "foo");
         final Folder foo = getFolder(home.getId(), "foo");
-        createPreparationWithAPI("{\"name\": \"test_name\", \"dataSetId\": \"1234\"}", foo.getId());
+        Preparation preparation = new Preparation();
+        preparation.setName("test_name");
+        preparation.setDataSetId("1234");
+        preparation.setRowMetadata(new RowMetadata());
+        clientTest.createPreparation(preparation, foo.getId());
 
         // when
         final Response response = given() //
@@ -315,14 +325,6 @@ public class FolderServiceTest extends BasePreparationTest {
                 .expect().statusCode(200).log().ifError()//
                 .when() //
                 .put("/folders").then().assertThat().statusCode(200);
-    }
-
-    private void checkErrorResponse(String response) throws IOException {
-        JsonNode rootNode = mapper.readTree(response);
-        assertTrue(rootNode.has("code"));
-        assertTrue(rootNode.has("message"));
-        assertTrue(rootNode.has("messageTitle"));
-        assertTrue(rootNode.has("context"));
     }
 
     private List<Folder> getFolderChildren(final String id) throws IOException {

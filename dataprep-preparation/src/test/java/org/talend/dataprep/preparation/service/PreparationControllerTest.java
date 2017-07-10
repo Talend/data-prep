@@ -131,16 +131,16 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder rootFolder = folderRepository.addFolder(home.getId(), "/root");
         final List<String> rootPreparations = new ArrayList<>(1);
-        rootPreparations.add(createPreparationWithAPI("{\"name\": \"prep_1\", \"dataSetId\": \"1234\"}", rootFolder.getId()));
+        rootPreparations.add(clientTest.createPreparation(createTestPreparation("prep_1", "1234"), rootFolder.getId()).getId());
 
         final Folder threePrepsFolder = folderRepository.addFolder(rootFolder.getId(), "three_preps");
         final List<String> threePreparations = new ArrayList<>(3);
         threePreparations
-                .add(createPreparationWithAPI("{\"name\": \"prep_2\", \"dataSetId\": \"1234\"}", threePrepsFolder.getId()));
+                .add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), threePrepsFolder.getId()).getId());
         threePreparations
-                .add(createPreparationWithAPI("{\"name\": \"prep_3\", \"dataSetId\": \"1234\"}", threePrepsFolder.getId()));
+                .add(clientTest.createPreparation(createTestPreparation("prep_3", "1234"), threePrepsFolder.getId()).getId());
         threePreparations
-                .add(createPreparationWithAPI("{\"name\": \"prep_4\", \"dataSetId\": \"1234\"}", threePrepsFolder.getId()));
+                .add(clientTest.createPreparation(createTestPreparation("prep_4", "1234"), threePrepsFolder.getId()).getId());
 
         final Folder noPrepsFolder = folderRepository.addFolder(threePrepsFolder.getId(), "no_prep");
         List<String> noPreparations = new ArrayList<>();
@@ -156,16 +156,16 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder rootFolder = folderRepository.addFolder(home.getId(), "/root");
         final List<String> rootPreparations = new ArrayList<>(1);
-        rootPreparations.add(createPreparationWithAPI("{\"name\": \"prep_1\", \"dataSetId\": \"1234\"}", rootFolder.getId()));
+        rootPreparations.add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), rootFolder.getId()).getId());
 
         final Folder threePrepsFolder = folderRepository.addFolder(rootFolder.getId(), "three_preps");
         final List<String> threePreparations = new ArrayList<>(3);
         threePreparations
-                .add(createPreparationWithAPI("{\"name\": \"prep_2\", \"dataSetId\": \"1234\"}", threePrepsFolder.getId()));
+                .add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), threePrepsFolder.getId()).getId());
         threePreparations
-                .add(createPreparationWithAPI("{\"name\": \"Prep_3\", \"dataSetId\": \"1234\"}", threePrepsFolder.getId()));
+                .add(clientTest.createPreparation(createTestPreparation("prep_3", "1234"), threePrepsFolder.getId()).getId());
         threePreparations
-                .add(createPreparationWithAPI("{\"name\": \"prep_4\", \"dataSetId\": \"1234\"}", threePrepsFolder.getId()));
+                .add(clientTest.createPreparation(createTestPreparation("prep_4", "1234"), threePrepsFolder.getId()).getId());
 
         final Folder noPrepsFolder = folderRepository.addFolder(threePrepsFolder.getId(), "no_prep");
         List<String> noPreparations = new ArrayList<>();
@@ -368,8 +368,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
-        final String originalId = createPreparationWithAPI(
-                "{\"name\": \"test_name\", \"dataSetId\": \"1234\", \"rowMetadata\":{\"columns\":[]}}}", fromFolder.getId());
+        final String originalId = clientTest.createPreparation(createTestPreparation("test_name", "1234"), fromFolder.getId()).getId();
         // Change the author, to make it different from system user.
         repository.get(originalId, Preparation.class).setAuthor("tagada");
 
@@ -402,8 +401,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String name = "my preparation";
         final Folder folder = folderRepository.addFolder(home.getId(), "great_folder");
 
-        final String originalId = createPreparationWithAPI("{\"name\": \"" + name + "\", \"dataSetId\": \"1234\"}",
-                folder.getId());
+        final String originalId = clientTest.createPreparation(createTestPreparation(name, "1234"), folder.getId()).getId();
 
         // when
         final Response response = given() //
@@ -421,7 +419,7 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldCopyWithDefaultParameters() throws Exception {
         // given
         final Folder folder = folderRepository.addFolder(home.getId(), "yet_another_folder");
-        final String originalId = createPreparationWithAPI("{\"name\": \"prep_1\", \"dataSetId\": \"1234\"}", folder.getId());
+        final String originalId = clientTest.createPreparation(createTestPreparation("prep_1", "1234"), folder.getId()).getId();
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
         // when
@@ -452,8 +450,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
-        final String originalId = createPreparationWithAPI("{\"name\": \"test_move\", \"dataSetId\": \"7535\"}",
-                fromFolder.getId());
+        final String originalId = clientTest.createPreparation(createTestPreparation("test_move", "7535"),
+                fromFolder.getId()).getId();
 
         // when
         final Response response = given() //
@@ -480,9 +478,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
         final String name = "super preparation";
-        final String preparationId = createPreparationWithAPI("{\"name\": \"another preparation\", \"dataSetId\": \"7535\"}",
-                fromFolder.getId());
-        createPreparationWithAPI("{\"name\": \"" + name + "\", \"dataSetId\": \"7384\"}", toFolder.getId());
+        final String preparationId = clientTest.createPreparation(createTestPreparation("another preparation", "7535"),
+                fromFolder.getId()).getId();
+        clientTest.createPreparation(createTestPreparation(name, "7384"), toFolder.getId());
 
         // when
         final Response response = given() //
@@ -502,7 +500,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
-        final String originalId = createPreparationWithAPI("{\"name\": \"yap\", \"dataSetId\": \"7535\"}", fromFolder.getId());
+        final String originalId = clientTest.createPreparation(createTestPreparation("yap" , "7535"), fromFolder.getId()).getId();
 
         // when
         final Response response = given() //
@@ -568,7 +566,7 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldLocatePreparation() throws Exception {
         // given
         final Folder bar = folderRepository.addFolder(home.getId(), "/foo/bar");
-        final String barEntry = createPreparationWithAPI("{\"name\": \"youpi\", \"dataSetId\": \"4824\"}", bar.getId());
+        final String barEntry = clientTest.createPreparation(createTestPreparation("youpi", "4824"), bar.getId()).getId();
 
         // when
         final Response response = given() //
@@ -751,7 +749,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
-        final String originalId = createPreparationWithAPI("{\"name\": \"yap\", \"dataSetId\": \"7535\"}", fromFolder.getId());
+        final String originalId = clientTest.createPreparation(createTestPreparation("yap","7535"), fromFolder.getId()).getId();
         Preparation expected = repository.get(originalId, Preparation.class);
 
         // when
@@ -775,10 +773,11 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldGetPreparation() throws Exception {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
-        final String preparationId = createPreparationWithAPI("{\"name\": \"yap\", \"dataSetId\": \"7535\"}", fromFolder.getId());
+        final String preparationId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
         final Preparation preparation = repository.get(preparationId, Preparation.class);
+
         final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
-                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"rowMetadata\":null," + "\"author\":\""
+                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"rowMetadata\":{\"nextId\":0,\"columns\":[]}," + "\"author\":\""
                 + preparation.getAuthor() + "\"," + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate()
                 + "," + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
                 + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
@@ -825,8 +824,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(folderRepository.entries(folder.getId(), PREPARATION).iterator().hasNext(), is(false));
 
         // when
-        final String preparationId = createPreparationWithAPI("{\"name\": \"another_preparation\", \"dataSetId\": \"75368\"}",
-                folder.getId());
+        final String preparationId = clientTest.createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).id();
 
         // then
         final Iterator<FolderEntry> iterator = folderRepository.entries(folder.getId(), PREPARATION).iterator();
@@ -843,7 +841,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(list.size(), is(0));
 
         // when
-        final String preparationId = createPreparationWithAPI("{\"name\": \"éàçè\", \"dataSetId\": \"1234\"}");
+        final String preparationId = clientTest.createPreparation(createTestPreparation("éàçè", "1234")).id();
 
         // then
         final Collection<Preparation> preparations = repository.list(Preparation.class).collect(Collectors.toList());
@@ -926,8 +924,8 @@ public class PreparationControllerTest extends BasePreparationTest {
     @Test
     public void update() throws Exception {
         assertThat(repository.list(Preparation.class).count(), is(0L));
-        final String preparationId = createPreparationWithAPI(
-                "{\"name\": \"test_name\", \"dataSetId\": \"1234\", \"rowMetadata\":{\"columns\":[]}}}}");
+        final String preparationId = clientTest.createPreparation(createTestPreparation(
+                "test_name", "1234")).getId();
 
         final Preparation createdPreparation = repository.list(Preparation.class).iterator().next();
         assertThat(createdPreparation.getId(), is(preparationId));
@@ -935,7 +933,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // Test preparation details update
         final String updatedId = given().contentType(ContentType.JSON) //
-                .body("{\"name\": \"test_name_updated\", \"dataSetId\": \"1234\"}") //
+                .body(createTestPreparation("test_name_updated", "1234" )) //
                 .when() //
                 .put("/preparations/{id}", preparationId) //
                 .asString();
@@ -956,12 +954,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Preparation createdPreparation = new Preparation("#123", versionService.version().getVersionId());
         createdPreparation.setDataSetId("1234");
         createdPreparation.setName("test_name");
+        createdPreparation.setRowMetadata(new RowMetadata());
 
-        final String preparationId = createPreparationWithAPI(mapper.writer().writeValueAsString(createdPreparation));
+        final String preparationId = clientTest.createPreparation(createdPreparation).getId();
 
         // when
-        final String updatedId = given().contentType(ContentType.JSON)
-                .body("{\"name\": \"éàçè\", \"dataSetId\": \"1234\"}".getBytes("UTF-8")).when()
+        final String updatedId = given().contentType(ContentType.JSON.withCharset(UTF_8))
+                .body(createTestPreparation("éàçè", "1234" )).when()
                 .put("/preparations/{id}", preparationId).asString();
 
         // then
@@ -1809,6 +1808,14 @@ public class PreparationControllerTest extends BasePreparationTest {
         for (final String columnId : columnsIds) {
             assertThat(head.getDiff().getCreatedColumns(), hasItem(columnId));
         }
+    }
+
+    private static Preparation createTestPreparation(String name, String datasetId) {
+        Preparation preparation = new Preparation();
+        preparation.setName(name);
+        preparation.setDataSetId(datasetId);
+        preparation.setRowMetadata(new RowMetadata());
+        return preparation;
     }
 
 }

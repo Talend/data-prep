@@ -179,6 +179,12 @@ public class PreparationClientTest {
         return when().get("/preparations/{id}/details", preparationId).as(PreparationMessage.class);
     }
 
+    public PreparationMessage createPreparation(final Preparation preparation) {
+        Response post = given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails()
+                .post("/preparations?folderId={folderId}", homeFolderId);
+        return getPreparation(post.asString());
+    }
+
     /**
      *
      * @param preparation

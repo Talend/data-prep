@@ -23,15 +23,12 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.zafarkhaja.semver.Version;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +43,19 @@ import org.talend.dataprep.api.service.upgrade.UpgradeServerVersion;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.zafarkhaja.semver.Version;
+
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class UpgradeAPI extends APIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpgradeAPI.class);
+
+    @Autowired
+    protected HttpClient httpClient;
 
     @Autowired
     VersionService service;
@@ -112,8 +116,7 @@ public class UpgradeAPI extends APIService {
     }
 
     private List<UpgradeServerVersion> fetchServerUpgradeVersions(org.talend.dataprep.info.Version version) throws IOException {
-        HttpClient client = new HttpClient();
-        final PostMethod post = new PostMethod(upgradeVersionLocation);
+        final HttpPost post = new HttpPost(upgradeVersionLocation);
         final String response;
         final StringWriter content = new StringWriter();
         try (final JsonGenerator generator = mapper.getFactory().createGenerator(content)) {
@@ -123,9 +126,8 @@ public class UpgradeAPI extends APIService {
             generator.writeEndObject();
             generator.flush();
 
-            post.setRequestEntity(new StringRequestEntity(content.toString(), MediaType.APPLICATION_JSON.getType(), UTF_8.name()));
-            client.executeMethod(post);
-            response = IOUtils.toString(post.getResponseBodyAsStream(), UTF_8);
+            post.setEntity(new StringEntity(content.toString(), ContentType.APPLICATION_JSON.withCharset(UTF_8)));
+            response = IOUtils.toString(httpClient.execute(post).getEntity().getContent(), UTF_8);
         } finally {
             post.releaseConnection();
         }

@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +54,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations", method = POST)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the created preparation.")
     @Timed
-    public String create(@ApiParam("preparation") @RequestBody final Preparation preparation,
+    public String create(@ApiParam("preparation") @RequestBody @Valid final Preparation preparation,
                          @ApiParam(value = "The folderId path to create the entry.") @RequestParam String folderId) {
         return preparationService.create(preparation, folderId);
     }
@@ -191,11 +193,11 @@ public class PreparationController {
      * @param preparation the updated preparation.
      * @return the updated preparation id.
      */
-    @RequestMapping(value = "/preparations/{id}", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/preparations/{id}", method = PUT)
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the updated preparation.")
     @Timed
     public String update(@ApiParam("id") @PathVariable("id") String id,
-                         @RequestBody @ApiParam("preparation") final PreparationMessage preparation) {
+                         @RequestBody @ApiParam("preparation") @Valid final PreparationMessage preparation) {
         return preparationService.update(id, preparation);
     }
 

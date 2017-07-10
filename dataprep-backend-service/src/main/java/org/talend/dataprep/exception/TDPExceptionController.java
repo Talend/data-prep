@@ -12,6 +12,10 @@
 
 package org.talend.dataprep.exception;
 
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +23,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.exception.error.PreparationErrorCodes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,10 +61,25 @@ public class TDPExceptionController {
         } else {
             LOGGER.debug("Returning an exception to HTTP client.", e);
         }
-        HttpHeaders httpStatus = new HttpHeaders();
-        httpStatus.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         TdpExceptionDto exceptionDto = conversionService.convert(e, TdpExceptionDto.class);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpStatus, HttpStatus.valueOf(e.getCode().getHttpStatus()));
+        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, HttpStatus.valueOf(e.getCode().getHttpStatus()));
+    }
+
+    /**
+     * This method is invoked when Spring throw an MethodArgumentNotValidException. This happen because @RequestMapping annotated
+     * methods may have @Valid annotated arguments and validation may fail.
+     */
+    @ExceptionHandler({ MethodArgumentNotValidException.class })
+    public ResponseEntity<String> handleInvalidArguments(MethodArgumentNotValidException e) throws JsonProcessingException {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        HashMap<String, Object> context = new HashMap<>();
+        context.put("binding_results", e.getBindingResult().getAllErrors());
+        TdpExceptionDto exceptionDto = new TdpExceptionDto(PreparationErrorCodes.INVALID_PREPARATION.getCode(), null,
+                e.getMessage(), "Invalid argument", context);
+        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, NOT_ACCEPTABLE);
     }
 
 }

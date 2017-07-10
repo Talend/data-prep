@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
@@ -38,6 +40,7 @@ public class Preparation extends Identifiable implements Serializable {
     private String dataSetId;
 
     /** Metadata on which the preparation is based. **/
+    @NotNull
     private RowMetadata rowMetadata;
 
     /** The author name. */

@@ -13,72 +13,7 @@
 
 export const LIVE_LOCATION_TYPE = 'job';
 
-const DATASTORE_PROPERTIES_MOCK = {
-	jsonSchema: {
-		title: 'Live Dataset connection',
-		type: 'object',
-		properties: {
-			username: {
-				title: 'Username',
-				type: 'string',
-			},
-			password: {
-				title: 'Password',
-				type: 'string',
-			},
-			tdp_name: {
-				title: 'Dataset name',
-				type: 'string',
-			},
-		},
-		required: [
-			'username',
-			'password',
-			'tdp_name',
-		],
-	},
-	properties: {},
-	uiSchema: {
-		password: {
-			'ui:widget': 'password',
-		},
-		'ui:order': [
-			'tdp_name',
-			'username',
-			'password',
-		],
-		tdp_name: {
-			'ui:autofocus': true,
-		},
-	},
-};
-
-const DATASET_PROPERTIES_MOCK = {
-	jsonSchema: {
-		title: 'Live dataset',
-		type: 'object',
-		properties: {
-			executable: {
-				title: 'Executable',
-				type: 'string',
-				enumNames: [
-					'default/LiveDataSet',
-					'production/LiveDataSet',
-					'production/LiveDataSet2',
-				],
-				enum: [
-					'5954cde9e4b0f1431b964c9d',
-					'594ce425e4b0818c91face84',
-				],
-			},
-		},
-		required: [
-			'executable',
-		],
-	},
-	properties: {},
-	uiSchema: {},
-};
+const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
 
 /**
  * @ngdoc controller
@@ -93,26 +28,27 @@ export default class DatasetImportLiveCtrl {
 		this.$timeout = $timeout;
 		this.$translate = $translate;
 
-		this.locationType = LIVE_LOCATION_TYPE;
-
 		this.datasetService = DatasetService;
 		this.importService = ImportService;
 		this.messageService = MessageService;
 		this.uploadWorkflowService = UploadWorkflowService;
 
+		this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
 		this.onDatastoreFormSubmit = this.onDatastoreFormSubmit.bind(this);
 		this._getDatastoreFormActions = this._getDatastoreFormActions.bind(this);
-
+		this.onDatasetFormChange = this.onDatasetFormChange.bind(this);
 		this.onDatasetFormSubmit = this.onDatasetFormSubmit.bind(this);
 		this._getDatasetFormActions = this._getDatasetFormActions.bind(this);
 
 		this._create = this._create.bind(this);
 		this._edit = this._edit.bind(this);
 		this._reset = this._reset.bind(this);
+		this._simulateDatastoreSubmit = this._simulateDatastoreSubmit.bind(this);
 	}
 
 	$onChanges(changes) {
 		const item = changes.item && changes.item.currentValue;
+		const locationType = (changes.locationType && changes.locationType.currentValue) || LIVE_LOCATION_TYPE;
 		if (item) {
 			this.importService
 				.getFormsByDatasetId(this.item.id)
@@ -130,9 +66,9 @@ export default class DatasetImportLiveCtrl {
 				})
 				.catch(this._reset);
 		}
-		else {
+		else if (locationType) {
 			this.importService
-				.importParameters(this.locationType)
+				.importParameters(locationType)
 				.then(({ data }) => {
 					const { properties } = data;
 					this.datastoreForm = null;
@@ -141,6 +77,12 @@ export default class DatasetImportLiveCtrl {
 						this.datastoreForm = data;
 					});
 					return properties;
+				})
+				.then((formData) => {
+					const hasHiddenTestConnectionBtn = formData && !(formData.tdp_isTestConnectionEnabled || true);
+					if (hasHiddenTestConnectionBtn) {
+						return this._initDatasetForm(formData);
+					}
 				})
 				.catch(this._reset);
 		}
@@ -151,6 +93,7 @@ export default class DatasetImportLiveCtrl {
 	 * @name _initDatasetForm
 	 * @methodOf data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
 	 * @description Initialize dataset form from datastore form data
+	 * @param formData Datastore form data
 	 * @returns {Promise}
 	 * @private
 	 */
@@ -172,10 +115,10 @@ export default class DatasetImportLiveCtrl {
 	 * @methodOf data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
 	 * @description Populates datastore form actions if they don't exist
 	 */
-	_getDatastoreFormActions() {
+	_getDatastoreFormActions(properties) {
 		if (!this.datastoreFormActions) {
 			this.datastoreFormActions = [{
-				style: 'info',
+				style: `info ${properties && !(properties.tdp_isTestConnectionEnabled || true) && 'sr-only'}`,
 				type: 'submit',
 				label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
 			}];
@@ -208,25 +151,96 @@ export default class DatasetImportLiveCtrl {
 
 	/**
 	 * @ngdoc method
+	 * @name onDatastoreFormChange
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Datastore form change handler
+	 * @param formData All data as form properties
+	 * @param definitionName ID attached to the form
+	 * @param propertyName Property which has triggered change handler
+	 */
+	onDatastoreFormChange(formData, definitionName, propertyName) {
+		this.importService
+			.refreshForm(propertyName, formData)
+			.then(({ data }) => {
+				this.datastoreForm = null;
+				this.$timeout(() => {
+					this.datastoreForm = data;
+				});
+			});
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name onDatastoreFormSubmit
 	 * @methodOf data-prep.import.controller:ImportCtrl
 	 * @description Datastore form change handler
 	 * @param uiSpecs All data as form properties
 	 * @param definitionName ID attached to the form
 	 */
-	onDatastoreFormSubmit(uiSpecs, definitionName = this.locationType) {
+	onDatastoreFormSubmit(uiSpecs, definitionName = (this.locationType || LIVE_LOCATION_TYPE)) {
 		const { formData } = uiSpecs;
-		this.importService
-			.testConnection(definitionName, formData)
-			.then(() => this.messageService.success(
-				'DATASTORE_TEST_CONNECTION',
-				'DATASTORE_CONNECTION_SUCCESSFUL'
-			))
-			.then(() => {
-				if (!this.item && !this.datasetForm) {
-					return this._initDatasetForm(formData);
-				}
+		if (this.submitLock) {
+			const formsData = {
+				dataStoreProperties: formData,
+				dataSetProperties: this.datasetFormData,
+			};
+			let controlledSubmitPromise;
+			// Dataset form change
+			if (this.currentPropertyName) {
+				controlledSubmitPromise = this.importService
+					.refreshForms(this.currentPropertyName, formsData)
+					.then(({ data }) => {
+						this.datasetForm = null;
+						this.$timeout(() => {
+							this.datasetForm = data;
+						});
+					});
+			}
+			// Dataset form submit
+			else {
+				const action = this.item ? this._edit : this._create;
+				controlledSubmitPromise = action(formsData)
+					.then(this.uploadWorkflowService.openDataset)
+					.then(this._reset);
+			}
+			controlledSubmitPromise.finally(() => {
+				this.currentPropertyName = null;
+				this.submitLock = false;
 			});
+		}
+		// Datastore form submit without submit button
+		else if (this.datastoreForm && this.datastoreForm.properties && !(this.datastoreForm.properties.tdp_isTestConnectionEnabled || true)) {
+			// From datastore form submit (i.e. submit with keyboard)
+			return false;
+		}
+		// Datastore form submit
+		else {
+			this.importService
+				.testConnection(definitionName, formData)
+				.then(() => this.messageService.success(
+					'DATASTORE_TEST_CONNECTION',
+					'DATASTORE_CONNECTION_SUCCESSFUL'
+				))
+				.then(() => {
+					if (!this.item && !this.datasetForm) {
+						return this._initDatasetForm(formData);
+					}
+				});
+		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onDatasetFormChange
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Dataset form change handler
+	 * @param formData All data as form properties
+	 * @param definitionName ID attached to the form
+	 * @param propertyName Property which has triggered change handler
+	 */
+	onDatasetFormChange(formData, definitionName, propertyName) {
+		this.currentPropertyName = propertyName;
+		this._simulateDatastoreSubmit(formData);
 	}
 
 	/**
@@ -239,17 +253,32 @@ export default class DatasetImportLiveCtrl {
 	 */
 	onDatasetFormSubmit(uiSpecs) {
 		const { formData } = uiSpecs;
-		const formsData = {
-			dataStoreProperties: formData,
-			dataSetProperties: this.datasetFormData,
-		};
-		const action = this.item ? this._edit : this._create;
-		action(formsData)
-			.then(this.uploadWorkflowService.openDataset)
-			.then(this._reset)
-			.finally(() => {
-				this.currentPropertyName = null;
-			});
+		this._simulateDatastoreSubmit(formData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _simulateDatastoreSubmit
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Simulate datastore form submit after saving dataset form data
+	 * Both forms need to be submitted so we have to put a latch in order to submit data store and data set forms data
+	 * One way to do that, it's to trigger onClick event on data store form submit button
+	 *  1. Second form submit -> save second form data
+	 *  2. Trigger click event on first form submit button -> save first form data
+	 *  3. Second form submit -> aggregate both forms data and send it
+	 * @private
+	 */
+	_simulateDatastoreSubmit(formData) {
+		this.submitLock = true;
+		const $datastoreFormSubmit = this.$document.find(DATASTORE_SUBMIT_SELECTOR).eq(0);
+		if ($datastoreFormSubmit.length) {
+			this.datasetFormData = formData;
+			const datastoreFormSubmitElm = $datastoreFormSubmit[0];
+			datastoreFormSubmitElm.click();
+		}
+		else {
+			this.submitLock = false;
+		}
 	}
 
 	/**
@@ -264,6 +293,7 @@ export default class DatasetImportLiveCtrl {
 			this.datastoreForm = null;
 			this.datasetForm = null;
 			this.datasetFormData = null;
+			this.submitLock = false;
 			this.currentPropertyName = null;
 			this.importService.StateService.hideImport();
 			this.importService.StateService.setCurrentImportItem(null);
@@ -280,7 +310,7 @@ export default class DatasetImportLiveCtrl {
 	 */
 	_create(formsData) {
 		return this.importService
-			.createDataset(this.locationType, formsData)
+			.createDataset((this.locationType || LIVE_LOCATION_TYPE), formsData)
 			.then(({ data }) => {
 				const { dataSetId } = data;
 				return this.datasetService.getDatasetById(dataSetId);

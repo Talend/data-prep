@@ -47,7 +47,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
                 .post("/api/aggregate");
 
         // then
-        assertEquals(400, response.getStatusCode());
+        assertEquals(406, response.getStatusCode());
     }
 
     @Test

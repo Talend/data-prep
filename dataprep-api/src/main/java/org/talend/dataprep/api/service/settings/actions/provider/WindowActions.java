@@ -13,12 +13,11 @@
 
 package org.talend.dataprep.api.service.settings.actions.provider;
 
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.builder;
+import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.*;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings.splitDropdownBuilder;
 
-import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 /**
  * Actions that triggers windows (modal, new tab, ...) settings
  */
@@ -56,15 +55,6 @@ public interface WindowActions {
             .icon("talend-bubbles")
             .type("@@modal/SHOW")
             .payload(PAYLOAD_METHOD_KEY, "showFeedback")
-            .build();
-
-    ActionSettings EXTERNAL_HELP = builder()
-            .id("external:help")
-            .name("Help")
-            .icon("talend-question-circle")
-            .type("@@external/OPEN_WINDOW")
-            .payload(PAYLOAD_METHOD_KEY, "open")
-            .payload(PAYLOAD_ARGS_KEY, new String[]{"https://help.talend.com/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.1%2522&utm_medium=dpdesktop&utm_source=header"})
             .build();
 
     ActionSettings HEADERBAR_HELP = splitDropdownBuilder()

@@ -12,17 +12,6 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.when;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
-
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.talend.dataprep.api.service.settings.AppSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
@@ -32,6 +21,17 @@ import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeader
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.jayway.restassured.RestAssured.when;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 
 public class AppSettingsAPITest extends ApiServiceTestBase {
 
@@ -104,7 +104,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
         assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
-                is("https://help.talend.com/#/search/all?filters=EnrichPlatform%253D%2522Talend+Data+Preparation%2522%2526EnrichVersion%253D%25222.1%2522&utm_medium=dpdesktop&utm_source=header"));
+                is("header"));
 
         final ActionSettings inventoryCancelEdit = settings.getActions().get("inventory:cancel-edit");
         assertThat(inventoryCancelEdit.getName(), is("Cancel name edition"));

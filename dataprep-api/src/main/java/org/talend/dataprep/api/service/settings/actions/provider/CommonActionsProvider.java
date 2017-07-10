@@ -13,19 +13,23 @@
 
 package org.talend.dataprep.api.service.settings.actions.provider;
 
-import static java.util.Arrays.asList;
-
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * Default actions settings provider
  */
 @Component
 public class CommonActionsProvider implements AppSettingsProvider<ActionSettings> {
+
+    @Autowired
+    private ExternalHelpActionsProvider externalHelpActionsProvider;
 
     @Override
     public List<ActionSettings> getSettings() {
@@ -68,7 +72,7 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 SearchActions.SEARCH_TOGGLE,
 
                 WindowActions.EXTERNAL_DOCUMENTATION,
-                WindowActions.EXTERNAL_HELP,
+                externalHelpActionsProvider.getExternalHelpAction(),
                 WindowActions.MODAL_ABOUT,
                 WindowActions.MODAL_FEEDBACK,
                 WindowActions.ONBOARDING_PREPARATION,

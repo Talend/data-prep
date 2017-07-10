@@ -12,12 +12,15 @@
 
 package org.talend.dataprep.api.service.settings.actions.configurer;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsConfigurer;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
+import org.talend.dataprep.api.service.settings.actions.provider.ExternalHelpActionsProvider;
 
 import java.util.Arrays;
+
 import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
 
 /**
@@ -25,6 +28,9 @@ import static org.talend.dataprep.api.service.settings.actions.provider.WindowAc
  */
 @Component
 public class HeaderbarHelpConfigurer extends AppSettingsConfigurer<ActionSettings> {
+
+    @Autowired
+    private ExternalHelpActionsProvider externalHelpActionsProvider;
 
     @Override
     public boolean isApplicable(final ActionSettings actionSettings) {
@@ -34,7 +40,7 @@ public class HeaderbarHelpConfigurer extends AppSettingsConfigurer<ActionSetting
     @Override
     public ActionSettings configure(final ActionSettings actionSettings) {
         return ActionSplitDropdownSettings.from((ActionSplitDropdownSettings) actionSettings) //
-                .items(Arrays.asList(EXTERNAL_HELP.getId(), ONBOARDING_PREPARATION.getId(), MODAL_ABOUT.getId(), MODAL_FEEDBACK.getId())) //
+                .items(Arrays.asList(externalHelpActionsProvider.getExternalHelpAction().getId(), ONBOARDING_PREPARATION.getId(), MODAL_ABOUT.getId(), MODAL_FEEDBACK.getId())) //
                 .build();
     }
 }

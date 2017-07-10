@@ -58,20 +58,9 @@
          ng-if="$ctrl.state.import.item"
          translate-once="EDIT_DATASET"></div>
     <br/>
-    <form ng-if="!($ctrl.ImportService.isTCOMP || $ctrl.state.import.item)"
-          name="$ctrl.ImportService.datasetForm"
-          ng-submit="$ctrl.ImportService.datasetForm.$valid && $ctrl.ImportService.import($ctrl.ImportService.currentInputType)">
-        <transform-params parameters="$ctrl.ImportService.currentInputType.parameters"></transform-params>
-        <div class="modal-buttons">
-            <button class="btn talend-modal-close btn-default modal-secondary-button"
-                    type="button"
-                    translate-once="CANCEL"></button>
-            <button class="btn btn-primary modal-primary-button"
-                    ng-disabled="$ctrl.ImportService.datasetForm.$invalid"
-                    translate-once="OK"></button>
-        </div>
-    </form>
-    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP || $ctrl.state.import.item"
+    <live-dataset-import ng-if="!$ctrl.ImportService.isTCOMP"
+                          item="$ctrl.state.import.item"></live-dataset-import>
+    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP"
                           item="$ctrl.state.import.item"
                           location-type="$ctrl.ImportService.currentInputType.locationType"></tcomp-dataset-import>
 </talend-modal>

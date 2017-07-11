@@ -58,9 +58,6 @@
          ng-if="$ctrl.state.import.item"
          translate-once="EDIT_DATASET"></div>
     <br/>
-    <live-dataset-import ng-if="!$ctrl.ImportService.isTCOMP"
-                          item="$ctrl.state.import.item"></live-dataset-import>
-    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP"
-                          item="$ctrl.state.import.item"
-                          location-type="$ctrl.ImportService.currentInputType.locationType"></tcomp-dataset-import>
+    <dataset-import item="$ctrl.state.import.item"
+                          location-type="$ctrl.ImportService.currentInputType.locationType"></dataset-import>
 </talend-modal>

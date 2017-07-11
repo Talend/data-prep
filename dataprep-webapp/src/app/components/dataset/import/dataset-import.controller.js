@@ -15,11 +15,11 @@ const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
 
 /**
  * @ngdoc controller
- * @name data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
- * @description TCOMP Dataset Import controller
+ * @name data-prep.dataset-import:DatasetImportCtrl
+ * @description Dataset Import controller
  */
-export default class DatasetImportTcompCtrl {
-	constructor($document, $timeout, $translate, MessageService, ImportService, UploadWorkflowService) {
+export default class DatasetImportCtrl {
+	constructor($document, $timeout, $translate, DatasetService, MessageService, ImportService, UploadWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
@@ -87,7 +87,7 @@ export default class DatasetImportTcompCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _initDatasetForm
-	 * @methodOf data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Initialize dataset form from datastore form data
 	 * @param formData Datastore form data
 	 * @returns {Promise}
@@ -108,7 +108,7 @@ export default class DatasetImportTcompCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _getDatastoreFormActions
-	 * @methodOf data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Populates datastore form actions if they don't exist
 	 */
 	_getDatastoreFormActions(properties) {
@@ -124,7 +124,7 @@ export default class DatasetImportTcompCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _getDatasetFormActions
-	 * @methodOf data-prep.dataset-import-tcomp:ImportService
+	 * @methodOf data-prep.dataset-import:ImportService
 	 * @description Populates dataset form actions if they don't exist
 	 */
 	_getDatasetFormActions() {

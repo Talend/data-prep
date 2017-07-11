@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-describe('Dataset Import TCOMP controller', () => {
+describe('Dataset Import controller', () => {
 
 	let ctrl;
 	let createController;
@@ -24,7 +24,7 @@ describe('Dataset Import TCOMP controller', () => {
 
 		createController = () => {
 			return $componentController(
-				'tcompDatasetImport',
+				'datasetImport',
 				{ $scope: scope }
 			);
 		};

@@ -92,9 +92,6 @@ export default function ImportRestService($http, RestURLs) {
 	 * @returns {Promise} The POST call promise
 	 */
 	function createDataset(definitionName, formsData) {
-		if (definitionName === 'job') {
-			return $http.post(RestURLs.uploadDatasetUrl, formsData);
-		}
 		return $http.post(`${RestURLs.tcompUrl}/datastores/${definitionName}/dataset`, formsData);
 	}
 

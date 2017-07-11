@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -57,6 +58,9 @@ public abstract class BaseDataSetService {
     /** DQ synchronous analyzers. */
     @Autowired
     private List<SynchronousDataSetAnalyzer> synchronousAnalyzers;
+
+    @Value("${dataset.local.file.size.limit:2000000}")
+    protected long maximumInputStreamSize;
 
     /**
      * Sort the synchronous analyzers.

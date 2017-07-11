@@ -163,9 +163,6 @@ public class DataSetService extends BaseDataSetService {
     @Autowired
     private AnalyzerService analyzerService;
 
-    @Value("${dataset.local.file.size.limit:2000000}")
-    private long maximumInputStreamSize;
-
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed

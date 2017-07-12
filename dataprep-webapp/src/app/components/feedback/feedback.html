@@ -96,16 +96,13 @@
             <button type="button"
                     class="btn talend-modal-close btn-default modal-secondary-button"
                     translate-once="CANCEL"></button>
-            <button type="submit"
-                    class="btn btn-primary modal-primary-button"
-                    ng-switch="feedbackCtrl.isSendingFeedback"
-                    ng-disabled="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback">
-                <span ng-switch-when="false" translate-once="OK"></span>
 
-                <div class="feedback-sending-div" ng-switch-when="true">
-                    <span class="feedback-sending continuous-rotate"><i data-icon="c" class="icon"></i></span>
-                </div>
-            </button>
+            <talend-button-loader button-class="btn btn-primary"
+                                  disable-condition="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback"
+                                  loading="feedbackCtrl.isSendingFeedback"
+                                  loading-class="icon">
+                <span translate-once="OK"></span>
+            </talend-button-loader>
         </div>
     </form>
 </talend-modal>

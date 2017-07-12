@@ -12,31 +12,30 @@
 
 package org.talend.dataprep.util;
 
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.preparation.service.UserPreparation;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.dataset.service.UserDataSetMetadata;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.preparation.service.UserPreparation;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
 
 /**
  * Utility class used to sort and order DataSets or Preparations.
@@ -45,11 +44,14 @@ public final class SortAndOrderHelper {
 
     private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
-    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL.converterTo(CaseFormat.UPPER_UNDERSCORE);
+    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
+            .converterTo(CaseFormat.UPPER_UNDERSCORE);
 
-    private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
+    private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
+            .converterTo(CaseFormat.LOWER_CAMEL);
 
-    private SortAndOrderHelper() {}
+    private SortAndOrderHelper() {
+    }
 
     private static class SortPropertyEditor extends PropertyEditorSupport {
 
@@ -57,7 +59,7 @@ public final class SortAndOrderHelper {
         public void setAsText(String text) {
             String fromCamelCase = camelToSnakeCaseConverter.convert(text);
             Sort value;
-            try{
+            try {
                 value = Sort.valueOf(fromCamelCase);
             } catch (IllegalArgumentException e) {
                 LOGGER.debug("Could not read Sort parameter as snake case.", e);
@@ -78,7 +80,7 @@ public final class SortAndOrderHelper {
         public void setAsText(String text) {
             String fromCamelCase = camelToSnakeCaseConverter.convert(text);
             Order value;
-            try{
+            try {
                 value = Order.valueOf(fromCamelCase);
             } catch (IllegalArgumentException e) {
                 LOGGER.debug("Could not read Order parameter as camel case.", e);
@@ -164,7 +166,7 @@ public final class SortAndOrderHelper {
      */
     private static Comparator<Comparable> getOrderComparator(Order orderKey) {
         final Comparator<Comparable> comparisonOrder;
-        if (orderKey == null){
+        if (orderKey == null) {
             comparisonOrder = Comparator.naturalOrder();
         } else {
             switch (orderKey) {
@@ -185,7 +187,7 @@ public final class SortAndOrderHelper {
     /**
      * Return a dataset metadata comparator from the given parameters.
      *
-     * @param sortKey  the sort key. If null, default to {@link Sort#NAME}.
+     * @param sortKey the sort key. If null, default to {@link Sort#NAME}.
      * @param orderKey the order key to use. If null, default to {@link Order#ASC}.
      * @return a dataset metadata comparator from the given parameters.
      */
@@ -205,7 +207,15 @@ public final class SortAndOrderHelper {
                 keyExtractor = dataSetMetadata -> dataSetMetadata.getName().toUpperCase();
                 break;
             case AUTHOR:
-                keyExtractor = dataSetMetadata -> ((UserDataSetMetadata) dataSetMetadata).getOwner().getDisplayName().toUpperCase();
+                keyExtractor = dataSetMetadata -> {
+                    // TODO: make this class agnostic of the subclass of DatasetMetadata it is using
+                    // in order to just call a method to retrieve the author name
+                    if (dataSetMetadata instanceof UserDataSetMetadata) {
+                        Owner owner = ((UserDataSetMetadata) dataSetMetadata).getOwner();
+                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
+                    }
+                    return dataSetMetadata.getAuthor();
+                };
                 break;
             case CREATION_DATE:
             case DATE:
@@ -228,7 +238,7 @@ public final class SortAndOrderHelper {
     /**
      * Return a Preparation comparator from the given parameters.
      *
-     * @param sortKey  the sort key.
+     * @param sortKey the sort key.
      * @param orderKey the order comparator to use.
      * @return a preparation comparator from the given parameters.
      */
@@ -236,7 +246,8 @@ public final class SortAndOrderHelper {
         return getPreparationComparator(sortKey, orderKey, null);
     }
 
-    public static Comparator<Preparation> getPreparationComparator(Sort sortKey, Order orderKey, Function<? super Preparation, ? extends DataSetMetadata> dataSetFinder) {
+    public static Comparator<Preparation> getPreparationComparator(Sort sortKey, Order orderKey,
+            Function<? super Preparation, ? extends DataSetMetadata> dataSetFinder) {
         Comparator<Comparable> comparisonOrder = getOrderComparator(orderKey);
 
         // Select comparator for sort (either by name or date)
@@ -248,10 +259,19 @@ public final class SortAndOrderHelper {
             // In case of API call error, default to NAME sort
             case NB_RECORDS:
             case NAME:
-                keyExtractor = preparation -> Optional.ofNullable(preparation).map(p -> p.getName().toUpperCase()).orElse(StringUtils.EMPTY);
+                keyExtractor = preparation -> Optional.ofNullable(preparation).map(p -> p.getName().toUpperCase())
+                        .orElse(StringUtils.EMPTY);
                 break;
             case AUTHOR:
-                keyExtractor = preparation -> ((UserPreparation) preparation).getOwner().getDisplayName().toUpperCase();
+                keyExtractor = preparation -> {
+                    // TODO: make this class agnostic of the subclass of DatasetMetadata it is using
+                    // in order to just call a method to retrieve the author name
+                    if (preparation instanceof UserPreparation) {
+                        Owner owner = ((UserPreparation) preparation).getOwner();
+                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
+                    }
+                    return preparation.getAuthor();
+                };
                 break;
             case CREATION_DATE:
             case DATE:
@@ -283,7 +303,7 @@ public final class SortAndOrderHelper {
 
     @Nullable
     private static Comparable getUpperCaseNameFromNullable(@Nullable DataSetMetadata dsm) {
-        if (dsm != null){
+        if (dsm != null) {
             String name = dsm.getName();
             if (name != null) {
                 return name.toUpperCase();
@@ -295,7 +315,7 @@ public final class SortAndOrderHelper {
     /**
      * Return a Folder comparator from the given parameters.
      *
-     * @param sortKey  the sort key.
+     * @param sortKey the sort key.
      * @param orderKey the order comparator to use.
      * @return a folder comparator from the given parameters.
      */

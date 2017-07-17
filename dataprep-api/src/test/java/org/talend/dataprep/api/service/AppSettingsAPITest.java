@@ -410,14 +410,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(localImport.get("defaultImport"), is(true));
         assertThat(localImport.get("label"), is("Local file"));
         assertThat(localImport.get("title"), is("Add local file dataset"));
-
-        final Map<String, Object> httpImport = (Map<String, Object>) importTypes.get(1);
-        assertThat(httpImport.get("locationType"), is("http"));
-        assertThat(httpImport.get("contentType"), is("application/vnd.remote-ds.http"));
-        assertThat(httpImport.get("dynamic"), is(false));
-        assertThat(httpImport.get("defaultImport"), is(false));
-        assertThat(httpImport.get("label"), is("From HTTP"));
-        assertThat(httpImport.get("title"), is("Add HTTP dataset"));
     }
 
     @Test

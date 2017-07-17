@@ -100,7 +100,7 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
         }
         final String datasetContent = IOUtils.toString(this.getClass().getResourceAsStream(file), UTF_8);
         final Response post = given() //
-                .contentType(ContentType.JSON) //
+                .contentType(type) //
                 .body(datasetContent) //
                 .queryParam("Content-Type", type) //
                 .queryParam("name", name) //

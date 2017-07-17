@@ -83,9 +83,8 @@ public class APIClientTest {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, "UTF-8");
         final Response post = given() //
-                .contentType(JSON) //
+                .contentType(type) //
                 .body(datasetContent) //
-                .queryParam("Content-Type", type) //
                 .when() //
                 .post("/api/datasets?name={name}", name);
 

@@ -1,0 +1,641 @@
+{
+  "views": {
+    "listview:preparations": {
+      "VIEW_TYPE": "List",
+      "didMountActionCreator": "preparations:folder:fetch",
+      "list": {
+        "columns": [
+          {
+            "key": "name",
+            "label": "Name"
+          },
+          {
+            "key": "author",
+            "label": "Author"
+          },
+          {
+            "key": "creationDate",
+            "label": "Created"
+          },
+          {
+            "key": "lastModificationDate",
+            "label": "Modified"
+          },
+          {
+            "key": "datasetName",
+            "label": "Dataset"
+          },
+          {
+            "key": "nbSteps",
+            "label": "Steps"
+          }
+        ],
+        "itemProps": {
+          "classNameKey": "className"
+        },
+        "sort": {
+          "options": [],
+          "onChange": "preparation:sort"
+        },
+        "titleProps": {
+          "displayModeKey": "displayMode",
+          "iconKey": "icon",
+          "key": "name",
+          "onClick": "menu:playground:preparation",
+          "onEditCancel": "inventory:cancel-edit",
+          "onEditSubmit": "preparation:submit-edit"
+        }
+      },
+      "toolbar": {
+        "actionBar": {
+          "actions": {
+            "left": [
+              "preparation:create",
+              "preparation:folder:create"
+            ]
+          }
+        }
+      }
+    },
+    "listview:folders": {
+      "VIEW_TYPE": "List",
+      "list": {
+        "columns": [],
+        "titleProps": {
+          "onClick": "menu:folders"
+        }
+      }
+    },
+    "sidepanel": {
+      "VIEW_TYPE": "SidePanel",
+      "onToggleDock": "sidepanel:toggle",
+      "actions": [
+        "menu:preparations",
+        "menu:datasets"
+      ]
+    },
+    "breadcrumb": {
+      "VIEW_TYPE": "Breadcrumb",
+      "maxItems": 5,
+      "onItemClick": "menu:folders"
+    },
+    "appheaderbar": {
+      "VIEW_TYPE": "AppHeaderBar",
+      "logo": {
+        "name": "Talend",
+        "label": "Go to home page",
+        "onClick": "menu:preparations"
+      },
+      "brand": {
+        "name": "Data Preparation",
+        "onClick": "menu:preparations"
+      },
+      "search": {
+        "debounceTimeout": 300,
+        "placeholder": "Search Talend Data Preparation and Documentation",
+        "onBlur": "search:toggle",
+        "onChange": "search:all",
+        "onKeyDown": "search:focus",
+        "onToggle": "search:toggle",
+        "onSelect": {
+          "documentation": "external:documentation",
+          "preparation": "menu:playground:preparation",
+          "folder": "menu:folders",
+          "dataset": "dataset:open"
+        }
+      },
+      "help": "headerbar:help"
+    },
+    "appheaderbar:playground": {
+      "VIEW_TYPE": "AppHeaderBar",
+      "logo": {
+        "name": "Talend",
+        "label": "Go to home page",
+        "onClick": "menu:preparations"
+      },
+      "brand": {
+        "name": "Data Preparation",
+        "onClick": "menu:preparations"
+      },
+      "search": {
+        "debounceTimeout": 300,
+        "placeholder": "Search Documentation",
+        "onBlur": "search:toggle",
+        "onChange": "search:doc",
+        "onKeyDown": "search:focus",
+        "onToggle": "search:toggle",
+        "onSelect": {
+          "documentation": "external:documentation"
+        }
+      },
+      "help": "playground:headerbar:help"
+    },
+    "listview:datasets": {
+      "VIEW_TYPE": "List",
+      "didMountActionCreator": "datasets:fetch",
+      "list": {
+        "columns": [
+          {
+            "key": "name",
+            "label": "Name"
+          },
+          {
+            "label": "Actions",
+            "hideHeader": true,
+            "type": "actions",
+            "key": "statusActions"
+          },
+          {
+            "key": "author",
+            "label": "Author"
+          },
+          {
+            "key": "creationDate",
+            "label": "Created"
+          },
+          {
+            "key": "nbRecords",
+            "label": "Rows"
+          }
+        ],
+        "itemProps": {
+          "classNameKey": "className"
+        },
+        "sort": {
+          "options": [],
+          "onChange": "dataset:sort"
+        },
+        "titleProps": {
+          "displayModeKey": "displayMode",
+          "iconKey": "icon",
+          "key": "name",
+          "onClick": "dataset:open",
+          "onEditCancel": "inventory:cancel-edit",
+          "onEditSubmit": "dataset:submit-edit"
+        }
+      },
+      "toolbar": {
+        "actionBar": {
+          "actions": {
+            "left": [
+              "dataset:create"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "search:toggle": {
+      "displayMode": "ActionSettings",
+      "id": "search:toggle",
+      "name": "Toggle search input",
+      "icon": "talend-search",
+      "type": "@@search/TOGGLE",
+      "enabled": true
+    },
+    "preparation:sort": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:sort",
+      "name": "Change preparation sort",
+      "type": "@@preparation/SORT",
+      "payload": {
+        "method": "changeSort"
+      },
+      "enabled": true
+    },
+    "preparation:folder:remove": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:folder:remove",
+      "name": "Remove folder",
+      "icon": "talend-trash",
+      "type": "@@preparation/FOLDER_REMOVE",
+      "payload": {
+        "method": "remove"
+      },
+      "enabled": true
+    },
+    "preparations:folder:fetch": {
+      "displayMode": "ActionSettings",
+      "id": "preparations:folder:fetch",
+      "name": "Fetch preparations from current folder",
+      "icon": "talend-dataprep",
+      "type": "@@preparation/FOLDER_FETCH",
+      "enabled": true
+    },
+    "preparation:display-mode": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:display-mode",
+      "name": "Change preparation display mode",
+      "type": "@@inventory/DISPLAY_MODE",
+      "payload": {
+        "method": "setPreparationsDisplayMode"
+      },
+      "enabled": true
+    },
+    "inventory:cancel-edit": {
+      "displayMode": "ActionSettings",
+      "id": "inventory:cancel-edit",
+      "name": "Cancel name edition",
+      "type": "@@inventory/CANCEL_EDIT",
+      "payload": {
+        "method": "disableInventoryEdit"
+      },
+      "enabled": true
+    },
+    "sidepanel:toggle": {
+      "displayMode": "ActionSettings",
+      "id": "sidepanel:toggle",
+      "name": "Click here to toggle the side panel",
+      "icon": "talend-arrow-left",
+      "type": "@@sidepanel/TOGGLE",
+      "payload": {
+        "method": "toggleHomeSidepanel"
+      },
+      "enabled": true
+    },
+    "preparation:create": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:create",
+      "name": "Add preparation",
+      "icon": "talend-plus-circle",
+      "type": "@@preparation/CREATE",
+      "bsStyle": "primary",
+      "payload": {
+        "method": "togglePreparationCreator"
+      },
+      "enabled": true
+    },
+    "menu:datasets": {
+      "displayMode": "ActionSettings",
+      "id": "menu:datasets",
+      "name": "Datasets",
+      "icon": "talend-datastore",
+      "type": "@@router/GO",
+      "payload": {
+        "args": [
+          "home.datasets"
+        ],
+        "method": "go"
+      },
+      "enabled": true
+    },
+    "preparation:remove": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:remove",
+      "name": "Remove preparation",
+      "icon": "talend-trash",
+      "type": "@@preparation/REMOVE",
+      "enabled": true
+    },
+    "search:all": {
+      "displayMode": "ActionSettings",
+      "id": "search:all",
+      "type": "@@search/ALL",
+      "enabled": true
+    },
+    "dataset:update": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:update",
+      "name": "Update dataset",
+      "icon": "talend-file-move",
+      "type": "@@dataset/UPDATE",
+      "enabled": true
+    },
+    "menu:preparations": {
+      "displayMode": "ActionSettings",
+      "id": "menu:preparations",
+      "name": "Preparations",
+      "icon": "talend-dataprep",
+      "type": "@@router/GO_CURRENT_FOLDER",
+      "payload": {
+        "args": [
+          "home.preparations"
+        ],
+        "method": "go"
+      },
+      "enabled": true
+    },
+    "menu:folders": {
+      "displayMode": "ActionSettings",
+      "id": "menu:folders",
+      "name": "Folders",
+      "icon": "talend-folder",
+      "type": "@@router/GO_FOLDER",
+      "payload": {
+        "args": [
+          "home.preparations"
+        ],
+        "method": "go"
+      },
+      "enabled": true
+    },
+    "dataset:display-mode": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:display-mode",
+      "name": "Change dataset display mode",
+      "type": "@@inventory/DISPLAY_MODE",
+      "payload": {
+        "method": "setDatasetsDisplayMode"
+      },
+      "enabled": true
+    },
+    "dataset:open": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:open",
+      "name": "Create new preparation",
+      "icon": "talend-datastore",
+      "type": "@@dataset/OPEN",
+      "enabled": true
+    },
+    "menu:playground:preparation": {
+      "displayMode": "ActionSettings",
+      "id": "menu:playground:preparation",
+      "name": "Open Preparation",
+      "icon": "talend-dataprep",
+      "type": "@@router/GO_PREPARATION",
+      "payload": {
+        "args": [
+          "playground.preparation"
+        ],
+        "method": "go"
+      },
+      "enabled": true
+    },
+    "datasets:fetch": {
+      "displayMode": "ActionSettings",
+      "id": "datasets:fetch",
+      "name": "Fetch all datasets",
+      "type": "@@dataset/DATASET_FETCH",
+      "enabled": true
+    },
+    "inventory:edit": {
+      "displayMode": "ActionSettings",
+      "id": "inventory:edit",
+      "name": "Edit name",
+      "icon": "talend-pencil",
+      "type": "@@inventory/EDIT",
+      "payload": {
+        "method": "enableInventoryEdit"
+      },
+      "enabled": true
+    },
+    "preparation:folder:create": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:folder:create",
+      "name": "Add folder",
+      "icon": "talend-folder",
+      "type": "@@preparation/CREATE",
+      "payload": {
+        "method": "toggleFolderCreator"
+      },
+      "enabled": true
+    },
+    "external:documentation": {
+      "displayMode": "ActionSettings",
+      "id": "external:documentation",
+      "name": "Documentation",
+      "icon": "talend-question-circle",
+      "type": "@@external/OPEN_WINDOW",
+      "payload": {
+        "method": "open"
+      },
+      "enabled": true
+    },
+    "dataset:clone": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:clone",
+      "name": "Copy dataset",
+      "icon": "talend-files-o",
+      "type": "@@dataset/CLONE",
+      "payload": {
+        "method": "clone"
+      },
+      "enabled": true
+    },
+    "preparation:copy-move": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:copy-move",
+      "name": "Copy/Move preparation",
+      "icon": "talend-files-o",
+      "type": "@@preparation/COPY_MOVE",
+      "enabled": true
+    },
+    "modal:about": {
+      "displayMode": "ActionSettings",
+      "id": "modal:about",
+      "name": "About Data Preparation",
+      "icon": "talend-info-circle",
+      "type": "@@modal/SHOW",
+      "payload": {
+        "method": "toggleAbout"
+      },
+      "enabled": true
+    },
+    "external:help": {
+      "displayMode": "ActionSettings",
+      "id": "external:help",
+      "name": "Help",
+      "icon": "talend-question-circle",
+      "type": "@@external/OPEN_WINDOW",
+      "payload": {
+        "args": [
+          "header"
+        ],
+        "method": "open"
+      },
+      "enabled": true
+    },
+    "list:dataset:preparations": {
+      "displayMode": "dropdown",
+      "id": "list:dataset:preparations",
+      "name": "Open preparation",
+      "icon": "talend-dataprep",
+      "enabled": true,
+      "items": "preparations",
+      "dynamicAction": "menu:playground:preparation",
+      "staticActions": [
+        "dataset:open"
+      ]
+    },
+    "dataset:favorite": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:favorite",
+      "name": "Add dataset in your favorite list",
+      "icon": "talend-star",
+      "type": "@@dataset/FAVORITE",
+      "payload": {
+        "method": "toggleFavorite"
+      },
+      "enabled": true
+    },
+    "headerbar:help": {
+      "displayMode": "splitDropdown",
+      "id": "headerbar:help",
+      "name": "Help",
+      "icon": "talend-question-circle",
+      "type": "@@headerbar/HELP",
+      "enabled": true,
+      "items": [
+        "external:help",
+        "onboarding:preparation",
+        "modal:about",
+        "modal:feedback"
+      ],
+      "action": "external:help"
+    },
+    "playground:headerbar:help": {
+      "displayMode": "splitDropdown",
+      "id": "playground:headerbar:help",
+      "name": "Help",
+      "icon": "talend-question-circle",
+      "type": "@@headerbar/HELP",
+      "enabled": true,
+      "items": [
+        "external:help",
+        "onboarding:playground",
+        "modal:about",
+        "modal:feedback"
+      ],
+      "action": "external:help"
+    },
+    "dataset:remove": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:remove",
+      "name": "Remove dataset",
+      "icon": "talend-trash",
+      "type": "@@dataset/REMOVE",
+      "enabled": true
+    },
+    "modal:feedback": {
+      "displayMode": "ActionSettings",
+      "id": "modal:feedback",
+      "name": "Feedback",
+      "icon": "talend-bubbles",
+      "type": "@@modal/SHOW",
+      "payload": {
+        "method": "showFeedback"
+      },
+      "enabled": true
+    },
+    "onboarding:preparation": {
+      "displayMode": "ActionSettings",
+      "id": "onboarding:preparation",
+      "name": "Guided tour",
+      "icon": "talend-board",
+      "type": "@@onboarding/START_TOUR",
+      "payload": {
+        "args": [
+          "preparation"
+        ],
+        "method": "startTour"
+      },
+      "enabled": true
+    },
+    "onboarding:playground": {
+      "displayMode": "ActionSettings",
+      "id": "onboarding:playground",
+      "name": "Guided tour",
+      "icon": "talend-board",
+      "type": "@@onboarding/START_TOUR",
+      "payload": {
+        "args": [
+          "playground"
+        ],
+        "method": "startTour"
+      },
+      "enabled": true
+    },
+    "dataset:submit-edit": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:submit-edit",
+      "name": "Submit name edition",
+      "type": "@@dataset/SUBMIT_EDIT",
+      "enabled": true
+    },
+    "dataset:sort": {
+      "displayMode": "ActionSettings",
+      "id": "dataset:sort",
+      "name": "Change dataset sort",
+      "type": "@@dataset/SORT",
+      "payload": {
+        "method": "changeSort"
+      },
+      "enabled": true
+    },
+    "dataset:create": {
+      "displayMode": "splitDropdown",
+      "id": "dataset:create",
+      "name": "Add dataset",
+      "icon": "talend-plus-circle",
+      "type": "@@dataset/CREATE",
+      "bsStyle": "primary",
+      "enabled": true,
+      "items": [
+        {
+          "locationType": "local",
+          "contentType": "text/plain",
+          "parameters": [
+            {
+              "name": "datasetFile",
+              "type": "file",
+              "implicit": false,
+              "canBeBlank": false,
+              "placeHolder": "*.csv",
+              "default": null,
+              "description": "File",
+              "label": "File"
+            }
+          ],
+          "dynamic": false,
+          "defaultImport": true,
+          "label": "Local file",
+          "title": "Add local file dataset"
+        }
+      ]
+    },
+    "preparation:submit-edit": {
+      "displayMode": "ActionSettings",
+      "id": "preparation:submit-edit",
+      "name": "Submit name edition",
+      "type": "@@preparation/SUBMIT_EDIT",
+      "enabled": true
+    },
+    "search:doc": {
+      "displayMode": "ActionSettings",
+      "id": "search:doc",
+      "type": "@@search/DOC",
+      "enabled": true
+    },
+    "search:focus": {
+      "displayMode": "ActionSettings",
+      "id": "search:focus",
+      "type": "@@search/FOCUS",
+      "enabled": true
+    }
+  },
+  "uris": {
+    "apiExport": "/api/export",
+    "apiAggregate": "/api/aggregate",
+    "apiSettings": "/api/settings",
+    "apiTcomp": "/api/tcomp",
+    "apiTypes": "/api/types",
+    "apiUploadDatasets": "/api/datasets",
+    "apiDatasets": "/api/datasets",
+    "apiUpgradeCheck": "/api/upgrade/check",
+    "apiVersion": "/api/version",
+    "apiFolders": "/api/folders",
+    "apiMail": "/api/mail",
+    "apiPreparationsPreview": "/api/preparations/preview",
+    "apiPreparations": "/api/preparations",
+    "apiSearch": "/api/search",
+    "apiTransform": "/api/transform"
+  },
+  "help": {
+    "exactUrl": "",
+    "versionFacet": "",
+    "searchUrl": "https://www.talendforge.org/find/api/THC.php",
+    "fuzzyUrl": "",
+    "languageFacet": ""
+  }
+}

@@ -63,8 +63,11 @@ public class FolderChildrenList extends GenericCommand<InputStream> {
 
     private HttpRequestBase onExecute(final String parentId, final Sort sort, final Order order) {
         try {
-            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + parentId + "/children");
-
+            String uri = preparationServiceUrl + "/folders";
+            final URIBuilder uriBuilder = new URIBuilder(uri);
+            if (parentId != null) {
+                uriBuilder.addParameter("parentId", parentId);
+            }
             if (sort != null) {
                 uriBuilder.addParameter("sort", sort.camelName());
             }

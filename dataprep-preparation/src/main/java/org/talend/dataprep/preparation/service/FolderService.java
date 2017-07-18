@@ -60,25 +60,30 @@ public class FolderService {
     private Security security;
 
     /**
-     * List direct sub folders for the given id.
+     * Get folders. If parentId is supplied, it will be used as filter.
      *
-     * @param id the current folder where to look for children.
+     * @param parentId the parent folder id parameter
      * @return direct sub folders for the given id.
      */
     //@formatter:off
-    @RequestMapping(value = "/folders/{id}/children", method = GET)
-    @ApiOperation(value = "Folder children", notes = "List all child folders of the one as parameter")
+    @RequestMapping(value = "/folders", method = GET)
+    @ApiOperation(value = "List children folders of the parameter if null list root children.", notes = "List all child folders of the one as parameter")
     @Timed
-    public Stream<Folder> children(@PathVariable String id,
+    public Stream<Folder> list(@RequestParam(required = false) @ApiParam(value = "Parent id filter.") String parentId,
                                    @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
                                    @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
     //@formatter:on
 
-        if (!folderRepository.exists(id)) {
-            throw new TDPException(FOLDER_NOT_FOUND, build().put("id", id));
+        Iterable<Folder> children;
+        if (parentId != null) {
+            if (!folderRepository.exists(parentId)) {
+                throw new TDPException(FOLDER_NOT_FOUND, build().put("id", parentId));
+            }
+            children = folderRepository.children(parentId);
+        } else {
+            // This will list all folders
+            children = folderRepository.searchFolders("", false);
         }
-
-        Iterable<Folder> children = folderRepository.children(id);
 
         final AtomicInteger folderCount = new AtomicInteger();
 
@@ -89,7 +94,7 @@ public class FolderService {
             folderCount.addAndGet(1);
         });
 
-        LOGGER.info("found {} children for {}", folderCount.get(), id);
+        LOGGER.info("Found {} children for parentId: {}", folderCount.get(), parentId);
 
         // sort the folders
         return StreamSupport.stream(children.spliterator(), false) //

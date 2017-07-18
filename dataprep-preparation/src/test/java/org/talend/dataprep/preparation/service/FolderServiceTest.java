@@ -15,7 +15,8 @@ package org.talend.dataprep.preparation.service;
 import static com.jayway.restassured.RestAssured.given;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,6 @@ import org.talend.dataprep.api.folder.FolderTreeNode;
 import org.talend.dataprep.preparation.BasePreparationTest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -77,7 +77,7 @@ public class FolderServiceTest extends BasePreparationTest {
         final Response response = given() //
                 .expect().statusCode(404).log().ifError()//
                 .when() //
-                .get("/folders/{id}/children", "unknownId");
+                .get("/folders?parentId={parentId}", "unknownId");
 
         // then
         assertThat(response.getStatusCode(), is(404));
@@ -317,18 +317,10 @@ public class FolderServiceTest extends BasePreparationTest {
                 .put("/folders").then().assertThat().statusCode(200);
     }
 
-    private void checkErrorResponse(String response) throws IOException {
-        JsonNode rootNode = mapper.readTree(response);
-        assertTrue(rootNode.has("code"));
-        assertTrue(rootNode.has("message"));
-        assertTrue(rootNode.has("messageTitle"));
-        assertTrue(rootNode.has("context"));
-    }
-
     private List<Folder> getFolderChildren(final String id) throws IOException {
         final Response response = given() //
                 .when() //
-                .get("/folders/{id}/children", id);
+                .get("/folders?parentId={parentId}", id);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
         return mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {

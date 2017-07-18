@@ -32,18 +32,25 @@ import org.talend.dataprep.exception.TDPException;
 @Scope("request")
 public class SearchFolders extends GenericCommand<InputStream> {
 
-    private SearchFolders(final String name, final boolean strict) {
+    private SearchFolders(final String name, final Boolean strict, String path) {
         super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(name, strict));
+        execute(() -> onExecute(name, strict, path));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private HttpRequestBase onExecute(final String name, final boolean strict) {
+    private HttpRequestBase onExecute(final String name, final Boolean strict, String path) {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/search");
-            uriBuilder.addParameter("name", name);
-            uriBuilder.addParameter("strict", String.valueOf(strict));
+            if (name != null) {
+                uriBuilder.addParameter("name", name);
+            }
+            if (strict != null) {
+                uriBuilder.addParameter("strict", String.valueOf(strict));
+            }
+            if (path != null) {
+                uriBuilder.addParameter("path", path);
+            }
             return new HttpGet(uriBuilder.build());
 
         } catch (URISyntaxException e) {

@@ -130,9 +130,16 @@ public class FolderService {
     @RequestMapping(value = "/folders/search", method = GET)
     @ApiOperation(value = "Search Folders with parameter as part of the name")
     @Timed
-    public Iterable<Folder> search(@RequestParam final String name,
-                                   @RequestParam(required = false) final boolean strict) {
-        final Iterable<Folder> folders = folderRepository.searchFolders(name, strict);
+    public Iterable<Folder> search(@RequestParam(required = false, defaultValue = "") final String name,
+                                   @RequestParam(required = false, defaultValue = "false") final Boolean strict,
+                                   @RequestParam(required = false) final String path) {
+        final Iterable<Folder> folders;
+        if (path == null) {
+            folders = folderRepository.searchFolders(name, strict);
+        } else {
+            folders = stream(folderRepository.searchFolders(name, strict).spliterator(), false)
+                    .filter(f -> f.getPath().equals(path)).collect(toList());
+        }
 
         int foldersFound = 0;
         for (Folder folder : folders) {
@@ -155,7 +162,10 @@ public class FolderService {
     @RequestMapping(value = "/folders", method = PUT)
     @ApiOperation(value = "Create a Folder", notes = "Create a folder")
     @Timed
-    public Folder addFolder(@RequestParam String parentId, @RequestParam String path) {
+    public Folder addFolder(@RequestParam(required = false) String parentId, @RequestParam String path) {
+        if (parentId == null) {
+            parentId = folderRepository.getHome().getId();
+        }
         return folderRepository.addFolder(parentId, path);
     }
 

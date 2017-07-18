@@ -26,6 +26,7 @@ $gradient-part-width: 100%/6;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			height: 130px;
 
 			.modal-content {
 				box-shadow: none;
@@ -39,7 +40,6 @@ $gradient-part-width: 100%/6;
 			width: 40%;
 			text-align: center;
 			background-color: white;
-			height: 130px;
 
 			h1 {
 				font-size: 14px;

@@ -17,9 +17,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.CONFLICT_TO_LOCK_RESOURCE;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
+import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
 import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
@@ -221,22 +224,24 @@ public class PreparationService {
      * <li>folderId path</li>
      * </ul>
      * </p>
-     *
-     * @param dataSetId to search all preparations based on this dataset id.
+     *  @param dataSetId to search all preparations based on this dataset id.
      * @param folderId to search all preparations located in this folderId.
      * @param name to search all preparations that match this name.
      * @param exactMatch if true, the name matching must be exact.
+     * @param path
      * @param sort Sort key (by name, creation date or modification date).
      * @param order Order for sort key (desc or asc).
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-            Sort sort, Order order) {
+                                                      String path, Sort sort, Order order) {
         final Stream<Preparation> result;
 
         if (dataSetId != null) {
             result = searchByDataSet(dataSetId);
         } else if (folderId != null) {
             result = searchByFolder(folderId);
+        } else if (path != null) {
+            result = searchByFolderPath(path);
         } else {
             result = searchByName(name, exactMatch);
         }
@@ -268,6 +273,33 @@ public class PreparationService {
         final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
         return StreamSupport.stream(entries.spliterator(), false) //
                 .map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+    }
+
+    /**
+     * List all preparations details in the given folder.
+     *
+     * @param path the folder where to look for preparations.
+     * @return the list of preparations details for the given folder path.
+     */
+    private Stream<Preparation> searchByFolderPath(String path) {
+        LOGGER.debug("looking for preparations in {}", path);
+        final List<Folder> foldersToSearch = stream(folderRepository.searchFolders("", false).spliterator(), false)
+                .filter(f -> f.getPath().equals(path)).collect(toList());
+        int size = foldersToSearch.size();
+        Stream<Preparation> preparationStream;
+        switch (size) {
+        case 1:
+            Folder folder = foldersToSearch.iterator().next();
+            final Iterable<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
+            preparationStream = StreamSupport.stream(entries.spliterator(), false) //
+                    .map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+            break;
+        case 0:
+            throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
+        default:
+            throw new TDPException(UNEXPECTED_EXCEPTION, ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
+        }
+        return preparationStream;
     }
 
     /**

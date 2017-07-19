@@ -127,13 +127,14 @@ public class PreparationController {
     @Timed
     public Stream<UserPreparation> searchPreparations(
             @RequestParam(required = false) @ApiParam("dataSetId") String dataSetId,
-            @RequestParam(required = false) @ApiParam(value = "path of the folderId where to look for preparations") String folderId,
+            @RequestParam(required = false) @ApiParam(value = "Id of the folder where to look for preparations") String folderId,
+            @RequestParam(required = false) @ApiParam(value = "Path of the folder where to look for preparations") String folderPath,
             @RequestParam(required = false) @ApiParam("name") String name,
             @RequestParam(defaultValue = "true") @ApiParam("exactMatch") boolean exactMatch,
             @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
             @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
 
-        return preparationService.searchPreparations(dataSetId, folderId, name, exactMatch, sort, order);
+        return preparationService.searchPreparations(dataSetId, folderId, name, exactMatch, folderPath, sort, order);
     }
 
     /**

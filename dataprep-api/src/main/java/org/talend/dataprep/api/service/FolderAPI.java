@@ -62,9 +62,9 @@ public class FolderAPI extends APIService {
     private SecurityProxy securityProxy;
 
     @RequestMapping(value = "/api/folders", method = GET)
-    @ApiOperation(value = "List children folders of the parameter if null list root children.", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<StreamingResponseBody> children(@RequestParam(required = false) String parentId) {
+    public ResponseEntity<StreamingResponseBody> listFolders(@RequestParam(required = false) String parentId) {
         try {
             final GenericCommand<InputStream> foldersList = getCommand(FolderChildrenList.class, parentId);
             return CommandHelper.toStreaming(foldersList);

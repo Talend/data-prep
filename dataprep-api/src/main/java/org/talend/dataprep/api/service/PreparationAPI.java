@@ -77,13 +77,14 @@ public class PreparationAPI extends APIService {
     public ResponseEntity<StreamingResponseBody> listPreparations(
             @ApiParam(name = "format", value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.")
             @RequestParam(value = "format", defaultValue = "summary") String format,
+            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
         }
         PreparationList.Format listFormat = PreparationList.Format.valueOf(format.toUpperCase());
-        GenericCommand<InputStream> command = getCommand(PreparationList.class, listFormat, sort, order);
+        GenericCommand<InputStream> command = getCommand(PreparationList.class, listFormat, name, sort, order);
         return CommandHelper.toStreaming(command);
     }
 

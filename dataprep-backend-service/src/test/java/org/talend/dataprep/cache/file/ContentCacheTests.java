@@ -174,7 +174,10 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
         // Put a content in cache...
         addCacheEntry(key, "content, yes again", ContentCache.TimeToLive.PERMANENT);
         assertThat(cache.has(key), is(true));
-        assertThat(IOUtils.toString(cache.get(key), UTF_8), is("content, yes again"));
+        InputStream actualContentStream = cache.get(key);
+        assertThat(IOUtils.toString(actualContentStream, UTF_8), is("content, yes again"));
+        // Note : Closing stream so that cache can be evicted
+        actualContentStream.close();
         // ... evict() it...
         cache.evict(key);
         // ... has() must immediately return false

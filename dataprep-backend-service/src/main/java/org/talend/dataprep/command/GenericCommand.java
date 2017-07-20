@@ -451,12 +451,4 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             return builder.toString();
         }
     }
-
-    public HttpClient getClient() {
-        return client;
-    }
-
-    public void setClient(HttpClient client) {
-        this.client = client;
-    }
 }

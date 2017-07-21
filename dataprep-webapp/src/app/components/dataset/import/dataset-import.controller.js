@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+export const LIVE_LOCATION_TYPE = 'job';
+
 const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
 
 /**
@@ -36,6 +38,7 @@ export default class DatasetImportCtrl {
 		this.onDatasetFormChange = this.onDatasetFormChange.bind(this);
 		this.onDatasetFormSubmit = this.onDatasetFormSubmit.bind(this);
 		this._getDatasetFormActions = this._getDatasetFormActions.bind(this);
+
 		this._create = this._create.bind(this);
 		this._edit = this._edit.bind(this);
 		this._reset = this._reset.bind(this);
@@ -44,7 +47,7 @@ export default class DatasetImportCtrl {
 
 	$onChanges(changes) {
 		const item = changes.item && changes.item.currentValue;
-		const locationType = changes.locationType && changes.locationType.currentValue;
+		const locationType = (changes.locationType && changes.locationType.currentValue) || LIVE_LOCATION_TYPE;
 		if (item) {
 			this.importService
 				.getFormsByDatasetId(this.item.id)
@@ -75,7 +78,7 @@ export default class DatasetImportCtrl {
 					return properties;
 				})
 				.then((formData) => {
-					const hasHiddenTestConnectionBtn = formData && !formData.tdp_isTestConnectionEnabled;
+					const hasHiddenTestConnectionBtn = formData && !(formData.tdp_isTestConnectionEnabled || true);
 					if (hasHiddenTestConnectionBtn) {
 						return this._initDatasetForm(formData);
 					}
@@ -114,7 +117,7 @@ export default class DatasetImportCtrl {
 	_getDatastoreFormActions(properties) {
 		if (!this.datastoreFormActions) {
 			this.datastoreFormActions = [{
-				style: `info ${properties && !properties.tdp_isTestConnectionEnabled && 'sr-only'}`,
+				style: `info ${properties && !(properties.tdp_isTestConnectionEnabled || true) && 'sr-only'}`,
 				type: 'submit',
 				label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
 			}];
@@ -124,7 +127,7 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _getDatasetFormActions
-	 * @methodOf data-prep.dataset-import:ImportService
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Populates dataset form actions if they don't exist
 	 */
 	_getDatasetFormActions() {
@@ -148,13 +151,13 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name onDatastoreFormChange
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Datastore form change handler
 	 * @param formData All data as form properties
 	 * @param definitionName ID attached to the form
 	 * @param propertyName Property which has triggered change handler
 	 */
-	onDatastoreFormChange(formData, definitionName, propertyName) {
+	onDatastoreFormChange(formData, definitionName = (this.locationType || LIVE_LOCATION_TYPE), propertyName) {
 		this.importService
 			.refreshForm(propertyName, formData)
 			.then(({ data }) => {
@@ -168,12 +171,12 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name onDatastoreFormSubmit
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Datastore form change handler
 	 * @param uiSpecs All data as form properties
 	 * @param definitionName ID attached to the form
 	 */
-	onDatastoreFormSubmit(uiSpecs, definitionName = this.locationType) {
+	onDatastoreFormSubmit(uiSpecs, definitionName = (this.locationType || LIVE_LOCATION_TYPE)) {
 		const { formData } = uiSpecs;
 		if (this.submitLock) {
 			const formsData = {
@@ -205,7 +208,7 @@ export default class DatasetImportCtrl {
 			});
 		}
 		// Datastore form submit without submit button
-		else if (this.datastoreForm && this.datastoreForm.properties && !this.datastoreForm.properties.tdp_isTestConnectionEnabled) {
+		else if (this.datastoreForm && this.datastoreForm.properties && !(this.datastoreForm.properties.tdp_isTestConnectionEnabled || true)) {
 			// From datastore form submit (i.e. submit with keyboard)
 			return false;
 		}
@@ -228,7 +231,7 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name onDatasetFormChange
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Dataset form change handler
 	 * @param formData All data as form properties
 	 * @param definitionName ID attached to the form
@@ -242,7 +245,7 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name onDatasetFormSubmit
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Dataset form submit handler
 	 * @see onDatastoreFormSubmit
 	 * @param uiSpecs
@@ -255,7 +258,7 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _simulateDatastoreSubmit
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Simulate datastore form submit after saving dataset form data
 	 * Both forms need to be submitted so we have to put a latch in order to submit data store and data set forms data
 	 * One way to do that, it's to trigger onClick event on data store form submit button
@@ -280,7 +283,7 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _reset
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Reset state after submit
 	 * @private
 	 */
@@ -299,14 +302,14 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _create
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Create dataset with both forms data
 	 * @param formsData Datastore and dataset properties
 	 * @private
 	 */
 	_create(formsData) {
 		return this.importService
-			.createDataset(this.locationType, formsData)
+			.createDataset((this.locationType || LIVE_LOCATION_TYPE), formsData)
 			.then(({ data }) => {
 				const { dataSetId } = data;
 				// temp dataset object to read its id
@@ -317,7 +320,7 @@ export default class DatasetImportCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _edit
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Edit dataset with both forms data
 	 * @param formsData Datastore and dataset properties
 	 * @private

@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-const specialClientErrorCodes = [403, 404];
+const specialClientErrorCodes = [401, 403, 404];
 
 /**
  * @ngdoc service

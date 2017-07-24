@@ -125,6 +125,22 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).not.toHaveBeenCalled();
 	}));
 
+	it('should not show error message if unauthorized', inject(($rootScope, $http, MessageService) => {
+		//given
+		$httpBackend.expectGET('testService').respond(401, {
+			messageTitle: 'TDP_API_DATASET_FORBIDDEN_TITLE',
+			message: 'TDP_API_DATASET_FORBIDDEN'
+		});
+
+		//when
+		$http.get('testService');
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).not.toHaveBeenCalled();
+	}));
+
 	it('should not show error message if forbidden', inject(($rootScope, $http, MessageService) => {
 		//given
 		$httpBackend.expectGET('testService').respond(403, {

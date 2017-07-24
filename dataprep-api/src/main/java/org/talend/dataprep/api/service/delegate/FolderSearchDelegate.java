@@ -42,7 +42,7 @@ public class FolderSearchDelegate extends AbstractSearchDelegate<Folder> {
 
     @Override
     public Stream<Folder> search(String query, boolean strict) {
-        final SearchFolders commandListFolders = getCommand(SearchFolders.class, query, strict);
+        final SearchFolders commandListFolders = getCommand(SearchFolders.class, query, strict, null);
         return CommandHelper.toStream(Folder.class, mapper, commandListFolders);
     }
 }

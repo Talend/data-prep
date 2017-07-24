@@ -61,8 +61,9 @@ public class PreparationList extends GenericCommand<InputStream> {
             } else {
                 uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/details"); //$NON-NLS-1$
             }
-
-            uriBuilder.addParameter("name", name);
+            if (name != null) {
+                uriBuilder.addParameter("name", name);
+            }
             uriBuilder.addParameter("sort", sort.camelName());
             uriBuilder.addParameter("order", order.camelName());
             return new HttpGet(uriBuilder.build());

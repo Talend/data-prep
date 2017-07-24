@@ -14,7 +14,6 @@ package org.talend.dataprep.transformation.service;
 
 import java.util.Optional;
 
-import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +54,6 @@ public abstract class BaseTransformationService {
     /** DataSet service url. */
     @Value("${dataset.service.url}")
     protected String datasetServiceUrl;
-
-    /** Http client used to retrieve datasets or preparations. */
-    @Autowired
-    protected HttpClient httpClient;
 
     /** The dataprep ready to use jackson object mapper. */
     @Autowired

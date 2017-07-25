@@ -452,10 +452,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         }
     }
 
-    public void setClient(HttpClient client) {
-        this.client = client;
-    }
-
     public String getAuthenticationToken() {
         return authenticationToken;
     }

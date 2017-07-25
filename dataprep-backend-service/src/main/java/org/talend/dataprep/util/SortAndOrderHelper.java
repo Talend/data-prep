@@ -205,7 +205,12 @@ public final class SortAndOrderHelper {
                 keyExtractor = dataSetMetadata -> dataSetMetadata.getName().toUpperCase();
                 break;
             case AUTHOR:
-                keyExtractor = dataSetMetadata -> ((UserDataSetMetadata) dataSetMetadata).getOwner().getDisplayName().toUpperCase();
+                keyExtractor = dataSetMetadata -> {
+                    if (dataSetMetadata instanceof UserDataSetMetadata) {
+                        return ((UserDataSetMetadata) dataSetMetadata).getOwner().getDisplayName().toUpperCase();
+                    }
+                    return dataSetMetadata.getAuthor().toUpperCase();
+                };
                 break;
             case CREATION_DATE:
             case DATE:

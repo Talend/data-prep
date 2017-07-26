@@ -79,7 +79,8 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 			> .content {
 				margin: 20px;
 				display: flex;
-				flex-basis: 180px;
+				flex-basis: auto;
+				height: auto;
 				flex-grow: 1;
 			}
 		}

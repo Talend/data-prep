@@ -23,8 +23,14 @@ public class ExportUtils {
         // TDP-2925 a multi-byte file name cannot export the file correctly
         // Current [RFC 2045] grammar restricts parameter values (and hence Content-Disposition filenames) to US-ASCII
         try {
-            HttpResponseContext.header(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=\"" + UriUtils.encodePath(exportName, UTF_8.toString()) + format.getExtension() + "\"");
+            HttpResponseContext.header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                String.format(
+                    "attachment; filename*=%s''%s",
+                    UTF_8.toString(),
+                    UriUtils.encodePath(exportName, UTF_8.toString()) + format.getExtension()
+                )
+            );
         } catch (UnsupportedEncodingException e) {
             LOGGER.error("Can't encode '{}' from UTF-8", exportName);
             throw new RuntimeException(e);

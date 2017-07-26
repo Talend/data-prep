@@ -141,7 +141,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 		// dataset specific init
 		else {
-			StateService.setNameEditionMode(true);
+			StateService.setNameEditionMode(false);
 			ExportService.refreshTypes('datasets', dataset.id);
 			TitleService.setStrict(dataset.name);
 		}

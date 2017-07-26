@@ -251,7 +251,7 @@ describe('Playground Service', () => {
 				expect(StateService.setCurrentDataset).toHaveBeenCalledWith(datasetColumns.metadata);
 				expect(StateService.setCurrentData).toHaveBeenCalledWith(datasetColumns);
 				expect(StateService.setCurrentSampleType).toHaveBeenCalledWith('HEAD');
-				expect(StateService.setNameEditionMode).toHaveBeenCalledWith(true);
+				expect(StateService.setNameEditionMode).toHaveBeenCalledWith(false);
 				expect(TransformationCacheService.invalidateCache).toHaveBeenCalled();
 				expect(HistoryService.clear).toHaveBeenCalled();
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);

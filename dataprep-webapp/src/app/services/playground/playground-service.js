@@ -55,6 +55,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 	const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
 	let fetchStatsTimeout;
+	let currentLoadingItems = 0;
 
 	function wrapInventoryName(invName) {
 		return invName + INVENTORY_SUFFIX;
@@ -102,14 +103,19 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * Helper to emit start loader event
 	 */
 	function startLoader() {
-		$rootScope.$emit(EVENT_LOADING_START);
+		if (currentLoadingItems <= 0) {
+			$rootScope.$emit(EVENT_LOADING_START);
+		}
+		currentLoadingItems++;
 	}
 
 	/**
 	 * Helper to emit stop loader event
 	 */
 	function stopLoader() {
-		$rootScope.$emit(EVENT_LOADING_STOP);
+		if (--currentLoadingItems === 0) {
+			$rootScope.$emit(EVENT_LOADING_STOP);
+		}
 	}
 
 	// --------------------------------------------------------------------------------------------

@@ -41,8 +41,8 @@ import {
 const LINE = 'line';
 
 // events
-const EVENT_LOADING_START = 'talend.loading.start';
-const EVENT_LOADING_STOP = 'talend.loading.stop';
+export const EVENT_LOADING_START = 'talend.loading.start';
+export const EVENT_LOADING_STOP = 'talend.loading.stop';
 
 export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
                                           state, StateService, StepUtilsService,

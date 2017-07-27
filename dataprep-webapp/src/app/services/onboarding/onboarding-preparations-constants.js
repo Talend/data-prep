@@ -17,21 +17,18 @@ const preparationTour = [
 		title: '<center>Preparations</center>',
 		content: 'Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.',
 		position: 'right',
-		tooltipPosition: 'right',
 	},
 	{
 		element: '#side-panel-nav-datasets',
 		title: '<center>Datasets</center>',
 		content: 'Here you can browse through and manage the datasets you added.</br>A dataset holds the raw data that can be used as raw material without affecting your original data.',
 		position: 'right',
-		tooltipPosition: 'right',
 	},
 	{
 		element: '#preparations-list-actions-preparation\\:create',
 		title: '<center>Add preparation</center>',
 		content: 'Click here to add a preparation and start cleansing your data.',
-		position: 'right',
-		tooltipPosition: 'right',
+		position: 'bottom',
 	},
 	{
 		element: '#headerbar\\:help',

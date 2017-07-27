@@ -145,7 +145,6 @@ export default class OnboardingService {
 					skipLabel: 'SKIP',
 					doneLabel: 'LET ME TRY',
 					steps: this.createIntroSteps(this.getTour(tour)),
-					showStepNumbers: false,
 				})
 				.oncomplete(onTourDone)
 				.onexit(onTourDone);

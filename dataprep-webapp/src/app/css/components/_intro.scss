@@ -99,6 +99,10 @@ tr.introjs-showElement > th {
 	box-sizing: content-box;
 }
 
+.introjs-helperNumberLayer {
+	visibility: hidden;
+}
+
 .introjs-arrow {
 	border: 5px solid white;
 	content: '';

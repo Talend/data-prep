@@ -286,6 +286,21 @@ describe('Playground Service', () => {
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
 		}));
 
+		it('should not stop spinner if it has been started more than one time', inject(($rootScope, PlaygroundService) => {
+			// given
+			expect($rootScope.$emit).not.toHaveBeenCalled();
+
+			// when
+			PlaygroundService.loadDataset(datasetColumns.metadata.id);
+			PlaygroundService.loadDataset(datasetColumns.metadata.id);
+			$rootScope.$digest();
+
+			// then
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+			expect($rootScope.$emit).toHaveBeenCalledTimes(2);
+		}));
+
 		it('should reset preparation name', inject(($rootScope, PlaygroundService, StateService) => {
 			// given
 			PlaygroundService.preparationName = 'preparation name';

@@ -103,10 +103,9 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * Helper to emit start loader event
 	 */
 	function startLoader() {
-		if (currentLoadingItems <= 0) {
+		if (currentLoadingItems++ <= 0) {
 			$rootScope.$emit(EVENT_LOADING_START);
 		}
-		currentLoadingItems++;
 	}
 
 	/**

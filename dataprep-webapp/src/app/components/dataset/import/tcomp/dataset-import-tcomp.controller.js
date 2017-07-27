@@ -309,7 +309,7 @@ export default class DatasetImportTcompCtrl {
 			.createDataset(this.locationType, formsData)
 			.then(({ data }) => {
 				const { dataSetId } = data;
-				// temp dataset object to be read its id
+				// temp dataset object to read its id
 				return { id: dataSetId };
 			});
 	}

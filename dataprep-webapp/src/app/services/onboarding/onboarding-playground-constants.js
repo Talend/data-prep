@@ -46,7 +46,7 @@ const playgroundTour = [
 		element: '#playground-lookup-icon',
 		title: '<center>Data lookup</center>',
 		content: 'Click here to link a dataset to your preparation. It will help you to dynamically use the data from a second dataset to complement your preparation.</br>For example, you can use it to add all US State abbreviations alongside the full name of the State.',
-		position: 'bottom',
+		position: 'left',
 	},
 ];
 

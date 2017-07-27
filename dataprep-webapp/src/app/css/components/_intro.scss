@@ -362,6 +362,8 @@ tr.introjs-showElement > th {
 	}
 
 	.navbar .introjs-showElement {
-		color: $white;
+		icon {
+			color: $white;
+		}
 	}
 }

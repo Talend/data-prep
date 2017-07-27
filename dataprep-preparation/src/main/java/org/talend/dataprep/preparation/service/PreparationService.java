@@ -173,17 +173,18 @@ public class PreparationService {
     /**
      * List all the preparations id.
      *
-     *
-     * @param name
+     * @param name if not null, only list ids of preparation having this name.
      * @param sort how the preparation should be sorted (default is 'last modification date').
      * @param order how to apply the sort.
      * @return the preparations id list.
      */
     public Stream<String> list(String name, Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (summary).");
-        Stream<Preparation> preparationStream = preparationRepository.list(Preparation.class);
-        if (name != null) {
-            preparationStream = preparationStream.filter(p -> Objects.equals(name, p.getName()));
+        Stream<Preparation> preparationStream;
+        if (name == null) {
+            preparationStream = preparationRepository.list(Preparation.class);
+        } else {
+            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
         }
         return preparationStream //
                 .map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
@@ -200,9 +201,11 @@ public class PreparationService {
      */
     public Stream<UserPreparation> listAll(String name, Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (with details).");
-        Stream<Preparation> preparationStream = preparationRepository.list(Preparation.class);
-        if (name != null) {
-            preparationStream = preparationStream.filter(p -> Objects.equals(name, p.getName()));
+        Stream<Preparation> preparationStream;
+        if (name == null) {
+            preparationStream = preparationRepository.list(Preparation.class);
+        } else {
+            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
         }
         return preparationStream //
                 .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
@@ -216,9 +219,11 @@ public class PreparationService {
      */
     public Stream<PreparationSummary> listSummary(String name) {
         LOGGER.debug("Get list of preparations (summary).");
-        Stream<Preparation> preparationStream = preparationRepository.list(Preparation.class);
-        if (name != null) {
-            preparationStream = preparationStream.filter(p -> Objects.equals(name, p.getName()));
+        Stream<Preparation> preparationStream;
+        if (name == null) {
+            preparationStream = preparationRepository.list(Preparation.class);
+        } else {
+            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
         }
         return preparationStream //
                 .map(p -> beanConversionService.convert(p, PreparationSummary.class)) //

@@ -123,6 +123,20 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
+    public void testPreparationsList_withFilter() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
+
+        // when : short format
+        final JsonPath shortFormat = when().get("/api/preparations/?format=short&name={name}", "testPreparation").jsonPath();
+
+        // then
+        final List<String> values = shortFormat.getList("");
+        assertThat(values.get(0), is(preparationId));
+    }
+
+    @Test
     public void testPreparationGet() throws Exception {
         // when
         final String datasetId = testClient.createDataset("dataset/dataset.csv", "great dataset", "text/csv");

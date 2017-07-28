@@ -13,7 +13,11 @@
 
 package org.talend.dataprep.http;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -33,7 +37,7 @@ public class HttpResponseContext {
 
     /**
      * Set the http status to set to the request (if available).
-     * 
+     *
      * @param status the http status to set.
      */
     public static void status(HttpStatus status) {
@@ -45,7 +49,7 @@ public class HttpResponseContext {
 
     /**
      * Set the header to the request (if available).
-     * 
+     *
      * @param header The header name.
      * @param value The header value.
      */
@@ -64,5 +68,22 @@ public class HttpResponseContext {
         if (attributes != null && attributes instanceof ServletRequestAttributes) {
             ((ServletRequestAttributes) attributes).getResponse().setContentType(contentType);
         }
+    }
+
+    public static void setAttachmentHeaders(String fileName) {
+        HttpHeaders headers = getAttachmentHeaders(fileName);
+
+        final RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        if (attributes != null && attributes instanceof ServletRequestAttributes) {
+            ((ServletRequestAttributes) attributes).getResponse().addHeader("Content-Type", headers.getContentType().toString());
+            ((ServletRequestAttributes) attributes).getResponse().addHeader("Content-Disposition", headers.getFirst("Content-Disposition"));
+        }
+    }
+
+    public static HttpHeaders getAttachmentHeaders(String fileName) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachement", fileName, UTF_8);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return headers;
     }
 }

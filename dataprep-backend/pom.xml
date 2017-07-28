@@ -26,7 +26,6 @@
     <name>dataprep-backend</name>
     <properties>
         <dataprep.core.version>2.2.0</dataprep.core.version>
-        <daikon.version>0.13.0-SNAPSHOT</daikon.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
         <java.version>1.8</java.version>
@@ -76,11 +75,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.talend.daikon</groupId>
-                <artifactId>service-common</artifactId>
-                <version>${daikon.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataquality</groupId>

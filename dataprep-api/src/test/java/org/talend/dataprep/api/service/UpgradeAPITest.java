@@ -29,7 +29,7 @@ import org.talend.daikon.security.CryptoHelper;
 import org.talend.daikon.token.TokenGenerator;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.service.upgrade.UpgradeServerVersion;
-import org.talend.dataprep.http.HttpResponseContext;
+import org.talend.daikon.http.HttpResponseContext;
 
 public class UpgradeAPITest extends ApiServiceTestBase {
 

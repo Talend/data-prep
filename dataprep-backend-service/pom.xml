@@ -90,6 +90,11 @@
         </dependency>
         <dependency>
             <groupId>org.talend.daikon</groupId>
+            <artifactId>service-common</artifactId>
+            <classifier>lib</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
             <artifactId>local-content-service</artifactId>
             <classifier>lib</classifier>
         </dependency>

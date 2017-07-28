@@ -103,7 +103,7 @@ public class BaseTest extends TransformationServiceBaseTest {
 
             // then
             Assert.assertTrue(response.getContentType().startsWith("text/csv"));
-            assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"myPrep.csv\"");
+            assertEquals(response.getHeader("Content-Disposition"), "attachment; filename*=UTF-8''myPrep.csv");
         }
     }
 }

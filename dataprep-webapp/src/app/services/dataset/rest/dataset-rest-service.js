@@ -57,8 +57,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The POST promise
      */
 	function create(parameters, contentType, file) {
+		const { name, size } = parameters;
 		const req = {
-			url: RestURLs.uploadDatasetUrl + '?name=' + encodeURIComponent(parameters.name),
+			url: `${RestURLs.uploadDatasetUrl}?name=${encodeURIComponent(name)}&size=${size}`,
 			headers: {
 				'Content-Type': contentType,
 			},

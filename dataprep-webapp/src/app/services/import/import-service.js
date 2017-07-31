@@ -207,6 +207,7 @@ export default class ImportService {
 		const params = {
 			...this.DatasetService.getLocationParamIteration({}, importType.parameters),
 			type: importType.locationType,
+			size: file.size,
 			name,
 		};
 

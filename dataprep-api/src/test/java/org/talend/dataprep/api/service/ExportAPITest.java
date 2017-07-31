@@ -101,7 +101,7 @@ public class ExportAPITest extends ApiServiceTestBase {
 
         // then
         assertTrue(response.getContentType().startsWith("text/csv"));
-        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"testHeaders.csv\"");
+        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename*=UTF-8''testHeaders.csv");
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // then
         assertTrue(response.getContentType().startsWith("text/csv"));
         // Expect URL encoded filename
-        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"_UTF-8%20%E4%BD%8F%E6%89%80.csv\"");
+        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename*=UTF-8''_UTF-8%20%E4%BD%8F%E6%89%80.csv");
     }
 
     @Test
@@ -330,7 +330,7 @@ public class ExportAPITest extends ApiServiceTestBase {
 
         // then
         String contentDispositionHeaderValue = export.getHeader("Content-Disposition");
-        Assertions.assertThat(contentDispositionHeaderValue).contains("filename=\"" + fileName);
+        Assertions.assertThat(contentDispositionHeaderValue).contains("filename*=UTF-8''" + fileName);
 
     }
 
@@ -354,7 +354,7 @@ public class ExportAPITest extends ApiServiceTestBase {
 
         // then
         String contentDispositionHeaderValue = export.getHeader("Content-Disposition");
-        Assertions.assertThat(contentDispositionHeaderValue).contains("filename=\"" + fileName);
+        Assertions.assertThat(contentDispositionHeaderValue).contains("filename*=UTF-8''" + fileName);
 
     }
 

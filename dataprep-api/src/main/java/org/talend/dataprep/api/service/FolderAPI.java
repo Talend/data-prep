@@ -62,9 +62,9 @@ public class FolderAPI extends APIService {
     private SecurityProxy securityProxy;
 
     @RequestMapping(value = "/api/folders", method = GET)
-    @ApiOperation(value = "List children folders of the parameter if null list root children.", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<StreamingResponseBody> children(@RequestParam(required = false) String parentId) {
+    public ResponseEntity<StreamingResponseBody> listFolders(@RequestParam(required = false) String parentId) {
         try {
             final GenericCommand<InputStream> foldersList = getCommand(FolderChildrenList.class, parentId);
             return CommandHelper.toStreaming(foldersList);
@@ -100,7 +100,7 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = PUT)
     @ApiOperation(value = "Add a folder.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public StreamingResponseBody addFolder(@RequestParam final String parentId, @RequestParam final String path) {
+    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId, @RequestParam final String path) {
         try {
             final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, parentId, path);
             return CommandHelper.toStreaming(createChildFolder);
@@ -150,9 +150,11 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders/search", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search Folders with parameter as part of the name", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<StreamingResponseBody> search(@RequestParam final String name, @RequestParam(required = false) final boolean strict) {
+    public ResponseEntity<StreamingResponseBody> search(@RequestParam(required = false) final String name,
+                                                        @RequestParam(required = false) final Boolean strict,
+                                                        @RequestParam(required = false) final String path) {
         try {
-            final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, name, strict);
+            final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, name, strict, path);
             return CommandHelper.toStreaming(searchFolders);
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDERS, e);

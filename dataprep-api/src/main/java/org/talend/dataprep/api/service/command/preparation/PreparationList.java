@@ -35,19 +35,23 @@ import org.talend.dataprep.util.SortAndOrderHelper.Order;
 @Scope("request")
 public class PreparationList extends GenericCommand<InputStream> {
 
-    private PreparationList(Format format, Sort sort, Order order) {
+    private PreparationList(Format format, String name, Sort sort, Order order) {
         super(GenericCommand.PREPARATION_GROUP);
-        execute(() -> onExecute(sort, order, format));
+        execute(() -> onExecute(name, sort, order, format));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_LIST, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private PreparationList(Format format) {
-        this(format, Sort.NAME, Order.ASC);
+    private PreparationList(Format format, Sort sort, Order order) {
+        this(format, null, sort, order);
     }
 
-    private HttpRequestBase onExecute(Sort sort, Order order, Format format) {
+    private PreparationList(Format format) {
+        this(format, null, Sort.NAME, Order.ASC);
+    }
+
+    private HttpRequestBase onExecute(String name, Sort sort, Order order, Format format) {
         try {
             URIBuilder uriBuilder;
             if (Format.SHORT.equals(format)) {
@@ -57,7 +61,9 @@ public class PreparationList extends GenericCommand<InputStream> {
             } else {
                 uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/details"); //$NON-NLS-1$
             }
-
+            if (name != null) {
+                uriBuilder.addParameter("name", name);
+            }
             uriBuilder.addParameter("sort", sort.camelName());
             uriBuilder.addParameter("order", order.camelName());
             return new HttpGet(uriBuilder.build());

@@ -100,21 +100,7 @@ tr.introjs-showElement > th {
 }
 
 .introjs-helperNumberLayer {
-	position: absolute;
-	top: -16px;
-	left: -16px;
-	z-index: 9999999999 !important;
-	font-weight: 700;
-	color: $white;
-	text-align: center;
-	text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
-	background: $dark-blue;
-	width: 25px;
-	height: 25px;
-	line-height: 21px;
-	border: 2px solid $white;
-	border-radius: 50%;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, .4);
+	visibility: hidden;
 }
 
 .introjs-arrow {
@@ -333,7 +319,7 @@ tr.introjs-showElement > th {
 	display: block;
 	width: 6px;
 	height: 6px;
-	background: #ccc;
+	background: $silver;
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -341,11 +327,11 @@ tr.introjs-showElement > th {
 }
 
 .introjs-bullets ul li a:hover {
-	background: #999;
+	background: $silver-chalice;
 }
 
 .introjs-bullets ul li a.active {
-	background: #999;
+	background: $scooter;
 }
 
 .introjs-progress {
@@ -374,3 +360,14 @@ tr.introjs-showElement > th {
 	top: 50%;
 }
 
+.playground-container {
+	.slidable .introjs-showElement {
+		background: $white;
+	}
+
+	.navbar .introjs-showElement {
+		icon {
+			color: $white;
+		}
+	}
+}

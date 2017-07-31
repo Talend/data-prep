@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.TDPException;
@@ -35,7 +35,7 @@ public class APIService {
     protected static final Logger LOG = LoggerFactory.getLogger(APIService.class);
 
     @Autowired
-    private WebApplicationContext context;
+    private ApplicationContext context;
 
     @Autowired
     private PoolingHttpClientConnectionManager connectionManager;

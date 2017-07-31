@@ -70,6 +70,10 @@ public class PersistentStep extends PersistentIdentifiable {
         return appVersion;
     }
 
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
     @Override
     public String id() {
         return getId();

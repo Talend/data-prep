@@ -83,7 +83,7 @@ public class FolderServiceTest extends BasePreparationTest {
         final Response response = given() //
                 .expect().statusCode(404).log().ifError()//
                 .when() //
-                .get("/folders/{id}/children", "unknownId");
+                .get("/folders?parentId={parentId}", "unknownId");
 
         // then
         assertThat(response.getStatusCode(), is(404));
@@ -330,7 +330,7 @@ public class FolderServiceTest extends BasePreparationTest {
     private List<Folder> getFolderChildren(final String id) throws IOException {
         final Response response = given() //
                 .when() //
-                .get("/folders/{id}/children", id);
+                .get("/folders?parentId={parentId}", id);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
         return mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {

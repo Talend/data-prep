@@ -486,6 +486,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         assertOnSearch("wine", false, 3);
         assertOnSearch("tIti", false, 4);
         assertOnSearch("titi", true, 1); // strict
+        assertOnSearch("", false, ((int) sizeAfter) + 1);
 
     }
 

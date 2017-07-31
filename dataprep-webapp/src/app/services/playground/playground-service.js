@@ -41,8 +41,8 @@ import {
 const LINE = 'line';
 
 // events
-const EVENT_LOADING_START = 'talend.loading.start';
-const EVENT_LOADING_STOP = 'talend.loading.stop';
+export const EVENT_LOADING_START = 'talend.loading.start';
+export const EVENT_LOADING_STOP = 'talend.loading.stop';
 
 export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
                                           state, StateService, StepUtilsService,
@@ -55,6 +55,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 	const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
 	let fetchStatsTimeout;
+	let currentLoadingItems = 0;
 
 	function wrapInventoryName(invName) {
 		return invName + INVENTORY_SUFFIX;
@@ -102,14 +103,18 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * Helper to emit start loader event
 	 */
 	function startLoader() {
-		$rootScope.$emit(EVENT_LOADING_START);
+		if (currentLoadingItems++ <= 0) {
+			$rootScope.$emit(EVENT_LOADING_START);
+		}
 	}
 
 	/**
 	 * Helper to emit stop loader event
 	 */
 	function stopLoader() {
-		$rootScope.$emit(EVENT_LOADING_STOP);
+		if (--currentLoadingItems === 0) {
+			$rootScope.$emit(EVENT_LOADING_STOP);
+		}
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -141,7 +146,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
 		// dataset specific init
 		else {
-			StateService.setNameEditionMode(true);
+			StateService.setNameEditionMode(false);
 			ExportService.refreshTypes('datasets', dataset.id);
 			TitleService.setStrict(dataset.name);
 		}

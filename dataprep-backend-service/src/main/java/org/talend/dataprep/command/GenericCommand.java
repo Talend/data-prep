@@ -51,9 +51,7 @@ import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
@@ -160,7 +158,12 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     @PostConstruct
     private void initSecurityToken() {
-        authenticationToken = context.getBean(Security.class).getAuthenticationToken();
+        authenticationToken = getAuthenticationToken();
+    }
+
+    /** Override this method to change security token source. Executed in post construct with all fields initialized. */
+    protected String getAuthenticationToken() {
+        return context.getBean(Security.class).getAuthenticationToken();
     }
 
     @Override

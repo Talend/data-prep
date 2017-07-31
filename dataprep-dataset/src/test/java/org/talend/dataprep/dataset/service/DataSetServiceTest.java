@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
@@ -963,7 +964,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         String dataSetId = given()
                 .body(IOUtils.toString(this.getClass().getResourceAsStream("../bands_quotes_and_carriage_return.csv"),
                         UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=false", dataSetId).asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -979,7 +980,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     public void empty_lines_and_missing_values() throws Exception {
         String dataSetId = given().body(
                 IOUtils.toString(this.getClass().getResourceAsStream(US_STATES_TO_CLEAN_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=false", dataSetId).asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -991,7 +992,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void nbLines() throws Exception {
         String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=true", dataSetId).asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -1003,7 +1004,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void nbLines2() throws Exception {
         String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(T_SHIRT_100_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=true", dataSetId).asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -1015,7 +1016,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void nbLinesUpdate() throws Exception {
         String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=true", dataSetId).asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -1024,7 +1025,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
 
         given().body(IOUtils.toString(this.getClass().getResourceAsStream(T_SHIRT_100_CSV), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().put("/datasets/{id}/raw", dataSetId).asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().put("/datasets/{id}/raw", dataSetId).asString();
 
         assertQueueMessages(dataSetId);
 
@@ -1175,7 +1176,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // given
         final String dataSetId = given() //
                 .body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8)) //
-                .queryParam("Content-Type", "text/csv") //
+                .queryParam(CONTENT_TYPE, "text/csv") //
                 .when() //
                 .post("/datasets") //
                 .asString();
@@ -1229,7 +1230,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // given
         final String dataSetId = given() //
                 .body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8)) //
-                .queryParam("Content-Type", "text/csv") //
+                .queryParam(CONTENT_TYPE, "text/csv") //
                 .when() //
                 .post("/datasets") //
                 .asString();
@@ -1270,7 +1271,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // given
         final String dataSetId = given() //
                 .body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8)) //
-                .queryParam("Content-Type", "text/csv") //
+                .queryParam(CONTENT_TYPE, "text/csv") //
                 .when() //
                 .post("/datasets") //
                 .asString();
@@ -1309,7 +1310,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         int before = dataSetMetadataRepository.size();
         String dataSetId = given().body(
                 IOUtils.toString(this.getClass().getResourceAsStream("../date_time_pattern.csv"), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         int after = dataSetMetadataRepository.size();
         assertThat(after - before, is(1));
         assertQueueMessages(dataSetId);
@@ -1343,7 +1344,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     public void invalid_us_states() throws Exception {
         String dataSetId = given().body(
                 IOUtils.toString(this.getClass().getResourceAsStream("../invalid_us_states.csv"), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=true", dataSetId).asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);

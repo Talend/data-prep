@@ -28,7 +28,7 @@ const playgroundTour = [
 		element: '#datagrid .quality-bar',
 		title: '<center>Quality bar</center>',
 		content: 'Use this quality bar to identify and filter:<ul><li> - valid records (in green),</li><li> - empty records (in white),</li><li> - invalid records (in orange).</li></ul>Click one of the record types to apply functions on it.',
-		position: 'right',
+		position: 'bottom',
 	},
 	{
 		element: '#help-suggestions',
@@ -46,7 +46,7 @@ const playgroundTour = [
 		element: '#playground-lookup-icon',
 		title: '<center>Data lookup</center>',
 		content: 'Click here to link a dataset to your preparation. It will help you to dynamically use the data from a second dataset to complement your preparation.</br>For example, you can use it to add all US State abbreviations alongside the full name of the State.',
-		position: 'bottom',
+		position: 'left',
 	},
 ];
 

@@ -60,25 +60,30 @@ public class FolderService {
     private Security security;
 
     /**
-     * List direct sub folders for the given id.
+     * Get folders. If parentId is supplied, it will be used as filter.
      *
-     * @param id the current folder where to look for children.
+     * @param parentId the parent folder id parameter
      * @return direct sub folders for the given id.
      */
     //@formatter:off
-    @RequestMapping(value = "/folders/{id}/children", method = GET)
-    @ApiOperation(value = "Folder children", notes = "List all child folders of the one as parameter")
+    @RequestMapping(value = "/folders", method = GET)
+    @ApiOperation(value = "List children folders of the parameter if null list root children.", notes = "List all child folders of the one as parameter")
     @Timed
-    public Stream<Folder> children(@PathVariable String id,
+    public Stream<Folder> list(@RequestParam(required = false) @ApiParam(value = "Parent id filter.") String parentId,
                                    @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
                                    @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
     //@formatter:on
 
-        if (!folderRepository.exists(id)) {
-            throw new TDPException(FOLDER_NOT_FOUND, build().put("id", id));
+        Iterable<Folder> children;
+        if (parentId != null) {
+            if (!folderRepository.exists(parentId)) {
+                throw new TDPException(FOLDER_NOT_FOUND, build().put("id", parentId));
+            }
+            children = folderRepository.children(parentId);
+        } else {
+            // This will list all folders
+            children = folderRepository.searchFolders("", false);
         }
-
-        Iterable<Folder> children = folderRepository.children(id);
 
         final AtomicInteger folderCount = new AtomicInteger();
 
@@ -89,7 +94,7 @@ public class FolderService {
             folderCount.addAndGet(1);
         });
 
-        LOGGER.info("found {} children for {}", folderCount.get(), id);
+        LOGGER.info("Found {} children for parentId: {}", folderCount.get(), parentId);
 
         // sort the folders
         return StreamSupport.stream(children.spliterator(), false) //
@@ -125,9 +130,16 @@ public class FolderService {
     @RequestMapping(value = "/folders/search", method = GET)
     @ApiOperation(value = "Search Folders with parameter as part of the name")
     @Timed
-    public Iterable<Folder> search(@RequestParam final String name,
-                                   @RequestParam(required = false) final boolean strict) {
-        final Iterable<Folder> folders = folderRepository.searchFolders(name, strict);
+    public Iterable<Folder> search(@RequestParam(required = false, defaultValue = "") final String name,
+                                   @RequestParam(required = false, defaultValue = "false") final Boolean strict,
+                                   @RequestParam(required = false) final String path) {
+        final Iterable<Folder> folders;
+        if (path == null) {
+            folders = folderRepository.searchFolders(name, strict);
+        } else {
+            folders = stream(folderRepository.searchFolders(name, strict).spliterator(), false)
+                    .filter(f -> f.getPath().equals(path)).collect(toList());
+        }
 
         int foldersFound = 0;
         for (Folder folder : folders) {
@@ -150,7 +162,10 @@ public class FolderService {
     @RequestMapping(value = "/folders", method = PUT)
     @ApiOperation(value = "Create a Folder", notes = "Create a folder")
     @Timed
-    public Folder addFolder(@RequestParam String parentId, @RequestParam String path) {
+    public Folder addFolder(@RequestParam(required = false) String parentId, @RequestParam String path) {
+        if (parentId == null) {
+            parentId = folderRepository.getHome().getId();
+        }
         return folderRepository.addFolder(parentId, path);
     }
 

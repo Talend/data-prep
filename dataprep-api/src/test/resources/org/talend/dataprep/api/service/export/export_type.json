@@ -41,8 +41,7 @@
           "multiple": false
         },
         "description": "Select character to use as a delimiter",
-        "label": "Delimiter",
-        "default": null
+        "label": "Delimiter"
       },
       {
         "name": "fileName",
@@ -51,8 +50,7 @@
         "canBeBlank": false,
         "placeHolder": "",
         "description": "Name of the generated export file",
-        "label": "Filename",
-        "default": null
+        "label": "Filename"
       }
     ],
     "supportSampling": true,
@@ -75,8 +73,7 @@
         "canBeBlank": false,
         "placeHolder": "",
         "description": "Name of the generated export file",
-        "label": "Filename",
-        "default": null
+        "label": "Filename"
       }
     ],
     "supportSampling": true,

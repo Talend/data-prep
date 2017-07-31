@@ -15,6 +15,11 @@ import {
 	HOME_DATASETS_ROUTE,
 } from '../../index-route';
 
+import {
+	EVENT_LOADING_START,
+	EVENT_LOADING_STOP,
+} from './playground-service';
+
 describe('Playground Service', () => {
 	const datasetColumnsWithoutStatistics = {
 		columns: [{ id: '0001', statistics: { frequencyTable: [] } }],
@@ -22,7 +27,7 @@ describe('Playground Service', () => {
 		data: [],
 	};
 	const datasetColumns = {
-		metadata:{
+		metadata: {
 			id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
 			name: 'customers_jso_light',
 			author: 'anonymousUser',
@@ -251,7 +256,7 @@ describe('Playground Service', () => {
 				expect(StateService.setCurrentDataset).toHaveBeenCalledWith(datasetColumns.metadata);
 				expect(StateService.setCurrentData).toHaveBeenCalledWith(datasetColumns);
 				expect(StateService.setCurrentSampleType).toHaveBeenCalledWith('HEAD');
-				expect(StateService.setNameEditionMode).toHaveBeenCalledWith(true);
+				expect(StateService.setNameEditionMode).toHaveBeenCalledWith(false);
 				expect(TransformationCacheService.invalidateCache).toHaveBeenCalled();
 				expect(HistoryService.clear).toHaveBeenCalled();
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
@@ -279,11 +284,26 @@ describe('Playground Service', () => {
 
 			// when
 			PlaygroundService.loadDataset(datasetColumns.metadata.id);
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 			$rootScope.$digest();
 
 			// then
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
+		}));
+
+		it('should not stop spinner if it has been started more than one time', inject(($rootScope, PlaygroundService) => {
+			// given
+			expect($rootScope.$emit).not.toHaveBeenCalled();
+
+			// when
+			PlaygroundService.loadDataset(datasetColumns.metadata.id);
+			PlaygroundService.loadDataset(datasetColumns.metadata.id);
+			$rootScope.$digest();
+
+			// then
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
+			expect($rootScope.$emit).toHaveBeenCalledTimes(2);
 		}));
 
 		it('should reset preparation name', inject(($rootScope, PlaygroundService, StateService) => {
@@ -407,11 +427,11 @@ describe('Playground Service', () => {
 
 			// when
 			PlaygroundService.loadPreparation(preparation);
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 			$rootScope.$apply();
 
 			// then
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 		}));
 
 		it('should load existing preparation with simulated dataset metadata when its metadata is not set yet',
@@ -459,7 +479,7 @@ describe('Playground Service', () => {
 
 				// when
 				PlaygroundService.loadStep(step);
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 				$rootScope.$apply();
 
 				// then
@@ -469,7 +489,7 @@ describe('Playground Service', () => {
 				expect(StateService.disableRecipeStepsAfter).toHaveBeenCalledWith(step);
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				expect(DatagridService.updateData).toHaveBeenCalledWith(data);
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 			})
 		);
 	});
@@ -722,11 +742,11 @@ describe('Playground Service', () => {
 
 				// when
 				PlaygroundService.appendStep(actions);
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 				$rootScope.$digest();
 
 				// then
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 			}));
 
 			it('should refresh recipe', inject(($rootScope, PlaygroundService, RecipeService) => {
@@ -910,11 +930,11 @@ describe('Playground Service', () => {
 
 				// when
 				PlaygroundService.updateStep(stepToUpdate, parameters);
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 				$rootScope.$digest();
 
 				// then
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 			}));
 
 			it('should refresh recipe', inject(($rootScope, PlaygroundService, RecipeService) => {
@@ -1127,11 +1147,11 @@ describe('Playground Service', () => {
 			it('should show/hide loading', inject(($rootScope, PlaygroundService) => {
 				// when
 				PlaygroundService.updateStepOrder(previousPosition, nextPosition);
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 				$rootScope.$digest();
 
 				// then
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 			}));
 
 			it('should refresh recipe', inject(($rootScope, PlaygroundService, RecipeService) => {
@@ -1244,11 +1264,11 @@ describe('Playground Service', () => {
 
 				// when
 				PlaygroundService.removeStep(stepToDelete);
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 				$rootScope.$digest();
 
 				// then
-				expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 			}));
 
 			it('should refresh recipe', inject(($rootScope, PlaygroundService, RecipeService) => {
@@ -1921,11 +1941,11 @@ describe('Playground Service', () => {
 
 			// when
 			PlaygroundService.copySteps('13cf24597f9b6ba542');
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
 			$rootScope.$digest();
 
 			// then
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 		}));
 	});
 

@@ -15,8 +15,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Massachussetts",
-            "label": "Massachussetts",
-            "default": null
+            "label": "Massachussetts"
           },
           {
             "name": "Masachussets",
@@ -25,8 +24,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Masachussets",
-            "label": "Masachussets",
-            "default": null
+            "label": "Masachussets"
           },
           {
             "name": "Massachusetts",
@@ -35,8 +33,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Massachusetts",
-            "label": "Massachusetts",
-            "default": null
+            "label": "Massachusetts"
           },
           {
             "name": "Masachusetts",
@@ -45,8 +42,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Masachusetts",
-            "label": "Masachusetts",
-            "default": null
+            "label": "Masachusetts"
           },
           {
             "name": "Massachusets",
@@ -55,8 +51,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Massachusets",
-            "label": "Massachusets",
-            "default": null
+            "label": "Massachusets"
           }
         ],
         "replace": {
@@ -79,8 +74,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "t@t@",
-            "label": "t@t@",
-            "default": null
+            "label": "t@t@"
           },
           {
             "name": "T@T@",
@@ -89,8 +83,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "T@T@",
-            "label": "T@T@",
-            "default": null
+            "label": "T@T@"
           }
         ],
         "replace": {
@@ -113,8 +106,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "tata",
-            "label": "tata",
-            "default": null
+            "label": "tata"
           },
           {
             "name": "Tata",
@@ -123,8 +115,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Tata",
-            "label": "Tata",
-            "default": null
+            "label": "Tata"
           }
         ],
         "replace": {
@@ -147,8 +138,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Texas",
-            "label": "Texas",
-            "default": null
+            "label": "Texas"
           },
           {
             "name": "Tixass",
@@ -157,8 +147,7 @@
             "canBeBlank": true,
             "placeHolder": "",
             "description": "Tixass",
-            "label": "Tixass",
-            "default": null
+            "label": "Tixass"
           }
         ],
         "replace": {

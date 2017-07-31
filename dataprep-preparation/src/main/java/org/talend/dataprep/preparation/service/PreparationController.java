@@ -70,9 +70,10 @@ public class PreparationController {
     @ApiOperation(value = "List all preparations id", notes = "Returns the list of preparations ids the current user is allowed to see. Creation date is always displayed in UTC time zone. See 'preparations/all' to get all details at once.")
     @Timed
     public Stream<String> list(
+            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
-        return preparationService.list(sort, order);
+        return preparationService.list(name, sort, order);
     }
 
     /**
@@ -86,9 +87,10 @@ public class PreparationController {
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations details the current user is allowed to see. Creation date is always displayed in UTC time zone. This operation return all details on the preparations.")
     @Timed
     public Stream<UserPreparation> listAll(
+            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
-        return preparationService.listAll(sort, order);
+        return preparationService.listAll(name, sort, order);
     }
 
     /**
@@ -99,8 +101,9 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/summaries", method = GET)
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations summaries the current user is allowed to see. Creation date is always displayed in UTC time zone.")
     @Timed
-    public Stream<PreparationSummary> listSummary() {
-        return preparationService.listSummary();
+    public Stream<PreparationSummary> listSummary(
+            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name) {
+        return preparationService.listSummary(name);
     }
 
     /**
@@ -129,13 +132,14 @@ public class PreparationController {
     @Timed
     public Stream<UserPreparation> searchPreparations(
             @RequestParam(required = false) @ApiParam("dataSetId") String dataSetId,
-            @RequestParam(required = false) @ApiParam(value = "path of the folderId where to look for preparations") String folderId,
+            @RequestParam(required = false) @ApiParam(value = "Id of the folder where to look for preparations") String folderId,
+            @RequestParam(required = false) @ApiParam(value = "Path of the folder where to look for preparations") String folderPath,
             @RequestParam(required = false) @ApiParam("name") String name,
             @RequestParam(defaultValue = "true") @ApiParam("exactMatch") boolean exactMatch,
             @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
             @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
 
-        return preparationService.searchPreparations(dataSetId, folderId, name, exactMatch, sort, order);
+        return preparationService.searchPreparations(dataSetId, folderId, name, exactMatch, folderPath, sort, order);
     }
 
     /**

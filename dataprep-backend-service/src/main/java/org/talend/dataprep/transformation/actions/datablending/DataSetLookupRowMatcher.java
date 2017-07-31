@@ -29,10 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -61,7 +61,7 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
 
     /** The Spring application context. */
     @Autowired
-    private WebApplicationContext context;
+    private ApplicationContext context;
 
     /** The dataset id to lookup. */
     private String datasetId;

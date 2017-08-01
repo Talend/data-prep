@@ -468,7 +468,7 @@ describe('Import service', () => {
 
 			// then
 			expect(ImportService.datasetNameModal).toBeFalsy();
-			const paramsExpected = { url: '', type: 'hdfs', name: 'my dataset' };
+			const paramsExpected = { url: '', type: 'hdfs', name: 'my dataset', size: undefined };
 			expect(DatasetService.create).toHaveBeenCalledWith(paramsExpected, 'application/vnd.remote-ds.hdfs', { name: 'my dataset.csv' });
 		}));
 
@@ -535,7 +535,7 @@ describe('Import service', () => {
 
 			it('should create dataset if name is unique', inject((StateService, $q, $rootScope, DatasetService, ImportService, UploadWorkflowService) => {
 				// given
-				const paramsExpected = { url: '', type: 'hdfs', name: 'my cool dataset' };
+				const paramsExpected = { url: '', type: 'hdfs', name: 'my cool dataset', size: undefined };
 
 				// when
 				ImportService.onImportNameValidation();

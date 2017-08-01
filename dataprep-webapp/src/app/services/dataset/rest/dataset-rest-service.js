@@ -58,8 +58,12 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function create(parameters, contentType, file) {
 		const { name, size } = parameters;
+		let url = `${RestURLs.uploadDatasetUrl}?name=${encodeURIComponent(name)}`;
+		if (size) {
+			url += `&size=${size}`;
+		}
 		const req = {
-			url: `${RestURLs.uploadDatasetUrl}?name=${encodeURIComponent(name)}&size=${size}`,
+			url,
 			headers: {
 				'Content-Type': contentType,
 			},

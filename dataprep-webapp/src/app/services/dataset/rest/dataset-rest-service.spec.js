@@ -211,10 +211,10 @@ describe('Dataset Rest Service', () => {
 		it('should call dataset creation rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
 			//given
 			let datasetId = null;
-			const dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false };
+			const dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false, size: 666 };
 
 			$httpBackend
-				.expectPOST(RestURLs.uploadDatasetUrl + '?name=my%20dataset')
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=my%20dataset&size=666')
 				.respond(200, 'e85afAa78556d5425bc2');
 
 			//when
@@ -236,6 +236,7 @@ describe('Dataset Rest Service', () => {
 				type: 'http',
 				name: 'greatremotedataset',
 				url: 'moc.dnelat//:ptth',
+				size: 666
 			};
 			var file = { id: '0001' };
 			var headers = {
@@ -244,7 +245,7 @@ describe('Dataset Rest Service', () => {
 			};
 
 			$httpBackend
-				.expectPOST(RestURLs.uploadDatasetUrl + '?name=greatremotedataset', file, headers)
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=greatremotedataset&size=666', file, headers)
 
 				.respond(200, 'e85afAa78556d5425bc2');
 
@@ -262,10 +263,10 @@ describe('Dataset Rest Service', () => {
 		it('should call dataset creation rest service with import parameters for remote http', inject(($rootScope, DatasetRestService, RestURLs) => {
 			//given
 			var datasetId = null;
-			var dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false };
+			var dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false, size: 666 };
 
 			$httpBackend
-				.expectPOST(RestURLs.uploadDatasetUrl + '?name=my%20dataset')
+				.expectPOST(RestURLs.uploadDatasetUrl + '?name=my%20dataset&size=666')
 
 				.respond(200, 'e85afAa78556d5425bc2');
 

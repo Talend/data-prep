@@ -172,7 +172,8 @@ public class DataSetService extends BaseDataSetService {
     public Stream<UserDataSetMetadata> list(
             @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(defaultValue = "desc") Order order,
-            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
+            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(required = false) String name,
+            @ApiParam(value = "Filter on name containing the specified name strictness") @RequestParam(defaultValue = "false") boolean nameStrict,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Only return a limited number of data sets") @RequestParam(defaultValue = "false") boolean limit) {
@@ -194,10 +195,18 @@ public class DataSetService extends BaseDataSetService {
         if (certified) {
             predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
         }
-        if (!StringUtils.isEmpty(name)) {
+
+        if (StringUtils.isNotEmpty(name)) {
             final String regex = "(?i)" + Pattern.quote(name);
-            predicates.add("name ~ '^.*" + regex + ".*$'");
+            final String filter;
+            if (nameStrict) {
+                filter = "name ~ '^" + regex + "$'";
+            } else {
+                filter = "name ~ '.*" + regex + ".*'";
+            }
+            predicates.add(filter);
         }
+
         final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
         LOG.debug("TQL Filter in use: {}", tqlFilter);
 
@@ -869,26 +878,18 @@ public class DataSetService extends BaseDataSetService {
      * @param name what to searched in datasets.
      * @param strict If the searched name should be the full name
      * @return the list of found datasets metadata.
+     * @deprecated please, use {@link #list(Sort, Order, String, boolean, boolean, boolean, boolean)} on {@code /datasets} enpoint
+     * with name and nameStrict parameters.
      */
     @RequestMapping(value = "/datasets/search", method = GET)
     @ApiOperation(value = "Search the dataset metadata", notes = "Search the dataset metadata.")
     @Timed
+    @Deprecated
     public Stream<UserDataSetMetadata> search( //
-            @RequestParam @ApiParam(value = "What to search in datasets") final String name, //
+            @RequestParam @ApiParam(value = "What to search in data sets") final String name, //
             @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) {
-
         LOG.debug("search datasets metadata for {}", name);
-
-        final String regex = "(?i)" + Pattern.quote(name);
-
-        final String filter;
-        if (strict) {
-            filter = "name ~ '^" + regex + "$'";
-        } else {
-            filter = "name ~ '.*" + regex + ".*'";
-        }
-        return dataSetMetadataRepository.list(filter, null, null) //
-                .map(d -> conversionService.convert(d, UserDataSetMetadata.class));
+        return list(null, null, name, strict, false, false, false);
     }
 
     @RequestMapping(value = "/datasets/encodings", method = GET)

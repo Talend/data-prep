@@ -30,6 +30,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -194,7 +195,7 @@ public class DataSetService extends BaseDataSetService {
             predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
         }
         if (!StringUtils.isEmpty(name)) {
-            final String regex = "(?i)" + name;
+            final String regex = "(?i)" + Pattern.quote(name);
             predicates.add("name ~ '^.*" + regex + ".*$'");
         }
         final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
@@ -878,7 +879,7 @@ public class DataSetService extends BaseDataSetService {
 
         LOG.debug("search datasets metadata for {}", name);
 
-        final String regex = "(?i)" + name;
+        final String regex = "(?i)" + Pattern.quote(name);
 
         final String filter;
         if (strict) {

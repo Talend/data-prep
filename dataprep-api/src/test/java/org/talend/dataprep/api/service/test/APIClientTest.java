@@ -13,8 +13,7 @@
 
 package org.talend.dataprep.api.service.test;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.not;
@@ -26,9 +25,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -39,9 +36,12 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPITest;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 
@@ -57,6 +57,18 @@ public class APIClientTest {
     @Autowired
     protected ObjectMapper mapper;
 
+    public List<UserDataSetMetadata> listDataSets(String name) throws IOException {
+        InputStream result;
+        if (name == null) {
+            result = when().get("/api/datasets").asInputStream();
+        }else {
+            result = when().get("/api/datasets?name={name}", name).asInputStream();
+        }
+        CollectionType resultType = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class,
+                UserDataSetMetadata.class);
+        return mapper.readValue(result, resultType);
+    }
+
     /**
      * Create a dataset.
      *
@@ -67,15 +79,7 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public String createDataset(final String file, final String name, final String type) throws IOException {
-        final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
-        assertNotNull(resourceAsStream);
-        final String datasetContent = IOUtils.toString(resourceAsStream, "UTF-8");
-        final Response post = given() //
-                .contentType(JSON) //
-                .body(datasetContent) //
-                .queryParam("Content-Type", type) //
-                .when() //
-                .post("/api/datasets?name={name}", name);
+        final Response post = callCreateDataSet(file, name, type);
 
         final int statusCode = post.getStatusCode();
         if (statusCode != 200) {
@@ -87,6 +91,27 @@ public class APIClientTest {
         assertThat(dataSetId, not(""));
 
         return dataSetId;
+    }
+
+    /**
+     * Call the data set creation endpoint en get the {@link Response}.
+     *
+     * @param file the classpath of the file to upload.
+     * @param name the dataset name.
+     * @param type the dataset type.
+     * @return the dataset id.
+     * @throws IOException sh*t happens.
+     */
+    public Response callCreateDataSet(String file, String name, String type) throws IOException {
+        final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
+        assertNotNull(resourceAsStream);
+        final String datasetContent = IOUtils.toString(resourceAsStream, "UTF-8");
+        return given() //
+                .contentType(JSON) //
+                .body(datasetContent) //
+                .queryParam("Content-Type", type) //
+                .when() //
+                .post("/api/datasets?name={name}", name);
     }
 
     /**

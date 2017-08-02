@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.exception.error;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +22,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
-
-import static org.springframework.http.HttpStatus.*;
 
 public enum APIErrorCodes implements ErrorCode {
     UNABLE_TO_DELETE_PREPARATION(BAD_REQUEST),
@@ -70,7 +70,11 @@ public enum APIErrorCodes implements ErrorCode {
     DATASET_REDIRECT(MOVED_PERMANENTLY),
     INVALID_HEAD_STEP_USING_DELETED_DATASET(FORBIDDEN),
     UNABLE_TO_IMPORT_PREPARATIONS(BAD_REQUEST),
-    UNABLE_TO_OVERWRITE_PREPARATIONS(BAD_REQUEST);
+    UNABLE_TO_OVERWRITE_PREPARATIONS(BAD_REQUEST),
+    /**
+     * When a search request ask for an invalid name.
+     */
+    INVALID_SEARCH_NAME(BAD_REQUEST, "name");
 
     /**
      * The http status to use.

@@ -12,10 +12,29 @@
 
 package org.talend.dataprep.dataset.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang.StringUtils;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.StreamSupport.stream;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
+import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -23,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.Import.ImportBuilder;
@@ -67,26 +87,9 @@ import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.StreamSupport.stream;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
-import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")
@@ -170,7 +173,8 @@ public class DataSetService extends BaseDataSetService {
     public Callable<Stream<UserDataSetMetadata>> list(
             @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(defaultValue = "desc") Order order,
-            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
+            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(required = false) String name,
+            @ApiParam(value = "Filter on name containing the specified name strictness") @RequestParam(defaultValue = "false") boolean nameStrict,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Only return a limited number of data sets") @RequestParam(defaultValue = "false") boolean limit) {
@@ -192,10 +196,21 @@ public class DataSetService extends BaseDataSetService {
             if (certified) {
                 predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
             }
-            if (!StringUtils.isEmpty(name)) {
-                final String regex = "(?i)" + name;
-                predicates.add("name ~ '^.*" + regex + ".*$'");
+            if (StringUtils.isNotEmpty(name)) {
+                if (name.contains("\'")) {
+                    // Until TQL can escape quotes:
+                    throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME, ExceptionContext.withBuilder().put("name", name).build());
+                }
+                final String regex = "(?i)" + Pattern.quote(name);
+                final String filter;
+                if (nameStrict) {
+                    filter = "name ~ '^" + regex + "$'";
+                } else {
+                    filter = "name ~ '.*" + regex + ".*'";
+                }
+                predicates.add(filter);
             }
+
             final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
             LOG.debug("TQL Filter in use: {}", tqlFilter);
 
@@ -264,6 +279,9 @@ public class DataSetService extends BaseDataSetService {
             @RequestHeader(CONTENT_TYPE) String contentType,
             @ApiParam(value = "content") InputStream content) throws IOException {
         //@formatter:on
+        if (StringUtils.isBlank(name) || name.contains("\'")) {
+            throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME, ExceptionContext.withBuilder().put("name", name).build());
+        }
 
         final String id = UUID.randomUUID().toString();
         final Marker marker = Markers.dataset(id);
@@ -868,26 +886,18 @@ public class DataSetService extends BaseDataSetService {
      * @param name what to searched in datasets.
      * @param strict If the searched name should be the full name
      * @return the list of found datasets metadata.
+     * @deprecated please, use {@link #list(Sort, Order, String, boolean, boolean, boolean, boolean)} on {@code /datasets} enpoint
+     * with name and nameStrict parameters.
      */
     @RequestMapping(value = "/datasets/search", method = GET)
     @ApiOperation(value = "Search the dataset metadata", notes = "Search the dataset metadata.")
     @Timed
+    @Deprecated
     public Stream<UserDataSetMetadata> search( //
-            @RequestParam @ApiParam(value = "What to search in datasets") final String name, //
-            @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) {
-
+            @RequestParam @ApiParam(value = "What to search in data sets") final String name, //
+            @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) throws Exception {
         LOG.debug("search datasets metadata for {}", name);
-
-        final String regex = "(?i)" + name;
-
-        final String filter;
-        if (strict) {
-            filter = "name ~ '^" + regex + "$'";
-        } else {
-            filter = "name ~ '.*" + regex + ".*'";
-        }
-        return dataSetMetadataRepository.list(filter, null, null) //
-                .map(d -> conversionService.convert(d, UserDataSetMetadata.class));
+        return list(null, null, name, strict, false, false, false).call();
     }
 
     @RequestMapping(value = "/datasets/encodings", method = GET)

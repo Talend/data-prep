@@ -14,6 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_SEARCH_NAME;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.service.delegate.SearchDelegate;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.i18n.MessagesBundle;
@@ -67,6 +69,9 @@ public class SearchAPI extends APIService {
             @ApiParam(value = "filter") @RequestParam(required = false) final List<String> filter,
             @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict) {
     //@formatter:on
+        if (name != null && name.contains("'")) {
+            throw new TDPException(INVALID_SEARCH_NAME, ExceptionContext.withBuilder().put("name", name).build());
+        }
         return output -> doSearch(name, filter, strict, output);
     }
 

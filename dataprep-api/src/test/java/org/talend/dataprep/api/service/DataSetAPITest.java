@@ -20,6 +20,8 @@ import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.INVALID_DATASET_NAME;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order.ASC;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order.DESC;
@@ -44,6 +46,8 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
@@ -386,6 +390,36 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // then
         assertThat(contentAsString, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void testDataSetCreate_shouldFailWithQuote() throws Exception {
+        // given
+        String dataSetName = "ta'ga'da";
+
+        // when
+        Response response = testClient.callCreateDataSet("dataset/dataset.csv", dataSetName, "text/csv");
+
+        // then
+        assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.value()));
+        TdpExceptionDto error = response.as(TdpExceptionDto.class);
+        assertThat(error.getCode(), equalTo("TDP_DSS_" + INVALID_DATASET_NAME.name()));
+        assertThat(error.getMessage(), is(not(nullValue())));
+        assertThat(error.getMessageTitle(), is(not(nullValue())));
+        assertThat(error.getCause(), is(nullValue()));
+    }
+
+    @Test
+    public void testDataSetList_nameSearch() throws Exception {
+        // given
+        String nameContainingRegexChars = "Preparation (A)";
+        testClient.createDataset("dataset/dataset.csv", nameContainingRegexChars, "text/csv");
+
+        // when
+        final List<UserDataSetMetadata> dataSetsPresent = testClient.listDataSets(nameContainingRegexChars);
+
+        // then
+        assertFalse(dataSetsPresent.isEmpty());
     }
 
     @Test

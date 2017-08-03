@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.api.service;
 
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -72,7 +73,7 @@ public class DataSetAPI extends APIService {
     public Callable<String> create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(defaultValue = "", required = false) String tag,
-            @RequestHeader("Content-Type") String contentType, @ApiParam(value = "content") InputStream dataSetContent) {
+            @RequestHeader(CONTENT_TYPE) String contentType, @ApiParam(value = "content") InputStream dataSetContent) {
         return () -> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating dataset (pool: {} )...", getConnectionStats());

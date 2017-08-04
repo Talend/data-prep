@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import enableStatistics from './enable-statistics.js';
+import enableStatistics from './analytics/enable-statistics.js';
 
 const configPath = '/assets/config/config.json';
 const settingsPath = '/api/settings';

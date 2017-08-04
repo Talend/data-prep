@@ -1,4 +1,4 @@
-import pendo from '../lib/pendo';
+import pendo from './pendo';
 
 export default function (config) {
 	pendo();

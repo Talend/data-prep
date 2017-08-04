@@ -12,7 +12,6 @@
  ============================================================================*/
 
 import angular from 'angular';
-import enableStatistics from './analytics/enable-statistics.js';
 
 const configPath = '/assets/config/config.json';
 const settingsPath = '/api/settings';
@@ -36,10 +35,6 @@ export default function getAppConfiguration() {
 	return getAppConfig()
 		.then((appConfig) => {
 			config = appConfig;
-			if (config.enableAnalytics) {
-				enableStatistics(config);
-			}
-
 			return getAppSettings(config);
 		})
 		.then(appSettings => ({ config, appSettings }));

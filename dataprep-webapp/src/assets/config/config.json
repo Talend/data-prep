@@ -5,7 +5,6 @@
   "enableDebug": false,
   "version": "2.2.0-SNAPSHOT",
   "copyRights": "© 2017 Talend. All Rights Reserved",
-  "enableAnalytics": false,
-  "analyticsVisitor": "",
+  "analyticsEnabled": false,
   "analyticsAccount": ""
 }

@@ -451,9 +451,4 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             return builder.toString();
         }
     }
-
-    public String getAuthenticationToken() {
-        return authenticationToken;
-    }
-
 }

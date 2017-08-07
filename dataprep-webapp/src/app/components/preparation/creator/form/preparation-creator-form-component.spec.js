@@ -26,6 +26,7 @@ describe('Preparation creator form component', () => {
             EXISTING_DATASETS: 'Existing Datasets',
             NAME_ALREADY_EXISTS: 'This Name already exists in the current folder',
             NEW_PREPARATION_NAME: 'Preparation Name',
+            NO_DATASET: 'No dataset available',
         });
         $translateProvider.preferredLanguage('en');
     }));
@@ -172,6 +173,18 @@ describe('Preparation creator form component', () => {
                 //then
                 expect(element.find('.fetching-spinner').length).toBe(0);
                 expect(element.find('.inventory-item-row').length).toBe(2);
+            });
+
+            it('should show a message if there is no dataset to display', () => {
+                //given
+                createElement();
+                controller.filteredDatasets = [];
+                scope.$digest();
+
+                //then
+                expect(element.find('.inventory-item-row').length).toBe(0);
+                expect(element.find('.empty-message').length).toBe(1);
+                expect(element.find('.empty-message').text()).toBe('No dataset available');
             });
 
             it('should disable right panel while import', () => {

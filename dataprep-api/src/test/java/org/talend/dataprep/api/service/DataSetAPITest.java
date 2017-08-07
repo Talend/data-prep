@@ -379,21 +379,23 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreate() throws Exception {
         // given
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada");
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_metadata.json");
 
         // when
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId);
 
         // then
-        final String contentAsString = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId).asString();
+        response.then().header("Content-Type", "application/json");
+        final String contentAsString = response.asString();
         assertThat(contentAsString, sameJSONAsFile(expected));
     }
 
     @Test
     public void testDataSetCreate_nameWithRegexParts() throws Exception {
         // given
-        InputStream expected =
-                PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_metadata_regex_test.json");
+        InputStream expected = PreparationAPITest.class
+                .getResourceAsStream("dataset/expected_dataset_with_metadata_regex_test.json");
 
         // when
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "Cr(())eate Email Address{rrr}bb[zzzz]");

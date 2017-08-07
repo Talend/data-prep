@@ -44,6 +44,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
@@ -186,6 +187,7 @@ public class DataSetAPI extends APIService {
         }
         try {
             final HystrixCommand<InputStream> retrievalCommand = getCommand(DataSetGet.class, id, fullContent, includeTechnicalProperties);
+            HttpResponseContext.contentType(APPLICATION_JSON_VALUE);
             return toStreaming(retrievalCommand);
         } finally {
             if (LOG.isDebugEnabled()) {

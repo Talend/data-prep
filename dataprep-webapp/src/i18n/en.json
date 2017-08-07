@@ -70,6 +70,7 @@
   "NO_CHILD": "Empty",
   "COPY": " Copy",
   "NO_RESULTS": "No results",
+  "NO_DATASET": "No dataset available",
   "CLICK_ADD_DATASETS": "There are no datasets to display. Click on 'Add Dataset' to add a dataset.",
   "CLICK_ADD_PREPARATIONS": "There are no preparations in this folder. Click on 'Add Preparation' to add a preparation.",
   "UPDATE_DATASET_INPUT": "Update dataset input",

@@ -12,14 +12,18 @@
 //  ============================================================================
 package org.talend.dataprep.dataset.store.metadata.memory;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepositoryTestUtils;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 
 import com.google.common.base.Defaults;
 
 public class InMemoryDataSetMetadataRepositoryTest {
+
+    private InMemoryDataSetMetadataRepository inMemoryDataSetMetadataRepository = new InMemoryDataSetMetadataRepository();
 
     private static final class TransientTestObject {
 
@@ -46,8 +50,6 @@ public class InMemoryDataSetMetadataRepositoryTest {
 
     @Test
     public void testResetTransiantOnDatasetMatadataFavorites() {
-        InMemoryDataSetMetadataRepository inMemoryDataSetMetadataRepository = new InMemoryDataSetMetadataRepository();
-
         TransientTestObject obj = new TransientTestObject();
         inMemoryDataSetMetadataRepository.resetTransientValues(obj);
         // check it has been reset to the default value
@@ -61,4 +63,37 @@ public class InMemoryDataSetMetadataRepositoryTest {
         assertTrue(obj.zeObject == Defaults.defaultValue(Object.class));// cause it is null
         assertTrue(Defaults.defaultValue(boolean.class).equals(obj.zeStaticBoolean));
     }
+
+    @Test
+    public void testCountAllDataSetsSizeReturnsZeroWhenRepoIsEmpty() {
+
+        // when
+        long totalSize = inMemoryDataSetMetadataRepository.countAllDataSetsSize();
+
+        // then
+        assertThat(totalSize, is(0L));
+    }
+
+    @Test
+    public void testCountAllDataSetsSizeWhenRepoContainsMultipleElements() throws Exception {
+        // given
+        for (int i = 1; i <= 3; i++) {
+            addMetadataToRepository(String.valueOf(i), 78945);
+        }
+        addMetadataToRepository("4", 5127892);
+
+        // when
+        long totalSize = inMemoryDataSetMetadataRepository.countAllDataSetsSize();
+
+        // then
+        assertThat(totalSize, is(5364727L));
+    }
+
+    private void addMetadataToRepository(String id, long dataSetSize) {
+        DataSetMetadata metadata = new DataSetMetadata();
+        metadata.setId(id);
+        metadata.setDataSetSize(dataSetSize);
+        inMemoryDataSetMetadataRepository.save(metadata);
+    }
+
 }

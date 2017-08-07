@@ -68,4 +68,11 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
         LOGGER.debug("dataset metadata repository cleared.");
     }
 
+    @Override
+    public long countAllDataSetsSize() {
+        return list() //
+                .mapToLong(m -> m.getDataSetSize()) //
+                .sum();
+    }
+
 }

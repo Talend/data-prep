@@ -106,6 +106,12 @@ public class DataSetMetadata implements Serializable {
     @JsonProperty("encoding")
     private String encoding = "UTF-8";
 
+    /**
+     * Size of the data set, in bytes.
+     */
+    @JsonProperty("dataSetSize")
+    private long dataSetSize;
+
     /** A arbitrary tag for the data set (used by studio on creation for a visual distinction). */
     private String tag;
 
@@ -332,8 +338,13 @@ public class DataSetMetadata implements Serializable {
         return appVersion;
     }
 
+    public long getDataSetSize() {
+        return dataSetSize;
+    }
 
-
+    public void setDataSetSize(long dataSetSize) {
+        this.dataSetSize = dataSetSize;
+    }
 
     /**
      * @return The tag value for the data set metadata. This tag is for example used to distinguish data sets created by a job
@@ -378,6 +389,7 @@ public class DataSetMetadata implements Serializable {
                 ", appVersion=" + appVersion + //
                 ", lifecycle=" + lifecycle + //
                 ", content=" + content + //
+                ", dataSetSize=" + dataSetSize + //
                 ", governance=" + governance + //
                 ", name='" + name + '\'' + //
                 ", author='" + author + '\'' + //
@@ -407,6 +419,7 @@ public class DataSetMetadata implements Serializable {
                 Objects.equals(id, that.id) && //
                 Objects.equals(rowMetadata, that.rowMetadata) && //
                 Objects.equals(lifecycle, that.lifecycle) && //
+                Objects.equals(dataSetSize, that.dataSetSize) && //
                 Objects.equals(content, that.content) && //
                 Objects.equals(governance, that.governance) && //
                 Objects.equals(location, that.location) && //
@@ -422,7 +435,7 @@ public class DataSetMetadata implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id, rowMetadata, lifecycle, content, governance, location, name, author, creationDate,
+        return Objects.hash(id, rowMetadata, lifecycle, dataSetSize, content, governance, location, name, author, creationDate,
                 lastModificationDate, sheetName, draft, schemaParserResult, appVersion);
     }
 }

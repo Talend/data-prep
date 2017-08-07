@@ -122,4 +122,10 @@ public interface DataSetMetadataRepository {
         return stream::iterator;
     }
 
+    /**
+     * Counts and returns the total size of all data sets.
+     *
+     * @return the total size of all data sets
+     */
+    long countAllDataSetsSize();
 }

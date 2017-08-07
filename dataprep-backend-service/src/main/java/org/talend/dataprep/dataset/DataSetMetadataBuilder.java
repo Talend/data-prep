@@ -176,6 +176,8 @@ public class DataSetMetadataBuilder {
 
     private Set<String> roles = new HashSet<>();
 
+    private long dataSetSize;
+
     private String tag;
 
     /**
@@ -337,6 +339,11 @@ public class DataSetMetadataBuilder {
         return this;
     }
 
+    public DataSetMetadataBuilder dataSetSize(long dataSetSize) {
+        this.dataSetSize = dataSetSize;
+        return this;
+    }
+
     /**
      * Copies fields of the specified data set metadata that are not related to the content of the data set.
      *
@@ -366,6 +373,7 @@ public class DataSetMetadataBuilder {
 
         this.sheetName = original.getSheetName();
         this.draft = original.isDraft();
+        this.dataSetSize = original.getDataSetSize();
 
         this.size = original.getContent().getNbRecords();
         if (original.getContent().getLimit().isPresent()) {
@@ -441,6 +449,7 @@ public class DataSetMetadataBuilder {
         }
         metadata.setSheetName(this.sheetName);
         metadata.setDraft(this.draft);
+        metadata.setDataSetSize(this.dataSetSize);
         metadata.setLocation(this.location);
         if (this.certificationStep != null) {
             metadata.getGovernance().setCertificationStep(this.certificationStep);

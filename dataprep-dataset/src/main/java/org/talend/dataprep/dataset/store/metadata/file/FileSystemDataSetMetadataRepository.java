@@ -13,10 +13,7 @@
 
 package org.talend.dataprep.dataset.store.metadata.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -114,7 +111,8 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
         ReentrantReadWriteLock lock = locks.getLock(id);
 
         lock.readLock().lock();
-        try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(file))) {
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+                GZIPInputStream input = new GZIPInputStream(fileInputStream)) {
             return mapper.readerFor(DataSetMetadata.class).readValue(input);
         } catch (IOException e) {
             LOG.error("unable to load dataset {}", id, e);

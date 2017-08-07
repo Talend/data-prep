@@ -27,7 +27,6 @@ import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComp
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
@@ -64,6 +63,7 @@ import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
+import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
@@ -98,14 +98,7 @@ public class DataSetService extends BaseDataSetService {
     /** This class' logger. */
     private static final Logger LOG = LoggerFactory.getLogger(DataSetService.class);
 
-    /** Date format to use. */
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-YYYY HH:mm"); // $NON-NLS-1
-
     private static final String CONTENT_TYPE = "Content-Type";
-
-    static {
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
 
     /**
      * Format analyzer needed to update the schema.
@@ -154,6 +147,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private BeanConversionService conversionService;
+
+    @Autowired
+    private QuotaService quotaService;
 
     @Value("#{'${dataset.imports}'.split(',')}")
     private Set<String> enabledImports;
@@ -258,6 +254,7 @@ public class DataSetService extends BaseDataSetService {
      * Creates a new data set and returns the new data set id as text in the response.
      *
      * @param name An optional name for the new data set (might be <code>null</code>).
+     * @param size An optional size for the newly created data set.
      * @param contentType the request content type.
      * @param content The raw content of the data set (might be a CSV, XLS...) or the connection parameter in case of a
      * remote csv.
@@ -272,6 +269,7 @@ public class DataSetService extends BaseDataSetService {
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(defaultValue = "") String tag,
+            @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
             @RequestHeader(CONTENT_TYPE) String contentType,
             @ApiParam(value = "content") InputStream content) throws IOException {
         //@formatter:on
@@ -283,6 +281,8 @@ public class DataSetService extends BaseDataSetService {
 
         // check that the name is not already taken
         checkIfNameIsAvailable(name);
+
+        quotaService.checkIfAddingSizeExceedsAvailableStorage(size);
 
         // get the location out of the content type and the request body
         final DataSetLocation location;

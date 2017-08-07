@@ -40,6 +40,7 @@ public enum DataSetErrorCodes implements ErrorCode {
      * meaning all mandatory analysis prevents service to correctly
      * serve data set's content.
      *
+     * @see DataSetLifecycle#importing()
      */
     UNABLE_TO_SERVE_DATASET_CONTENT(BAD_REQUEST.value(), "id"),
     /**
@@ -197,7 +198,12 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * A lookup dataSet used by a preparation with a given name have not the expected format.
      */
-    INVALID_DATASET_NAME(BAD_REQUEST.value(), "name");
+    INVALID_DATASET_NAME(BAD_REQUEST.value(), "name"),
+    /**
+     * A create operation on a dataset lead to exceeding storage quota.
+     */
+    MAX_STORAGE_MAY_BE_EXCEEDED(PAYLOAD_TOO_LARGE.value(), "size");
+
 
     /**
      * The http status to use.

@@ -80,10 +80,17 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final String dataSetId = parameters.getDatasetId();
         final ExportFormat format = getFormat(parameters.getExportType());
 
+        // dataset content must be retrieved as the technical user because it might not be shared
+        boolean technicianIdentityReleased = false;
+        securityProxy.asTechnicalUser();
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
         try (final InputStream datasetContent = dataSetGet.execute();
-             final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+                final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+
+            // release the technical user identity
+            securityProxy.releaseIdentity();
+            technicianIdentityReleased = true;
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
 
@@ -94,22 +101,16 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             final String actions = getActions(preparationId, version);
 
             // create tee to broadcast to cache + service output
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                    dataSetId,
-                    preparationId,
-                    version,
-                    formatName,
-                    parameters.getFrom(),
-                    parameters.getArguments()
-            );
+            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(dataSetId, preparationId, version, formatName,
+                    parameters.getFrom(), parameters.getArguments());
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
+                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
                 final Configuration configuration = Configuration.builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .sourceType(parameters.getFrom())
-                        .format(format.getName()) //
+                        .sourceType(parameters.getFrom()).format(format.getName()) //
                         .actions(actions) //
                         .preparation(getPreparation(preparationId)) //
                         .stepId(version) //
@@ -127,6 +128,10 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             throw e;
         } catch (Exception e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
+        } finally {
+            if (!technicianIdentityReleased) {
+                securityProxy.releaseIdentity();
+            }
         }
     }
 }

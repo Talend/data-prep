@@ -22,7 +22,7 @@ export default class ProgressService {
 		'ngInject';
 
 		this.PROGRESSION_STATES = PROGRESSION_STATES;
-		this.steps = [];
+		this._steps = [];
 		this.title = '';
 		this.progressionGetter = null;
 	}
@@ -35,7 +35,7 @@ export default class ProgressService {
 	//  * @returns {Promise} The GET call promise
 	//  */
 	// set steps(steps) {
-	// 	this.steps = steps;
+	// 	this._steps = steps;
 	// }
 	//
 	// set title(title) {
@@ -53,17 +53,30 @@ export default class ProgressService {
 	 * @description sets the fetched builds in the state
 	 */
 	next() {
-		const index = this.steps.findIndex(step => step.state === this.PROGRESSION_STATES.IN_PROGRESS);
+		const index = this._steps.findIndex(step => step.state === this.PROGRESSION_STATES.IN_PROGRESS);
 
-		if (this.steps[index + 1]) {
-			this.steps[index].state = this.PROGRESSION_STATES.COMPLETE;
-			this.steps[index + 1].state = this.PROGRESSION_STATES.IN_PROGRESS;
+		if (this._steps[index + 1]) {
+			this._steps[index].state = this.PROGRESSION_STATES.COMPLETE;
+			this._steps[index + 1].state = this.PROGRESSION_STATES.IN_PROGRESS;
 		}
 		else {
 			this.progressionGetter = null;
 			this.title = '';
-			this.steps = [];
+			this._steps = [];
 		}
 	}
 
+	set steps(steps) {
+		this._steps = [...steps].map((s) => {
+			return { ...s };
+		});
+	}
+
+	get steps() {
+		return this._steps;
+	}
+
+	get current() {
+		return this._steps.find(step => step.state === this.PROGRESSION_STATES.IN_PROGRESS);
+	}
 }

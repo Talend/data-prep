@@ -11,7 +11,7 @@
             <div
                 class="progression"
                 ng-style="{width: $ctrl.ProgressService.progressionGetter() + '%'}"
-                ng-class="{'infinite': $ctrl.currentStep.type === 'INFINITE'}"
+                ng-class="{'infinite': $ctrl.ProgressService.current.type === $ctrl.PROGRESSION_TYPES.INFINITE}"
             >
             </div>
     	</div>
@@ -21,14 +21,17 @@
                 ng-repeat="step in $ctrl.ProgressService.steps track by $index"
                 ng-if="step.label"
                 class="step"
-                ng-class="{
-                    'in-progress': step.state === 'IN_PROGRESS',
-                    'complete': step.state === 'COMPLETE',
-                    'future': step.state === 'FUTURE'
-                }">
+                ng-class="$ctrl.getSpinnerClass(step.state)">
                 <span>{{ step.label | translate }}</span>
-                <pure-circular-progress  ng-if="step.state === 'IN_PROGRESS'" class="step-icon progress-icon"></pure-circular-progress>
-                <icon ng-if="step.state === 'COMPLETE'" class="step-icon complete-icon" name="'talend-check'"/>
+                <pure-circular-progress
+                    ng-if="step.state === $ctrl.PROGRESSION_STATES.IN_PROGRESS"
+                    class="step-icon progress-icon"
+                ></pure-circular-progress>
+                <icon
+                    ng-if="step.state === $ctrl.PROGRESSION_STATES.COMPLETE"
+                    class="step-icon complete-icon"
+                    name="'talend-check'"
+                />
             </li>
     	</ol>
 </talend-modal>

@@ -32,6 +32,8 @@ import { homeState, HomeStateService } from './home/home-state-service';
 import { state, StateService } from './state-service';
 import { searchState, SearchStateService } from './search/search-state-service';
 
+import SERVICES_PROGRESS_MODULE from '../progress/progress-module';
+
 const MODULE_NAME = 'data-prep.services.state';
 
 /**
@@ -39,7 +41,7 @@ const MODULE_NAME = 'data-prep.services.state';
  * @name data-prep.services.state
  * @description This module contains the service that hold the application state
  */
-angular.module(MODULE_NAME, [])
+angular.module(MODULE_NAME, [SERVICES_PROGRESS_MODULE])
 	.service('DatasetStateService', DatasetStateService)
 	.constant('datasetState', datasetState)
 

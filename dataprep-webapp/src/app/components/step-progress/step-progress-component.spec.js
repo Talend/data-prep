@@ -18,14 +18,8 @@ describe('Step Progress component', () => {
 	let stateMock;
 	let controller;
 
-	beforeEach(angular.mock.module('data-prep.step-progress', ($provide) => {
-		stateMock = {
-			dataset: {
-				uploadingDataset:  null,
-				uploadSteps: [],
-			},
-		};
-		$provide.constant('state', stateMock);
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.preferredLanguage('en');
 	}));
 
 	beforeEach(inject(($rootScope, $compile) => {

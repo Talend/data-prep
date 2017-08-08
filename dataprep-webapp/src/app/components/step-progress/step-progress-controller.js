@@ -19,11 +19,11 @@ export default class StepProgressCtrl {
 		this.PROGRESSION_STATES = PROGRESSION_STATES;
 	}
 
-	getSpinnerClass(state) {
+	getStepClass(state) {
 		return {
-			IN_PROGRESS: 'in-progress',
-			COMPLETE: 'complete',
-			FUTURE: 'future',
+			[this.PROGRESSION_STATES.IN_PROGRESS]: 'in-progress',
+			[this.PROGRESSION_STATES.COMPLETE]: 'complete',
+			[this.PROGRESSION_STATES.FUTURE]: 'future',
 		}[state];
 	}
 }

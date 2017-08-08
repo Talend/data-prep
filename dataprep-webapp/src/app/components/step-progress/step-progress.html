@@ -21,7 +21,7 @@
                 ng-repeat="step in $ctrl.ProgressService.steps track by $index"
                 ng-if="step.label"
                 class="step"
-                ng-class="$ctrl.getSpinnerClass(step.state)">
+                ng-class="$ctrl.getStepClass(step.state)">
                 <span>{{ step.label | translate }}</span>
                 <pure-circular-progress
                     ng-if="step.state === $ctrl.PROGRESSION_STATES.IN_PROGRESS"

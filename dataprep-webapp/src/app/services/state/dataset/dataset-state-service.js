@@ -30,7 +30,11 @@ export function DatasetStateService($translate, ProgressService, PROGRESSION_DEF
     // --------------------------------------------------------------------------------------------
 	function startUploadingDataset(dataset) {
 		datasetState.uploadingDataset = dataset;
-		initSteps(dataset);
+		ProgressService.start(
+			'ADD_NEW_DATASET',
+			PROGRESSION_DEFAULTS.DATASET,
+			() => dataset.progress
+		);
 	}
 
 	function startProfilingDataset() {
@@ -40,11 +44,5 @@ export function DatasetStateService($translate, ProgressService, PROGRESSION_DEF
 	function finishUploadingDataset() {
 		datasetState.uploadingDataset = null;
 		ProgressService.next();
-	}
-
-	function initSteps(dataset) {
-		ProgressService.title = 'ADD_NEW_DATASET';
-		ProgressService.steps = PROGRESSION_DEFAULTS.DATASET;
-		ProgressService.progressionGetter = () => dataset.progress;
 	}
 }

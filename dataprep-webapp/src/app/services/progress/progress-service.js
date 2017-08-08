@@ -24,7 +24,7 @@ export default class ProgressService {
 		this.PROGRESSION_STATES = PROGRESSION_STATES;
 		this._steps = [];
 		this.title = '';
-		this.progressionGetter = null;
+		this.getProgression = null;
 	}
 
 	// /**
@@ -45,6 +45,12 @@ export default class ProgressService {
 	// set progressionGetter(getter) {
 	// 	this.progressionGetter = getter;
 	// }
+
+	start(title, steps, getter) {
+		this.title = title;
+		this.steps = steps;
+		this.getProgression = getter;
+	}
 
 	/**
 	 * @ngdoc method

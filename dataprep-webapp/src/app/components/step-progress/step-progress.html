@@ -10,7 +10,7 @@
     	<div class="progress">
             <div
                 class="progression"
-                ng-style="{width: $ctrl.ProgressService.progressionGetter() + '%'}"
+                ng-style="{width: $ctrl.ProgressService.getProgression() + '%'}"
                 ng-class="{'infinite': $ctrl.ProgressService.current.type === $ctrl.PROGRESSION_TYPES.INFINITE}"
             >
             </div>

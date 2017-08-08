@@ -5,12 +5,12 @@
                 disable-enter="true"
                 disable-close-on-background-click="true">
 
-        <h1>{{ $ctrl.modalTitle }}</h1>
+        <h1>{{ $ctrl.ProgressService.title | translate }}</h1>
 
     	<div class="progress">
             <div
                 class="progression"
-                ng-style="{width: $ctrl.currentStep.getValue() + '%'}"
+                ng-style="{width: $ctrl.ProgressService.progressionGetter() + '%'}"
                 ng-class="{'infinite': $ctrl.currentStep.type === 'INFINITE'}"
             >
             </div>
@@ -18,7 +18,7 @@
 
         <ol class="steps-list">
             <li
-                ng-repeat="step in $ctrl.steps track by $index"
+                ng-repeat="step in $ctrl.ProgressService.steps track by $index"
                 ng-if="step.label"
                 class="step"
                 ng-class="{
@@ -26,7 +26,7 @@
                     'complete': step.state === 'COMPLETE',
                     'future': step.state === 'FUTURE'
                 }">
-                <span>{{ step.label }}</span>
+                <span>{{ step.label | translate }}</span>
                 <pure-circular-progress  ng-if="step.state === 'IN_PROGRESS'" class="step-icon progress-icon"></pure-circular-progress>
                 <icon ng-if="step.state === 'COMPLETE'" class="step-icon complete-icon" name="'talend-check'"/>
             </li>

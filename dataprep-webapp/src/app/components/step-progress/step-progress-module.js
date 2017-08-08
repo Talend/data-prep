@@ -13,12 +13,14 @@
 
 import angular from 'angular';
 
+import SERVICES_PROGRESS_MODULE from '../../services/progress/progress-module';
+
 import StepProgressComponent from './step-progress-component';
 
 
 const MODULE_NAME = 'data-prep.step-progress';
 
-angular.module(MODULE_NAME, [])
+angular.module(MODULE_NAME, [SERVICES_PROGRESS_MODULE])
 	.component('stepProgress', StepProgressComponent);
 
 export default MODULE_NAME;

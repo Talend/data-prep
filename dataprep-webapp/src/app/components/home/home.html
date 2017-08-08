@@ -7,9 +7,6 @@
 <preparation-copy-move></preparation-copy-move>
 <preparation-creator></preparation-creator>
 <insertion-home></insertion-home>
-<step-progress 	modal-title="$ctrl.ProgressService.title"
-				ng-if="!$ctrl.state.home.preparations.creator.isVisible"
-				steps="$ctrl.ProgressService.steps"
->
+<step-progress ng-if="!$ctrl.state.home.preparations.creator.isVisible">
 </step-progress>
 <name-modal></name-modal>

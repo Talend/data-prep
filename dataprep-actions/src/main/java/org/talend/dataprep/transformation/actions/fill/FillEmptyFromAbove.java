@@ -13,6 +13,11 @@
 
 package org.talend.dataprep.transformation.actions.fill;
 
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+
+import java.util.EnumSet;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -20,11 +25,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.converters.StringTrimmer;
-
-import java.util.*;
-
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
 /**
  * TDQ-13265 msjian : Fill empty cell from above.
@@ -74,8 +74,10 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
         final String value = row.get(columnId);
 
         // Empty means null, empty string and any whitespace only strings
-        if (StringUtils.isBlank(value) && holder.getValue() != null) {
-             row.set(columnId, holder.getValue());
+        if (StringUtils.isBlank(value)) {
+            if (holder.getValue() != null) {
+                row.set(columnId, holder.getValue());
+            }
         } else {
             holder.setValue(value);
         }

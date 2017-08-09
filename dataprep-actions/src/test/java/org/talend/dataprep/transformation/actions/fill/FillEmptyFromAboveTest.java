@@ -13,6 +13,19 @@
 
 package org.talend.dataprep.transformation.actions.fill;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -20,20 +33,8 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
  * Unit test for the FillEmptyFromAbove action.
@@ -276,13 +277,13 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
 
         // row 0
         rowContent.put("0000", "David");
-        String davidFirstBlankValue = "\\u2006\\u00A0";
+        String davidFirstBlankValue = "\u2006";
         rowContent.put("0001", davidFirstBlankValue);
         final DataSetRow row0 = new DataSetRow(rowContent);
 
         // row 1
         rowContent.put("0000", "David");
-        String davidSecondBlankValue = "  \\t\\r";
+        String davidSecondBlankValue = "  \t\r";
         rowContent.put("0001", davidSecondBlankValue);
         final DataSetRow row1 = new DataSetRow(rowContent);
 

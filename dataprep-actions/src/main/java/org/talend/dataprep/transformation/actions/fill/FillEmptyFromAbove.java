@@ -35,8 +35,8 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
     /** the action name. */
     public static final String ACTION_NAME = "fill_empty_from_above"; //$NON-NLS-1$
 
-    /** empty value list. */
-    public static final List EMPTY_VALUE_LIST = Arrays.asList(new StringTrimmer().WHITESPACE_CHARS);
+    /** previous row's value store. */
+    public static final String PREVIOUS = "previous"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -56,14 +56,11 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
     @Override
     public Set<Behavior> getBehavior() {  return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED); }
 
-    /** this class is used to store the previous value. */
-    private static class PreviousValueHolder {
-        String value;
-        public String getValue() {
-            return value;
-        }
-        public void setValue(String value) {
-            this.value = value;
+    @Override
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+            actionContext.get(PREVIOUS, values -> new PreviousValueHolder());
         }
     }
 
@@ -72,15 +69,26 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
         // the first time applyOnColumn is called, save the current value in PreviousValueHolder
         // and the Optional.ofNullable(...) allows you to NOT modify the first row (add an empty value)
         // then second call of applyOnColumn, PreviousContextHolder has... previous value
-        final PreviousValueHolder holder = context.get("previous", values -> new PreviousValueHolder());
+        final PreviousValueHolder holder = context.get(PREVIOUS);
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
 
         // Empty means null, empty string and any whitespace only strings
-        if (StringUtils.isBlank(value) || EMPTY_VALUE_LIST.contains(value)) {
-            row.set(columnId, Optional.ofNullable(holder.getValue()).orElse(value));
+        if (StringUtils.isBlank(value) && holder.getValue() != null) {
+             row.set(columnId, holder.getValue());
         } else {
             holder.setValue(value);
+        }
+    }
+
+    /** this class is used to store the previous value. */
+    private static class PreviousValueHolder {
+        String value;
+        public String getValue() {
+            return value;
+        }
+        public void setValue(String value) {
+            this.value = value;
         }
     }
 }

@@ -43,18 +43,18 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    private FillEmptyFromAbove fillEmptyFromAbove = new FillEmptyFromAbove();
+    private FillEmptyFromAbove action = new FillEmptyFromAbove();
 
     @PostConstruct
     public void init() {
-        fillEmptyFromAbove = (FillEmptyFromAbove) fillEmptyFromAbove.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
+        action = (FillEmptyFromAbove) action.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
     }
 
     @Test
     public void test_adapt() throws Exception {
-        assertThat(fillEmptyFromAbove.adapt((ColumnMetadata) null), is(fillEmptyFromAbove));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(fillEmptyFromAbove.adapt(column), is(fillEmptyFromAbove));
+        assertThat(action.adapt(column), is(action));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
         List<String> parameterNames = Arrays.asList("column_id", "row_id", "scope", "filter");
 
         // when
-        final List<Parameter> parameters = fillEmptyFromAbove.getParameters();
+        final List<Parameter> parameters = action.getParameters();
 
         // then
         assertNotNull(parameters);
@@ -77,8 +77,14 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
     @Test
     public void should_fill_empty_string() throws Exception {
         // given
-        // row 1
         Map<String, String> rowContent = new HashMap<>();
+
+        // row 0
+        rowContent.put("0000", "David");
+        rowContent.put("0001", null);
+        final DataSetRow row0 = new DataSetRow(rowContent);
+
+        // row 1
         rowContent.put("0000", "David");
         rowContent.put("0001", "");
         final DataSetRow row1 = new DataSetRow(rowContent);
@@ -125,6 +131,22 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
         rowContent.put("0001", "\t");
         final DataSetRow row8 = new DataSetRow(rowContent);
 
+
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "\f");
+        final DataSetRow row81 = new DataSetRow(rowContent);
+
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "\n");
+        final DataSetRow row82 = new DataSetRow(rowContent);
+
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "\r");
+        final DataSetRow row83 = new DataSetRow(rowContent);
+
         // row 9
         rowContent = new HashMap<>();
         rowContent.put("0000", "John");
@@ -142,9 +164,11 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
         parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2,row3, row4,row5, row6,row7, row8, row9, row10), actionRegistry, factory.create(fillEmptyFromAbove, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row0,row1, row2,row3, row4,row5, row6,row7, row8, row81, row82, row83, row9, row10), actionRegistry, factory.create(
+                action, parameters));
 
         // then
+        assertNull(row0.get("0001"));
         assertEquals("", row1.get("0001"));
         assertEquals("200", row2.get("0001"));
         assertEquals("200", row3.get("0001"));
@@ -153,6 +177,9 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
         assertEquals("600", row6.get("0001"));
         assertEquals("600", row7.get("0001"));
         assertEquals("600", row8.get("0001"));
+        assertEquals("600", row81.get("0001"));
+        assertEquals("600", row82.get("0001"));
+        assertEquals("600", row83.get("0001"));
         assertEquals("900", row9.get("0001"));
         assertEquals("aaa", row10.get("0001"));
     }
@@ -227,7 +254,7 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
-                factory.create(fillEmptyFromAbove, parameters));
+                factory.create(action, parameters));
 
         // then
         assertEquals("", row1.get("0001"));
@@ -244,16 +271,15 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillEmptyFromAbove.acceptField(getColumn(Type.STRING)));
-        assertTrue(fillEmptyFromAbove.acceptField(getColumn(Type.NUMERIC)));
-        assertTrue(fillEmptyFromAbove.acceptField(getColumn(Type.ANY)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, fillEmptyFromAbove.getBehavior().size());
-        assertTrue(fillEmptyFromAbove.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
-        assertTrue(fillEmptyFromAbove.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
     }
-
 }

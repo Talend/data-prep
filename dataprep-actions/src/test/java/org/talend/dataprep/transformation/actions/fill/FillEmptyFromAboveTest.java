@@ -270,6 +270,36 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_not_copy_blanks() throws Exception {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+
+        // row 0
+        rowContent.put("0000", "David");
+        String davidFirstBlankValue = "\\u2006\\u00A0";
+        rowContent.put("0001", davidFirstBlankValue);
+        final DataSetRow row0 = new DataSetRow(rowContent);
+
+        // row 1
+        rowContent.put("0000", "David");
+        String davidSecondBlankValue = "  \\t\\r";
+        rowContent.put("0001", davidSecondBlankValue);
+        final DataSetRow row1 = new DataSetRow(rowContent);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row0,row1), actionRegistry, factory.create(
+                action, parameters));
+
+        // then
+        assertEquals(davidFirstBlankValue, row0.get("0001"));
+        assertEquals(davidSecondBlankValue, row1.get("0001"));
+    }
+
+    @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.STRING)));
         assertTrue(action.acceptField(getColumn(Type.NUMERIC)));

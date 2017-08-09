@@ -27,25 +27,14 @@ export default class ProgressService {
 		this.getProgression = null;
 	}
 
-	// /**
-	//  * @ngdoc method
-	//  * @name fetchBuildDetails
-	//  * @methodOf data-prep.services.progress.service:ProgressService
-	//  * @description Fetches the build id of each backend service
-	//  * @returns {Promise} The GET call promise
-	//  */
-	// set steps(steps) {
-	// 	this._steps = steps;
-	// }
-	//
-	// set title(title) {
-	// 	this.title = this.$translate(title);
-	// }
-	//
-	// set progressionGetter(getter) {
-	// 	this.progressionGetter = getter;
-	// }
-
+	/**
+	 * @ngdoc method
+	 * @name start
+	 * @methodOf data-prep.services.progress.service:ProgressService
+	 * @description Displays the step progress modal
+	 * @param {Object} schema The steps and the modal title
+	 * @param {Function} getter The getter to use to obtain the progress value
+	 */
 	start(schema, getter) {
 		this.title = schema.title;
 		this.steps = schema.steps;
@@ -54,9 +43,9 @@ export default class ProgressService {
 
 	/**
 	 * @ngdoc method
-	 * @name loadBuilds
+	 * @name next
 	 * @methodOf data-prep.services.progress.service:ProgressService
-	 * @description sets the fetched builds in the state
+	 * @description Displays the next step
 	 */
 	next() {
 		const index = this._steps.findIndex(step => step.state === this.ProgressConstants.STATES.IN_PROGRESS);
@@ -70,6 +59,12 @@ export default class ProgressService {
 		}
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name reset
+	 * @methodOf data-prep.services.progress.service:ProgressService
+	 * @description Hide the modal and reset his attributes
+	 */
 	reset() {
 		this.progressionGetter = null;
 		this.title = '';

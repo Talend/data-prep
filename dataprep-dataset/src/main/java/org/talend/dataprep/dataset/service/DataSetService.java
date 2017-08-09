@@ -279,9 +279,7 @@ public class DataSetService extends BaseDataSetService {
             @RequestHeader(CONTENT_TYPE) String contentType,
             @ApiParam(value = "content") InputStream content) throws IOException {
         //@formatter:on
-        if (StringUtils.isBlank(name) || name.contains("\'")) {
-            throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME, ExceptionContext.withBuilder().put("name", name).build());
-        }
+        checkDataSetName(name);
 
         final String id = UUID.randomUUID().toString();
         final Marker marker = Markers.dataset(id);
@@ -463,6 +461,10 @@ public class DataSetService extends BaseDataSetService {
             @ApiParam(value = "The name of the cloned dataset.") @RequestParam(required = false) String copyName)
             throws IOException {
 
+        if (copyName != null) {
+            checkDataSetName(copyName);
+        }
+
         HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
 
         DataSetMetadata original = dataSetMetadataRepository.get(dataSetId);
@@ -535,6 +537,10 @@ public class DataSetService extends BaseDataSetService {
             @ApiParam(value = "content") InputStream dataSetContent) {
 
         LOG.debug("updating dataset content #{}", dataSetId);
+
+        if (name != null) {
+            checkDataSetName(name);
+        }
 
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         try {
@@ -660,6 +666,10 @@ public class DataSetService extends BaseDataSetService {
     public void updateDataSet(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId,
             @RequestBody DataSetMetadata dataSetMetadata) {
+
+        if (dataSetMetadata != null && dataSetMetadata.getName() != null) {
+            checkDataSetName(dataSetMetadata.getName());
+        }
 
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         lock.lock();
@@ -1025,5 +1035,17 @@ public class DataSetService extends BaseDataSetService {
             return columnMetadata.getSemanticDomains();
         }
 
+    }
+
+    /**
+     * Verify validity of the supplied name for a data set. This check will fail if the supplied name is null or only containing
+     * whitespaces characters. It will also throw an exception if a quote is in the name as it is an illegal TQL chars for searches.
+     *
+     * @param dataSetName the data set name to validate
+     */
+    private void checkDataSetName(String dataSetName) {
+        if (dataSetName.contains("'")) {
+            throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME, ExceptionContext.withBuilder().put("name", dataSetName).build());
+        }
     }
 }

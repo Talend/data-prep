@@ -19,8 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
@@ -163,7 +163,7 @@ public class DataSetImportTest extends DataSetBaseTest {
             try {
                 dataSetId = given().body(
                         IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
-                        .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                        .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
                 LOGGER.debug("testCannotOpenDataSetBeingImported dataset created #{}", dataSetId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -173,8 +173,12 @@ public class DataSetImportTest extends DataSetBaseTest {
         Thread creationThread = new Thread(creation);
         creationThread.start();
         // Wait for creation of data set object
+        int iterations = 0;
         while (dataSetMetadataRepository.size() == 0) {
             TimeUnit.MILLISECONDS.sleep(20);
+            if (iterations++ > 100) {
+                fail();
+            }
         }
         // Find data set being imported...
         final Iterator<DataSetMetadata> iterator = dataSetMetadataRepository.list().iterator();

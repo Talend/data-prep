@@ -42,6 +42,6 @@ export function DatasetStateService($translate, ProgressService, ProgressConstan
 
 	function finishUploadingDataset() {
 		datasetState.uploadingDataset = null;
-		ProgressService.next();
+		ProgressService.reset();
 	}
 }

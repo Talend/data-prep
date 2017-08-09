@@ -42,11 +42,14 @@ describe('Step Progress component', () => {
 	describe('render', () => {
 		it('should render 2 steps', inject(function ($rootScope, ProgressService) {
 			// given
-			const mock = [
-				{ label: '1' },
-				{ label: '2' },
-			];
-			ProgressService.start('test', mock);
+			const mock = {
+				title: 'test',
+				steps: [
+					{ label: '1' },
+					{ label: '2' },
+				]
+			};
+			ProgressService.start(mock);
 			// when
 			createElement();
 			scope.$digest();
@@ -57,11 +60,14 @@ describe('Step Progress component', () => {
 
 		it('should not render steps without label', inject(function ($rootScope, ProgressService) {
 			// given
-			const mock = [
-				{ label: '1' },
-				{},
-			];
-			ProgressService.start('test', mock);
+			const mock = {
+				title: 'test',
+				steps: [
+					{ label: '1' },
+					{},
+				]
+			};
+			ProgressService.start(mock);
 
 			// when
 			createElement();
@@ -73,11 +79,14 @@ describe('Step Progress component', () => {
 
 		it('should indicates an in progress upload', inject(function ($rootScope, ProgressService) {
 			// given
-			const mock = [
-				{ id: 'mock', name: 'Mock', state: 'IN_PROGRESS', label: 'A' },
-				{ id: 'mock', name: 'Mock', type: 'INFINITE', label: 'B', state: 'FUTURE' },
-			];
-			ProgressService.start('test', mock);
+			const mock = {
+				title: 'test',
+				steps: [
+					{ id: 'mock', name: 'Mock', state: 'IN_PROGRESS', label: 'A' },
+					{ id: 'mock', name: 'Mock', type: 'INFINITE', label: 'B', state: 'FUTURE' },
+				]
+			};
+			ProgressService.start(mock);
 
 			// when
 			createElement();
@@ -91,11 +100,14 @@ describe('Step Progress component', () => {
 
 		it('should indicates an in progress profiling', inject(function ($rootScope, ProgressService) {
 			// given
-			const mock = [
-				{ id: 'mock', name: 'Mock', state: 'COMPLETE', label: 'A' },
-				{ id: 'mock', name: 'Mock', type: 'INFINITE', state: 'IN_PROGRESS', label: 'B' },
-			];
-			ProgressService.start('test', mock);
+			const mock = {
+				title: 'test',
+				steps: [
+					{ id: 'mock', name: 'Mock', state: 'COMPLETE', label: 'A' },
+					{ id: 'mock', name: 'Mock', type: 'INFINITE', state: 'IN_PROGRESS', label: 'B' },
+				]
+			};
+			ProgressService.start(mock);
 
 			// when
 			createElement();

@@ -11,12 +11,12 @@
 
   ============================================================================*/
 
-describe('Analytics state service', function () {
+describe('Analytics state service', () => {
     'use strict';
 
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    it('should set value by default', inject(function (analyticsEnabled) {
+    it('should set value by default', inject((analyticsEnabled) => {
         //then
         expect(analyticsEnabled).toBe(false);
     }));

@@ -11,12 +11,12 @@
 
   ============================================================================*/
 
-describe('Analytics account service', function () {
+describe('Analytics account service', () => {
     'use strict';
 
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    it('should set value by default', inject(function (analyticsAccount) {
+    it('should set value by default', inject((analyticsAccount) => {
         //then
         expect(analyticsAccount).toBe('');
     }));

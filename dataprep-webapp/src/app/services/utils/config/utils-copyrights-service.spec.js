@@ -11,12 +11,12 @@
 
   ============================================================================*/
 
-describe('Copyrights service', function () {
+describe('Copyrights service', () => {
     'use strict';
 
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    it('should set value by default', inject(function (copyRights) {
+    it('should set value by default', inject((copyRights) => {
         //then
         expect(copyRights).toBe('Talend. All Rights Reserved');
     }));

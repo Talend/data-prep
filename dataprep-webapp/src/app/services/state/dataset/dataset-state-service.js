@@ -30,10 +30,7 @@ export function DatasetStateService($translate, ProgressService, ProgressConstan
     // --------------------------------------------------------------------------------------------
 	function startUploadingDataset(dataset) {
 		datasetState.uploadingDataset = dataset;
-		ProgressService.start(
-			ProgressConstants.SCHEMAS.DATASET,
-			() => dataset.progress
-		);
+		ProgressService.start(ProgressConstants.SCHEMAS.DATASET, () => dataset.progress);
 	}
 
 	function startProfilingDataset() {

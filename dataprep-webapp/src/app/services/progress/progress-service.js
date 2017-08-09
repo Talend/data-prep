@@ -38,7 +38,7 @@ export default class ProgressService {
 	start(schema, getter) {
 		this.title = schema.title;
 		this.steps = schema.steps;
-		this.getProgression = getter;
+		this.getProgression = getter || (() => 0);
 	}
 
 	/**

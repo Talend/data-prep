@@ -18,10 +18,10 @@
  * @description Progress Service. This service manage the progressions
  */
 export default class ProgressService {
-	constructor(PROGRESSION_STATES) {
+	constructor(ProgressConstants) {
 		'ngInject';
 
-		this.PROGRESSION_STATES = PROGRESSION_STATES;
+		this.ProgressConstants = ProgressConstants;
 		this._steps = [];
 		this.title = '';
 		this.getProgression = null;
@@ -46,9 +46,9 @@ export default class ProgressService {
 	// 	this.progressionGetter = getter;
 	// }
 
-	start(title, steps, getter) {
-		this.title = title;
-		this.steps = steps;
+	start(schema, getter) {
+		this.title = schema.title;
+		this.steps = schema.steps;
 		this.getProgression = getter;
 	}
 
@@ -59,17 +59,21 @@ export default class ProgressService {
 	 * @description sets the fetched builds in the state
 	 */
 	next() {
-		const index = this._steps.findIndex(step => step.state === this.PROGRESSION_STATES.IN_PROGRESS);
+		const index = this._steps.findIndex(step => step.state === this.ProgressConstants.STATES.IN_PROGRESS);
 
 		if (this._steps[index + 1]) {
-			this._steps[index].state = this.PROGRESSION_STATES.COMPLETE;
-			this._steps[index + 1].state = this.PROGRESSION_STATES.IN_PROGRESS;
+			this._steps[index].state = this.ProgressConstants.STATES.COMPLETE;
+			this._steps[index + 1].state = this.ProgressConstants.STATES.IN_PROGRESS;
 		}
 		else {
-			this.progressionGetter = null;
-			this.title = '';
-			this._steps = [];
+			this.reset();
 		}
+	}
+
+	reset() {
+		this.progressionGetter = null;
+		this.title = '';
+		this._steps = [];
 	}
 
 	set steps(steps) {
@@ -83,6 +87,6 @@ export default class ProgressService {
 	}
 
 	get current() {
-		return this._steps.find(step => step.state === this.PROGRESSION_STATES.IN_PROGRESS);
+		return this._steps.find(step => step.state === this.ProgressConstants.STATES.IN_PROGRESS);
 	}
 }

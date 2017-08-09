@@ -29,14 +29,14 @@ describe('Dataset progress controller', () => {
 	}));
 
 	describe('step class getter', () => {
-		it('should return the appropriate class', inject((PROGRESSION_STATES) => {
+		it('should return the appropriate class', inject((ProgressConstants) => {
 			//given
 			const ctrl = createController();
 
 			//then
-			expect(ctrl.getStepClass(PROGRESSION_STATES.IN_PROGRESS)).toBe('in-progress');
-			expect(ctrl.getStepClass(PROGRESSION_STATES.COMPLETE)).toBe('complete');
-			expect(ctrl.getStepClass(PROGRESSION_STATES.FUTURE)).toBe('future');
+			expect(ctrl.getStepClass(ProgressConstants.STATES.IN_PROGRESS)).toBe('in-progress');
+			expect(ctrl.getStepClass(ProgressConstants.STATES.COMPLETE)).toBe('complete');
+			expect(ctrl.getStepClass(ProgressConstants.STATES.FUTURE)).toBe('future');
 		}));
 	});
 });

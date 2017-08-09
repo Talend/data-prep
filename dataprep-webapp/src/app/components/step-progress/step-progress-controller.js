@@ -12,18 +12,17 @@
  ============================================================================*/
 
 export default class StepProgressCtrl {
-	constructor(ProgressService, PROGRESSION_TYPES, PROGRESSION_STATES) {
+	constructor(ProgressService, ProgressConstants) {
 		'ngInject';
+		this.ProgressConstants = ProgressConstants;
 		this.ProgressService = ProgressService;
-		this.PROGRESSION_TYPES = PROGRESSION_TYPES;
-		this.PROGRESSION_STATES = PROGRESSION_STATES;
 	}
 
 	getStepClass(state) {
 		return {
-			[this.PROGRESSION_STATES.IN_PROGRESS]: 'in-progress',
-			[this.PROGRESSION_STATES.COMPLETE]: 'complete',
-			[this.PROGRESSION_STATES.FUTURE]: 'future',
+			[this.ProgressConstants.STATES.IN_PROGRESS]: 'in-progress',
+			[this.ProgressConstants.STATES.COMPLETE]: 'complete',
+			[this.ProgressConstants.STATES.FUTURE]: 'future',
 		}[state];
 	}
 }

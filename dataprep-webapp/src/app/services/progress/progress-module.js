@@ -13,14 +13,8 @@
 
 import angular from 'angular';
 
-import {
-	DEFAULTS,
-	TYPES,
-	STATES,
-} from './progress-service-constants';
-
 import ProgressService from './progress-service';
-
+import ProgressConstants from './progress-constants';
 
 const MODULE_NAME = 'data-prep.services.progress';
 
@@ -31,9 +25,7 @@ const MODULE_NAME = 'data-prep.services.progress';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME, [])
-	.value('PROGRESSION_STATES', STATES)
-	.value('PROGRESSION_TYPES', TYPES)
-	.value('PROGRESSION_DEFAULTS', DEFAULTS)
+	.service('ProgressConstants', ProgressConstants)
 	.service('ProgressService', ProgressService);
 
 export default MODULE_NAME;

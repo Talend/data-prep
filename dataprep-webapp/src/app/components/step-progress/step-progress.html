@@ -11,7 +11,7 @@
             <div
                 class="progression"
                 ng-style="{width: $ctrl.ProgressService.getProgression() + '%'}"
-                ng-class="{'infinite': $ctrl.ProgressService.current.type === $ctrl.PROGRESSION_TYPES.INFINITE}"
+                ng-class="{'infinite': $ctrl.ProgressService.current.type === $ctrl.ProgressConstants.TYPES.INFINITE}"
             >
             </div>
     	</div>
@@ -24,11 +24,11 @@
                 ng-class="$ctrl.getStepClass(step.state)">
                 <span>{{ step.label | translate }}</span>
                 <pure-circular-progress
-                    ng-if="step.state === $ctrl.PROGRESSION_STATES.IN_PROGRESS"
+                    ng-if="step.state === $ctrl.ProgressConstants.STATE.IN_PROGRESS"
                     class="step-icon progress-icon"
                 ></pure-circular-progress>
                 <icon
-                    ng-if="step.state === $ctrl.PROGRESSION_STATES.COMPLETE"
+                    ng-if="step.state === $ctrl.ProgressConstants.STATE.COMPLETE"
                     class="step-icon complete-icon"
                     name="'talend-check'"
                 />

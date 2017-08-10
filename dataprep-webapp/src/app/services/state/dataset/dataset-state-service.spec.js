@@ -35,36 +35,6 @@ describe('dataset state service', function () {
 		expect(datasetState.uploadingDataset).toBe(dataset);
 	}));
 
-	it('should update the progression steps when uploading', inject((DatasetStateService, datasetState, ProgressService) => {
-		//given
-		DatasetStateService.startUploadingDataset(dataset);
-
-		//then
-		expect(ProgressService.steps[0].type).toBe('PROGRESSION');
-		expect(ProgressService.steps[0].state).toBe('IN_PROGRESS');
-		expect(ProgressService.steps[0].label).toBe('UPLOADING_FILE');
-		expect(ProgressService.getProgression()).toBe(66);
-
-		expect(ProgressService.steps[1].type).toBe('INFINITE');
-		expect(ProgressService.steps[1].state).toBe('FUTURE');
-		expect(ProgressService.steps[1].label).toBe('PROFILING_DATA');
-	}));
-
-	it('should update the progression steps when profiling', inject((DatasetStateService, datasetState, ProgressService) => {
-		//given
-		DatasetStateService.startUploadingDataset(dataset);
-		DatasetStateService.startProfilingDataset();
-
-		//then
-		expect(ProgressService.steps[0].type).toBe('PROGRESSION');
-		expect(ProgressService.steps[0].state).toBe('COMPLETE');
-		expect(ProgressService.steps[0].label).toBe('UPLOADING_FILE');
-
-		expect(ProgressService.steps[1].type).toBe('INFINITE');
-		expect(ProgressService.steps[1].state).toBe('IN_PROGRESS');
-		expect(ProgressService.steps[1].label).toBe('PROFILING_DATA');
-	}));
-
 	it('should remove the uploading dataset', inject((DatasetStateService, datasetState) => {
 		//given
 		DatasetStateService.startUploadingDataset(dataset);

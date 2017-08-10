@@ -12,12 +12,11 @@
  ============================================================================*/
 
 export default class HomeCtrl {
-	constructor(state, StateService, StorageService, ProgressService) {
+	constructor(state, StateService, StorageService) {
 		'ngInject';
 		this.state = state;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
-		this.ProgressService = ProgressService;
 	}
 
 	$onInit() {

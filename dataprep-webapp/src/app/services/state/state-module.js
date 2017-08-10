@@ -29,10 +29,15 @@ import { routeState, RouteStateService } from './route/route-state-service';
 import { importState, ImportStateService } from './import/import-state-service';
 import { exportState, ExportStateService } from './export/export-state-service';
 import { homeState, HomeStateService } from './home/home-state-service';
+import {
+	progressState,
+	ProgressStateService,
+	STATES,
+	TYPES,
+	SCHEMAS,
+} from './progress/progress-state-service';
 import { state, StateService } from './state-service';
 import { searchState, SearchStateService } from './search/search-state-service';
-
-import SERVICES_PROGRESS_MODULE from '../progress/progress-module';
 
 const MODULE_NAME = 'data-prep.services.state';
 
@@ -41,7 +46,7 @@ const MODULE_NAME = 'data-prep.services.state';
  * @name data-prep.services.state
  * @description This module contains the service that hold the application state
  */
-angular.module(MODULE_NAME, [SERVICES_PROGRESS_MODULE])
+angular.module(MODULE_NAME, [])
 	.service('DatasetStateService', DatasetStateService)
 	.constant('datasetState', datasetState)
 
@@ -89,6 +94,12 @@ angular.module(MODULE_NAME, [SERVICES_PROGRESS_MODULE])
 
 	.service('HomeStateService', HomeStateService)
 	.constant('homeState', homeState)
+
+	.service('ProgressStateService', ProgressStateService)
+	.constant('progressState', progressState)
+	.constant('PROGRESS_TYPES', TYPES)
+	.constant('PROGRESS_STATES', STATES)
+	.constant('PROGRESS_SCHEMAS', SCHEMAS)
 
 	.service('StateService', StateService)
 	.constant('state', state)

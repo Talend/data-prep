@@ -86,14 +86,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = when().get("/preparations/details");
 
         // then
-        response.then().statusCode(HttpStatus.OK.value())
-                .body(sameJSONAs(
-                        "[{\"id\":\"#548425458\"," +
-                                "\"dataSetId\":\"1234\"," +
-                                "\"creationDate\":0," +
-                                "\"lastModificationDate\":12345}]"
-                        ).allowingExtraUnexpectedFields()
-                );
+        response.then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[{\"id\":\"#548425458\"," + "\"dataSetId\":\"1234\","
+                + "\"creationDate\":0," + "\"lastModificationDate\":12345}]").allowingExtraUnexpectedFields());
 
         // given
         final Preparation preparation1 = new Preparation("#1438725", "5678", rootStep.id(),
@@ -739,17 +733,11 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final String preparationId = createPreparationWithAPI("{\"name\": \"yap\", \"dataSetId\": \"7535\"}", fromFolder.getId());
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final String expected = "{" +
-                "\"id\":\"" + preparation.getId() + "\"," +
-                "\"app-version\":\"" + preparation.getAppVersion() + "\"," +
-                "\"dataSetId\":\"7535\"," +
-                "\"rowMetadata\":null," +
-                "\"author\":\"" + preparation.getAuthor() + "\"," +
-                "\"name\":\"yap\"," +
-                "\"creationDate\":" + preparation.getCreationDate() + "," +
-                "\"lastModificationDate\":" + preparation.getCreationDate() + "," +
-                "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" +
-                "}";
+        final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
+                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"rowMetadata\":null," + "\"author\":\""
+                + preparation.getAuthor() + "\"," + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate()
+                + "," + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
+                + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
 
         // when
         final Response response = given() //
@@ -888,7 +876,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));
         assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(1L));
+        assertThat(repository.list(PreparationActions.class).count(), is(2L));
     }
 
     @Test

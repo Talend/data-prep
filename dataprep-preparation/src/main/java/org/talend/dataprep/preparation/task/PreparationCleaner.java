@@ -14,10 +14,8 @@ package org.talend.dataprep.preparation.task;
 
 import static java.util.stream.Collectors.toSet;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
@@ -33,7 +31,6 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.preparation.configuration.PreparationConversions;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
@@ -63,8 +60,6 @@ public class PreparationCleaner {
 
     @Autowired
     private PreparationUtils preparationUtils;
-
-    private String filterByContentIdKey = "contentId";
 
     /**
      * Get all the step ids that belong to a preparation
@@ -103,12 +98,12 @@ public class PreparationCleaner {
                 repository.remove(stepToRemove);
 
                 // Remove actions linked to step
-                List<PersistentStep> collect = repository
-                        .list(PersistentStep.class, filterByContentIdKey + "='" + step.getContent() + "'")
-                        .collect(Collectors.toList());
-                if (collect.size() > 0) {
+                // if this step re-use an existing actions we don't delete the actions
+                boolean criterion = repository.exist(PersistentStep.class, "contentId" + "='" + step.getContent() + "'");
+                if (criterion) {
                     LOGGER.info("Don't removing step content {} it still used by another step.", step.getContent());
                 } else {
+                    LOGGER.info("Removing step content {}.", step.getContent());
                     final PreparationActions preparationActionsToRemove = new PreparationActions();
                     preparationActionsToRemove.setId(step.getContent());
                     repository.remove(preparationActionsToRemove);
@@ -117,13 +112,5 @@ public class PreparationCleaner {
         } finally {
             securityProxy.releaseIdentity();
         }
-    }
-
-    public String getFilterByContentIdKey() {
-        return filterByContentIdKey;
-    }
-
-    public void setFilterByContentIdKey(String filterByContentIdKey) {
-        this.filterByContentIdKey = filterByContentIdKey;
     }
 }

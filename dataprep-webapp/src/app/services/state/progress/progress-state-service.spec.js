@@ -12,6 +12,7 @@
   ============================================================================*/
 
 describe('progress service', function () {
+	let progressStateMock;
 	const schema = {
 		title: 'TEST_TITLE',
 		steps: [
@@ -28,35 +29,39 @@ describe('progress service', function () {
 		],
 	};
 
-	beforeEach(angular.mock.module('data-prep.services.progress'));
 
-	it('should start the progress sequence', inject((ProgressService) => {
-		//when
-		ProgressService.start(schema);
+	beforeEach(angular.mock.module('data-prep.services.state'));
 
-		//then
-		// expect(ProgressService.getProgression()).toBe(66);
-		expect(ProgressService.current).toEqual(schema.steps[0]);
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.preferredLanguage('en');
 	}));
 
-	it('should go to the next progress step and update states', inject((ProgressService) => {
-		//given
-		ProgressService.start(schema);
-
-		expect(ProgressService.current).toEqual(schema.steps[0]);
-
+	it('should start the progress sequence', inject((StateService, progressState) => {
 		//when
-		ProgressService.next();
+		StateService.startProgress(schema);
 
 		//then
-		expect(ProgressService.steps[0]).toEqual(
+		expect(StateService.getCurrentProgressStep()).toEqual(schema.steps[0]);
+	}));
+
+	it('should go to the next progress step and update states', inject((StateService, progressState) => {
+		//given
+		StateService.startProgress(schema);
+
+		expect(StateService.getCurrentProgressStep()).toEqual(schema.steps[0]);
+
+		//when
+		StateService.nextProgress();
+
+		//then
+		expect(progressState.steps[0]).toEqual(
 			{
 				type: 'PROGRESSION',
 				state: 'COMPLETE',
 				label: 'STEP_1',
 			}
 		);
-		expect(ProgressService.current).toEqual(
+		expect(StateService.getCurrentProgressStep()).toEqual(
 			{
 				type: 'INFINITE',
 				state: 'IN_PROGRESS',
@@ -65,31 +70,31 @@ describe('progress service', function () {
 		);
 	}));
 
-	it('should reset steps', inject((ProgressService) => {
+	it('should reset steps', inject((StateService, progressState) => {
 		//given
-		ProgressService.start(schema);
-		expect(ProgressService.steps).toEqual(schema.steps);
+		StateService.startProgress(schema);
+		expect(progressState.steps).toEqual(schema.steps);
 
 		//when
-		ProgressService.reset();
+		StateService.resetProgress();
 
 		//then
-		expect(ProgressService.steps).toEqual([]);
+		expect(progressState.steps).toEqual([]);
 	}));
 
-	it('should return value', inject((ProgressService) => {
+	it('should return value', inject((StateService, progressState) => {
 		//given
-		ProgressService.start(schema, () => 42);
+		StateService.startProgress(schema, () => 42);
 
 		//then
-		expect(ProgressService.getProgression()).toBe(42);
+		expect(progressState.progressionGetter()).toBe(42);
 	}));
 
-	it('should set the title', inject((ProgressService) => {
+	it('should set the title', inject((StateService, progressState) => {
 		//given
-		ProgressService.start(schema);
+		StateService.startProgress(schema);
 
 		//then
-		expect(ProgressService.title).toBe('TEST_TITLE');
+		expect(progressState.title).toBe('TEST_TITLE');
 	}));
 });

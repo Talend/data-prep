@@ -16,6 +16,9 @@ describe('Dataset progress controller', () => {
 	let scope;
 
 	beforeEach(angular.mock.module('data-prep.step-progress'));
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.preferredLanguage('en');
+	}));
 
 	beforeEach(inject(($rootScope, $componentController) => {
 		scope = $rootScope.$new();
@@ -29,14 +32,14 @@ describe('Dataset progress controller', () => {
 	}));
 
 	describe('step class getter', () => {
-		it('should return the appropriate class', inject((ProgressConstants) => {
+		it('should return the appropriate class', inject((PROGRESS_STATES) => {
 			//given
 			const ctrl = createController();
 
 			//then
-			expect(ctrl.getStepClass(ProgressConstants.STATES.IN_PROGRESS)).toBe('in-progress');
-			expect(ctrl.getStepClass(ProgressConstants.STATES.COMPLETE)).toBe('complete');
-			expect(ctrl.getStepClass(ProgressConstants.STATES.FUTURE)).toBe('future');
+			expect(ctrl.getStepClass(PROGRESS_STATES.IN_PROGRESS)).toBe('in-progress');
+			expect(ctrl.getStepClass(PROGRESS_STATES.COMPLETE)).toBe('complete');
+			expect(ctrl.getStepClass(PROGRESS_STATES.FUTURE)).toBe('future');
 		}));
 	});
 });

@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.dataprep.transformation.actions.fill;
 
 import org.talend.dataprep.api.action.Action;
@@ -19,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by qiongli on 8/3/2017.
+ * Generate a sequence on a column based on star value and step value.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + GenerateSequence.ACTION_NAME)
 public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
@@ -58,7 +70,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
     @Override
     public Set<Behavior> getBehavior() {
-            return EnumSet.of(Behavior.VALUES_COLUMN);
+            return EnumSet.of(Behavior.VALUES_COLUMN,Behavior.FORBID_DISTRIBUTED);
     }
 
     @Override
@@ -69,13 +81,13 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     public void applyOnColumn(DataSetRow row, ActionContext context) {
 
         String startValue = context.getParameters().get(START_VALUE);
-        String stepVlaue = context.getParameters().get(STEP_VALUE);
-        if (startValue.isEmpty() || stepVlaue.isEmpty()) {
+        String stepValue = context.getParameters().get(STEP_VALUE);
+        if (startValue.isEmpty() || stepValue.isEmpty()) {
             return;
         }
         final String columnId = context.getColumnId();
         Long startValueLong = Long.parseLong(startValue);
-        Long stepValueLong = Long.parseLong(stepVlaue);
+        Long stepValueLong = Long.parseLong(stepValue);
         Long currentValue = startValueLong + stepValueLong * (row.getTdpId() - 1);
         row.set(columnId, currentValue.toString());
     }

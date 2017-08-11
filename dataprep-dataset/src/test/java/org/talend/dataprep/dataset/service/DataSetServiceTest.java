@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -439,10 +440,10 @@ public class DataSetServiceTest extends DataSetBaseTest {
         checkSearchResult("toto", nonStrict, emptyList());
         checkSearchResult("tic", nonStrict, asList(ticId, ticTacId, ticTacTocId));
         checkSearchResult("tac", nonStrict, asList(ticTacId, ticTacTocId));
-        checkSearchResult("toc", nonStrict, asList(ticTacTocId));
+        checkSearchResult("toc", nonStrict, singletonList(ticTacTocId));
 
         checkSearchResult("tac", strict, emptyList());
-        checkSearchResult("tic TAC toc", strict, asList(ticTacTocId));
+        checkSearchResult("tic TAC toc", strict, singletonList(ticTacTocId));
     }
 
     private void checkSearchResult(final String search, final boolean isStrict, final List<String> expectedIds)

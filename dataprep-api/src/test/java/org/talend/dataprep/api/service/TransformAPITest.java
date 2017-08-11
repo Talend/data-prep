@@ -58,8 +58,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testTransformOneAction() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testDataset", "text/csv",
-                home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_firstname.json"), UTF_8));
 
@@ -77,8 +76,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testTransformTwoActions() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "another test Dataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "another test Dataset", home.getId());
         testClient.applyAction(preparationId, IOUtils
                 .toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json"), UTF_8));
 
@@ -96,7 +94,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testSuggestActionParams_should_return_dynamic_params_with_dataset() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("transformation/cluster_dataset.csv", "testClustering", "text/csv");
+        final String dataSetId = testClient.createDataset("transformation/cluster_dataset.csv", "testClustering");
         final String expectedClusterParameters = IOUtils
                 .toString(this.getClass()
                         .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
@@ -113,7 +111,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testSuggestActionParams_should_return_dynamic_params_with_preparation_head() throws Exception {
         // given
         final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv", "testClustering",
-                "text/csv", home.getId());
+                home.getId());
         final String expectedClusterParameters = IOUtils
                 .toString(this.getClass()
                         .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
@@ -131,7 +129,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testSuggestActionParams_should_return_dynamic_params_with_preparation_step() throws Exception {
         // given
         final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv", "testClustering",
-                "text/csv", home.getId());
+                home.getId());
         testClient.applyActionFromFile(preparationId, "export/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "export/upper_case_lastname.json");
 
@@ -172,7 +170,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void should_not_exceed_url_length_limit() throws Exception {
 
         // given
-        final String preparationId = testClient.createPreparationFromFile("bugfix/TDP-280.csv", "cars", "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("bugfix/TDP-280.csv", "cars", home.getId());
 
         // parameters for text clustering are complicated and computed by the front. Since computing them is not
         // the point of this test, let's just get them from a file.
@@ -194,8 +192,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void should_use_all_date_patterns() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-402.json"), UTF_8));
 
@@ -215,8 +212,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void shouldChangeTypeOnTransformation() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-1308.csv", "testDataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-1308.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1308.json"), UTF_8));
 
@@ -234,8 +230,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testMultipleParams() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/multiple_filters.json"), UTF_8));
 
@@ -257,8 +252,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testCustomDateFormat_MMM_dd_yyyyTransformation() throws Exception {
 
         // given (a dataset with single date column)
-        final String preparationId = testClient.createPreparationFromFile("dataset/TDP-714.csv", "dates", "text/csv",
-                home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/TDP-714.csv", "dates", home.getId());
 
         // when (change the date format to an unknown DQ pattern)
         testClient.applyAction(preparationId,
@@ -288,8 +282,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testCustomDateFormat_MMMM_yyyy_dd_Transformation() throws Exception {
 
         // given (a dataset with single date column)
-        final String preparationId = testClient.createPreparationFromFile("dataset/TDP-714.csv", "dates", "text/csv",
-                home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/TDP-714.csv", "dates", home.getId());
 
         // when (change the date format to an unknown DQ pattern)
         testClient.applyAction(preparationId, IOUtils
@@ -318,8 +311,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testCompareNumbersAfterSplit() throws Exception {
 
         // given (a dataset with single date column)
-        final String preparationId = testClient.createPreparationFromFile("dataset/TDP-714.csv", "dates", "text/csv",
-                home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/TDP-714.csv", "dates", home.getId());
 
         // when (change the date format to an unknown DQ pattern)
         testClient.applyAction(preparationId,
@@ -343,8 +335,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void shouldFilterOnPreviouslyCreatedValues() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-1672.csv", "testDataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-1672.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1672.json"), UTF_8));
 
@@ -364,8 +355,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void typeChangeShouldOnlyImpactTargetedColumn() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-2165.csv", "testDataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-2165.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), UTF_8));
 
@@ -401,8 +391,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testShouldEvictPreparationCacheOnDataSetUpdate() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-2165.csv", "testDataset",
-                "text/csv", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset_TDP-2165.csv", "testDataset", home.getId());
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), UTF_8));
         given().when() //

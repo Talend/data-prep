@@ -62,6 +62,13 @@
 		height: 40vh;
 		overflow-y: auto;
 
+		.empty-message {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+		}
+
 		.inventory-item-row {
 			display: flex;
 			flex-direction: row;

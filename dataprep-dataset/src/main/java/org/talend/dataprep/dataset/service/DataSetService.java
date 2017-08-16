@@ -163,7 +163,7 @@ public class DataSetService extends BaseDataSetService {
     @Autowired
     private AnalyzerService analyzerService;
 
-    @Value("${dataset.local.file.size.limit:2000000}")
+    @Value("${dataset.local.file.size.limit:20000000}")
     private long maximumInputStreamSize;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)

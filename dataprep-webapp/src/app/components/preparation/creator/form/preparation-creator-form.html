@@ -82,6 +82,10 @@
 					details="DATASET_DETAILS">
 			</inventory-item>
 		</div>
+		<div class="empty-message"
+			 ng-if="!$ctrl.isFetchingDatasets && $ctrl.filteredDatasets.length === 0"
+			 translate-once="NO_DATASET">
+		</div>
 	</div>
 </div>
 

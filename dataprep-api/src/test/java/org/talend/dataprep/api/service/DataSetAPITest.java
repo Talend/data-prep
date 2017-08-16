@@ -83,7 +83,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetUpdate() throws Exception {
         // given a created dataset
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when it's updated
         given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
@@ -100,7 +100,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     public void test_TDP_2052() throws Exception {
         // given a created dataset
         final String datasetOriginalName = "testDataset";
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", datasetOriginalName, "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", datasetOriginalName);
 
         // when it's updated
         given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
@@ -121,7 +121,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     public void test_TDP_2546() throws Exception {
         // given a created dataset
         final String datasetOriginalName = "testDataset";
-        final String dataSetId = testClient.createDataset("dataset/dataset_TDP-2546.csv", datasetOriginalName, "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset_TDP-2546.csv", datasetOriginalName);
 
         // then, the content should include technical properties when asked.
         String defaultDataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
@@ -137,7 +137,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetUpdateMetadata() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada");
 
         // when
         final String jsonOriginalMetadata = when().get("/api/datasets/{id}/metadata", dataSetId).asString();
@@ -157,7 +157,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetList() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when
         final String list = when().get("/api/datasets").asString();
@@ -171,7 +171,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // given
         for (int i = 0; i < 6; i++) {
-            final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset-" + i, "text/csv");
+            final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset-" + i);
             for (int j = 0; j < 6; j++) {
                 testClient.createPreparationFromDataset(dataSetId, "preparation-" + i + "-" + j, home.getId());
             }
@@ -216,9 +216,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testListCompatibleDataSets() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1", "text/csv");
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2", "text/csv");
-        final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
+        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2");
+        final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible");
 
         // when
         final String compatibleDatasetList = when().get("/api/datasets/{id}/compatibledatasets", dataSetId).asString();
@@ -231,9 +231,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testListCompatiblePreparationsWhenNothingIsCompatible() throws Exception {
         //
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1", "text/csv");
-        testClient.createDataset("dataset/dataset.csv", "compatible2", "text/csv");
-        testClient.createDataset("t-shirt_100.csv", "incompatible", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
+        testClient.createDataset("dataset/dataset.csv", "compatible2");
+        testClient.createDataset("t-shirt_100.csv", "incompatible");
 
         final String getResult = when().get("/api/datasets/{id}/compatiblepreparations", dataSetId).asString();
         final List compatiblePreparations = mapper.readerFor(List.class).readValue(getResult);
@@ -245,9 +245,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testListCompatiblePreparationsWhenTwoPreparationsAreCompatible() throws Exception {
         //
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1", "text/csv");
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2", "text/csv");
-        testClient.createDataset("t-shirt_100.csv", "incompatible", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
+        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2");
+        testClient.createDataset("t-shirt_100.csv", "incompatible");
 
         final String prep1 = testClient.createPreparationFromDataset(dataSetId, "prep1", home.getId());
         final String prep2 = testClient.createPreparationFromDataset(dataSetId2, "prep2", home.getId());
@@ -265,7 +265,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testListCompatibleDataSetsWhenUniqueDatasetInRepository() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "unique", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "unique");
 
         // when
         final String compatibleDatasetList = when().get("/api/datasets/{id}/compatibledatasets", dataSetId).asString();
@@ -278,9 +278,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
     public void testDataSetListWithDateOrder() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         // given
-        final String dataSetId1 = testClient.createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        final String dataSetId1 = testClient.createDataset("dataset/dataset.csv", "aaaa");
         Thread.sleep(100);
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "bbbb");
 
         // when (sort by date, order is desc)
         String list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), DESC.camelName()).asString();
@@ -309,9 +309,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
     public void testDataSetListWithNameOrder() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         // given
-        final String dataSetId1 = testClient.createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        final String dataSetId1 = testClient.createDataset("dataset/dataset.csv", "aaaa");
         Thread.sleep(100);
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "bbbb");
 
         // when (sort by date, order is desc)
         String list = when().get("/api/datasets?sort={sort}&order={order}", NAME.camelName(), DESC.camelName()).asString();
@@ -342,7 +342,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetDelete() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         final String list = when().get("/api/datasets").asString();
         assertTrue(list.contains(dataSetId));
@@ -361,7 +361,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetDeleteWhenUsedByPreparation() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
         testClient.createPreparationFromDataset(dataSetId, "testPreparation", home.getId());
 
         // when/then
@@ -379,7 +379,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreate() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada");
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_metadata.json");
 
         // when
@@ -392,10 +392,24 @@ public class DataSetAPITest extends ApiServiceTestBase {
     }
 
     @Test
+    public void testDataSetCreate_nameWithRegexParts() throws Exception {
+        // given
+        InputStream expected = PreparationAPITest.class
+                .getResourceAsStream("dataset/expected_dataset_with_metadata_regex_test.json");
+
+        // when
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "Cr(())eate Email Address{rrr}bb[zzzz]");
+
+        // then
+        final String contentAsString = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId).asString();
+        assertThat(contentAsString, sameJSONAsFile(expected));
+    }
+
+    @Test
     public void testDataSetList_nameSearch() throws Exception {
         // given
         String nameContainingRegexChars = "Preparation (A)";
-        testClient.createDataset("dataset/dataset.csv", nameContainingRegexChars, "text/csv");
+        testClient.createDataset("dataset/dataset.csv", nameContainingRegexChars);
 
         // when
         final List<UserDataSetMetadata> dataSetsPresent = testClient.listDataSets(nameContainingRegexChars);
@@ -407,7 +421,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void shouldCopyDataset() throws Exception {
         // given
-        final String originalId = testClient.createDataset("dataset/dataset.csv", "original", "text/csv");
+        final String originalId = testClient.createDataset("dataset/dataset.csv", "original");
 
         // when
         final Response response = given().param("name", "copy") //
@@ -424,7 +438,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void copyDataSetClashShouldForwardException() throws Exception {
         // given
-        final String originalId = testClient.createDataset("dataset/dataset.csv", "taken", "text/csv");
+        final String originalId = testClient.createDataset("dataset/dataset.csv", "taken");
 
         // when
         final Response response = given().param("name", "taken") //
@@ -439,7 +453,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetGetMetadata() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "test_metadata", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "test_metadata");
 
         // when
         final String content = when().get("/api/datasets/{id}/metadata", dataSetId).asString();
@@ -452,7 +466,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreateWithSpace() throws Exception {
         // given
-        String dataSetId = testClient.createDataset("dataset/dataset.csv", "Test with spaces", "text/csv");
+        String dataSetId = testClient.createDataset("dataset/dataset.csv", "Test with spaces");
 
         // when
         final DataSetMetadata metadata = dataSetMetadataRepository.get(dataSetId);
@@ -502,7 +516,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetActions() throws Exception {
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when
         final String contentAsString = when().get("/api/datasets/{id}/actions", dataSetId).asString();
@@ -514,9 +528,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testLookupActionsActions() throws Exception {
         // given
-        final String firstDataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
-        final String dataSetId = testClient.createDataset("dataset/dataset_cars.csv", "cars", "text/csv");
-        final String thirdDataSetId = testClient.createDataset("dataset/dataset.csv", "third", "text/csv");
+        final String firstDataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
+        final String dataSetId = testClient.createDataset("dataset/dataset_cars.csv", "cars");
+        final String thirdDataSetId = testClient.createDataset("dataset/dataset.csv", "third");
 
         List<String> expectedIds = Arrays.asList(firstDataSetId, thirdDataSetId);
 
@@ -597,10 +611,10 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void should_list_filtered_datasets_properly() throws Exception {
         // create data sets
-        final String dataSetId1 = testClient.createDataset("dataset/dataset.csv", "dataset1", "text/csv");
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "dataset2", "text/csv");
-        final String dataSetId3 = testClient.createDataset("dataset/dataset.csv", "dataset3", "text/csv");
-        testClient.createDataset("dataset/dataset.csv", "dataset4", "text/csv");
+        final String dataSetId1 = testClient.createDataset("dataset/dataset.csv", "dataset1");
+        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "dataset2");
+        final String dataSetId3 = testClient.createDataset("dataset/dataset.csv", "dataset3");
+        testClient.createDataset("dataset/dataset.csv", "dataset4");
 
         // Make dataset1 more recent
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
@@ -714,7 +728,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     public void shouldGetDataSetColumnTypes() throws Exception {
 
         // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
 
         // when

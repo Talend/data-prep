@@ -18,7 +18,47 @@ describe('dataset state service', function () {
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.preferredLanguage('en');
 	}));
-	beforeEach(angular.mock.module('data-prep.services.state'));
+	beforeEach(angular.mock.module('data-prep.services.state', ($provide) => {
+		stateMock = {
+			home: {
+				preparations: {
+					creator: {
+						isVisible: false,
+					},
+				},
+			},
+			progress: {
+				steps: [],
+				types: {
+					progression: 'PROGRESSION',
+					infinite: 'INFINITE',
+				},
+				states: {
+					inProgress: 'IN_PROGRESS',
+					future: 'FUTURE',
+					complete: 'COMPLETE',
+				},
+				schemas: {
+					dataset: {
+						title: 'ADD_NEW_DATASET',
+						steps: [
+							{
+								type: 'PROGRESSION',
+								state: 'IN_PROGRESS',
+								label: 'UPLOADING_FILE',
+							},
+							{
+								type: 'INFINITE',
+								state: 'FUTURE',
+								label: 'PROFILING_DATA',
+							},
+						],
+					},
+				},
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 	beforeEach(inject(datasetState => {
 		datasetState.uploadingDataset = null;
 		datasetState.uploadSteps = [];

@@ -16,7 +16,7 @@ export const datasetState = {
 	uploadSteps: [],
 };
 
-export function DatasetStateService($translate, ProgressStateService, PROGRESS_SCHEMAS) {
+export function DatasetStateService($translate, ProgressStateService, state) {
 	'ngInject';
 
 	return {
@@ -30,7 +30,7 @@ export function DatasetStateService($translate, ProgressStateService, PROGRESS_S
     // --------------------------------------------------------------------------------------------
 	function startUploadingDataset(dataset) {
 		datasetState.uploadingDataset = dataset;
-		ProgressStateService.start(PROGRESS_SCHEMAS.DATASET, () => dataset.progress);
+		ProgressStateService.start(state.progress.schemas.dataset, () => dataset.progress);
 	}
 
 	function startProfilingDataset() {

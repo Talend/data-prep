@@ -11,29 +11,29 @@
 
  ============================================================================*/
 
-export const TYPES = {
-	PROGRESSION: 'PROGRESSION',
-	INFINITE: 'INFINITE',
+const types = {
+	progression: 'PROGRESSION',
+	infinite: 'INFINITE',
 };
 
-export const STATES = {
-	IN_PROGRESS: 'IN_PROGRESS',
-	FUTURE: 'FUTURE',
-	COMPLETE: 'COMPLETE',
+const states = {
+	inProgress: 'IN_PROGRESS',
+	future: 'FUTURE',
+	complete: 'COMPLETE',
 };
 
-export const SCHEMAS = {
-	DATASET: {
+const schemas = {
+	dataset: {
 		title: 'ADD_NEW_DATASET',
 		steps: [
 			{
-				type: TYPES.PROGRESSION,
-				state: STATES.IN_PROGRESS,
+				type: types.progression,
+				state: states.inProgress,
 				label: 'UPLOADING_FILE',
 			},
 			{
-				type: TYPES.INFINITE,
-				state: STATES.FUTURE,
+				type: types.infinite,
+				state: states.future,
 				label: 'PROFILING_DATA',
 			},
 		],
@@ -52,6 +52,9 @@ export function ProgressStateService() {
 		next,
 		reset,
 		getCurrentStep,
+		types,
+		states,
+		schemas,
 	};
 
 	/**
@@ -77,11 +80,11 @@ export function ProgressStateService() {
 	 * @description Displays the next step
 	 */
 	function next() {
-		const index = progressState.steps.findIndex(step => step.state === STATES.IN_PROGRESS);
+		const index = progressState.steps.findIndex(step => step.state === states.inProgress);
 
 		if (progressState.steps[index + 1]) {
-			progressState.steps[index].state = STATES.COMPLETE;
-			progressState.steps[index + 1].state = STATES.IN_PROGRESS;
+			progressState.steps[index].state = states.complete;
+			progressState.steps[index + 1].state = states.inProgress;
 		}
 		else {
 			progressState.reset();
@@ -107,6 +110,6 @@ export function ProgressStateService() {
 	 * @description Return the current step (IN_PROGRESS state)
 	 */
 	function getCurrentStep() {
-		return progressState.steps.find(step => step.state === STATES.IN_PROGRESS);
+		return progressState.steps.find(step => step.state === states.inProgress);
 	}
 }

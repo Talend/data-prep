@@ -17,8 +17,6 @@ export const datasetState = {
 };
 
 export function DatasetStateService() {
-	'ngInject';
-
 	return {
 		startUploadingDataset,
 		finishUploadingDataset,

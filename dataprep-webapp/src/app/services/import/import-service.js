@@ -218,7 +218,7 @@ export default class ImportService {
 			.progress((event) => {
 				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
 				if (dataset.progress !== progress && progress === 100) {
-					this.StateService.nextProgressStep();
+					this.StateService.nextProgress();
 				}
 				dataset.progress = progress;
 			})

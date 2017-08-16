@@ -40,7 +40,7 @@ export default function UpdateWorkflowService(state, StateService, MessageServic
 			.progress(function (event) {
 				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
 				if (dataset.progress !== progress && progress === 100) {
-					StateService.nextProgressStep();
+					StateService.nextProgress();
 				}
 				dataset.progress = progress;
 			})

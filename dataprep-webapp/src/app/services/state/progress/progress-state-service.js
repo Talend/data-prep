@@ -44,6 +44,9 @@ export const progressState = {
 	steps: [],
 	title: '',
 	progressionGetter: null,
+	types,
+	states,
+	schemas,
 };
 
 export function ProgressStateService() {
@@ -52,9 +55,6 @@ export function ProgressStateService() {
 		next,
 		reset,
 		getCurrentStep,
-		types,
-		states,
-		schemas,
 	};
 
 	/**

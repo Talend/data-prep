@@ -68,8 +68,8 @@ export function ProgressStateService() {
 	function start(schema, getter) {
 		progressState.title = schema.title;
 		progressState.progressionGetter = getter || (() => 100);
-		progressState.steps = [...schema.steps].map((s) => {
-			return { ...s };
+		progressState.steps = [...schema.steps].map((step) => {
+			return { ...step };
 		});
 	}
 

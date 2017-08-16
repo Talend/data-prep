@@ -138,7 +138,6 @@ export function StateService(RouteStateService, routeState,
 
 		// dataset
 		startUploadingDataset: DatasetStateService.startUploadingDataset,
-		startProfilingDataset: DatasetStateService.startProfilingDataset,
 		finishUploadingDataset: DatasetStateService.finishUploadingDataset,
 
 		// easter eggs

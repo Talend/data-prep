@@ -212,11 +212,13 @@ export default class ImportService {
 
 		const dataset = this.DatasetService.createDatasetInfo(file, name);
 		this.StateService.startUploadingDataset(dataset);
+		this.StateService.startProgress(this.state.progress.schemas.dataset, () => dataset.progress);
+
 		return this.DatasetService.create(params, importType.contentType, file)
 			.progress((event) => {
 				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
 				if (dataset.progress !== progress && progress === 100) {
-					this.StateService.startProfilingDataset();
+					this.StateService.nextProgressStep();
 				}
 				dataset.progress = progress;
 			})
@@ -230,6 +232,7 @@ export default class ImportService {
 				dataset.error = true;
 			})
 			.finally(() => {
+				this.StateService.resetProgress();
 				this.StateService.finishUploadingDataset();
 			});
 	}

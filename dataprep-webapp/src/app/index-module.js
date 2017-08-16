@@ -127,7 +127,9 @@ window.fetchConfiguration = function fetchConfiguration() {
 
 			angular.module(SERVICES_UTILS_MODULE)
 				.value('version', config.version)
-				.value('copyRights', config.copyRights);
+				.value('copyRights', config.copyRights)
+				.value('analyticsEnabled', config.analyticsEnabled)
+				.value('analyticsAccount', config.analyticsAccount);
 		});
 };
 

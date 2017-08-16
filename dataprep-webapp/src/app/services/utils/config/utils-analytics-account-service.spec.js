@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,13 +11,13 @@
 
   ============================================================================*/
 
-describe('Copyrights service', () => {
+describe('Analytics account service', () => {
     'use strict';
 
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    it('should set value by default', inject((copyRights) => {
+    it('should set value by default', inject((analyticsAccount) => {
         //then
-        expect(copyRights).toBe('Talend. All Rights Reserved');
+        expect(analyticsAccount).toBe('');
     }));
 });

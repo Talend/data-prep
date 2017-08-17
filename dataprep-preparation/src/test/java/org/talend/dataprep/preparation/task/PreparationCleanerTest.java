@@ -29,7 +29,7 @@ import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.BasePreparationTest;
 
-@TestPropertySource(properties={"dataset.metadata.store: in-memory"})
+@TestPropertySource(properties = { "dataset.metadata.store: in-memory" })
 public class PreparationCleanerTest extends BasePreparationTest {
 
     @Autowired
@@ -43,7 +43,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
     @Test
     public void removeOrphanSteps_should_remove_orphan_step_after_at_least_X_hours() {
-        //given
+        // given
         final String version = versionService.version().getVersionId();
         final Step firstStep = new Step(Step.ROOT_STEP.id(), "first", version);
         final Step secondStep = new Step(firstStep.id(), "second", version);
@@ -55,10 +55,10 @@ public class PreparationCleanerTest extends BasePreparationTest {
         repository.add(orphanStep);
         repository.add(preparation);
 
-        //when
+        // when
         cleaner.removeOrphanSteps();
 
-        //then
+        // then
         assertNull(repository.get(orphanStep.getId(), Step.class));
         assertNotNull(repository.get(firstStep.getId(), Step.class));
         assertNotNull(repository.get(secondStep.getId(), Step.class));
@@ -66,7 +66,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
     @Test
     public void removeOrphanSteps_should_not_remove_step_that_still_belongs_to_a_preparation() {
-        //given
+        // given
         final String version = versionService.version().getVersionId();
         final Step firstStep = new Step(Step.ROOT_STEP.id(), "first", version);
         final Step secondStep = new Step(firstStep.id(), "second", version);
@@ -81,10 +81,10 @@ public class PreparationCleanerTest extends BasePreparationTest {
         repository.add(firstPreparation);
         repository.add(secondPreparation);
 
-        //when
+        // when
         cleaner.removeOrphanSteps();
 
-        //then
+        // then
         assertNotNull(repository.get(firstStep.getId(), Step.class));
         assertNotNull(repository.get(secondStep.getId(), Step.class));
         assertNotNull(repository.get(thirdStep.getId(), Step.class));
@@ -92,20 +92,20 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
     @Test
     public void removeOrphanSteps_should_not_remove_root_step() {
-        //given
+        // given
         repository.clear();
         assertNotNull(repository.get(Step.ROOT_STEP.getId(), Step.class));
 
-        //when
+        // when
         cleaner.removeOrphanSteps();
 
-        //then
+        // then
         assertNotNull(repository.get(Step.ROOT_STEP.getId(), Step.class));
     }
 
     @Test
     public void removeOrphanSteps_should_remove_orphan_step_content() {
-        //given
+        // given
         final String version = versionService.version().getVersionId();
         final PreparationActions content = new PreparationActions();
         content.setAppVersion(version);
@@ -114,11 +114,11 @@ public class PreparationCleanerTest extends BasePreparationTest {
         repository.add(step);
         repository.add(content);
 
-        //when
+        // when
         cleaner.removeOrphanSteps();
         int nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
 
-        //then
+        // then
         assertNull(repository.get(step.getId(), Step.class));
         assertNull(repository.get(content.getId(), PreparationActions.class));
         // it remains the root action
@@ -136,7 +136,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
         content.setAppVersion(version);
         repository.add(content);
 
-        // 2 Preparations, with each, one step that shares the same action
+        // 2 preparations, with each, one step that shares the same action
         final Step stepFirstPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
         final Step stepSecondPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
 
@@ -159,7 +159,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
         // then
         int nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
-        // when the first prepartion is removed, the shared action is not deleted
+        // when the first preparation is removed, the shared action is not deleted
         assertEquals(expectedNbActions, nbActions);
 
         // when

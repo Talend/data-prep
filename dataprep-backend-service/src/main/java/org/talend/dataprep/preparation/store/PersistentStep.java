@@ -90,6 +90,11 @@ public class PersistentStep extends PersistentIdentifiable {
         return contentId;
     }
 
+    // needed for Serialization
+    public String getContentId() {
+        return getContent();
+    }
+
     public void setContent(String preparationActions) {
         this.contentId = preparationActions;
     }

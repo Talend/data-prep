@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -40,6 +42,8 @@ import org.talend.dataprep.security.SecurityProxy;
 @Component
 @EnableScheduling
 public class PreparationCleaner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
 
     @Autowired
     private PreparationRepository repository;
@@ -94,9 +98,16 @@ public class PreparationCleaner {
                 repository.remove(stepToRemove);
 
                 // Remove actions linked to step
-                final PreparationActions preparationActionsToRemove = new PreparationActions();
-                preparationActionsToRemove.setId(step.getContent());
-                repository.remove(preparationActionsToRemove);
+                // if this step re-use an existing actions we don't delete the actions
+                boolean criterion = repository.exist(PersistentStep.class, "contentId" + "='" + step.getContent() + "'");
+                if (criterion) {
+                    LOGGER.info("Don't removing step content {} it still used by another step.", step.getContent());
+                } else {
+                    LOGGER.info("Removing step content {}.", step.getContent());
+                    final PreparationActions preparationActionsToRemove = new PreparationActions();
+                    preparationActionsToRemove.setId(step.getContent());
+                    repository.remove(preparationActionsToRemove);
+                }
             });
         } finally {
             securityProxy.releaseIdentity();

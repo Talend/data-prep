@@ -73,7 +73,7 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 @Component
 public class PreparationService {
 
-    private static final Logger log = LoggerFactory.getLogger(PreparationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationService.class);
 
     private final ActionFactory factory = new ActionFactory();
 
@@ -149,7 +149,7 @@ public class PreparationService {
      */
     public String create(final Preparation preparation, String folderId) {
 
-        log.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
+        LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
 
         Preparation toCreate = new Preparation(UUID.randomUUID().toString(), versionService.version().getVersionId());
         toCreate.setHeadId(rootStep.id());
@@ -166,7 +166,7 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, id);
         folderRepository.addFolderEntry(folderEntry, folderId);
 
-        log.info("New preparation {} created and stored in {} ", preparation, folderId);
+        LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
         // Lock the freshly created preparation
         lock(id);
         return id;
@@ -175,37 +175,36 @@ public class PreparationService {
     /**
      * List all the preparations id.
      *
-     * @param sort  how the preparation should be sorted (default is 'last modification date').
+     * @param sort how the preparation should be sorted (default is 'last modification date').
      * @param order how to apply the sort.
      * @return the preparations id list.
      */
     public List<String> list(String sort, String order) {
 
-        log.debug("Get list of preparations (summary).");
+        LOGGER.debug("Get list of preparations (summary).");
 
         final List<String> preparations = preparationRepository.list(Preparation.class) //
                 .sorted(getPreparationComparator(sort, order)) //
-                .map(Preparation::id)
-                .collect(toList());
+                .map(Preparation::id).collect(toList());
 
-        log.info("found {} preparation(s) ID in total", preparations.size());
+        LOGGER.info("found {} preparation(s) ID in total", preparations.size());
         return preparations;
     }
 
     /**
      * List all preparation details.
      *
-     * @param sort  how to sort the preparations.
+     * @param sort how to sort the preparations.
      * @param order how to order the sort.
      * @return the preparation details.
      */
     public Collection<UserPreparation> listAll(String sort, String order) {
-        log.debug("Get list of preparations (with details).");
+        LOGGER.debug("Get list of preparations (with details).");
         Collection<UserPreparation> details = preparationRepository.list(Preparation.class) //
                 .sorted(getPreparationComparator(sort, order)) //
                 .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
                 .collect(toList());
-        log.info("found {} preparation(s) in total", details.size());
+        LOGGER.info("found {} preparation(s) in total", details.size());
         return details;
     }
 
@@ -215,7 +214,7 @@ public class PreparationService {
      * @return the preparation summaries, sorted by descending last modification date.
      */
     public Collection<PreparationSummary> listSummary() {
-        log.debug("Get list of preparations (summary).");
+        LOGGER.debug("Get list of preparations (summary).");
         return preparationRepository.list(Preparation.class) //
                 .map(p -> beanConversionService.convert(p, PreparationSummary.class)) //
                 .sorted(comparing(PreparationSummary::getLastModificationDate, reverseOrder())) //
@@ -244,7 +243,7 @@ public class PreparationService {
      * @param order Order for sort key (desc or asc).
      */
     public Iterable<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-                                                           String sort, String order) {
+            String sort, String order) {
         // TODO should stream the response à la DataSetRowIterator & DataSetRowStreamSerializer
         final Collection<Preparation> result;
 
@@ -270,7 +269,7 @@ public class PreparationService {
      * @return the preparations that are based on the given dataset.
      */
     private Collection<Preparation> searchByDataSet(String dataSetId) {
-        log.debug("looking for preparations based on dataset #{}", dataSetId);
+        LOGGER.debug("looking for preparations based on dataset #{}", dataSetId);
         return preparationRepository.list(Preparation.class, "dataSetId = '" + dataSetId + "'").collect(toList());
     }
 
@@ -282,7 +281,7 @@ public class PreparationService {
      */
     private Collection<Preparation> searchByFolder(String folderId) {
 
-        log.debug("looking for preparations in {}", folderId);
+        LOGGER.debug("looking for preparations in {}", folderId);
 
         final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
 
@@ -293,7 +292,7 @@ public class PreparationService {
                     .collect(toList());
         }
 
-        log.info("found {} preparation(s) in {}", preparations.size(), folderId);
+        LOGGER.info("found {} preparation(s) in {}", preparations.size(), folderId);
 
         return preparations;
     }
@@ -301,13 +300,13 @@ public class PreparationService {
     /**
      * List all the preparations that matches the given name.
      *
-     * @param name       the wanted preparation name.
+     * @param name the wanted preparation name.
      * @param exactMatch true if the name must match exactly.
      * @return all the preparations that matches the given name.
      */
     private Collection<Preparation> searchByName(String name, boolean exactMatch) {
 
-        log.debug("looking for preparations with the name '{}' exact match is ", name, exactMatch);
+        LOGGER.debug("looking for preparations with the name '{}' exact match is ", name, exactMatch);
 
         final String filter;
         if (exactMatch) {
@@ -321,13 +320,13 @@ public class PreparationService {
     /**
      * Copy the given preparation to the given name / folder ans returns the new if in the response.
      *
-     * @param name        the name of the copied preparation, if empty, the name is "orginal-preparation-name Copy"
+     * @param name the name of the copied preparation, if empty, the name is "orginal-preparation-name Copy"
      * @param destination the folder path where to copy the preparation, if empty, the copy is in the same folder.
      * @return The new preparation id.
      */
     public String copy(String preparationId, String name, String destination) throws IOException {
 
-        log.debug("copy {} to folder {} with {} as new name");
+        LOGGER.debug("copy {} to folder {} with {} as new name");
 
         HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
 
@@ -362,7 +361,7 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, newId);
         folderRepository.addFolderEntry(folderEntry, destination);
 
-        log.info("preparation {} copied to folder {} with the name {}", preparationId, destination, newName);
+        LOGGER.info("preparation {} copied to folder {} with the name {}", preparationId, destination, newName);
         return newId;
     }
 
@@ -393,14 +392,14 @@ public class PreparationService {
     /**
      * Move a preparation to an other folder.
      *
-     * @param folder      The original folder of the preparation.
+     * @param folder The original folder of the preparation.
      * @param destination The new folder of the preparation.
-     * @param newName     The new preparation name.
+     * @param newName The new preparation name.
      */
     public void move(String preparationId, String folder, String destination, String newName) throws IOException {
         //@formatter:on
 
-        log.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);
+        LOGGER.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);
 
         HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
 
@@ -432,7 +431,8 @@ public class PreparationService {
             FolderEntry folderEntry = new FolderEntry(PREPARATION, preparationId);
             folderRepository.moveFolderEntry(folderEntry, folder, destination);
 
-            log.info("preparation {} moved from {} to {} with the new name {}", preparationId, folder, destination, targetName);
+            LOGGER.info("preparation {} moved from {} to {} with the new name {}", preparationId, folder, destination,
+                    targetName);
         } finally {
             unlock(preparationId);
         }
@@ -445,7 +445,7 @@ public class PreparationService {
      */
     public void delete(String id) {
 
-        log.debug("Deletion of preparation #{} requested.", id);
+        LOGGER.debug("Deletion of preparation #{} requested.", id);
 
         Preparation preparationToDelete = preparationRepository.get(id, Preparation.class);
 
@@ -463,13 +463,13 @@ public class PreparationService {
         folderRepository.findFolderEntries(id, PREPARATION)
                 .forEach(e -> folderRepository.removeFolderEntry(e.getFolderId(), id, PREPARATION));
 
-        log.info("Deletion of preparation #{} done.", id);
+        LOGGER.info("Deletion of preparation #{} done.", id);
     }
 
     /**
      * Update a preparation.
      *
-     * @param id          the preparation id to update.
+     * @param id the preparation id to update.
      * @param preparation the updated preparation.
      * @return the updated preparation id.
      */
@@ -483,7 +483,7 @@ public class PreparationService {
         }
         // Ensure that the preparation is not locked elsewhere
         lock(id);
-        log.debug("Updating preparation with id {}: {}", preparation.id(), previousPreparation);
+        LOGGER.debug("Updating preparation with id {}: {}", preparation.id(), previousPreparation);
 
         Preparation updated = previousPreparation.merge(preparation);
         if (!updated.id().equals(id)) {
@@ -493,7 +493,7 @@ public class PreparationService {
         updated.setLastModificationDate(System.currentTimeMillis());
         preparationRepository.add(updated);
 
-        log.info("Preparation {} updated -> {}", id, updated);
+        LOGGER.info("Preparation {} updated -> {}", id, updated);
 
         return updated.id();
     }
@@ -506,7 +506,7 @@ public class PreparationService {
      */
     public void updatePreparationSteps(final String preparationId, final List<Step> steps) {
 
-        log.debug("update preparation #{}'s steps", preparationId);
+        LOGGER.debug("update preparation #{}'s steps", preparationId);
 
         int updatedSteps = 0;
         for (Step toUpdate : steps) {
@@ -518,13 +518,13 @@ public class PreparationService {
             toUpdate.setDiff(toUpdate.getDiff());
             toUpdate.setParent(toUpdate.getParent());
 
-            log.debug("{} updated", toUpdate);
+            LOGGER.debug("{} updated", toUpdate);
             preparationRepository.add(toUpdate);
 
             updatedSteps++;
         }
 
-        log.info("{} steps for preparation #{} were updated", updatedSteps, preparationId);
+        LOGGER.info("{} steps for preparation #{} were updated", updatedSteps, preparationId);
     }
 
     /**
@@ -532,28 +532,28 @@ public class PreparationService {
      * <p>
      * This is only allowed if this preparation has no steps.
      *
-     * @param id   the preparation id to update.
+     * @param id the preparation id to update.
      * @param from the preparation id to copy the steps from.
      */
     public void copyStepsFrom(String id, String from) {
 
-        log.debug("copy steps from {} to {}", from, id);
+        LOGGER.debug("copy steps from {} to {}", from, id);
 
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation == null) {
-            log.error("cannot update {} steps --> preparation not found in repository", id);
+            LOGGER.error("cannot update {} steps --> preparation not found in repository", id);
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
 
         // if the preparation is not empty (head != root step) --> 409
         if (!StringUtils.equals(preparation.getHeadId(), rootStep.id())) {
-            log.error("cannot update {} steps --> preparation has already steps.");
+            LOGGER.error("cannot update {} steps --> preparation has already steps.");
             throw new TDPException(PREPARATION_NOT_EMPTY, build().put("id", id));
         }
 
         final Preparation reference = preparationRepository.get(from, Preparation.class);
         if (reference == null) {
-            log.warn("cannot copy steps from {} to {} because the original preparation is not found", from, id);
+            LOGGER.warn("cannot copy steps from {} to {} because the original preparation is not found", from, id);
             return;
         }
 
@@ -561,7 +561,7 @@ public class PreparationService {
         preparation.setLastModificationDate(new Date().getTime());
         preparationRepository.add(preparation);
 
-        log.info("copy steps from {} to {} done --> {}", from, id, preparation);
+        LOGGER.info("copy steps from {} to {} done --> {}", from, id, preparation);
     }
 
     /**
@@ -571,12 +571,44 @@ public class PreparationService {
      * @return the preparation details.
      */
     public PreparationMessage getPreparationDetails(String id) {
-        log.debug("Get content of preparation details for #{}.", id);
+        LOGGER.debug("Get content of preparation details for #{}.", id);
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
 
+        //ensurePreparationConsistency(preparation);
+
         final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
-        log.info("returning details for {} -> {}", id, details);
+        LOGGER.info("returning details for {} -> {}", id, details);
         return details;
+    }
+
+    /**
+     * This method ensures the consistency of a preparation .i.e. makes sure that a non-empty head step of a preparation
+     * has its corresponding actions available. If it is not the case, we walk recursively on the steps from the current head
+     * to the root step until we reach a step having its actions accessible or we reach the root step.
+     *
+     * @param preparation the specified preparation
+     */
+    private void ensurePreparationConsistency(Preparation preparation) {
+        final String headId = preparation.getHeadId();
+        Step head = preparationRepository.get(headId, Step.class);
+        if (head != null) {
+            PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            boolean inconsistentPreparation = false;
+            while (prepActions == null && head != Step.ROOT_STEP) {
+                LOGGER.info(
+                        "Head step {} is inconsistent. Its corresponding action is unavailable. for the sake of safety new head is set to {}",
+                        head.getId(), head.getParent());
+
+                inconsistentPreparation = true;
+                deleteAction(preparation, head.getId());
+                head = preparationRepository.get(head.getParent(), Step.class);
+                prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            }
+
+            if (inconsistentPreparation) {
+                setPreparationHead(preparation, head);
+            }
+        }
     }
 
     /**
@@ -587,33 +619,33 @@ public class PreparationService {
      */
     public Folder searchLocation(String id) {
 
-        log.debug("looking the folder for {}", id);
+        LOGGER.debug("looking the folder for {}", id);
 
         final Folder folder = folderRepository.locateEntry(id, PREPARATION);
         if (folder == null) {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
 
-        log.info("found where {} is stored : {}", id, folder);
+        LOGGER.info("found where {} is stored : {}", id, folder);
 
         return folder;
     }
 
     public List<String> getSteps(String id) {
-        log.debug("Get steps of preparation for #{}.", id);
+        LOGGER.debug("Get steps of preparation for #{}.", id);
         final Step step = getStep(id);
         return preparationUtils.listStepsIds(step.id(), preparationRepository);
     }
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
-        log.debug("Adding action to preparation...");
+        LOGGER.debug("Adding action to preparation...");
         Preparation preparation = getPreparation(preparationId);
         List<Action> actions = getVersionedAction(preparationId, "head");
         StepDiff actionCreatedColumns = stepDiffDelegate.computeCreatedColumns(preparation.getRowMetadata(),
                 buildActions(actions), buildActions(step.getActions()));
         step.setDiff(actionCreatedColumns);
         appendSteps(preparationId, Collections.singletonList(step));
-        log.debug("Added action to preparation.");
+        LOGGER.debug("Added action to preparation.");
     }
 
     /**
@@ -632,14 +664,13 @@ public class PreparationService {
         return builtActions;
     }
 
-
     /**
      * Append step(s) in a preparation.
      */
     public void appendSteps(String id, final List<AppendStep> stepsToAppend) {
         stepsToAppend.forEach(this::checkActionStepConsistency);
 
-        log.debug("Adding actions to preparation #{}", id);
+        LOGGER.debug("Adding actions to preparation #{}", id);
 
         final Preparation preparation = getPreparation(id);
         // no preparation found
@@ -649,11 +680,11 @@ public class PreparationService {
         // Ensure that the preparation is not locked elsewhere
         lock(id);
 
-        log.debug("Current head for preparation #{}: {}", id, preparation.getHeadId());
+        LOGGER.debug("Current head for preparation #{}: {}", id, preparation.getHeadId());
 
         // rebuild history from head
         replaceHistory(preparation, preparation.getHeadId(), stepsToAppend);
-        log.debug("Added head to preparation #{}: head is now {}", id, preparation.getHeadId());
+        LOGGER.debug("Added head to preparation #{}: head is now {}", id, preparation.getHeadId());
     }
 
     /**
@@ -671,7 +702,7 @@ public class PreparationService {
     public void updateAction(final String preparationId, final String stepToModifyId, final AppendStep newStep) {
         checkActionStepConsistency(newStep);
 
-        log.debug("Modifying actions in preparation #{}", preparationId);
+        LOGGER.debug("Modifying actions in preparation #{}", preparationId);
         final Preparation preparation = getPreparation(preparationId);
 
         // no preparation found
@@ -680,12 +711,12 @@ public class PreparationService {
         }
         // Ensure that the preparation is not locked elsewhere
         lock(preparationId);
-        log.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
+        LOGGER.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
 
         // Get steps from "step to modify" to the head
         final List<String> steps = extractSteps(preparation, stepToModifyId); // throws an exception if stepId is not in
         // the preparation
-        log.debug("Rewriting history for {} steps.", steps.size());
+        LOGGER.debug("Rewriting history for {} steps.", steps.size());
 
         // Extract created columns ids diff info
         final Step stm = getStep(stepToModifyId);
@@ -695,9 +726,8 @@ public class PreparationService {
                 // not anymore
                 .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
         final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty() ?
-                originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() :
-                MAX_VALUE;
+        final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
+                ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
 
         // Build list of actions from modified one to the head
         final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -707,7 +737,7 @@ public class PreparationService {
         // Rebuild history from modified step
         final Step stepToModify = getStep(stepToModifyId);
         replaceHistory(preparation, stepToModify.getParent(), actionsSteps);
-        log.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
+        LOGGER.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
     }
 
     /**
@@ -746,8 +776,7 @@ public class PreparationService {
 
         final Step head = getStep(headId);
         if (head == null) {
-            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
-                    build().put("id", preparationId).put("stepId", headId));
+            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparationId).put("stepId", headId));
         }
 
         final Preparation preparation = getPreparation(preparationId);
@@ -763,12 +792,12 @@ public class PreparationService {
     /**
      * Get all the actions of a preparation at given version.
      *
-     * @param id      the wanted preparation id.
+     * @param id the wanted preparation id.
      * @param version the wanted preparation version.
      * @return the list of actions.
      */
     public List<Action> getVersionedAction(final String id, final String version) {
-        log.debug("Get list of actions of preparations #{} at version {}.", id, version);
+        LOGGER.debug("Get list of actions of preparations #{} at version {}.", id, version);
 
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation != null) {
@@ -812,10 +841,8 @@ public class PreparationService {
     /** Check if the preparation uses this dataset in its head version. */
     private boolean isDatasetUsedToLookupInPreparationHead(String datasetId) {
         final String datasetParamName = Lookup.Parameters.LOOKUP_DS_ID.getKey();
-        return preparationRepository.list(Preparation.class)
-                .flatMap(p -> getVersionedAction(p.getId(), "head").stream())
-                .filter(Objects::nonNull)
-                .filter(a -> Objects.equals(a.getName(), Lookup.LOOKUP_ACTION_NAME))
+        return preparationRepository.list(Preparation.class).flatMap(p -> getVersionedAction(p.getId(), "head").stream())
+                .filter(Objects::nonNull).filter(a -> Objects.equals(a.getName(), Lookup.LOOKUP_ACTION_NAME))
                 .anyMatch(a -> Objects.equals(datasetId, a.getParameters().get(datasetParamName)));
     }
 
@@ -824,13 +851,13 @@ public class PreparationService {
      * preparation.
      *
      * @param preparationId the id of the preparation containing the step to move
-     * @param stepId        the id of the step to move
-     * @param parentStepId  the id of the step which wanted as the parent of the step to move
+     * @param stepId the id of the step to move
+     * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     public void moveStep(final String preparationId, String stepId, String parentStepId) {
         //@formatter:on
 
-        log.debug("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
+        LOGGER.debug("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
 
         final Preparation preparation = getPreparation(preparationId);
 
@@ -847,7 +874,7 @@ public class PreparationService {
     /**
      * Get the actual step id by converting "head" and "origin" to the hash
      *
-     * @param version     The version to convert to step id
+     * @param version The version to convert to step id
      * @param preparation The preparation
      * @return The converted step Id
      */
@@ -890,7 +917,7 @@ public class PreparationService {
     public Preparation getPreparation(final String id) {
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation == null) {
-            log.error("Preparation #{} does not exist", id);
+            LOGGER.error("Preparation #{} does not exist", id);
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         return preparation;
@@ -899,7 +926,7 @@ public class PreparationService {
     /**
      * Extract all actions after a provided step
      *
-     * @param stepsIds  The steps list
+     * @param stepsIds The steps list
      * @param afterStep The (excluded) step id where to start the extraction
      * @return The actions after 'afterStep' to the end of the list
      */
@@ -935,7 +962,7 @@ public class PreparationService {
      * preparation
      *
      * @param preparation The preparation
-     * @param fromStepId  The starting step id
+     * @param fromStepId The starting step id
      * @return The steps ids from 'fromStepId' to the head
      * @throws TDPException If 'fromStepId' is not a step of the provided preparation
      */
@@ -961,21 +988,20 @@ public class PreparationService {
 
         Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
         if (preparation == null) {
-            log.warn("Preparation #{} does not exist.", preparationId);
+            LOGGER.warn("Preparation #{} does not exist.", preparationId);
             return;
         }
 
         LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
         LockedResource lockedResource = lockedResourceRepository.tryLock(preparation, userInfo);
         if (lockedResourceRepository.lockOwned(lockedResource, userId)) {
-            log.debug("Preparation {} locked for user {}.", preparationId, userId);
+            LOGGER.debug("Preparation {} locked for user {}.", preparationId, userId);
         } else {
-            log.debug("Unable to lock Preparation {} for user {}. Already locked by user {}", preparationId, userId,
+            LOGGER.debug("Unable to lock Preparation {} for user {}. Already locked by user {}", preparationId, userId,
                     lockedResource.getUserId());
             throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()), false);
         }
     }
-
 
     /**
      * Marks the specified preparation (identified by <i>preparationId</i>) as unlocked by the user identified by the
@@ -989,15 +1015,15 @@ public class PreparationService {
         Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
         // TODO: A hack to avoid sending error until TDP-2124 is fixed
         if (preparation == null) {
-            log.debug("Preparation {} you are trying to lock does not exist.", preparationId);
+            LOGGER.debug("Preparation {} you are trying to lock does not exist.", preparationId);
             return;
         }
         LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
         LockedResource lockedResource = lockedResourceRepository.tryUnlock(preparation, userInfo);
         if (lockedResourceRepository.lockReleased(lockedResource)) {
-            log.debug("Preparation {} unlocked by user {}.", preparationId, userId);
+            LOGGER.debug("Preparation {} unlocked by user {}.", preparationId, userId);
         } else {
-            log.debug("Unable to unlock Preparation {} for user {}. Already locked by {}", preparationId, userId,
+            LOGGER.debug("Unable to unlock Preparation {} for user {}. Already locked by {}", preparationId, userId,
                     lockedResource.getUserId());
             // TODO: We must find a way to avoid printing stack trace when such a kind of non critical exceptions occurs
             throw new TDPException(CommonErrorCodes.CONFLICT_TO_UNLOCK_RESOURCE,
@@ -1014,7 +1040,7 @@ public class PreparationService {
      * the head
      *
      * @param preparation The preparation to test
-     * @param stepId      The step id to test
+     * @param stepId The step id to test
      * @return True if 'stepId' is considered as the preparation head
      */
     private boolean isPreparationHead(final Preparation preparation, final String stepId) {
@@ -1059,15 +1085,15 @@ public class PreparationService {
      * as rule 2. (New_created_column_id = created_column_id + columnShiftNumber, only if created_column_id >
      * 'shiftColumnAfterId')
      *
-     * @param stepsIds           The steps ids
-     * @param afterStepId        The (EXCLUDED) step where the extraction starts
-     * @param deletedColumns     The column ids that will be removed
+     * @param stepsIds The steps ids
+     * @param afterStepId The (EXCLUDED) step where the extraction starts
+     * @param deletedColumns The column ids that will be removed
      * @param shiftColumnAfterId The (EXCLUDED) column id where we start the shift
-     * @param shiftNumber        The shift number. new_column_id = old_columns_id + columnShiftNumber
+     * @param shiftNumber The shift number. new_column_id = old_columns_id + columnShiftNumber
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns
@@ -1097,7 +1123,7 @@ public class PreparationService {
      * negative)
      *
      * @param shiftColumnAfterId The shift is performed if created column id > shiftColumnAfterId
-     * @param shiftNumber        The number to shift (can be negative)
+     * @param shiftNumber The number to shift (can be negative)
      * @return The same step but modified
      */
     private Function<AppendStep, AppendStep> shiftCreatedColumns(final int shiftColumnAfterId, final int shiftNumber) {
@@ -1122,7 +1148,7 @@ public class PreparationService {
      * negative)
      *
      * @param shiftColumnAfterId The shift is performed if column id > shiftColumnAfterId
-     * @param shiftNumber        The number to shift (can be negative)
+     * @param shiftNumber The number to shift (can be negative)
      * @return The same step but modified
      */
     private Function<AppendStep, AppendStep> shiftStepParameter(final int shiftColumnAfterId, final int shiftNumber) {
@@ -1154,7 +1180,7 @@ public class PreparationService {
      * Update the head step of a preparation
      *
      * @param preparation The preparation to update
-     * @param head        The head step
+     * @param head The head step
      */
     private void setPreparationHead(final Preparation preparation, final Step head) {
         preparation.setHeadId(head.id());
@@ -1165,8 +1191,8 @@ public class PreparationService {
     /**
      * Rewrite the preparation history from a specific step, with the provided actions
      *
-     * @param preparation  The preparation
-     * @param startStepId  The step id to start the (re)write. The following steps will be erased
+     * @param preparation The preparation
+     * @param startStepId The step id to start the (re)write. The following steps will be erased
      * @param actionsSteps The actions to perform
      */
     private void replaceHistory(final Preparation preparation, final String startStepId, final List<AppendStep> actionsSteps) {
@@ -1208,7 +1234,7 @@ public class PreparationService {
     /**
      * Deletes the step of specified id of the specified preparation
      *
-     * @param preparation    the specified preparation
+     * @param preparation the specified preparation
      * @param stepToDeleteId the specified step id to delete
      */
     private void deleteAction(Preparation preparation, String stepToDeleteId) {
@@ -1218,11 +1244,10 @@ public class PreparationService {
         final Step std = getStep(stepToDeleteId);
         final List<String> deletedColumns = std.getDiff().getCreatedColumns();
         final int columnsDiffNumber = -deletedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ?
-                MAX_VALUE :
-                deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
+        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ? MAX_VALUE
+                : deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
 
-        log.debug("Deleting actions in preparation #{} at step #{}", preparation.getId(), stepToDeleteId); //$NON-NLS-1$
+        LOGGER.debug("Deleting actions in preparation #{} at step #{}", preparation.getId(), stepToDeleteId); //$NON-NLS-1$
 
         // get new actions to rewrite history from deleted step
         final List<AppendStep> actions = getStepsWithShiftedColumnIds(steps, stepToDeleteId, deletedColumns,
@@ -1237,8 +1262,8 @@ public class PreparationService {
      * Moves the step with specified <i>stepId</i> just after the step with <i>parentStepId</i> as identifier within the
      * specified preparation.
      *
-     * @param preparation  the preparation containing the step to move
-     * @param stepId       the id of the step to move
+     * @param preparation the preparation containing the step to move
+     * @param stepId the id of the step to move
      * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     private void reorderSteps(final Preparation preparation, final String stepId, final String parentStepId) {
@@ -1259,7 +1284,7 @@ public class PreparationService {
         }
 
         if (stepIndex - 1 == parentIndex) {
-            log.debug("No need to Move step {} after step {}, within preparation {}: already at the wanted position.", stepId,
+            LOGGER.debug("No need to Move step {} after step {}, within preparation {}: already at the wanted position.", stepId,
                     parentStepId, preparation.getId());
         } else {
             final int lastUnchangedIndex;

@@ -257,7 +257,7 @@ public class StreamNumberHistogramStatistics {
             // because i is an integer and can be overflowed if i+factor > Integer.MAX_VALUE, let's use a long temp variable
             long temp = i + factor;
             if (temp < numberOfBins) {
-                i += factor;
+                i += (int) factor;
             } else {
                 // let's break the loop !
                 i = numberOfBins;

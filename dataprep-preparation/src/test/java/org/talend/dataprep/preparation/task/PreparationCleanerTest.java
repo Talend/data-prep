@@ -116,14 +116,18 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
         //when
         cleaner.removeOrphanSteps();
+        int nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
 
         //then
         assertNull(repository.get(step.getId(), Step.class));
         assertNull(repository.get(content.getId(), PreparationActions.class));
+        // it remains the root action
+        assertEquals(1, nbActions);
     }
 
     @Test
     public void test_clean_preparation_dont_remove_mutualized_actions() throws Exception {
+
         // given
         final String version = versionService.version().getVersionId();
         final PreparationActions content = new PreparationActions();
@@ -132,15 +136,18 @@ public class PreparationCleanerTest extends BasePreparationTest {
         content.setAppVersion(version);
         repository.add(content);
 
+        // 2 Preparations, with each, one step that shares the same action
         final Step stepFirstPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
         final Step stepSecondPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
 
+        // add the steps to the repository
         repository.add(stepFirstPreparation);
         repository.add(stepSecondPreparation);
 
         Preparation firstPreparation = new Preparation("1", null, stepFirstPreparation.getId(), version);
         Preparation secondPreparation = new Preparation("2", null, stepSecondPreparation.getId(), version);
 
+        // add the preparations to the repository
         repository.add(firstPreparation);
         repository.add(secondPreparation);
 
@@ -152,6 +159,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
         // then
         int nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
+        // when the first prepartion is removed, the shared action is not deleted
         assertEquals(expectedNbActions, nbActions);
 
         // when
@@ -160,6 +168,7 @@ public class PreparationCleanerTest extends BasePreparationTest {
 
         // then
         nbActions = repository.list(PreparationActions.class).collect(Collectors.toList()).size();
+        // it remains the root action
         assertEquals(1, nbActions);
     }
 }

@@ -55,6 +55,7 @@ export function ProgressStateService() {
 		next,
 		reset,
 		getCurrentStep,
+		addSchema,
 	};
 
 	/**
@@ -111,5 +112,15 @@ export function ProgressStateService() {
 	 */
 	function getCurrentStep() {
 		return progressState.steps.find(step => step.state === states.inProgress);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name addSchema
+	 * @methodOf data-prep.services.state.service:ProgressStateService
+	 * @description Adds the given schema to the schemas array
+	 */
+	function addSchema(key, schema) {
+		progressState.schemas[key] = schema;
 	}
 }

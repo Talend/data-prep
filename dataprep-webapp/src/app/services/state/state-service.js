@@ -192,5 +192,6 @@ export function StateService(RouteStateService, routeState,
 		nextProgress: ProgressStateService.next,
 		resetProgress: ProgressStateService.reset,
 		getCurrentProgressStep: ProgressStateService.getCurrentStep,
+		addProgressSchema: ProgressStateService.addSchema,
 	};
 }

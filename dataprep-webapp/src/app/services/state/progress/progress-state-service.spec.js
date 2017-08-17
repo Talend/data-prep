@@ -12,7 +12,6 @@
   ============================================================================*/
 
 describe('progress service', function () {
-	let progressStateMock;
 	const schema = {
 		title: 'TEST_TITLE',
 		steps: [
@@ -36,24 +35,24 @@ describe('progress service', function () {
 		$translateProvider.preferredLanguage('en');
 	}));
 
-	it('should start the progress sequence', inject((StateService, progressState) => {
-		//when
+	it('should start the progress sequence', inject((StateService) => {
+		// when
 		StateService.startProgress(schema);
 
-		//then
+		// then
 		expect(StateService.getCurrentProgressStep()).toEqual(schema.steps[0]);
 	}));
 
 	it('should go to the next progress step and update states', inject((StateService, progressState) => {
-		//given
+		// given
 		StateService.startProgress(schema);
 
 		expect(StateService.getCurrentProgressStep()).toEqual(schema.steps[0]);
 
-		//when
+		// when
 		StateService.nextProgress();
 
-		//then
+		// then
 		expect(progressState.steps[0]).toEqual(
 			{
 				type: 'PROGRESSION',
@@ -71,30 +70,48 @@ describe('progress service', function () {
 	}));
 
 	it('should reset steps', inject((StateService, progressState) => {
-		//given
+		// given
 		StateService.startProgress(schema);
 		expect(progressState.steps).toEqual(schema.steps);
 
-		//when
+		// when
 		StateService.resetProgress();
 
-		//then
+		// then
 		expect(progressState.steps).toEqual([]);
 	}));
 
 	it('should return value', inject((StateService, progressState) => {
-		//given
+		// given
 		StateService.startProgress(schema, () => 42);
 
-		//then
+		// then
 		expect(progressState.progressionGetter()).toBe(42);
 	}));
 
 	it('should set the title', inject((StateService, progressState) => {
-		//given
+		// given
 		StateService.startProgress(schema);
 
-		//then
+		// then
 		expect(progressState.title).toBe('TEST_TITLE');
+	}));
+
+	it('should add the given schema', inject((StateService, progressState) => {
+		// given
+		const actual = Object.assign({}, progressState.schemas);
+		const add = {
+			title: 'A',
+			steps: [{ label: 'A1' }, { label: 'A2' }],
+		};
+
+		// when
+		StateService.addProgressSchema('new', add);
+
+		// then
+		expect(progressState.schemas).toEqual({
+			...actual,
+			new: add,
+		});
 	}));
 });

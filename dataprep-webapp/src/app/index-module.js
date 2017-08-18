@@ -127,7 +127,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 
 			angular.module(SERVICES_UTILS_MODULE)
 				.value('analyticsEnabled', config.analyticsEnabled == true) // eslint-disable-line eqeqeq
-				.value('analyticsAccount', config.analyticsAccount == true) // eslint-disable-line eqeqeq
+				.value('analyticsAccount', config.analyticsAccount)
 				.value('version', config.version)
 				.value('copyRights', config.copyRights);
 		});

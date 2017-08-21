@@ -267,4 +267,35 @@ public class StreamNumberHistogramStatisticsTest {
         assertTrue(min.compareTo(new Range(0, 4)) == 0);
         assertTrue(max.compareTo(new Range(4, 8)) == 0);
     }
+
+    /**
+     * See https://jira.talendforge.org/browse/TDP-4027
+     */
+    @Test(timeout = 5000L)
+    public void shouldDealWithIntegerOverflow() {
+        // given
+        final StreamNumberHistogramStatistics histogram = new StreamNumberHistogramStatistics();
+        double[] array = { 110000000003016d, 110000000001315d, 110000000007584d, 110000000000097d, 110000000000098d,
+                110000000000099d, 110000000000100d, 110000000000101d, 110000000000102d, 110000000003847d, 110000000002272d,
+                110000000002670d, 110000000002671d, 110000000002672d, 110000000002673d, 110000000002700d, 110000000003262d,
+                110000000003263d, 110000000003264d, 110000000003265d, 110000000007711d, 110000000007712d, 110000000000632d,
+                110000000000632d, 110000000002677d, 110000000002678d, 110000000002708d, 110000000002710d, 110000000007644d,
+                110000000004115d, 110000000004116d, 110000000002020d, 110000000004010d, 110000000004011d, 110000000004012d,
+                110000000004013d, 110000000004014d, 110000000004015d, 110000000004016d, 110000000004017d, 110000000001722d,
+                110000000003599d, 110000000002264d, 110000000004288d, 110000000002390d, 110000000002390d, 110000000002390d,
+                110000000002417d, 110000000002418d, 110000000002419d, 110000000004286d, 110000000004281d, 110000000001774d,
+                110000000002135d, 110000000002839d, 110000000000105d, 6196 };
+
+        // when
+        for (double i : array) {
+            histogram.add(i);
+        }
+
+        // then
+        assertEquals(57, histogram.getNumberOfValues());
+        assertEquals(1.080701754415868E14, histogram.getMean(), 0);
+        assertEquals(6196.0, histogram.getMin(), 0);
+        assertEquals(1.10000000007712E14, histogram.getMax(), 0);
+        assertEquals(32, histogram.getNumberOfBins());
+    }
 }

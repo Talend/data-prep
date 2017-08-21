@@ -18,11 +18,49 @@ describe('Step Progress component', () => {
 	let stateMock;
 	let controller;
 
+
+
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.preferredLanguage('en');
+	}));
+
 	beforeEach(angular.mock.module('data-prep.step-progress', ($provide) => {
 		stateMock = {
-			dataset: {
-				uploadingDataset:  null,
-				uploadSteps: [],
+			home: {
+				preparations: {
+					creator: {
+						isVisible: false,
+					},
+				},
+			},
+			progress: {
+				steps: [],
+				types: {
+					progression: 'PROGRESSION',
+					infinite: 'INFINITE',
+				},
+				states: {
+					inProgress: 'IN_PROGRESS',
+					future: 'FUTURE',
+					complete: 'COMPLETE',
+				},
+				schemas: {
+					dataset: {
+						title: 'ADD_NEW_DATASET',
+						steps: [
+							{
+								type: 'PROGRESSION',
+								state: 'IN_PROGRESS',
+								label: 'UPLOADING_FILE',
+							},
+							{
+								type: 'INFINITE',
+								state: 'FUTURE',
+								label: 'PROFILING_DATA',
+							},
+						],
+					},
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -32,13 +70,15 @@ describe('Step Progress component', () => {
 		scope = $rootScope.$new(true);
 
 		createElement = () => {
-			const html = `	<step-progress steps="steps">
-							</step-progress>`;
+			const html = `<step-progress></step-progress>`;
 			element = $compile(html)(scope);
 			scope.$digest();
 			controller = element.controller('step-progress');
 		};
 	}));
+
+
+
 
 	afterEach(() => {
 		scope.$destroy();
@@ -46,9 +86,9 @@ describe('Step Progress component', () => {
 	});
 
 	describe('render', () => {
-		it('should render 2 steps', inject(function ($rootScope) {
+		it('should render 2 steps', inject(($rootScope) => {
 			// given
-			scope.steps = [
+			stateMock.progress.steps = [
 				{ label: '1' },
 				{ label: '2' },
 			];
@@ -60,9 +100,9 @@ describe('Step Progress component', () => {
 			expect(element.find('.step').length).toBe(2);
 		}));
 
-		it('should not render steps without label', inject(function ($rootScope) {
+		it('should not render steps without label', inject(($rootScope, StateService) => {
 			// given
-			scope.steps = [
+			stateMock.progress.steps = [
 				{ label: '1' },
 				{},
 			];
@@ -75,10 +115,10 @@ describe('Step Progress component', () => {
 			expect(element.find('.step').length).toBe(1);
 		}));
 
-		it('should indicates an in progress upload', inject(function ($rootScope) {
+		it('should indicates an in progress upload', inject(($rootScope, StateService) => {
 			// given
-			scope.steps = [
-				{ id: 'mock', name: 'Mock', state: 'IN_PROGRESS', label: 'A', getValue: () => 50 },
+			stateMock.progress.steps = [
+				{ id: 'mock', name: 'Mock', state: 'IN_PROGRESS', label: 'A' },
 				{ id: 'mock', name: 'Mock', type: 'INFINITE', label: 'B', state: 'FUTURE' },
 			];
 
@@ -92,9 +132,9 @@ describe('Step Progress component', () => {
 			expect(steps.eq(1).hasClass('future')).toBe(true);
 		}));
 
-		it('should indicates an in progress profiling', inject(function ($rootScope) {
+		it('should indicates an in progress profiling', inject(($rootScope, StateService) => {
 			// given
-			scope.steps = [
+			stateMock.progress.steps = [
 				{ id: 'mock', name: 'Mock', state: 'COMPLETE', label: 'A' },
 				{ id: 'mock', name: 'Mock', type: 'INFINITE', state: 'IN_PROGRESS', label: 'B' },
 			];

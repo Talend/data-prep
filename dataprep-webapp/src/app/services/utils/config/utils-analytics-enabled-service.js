@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,19 +11,5 @@
 
  ============================================================================*/
 
-export default class StepProgressCtrl {
-	constructor(state, StateService) {
-		'ngInject';
-
-		this.state = state;
-		this.StateService = StateService;
-	}
-
-	getStepClass(state) {
-		return {
-			[this.state.progress.states.inProgress]: 'in-progress',
-			[this.state.progress.states.complete]: 'complete',
-			[this.state.progress.states.future]: 'future',
-		}[state];
-	}
-}
+const DEFAULT_ANALYTICS_ENABLED = false;
+export default DEFAULT_ANALYTICS_ENABLED;

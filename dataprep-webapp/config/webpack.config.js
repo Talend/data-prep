@@ -149,7 +149,14 @@ function addDevServerConfig(config) {
 		compress: true,
 		inline: true,
 		contentBase: BUILD_PATH,
-	};
+		setup: function (app) {
+			app.get('/assets/config/config.json', function (req, res) {
+				const configFile = require('./../src/assets/config/config.json');
+				configFile.serverUrl = "http://localhost:8888";
+				res.json(configFile);
+			});
+		},
+	}
 }
 
 function addFilesConfig(config) {
@@ -173,16 +180,6 @@ function addPlugins(config, options) {
 		{ from: 'src/assets/config/config.json', to: 'assets/config' },
 		{ from: 'src/i18n', to: 'i18n' },
 	];
-
-	if (options.env === 'dev') {
-		copyWebpackPluginConfiguration.push(
-			{
-				from: 'src/assets/config/config.mine.json',
-				to: 'assets/config/config.json',
-				force: true,
-			}
-		);
-	}
 
 	config.plugins.push(
 		/*

@@ -36,7 +36,6 @@ public class SearchAPITest extends ApiServiceTestBase {
     public void shouldReturnMatchingPreparationsWhenPerformingInventory() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testInventoryOfPreparations",
-                "text/csv",
                 folderRepository.getHome().getId());
 
         // when
@@ -61,7 +60,6 @@ public class SearchAPITest extends ApiServiceTestBase {
     public void shouldReturnMatchingPreparationsWithSpaceWhenPerformingInventory() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations",
-                "text/csv",
                 folderRepository.getHome().getId());
 
         // when
@@ -85,7 +83,7 @@ public class SearchAPITest extends ApiServiceTestBase {
     @Test
     public void shouldNotReturnNonMatchingPreparationsWhenPerformingInventory() throws IOException {
         // given
-        testClient.createPreparationFromFile("t-shirt_100.csv", "nonMatchingPreparation", "text/csv", home.getId());
+        testClient.createPreparationFromFile("t-shirt_100.csv", "nonMatchingPreparation", home.getId());
 
         // when
         final Response response = given() //
@@ -120,17 +118,16 @@ public class SearchAPITest extends ApiServiceTestBase {
         folderRepository.addFolder(home.getId(), "/menu/menu B");
         folderRepository.addFolder(home.getId(), "/menu/menu C");
 
-        final String datasetId1 = testClient.createDataset("dataset/dataset.csv", "MacCallan collection", "text/csv");
-        final String datasetId2 = testClient.createDataset("dataset/dataset.csv", "menu", "text/csv");
-        testClient.createDataset("dataset/dataset.csv", "Saint Feuillien", "text/csv");
-        testClient.createDataset("dataset/dataset.csv", "menu bis", "text/csv");
+        final String datasetId1 = testClient.createDataset("dataset/dataset.csv", "MacCallan collection");
+        final String datasetId2 = testClient.createDataset("dataset/dataset.csv", "menu");
+        testClient.createDataset("dataset/dataset.csv", "Saint Feuillien");
+        testClient.createDataset("dataset/dataset.csv", "menu bis");
 
-        final String preparationId1 = testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup MacCallan", "text/csv",
+        final String preparationId1 = testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup MacCallan",
                 whiskyFolder.getId());
-        final String preparationId2 = testClient.createPreparationFromFile("dataset/dataset.csv", "menu", "text/csv",
-                menuFolder.getId());
-        testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup Queue 2 charrue", "text/csv", beerFolder.getId());
-        testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup menu", "text/csv", menuFolder.getId());
+        final String preparationId2 = testClient.createPreparationFromFile("dataset/dataset.csv", "menu", menuFolder.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup Queue 2 charrue", beerFolder.getId());
+        testClient.createPreparationFromFile("dataset/dataset.csv", "cleanup menu", menuFolder.getId());
 
         final boolean nonStrict = false;
         final boolean strict = true;

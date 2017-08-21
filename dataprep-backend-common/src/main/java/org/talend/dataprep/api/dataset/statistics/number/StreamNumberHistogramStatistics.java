@@ -12,7 +12,11 @@
 // ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.talend.dataquality.statistics.numeric.histogram.Range;
 
@@ -201,9 +205,9 @@ public class StreamNumberHistogramStatistics {
      */
     private void extendToLeft(double d) {
         double histogramWidth = numberOfBins * binSize;
-        int factor = 2;
+        long factor = 2;
         while (d < lowerBound - histogramWidth * (factor >>> 1)) {
-            factor <<= 1;
+            factor <<= 1; // multiply by 2
         }
         binSize = binSize * factor;
         int offset = (int) (histogramWidth * (factor >>> 1) / binSize);
@@ -236,21 +240,33 @@ public class StreamNumberHistogramStatistics {
      * @param factor the factor by which the binSize is multiplied
      * @param offset the position of the older lower bound in the new array
      */
-    private void merge(int factor, int offset) {
+    private void merge(long factor, int offset) {
         // merge previous regulars to form new regulars of newBinSize width
         int k = 0;
-        for (int i = 0; i < numberOfBins; i += factor) {
+        int i = 0;
+        while (i < numberOfBins) {
+
             long count = 0L;
             for (int j = i; j < i + factor && j < numberOfBins; j++) {
                 count += regulars[j];
                 regulars[j] = 0;
             }
+
             regulars[k++] = count;
+
+            // because i is an integer and can be overflowed if i+factor > Integer.MAX_VALUE, let's use a long temp variable
+            long temp = i + factor;
+            if (temp < numberOfBins) {
+                i += (int) factor;
+            } else {
+                // let's break the loop !
+                i = numberOfBins;
+            }
         }
         if (0 < offset) {
             // move bins according to the offset
             // to avoid overwriting some bins that must not we start from "numberOfBins - 1 - offset"
-            for (int i = numberOfBins - 1 - offset; 0 <= i; i--) {
+            for (i = numberOfBins - 1 - offset; 0 <= i; i--) {
                 long count = regulars[i];
                 regulars[i] = 0;
                 regulars[i + offset] = count;

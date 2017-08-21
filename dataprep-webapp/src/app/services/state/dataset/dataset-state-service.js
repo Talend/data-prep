@@ -16,22 +16,9 @@ export const datasetState = {
 	uploadSteps: [],
 };
 
-export function DatasetStateService($translate) {
-	'ngInject';
-
-	const TYPES = {
-		PROGRESSION: 'PROGRESSION',
-		INFINITE: 'INFINITE',
-	};
-	const STATES = {
-		IN_PROGRESS: 'IN_PROGRESS',
-		FUTURE: 'FUTURE',
-		COMPLETE: 'COMPLETE',
-	};
-
+export function DatasetStateService() {
 	return {
 		startUploadingDataset,
-		startProfilingDataset,
 		finishUploadingDataset,
 	};
 
@@ -40,42 +27,9 @@ export function DatasetStateService($translate) {
     // --------------------------------------------------------------------------------------------
 	function startUploadingDataset(dataset) {
 		datasetState.uploadingDataset = dataset;
-		initSteps(dataset);
-	}
-
-	function startProfilingDataset() {
-		nextStep();
 	}
 
 	function finishUploadingDataset() {
 		datasetState.uploadingDataset = null;
-		nextStep();
-	}
-
-	function initSteps(dataset) {
-		datasetState.uploadSteps = [
-			{
-				type: TYPES.PROGRESSION,
-				state: STATES.IN_PROGRESS,
-				label: $translate.instant('UPLOADING_FILE'),
-				getValue: () => dataset.progress,
-			},
-			{
-				type: TYPES.INFINITE,
-				state: STATES.FUTURE,
-				label: $translate.instant('PROFILING_DATA'),
-			},
-		];
-	}
-
-	function nextStep() {
-		const index = datasetState.uploadSteps.findIndex(step => step.state === STATES.IN_PROGRESS);
-		if (datasetState.uploadSteps[index + 1]) {
-			datasetState.uploadSteps[index].state = STATES.COMPLETE;
-			datasetState.uploadSteps[index + 1].state = STATES.IN_PROGRESS;
-		}
-		else {
-			datasetState.uploadSteps = [];
-		}
 	}
 }

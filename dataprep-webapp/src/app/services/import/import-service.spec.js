@@ -25,6 +25,34 @@ describe('Import service', () => {
 					datasets: [],
 				},
 			},
+			progress: {
+				types: {
+					progression: 'PROGRESSION',
+					infinite: 'INFINITE',
+				},
+				states: {
+					inProgress: 'IN_PROGRESS',
+					future: 'FUTURE',
+					complete: 'COMPLETE',
+				},
+				schemas: {
+					dataset: {
+						title: 'ADD_NEW_DATASET',
+						steps: [
+							{
+								type: 'PROGRESSION',
+								state: 'IN_PROGRESS',
+								label: 'UPLOADING_FILE',
+							},
+							{
+								type: 'INFINITE',
+								state: 'FUTURE',
+								label: 'PROFILING_DATA',
+							},
+						],
+					},
+				},
+			},
 		};
 		$provide.constant('state', stateMock);
 	}));

@@ -20,7 +20,7 @@
  * @requires data-prep.services.dataset.service:DatasetService
  * @requires data-prep.services.datasetWorkflowService.service:UploadWorkflowService
  */
-export default function UpdateWorkflowService(StateService, MessageService, DatasetService, UploadWorkflowService) {
+export default function UpdateWorkflowService(state, StateService, MessageService, DatasetService, UploadWorkflowService) {
 	'ngInject';
 
 	/**
@@ -34,12 +34,13 @@ export default function UpdateWorkflowService(StateService, MessageService, Data
 	this.updateDataset = function updateDataset(file, existingDataset) {
 		const dataset = DatasetService.createDatasetInfo(file, existingDataset.name, existingDataset.id);
 		StateService.startUploadingDataset(dataset);
+		StateService.startProgress(state.progress.schemas.dataset, () => dataset.progress);
 
 		return DatasetService.update(dataset)
 			.progress(function (event) {
 				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
 				if (dataset.progress !== progress && progress === 100) {
-					StateService.startProfilingDataset();
+					StateService.nextProgress();
 				}
 				dataset.progress = progress;
 			})
@@ -55,6 +56,7 @@ export default function UpdateWorkflowService(StateService, MessageService, Data
 			})
 			.finally(function () {
 				StateService.finishUploadingDataset();
+				StateService.resetProgress();
 			});
 	};
 }

@@ -23,7 +23,7 @@ describe('Datagrid column service', () => {
 		columnsMetadata = [
 			{ id: '0000', name: 'col0', type: 'string' },
 			{ id: '0001', name: 'col1', type: 'integer' },
-			{ id: '0002', name: 'col2', type: 'string', domain: 'salary' },
+			{ id: '0002', name: 'col2', type: 'string', domain: 'salary', domainLabel: 'Salary label' },
 		];
 
 		gridMock = new SlickGridMock();
@@ -113,13 +113,14 @@ describe('Datagrid column service', () => {
 
 			expect(createdColumns[3].id).toEqual('0002');
 			expect(createdColumns[3].field).toEqual('0002');
-			expect(createdColumns[3].name).toEqual('<div class="grid-header ">   <div class="grid-header-title dropdown-button ng-binding">col2</div>   <div class="grid-header-type ng-binding">salary</div></div><div class="quality-bar"><div class="record-unknown"></div></div>');
+			expect(createdColumns[3].name).toEqual('<div class="grid-header ">   <div class="grid-header-title dropdown-button ng-binding">col2</div>   <div class="grid-header-type ng-binding">Salary label</div></div><div class="quality-bar"><div class="record-unknown"></div></div>');
 			expect(createdColumns[3].formatter).toEqual(formatter);
 			expect(createdColumns[3].tdpColMetadata).toEqual({
 				id: '0002',
 				name: 'col2',
 				type: 'string',
 				domain: 'salary',
+				domainLabel: 'Salary label',
 			});
 		}));
 
@@ -157,6 +158,7 @@ describe('Datagrid column service', () => {
 				name: 'col2',
 				type: 'string',
 				domain: 'salary',
+				domainLabel: 'Salary label',
 			});
 		}));
 	});

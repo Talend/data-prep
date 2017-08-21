@@ -1,34 +1,37 @@
 <talend-modal   id="step-progress-modal"
                 close-button="false"
-                ng-if="$ctrl.steps.length > 0"
-                state="$ctrl.steps.length > 0"
+                ng-if="$ctrl.state.progress.steps.length > 0 && !$ctrl.state.home.preparations.creator.isVisible"
+                state="$ctrl.state.progress.steps.length > 0 && !$ctrl.state.home.preparations.creator.isVisible"
                 disable-enter="true"
                 disable-close-on-background-click="true">
 
-        <h1>{{ $ctrl.modalTitle }}</h1>
+        <h1>{{ $ctrl.state.progress.title | translate }}</h1>
 
     	<div class="progress">
             <div
                 class="progression"
-                ng-style="{width: $ctrl.currentStep.getValue() + '%'}"
-                ng-class="{'infinite': $ctrl.currentStep.type === 'INFINITE'}"
+                ng-style="{width: $ctrl.state.progress.progressionGetter() + '%'}"
+                ng-class="{'infinite': $ctrl.StateService.getCurrentProgressStep().type === $ctrl.state.progress.types.infinite}"
             >
             </div>
     	</div>
 
         <ol class="steps-list">
             <li
-                ng-repeat="step in $ctrl.steps track by $index"
+                ng-repeat="step in $ctrl.state.progress.steps track by $index"
                 ng-if="step.label"
                 class="step"
-                ng-class="{
-                    'in-progress': step.state === 'IN_PROGRESS',
-                    'complete': step.state === 'COMPLETE',
-                    'future': step.state === 'FUTURE'
-                }">
-                <span>{{ step.label }}</span>
-                <pure-circular-progress  ng-if="step.state === 'IN_PROGRESS'" class="step-icon progress-icon"></pure-circular-progress>
-                <icon ng-if="step.state === 'COMPLETE'" class="step-icon complete-icon" name="'talend-check'"/>
+                ng-class="$ctrl.getStepClass(step.state)">
+                <span>{{ step.label | translate }}</span>
+                <pure-circular-progress
+                    ng-if="step.state === $ctrl.state.progress.states.inProgress"
+                    class="step-icon progress-icon"
+                ></pure-circular-progress>
+                <icon
+                    ng-if="step.state === $ctrl.state.progress.states.complete"
+                    class="step-icon complete-icon"
+                    name="'talend-check'"
+                />
             </li>
     	</ol>
 </talend-modal>

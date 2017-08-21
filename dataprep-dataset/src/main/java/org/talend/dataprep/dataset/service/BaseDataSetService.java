@@ -59,9 +59,6 @@ public abstract class BaseDataSetService {
     @Autowired
     private List<SynchronousDataSetAnalyzer> synchronousAnalyzers;
 
-    @Value("${dataset.local.file.size.limit:2000000}")
-    protected long maximumInputStreamSize;
-
     /**
      * Sort the synchronous analyzers.
      */

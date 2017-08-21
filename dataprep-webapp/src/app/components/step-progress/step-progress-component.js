@@ -15,10 +15,6 @@ import template from './step-progress.html';
 import StepProgressCtrl from './step-progress-controller';
 
 const StepProgressComponent = {
-	bindings: {
-		steps: '=',
-		modalTitle: '=',
-	},
 	controller: StepProgressCtrl,
 	templateUrl: template,
 };

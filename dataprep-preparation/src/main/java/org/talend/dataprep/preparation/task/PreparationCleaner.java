@@ -99,7 +99,7 @@ public class PreparationCleaner {
 
                     // Remove actions linked to step
                     // if this step re-use an existing actions we don't delete the actions
-                    boolean criterion = repository.exist(PersistentStep.class, "content" + "='" + step.getContent() + "'");
+                    boolean criterion = repository.exist(PersistentStep.class, "contentId" + "='" + step.getContent() + "'");
                     if (criterion) {
                         LOGGER.info("Don't removing step content {} it still used by another step.", step.getContent());
                     } else {

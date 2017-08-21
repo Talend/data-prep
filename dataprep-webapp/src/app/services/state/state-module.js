@@ -29,6 +29,7 @@ import { routeState, RouteStateService } from './route/route-state-service';
 import { importState, ImportStateService } from './import/import-state-service';
 import { exportState, ExportStateService } from './export/export-state-service';
 import { homeState, HomeStateService } from './home/home-state-service';
+import { progressState, ProgressStateService } from './progress/progress-state-service';
 import { state, StateService } from './state-service';
 import { searchState, SearchStateService } from './search/search-state-service';
 
@@ -87,6 +88,9 @@ angular.module(MODULE_NAME, [])
 
 	.service('HomeStateService', HomeStateService)
 	.constant('homeState', homeState)
+
+	.service('ProgressStateService', ProgressStateService)
+	.constant('progressState', progressState)
 
 	.service('StateService', StateService)
 	.constant('state', state)

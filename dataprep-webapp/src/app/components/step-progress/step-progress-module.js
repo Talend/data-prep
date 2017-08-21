@@ -12,13 +12,18 @@
  ============================================================================*/
 
 import angular from 'angular';
-
+import SERVICES_STATE_MODULE from '../../services/state/state-module';
 import StepProgressComponent from './step-progress-component';
-
 
 const MODULE_NAME = 'data-prep.step-progress';
 
-angular.module(MODULE_NAME, [])
+/**
+ * @ngdoc object
+ * @name data-prep.step-progress
+ * @description This module contains the controller and component to manage the step-progress
+ * @requires data-prep.services.state
+ */
+angular.module(MODULE_NAME, [SERVICES_STATE_MODULE])
 	.component('stepProgress', StepProgressComponent);
 
 export default MODULE_NAME;

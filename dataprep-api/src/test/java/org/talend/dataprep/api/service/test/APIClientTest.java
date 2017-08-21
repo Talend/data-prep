@@ -74,19 +74,19 @@ public class APIClientTest {
      *
      * @param file the classpath of the file to upload.
      * @param name the dataset name.
-     * @param type the dataset type.
      * @return the dataset id.
      * @throws IOException sh*t happens.
      */
-    public String createDataset(final String file, final String name, final String type) throws IOException {
+    public String createDataset(final String file, final String name) throws IOException {
         final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
         assertNotNull(resourceAsStream);
-        final String datasetContent = IOUtils.toString(resourceAsStream, "UTF-8");
+        final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //
-                .contentType(type) //
+                .contentType(JSON) //
                 .body(datasetContent) //
+                .queryParam("name", name) //
                 .when() //
-                .post("/api/datasets?name={name}", name);
+                .post("/api/datasets");
 
         final int statusCode = post.getStatusCode();
         if (statusCode != 200) {
@@ -105,14 +105,13 @@ public class APIClientTest {
      *
      * @param file the dataset classpath file to upload.
      * @param name the preparation name.
-     * @param type the dataset type.
      * @param folderId where to create the preparation.
      * @return the preparation id.
      * @throws IOException sh*i happens.
      */
-    public String createPreparationFromFile(final String file, final String name, final String type, final String folderId)
+    public String createPreparationFromFile(final String file, final String name, final String folderId)
             throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID(), type);
+        final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID());
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
 
@@ -158,7 +157,7 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyActionFromFile(final String preparationId, final String actionFile) throws IOException {
-        final String action = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(actionFile), "UTF-8");
+        final String action = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(actionFile), UTF_8);
         applyAction(preparationId, action);
     }
 
@@ -205,7 +204,7 @@ public class APIClientTest {
                 expect() //
                         .statusCode(200).log().ifValidationFails() //
                         .when() //
-                        .get("/api/preparations/{id}/details", new Object[] { preparationId }).asString();
+                        .get("/api/preparations/{id}/details", preparationId).asString();
         return mapper.readerFor(Preparation.class).readValue(json);
     }
 

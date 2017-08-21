@@ -2,6 +2,35 @@
 # yarn lockfile v1
 
 
+"@talend/bootstrap-theme@0.101.0":
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.101.0.tgz#e5392df1ced062a757bb223775799b34bd8a3fa8"
+  dependencies:
+    bootstrap-sass "3.3.7"
+
+"@talend/icons@0.101.0":
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.101.0.tgz#233ee831b76c13261c658adbd41db9663a4e6203"
+
+"@talend/react-components@0.101.0":
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.101.0.tgz#06a176c73055c33dc77dad2c41f52211f46e8f45"
+  dependencies:
+    lodash "4.17.4"
+    react-autowhatever "^7.0.0"
+    react-debounce-input "^2.4.2"
+    react-virtualized "^9.3.0"
+
+"@talend/react-forms@0.101.0":
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.101.0.tgz#5357e430b7112dcc0599de94e8967c60406668e4"
+  dependencies:
+    classnames "2.2.5"
+    keycode "2.1.9"
+    react-autowhatever "^7.0.0"
+    react-jsonschema-form "^0.42.0"
+    talend-json-schema-form-core "1.0.2-alpha.2"
+
 "X-SlickGrid@git+https://github.com/ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf":
   version "0.0.1"
   resolved "git+https://github.com/ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf"
@@ -1047,12 +1076,6 @@ boom@2.x.x:
 bootstrap-sass@3.3.7, bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
-
-bootstrap-talend-theme@0.101.0:
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.101.0.tgz#9b710a0cb1e4d28742b4da972d2bd17b9695907f"
-  dependencies:
-    bootstrap-sass "3.3.7"
 
 brace-expansion@^1.0.0:
   version "1.1.6"
@@ -5037,25 +5060,6 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.101.0:
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.101.0.tgz#2d4a777bed00f543acf18881a035ad8f8db11b55"
-  dependencies:
-    lodash "4.17.4"
-    react-autowhatever "^7.0.0"
-    react-debounce-input "^2.4.2"
-    react-virtualized "^9.3.0"
-
-react-talend-forms@0.101.0:
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.101.0.tgz#82b8ee4b39353c2bf41f56391812727752e182b6"
-  dependencies:
-    classnames "2.2.5"
-    keycode "2.1.9"
-    react-autowhatever "^7.0.0"
-    react-jsonschema-form "^0.42.0"
-    talend-json-schema-form-core "1.0.2-alpha.2"
-
 react-themeable@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-themeable/-/react-themeable-1.1.0.tgz#7d4466dd9b2b5fa75058727825e9f152ba379a0e"
@@ -5913,10 +5917,6 @@ table@^3.7.8:
     lodash "^4.0.0"
     slice-ansi "0.0.4"
     string-width "^2.0.0"
-
-talend-icons@0.101.0:
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.101.0.tgz#385c862ab31bc81e7a6d3e6f8953911aa16a0c98"
 
 talend-json-schema-form-core@1.0.2-alpha.2:
   version "1.0.2-alpha.2"

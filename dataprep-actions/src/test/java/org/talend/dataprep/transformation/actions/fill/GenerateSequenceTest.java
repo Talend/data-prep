@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test to generate a sequence  function.
+ * Test to generate a sequence function.
  */
 public class GenerateSequenceTest extends AbstractMetadataBaseTest {
 
@@ -88,7 +88,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         Map<String, Object> expectedValues3 = new LinkedHashMap<>();
         expectedValues3.put("0000", "4");
 
-        ActionTestWorkbench.test(Arrays.asList(row1, row2,row3), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1,row2,row3), actionRegistry, factory.create(action, parameters));
         assertEquals(expectedValues, row1.values());
         assertEquals(expectedValues2, row2.values());
         assertEquals(expectedValues3, row3.values());

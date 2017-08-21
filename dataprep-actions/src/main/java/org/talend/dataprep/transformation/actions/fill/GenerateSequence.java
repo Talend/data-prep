@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Generate a sequence on a column based on star value and step value.
+ * Generate a sequence on a column based on start value and step value.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + GenerateSequence.ACTION_NAME)
 public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
@@ -70,16 +70,11 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
     @Override
     public Set<Behavior> getBehavior() {
-            return EnumSet.of(Behavior.VALUES_COLUMN,Behavior.FORBID_DISTRIBUTED);
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED);
     }
 
-    @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-    }
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-
         String startValue = context.getParameters().get(START_VALUE);
         String stepValue = context.getParameters().get(STEP_VALUE);
         if (startValue.isEmpty() || stepValue.isEmpty()) {

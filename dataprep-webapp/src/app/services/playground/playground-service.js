@@ -459,8 +459,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 */
 	function appendStep(actions) {
 		startLoader();
-
-		const currentStepCount = state.playground.recipe.current.steps.length;
+		const actualSteps = state.playground.recipe.current.steps.slice(0);
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
@@ -483,7 +482,8 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			// hide loading screen
 			.finally(() => {
 				stopLoader();
-				if (currentStepCount === 0) {
+				const len = actualSteps.length;
+				if (!len || (len === 1 && actualSteps[0].preview)) {
 					StateService.showRecipe();
 				}
 			});

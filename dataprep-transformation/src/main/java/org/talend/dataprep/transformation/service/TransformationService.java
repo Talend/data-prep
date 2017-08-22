@@ -378,11 +378,12 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void executeDiffOnDataset(final PreviewParameters previewParameters, final OutputStream output) {
+        boolean identityReleased = false;
+        securityProxy.asTechnicalUser();
+
         // because of dataset records streaming, the dataset content must be within an auto closeable block
         final DataSetGet dataSetGet = context.getBean(DataSetGet.class, previewParameters.getDataSetId(), false, true);
 
-        boolean identityReleased = false;
-        securityProxy.asTechnicalUser();
         try (final InputStream dataSetContent = dataSetGet.execute(); //
                 final JsonParser parser = mapper.getFactory().createParser(dataSetContent)) {
 

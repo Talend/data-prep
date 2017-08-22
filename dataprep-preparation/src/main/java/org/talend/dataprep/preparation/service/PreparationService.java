@@ -481,7 +481,7 @@ public class PreparationService {
         // Ensure that the preparation is not locked elsewhere
         lock(id);
         preparationRepository.remove(preparationToDelete);
-        preparationCleaner.removeOrphanSteps();
+        preparationCleaner.removeCurrentOrphanSteps();
 
         // delete the associated folder entries
         // TODO make this async?

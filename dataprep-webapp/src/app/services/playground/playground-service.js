@@ -135,11 +135,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		StateService.setCurrentSampleType(sampleType);
 		FilterService.initFilters(dataset, preparation);
 		updateGridSelection(dataset, preparation);
-		this.updatePreparationDetails();
+		this.updatePreparationDetails().then(() => {
+			if (state.playground.recipe.current.steps.length > 0) {
+				StateService.showRecipe();
+			}
+		});
 
 		// preparation specific init
 		if (preparation) {
-			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
 			TitleService.setStrict(preparation.name);
 		}
@@ -336,13 +339,10 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then((preparation) => {
 				RecipeService.refresh(preparation);
 
-				if (state.playground.recipe.current.steps.length) {
-					StateService.showRecipe();
-				}
-
 				if (!state.playground.isReadOnly &&
 					OnboardingService.shouldStartTour('recipe') &&
 					state.playground.recipe.current.steps.length >= 3) {
+					StateService.showRecipe();
 					$timeout(OnboardingService.startTour('recipe'), 300, false);
 				}
 				return preparation;
@@ -459,6 +459,8 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 */
 	function appendStep(actions) {
 		startLoader();
+
+		const currentStepCount = state.playground.recipe.current.steps.length;
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
@@ -479,7 +481,12 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 				HistoryService.addAction(undo, redo);
 			})
 			// hide loading screen
-			.finally(stopLoader);
+			.finally(() => {
+				stopLoader();
+				if (currentStepCount === 0) {
+					StateService.showRecipe();
+				}
+			});
 	}
 
 	/**

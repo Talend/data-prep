@@ -95,6 +95,7 @@ describe('Playground Service', () => {
 	];
 
 	let stateMock;
+	let showRecipeSpy;
 
 	beforeEach(angular.mock.module('data-prep.services.playground', ($provide) => {
 		stateMock = {
@@ -162,7 +163,7 @@ describe('Playground Service', () => {
 		spyOn(StateService, 'setCurrentSampleType').and.returnValue();
 		spyOn(StateService, 'setPreparationName').and.returnValue();
 		spyOn(StateService, 'setNameEditionMode').and.returnValue();
-		spyOn(StateService, 'showRecipe').and.returnValue();
+		showRecipeSpy = spyOn(StateService, 'showRecipe').and.returnValue();
 		spyOn(StateService, 'hideRecipe').and.returnValue();
 		spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
 		spyOn(FilterService, 'initFilters').and.returnValue();
@@ -380,7 +381,6 @@ describe('Playground Service', () => {
 				expect(StateService.setCurrentDataset).toHaveBeenCalledWith(metadata);
 				expect(StateService.setCurrentData).toHaveBeenCalledWith(data);
 				expect(StateService.setCurrentSampleType).toHaveBeenCalledWith('HEAD');
-				expect(StateService.showRecipe).toHaveBeenCalled();
 				expect(RecipeService.refresh).toHaveBeenCalled();
 				expect(TransformationCacheService.invalidateCache).toHaveBeenCalled();
 				expect(HistoryService.clear).toHaveBeenCalled();
@@ -1824,6 +1824,7 @@ describe('Playground Service', () => {
 				$timeout.flush(300);
 
 				// then
+				expect(StateService.showRecipe).toHaveBeenCalled();
 				expect(OnboardingService.startTour).toHaveBeenCalled();
 			}));
 
@@ -1842,6 +1843,7 @@ describe('Playground Service', () => {
 				$rootScope.$digest();
 				$timeout.flush(300);
 
+
 				// given : second action call
 				PlaygroundService.appendStep(actions);
 				$timeout.flush(300);
@@ -1856,6 +1858,30 @@ describe('Playground Service', () => {
 
 				// then
 				expect(OnboardingService.startTour).not.toHaveBeenCalled();
+			}));
+
+			it('should show recipe only on the first step', inject(($rootScope, $timeout, PlaygroundService, StateService, OnboardingService) => {
+				// given
+				stateMock.playground.dataset = { id: '123456' };
+
+				const parameters = { param1: 'param1Value', param2: 4 };
+				const actions = [{ action: 'uppercase', parameters: parameters }];
+
+				// given : first action call
+				PlaygroundService.appendStep(actions);
+				stateMock.playground.preparation = preparations[0];
+				$rootScope.$digest();
+				$timeout.flush(300);
+
+				expect(StateService.showRecipe).toHaveBeenCalled();
+				showRecipeSpy.calls.reset();
+
+				// given : second action call
+				PlaygroundService.appendStep(actions);
+				$timeout.flush(300);
+				$rootScope.$digest();
+
+				expect(StateService.showRecipe).not.toHaveBeenCalled();
 			}));
 		});
 	});
@@ -1872,19 +1898,6 @@ describe('Playground Service', () => {
 			// then
 			expect(PreparationService.getDetails).toHaveBeenCalledWith('79db821355a65cd96');
 			expect(RecipeService.refresh).toHaveBeenCalled();
-		}));
-
-		it('should show recipe', inject(($rootScope, PlaygroundService, StateService, $state) => {
-			// given
-			stateMock.playground.preparation = preparations[0];
-			stateMock.playground.recipe.current.steps = [{}];
-
-			// when
-			PlaygroundService.updatePreparationDetails();
-			$rootScope.$digest();
-
-			// then
-			expect(StateService.showRecipe).toHaveBeenCalled();
 		}));
 	});
 

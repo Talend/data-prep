@@ -29,7 +29,7 @@
         <maven>3.1.0</maven>
     </prerequisites>
     <properties>
-        <docker.tools.image.name>kkarczmarczyk/node-yarn</docker.tools.image.name>
+        <docker.image.name>kkarczmarczyk/node-yarn</docker.image.name>
         <docker.path.dataprep>/data-prep</docker.path.dataprep>
         <node.version>v7.7.4</node.version>
         <yarn.version>v0.27.5</yarn.version>
@@ -157,7 +157,7 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>docker pull ${docker.tools.image.name}</id>
+                                <id>docker pull ${docker.image.name}</id>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
@@ -166,7 +166,7 @@
                                     <executable>docker</executable>
                                     <arguments>
                                         <argument>pull</argument>
-                                        <argument>${docker.tools.image.name}</argument>
+                                        <argument>${docker.image.name}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -183,7 +183,7 @@
                                         <argument>-v</argument>
                                         <argument>${basedir}:${docker.path.dataprep}</argument>
                                         <argument>--rm=true</argument>
-                                        <argument>${docker.tools.image.name}</argument>
+                                        <argument>${docker.image.name}</argument>
                                         <argument>/bin/sh</argument>
                                         <argument>-c</argument>
                                         <argument>cd ${docker.path.dataprep} &amp;&amp; yarn install --force</argument>
@@ -204,7 +204,7 @@
                                         <argument>-v</argument>
                                         <argument>${basedir}:${docker.path.dataprep}</argument>
                                         <argument>--rm=true</argument>
-                                        <argument>${docker.tools.image.name}</argument>
+                                        <argument>${docker.image.name}</argument>
                                         <argument>/bin/sh</argument>
                                         <argument>-c</argument>
                                         <argument>cd ${docker.path.dataprep} &amp;&amp; yarn run build:dist</argument>
@@ -224,7 +224,7 @@
                                         <argument>-v</argument>
                                         <argument>${basedir}:${docker.path.dataprep}</argument>
                                         <argument>--rm=true</argument>
-                                        <argument>${docker.tools.image.name}</argument>
+                                        <argument>${docker.image.name}</argument>
                                         <argument>/bin/sh</argument>
                                         <argument>-c</argument>
                                         <argument>cd ${docker.path.dataprep} &amp;&amp; yarn run test:ci</argument>

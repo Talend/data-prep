@@ -357,6 +357,20 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.removeStep).toHaveBeenCalledWith(step);
 		}));
 
+		it('should NOT call removeStep if the deletion is already in progress', inject((PlaygroundService) => {
+			// given
+			const ctrl = createController();
+			const event = angular.element.Event('click');
+
+			// when
+			ctrl.remove(step, event);
+			ctrl.remove(step, event);
+			scope.$digest();
+
+			// then
+			expect(PlaygroundService.removeStep.calls.count()).toBe(1);
+		}));
+
 		it('should hide lookup panel when the deleted step is a lookup step',
 			inject((StateService) => {
 			// given

@@ -87,6 +87,12 @@ $recipe-step-draggable-background-color: #808080 !default;
     .remove-icon {
       @include transition(opacity .1s linear);
       opacity: 0;
+
+      &.disabled {
+          &:hover {
+            cursor: not-allowed;
+          }
+      }
     }
 
     &:hover {

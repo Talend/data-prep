@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.folder.store.file;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderBuilder.folder;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
@@ -45,6 +42,7 @@ import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.security.Security;
@@ -90,7 +88,7 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public Iterable<Folder> children(String parentId) {
+    public Stream<Folder> children(String parentId) {
         final FolderPath parentDpPath = fromId(parentId);
         try {
             Path folderPath;
@@ -99,16 +97,12 @@ public class FileSystemFolderRepository implements FolderRepository {
             } else {
                 folderPath = pathsConverter.getRootFolder();
             }
-            List<Folder> children;
+            Stream<Folder> children;
             if (Files.notExists(folderPath)) {
-                children = emptyList();
+                children = Stream.empty();
             } else {
-                try (Stream<Path> childrenStream = Files.list(folderPath)) {
-                    children = childrenStream //
-                            .map(p -> toFolderIfDirectory(p, security.getUserId())) //
-                            .filter(Objects::nonNull) //
-                            .collect(toList());
-                }
+                children = Files.list(folderPath).map(p -> toFolderIfDirectory(p, security.getUserId())) //
+                        .filter(Objects::nonNull);
             }
             return children;
         } catch (IOException e) {
@@ -148,6 +142,11 @@ public class FileSystemFolderRepository implements FolderRepository {
         final FolderPath folderDpPath = fromId(folderId);
         final Path folderPath = pathsConverter.toPath(folderDpPath);
         return toFolder(folderPath, security.getUserId());
+    }
+
+    @Override
+    public long count(String folder, FolderContentType type) {
+        return entries(folder, type).count();
     }
 
     @Override
@@ -194,21 +193,21 @@ public class FileSystemFolderRepository implements FolderRepository {
         try {
             String fileName = buildFileName(folderEntry);
 
-            Path entryFilepath = pathsConverter.toPath(folderPath).resolve(fileName);
+            Path entryFilePath = pathsConverter.toPath(folderPath).resolve(fileName);
 
             // we delete it if exists
-            Files.deleteIfExists(entryFilepath);
+            Files.deleteIfExists(entryFilePath);
 
-            Path parentPath = entryFilepath.getParent();
+            Path parentPath = entryFilePath.getParent();
             // check parent path first
             if (Files.notExists(parentPath)) {
                 Files.createDirectories(parentPath);
             }
 
-            entryFilepath = Files.createFile(entryFilepath);
+            entryFilePath = Files.createFile(entryFilePath);
             folderEntry.setFolderId(folderId);
 
-            try (OutputStream outputStream = Files.newOutputStream(entryFilepath)) {
+            try (OutputStream outputStream = Files.newOutputStream(entryFilePath)) {
                 writeEntryToStream(folderEntry, outputStream);
             }
             return folderEntry;
@@ -230,8 +229,7 @@ public class FileSystemFolderRepository implements FolderRepository {
             Path path = pathsConverter.toPath(folderPath);
 
             try (Stream<Path> paths = Files.list(path)) {
-                paths //
-                        .filter(pathFound -> !Files.isDirectory(pathFound)) //
+                paths.filter(pathFound -> !Files.isDirectory(pathFound)) //
                         .filter(pathFile -> matches(pathFile, contentId, contentType)) //
                         .forEach(deleteFile());
             }
@@ -256,7 +254,7 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public Iterable<FolderEntry> entries(String folderId, FolderContentType contentType) {
+    public Stream<FolderEntry> entries(String folderId, FolderContentType contentType) {
         FolderPath folderPath = fromId(folderId);
 
         if (folderPath == null) {
@@ -266,32 +264,29 @@ public class FileSystemFolderRepository implements FolderRepository {
         final Path path = pathsConverter.toPath(folderPath);
 
         if (Files.notExists(path)) {
-            return emptyList();
+            return Stream.empty();
         }
 
         try {
-            try (Stream<Path> paths = Files.list(path)) {
-                return paths.filter(pathFound -> !Files.isDirectory(pathFound)) //
-                        .map(FileSystemUtils::toFolderEntry) //
-                        .filter(entry -> Objects.equals(contentType, entry.getContentType())) //
-                        .collect(toList());
-            }
+            return Files.list(path) //
+                    .filter(pathFound -> !Files.isDirectory(pathFound)) //
+                    .map(FileSystemUtils::toFolderEntry) //
+                    .filter(entry -> Objects.equals(contentType, entry.getContentType()));
         } catch (IOException e) {
             throw new TDPException(UNABLE_TO_LIST_FOLDER_ENTRIES, e, build().put("path", path).put("type", contentType));
         }
     }
 
     @Override
-    public Iterable<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType) {
-        try (Stream<Path> filesStream = Files.walk(pathsConverter.getRootFolder())) {
-            return filesStream //
+    public Stream<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType) {
+        try {
+            return Files.walk(pathsConverter.getRootFolder()) //
                     .filter(Files::isRegularFile) //
                     .map(FileSystemUtils::toFolderEntry) //
                     .filter(entry -> StringUtils.equals(entry.getContentId(), contentId) //
-                            && Objects.equals(contentType, entry.getContentType())) //
-                    .collect(toSet());
+                            && Objects.equals(contentType, entry.getContentType()));
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
@@ -301,21 +296,20 @@ public class FileSystemFolderRepository implements FolderRepository {
             FileUtils.deleteDirectory(pathsConverter.getRootFolder().toFile());
             init();
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
     @Override
-    public Iterable<Folder> searchFolders(String queryString, boolean strict) {
-        try (Stream<Path> walk = Files.walk(pathsConverter.getRootFolder())) {
-            return walk //
+    public Stream<Folder> searchFolders(String queryString, boolean strict) {
+        try {
+            return Files.walk(pathsConverter.getRootFolder()) //
                     .filter(path -> //
                             Files.isDirectory(path) //
                                     && StringsHelper.match(path.getFileName().toString(), queryString, strict)) //
-                    .map(path -> toFolder(path, security.getUserId())) //
-                    .collect(toList());
+                    .map(path -> toFolder(path, security.getUserId()));
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
@@ -348,8 +342,8 @@ public class FileSystemFolderRepository implements FolderRepository {
 
     @Override
     public Folder locateEntry(String contentId, FolderContentType type) {
-        try (Stream<Path> walk = Files.walk(pathsConverter.getRootFolder())) {
-            return walk //
+        try {
+            return Files.walk(pathsConverter.getRootFolder()) //
                     .filter(Files::isRegularFile) //
                     .filter(file -> {
                         FolderEntry folderEntry = FileSystemUtils.toFolderEntry(file);
@@ -361,7 +355,7 @@ public class FileSystemFolderRepository implements FolderRepository {
                     .map(p -> toFolder(p, security.getUserId())) //
                     .orElse(null);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 

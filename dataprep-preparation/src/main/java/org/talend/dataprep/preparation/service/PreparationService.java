@@ -35,7 +35,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -295,9 +294,8 @@ public class PreparationService {
      */
     private Stream<Preparation> searchByFolder(String folderId) {
         LOGGER.debug("looking for preparations in {}", folderId);
-        final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
-        return StreamSupport.stream(entries.spliterator(), false) //
-                .map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+        final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
+        return entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
     }
 
     /**
@@ -315,9 +313,8 @@ public class PreparationService {
         switch (size) {
         case 1:
             Folder folder = foldersToSearch.iterator().next();
-            final Iterable<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
-            preparationStream = StreamSupport.stream(entries.spliterator(), false) //
-                    .map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+            final Stream<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
+            preparationStream = entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
             break;
         case 0:
             throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
@@ -403,7 +400,7 @@ public class PreparationService {
     private void checkIfPreparationNameIsAvailable(String folderId, String name) {
 
         // make sure the preparation does not already exist in the target folderId
-        final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
+        final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
         entries.forEach(folderEntry -> {
             Preparation preparation = preparationRepository.get(folderEntry.getContentId(), Preparation.class);
             if (preparation != null && StringUtils.equals(name, preparation.getName())) {

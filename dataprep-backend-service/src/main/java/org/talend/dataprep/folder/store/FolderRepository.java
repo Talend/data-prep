@@ -14,6 +14,7 @@ package org.talend.dataprep.folder.store;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderContentType;
@@ -56,7 +57,7 @@ public interface FolderRepository {
      * visible by current user.
      * @param folderId the parent folder in the format /ffo/blab/mm or <code>null</code> for root folder
      */
-    Iterable<Folder> children(String folderId);
+    Stream<Folder> children(String folderId);
 
     /**
      * Remove folder and content recursively only if no entry is found. Throws a {@link TDPException} with
@@ -98,7 +99,7 @@ public interface FolderRepository {
      * @param contentType the contentClass to filter folder entries
      * @return A {@link java.lang.Iterable iterable} of {@link FolderEntry} content filtered for the given type
      */
-    Iterable<FolderEntry> entries(String folderId, FolderContentType contentType);
+    Stream<FolderEntry> entries(String folderId, FolderContentType contentType);
 
     /**
      * Look for all the {@link FolderEntry} that points to an existing content.
@@ -109,7 +110,7 @@ public interface FolderRepository {
      * @param contentType  the type dataset, preparation
      * @return A {@link Iterable} of the {@link FolderEntry} containing the folderEntry as described by contentType and contentId.
      */
-    Iterable<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType);
+    Stream<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType);
 
     /**
      * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>
@@ -144,7 +145,7 @@ public interface FolderRepository {
      * @param strict strict mode means the name is the full name
      * @return A {@link Iterable} of {@link Folder} with the query string in the name
      */
-    Iterable<Folder> searchFolders(String queryString, boolean strict);
+    Stream<Folder> searchFolders(String queryString, boolean strict);
 
     /**
      * Return the folder that holds the given content id and content type.
@@ -164,6 +165,15 @@ public interface FolderRepository {
     Folder getFolderById(String folderId);
 
     /**
+     * Count the number of objects of <code>type</code> in given <code>folder</code>.
+     *
+     * @param folder the folder id.
+     * @param type the content type.
+     * @return The number of <code>type</code> objects in given <code>folder</code>. Returns 0 if folder does not exist.
+     */
+    long count(String folder, FolderContentType type);
+
+    /**
      * Get the folder hierarchy (list of its parents)
      *
      * @param folder the folder.
@@ -178,8 +188,7 @@ public interface FolderRepository {
                 final Folder parent = this.getFolderById(nextParentId);
                 hierarchy.add(0, parent);
                 nextParentId = parent.getParentId();
-            }
-            catch(final TDPException e) {
+            } catch(final TDPException e) {
                 // in case of shared folder, we can have a 403 during hierarchy construction
                 // ex: /folder/folderChild/folderGrandChild, with /folderChild shared but not /folder
                 // we just add the current user home because every top level shared folder is considered

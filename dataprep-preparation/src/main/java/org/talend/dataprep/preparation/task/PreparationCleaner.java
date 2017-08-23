@@ -121,6 +121,6 @@ public class PreparationCleaner {
      */
     @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
     public void removeOrphanSteps() {
-        forAll.execute(this::removeCurrentOrphanSteps);
+        forAll.execute(forAll.condition().operational(repository), this::removeCurrentOrphanSteps);
     }
 }

@@ -24,4 +24,9 @@ public class NoOpForAll implements ForAll {
     public void execute(Runnable runnable) {
         runnable.run();
     }
+
+    @Override
+    public ForAllConditionBuilder condition() {
+        return bean -> () -> true;
+    }
 }

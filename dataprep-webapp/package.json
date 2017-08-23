@@ -109,6 +109,7 @@
     "null-loader": "^0.1.1",
     "phantomjs-prebuilt": "^2.1.7",
     "postcss-loader": "^1.2.2",
+    "react-ace": "^5.1.1",
     "react-addons-css-transition-group": "^15.4.2",
     "resolve-url-loader": "^1.6.1",
     "rimraf": "^2.5.4",
@@ -121,8 +122,7 @@
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0",
     "worker-loader": "^0.7.1",
-    "yargs": "^4.8.1",
-		"react-ace": "^5.1.1"
+    "yargs": "^4.8.1"
   },
   "engines": {
     "node": ">=6.9.5"

@@ -361,17 +361,19 @@ describe('Recipe controller', () => {
 			// given
 			const ctrl = createController();
 			const event = angular.element.Event('click');
-			const deletingStep = {
-				...step,
-				deleting: true,
-			};
 
 			// when
-			ctrl.remove(deletingStep, event);
-			scope.$digest();
+			ctrl.remove(step, event);
+
+			expect(PlaygroundService.removeStep).toHaveBeenCalledWith(step);
+
+			// when
+			PlaygroundService.removeStep.calls.reset();
+			ctrl.remove(step, event);
 
 			// then
-			expect(PlaygroundService.removeStep).not.toHaveBeenCalledWith(deletingStep);
+			expect(PlaygroundService.removeStep).not.toHaveBeenCalled();
+			scope.$digest();
 		}));
 
 		it('should hide lookup panel when the deleted step is a lookup step',

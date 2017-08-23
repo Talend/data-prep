@@ -136,7 +136,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		FilterService.initFilters(dataset, preparation);
 		updateGridSelection(dataset, preparation);
 		this.updatePreparationDetails().then(() => {
-			if (state.playground.recipe.current.steps.length > 0) {
+			if (state.playground.recipe.current.steps.length) {
 				StateService.showRecipe();
 			}
 		});
@@ -459,7 +459,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 */
 	function appendStep(actions) {
 		startLoader();
-		const actualSteps = state.playground.recipe.current.steps.slice(0);
+		const actualSteps = state.playground.recipe.current.steps.slice();
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
@@ -482,8 +482,8 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			// hide loading screen
 			.finally(() => {
 				stopLoader();
-				const len = actualSteps.length;
-				if (!len || (len === 1 && actualSteps[0].preview)) {
+				const actualStepsLength = actualSteps.length;
+				if (!actualStepsLength || (actualStepsLength === 1 && actualSteps[0].preview)) {
 					StateService.showRecipe();
 				}
 			});

@@ -95,7 +95,6 @@ describe('Playground Service', () => {
 	];
 
 	let stateMock;
-	let showRecipeSpy;
 
 	beforeEach(angular.mock.module('data-prep.services.playground', ($provide) => {
 		stateMock = {
@@ -163,7 +162,7 @@ describe('Playground Service', () => {
 		spyOn(StateService, 'setCurrentSampleType').and.returnValue();
 		spyOn(StateService, 'setPreparationName').and.returnValue();
 		spyOn(StateService, 'setNameEditionMode').and.returnValue();
-		showRecipeSpy = spyOn(StateService, 'showRecipe').and.returnValue();
+		spyOn(StateService, 'showRecipe').and.returnValue();
 		spyOn(StateService, 'hideRecipe').and.returnValue();
 		spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
 		spyOn(FilterService, 'initFilters').and.returnValue();
@@ -1818,6 +1817,7 @@ describe('Playground Service', () => {
 
 				expect(OnboardingService.startTour).not.toHaveBeenCalled();
 
+				StateService.showRecipe.calls.reset();
 				// when
 				PlaygroundService.appendStep(actions);
 				$rootScope.$digest();
@@ -1874,7 +1874,7 @@ describe('Playground Service', () => {
 				$timeout.flush(300);
 
 				expect(StateService.showRecipe).toHaveBeenCalled();
-				showRecipeSpy.calls.reset();
+				StateService.showRecipe.calls.reset();
 
 				// given : second action call
 				PlaygroundService.appendStep(actions);

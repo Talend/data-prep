@@ -22,11 +22,11 @@ describe('Resizable input directive', () => {
 
     const defaultInput = {
         content: 'Lorem ipsum',
-        width: '84px',
+        width: (11 * 0.5) + 'em',
     };
     const newInput = {
         content: 'Lorem ipsum dolor sit amet',
-        width: '189px',
+        width: (26 * 0.5) + 'em',
     };
 
     beforeEach(inject(($rootScope, $compile) => {
@@ -34,8 +34,8 @@ describe('Resizable input directive', () => {
         scope.ngModel = defaultInput.content;
         scope.offset = 0;
         createElement = () => {
-            element = angular.element(`<input ng-model="ngModel" 
-                                              resizable-input 
+            element = angular.element(`<input ng-model="ngModel"
+                                              resizable-input
                                               resizable-input-offset="offset" >`);
             $compile(element)(scope);
             scope.$digest();
@@ -67,19 +67,5 @@ describe('Resizable input directive', () => {
 
         //then
         expect(element.css('width')).toBe(newInput.width);
-    });
-
-    it('should adjust input size on offset change', () => {
-        //given
-        createElement();
-        expect(element.css('width')).toBe(defaultInput.width);
-
-        //when
-        scope.offset = 10;
-        scope.$digest();
-
-        //then
-        const expectedWidth = '94px'; //defaultInput.width + scope.offset;
-        expect(element.css('width')).toBe(expectedWidth);
     });
 });

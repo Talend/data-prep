@@ -14,8 +14,6 @@ package org.talend.dataprep.security;
 
 import java.util.function.Supplier;
 
-import org.slf4j.LoggerFactory;
-
 /**
  * An interface to abstract repetitive actions (to be performed on all tenants for example).
  */
@@ -26,7 +24,7 @@ public interface ForAll {
      *
      * @param runnable The {@link Runnable} to execute.
      */
-    void execute(Runnable runnable);
+    void execute(final Supplier<Boolean> condition, Runnable runnable);
 
     /**
      * @return A {@link ForAllConditionBuilder builder} for building conditions to {@link #execute(Supplier, Runnable)}.
@@ -38,12 +36,8 @@ public interface ForAll {
      *
      * @param runnable The {@link Runnable} to execute.
      */
-    default void execute(final Supplier<Boolean> condition, Runnable runnable) {
-        if (condition.get()) {
-            execute(runnable);
-        } else {
-            LoggerFactory.getLogger(ForAll.class).debug("Unable to run '{}' (condition disallowed run of it).", runnable);
-        }
+    default void execute(Runnable runnable) {
+        execute(() -> true, runnable);
     }
 
     /**

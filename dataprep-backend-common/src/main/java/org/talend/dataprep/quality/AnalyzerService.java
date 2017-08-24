@@ -31,6 +31,7 @@ import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.Metadata;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
@@ -160,9 +161,9 @@ public class AnalyzerService {
     /**
      * Similarly to {@link #build(List, Analysis...)} but for a single column.
      *
-     * @param column A column, may be null.
+     * @param column   A column, may be null.
      * @param settings A varargs with {@link Analysis}. Duplicates are possible in varargs but will be considered only
-     * once.
+     *                 once.
      * @return A ready to use {@link Analyzer}.
      */
     public Analyzer<Analyzers.Result> build(ColumnMetadata column, Analysis... settings) {
@@ -174,12 +175,26 @@ public class AnalyzerService {
     }
 
     /**
+     * Extract all column name and return them in a {@link List}.
+     *
+     * @param columns columns metadata containing columns names.
+     * @return a {@link List} of column name
+     */
+    private List<String> extractColumnNames(List<ColumnMetadata> columns) {
+        List<String> colName = new ArrayList<>();
+        for (ColumnMetadata column : columns) {
+            colName.add(column.getName());
+        }
+        return colName;
+    }
+
+    /**
      * Build a {@link Analyzer} to analyze records with columns (in <code>columns</code>). <code>settings</code> give
      * all the wanted analysis settings for the analyzer.
      *
-     * @param columns A list of columns, may be null or empty.
+     * @param columns  A list of columns, may be null or empty.
      * @param settings A varargs with {@link Analysis}. Duplicates are possible in varargs but will be considered only
-     * once.
+     *                 once.
      * @return A ready to use {@link Analyzer}.
      */
     public Analyzer<Analyzers.Result> build(List<ColumnMetadata> columns, Analysis... settings) {
@@ -211,66 +226,67 @@ public class AnalyzerService {
         List<Analyzer> analyzers = new ArrayList<>();
         for (Analysis setting : settings) {
             switch (setting) {
-            case SEMANTIC:
-                final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(builder);
-                semanticAnalyzer.setLimit(Integer.MAX_VALUE);
-                analyzers.add(semanticAnalyzer);
-                break;
-            case HISTOGRAM:
-                analyzers.add(new StreamDateHistogramAnalyzer(columns, types, dateParser));
-                analyzers.add(new StreamNumberHistogramAnalyzer(types));
-                break;
-            case QUALITY:
-                final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
-                columns.forEach(
-                        c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
-                analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
-                        new SemanticQualityAnalyzer(builder, domains, false), true)); // NOSONAR
-                break;
-            case CARDINALITY:
-                analyzers.add(new CardinalityAnalyzer());
-                break;
-            case PATTERNS:
-                analyzers.add(buildPatternAnalyzer(columns));
-                break;
-            case LENGTH:
-                analyzers.add(new TextLengthAnalyzer());
-                break;
-            case QUANTILES:
-                boolean acceptQuantiles = false;
-                for (DataTypeEnum type : types) {
-                    if (type == DataTypeEnum.INTEGER || type == DataTypeEnum.DOUBLE) {
-                        acceptQuantiles = true;
-                        break;
+                case SEMANTIC:
+                    final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(builder);
+                    semanticAnalyzer.setLimit(Integer.MAX_VALUE);
+                    semanticAnalyzer.setMetadata(Metadata.HEADER_NAME, extractColumnNames(columns));
+                    analyzers.add(semanticAnalyzer);
+                    break;
+                case HISTOGRAM:
+                    analyzers.add(new StreamDateHistogramAnalyzer(columns, types, dateParser));
+                    analyzers.add(new StreamNumberHistogramAnalyzer(types));
+                    break;
+                case QUALITY:
+                    final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
+                    columns.forEach(
+                            c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
+                    analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
+                            new SemanticQualityAnalyzer(builder, domains, false), true)); // NOSONAR
+                    break;
+                case CARDINALITY:
+                    analyzers.add(new CardinalityAnalyzer());
+                    break;
+                case PATTERNS:
+                    analyzers.add(buildPatternAnalyzer(columns));
+                    break;
+                case LENGTH:
+                    analyzers.add(new TextLengthAnalyzer());
+                    break;
+                case QUANTILES:
+                    boolean acceptQuantiles = false;
+                    for (DataTypeEnum type : types) {
+                        if (type == DataTypeEnum.INTEGER || type == DataTypeEnum.DOUBLE) {
+                            acceptQuantiles = true;
+                            break;
+                        }
                     }
-                }
-                if (acceptQuantiles) {
-                    analyzers.add(new QuantileAnalyzer(types));
-                }
-                break;
-            case SUMMARY:
-                analyzers.add(new SummaryAnalyzer(types));
-                break;
-            case TYPE:
-                boolean shouldUseTypeAnalysis = true;
-                for (Analysis analysis : settings) {
-                    if (analysis == Analysis.QUALITY) {
-                        shouldUseTypeAnalysis = false;
-                        break;
+                    if (acceptQuantiles) {
+                        analyzers.add(new QuantileAnalyzer(types));
                     }
-                }
-                if (shouldUseTypeAnalysis) {
-                    final List<String> mostUsedDatePatterns = getMostUsedDatePatterns(columns);
-                    analyzers.add(new DataTypeAnalyzer(mostUsedDatePatterns));
-                } else {
-                    LOGGER.warn("Disabled {} analysis (conflicts with {}).", setting, Analysis.QUALITY);
-                }
-                break;
-            case FREQUENCY:
-                analyzers.add(new DataTypeFrequencyAnalyzer());
-                break;
-            default:
-                throw new IllegalArgumentException("Missing support for '" + setting + "'.");
+                    break;
+                case SUMMARY:
+                    analyzers.add(new SummaryAnalyzer(types));
+                    break;
+                case TYPE:
+                    boolean shouldUseTypeAnalysis = true;
+                    for (Analysis analysis : settings) {
+                        if (analysis == Analysis.QUALITY) {
+                            shouldUseTypeAnalysis = false;
+                            break;
+                        }
+                    }
+                    if (shouldUseTypeAnalysis) {
+                        final List<String> mostUsedDatePatterns = getMostUsedDatePatterns(columns);
+                        analyzers.add(new DataTypeAnalyzer(mostUsedDatePatterns));
+                    } else {
+                        LOGGER.warn("Disabled {} analysis (conflicts with {}).", setting, Analysis.QUALITY);
+                    }
+                    break;
+                case FREQUENCY:
+                    analyzers.add(new DataTypeFrequencyAnalyzer());
+                    break;
+                default:
+                    throw new IllegalArgumentException("Missing support for '" + setting + "'.");
             }
         }
 
@@ -405,6 +421,11 @@ public class AnalyzerService {
         @Override
         public Analyzer<Analyzers.Result> merge(Analyzer<Analyzers.Result> analyzer) {
             return analyzer.merge(analyzer);
+        }
+
+        @Override
+        public void setMetadata(Metadata metadata, List<String> values) {
+            analyzer.setMetadata(metadata, values);
         }
 
         @Override

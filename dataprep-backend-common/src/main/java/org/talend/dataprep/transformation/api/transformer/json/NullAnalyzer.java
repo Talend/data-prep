@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.Metadata;
 
 public class NullAnalyzer implements Analyzer<Analyzers.Result> {
 
@@ -40,6 +41,11 @@ public class NullAnalyzer implements Analyzer<Analyzers.Result> {
     @Override
     public Analyzer<Analyzers.Result> merge(Analyzer<Analyzers.Result> analyzer) {
         return this;
+    }
+
+    @Override
+    public void setMetadata(Metadata metadata, List<String> values) {
+        // Nothing to do
     }
 
     @Override

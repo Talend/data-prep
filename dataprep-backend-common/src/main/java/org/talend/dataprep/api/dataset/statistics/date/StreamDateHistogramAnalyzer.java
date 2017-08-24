@@ -25,6 +25,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Metadata;
 import org.talend.dataquality.common.inference.ResizableList;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.TypeInferenceUtils;
@@ -107,6 +108,11 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
 
     @Override
     public Analyzer<StreamDateHistogramStatistics> merge(Analyzer<StreamDateHistogramStatistics> another) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setMetadata(Metadata metadata, List<String> values) {
         throw new NotImplementedException();
     }
 

@@ -27,6 +27,7 @@
  */
 
 const AVERAGE_CHAR_WIDTH = 0.5;
+const MINIMUM_WIDTH = 1;
 
 const InputResizable = () => {
 	return {
@@ -38,12 +39,9 @@ const InputResizable = () => {
 			 */
 			function updateSize() {
 				const input = element;
-				const inputValue = input.val();
-				if (!inputValue || !inputValue.length) {
-					return;
-				}
-
-				input.css('width', (inputValue.length * AVERAGE_CHAR_WIDTH) + 'em');
+				const length = input.val().length;
+				const width = Math.max(length * AVERAGE_CHAR_WIDTH, MINIMUM_WIDTH);
+				input.css('width', width + 'em');
 			}
 
 			scope.$watchGroup([() => ngModel.$modelValue], updateSize);

@@ -292,7 +292,7 @@ public class AnalyzerService {
 
         // Merge all analyzers into one
         final Analyzer<Analyzers.Result> analyzer = Analyzers.with(analyzers.toArray(new Analyzer[analyzers.size()]));
-        analyzer.init();
+        analyzer.init(); // ça vire le metadata
         if (LOGGER.isDebugEnabled()) {
             // Wrap analyzer for usage monitoring (to diagnose non-closed analyzer issues).
             return new ResourceMonitoredAnalyzer(analyzer);
@@ -421,11 +421,6 @@ public class AnalyzerService {
         @Override
         public Analyzer<Analyzers.Result> merge(Analyzer<Analyzers.Result> analyzer) {
             return analyzer.merge(analyzer);
-        }
-
-        @Override
-        public void setMetadata(Metadata metadata, List<String> values) {
-            analyzer.setMetadata(metadata, values);
         }
 
         @Override

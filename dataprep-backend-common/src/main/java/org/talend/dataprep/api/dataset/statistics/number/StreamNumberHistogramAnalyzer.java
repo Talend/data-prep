@@ -75,11 +75,6 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
     }
 
     @Override
-    public void setMetadata(Metadata metadata, List<String> values) {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public void end() {
         // nothing to do here
     }

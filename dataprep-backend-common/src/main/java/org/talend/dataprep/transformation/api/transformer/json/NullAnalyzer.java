@@ -44,11 +44,6 @@ public class NullAnalyzer implements Analyzer<Analyzers.Result> {
     }
 
     @Override
-    public void setMetadata(Metadata metadata, List<String> values) {
-        // Nothing to do
-    }
-
-    @Override
     public void close() throws Exception {
         // Nothing to do
     }

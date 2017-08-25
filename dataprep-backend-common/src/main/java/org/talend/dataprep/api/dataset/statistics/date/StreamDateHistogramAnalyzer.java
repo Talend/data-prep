@@ -61,7 +61,7 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
 
     /**
      * Constructor
-     * 
+     *
      * @param columns The columns metadata
      * @param types The columns data types
      * @param dateParser A date parser based on column metadata and DQ analyzer
@@ -108,11 +108,6 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
 
     @Override
     public Analyzer<StreamDateHistogramStatistics> merge(Analyzer<StreamDateHistogramStatistics> another) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void setMetadata(Metadata metadata, List<String> values) {
         throw new NotImplementedException();
     }
 

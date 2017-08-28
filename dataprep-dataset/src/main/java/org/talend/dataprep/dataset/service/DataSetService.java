@@ -455,7 +455,7 @@ public class DataSetService extends BaseDataSetService {
             @ApiParam(value = "The name of the cloned dataset.") @RequestParam(required = false) String copyName)
             throws IOException {
 
-        HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
+        HttpResponseContext.contentType(TEXT_PLAIN_VALUE);
 
         DataSetMetadata original = dataSetMetadataRepository.get(dataSetId);
         if (original == null) {

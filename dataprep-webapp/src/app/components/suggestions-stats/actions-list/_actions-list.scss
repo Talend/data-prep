@@ -19,6 +19,7 @@
 	$category-border-color: $shadow-gray;
 	$category-color: #4F93A7;
 	$category-font-size: 1.2rem;
+	position: relative;
 
 	.actions-category {
 		border-bottom: 1px solid $category-border-color;

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,17 +12,19 @@
 
 package org.talend.dataprep.transformation.cache;
 
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.ContentCacheKey;
-
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * Content cache key used to cache transformation.
  */
 public class TransformationMetadataCacheKey implements ContentCacheKey {
+
+    private static final String PREFIX = "transformation-metadata";
 
     private final String preparationId;
 
@@ -45,18 +46,27 @@ public class TransformationMetadataCacheKey implements ContentCacheKey {
 
     @Override
     public String getKey() {
-        return "transformation-metadata_" + preparationId + "_" + stepId + "_" + sourceType + "_" + userId;
+        return PREFIX + "_" + preparationId + "_" + stepId + "_" + sourceType + "_" + userId;
     }
 
     @Override
     public Predicate<String> getMatcher() {
-        final String regex = "transformation-metadata_"
+        final String regex = PREFIX + '_'
                 + (preparationId == null ? ".*" : preparationId) + "_"
                 + (stepId == null ? ".*" : stepId) + "_"
                 + (sourceType == null ? ".*" : sourceType) + "_"
                 + (userId == null ? ".*" : userId) + "([.].*)?";
         final Pattern pattern = Pattern.compile(regex);
         return str -> pattern.matcher(str).matches();
+    }
+
+    @Override
+    public String getPrefix() {
+        StringBuilder prefix = new StringBuilder(PREFIX);
+        if (preparationId != null) {
+            prefix.append("_").append(preparationId);
+        }
+        return prefix.toString();
     }
 
     public String getPreparationId() {

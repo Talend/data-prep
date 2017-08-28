@@ -23,44 +23,28 @@
  * @restrict A
  * @usage
  <input ng-model="ngModel"
- resizable-input
- resizable-input-offset="10" />
+ resizable-input />
  */
+
+const AVERAGE_CHAR_WIDTH = 0.5;
+const MINIMUM_WIDTH = 1;
+
 const InputResizable = () => {
 	return {
 		restrict: 'A',
-		scope: {
-			resizableInputOffset: '<',
-		},
 		require: 'ngModel',
 		link: (scope, element, attrs, ngModel) => {
-			/**
-			 * @type {number} Minimum input width in px
-			 */
-			const minInputWidth = 30;
-
 			/**
 			 * Adjust input width
 			 */
 			function updateSize() {
 				const input = element;
-				const inputValue = input.val();
-				if (!inputValue || !inputValue.length) {
-					return;
-				}
-
-				const resizableInputOffset = scope.resizableInputOffset;
-				const inputWidth = ((inputValue.length + 1 + ((inputValue.split('\t').length - 1) * 8)) * 7) + (resizableInputOffset);
-				input.css('width', (inputWidth < minInputWidth ? minInputWidth : inputWidth) + 'px');
+				const length = input.val().length;
+				const width = Math.max(length * AVERAGE_CHAR_WIDTH, MINIMUM_WIDTH);
+				input.css('width', width + 'em');
 			}
 
-			scope.$watchGroup(
-				[
-					() => ngModel.$modelValue,
-					() => scope.resizableInputOffset,
-				],
-				updateSize
-			);
+			scope.$watchGroup([() => ngModel.$modelValue], updateSize);
 		},
 	};
 };

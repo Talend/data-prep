@@ -83,7 +83,7 @@ $matches-color: $brown;
   }
 
   &-value {
-    padding: 3px 2px;
+    margin: 3px 2px;
 
     li > * {
       display: inline-block;
@@ -91,7 +91,10 @@ $matches-color: $brown;
 
     input[type="text"] {
       margin: 0;
-      padding: 2px;
+      margin: {
+        left: 5px;
+        right: 5px;
+      }
       width: 30px;
       font-weight: 500;
       font-family: $inconsolota;
@@ -101,10 +104,15 @@ $matches-color: $brown;
       box-shadow: none;
     }
 
+    span {
+        margin: {
+            left: 5px;
+            right: 5px;
+        }
+    }
+
     &.multi {
       input[type="text"] {
-        margin-right: -20px;
-        padding-right: 15px;
         transition: .2s width;
       }
     }

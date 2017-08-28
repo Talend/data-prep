@@ -20,7 +20,7 @@ describe('App header bar container', () => {
 	let element;
 	const body = angular.element('body');
 
-	beforeEach(angular.mock.module('react-talend-components.containers'));
+	beforeEach(angular.mock.module('@talend/react-components.containers'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {

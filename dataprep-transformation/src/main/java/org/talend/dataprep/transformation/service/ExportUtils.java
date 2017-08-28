@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.service;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -8,15 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriUtils;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.http.HttpResponseContext;
 
 public class ExportUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExportUtils.class);
+
     private ExportUtils() {
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExportUtils.class);
 
     public static void setExportHeaders(String exportName, ExportFormat format) {
         HttpResponseContext.contentType(format.getMimeType());
@@ -32,8 +46,8 @@ public class ExportUtils {
                 )
             );
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Can't encode '{}' from UTF-8", exportName);
-            throw new RuntimeException(e);
+            LOGGER.error("Can't encode '{}' from UTF-8", exportName, e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 }

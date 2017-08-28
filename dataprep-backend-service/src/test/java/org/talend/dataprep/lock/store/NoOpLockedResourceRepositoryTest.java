@@ -13,26 +13,22 @@
 package org.talend.dataprep.lock.store;
 
 import static org.junit.Assert.*;
+import static org.talend.dataprep.lock.store.LockedResourceTestUtils.*;
 
 import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
-@TestPropertySource(properties = { "lock.preparation.store=none" })
-public class NoOpLockedResourceRepositoryTest extends LockedResourceTestUtils {
+public class NoOpLockedResourceRepositoryTest {
 
-    @Autowired
-    private LockedResourceRepository repository;
+    private final LockedResourceRepository repository = new NoOpLockedResourceRepository();
 
     @Before
     public void setUp() {
-        super.setUp();
         repository.clear();
     }
 
@@ -105,8 +101,8 @@ public class NoOpLockedResourceRepositoryTest extends LockedResourceTestUtils {
         Identifiable resource2 = getSecondResourceType("2");
         Identifiable resource3 = getSecondResourceType("3");
 
-        LockedResource lockOnResource1 = repository.tryLock(resource, user1);
-        LockedResource lockOnResource2 = repository.tryLock(resource2, user2);
+        repository.tryLock(resource, user1);
+        repository.tryLock(resource2, user2);
         repository.tryLock(resource3, user2);
         repository.tryUnlock(resource3, user2);
 
@@ -124,9 +120,9 @@ public class NoOpLockedResourceRepositoryTest extends LockedResourceTestUtils {
         Identifiable resource2 = getSecondResourceType("2");
         Identifiable resource3 = getSecondResourceType("3");
 
-        LockedResource lockOnResource1 = repository.tryLock(resource, user1);
-        LockedResource lockOnResource2 = repository.tryLock(resource2, user2);
-        LockedResource lockOnResource3 = repository.tryLock(resource3, user2);
+        repository.tryLock(resource, user1);
+        repository.tryLock(resource2, user2);
+        repository.tryLock(resource3, user2);
 
         Collection<LockedResource> allLockedResources = repository.listByUser(user2.getId());
 
@@ -139,7 +135,7 @@ public class NoOpLockedResourceRepositoryTest extends LockedResourceTestUtils {
         LockUserInfo user1 = randomLockUserInfo();
         Identifiable resource = getFirstResourceType("1");
 
-        LockedResource lockOnResource1 = repository.tryLock(resource, user1);
+        repository.tryLock(resource, user1);
 
         LockedResource mustBeNull = repository.get(resource);
 

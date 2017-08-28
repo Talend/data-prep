@@ -13,7 +13,6 @@
 package org.talend.dataprep.preparation.service;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
@@ -74,7 +73,7 @@ public class FolderService {
                                    @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
     //@formatter:on
 
-        Iterable<Folder> children;
+        Stream<Folder> children;
         if (parentId != null) {
             if (!folderRepository.exists(parentId)) {
                 throw new TDPException(FOLDER_NOT_FOUND, build().put("id", parentId));
@@ -88,8 +87,8 @@ public class FolderService {
         final AtomicInteger folderCount = new AtomicInteger();
 
         // update the number of preparations in each children
-        children.forEach(f -> {
-            final long count = stream(folderRepository.entries(f.getId(), PREPARATION).spliterator(), false).count();
+        children = children.peek(f -> {
+            final long count = folderRepository.count(f.getId(), PREPARATION);
             f.setNbPreparations(count);
             folderCount.addAndGet(1);
         });
@@ -97,8 +96,7 @@ public class FolderService {
         LOGGER.info("Found {} children for parentId: {}", folderCount.get(), parentId);
 
         // sort the folders
-        return StreamSupport.stream(children.spliterator(), false) //
-                .sorted(getFolderComparator(sort, order));
+        return children.sorted(getFolderComparator(sort, order));
     }
 
     /**
@@ -130,23 +128,21 @@ public class FolderService {
     @RequestMapping(value = "/folders/search", method = GET)
     @ApiOperation(value = "Search Folders with parameter as part of the name")
     @Timed
-    public Iterable<Folder> search(@RequestParam(required = false, defaultValue = "") final String name,
+    public Stream<Folder> search(@RequestParam(required = false, defaultValue = "") final String name,
                                    @RequestParam(required = false, defaultValue = "false") final Boolean strict,
                                    @RequestParam(required = false) final String path) {
-        final Iterable<Folder> folders;
+        Stream<Folder> folders;
         if (path == null) {
             folders = folderRepository.searchFolders(name, strict);
         } else {
-            folders = stream(folderRepository.searchFolders(name, strict).spliterator(), false)
-                    .filter(f -> f.getPath().equals(path)).collect(toList());
+            folders = folderRepository.searchFolders(name, strict).filter(f -> f.getPath().equals(path));
         }
 
-        int foldersFound = 0;
-        for (Folder folder : folders) {
-            final long count = stream(folderRepository.entries(folder.getId(), PREPARATION).spliterator(), false).count();
-            folder.setNbPreparations(count);
-            foldersFound++;
-        }
+        AtomicInteger foldersFound = new AtomicInteger(0);
+        folders = folders.peek(folder -> {
+            folder.setNbPreparations(folderRepository.count(folder.getId(), PREPARATION));
+            foldersFound.incrementAndGet();
+        });
 
         LOGGER.info("Found {} folder(s) searching for {}", foldersFound, name);
 
@@ -203,7 +199,7 @@ public class FolderService {
     }
 
     private FolderTreeNode getTree(final Folder root) {
-        final Iterable<Folder> children = folderRepository.children(root.getId());
+        final Stream<Folder> children = folderRepository.children(root.getId());
         final List<FolderTreeNode> childrenSubtrees = StreamSupport.stream(children.spliterator(), false)
                 .map(this::getTree)
                 .collect(toList());

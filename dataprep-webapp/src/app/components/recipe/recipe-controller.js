@@ -453,14 +453,18 @@ export default class RecipeCtrl {
 	 */
 	remove(step, $event) {
 		$event.stopPropagation();
-		this.PlaygroundService.removeStep(step)
-			.then(() => {
-				this.resetStepToBeDeleted();// otherwise it will wrongly appear when undo
-				if (this.state.playground.lookup.visibility && this.state.playground.stepInEditionMode) {
-					this.StateService.setLookupVisibility(false);
-					this.StateService.setStepInEditionMode(null);
-				}
-			});
+		if (!step.deleting) {
+			step.deleting = true;
+			this.PlaygroundService.removeStep(step)
+				.then(() => {
+					this.resetStepToBeDeleted(); // otherwise it will wrongly appear when undo
+					if (this.state.playground.lookup.visibility && this.state.playground.stepInEditionMode) {
+						this.StateService.setLookupVisibility(false);
+						this.StateService.setStepInEditionMode(null);
+					}
+				})
+				.finally(() => step.deleting = false);
+		}
 	}
 
 	//---------------------------------------------------------------------------------------------

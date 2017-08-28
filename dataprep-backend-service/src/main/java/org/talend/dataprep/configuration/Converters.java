@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.configuration;
 
 import java.io.IOException;
@@ -9,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
+import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
@@ -46,8 +59,15 @@ public class Converters {
                 try {
                     return mapper.readerFor(JsonErrorCode.class).readValue(source);
                 } catch (Exception e) {
-                    LOGGER.debug("Unable to read error code from '{}'", source, e);
-                    return CommonErrorCodes.UNEXPECTED_EXCEPTION;
+                    LOGGER.trace("Unable to read error code from '{}'", source, e);
+
+                    // Build a JSON error code out of "source" (mostly likely a error code as string).
+                    final ErrorCodeDto errorCodeDto = new ErrorCodeDto();
+                    errorCodeDto.setCode(source);
+                    errorCodeDto.setHttpStatus(CommonErrorCodes.UNEXPECTED_EXCEPTION.getHttpStatus());
+                    errorCodeDto.setGroup(CommonErrorCodes.UNEXPECTED_EXCEPTION.getGroup());
+                    errorCodeDto.setProduct(CommonErrorCodes.UNEXPECTED_EXCEPTION.getProduct());
+                    return errorCodeDto;
                 }
             }
         };

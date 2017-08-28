@@ -20,8 +20,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.user.store.AbstractUserDataRepositoryTest;

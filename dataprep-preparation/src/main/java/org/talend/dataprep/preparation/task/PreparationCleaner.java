@@ -64,7 +64,6 @@ public class PreparationCleaner {
      *
      * @return The step ids
      */
-
     private Set<String> getPreparationStepIds() {
         return repository.list(Preparation.class) //
                 .flatMap(p -> p.getSteps().stream().map(Step::getId)) //
@@ -84,39 +83,44 @@ public class PreparationCleaner {
     }
 
     /**
-     * Remove the orphan steps (that do NOT belong to any preparation).
+     * Remove all orphan steps in preparation repository.
+     */
+    public void removeCurrentOrphanSteps() {
+        securityProxy.asTechnicalUser();
+        try {
+            getCurrentOrphanSteps().forEach(step -> {
+                // Remove step
+                final Step stepToRemove = new Step();
+                stepToRemove.setId(step.getId());
+                repository.remove(stepToRemove);
+
+                // Remove actions linked to step
+                // if this step re-use an existing actions we don't delete the actions
+                boolean criterion = repository.exist(PersistentStep.class, "contentId='" + step.getContent() + "'");
+                if (criterion) {
+                    LOGGER.debug("Don't removing step content {} it still used by another step.", step.getContent());
+                } else {
+                    LOGGER.debug("Removing step content {}.", step.getContent());
+                    final PreparationActions preparationActionsToRemove = new PreparationActions();
+                    preparationActionsToRemove.setId(step.getContent());
+                    repository.remove(preparationActionsToRemove);
+                }
+
+                // Remove metadata linked to step
+                final StepRowMetadata stepRowMetadataToRemove = new StepRowMetadata();
+                stepRowMetadataToRemove.setId(stepToRemove.getRowMetadata());
+                repository.remove(stepRowMetadataToRemove);
+            });
+        } finally {
+            securityProxy.releaseIdentity();
+        }
+    }
+
+    /**
+     * Remove the orphan steps (that do NOT belong to any preparation) for all available tenants.
      */
     @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
     public void removeOrphanSteps() {
-        forAll.execute(() -> {
-            securityProxy.asTechnicalUser();
-            try {
-                getCurrentOrphanSteps().forEach(step -> {
-                    // Remove step
-                    final Step stepToRemove = new Step();
-                    stepToRemove.setId(step.getId());
-                    repository.remove(stepToRemove);
-
-                    // Remove actions linked to step
-                    // if this step re-use an existing actions we don't delete the actions
-                    boolean criterion = repository.exist(PersistentStep.class, "contentId" + "='" + step.getContent() + "'");
-                    if (criterion) {
-                        LOGGER.info("Don't removing step content {} it still used by another step.", step.getContent());
-                    } else {
-                        LOGGER.info("Removing step content {}.", step.getContent());
-                        final PreparationActions preparationActionsToRemove = new PreparationActions();
-                        preparationActionsToRemove.setId(step.getContent());
-                        repository.remove(preparationActionsToRemove);
-                    }
-
-                    // Remove metadata linked to step
-                    final StepRowMetadata stepRowMetadataToRemove = new StepRowMetadata();
-                    stepRowMetadataToRemove.setId(stepToRemove.getRowMetadata());
-                    repository.remove(stepRowMetadataToRemove);
-                });
-            } finally {
-                securityProxy.releaseIdentity();
-            }
-        });
+        forAll.execute(forAll.condition().operational(repository), this::removeCurrentOrphanSteps);
     }
 }

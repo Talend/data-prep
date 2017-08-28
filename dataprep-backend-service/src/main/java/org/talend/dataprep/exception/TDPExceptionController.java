@@ -15,6 +15,7 @@ package org.talend.dataprep.exception;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.exception.error.PreparationErrorCodes;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,11 +74,11 @@ public class TDPExceptionController {
      */
     @ExceptionHandler({ MethodArgumentNotValidException.class })
     public ResponseEntity<String> handleInvalidArguments(MethodArgumentNotValidException e) throws JsonProcessingException {
-        HttpHeaders httpHeaders = new HttpHeaders();
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        final Map<String, Object> context = new HashMap<>();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        HashMap<String, Object> context = new HashMap<>();
         context.put("binding_results", e.getBindingResult().getAllErrors());
-        TdpExceptionDto exceptionDto = new TdpExceptionDto(PreparationErrorCodes.INVALID_PREPARATION.getCode(), null,
+        TdpExceptionDto exceptionDto = new TdpExceptionDto(CommonErrorCodes.UNEXPECTED_CONTENT.getCode(), null,
                 e.getMessage(), "Invalid argument", context);
         return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, NOT_ACCEPTABLE);
     }

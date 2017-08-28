@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,8 +12,7 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.BAD_GATEWAY;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +23,7 @@ import org.talend.daikon.exception.error.ErrorCode;
 
 public enum CommonErrorCodes implements ErrorCode {
     UNEXPECTED_EXCEPTION(500),
+    UNEXPECTED_CONTENT(BAD_REQUEST.value(), "message"),
     UNEXPECTED_SERVICE_EXCEPTION(500, "message"),
     UNABLE_TO_PARSE_JSON(400),
     UNABLE_TO_GET_SERVICE_VERSION(400),

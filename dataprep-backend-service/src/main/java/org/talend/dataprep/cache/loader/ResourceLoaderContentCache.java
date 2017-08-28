@@ -140,7 +140,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Override
     public void evictMatch(ContentCacheKey key) {
         try {
-            final DeletableResource[] resources = resolver.getResources("/cache/**");
+            final DeletableResource[] resources = resolver.getResources("/cache/" + key.getPrefix() + "**");
             final Predicate<String> matcher = key.getMatcher();
             stream(resources).filter(r -> matcher.test(r.getFilename())).forEach(r -> {
                 try {

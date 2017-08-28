@@ -55,13 +55,13 @@ public class UpgradeAPI extends APIService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpgradeAPI.class);
 
     @Autowired
-    protected HttpClient httpClient;
+    private HttpClient httpClient;
 
     @Autowired
-    VersionService service;
+    private VersionService service;
 
     @Value("${upgrade.location:}")
-    String upgradeVersionLocation;
+    private String upgradeVersionLocation;
 
     private String token;
 

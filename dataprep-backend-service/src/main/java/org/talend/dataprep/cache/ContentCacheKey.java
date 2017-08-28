@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,6 +13,8 @@
 package org.talend.dataprep.cache;
 
 import java.util.function.Predicate;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Content cache key used to group all information needed by the cache.
@@ -45,4 +46,12 @@ public interface ContentCacheKey {
         throw new UnsupportedOperationException("Matcher is not implemented");
     }
 
+    /**
+     * Returns a common prefix that will be used to perform more efficient lookups in cache.
+     *
+     * @return A common prefix for all cache keys.
+     */
+    default String getPrefix() {
+        return StringUtils.EMPTY;
+    }
 }

@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.security;
 
+import java.util.function.Supplier;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,7 +24,17 @@ import org.springframework.stereotype.Component;
 public class NoOpForAll implements ForAll {
 
     @Override
-    public void execute(Runnable runnable) {
-        runnable.run();
+    public void execute(Supplier<Boolean> condition, Runnable runnable) {
+        if (condition.get()) {
+            runnable.run();
+        } else {
+            LoggerFactory.getLogger(ForAll.class).debug("Unable to run '{}' (condition disallowed run of it).", runnable);
+        }
+    }
+
+    @Override
+    public ForAllConditionBuilder condition() {
+        // This ForAllConditionBuilder implementation always returns a Supplier that returns true
+        return bean -> () -> true;
     }
 }

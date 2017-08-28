@@ -26,8 +26,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
@@ -112,8 +110,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Autowired
     private BeanConversionService conversionService;
 
-    private String authenticationToken;
-
     private final Map<String, String> headers = new HashMap<>();
 
     private Supplier<HttpRequestBase> httpCall;
@@ -156,13 +152,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     }
 
-    @PostConstruct
-    private void initSecurityToken() {
-        authenticationToken = getAuthenticationToken();
-    }
-
     /** Override this method to change security token source. Executed in post construct with all fields initialized. */
-    protected String getAuthenticationToken() {
+    private String getAuthenticationToken() {
         return context.getBean(Security.class).getAuthenticationToken();
     }
 
@@ -196,12 +187,14 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      */
     @Override
     protected T run() throws Exception {
+
         final HttpRequestBase request = httpCall.get();
 
         // insert all the provided headers in the request
         if (headers.size() > 0) {
             headers.forEach(request::addHeader);
         }
+
         // update request header with security token
         if (StringUtils.isNotBlank(getAuthenticationToken())) {
             request.addHeader(AUTHORIZATION, getAuthenticationToken());

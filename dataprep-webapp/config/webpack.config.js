@@ -37,18 +37,18 @@ function getDefaultConfig(options) {
 				{
 					test: /\.css$/,
 					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getCommonStyleLoaders()),
-					exclude: /react-talend-/,
+					exclude: /@talend/,
 				},
 				{
 					test: /\.scss$/,
 					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders()),
-					exclude: /react-talend-/,
+					exclude: /@talend/,
 				},
 				// css modules local scope
 				{
 					test: /\.scss$/,
 					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders(true)),
-					include: /react-talend-/,
+					include: /@talend/,
 				},
 				{
 					test: /\.(png|jpg|jpeg|gif)$/,

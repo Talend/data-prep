@@ -12,12 +12,7 @@
 
 package org.talend.dataprep.io;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,11 +23,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -99,7 +90,7 @@ public class CloseableResourceWatch implements Condition {
     @Scheduled(fixedDelay = 30000)
     public void log() {
         synchronized (entries) {
-            LOGGER.info("Logging closeable resources...");
+            LOGGER.info("Logging closeable resources ({} opened resources)...", entries.size());
             for (CloseableHandler entry : entries) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("{}", entry.format());
@@ -107,7 +98,7 @@ public class CloseableResourceWatch implements Condition {
                     LOGGER.info("{}", entry);
                 }
             }
-            LOGGER.info("Done logging closeable resources.");
+            LOGGER.info("Done logging closeable resources ({} opened resources).", entries.size());
         }
     }
 

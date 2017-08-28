@@ -15,21 +15,28 @@ package org.talend.dataprep.lock.store;
 import java.util.Random;
 import java.util.UUID;
 
-import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
-public abstract class LockedResourceTestUtils extends ServiceBaseTest {
+public class LockedResourceTestUtils {
 
-    protected Identifiable getFirstResourceType(String id) {
+    public static Identifiable getFirstResourceType(String id) {
         return new Resource(id);
     }
 
-    protected Identifiable getSecondResourceType(String id) {
+    public static Identifiable getSecondResourceType(String id) {
         return new SecondResource(id);
     }
 
-    protected class Resource extends Identifiable {
+    public static LockUserInfo randomLockUserInfo() {
+        final Random random = new Random();
+        final String userId = UUID.randomUUID().toString();
+        final String displayName = "display name for " + random.nextInt(100) + 1;
+
+        return new LockUserInfo(userId, displayName);
+    }
+
+    private static class Resource extends Identifiable {
 
         Resource(String id) {
             this.id = id;
@@ -51,18 +58,10 @@ public abstract class LockedResourceTestUtils extends ServiceBaseTest {
         }
     }
 
-    protected class SecondResource extends Resource {
+    private static class SecondResource extends Resource {
 
         SecondResource(String id) {
             super(id);
         }
-    }
-
-    protected LockUserInfo randomLockUserInfo() {
-        final Random random = new Random();
-        final String userId = UUID.randomUUID().toString();
-        final String displayName = "display name for " + random.nextInt(100) + 1;
-
-        return new LockUserInfo(userId, displayName);
     }
 }

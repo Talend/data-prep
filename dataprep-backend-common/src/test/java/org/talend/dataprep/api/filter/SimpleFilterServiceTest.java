@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.filter;
 
@@ -21,41 +20,18 @@ import static org.mockito.Mockito.when;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.function.Predicate;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 
-public class SimpleFilterServiceTest {
+public class SimpleFilterServiceTest extends FilterServiceTest {
 
     private final SimpleFilterService service = new SimpleFilterService();
-
-    private DataSetRow datasetRowFromValues;
-
-    private DataSetRow row;
-
-    private RowMetadata rowMetadata;
-
-    @Before
-    public void init() {
-        datasetRowFromValues = new DataSetRow(new HashMap<>());
-
-        final ColumnMetadata firstColumn = new ColumnMetadata();
-        firstColumn.setId("0001");
-        final ColumnMetadata secondColumn = new ColumnMetadata();
-        secondColumn.setId("0002");
-        rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Arrays.asList(firstColumn, secondColumn));
-        row = new DataSetRow(rowMetadata);
-    }
 
     @Test
     public void should_create_TRUE_predicate_on_empty_filter() throws Exception {

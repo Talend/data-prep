@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.configuration;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -8,8 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.talend.dataprep.api.filter.CompositeFilterService;
 import org.talend.dataprep.api.filter.FilterService;
-import org.talend.dataprep.api.filter.SimpleFilterService;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
@@ -49,7 +61,7 @@ public class Actions {
 
     @Bean
     public FilterService filterService() {
-        return new SimpleFilterService();
+        return new CompositeFilterService();
     }
 
     @Bean

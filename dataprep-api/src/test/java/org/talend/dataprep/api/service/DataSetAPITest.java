@@ -744,6 +744,22 @@ public class DataSetAPITest extends ApiServiceTestBase {
         }
     }
 
+    @Test
+    public void testDataSetFilter() throws Exception {
+        // given
+        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_filter.json");
+
+        // when
+        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false&filter=0001%3D%27John%27", dataSetId);
+
+        // then
+        response.then().header("Content-Type", "application/json");
+        final String contentAsString = response.asString();
+        assertThat(contentAsString, sameJSONAsFile(expected));
+    }
+
+
     @Component
     public static class TCOMPLocationTest implements DataSetLocation {
 

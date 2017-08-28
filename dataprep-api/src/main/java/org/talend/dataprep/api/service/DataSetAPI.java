@@ -184,12 +184,13 @@ public class DataSetAPI extends APIService {
     @Timed
     public StreamingResponseBody get(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
             @ApiParam(value = "Whether output should be the full data set (true) or not (false).") @RequestParam(value = "fullContent", defaultValue = "false") boolean fullContent,
+            @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter", defaultValue = "") String filter,
             @ApiParam(value = "Whether to include internal technical properties (true) or not (false).") @RequestParam(value = "includeTechnicalProperties", defaultValue = "false") boolean includeTechnicalProperties) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting dataset #{} (pool: {})...", id, getConnectionStats());
         }
         try {
-            final HystrixCommand<InputStream> retrievalCommand = getCommand(DataSetGet.class, id, fullContent, includeTechnicalProperties);
+            final HystrixCommand<InputStream> retrievalCommand = getCommand(DataSetGet.class, id, fullContent, includeTechnicalProperties, filter);
             HttpResponseContext.contentType(APPLICATION_JSON_VALUE);
             return toStreaming(retrievalCommand);
         } finally {

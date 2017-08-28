@@ -27,10 +27,10 @@ public class TQLFilterServiceTest extends FilterServiceTest {
     @Test
     public void shouldMatchEquals() throws Exception {
         // Given
-        row.set("c0001", "test");
+        row.set("0001", "test");
 
         // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("c0001 = 'test'", rowMetadata);
+        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 = 'test'", rowMetadata);
 
         // Then
         assertTrue(predicate.test(row));
@@ -39,10 +39,10 @@ public class TQLFilterServiceTest extends FilterServiceTest {
     @Test
     public void shouldNotMatchEquals() throws Exception {
         // Given
-        row.set("c0001", "my value");
+        row.set("0001", "my value");
 
         // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("c0001 = 'test'", rowMetadata);
+        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 = 'test'", rowMetadata);
 
         // Then
         assertFalse(predicate.test(row));
@@ -51,10 +51,10 @@ public class TQLFilterServiceTest extends FilterServiceTest {
     @Test
     public void shouldMatchGreaterThan() throws Exception {
         // Given
-        row.set("c0001", "0");
+        row.set("0001", "0");
 
         // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("c0001 > 1", rowMetadata);
+        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 > 1", rowMetadata);
 
         // Then
         assertFalse(predicate.test(row));
@@ -63,10 +63,10 @@ public class TQLFilterServiceTest extends FilterServiceTest {
     @Test
     public void shouldMatchLessThan() throws Exception {
         // Given
-        row.set("c0001", "0");
+        row.set("0001", "0");
 
         // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("c0001 < 1", rowMetadata);
+        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 < 1", rowMetadata);
 
         // Then
         assertTrue(predicate.test(row));

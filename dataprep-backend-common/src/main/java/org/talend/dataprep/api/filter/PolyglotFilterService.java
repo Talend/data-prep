@@ -14,13 +14,14 @@ package org.talend.dataprep.api.filter;
 
 import java.util.function.Predicate;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 
 /**
  * A {@link FilterService} implementation that understands both JSON and TQL as filter.
  */
-public class CompositeFilterService implements FilterService {
+public class PolyglotFilterService implements FilterService {
 
     private final SimpleFilterService jsonFilterService = new SimpleFilterService();
 
@@ -28,6 +29,9 @@ public class CompositeFilterService implements FilterService {
 
     @Override
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
+        if (StringUtils.isBlank(filterAsString)) {
+            return row -> true;
+        }
         return selectFilterService(filterAsString).build(filterAsString, rowMetadata);
     }
 

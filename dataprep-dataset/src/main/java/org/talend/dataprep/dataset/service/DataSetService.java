@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -85,6 +86,7 @@ import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
+import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.cache.ContentCache;
@@ -196,6 +198,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private AnalyzerService analyzerService;
+
+    @Autowired
+    FilterService filterService;
 
     @Value("${dataset.local.file.size.limit:20000000}")
     private long maximumInputStreamSize;
@@ -413,6 +418,7 @@ public class DataSetService extends BaseDataSetService {
     public Callable<DataSet> get(
             @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata, //
             @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent", value = "Include internal content in the response") boolean includeInternalContent, //
+            @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter", defaultValue = "") String filter,
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId) {
         return () -> {
             final Marker marker = Markers.dataset(dataSetId);
@@ -441,6 +447,10 @@ public class DataSetService extends BaseDataSetService {
                         return new DataSetRow(r.getRowMetadata(), filteredValues);
                     });
                 }
+
+                // Filter content
+                stream = stream.filter(filterService.build(URLDecoder.decode(filter, "UTF-8"), dataSetMetadata.getRowMetadata()));
+
                 dataSet.setRecords(stream);
                 return dataSet;
             } finally {

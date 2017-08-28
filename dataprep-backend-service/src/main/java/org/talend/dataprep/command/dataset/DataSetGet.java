@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -23,6 +22,7 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -44,20 +44,21 @@ public class DataSetGet extends GenericCommand<InputStream> {
     private final String dataSetId;
 
     private final boolean includeInternalContent;
+    private final String filter;
 
     @Autowired
     private DataSetContentLimit limit;
 
-    /**
-     * Constructor.
-     *
-     * @param dataSetId the requested dataset id.
-     */
     public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
+        this(dataSetId, fullContent, includeInternalContent, StringUtils.EMPTY);
+    }
+
+    public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent, String filter) {
         super(DATASET_GROUP);
         this.fullContent = fullContent;
         this.dataSetId = dataSetId;
         this.includeInternalContent = includeInternalContent;
+        this.filter = filter;
 
         on(HttpStatus.NO_CONTENT).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
@@ -75,12 +76,12 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
     private void configureLimitedDataset(final String dataSetId) {
         execute(() -> {
-            final String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=true&includeInternalContent=" + includeInternalContent;
+            final String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=true&includeInternalContent=" + includeInternalContent + "&filter=" + filter;
             return new HttpGet(url);
         });
     }
 
     private void configureSampleDataset(final String dataSetId) {
-        execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/sample"));
+        execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/sample?filter=" + filter));
     }
 }

@@ -1,0 +1,18 @@
+{
+   "metadata":{
+      "name":"tagada",
+      "records":2,
+      "nbLinesHeader":1,
+      "nbLinesFooter":0
+   },
+   "records":[
+      {
+         "0000": "1",
+         "0001": "John",
+         "0002": "Lennon",
+         "0003": "40",
+         "0004": "10/09/1940",
+         "0005": "false"
+      }
+   ]
+}

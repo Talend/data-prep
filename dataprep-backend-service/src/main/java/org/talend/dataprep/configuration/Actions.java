@@ -20,8 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.talend.dataprep.api.filter.CompositeFilterService;
 import org.talend.dataprep.api.filter.FilterService;
+import org.talend.dataprep.api.filter.PolyglotFilterService;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
@@ -61,7 +61,7 @@ public class Actions {
 
     @Bean
     public FilterService filterService() {
-        return new CompositeFilterService();
+        return new PolyglotFilterService();
     }
 
     @Bean

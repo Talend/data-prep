@@ -19,9 +19,9 @@ import java.util.function.Predicate;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 
-public class CompositeFilterServiceTest extends FilterServiceTest {
+public class PolyglotFilterServiceTest extends FilterServiceTest {
 
-    private final FilterService compositeFilterService = new CompositeFilterService();
+    private final FilterService compositeFilterService = new PolyglotFilterService();
 
     @Test
     public void shouldUnderstandJsonQuery() throws Exception {

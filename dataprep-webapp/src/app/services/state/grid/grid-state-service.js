@@ -114,12 +114,15 @@ export function GridStateService() {
 		const allFilterFn = function allFilterFn(item, args) {
 			// init filters with actual data
 			const initializedFilters = map(args.filters, function (filter) {
-				return filter(data);
+				if (typeof filter === 'function') {
+					return filter(data);
+				}
 			});
+
 			// execute each filter on the value
 			for (let i = 0; i < initializedFilters.length; i++) {
 				const filter = initializedFilters[i];
-				if (!filter(item)) {
+				if (filter && !filter(item)) {
 					return false;
 				}
 			}

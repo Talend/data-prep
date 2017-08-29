@@ -13,19 +13,19 @@
 
 import _ from 'lodash';
 
-const CONTAINS = 'contains';
-const EXACT = 'exact';
-const INVALID_RECORDS = 'invalid_records';
-const EMPTY_RECORDS = 'empty_records';
-const VALID_RECORDS = 'valid_records';
-const INSIDE_RANGE = 'inside_range';
-const MATCHES = 'matches';
-const QUALITY = 'quality';
+export const CONTAINS = 'contains';
+export const EXACT = 'exact';
+export const INVALID_RECORDS = 'invalid_records';
+export const EMPTY_RECORDS = 'empty_records';
+export const VALID_RECORDS = 'valid_records';
+export const INSIDE_RANGE = 'inside_range';
+export const MATCHES = 'matches';
+export const QUALITY = 'quality';
 
-const EMPTY_RECORDS_LABEL = 'rows with empty values';
-const INVALID_RECORDS_LABEL = 'rows with invalid values';
-const VALID_RECORDS_LABEL = 'rows with valid values';
-const INVALID_EMPTY_RECORDS_LABEL = 'rows with invalid or empty values';
+export const EMPTY_RECORDS_LABEL = 'rows with empty values';
+export const INVALID_RECORDS_LABEL = 'rows with invalid values';
+export const VALID_RECORDS_LABEL = 'rows with valid values';
+export const INVALID_EMPTY_RECORDS_LABEL = 'rows with invalid or empty values';
 
 const INVALID_RECORDS_VALUES = [{
 	label: INVALID_RECORDS_LABEL,

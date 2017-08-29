@@ -18,8 +18,8 @@ const EXACT = 'exact';
 const INVALID_RECORDS = 'invalid_records';
 const EMPTY_RECORDS = 'empty_records';
 const VALID_RECORDS = 'valid_records';
-const INSIDE_RANGE = 'inside_range';
-const MATCHES = 'matches';
+// const INSIDE_RANGE = 'inside_range';
+// const MATCHES = 'matches';
 const QUALITY = 'quality';
 
 export default function TqlFilterAdapterService() {
@@ -135,7 +135,7 @@ export default function TqlFilterAdapterService() {
 	 * @returns {String} The filter TQL
 	 */
 	function getFilterTQL() {
-		//const args = this.args;
+		// const args = this.args;
 		const colId = this.colId;
 		const value = this.value;
 		switch (this.type) {
@@ -158,12 +158,13 @@ export default function TqlFilterAdapterService() {
 		let dsl = '';
 		if (typeof (value) === 'string') {  // eslint-disable-line angular/typecheck-string
 			dsl = value !== '' ?
-			'(' + fieldId + "contains" + value + "')" :
-			'(' + fieldId + ' is empty)';
-		} else {
+				'(' + fieldId + 'contains' + value + "')" :
+				'(' + fieldId + ' is empty)';
+		}
+		else {
 			dsl = value !== '' ?
-			'(' + fieldId + 'contains' + value + ')' :
-			'(' + fieldId + ' is empty)';
+				'(' + fieldId + 'contains' + value + ')' :
+				'(' + fieldId + ' is empty)';
 		}
 		return dsl;
 	}
@@ -172,12 +173,13 @@ export default function TqlFilterAdapterService() {
 		let dsl = '';
 		if (typeof (value) === 'string') {  // eslint-disable-line angular/typecheck-string
 			dsl = value !== '' ?
-			'(' + fieldId + "='" + value + "')" :
-			'(' + fieldId + ' is empty)';
-		} else {
+				'(' + fieldId + "='" + value + "')" :
+				'(' + fieldId + ' is empty)';
+		}
+		else {
 			dsl = value !== '' ?
-			'(' + fieldId + '=' + value + ')' :
-			'(' + fieldId + ' is empty)';
+				'(' + fieldId + '=' + value + ')' :
+				'(' + fieldId + ' is empty)';
 		}
 		return dsl;
 	}

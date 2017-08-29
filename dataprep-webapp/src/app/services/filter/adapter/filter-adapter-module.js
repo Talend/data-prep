@@ -14,6 +14,7 @@
 import angular from 'angular';
 
 import FilterAdapterService from './filter-adapter-service';
+import TqlFilterAdapterService from './tql-filter-adapter-service';
 
 const MODULE_NAME = 'data-prep.services.filter-adapter';
 
@@ -24,6 +25,7 @@ const MODULE_NAME = 'data-prep.services.filter-adapter';
  * It is responsible for the filter update within the SlickGrid grid
  */
 angular.module(MODULE_NAME, [])
-    .service('FilterAdapterService', FilterAdapterService);
+    .service('FilterAdapterService', FilterAdapterService)
+	.service('TqlFilterAdapterService', TqlFilterAdapterService);
 
 export default MODULE_NAME;

@@ -142,13 +142,13 @@ export default function TqlFilterAdapterService() {
 		case CONTAINS:
 			return value
 				.map((filterValue) => {
-					return convertContainsFilterToTQL(colId, filterValue);
+					return convertContainsFilterToTQL(colId, filterValue.value);
 				})
 				.reduce(reduceOrFn);
 		case EXACT:
 			return value
 				.map((filterValue) => {
-					return convertExactFilterToTQL(colId, filterValue);
+					return convertExactFilterToTQL(colId, filterValue.value);
 				})
 				.reduce(reduceOrFn);
 		}
@@ -187,13 +187,16 @@ export default function TqlFilterAdapterService() {
 	// -------------------------------------------------FILTER ==> TQL----------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
 	function toTQL(filters) {
+		if (filters.length === 1) {
+			return filters[0].toTQL();
+		}
 		return _.reduce(filters, reduceAndFn, '');
 	}
 
 	function reduceAndFn(accu, filterItem) {
-		let nextAccuFilter = filterItem.toTree();
+		let nextAccuFilter = filterItem.toTQL();
 
-		if (nextAccuFilter) {
+		if (accu && nextAccuFilter) {
 			nextAccuFilter = accu + ' and ' + nextAccuFilter;
 		}
 

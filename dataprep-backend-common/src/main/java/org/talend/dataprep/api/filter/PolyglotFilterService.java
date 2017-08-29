@@ -15,6 +15,8 @@ package org.talend.dataprep.api.filter;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 
@@ -32,7 +34,11 @@ public class PolyglotFilterService implements FilterService {
         if (StringUtils.isBlank(filterAsString)) {
             return row -> true;
         }
-        return selectFilterService(filterAsString).build(filterAsString, rowMetadata);
+        try {
+            return selectFilterService(filterAsString).build(filterAsString, rowMetadata);
+        } catch (Exception e) {
+            throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e);
+        }
     }
 
     private FilterService selectFilterService(String filterAsString) {

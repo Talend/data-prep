@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.actions.fill;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -23,11 +22,10 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.converters.DuplicateCharEraser;
 
+import java.math.BigInteger;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -81,9 +79,9 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             return;
         }
         final String columnId = context.getColumnId();
-        Long startValueLong = Long.parseLong(startValue);
-        Long stepValueLong = Long.parseLong(stepValue);
-        Long currentValue = startValueLong + stepValueLong * (row.getTdpId() - 1);
+        BigInteger start = new BigInteger(startValue);
+        BigInteger step = new BigInteger(stepValue);
+        BigInteger currentValue = start.add(step.multiply(BigInteger.valueOf(row.getTdpId() - 1)));
         row.set(columnId, currentValue.toString());
     }
 }

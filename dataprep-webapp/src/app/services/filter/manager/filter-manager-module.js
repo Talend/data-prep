@@ -13,6 +13,7 @@
 
 import angular from 'angular';
 import SERVICES_FILTER_MODULE from './../filter-module';
+import SERVICES_PLAYGROUND_MODULE from './../../playground/playground-module';
 import SERVICES_STATE_MODULE from '../../../services/state/state-module';
 import SERVICES_STATISTICS_MODULE from '../../statistics/statistics-module';
 
@@ -29,9 +30,10 @@ const MODULE_NAME = 'data-prep.services.filter-manager-service';
 angular.module(MODULE_NAME,
 	[
 		SERVICES_FILTER_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_STATISTICS_MODULE,
 	])
-    .service('FilterManagerService', FilterManagerService);
+	.service('FilterManagerService', FilterManagerService);
 
 export default MODULE_NAME;

@@ -53,7 +53,12 @@ export default class FilterService {
 		this.DateService = DateService;
 		this.StorageService = StorageService;
 
-		this.TQL_ENABLED = state.filter.isTQL;
+		this.TQL_ENABLED = false;
+		const { playground } = state;
+		if (playground) {
+			const { filter } = playground;
+			this.TQL_ENABLED = filter && filter.isTQL;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------
@@ -108,7 +113,7 @@ export default class FilterService {
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
-				if (keyName === this.CTRL_KEY_NAME) {
+				if (keyName === CTRL_KEY_NAME) {
 					args.phrase = [emptyFilterValue].concat(args.phrase);
 				}
 			}
@@ -1044,5 +1049,12 @@ export default class FilterService {
 			return this.TqlFilterAdapterService.toTQL(filters);
 		}
 		return this.FilterAdapterService.toTree(filters);
+	}
+
+	parse(str) {
+		if (this.TQL_ENABLED) {
+			return this.TqlFilterAdapterService.fromTQL(str);
+		}
+		return this.FilterAdapterService.fromTree(str);
 	}
 }

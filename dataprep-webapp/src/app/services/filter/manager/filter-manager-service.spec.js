@@ -37,7 +37,6 @@ describe('Filter Manager Service', () => {
 		spyOn(FilterService, 'removeFilter').and.returnValue();
 		spyOn(FilterService, 'toggleFilters').and.returnValue();
 		spyOn(FilterService, 'updateFilter').and.returnValue();
-		spyOn(FilterService, 'CTRL_KEY_NAME').and.returnValue('ctrl');
 		spyOn(StorageService, 'saveFilter').and.returnValue();
 		spyOn(StorageService, 'removeFilter').and.returnValue();
 	}));

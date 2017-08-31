@@ -927,6 +927,7 @@ export default function PlaygroundService(
 	}
 
 	function updateDatasetDatagrid(tql) {
+<<<<<<< HEAD
 		return DatasetService.getContent(
 			state.playground.dataset.id,
 			true,
@@ -935,6 +936,19 @@ export default function PlaygroundService(
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
 		});
+=======
+		const {
+			dataset,
+		} = state.playground;
+		if (!dataset) {
+			return;
+		}
+		return DatasetService.getContent(dataset.id, true, tql)
+			.then((response) => {
+				DatagridService.updateData(response);
+				PreviewService.reset(false);
+			});
+>>>>>>> 3d9cd57... feat(TDP-1399): fix some run errors
 	}
 
 	function updateDatagrid() {

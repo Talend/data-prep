@@ -22,7 +22,6 @@ export function StateService(RouteStateService, routeState,
                              PlaygroundStateService, playgroundState,
                              DatasetStateService, datasetState,
                              EasterEggsStateService, easterEggsState,
-                             filterState,
                              InventoryStateService, inventoryState,
                              FeedbackStateService, feedbackState,
                              ImportStateService, importState,
@@ -33,7 +32,6 @@ export function StateService(RouteStateService, routeState,
 	'ngInject';
 
 	state.route = routeState;
-	state.filter = filterState;
 	state.playground = playgroundState;
 	state.dataset = datasetState;
 	state.easterEggsState = easterEggsState;

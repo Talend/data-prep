@@ -927,36 +927,29 @@ export default function PlaygroundService(
 	}
 
 	function updateDatasetDatagrid(tql) {
-<<<<<<< HEAD
+		const { dataset } = state.playground;
+		if (!dataset) {
+			return;
+		}
 		return DatasetService.getContent(
-			state.playground.dataset.id,
+			dataset.id,
 			true,
 			tql
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
 		});
-=======
-		const {
-			dataset,
-		} = state.playground;
-		if (!dataset) {
-			return;
-		}
-		return DatasetService.getContent(dataset.id, true, tql)
-			.then((response) => {
-				DatagridService.updateData(response);
-				PreviewService.reset(false);
-			});
->>>>>>> 3d9cd57... feat(TDP-1399): fix some run errors
 	}
 
 	function updateDatagrid() {
 		const { filter, preparation } = state.playground;
-		const tql = FilterService.stringify(filter.gridFilters);
 		if (preparation && preparation.id) {
 			return this.updatePreparationDatagrid();
 		}
+		const tql =
+			filter.enabled &&
+			filter.isTQL &&
+			FilterService.stringify(filter.gridFilters);
 		return this.updateDatasetDatagrid(tql);
 	}
 

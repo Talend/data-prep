@@ -15,7 +15,13 @@ package org.talend.dataprep.quality;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -181,11 +187,7 @@ public class AnalyzerService {
      * @return a {@link List} of column name
      */
     private List<String> extractColumnNames(List<ColumnMetadata> columns) {
-        List<String> colName = new ArrayList<>();
-        for (ColumnMetadata column : columns) {
-            colName.add(column.getName());
-        }
-        return colName;
+        return columns.stream().map(ColumnMetadata::getName).collect(Collectors.toList());
     }
 
     /**
@@ -292,7 +294,7 @@ public class AnalyzerService {
 
         // Merge all analyzers into one
         final Analyzer<Analyzers.Result> analyzer = Analyzers.with(analyzers.toArray(new Analyzer[analyzers.size()]));
-        analyzer.init(); // ça vire le metadata
+        analyzer.init();
         if (LOGGER.isDebugEnabled()) {
             // Wrap analyzer for usage monitoring (to diagnose non-closed analyzer issues).
             return new ResourceMonitoredAnalyzer(analyzer);

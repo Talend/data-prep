@@ -1,8 +1,12 @@
 package org.talend.dataprep.quality;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +45,7 @@ public class AnalyzerServiceTest {
         final AnalyzerService.Analysis[] allAnalysis = AnalyzerService.Analysis.values();
         final ColumnMetadata column = new ColumnMetadata();
         column.setType(Type.INTEGER.getName());
+        column.setName(UUID.randomUUID().toString());
         try (Analyzer<Analyzers.Result> analyzer = service.build(column, allAnalysis)) {
             assertNotNull(analyzer);
             // When

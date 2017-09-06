@@ -18,8 +18,9 @@ const EMPTY_CELLS = 'empty';
 const INVALID_CELLS = 'invalid';
 
 const TAB_INDEXES = {
-	COLUMN: 0,
-	LINE: 1,
+	column: 0,
+	line: 1,
+	dataset: 2,
 };
 
 function initActions() {
@@ -43,6 +44,7 @@ export const suggestionsState = {
 	isLoading: false,
 	line: initActions(),
 	column: initActions(),
+	dataset: initActions(),
 	transformationsForEmptyCells: [],   // all column transformations applied to empty cells
 	transformationsForInvalidCells: [],  // all column transformations applied to invalid cells,
 };
@@ -89,5 +91,6 @@ export function SuggestionsStateService() {
 		suggestionsState.isLoading = false;
 		suggestionsState.line = initActions();
 		suggestionsState.column = initActions();
+		suggestionsState.dataset = initActions();
 	}
 }

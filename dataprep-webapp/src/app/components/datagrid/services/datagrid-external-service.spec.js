@@ -96,7 +96,7 @@ describe('Datagrid external service', () => {
                 DatagridExternalService.updateSuggestionPanel();
 
                 // then
-                expect(StateService.selectTransformationsTab).toHaveBeenCalledWith('COLUMN');
+                expect(StateService.selectTransformationsTab).toHaveBeenCalledWith('column');
             }));
 
             it('should select "LINE" tab when there is no selected column', inject((DatagridExternalService, StateService) => {
@@ -109,7 +109,15 @@ describe('Datagrid external service', () => {
                 DatagridExternalService.updateSuggestionPanel();
 
                 // then
-                expect(StateService.selectTransformationsTab).toHaveBeenCalledWith('LINE');
+                expect(StateService.selectTransformationsTab).toHaveBeenCalledWith('line');
+            }));
+
+            it('should init dataset tab actions', inject((DatagridExternalService, TransformationService) => {
+                // when
+                DatagridExternalService.initSuggestionPanelDatasetTab();
+
+                // then
+                expect(TransformationService.initTransformations).toHaveBeenCalledWith('dataset');
             }));
         });
 

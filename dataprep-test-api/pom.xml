@@ -70,18 +70,18 @@
 
     </dependencies>
 
-    <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>src/test/java</directory>
-                <includes>
-                    <include>**/*.story</include>
-                </includes>
-            </testResource>
-        </testResources>
-    </build>
+    <!--<build>-->
+        <!--<testResources>-->
+            <!--<testResource>-->
+                <!--<directory>src/test/resources</directory>-->
+            <!--</testResource>-->
+            <!--<testResource>-->
+                <!--<directory>src/test/java</directory>-->
+                <!--<includes>-->
+                    <!--<include>**/*.story</include>-->
+                <!--</includes>-->
+            <!--</testResource>-->
+        <!--</testResources>-->
+    <!--</build>-->
 
 </project>

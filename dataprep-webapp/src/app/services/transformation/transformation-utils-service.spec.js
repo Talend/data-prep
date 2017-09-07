@@ -623,6 +623,89 @@ function generateSuggestions() {
 				}
 			]
 		},
+		{
+			"name":"lookup",
+			"parameters":[
+				{
+					"name":"column_id",
+					"type":"string",
+					"implicit":true,
+					"canBeBlank":true,
+					"placeHolder":"",
+					"default":"",
+					"description":"The column to which you want to apply this action",
+					"label":"Column"
+				},
+				{
+					"name":"filter",
+					"type":"filter",
+					"implicit":true,
+					"canBeBlank":true,
+					"placeHolder":"",
+					"default":"",
+					"description":"An optional filter to apply action on matching values only.",
+					"label":"Filter"
+				},
+				{
+					"name":"lookup_ds_name",
+					"type":"string",
+					"implicit":false,
+					"canBeBlank":false,
+					"placeHolder":"",
+					"default":"",
+					"description":"Lookup dataset name",
+					"label":"Lookup dataset name"
+				},
+				{
+					"name":"lookup_ds_id",
+					"type":"string",
+					"implicit":false,
+					"canBeBlank":false,
+					"placeHolder":"",
+					"default":"",
+					"description":"Lookup dataset id",
+					"label":"Lookup dataset id"
+				},
+				{
+					"name":"lookup_join_on",
+					"type":"string",
+					"implicit":false,
+					"canBeBlank":false,
+					"placeHolder":"",
+					"default":"",
+					"description":"Lookup column join",
+					"label":"Lookup column join"
+				},
+				{
+					"name":"lookup_join_on_name",
+					"type":"string",
+					"implicit":false,
+					"canBeBlank":false,
+					"placeHolder":"",
+					"default":"",
+					"description":"Lookup column join name",
+					"label":"Lookup column join name"
+				},
+				{
+					"name":"lookup_selected_cols",
+					"type":"list",
+					"implicit":false,
+					"canBeBlank":false,
+					"placeHolder":"",
+					"default":"",
+					"description":"Lookup selected columns",
+					"label":"Lookup selected columns"
+				}
+			],
+			"category":"data_blending",
+			"description":"Blends columns from another dataset into this one",
+			"label":"Lookup",
+			"dynamic":false,
+			"docUrl":"",
+			"actionScope":[
+
+			]
+		},
 	];
 }
 
@@ -793,6 +876,7 @@ describe('Transformation Utils Service', () => {
 				// then
 				categories.forEach((item) => {
 					expect(item.category).not.toBe('column_metadata');
+					expect(item.category).not.toBe('data_blending');
 				});
 			})
 		);

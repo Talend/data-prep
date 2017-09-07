@@ -332,11 +332,11 @@ describe('Dataset List Service', () => {
 			const dataset = { name: 'my dataset' };
 
 			//when
-			DatasetListService.update(dataset);
+			DatasetListService.update(dataset, {size: 1000});
 			$rootScope.$apply();
 
 			//then
-			expect(DatasetRestService.update).toHaveBeenCalledWith(dataset);
+			expect(DatasetRestService.update).toHaveBeenCalledWith(dataset, {size: 1000});
 		}));
 
 		it('should refresh datasets list', inject(($rootScope, DatasetListService, DatasetRestService) => {

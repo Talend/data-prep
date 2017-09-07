@@ -36,7 +36,7 @@ export default function UpdateWorkflowService(state, StateService, MessageServic
 		StateService.startUploadingDataset(dataset);
 		StateService.startProgress(state.progress.schemas.dataset, () => dataset.progress);
 
-		return DatasetService.update(dataset)
+		return DatasetService.update(dataset, {size : file.size})
 			.progress(function (event) {
 				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
 				if (dataset.progress !== progress && progress === 100) {

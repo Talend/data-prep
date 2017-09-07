@@ -78,11 +78,17 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @methodOf data-prep.services.dataset.service:DatasetRestService
      * @description Update the dataset
      * @param {dataset} dataset The dataset infos to update
+	 * @param {object} parameters The update parameters
      * @returns {Promise} the $upload promise
      */
-	function update(dataset) {
+	function update(dataset, parameters) {
+		let url = RestURLs.uploadDatasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name);
+		if (parameters && parameters.size) {
+			url += `&size=${parameters.size}`;
+		}
+
 		return $upload.http({
-			url: RestURLs.uploadDatasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name),
+			url,
 			method: 'PUT',
 			headers: { 'Content-Type': 'text/plain' },
 			data: dataset.file,

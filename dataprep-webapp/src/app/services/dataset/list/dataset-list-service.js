@@ -215,11 +215,12 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 * @name update
 	 * @methodOf data-prep.services.dataset.service:DatasetListService
 	 * @param {object} dataset The dataset to delete
+	 * @param {object} parameters The update parameters
 	 * @description Update a dataset from backend and refresh its internal list
 	 * @returns {promise} The pending POST promise
 	 */
-	function update(dataset) {
-		const promise = DatasetRestService.update(dataset);
+	function update(dataset, parameters) {
+		const promise = DatasetRestService.update(dataset, parameters);
 
 		// The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
 		// which is used by the caller

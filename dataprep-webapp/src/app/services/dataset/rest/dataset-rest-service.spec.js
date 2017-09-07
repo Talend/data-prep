@@ -336,6 +336,28 @@ describe('Dataset Rest Service', () => {
 			//expect PUT not to throw any exception
 		}));
 
+		it('should call dataset update rest service with size', inject(($rootScope, DatasetRestService, RestURLs) => {
+			//given
+			var dataset = {
+				name: 'my dataset',
+				file: { path: '/path/to/file' },
+				error: false,
+				id: 'e85afAa78556d5425bc2',
+			};
+
+			$httpBackend
+				.expectPUT(RestURLs.uploadDatasetUrl + '/e85afAa78556d5425bc2?name=my%20dataset&size=1000')
+				.respond(200);
+
+			//when
+			DatasetRestService.update(dataset, {size: 1000});
+			$httpBackend.flush();
+			$rootScope.$digest();
+
+			//then
+			//expect PUT not to throw any exception
+		}));
+
 		it('should call dataset metadata update rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
 			//given
 			const metadata = { id: 'e85afAa78556d5425bc2', name: 'my dataset' };

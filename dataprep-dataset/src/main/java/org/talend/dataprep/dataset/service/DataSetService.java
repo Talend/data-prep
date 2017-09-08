@@ -530,6 +530,7 @@ public class DataSetService extends BaseDataSetService {
     public void updateRawDataSet(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId, //
             @RequestParam(value = "name", required = false) @ApiParam(name = "name", value = "New value for the data set name") String name, //
+            @RequestParam(value = "size", required = false, defaultValue = "0") @ApiParam(name = "size", value = "The size of the dataSet") long size, //
             @ApiParam(value = "content") InputStream dataSetContent) {
 
         LOG.debug("updating dataset content #{}", dataSetId);
@@ -537,6 +538,9 @@ public class DataSetService extends BaseDataSetService {
         if (name != null) {
             checkDataSetName(name);
         }
+
+        DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
+        quotaService.checkIfAddingSizeExceedsAvailableStorage(size - currentDataSetMetadata.getDataSetSize());
 
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         try {
@@ -546,6 +550,7 @@ public class DataSetService extends BaseDataSetService {
             if (metadataForUpdate != null) {
                 datasetBuilder.copyNonContentRelated(metadataForUpdate);
                 datasetBuilder.modified(System.currentTimeMillis());
+                datasetBuilder.size(size);
             }
             if (!StringUtils.isEmpty(name)) {
                 datasetBuilder.name(name);

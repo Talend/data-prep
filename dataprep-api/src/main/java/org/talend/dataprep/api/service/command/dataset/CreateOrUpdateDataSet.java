@@ -45,7 +45,7 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
      * @param name the dataset name.
      * @param dataSetContent the new dataset content.
      */
-    private CreateOrUpdateDataSet(String id, String name, InputStream dataSetContent) {
+    private CreateOrUpdateDataSet(String id, String name, long size, InputStream dataSetContent) {
         super(GenericCommand.DATASET_GROUP);
         execute(() -> {
             try {
@@ -53,6 +53,7 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
                 if (!StringUtils.isEmpty(name)) {
                     uriBuilder.addParameter("name", name);
                 }
+                uriBuilder.addParameter("size", String.valueOf(size));
                 final HttpPut put = new HttpPut(uriBuilder.build()); // $NON-NLS-1$ //$NON-NLS-2$
                 put.setEntity(new InputStreamEntity(dataSetContent));
                 return put;

@@ -74,13 +74,14 @@ public class DataSetAPI extends APIService {
     public Callable<String> create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(defaultValue = "", required = false) String tag,
+            @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
             @RequestHeader(CONTENT_TYPE) String contentType, @ApiParam(value = "content") InputStream dataSetContent) {
         return () -> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating dataset (pool: {} )...", getConnectionStats());
             }
             try {
-                HystrixCommand<String> creation = getCommand(CreateDataSet.class, name, tag, contentType, dataSetContent);
+                HystrixCommand<String> creation = getCommand(CreateDataSet.class, name, tag, contentType, dataSetContent, size);
                 return creation.execute();
             } finally {
                 LOG.debug("Dataset creation done.");
@@ -95,12 +96,13 @@ public class DataSetAPI extends APIService {
     public Callable<String> createOrUpdateById(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
+            @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
             @ApiParam(value = "content") InputStream dataSetContent) {
         return () -> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
             }
-            HystrixCommand<String> creation = getCommand(CreateOrUpdateDataSet.class, id, name, dataSetContent);
+            HystrixCommand<String> creation = getCommand(CreateOrUpdateDataSet.class, id, name, size, dataSetContent);
             String result = creation.execute();
             LOG.debug("Dataset creation or update for #{} done.", id);
             return result;

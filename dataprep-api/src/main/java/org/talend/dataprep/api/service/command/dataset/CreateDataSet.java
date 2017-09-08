@@ -44,9 +44,9 @@ public class CreateDataSet extends GenericCommand<String> {
      * @param contentType content-type of the dataset.
      * @param dataSetContent Dataset content or import parameters in json for remote datasets.
      */
-    private CreateDataSet(String name, String tag, String contentType, InputStream dataSetContent) {
+    private CreateDataSet(String name, String tag, String contentType, long size, InputStream dataSetContent) {
         super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(name, tag, contentType, dataSetContent));
+        execute(() -> onExecute(name, tag, contentType, size, dataSetContent));
         onError(e -> {
             if (e instanceof TDPException) {
                 return passthrough().apply(e);
@@ -57,11 +57,12 @@ public class CreateDataSet extends GenericCommand<String> {
         on(HttpStatus.OK).then(asString());
     }
 
-    private HttpRequestBase onExecute(String name, String tag, String contentType, InputStream dataSetContent) {
+    private HttpRequestBase onExecute(String name, String tag, String contentType, long size, InputStream dataSetContent) {
         try {
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets");
             uriBuilder.addParameter("name", name);
             uriBuilder.addParameter("tag", tag);
+            uriBuilder.addParameter("size", String.valueOf(size));
             final HttpPost post = new HttpPost(uriBuilder.build());
             post.addHeader("Content-Type", contentType); //$NON-NLS-1$
             post.setEntity(new InputStreamEntity(dataSetContent));

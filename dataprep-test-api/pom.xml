@@ -31,18 +31,15 @@
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
+            <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!--Cucumber-->
@@ -58,6 +55,12 @@
             <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!--JUnit-->
         <dependency>
@@ -69,19 +72,5 @@
 
 
     </dependencies>
-
-    <!--<build>-->
-        <!--<testResources>-->
-            <!--<testResource>-->
-                <!--<directory>src/test/resources</directory>-->
-            <!--</testResource>-->
-            <!--<testResource>-->
-                <!--<directory>src/test/java</directory>-->
-                <!--<includes>-->
-                    <!--<include>**/*.story</include>-->
-                <!--</includes>-->
-            <!--</testResource>-->
-        <!--</testResources>-->
-    <!--</build>-->
 
 </project>

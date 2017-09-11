@@ -19,27 +19,32 @@ class FolderSelectionCtrl {
 		this.folderService = FolderService;
 		this.tree = [];
 		this.searchFolderQuery = '';
+		this.isLoading = false;
 	}
 
-    /**
-     * @ngdoc method
-     * @name $onInit
-     * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
-     * @description initializes the folders tree on controller creation
-     **/
+	/**
+	 * @ngdoc method
+	 * @name $onInit
+	 * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
+	 * @description initializes the folders tree on controller creation
+	 **/
 	$onInit() {
+		this.isLoading = true;
 		this.folderService.tree()
-            .then(tree => this._initTree(tree));
+			.then(tree => this._initTree(tree))
+			.finally(() => {
+				this.isLoading = false;
+			});
 	}
 
-    // --------------------------------------------------------------------------------------------
-    // ---------------------------------------------- INITIALIZATION ------------------------------
-    // --------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name _initTree
-     * @description Adapt the folder tree
-     **/
+	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------- INITIALIZATION ------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name _initTree
+	 * @description Adapt the folder tree
+	 **/
 	_initTree(tree) {
 		this.tree = tree;
 
@@ -96,45 +101,45 @@ class FolderSelectionCtrl {
 		return nextAccu;
 	}
 
-    // --------------------------------------------------------------------------------------------
-    // -------------------------------------------- ACTIONS ON FOLDERS ----------------------------
-    // --------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name toggle
-     * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
-     * @description show/hides the children of a given folder in the tree
-     * @param {Object} treeNode The node to toggle
-     **/
+	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------- ACTIONS ON FOLDERS ----------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name toggle
+	 * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
+	 * @description show/hides the children of a given folder in the tree
+	 * @param {Object} treeNode The node to toggle
+	 **/
 	toggle(treeNode) {
 		treeNode.folder.opened = !treeNode.folder.opened;
 	}
 
-    /**
-     * @ngdoc method
-     * @name chooseFolder
-     * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
-     * @description selects a folder
-     * @param {Object} folder to select
-     **/
+	/**
+	 * @ngdoc method
+	 * @name chooseFolder
+	 * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
+	 * @description selects a folder
+	 * @param {Object} folder to select
+	 **/
 	chooseFolder(folder) {
 		this.selectedFolder.selected = false;
 		this.selectedFolder = folder;
 		this.selectedFolder.selected = true;
 	}
 
-    // --------------------------------------------------------------------------------------------
-    // ------------------------------------------------ SEARCH FOLDERS ----------------------------
-    // --------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name performSearch
-     * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
-     * @description perform folder search
-     **/
+	// --------------------------------------------------------------------------------------------
+	// ------------------------------------------------ SEARCH FOLDERS ----------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name performSearch
+	 * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
+	 * @description perform folder search
+	 **/
 	performSearch() {
 		if (this.searchFolderQuery) {
-            // save tree selection
+			// save tree selection
 			this.lastTreeSelection = this.lastTreeSelection || this.selectedFolder;
 			this.searchItems = this._search([], this.tree, this.searchFolderQuery);
 			if (this.searchItems.length) {
@@ -142,9 +147,9 @@ class FolderSelectionCtrl {
 			}
 		}
 		else {
-            // reset search result
+			// reset search result
 			this.searchItems = null;
-            // reset last tree selection as selected node
+			// reset last tree selection as selected node
 			this.chooseFolder(this.lastTreeSelection);
 			this.lastTreeSelection = null;
 		}

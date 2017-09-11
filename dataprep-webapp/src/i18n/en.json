@@ -311,7 +311,7 @@
   "SELECT_COLUMN_TO_DISPLAY_STATS": "Select a column to display its statistics",
   "SELECT_PATTERN_IS": "The selected pattern is: ",
   "FILTERING_COMING_SOON": "Filtering is coming soon.",
-  "REFRESHING_WAIT": "refreshing, please wait ...",
+  "REFRESHING_WAIT": "refreshing, please wait…",
   "TOOLTIP_MATCHING_FILTER": "matching your filter",
   "TOOLTIP_MATCHING_FULL": "in entire dataset",
   "NO_CHART": "No chart for the current selection",
@@ -352,6 +352,8 @@
   "SAVE_CHANGE_DESCRITION_2": "Do you want to save it?",
   "PREPARATION_NAME": "Preparation Name: ",
   "SAVE_IT": "SAVE IT",
+  "WAITING_FOLDERS_TITLE": "Please wait while the folders are being loaded",
+  "SAVE_PREPARATION_TITLE": "Save preparation",
 
   "_comment": "Quality Bar",
   "VALID_RECORDS": "valid values",

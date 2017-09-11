@@ -164,6 +164,38 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 
 	/**
 	 * @ngdoc method
+	 * @name isCancelDisabled
+	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
+	 * @description Know if cancel button is disabled
+	 */
+	vm.isCancelDisabled = () => {
+		return !vm.destinationFolder;
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name isSubmitDisabled
+	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
+	 * @description Know if submit button is disabled
+	 */
+	vm.isSubmitDisabled = () => {
+		return !vm.destinationFolder
+			|| vm.savePreparationForm.$invalid
+			|| vm.state.playground.isSavingPreparation;
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name isSubmitLoading
+	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
+	 * @description Know if submit button has loading state
+	 */
+	vm.isSubmitLoading = () => {
+		return vm.state.playground.isSavingPreparation;
+	};
+
+	/**
+	 * @ngdoc method
 	 * @name discardSaveOnClose
 	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
 	 * @description Discard implicit preparation save. This trigger a preparation delete.

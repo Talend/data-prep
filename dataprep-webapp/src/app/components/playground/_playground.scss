@@ -186,25 +186,6 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 				height: calc(#{$suggestions-stats-content-height});
 				width: 330px;
 			}
-
-			.loading-msg {
-				position: absolute;
-				text-align: center;
-				top: 100px;
-				left: 35px;
-				right: 35px;
-				background: transparent;
-				color: $pale-blue;
-				opacity: 0.8;
-
-				.wait-icon {
-					position: absolute;
-				}
-
-				.wait-text {
-					padding-left: 40px;
-				}
-			}
 		}
 
 		sc-accordion-item {

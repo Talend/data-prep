@@ -1,0 +1,20 @@
+.loading-msg {
+	position: absolute;
+	text-align: center;
+	top: 100px;
+	left: 35px;
+	right: 35px;
+	background: transparent;
+	color: $pale-blue;
+	opacity: 0.8;
+
+	.wait {
+		&-icon {
+			position: absolute;
+		}
+
+		&-text {
+			padding-left: 40px;
+		}
+	}
+}

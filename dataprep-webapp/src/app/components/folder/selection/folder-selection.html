@@ -25,24 +25,27 @@
            talend-search-input>
 
     <div class="folders"
-         ng-switch="!!$ctrl.searchFolderQuery">
+         ng-switch="$ctrl.isLoading">
+        <loader ng-switch-when="true"></loader>
+        <div ng-switch-when="false"
+             ng-switch="!!$ctrl.searchFolderQuery">
+            <folder-tree ng-switch-when="false"
+                         level="0"
+                         on-select="$ctrl.chooseFolder(node.folder)"
+                         on-toggle="$ctrl.toggle(node)"
+                         node="$ctrl.tree"></folder-tree>
 
-        <folder-tree ng-switch-when="false"
-                     level="0"
-                     on-select="$ctrl.chooseFolder(node.folder)"
-                     on-toggle="$ctrl.toggle(node)"
-                     node="$ctrl.tree"></folder-tree>
-
-        <folder-tree-node ng-switch-when="true"
-                          ng-repeat="node in $ctrl.searchItems track by node.folder.id"
-                          has-children="false"
-                          is-opened="false"
-                          is-selected="node.folder.selected"
-                          level="0"
-                          name="node.folder.name"
-                          path="node.folder.path"
-                          on-select="$ctrl.chooseFolder(node.folder)"
-                          on-toggle="$ctrl.toggle(node)">
-        </folder-tree-node>
+            <folder-tree-node ng-switch-when="true"
+                              ng-repeat="node in $ctrl.searchItems track by node.folder.id"
+                              has-children="false"
+                              is-opened="false"
+                              is-selected="node.folder.selected"
+                              level="0"
+                              name="node.folder.name"
+                              path="node.folder.path"
+                              on-select="$ctrl.chooseFolder(node.folder)"
+                              on-toggle="$ctrl.toggle(node)">
+            </folder-tree-node>
+        </div>
     </div>
 </div>

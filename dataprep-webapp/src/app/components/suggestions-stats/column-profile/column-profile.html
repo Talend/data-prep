@@ -14,13 +14,9 @@
   -->
 
 <div class="column-profile" ng-switch="!!(columnProfileCtrl.state.playground.isFetchingStats)">
-
     <div id="chart-ghost" class="loading-container" ng-switch-when="true">
         <img id="chart-ghost-img" src="/assets/images/refreshing-ghost-chart.png">
-        <div id="chart-ghost-message" class="loading-msg">
-            <span class="wait-icon continuous-rotate" ><i data-icon="c" class="icon"></i></span>
-            <span class="wait-text" translate-once="REFRESHING_WAIT"></span>
-        </div>
+        <loader id="chart-ghost-message"></loader>
     </div>
 
     <div id="column-profile-chart" ng-switch-when="false">

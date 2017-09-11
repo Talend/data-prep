@@ -122,15 +122,18 @@
 
         <div class="modal-buttons">
             <button ng-click="playgroundCtrl.discardSaveOnClose()"
+                    ng-class="{'disabled': playgroundCtrl.isCancelDisabled()}"
+                    ng-disabled="playgroundCtrl.isCancelDisabled()"
                     type="button"
                     class="btn modal-secondary-button btn-link"
                     translate-once="NO_THANKS">
             </button>
 
-            <talend-button-loader button-class="btn modal-primary-button btn-primary"
-                                  disable-condition="playgroundCtrl.savePreparationForm.$invalid || playgroundCtrl.state.playground.isSavingPreparation"
-                                  loading="playgroundCtrl.state.playground.isSavingPreparation"
-                                  loading-class="icon">
+            <talend-button-loader button-class="btn modal-primary-button btn-primary {{playgroundCtrl.isSubmitDisabled() && 'disabled'}}"
+                                  disable-condition="playgroundCtrl.isSubmitDisabled()"
+                                  loading="playgroundCtrl.isSubmitLoading()"
+                                  loading-class="icon"
+                                  title="{{(playgroundCtrl.isSubmitDisabled() ? 'WAITING_FOLDERS_TITLE' : 'SAVE_PREPARATION_TITLE') | translate}}">
                 <span translate-once="SAVE_IT"></span>
             </talend-button-loader>
         </div>

@@ -354,6 +354,25 @@ describe('Playground controller', () => {
 		});
 
 		describe('discard preparation', () => {
+			it('should determinate if cancel btn is disabled', () => {
+				// when
+				const isCancelDisabled = ctrl.isCancelDisabled();
+
+				// then
+				expect(isCancelDisabled).toBeTruthy();
+			});
+
+			it('should determinate if cancel btn is enabled', () => {
+				// given
+				ctrl.destinationFolder = { id: 'LW==', path: '' };
+
+				// when
+				const isCancelDisabled = ctrl.isCancelDisabled();
+
+				// then
+				expect(isCancelDisabled).toBeFalsy();
+			});
+
 			it('should call startLoader', inject((PlaygroundService) => {
 				// given
 				spyOn(PlaygroundService, 'startLoader');
@@ -398,6 +417,28 @@ describe('Playground controller', () => {
 		});
 
 		describe('save preparation', () => {
+			it('should determinate if submit is disabled', () => {
+				// when
+				const isSubmitDisabled = ctrl.isSubmitDisabled();
+
+				// then
+				expect(isSubmitDisabled).toBeTruthy();
+			});
+
+			it('should determinate if submit is enabled', () => {
+				// given
+				ctrl.savePreparationForm = {
+					'$invalid': false,
+				};
+				ctrl.destinationFolder = { id: 'LW==', path: '' };
+
+				// when
+				const isSubmitDisabled = ctrl.isSubmitDisabled();
+
+				// then
+				expect(isSubmitDisabled).toBeFalsy();
+			});
+
 			it('should change preparation name when destination is home', inject((PreparationService) => {
 				// given
 				ctrl.destinationFolder = { id: 'LW==', path: '' };
@@ -441,6 +482,17 @@ describe('Playground controller', () => {
 				expect(StateService.resetPlayground).toHaveBeenCalled();
 				expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, undefined);
 			}));
+
+			it('should determinate when submit is loading', () => {
+				// given
+				stateMock.playground.isSavingPreparation = true;
+
+				// when
+				const isSubmitLoading = ctrl.isSubmitLoading();
+
+				// then
+				expect(isSubmitLoading).toBeTruthy();
+			});
 
 			it('should manage isSaving flag', inject((StateService) => {
 				// given

@@ -18,7 +18,7 @@ import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 @Component
 public class DataPrepAPIHelper {
 
-    private String baseUrl = "http://localhost:8888";
+    private String baseUrl;
 
     private static RequestSpecification given() {
         return RestAssured.given().log().all(true);
@@ -162,4 +162,28 @@ public class DataPrepAPIHelper {
                 .get(API_FULLRUN_EXPORT + "/" + preparationId + "/" + API_HISTORY);
     }
 
+
+    /**
+     * Get the default home folder.
+     *
+     * @return the home folder.
+     */
+    public String getHomeFolder() {
+        return given()
+                .when()
+                .get("/api/user")
+                .jsonPath().getString("homeFolderId");
+    }
+
+    /**
+     * Delete a preparation identified by its id.
+     *
+     * @param preparationId the preparation id to delete.
+     * @return the response.
+     */
+    public Response deletePreparation(String preparationId) {
+        return given()
+                .when()
+                .delete(API_PREPARATIONS + preparationId);
+    }
 }

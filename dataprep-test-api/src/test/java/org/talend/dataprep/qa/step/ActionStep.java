@@ -10,8 +10,7 @@ import org.talend.dataprep.qa.SpringContextConfiguration;
 /**
  * Step dealing with action
  */
-@ContextConfiguration(classes = SpringContextConfiguration.class, loader = AnnotationConfigContextLoader.class)
-public class ActionStep implements En {
+public class ActionStep extends DataPrepStep implements En {
 
     /**
      * This class' logger.
@@ -25,6 +24,8 @@ public class ActionStep implements En {
 
         When("^I add a step \"(.*)\" to the column \"(.*)\" of the preparation \"(.*)\"$", (String actionName, String columnName, String preparationName) -> {
             LOG.debug("I add a step {} to the column {} of the preparation {}", actionName, columnName, preparationName);
+            String preparationId = context.getPreparationId(preparationName);
+            dpah.addStep(preparationId,actionName, columnName, "00002");
         });
 
     }

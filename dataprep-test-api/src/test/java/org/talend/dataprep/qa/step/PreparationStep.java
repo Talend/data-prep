@@ -3,20 +3,11 @@ package org.talend.dataprep.qa.step;
 import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.talend.dataprep.helper.DataPrepAPIHelper;
-import org.talend.dataprep.qa.SpringContextConfiguration;
 
 /**
  * Step dealing with preparation
  */
-@ContextConfiguration(classes = SpringContextConfiguration.class, loader = AnnotationConfigContextLoader.class)
-public class PreparationStep implements En {
-
-    @Autowired
-    private DataPrepAPIHelper dpah;
+public class PreparationStep extends DataPrepStep implements En {
 
     /**
      * This class' logger.
@@ -28,14 +19,21 @@ public class PreparationStep implements En {
      */
     public PreparationStep() {
 
-        Given("^I create a preparation with name \"(.*)\"$", (String preparationName) -> {
-
+        Given("^I create a preparation with name \"(.*)\", based on \"(.*)\" dataset$", (String preparationName, String datasetName) -> {
             LOG.debug("I create a preparation with name {}", preparationName);
+            String homeFolder = dpah.getHomeFolder();
+            String preparationId = dpah.createPreparation(context.getDatasetId(datasetName), preparationName, homeFolder)
+                    .then().statusCode(200)
+                    .extract().body().asString();
+            context.storePreparationRef(preparationId, preparationName);
         });
 
-        When("^I export the preparation \"(.*)\"$", (String preparationName) -> {
-            LOG.debug("I export the preparation {}", preparationName);
-        });
+        When("^I full run the preparation \"(.*)\" on the dataset \"(.*)\" and export the result in \"(.*)\" file.$",
+                (String preparationName, String datasetName, String filename) -> {
+                    LOG.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName, datasetName, filename);
+//            dpah.executeFullRunExport();
+
+                });
 
 
         Then("^I check that exported preparation equals \"(.*)\"$", (String expectedCSVFileName) -> {

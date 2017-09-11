@@ -129,7 +129,7 @@
                     translate-once="NO_THANKS">
             </button>
 
-            <talend-button-loader button-class="btn modal-primary-button btn-primary {{playgroundCtrl.isSubmitDisabled() && 'disabled'}}"
+            <talend-button-loader button-class="btn modal-primary-button btn-primary {{playgroundCtrl.isSubmitDisabled() ? 'disabled' : ''}}"
                                   disable-condition="playgroundCtrl.isSubmitDisabled()"
                                   loading="playgroundCtrl.isSubmitLoading()"
                                   loading-class="icon"

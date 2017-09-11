@@ -4,6 +4,8 @@ import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Step dealing with preparation
  */
@@ -31,7 +33,14 @@ public class PreparationStep extends DataPrepStep implements En {
         When("^I full run the preparation \"(.*)\" on the dataset \"(.*)\" and export the result in \"(.*)\" file.$",
                 (String preparationName, String datasetName, String filename) -> {
                     LOG.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName, datasetName, filename);
-//            dpah.executeFullRunExport();
+                    String datasetId = context.getDatasetId(datasetName);
+                    String preparationId = context.getPreparationId(preparationName);
+                    List<String> steps = dpah.getPreparation(preparationId)
+                            .then().statusCode(200)
+                            .extract().body().jsonPath().getJsonObject("steps");
+                    dpah.executeFullRunExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename);
+
+
 
                 });
 

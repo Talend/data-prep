@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.talend.dataprep.helper.DataPrepAPIHelper;
+import org.talend.dataprep.qa.bean.FeatureContext;
 
 @Configurable
 public class SpringContextConfiguration {
@@ -25,4 +26,10 @@ public class SpringContextConfiguration {
 
         return dataPrepAPIHelper;
     }
+
+    @Bean
+    public FeatureContext featureContext(){
+        return new FeatureContext();
+    }
+
 }

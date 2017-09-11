@@ -132,6 +132,18 @@ public class DataPrepAPIHelper {
     }
 
     /**
+     * Get a dataset.
+     *
+     * @param datasetId the dataset id.
+     * @return the response.
+     */
+    public Response getDataset(String datasetId) {
+        return given()
+                .when()
+                .get(API_DATASETS + datasetId);
+    }
+
+    /**
      * Execute a preparation full run on a dataset followed by an export.
      *
      * @param exportType    export format.

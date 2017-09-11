@@ -3,9 +3,6 @@ package org.talend.dataprep.qa.step;
 import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.talend.dataprep.qa.SpringContextConfiguration;
 
 /**
  * Step dealing with action
@@ -25,7 +22,7 @@ public class ActionStep extends DataPrepStep implements En {
         When("^I add a step \"(.*)\" to the column \"(.*)\" of the preparation \"(.*)\"$", (String actionName, String columnName, String preparationName) -> {
             LOG.debug("I add a step {} to the column {} of the preparation {}", actionName, columnName, preparationName);
             String preparationId = context.getPreparationId(preparationName);
-            dpah.addStep(preparationId,actionName, columnName, "00002");
+            dpah.addStep(preparationId, actionName, columnName, "00002");
         });
 
     }

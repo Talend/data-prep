@@ -20,6 +20,11 @@ By default cucumber test will call the backend api on localhost. You can set ano
 ```
 $ mvn clean test -Dbackend.api.url=http://backend.api.server.url/
 ```
+
+## Report
+
+The cucumber report will be available on the target/cucumber directory
+
 ## License
 
 Copyright (c) 2006-2015 Talend

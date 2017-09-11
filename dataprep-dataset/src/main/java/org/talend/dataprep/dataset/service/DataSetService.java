@@ -301,6 +301,7 @@ public class DataSetService extends BaseDataSetService {
                     .location(location) //
                     .created(System.currentTimeMillis()) //
                     .tag(tag) //
+                    .dataSetSize(size) //
                     .build();
 
             dataSetMetadata.getLifecycle().setImporting(true); // Indicate data set is being imported
@@ -550,7 +551,7 @@ public class DataSetService extends BaseDataSetService {
             if (metadataForUpdate != null) {
                 datasetBuilder.copyNonContentRelated(metadataForUpdate);
                 datasetBuilder.modified(System.currentTimeMillis());
-                datasetBuilder.size(size);
+                datasetBuilder.dataSetSize(size);
             }
             if (!StringUtils.isEmpty(name)) {
                 datasetBuilder.name(name);

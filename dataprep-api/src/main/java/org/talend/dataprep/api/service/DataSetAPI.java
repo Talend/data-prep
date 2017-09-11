@@ -81,7 +81,7 @@ public class DataSetAPI extends APIService {
                 LOG.debug("Creating dataset (pool: {} )...", getConnectionStats());
             }
             try {
-                HystrixCommand<String> creation = getCommand(CreateDataSet.class, name, tag, contentType, dataSetContent, size);
+                HystrixCommand<String> creation = getCommand(CreateDataSet.class, name, tag, contentType, size, dataSetContent);
                 return creation.execute();
             } finally {
                 LOG.debug("Dataset creation done.");

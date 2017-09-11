@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
  * Before each scenario it will log the user for EE context
  */
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "html:target/cucumber"}, glue = "classpath:org/talend/dataprep/qa/step", features = "classpath:features/")
+@CucumberOptions(plugin = {"pretty", "html:target/cucumber" , "json:target/cucumber.json"},
+        glue = "classpath:org/talend/dataprep/qa/step",
+        features = "classpath:features/")
 public class EERunnerConfigurationTest extends DataStepRunner {
 
     /**

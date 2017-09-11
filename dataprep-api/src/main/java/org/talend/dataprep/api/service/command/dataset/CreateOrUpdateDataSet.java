@@ -13,8 +13,7 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.command.Defaults.asString;
-import static org.talend.dataprep.command.Defaults.emptyString;
+import static org.talend.dataprep.command.Defaults.*;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -61,7 +60,12 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
         });
-        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET, e));
+        onError(e -> {
+            if (e instanceof TDPException) {
+                return passthrough().apply(e);
+            }
+            return new TDPException(APIErrorCodes.UNABLE_TO_CREATE_DATASET, e);
+        });
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyString());
         on(HttpStatus.OK).then(asString());
     }

@@ -7,9 +7,14 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.objects.Action;
+import org.talend.dataprep.helper.objects.ActionRequest;
+import org.talend.dataprep.helper.objects.Parameters;
 import org.talend.dataprep.helper.objects.PreparationRequest;
 
 import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 
@@ -54,6 +59,28 @@ public class DataPrepAPIHelper {
                 .when()
                 .body(new PreparationRequest(datasetID, preparationName))
                 .post(API_PREPARATIONS_FOLDER + homeFolderId);
+    }
+
+    /**
+     * Add an action to a preparation.
+     *
+     * @param preparationId the preparation Id.
+     * @param actionName    the action name to add as a step.
+     * @param columnName    the column name on which the action will be executed.
+     * @param columnId      the column id on which the action will be executed.
+     * @return the response.
+     */
+    public Response addStep(String preparationId, String actionName, String columnName, String columnId) {
+        Parameters parameters = new Parameters(columnId, columnName, null, "column");
+        Action action = new Action(actionName, parameters);
+        List<Action> actions = new LinkedList<>();
+        actions.add(action);
+        ActionRequest actionRequest = new ActionRequest(actions);
+        return given()
+                .contentType(ContentType.JSON)
+                .when()
+                .body(actionRequest)
+                .post(API_PREPARATIONS + preparationId + "/" + API_ACTIONS);
     }
 
     /**

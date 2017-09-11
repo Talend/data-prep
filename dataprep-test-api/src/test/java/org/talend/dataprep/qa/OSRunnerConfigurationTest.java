@@ -8,5 +8,4 @@ import org.junit.runner.RunWith;
 @CucumberOptions(plugin = {"pretty", "html:target/cucumber"}, glue = "classpath:org/talend/dataprep/qa/step", features = "classpath:features/os")
 public class OSRunnerConfigurationTest {
 
-
 }

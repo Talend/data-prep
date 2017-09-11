@@ -7,10 +7,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.objects.Action;
-import org.talend.dataprep.helper.objects.ActionRequest;
-import org.talend.dataprep.helper.objects.Parameters;
-import org.talend.dataprep.helper.objects.PreparationRequest;
+import org.talend.dataprep.helper.objects.*;
 
 import java.nio.charset.Charset;
 import java.util.LinkedList;
@@ -122,10 +119,47 @@ public class DataPrepAPIHelper {
         return given().get(baseUrl + API_DATASETS);
     }
 
-//    public Response getHomeFolder(){
-//        return given()
-//                .when()
-//                .get("/api/user")
-//                .jsonPath().getString("homeFolderId");
-//    }
+    /**
+     * Get a preparation as a list of step id.
+     *
+     * @param preparationId the preparation id.
+     * @return the response.
+     */
+    public Response getPreparation(String preparationId) {
+        return given()
+                .when()
+                .get(API_PREPARATIONS + preparationId + "/" + API_DETAILS);
+    }
+
+    /**
+     * Execute a preparation full run on a dataset followed by an export.
+     *
+     * @param exportType    export format.
+     * @param datasetId     the dataset id on which the full run will be applied.
+     * @param preparationId the full run preparation id.
+     * @param stepId        the last step id. TODO : verify this assertion
+     * @param delimiter     the column delimiter.
+     * @param filename      the name for the exported generated file.
+     * @return the response.
+     */
+    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter, String filename) {
+        return given()
+                .contentType(ContentType.JSON)
+                .when()
+                .body(new FullRunRequest(exportType, datasetId, preparationId, stepId, delimiter, filename))
+                .post(API_FULLRUN_EXPORT);
+    }
+
+    /**
+     * Get the full run export history of a preparation.
+     *
+     * @param preparationId the preparation id.
+     * @return the response.
+     */
+    public Response getFullRunExportHistory(String preparationId) {
+        return given()
+                .when()
+                .get(API_FULLRUN_EXPORT + "/" + preparationId + "/" + API_HISTORY);
+    }
+
 }

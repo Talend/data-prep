@@ -77,6 +77,8 @@ public class ExportAPI extends APIService {
             final String exportName = getExportNameAndConsolidateParameters(parameters);
             parameters.setExportName(exportName);
 
+            LOG.info("New Export {}", parameters);
+
             final GenericCommand<InputStream> command = getCommand(Export.class, parameters);
             return CommandHelper.toStreaming(command);
         } catch (TDPException e) {

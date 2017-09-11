@@ -13,7 +13,9 @@
 package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.CommandHelper.toPublisher;
 
@@ -27,11 +29,22 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
-import org.talend.dataprep.api.service.command.folder.*;
+import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
+import org.talend.dataprep.api.service.command.folder.FolderChildrenList;
+import org.talend.dataprep.api.service.command.folder.FolderTree;
+import org.talend.dataprep.api.service.command.folder.GetFolder;
+import org.talend.dataprep.api.service.command.folder.RemoveFolder;
+import org.talend.dataprep.api.service.command.folder.RenameFolder;
+import org.talend.dataprep.api.service.command.folder.SearchFolders;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationListByFolder;
@@ -179,6 +192,8 @@ public class FolderAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing preparations in destination {} (pool: {} )...", id, getConnectionStats());
         }
+
+        LOG.info("Listing preparations in folder {}", id);
 
         return output -> {
             try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {

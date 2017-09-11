@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -124,6 +123,11 @@ public abstract class BaseDataSetService {
             throw e;
         }
 
+        // important log here (TDP-4137)
+        final DataSetMetadata metadata = dataSetMetadataRepository.get(id);
+        LOG.info("New DataSet #{}, name: {}, type: {}, from: {}", metadata.getId(), metadata.getName(),
+                metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
+
         // perform async analysis
         if (performAsyncBackgroundAnalysis) {
             LOG.debug("starting async background analysis");
@@ -132,4 +136,5 @@ public abstract class BaseDataSetService {
             LOG.info("skipping asynchronous background analysis");
         }
     }
+
 }

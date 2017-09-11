@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -34,11 +33,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class ExportParameters implements AsyncGroupKey {
 
     /**
-     * Where should the data com from.
+     * Where should the data comes from.
      */
     public enum SourceType {
+        /**
+         * Export is performed from preparation's head. This corresponds to apply steps to dataset head (10k
+         * first lines).
+         */
         HEAD,
+        /**
+         * Export is performed for building a new sample (out of a filter). This corresponds to "Fetch more"
+         * operation on UI side.
+         */
         FILTER,
+        /**
+         * Export is performed from preparation's reservoir (not first 10K lines of the dataset). <b>Not used</b> at
+         * the moment.
+         */
         RESERVOIR
     }
 

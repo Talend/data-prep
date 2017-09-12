@@ -181,7 +181,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.isSubmitDisabled = () => {
 		return !vm.destinationFolder
 			|| vm.savePreparationForm.$invalid
-			|| vm.state.playground.isSavingPreparation;
+			|| vm.isSubmitLoading();
 	};
 
 	/**

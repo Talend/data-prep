@@ -13,6 +13,13 @@
 
 package org.talend.dataprep.dataset.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.BDDMockito.doThrow;
+import static org.mockito.BDDMockito.mock;
+
+import java.io.InputStream;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,11 +29,6 @@ import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
-
-import java.io.InputStream;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 /**
  * Unit tests for dataset services.
@@ -48,13 +50,16 @@ public class DataSetServiceUnitTest {
 
     @Test
     public void testCreateFailsWhenSizeParameterExceedsAvailableStorage() throws Exception {
+        // given
         final long size = 123789;
         TDPException expectedException = new TDPException();
         doThrow(expectedException).when(quotaService).checkIfAddingSizeExceedsAvailableStorage(size);
 
+        // when
         Throwable exceptionThrown = catchThrowable(
                 () -> dataSetService.create("Test dataset", null, size, "content-type", mock(InputStream.class)));
 
+        // then
         assertThat(exceptionThrown).isEqualTo(expectedException);
     }
 

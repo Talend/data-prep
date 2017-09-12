@@ -13,7 +13,11 @@
 
 package org.talend.dataprep.dataset.store.noop;
 
-import org.springframework.context.annotation.Primary;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.dataset.store.QuotaService;
 
@@ -21,11 +25,20 @@ import org.talend.dataprep.dataset.store.QuotaService;
  * [Personal & Enterprise Edition] Does nothing.
  */
 @Component
-@Primary
-public class NoOpQuotaService implements QuotaService {
+@Conditional(NoOpQuotaService.class)
+public class NoOpQuotaService implements QuotaService, Condition {
 
     @Override
     public void checkIfAddingSizeExceedsAvailableStorage(long size) {
         // Do nothing
+    }
+
+    /**
+     * @return true if 'dataset.quota.check.enabled' is not set to 'true'
+     */
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        final String property = context.getEnvironment().getProperty("dataset.quota.check.enabled");
+        return !StringUtils.equals("true", property);
     }
 }

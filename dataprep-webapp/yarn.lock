@@ -2,28 +2,28 @@
 # yarn lockfile v1
 
 
-"@talend/bootstrap-theme@0.102.4":
-  version "0.102.4"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.102.4.tgz#d56ab48a8e4c0e0910a6347822275d784ba0ef9f"
+"@talend/bootstrap-theme@0.104.0":
+  version "0.104.0"
+  resolved "https://artifacts-zl.talend.com/nexus/content/groups/npm_group/@talend/bootstrap-theme/-/bootstrap-theme-0.104.0.tgz#02b0d0c52321e937a3db92bc9c2c73e2627dc75d"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.102.4":
-  version "0.102.4"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.102.4.tgz#dbe50f80b456ceea537647418c1f5598447661ca"
+"@talend/icons@0.104.0":
+  version "0.104.0"
+  resolved "https://artifacts-zl.talend.com/nexus/content/groups/npm_group/@talend/icons/-/icons-0.104.0.tgz#7d6c07f3e824953327c93face080e5f8829b829c"
 
-"@talend/react-components@0.102.4":
-  version "0.102.4"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.102.4.tgz#6fcc01564651110aabada9dc891d4360801e24ae"
+"@talend/react-components@0.104.0":
+  version "0.104.0"
+  resolved "https://artifacts-zl.talend.com/nexus/content/groups/npm_group/@talend/react-components/-/react-components-0.104.0.tgz#c454199935692f8c00e2ab4c57951bd4760a5bbc"
   dependencies:
     lodash "4.17.4"
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"
     react-virtualized "^9.3.0"
 
-"@talend/react-forms@0.102.4":
-  version "0.102.4"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.102.4.tgz#6d2f2b81e8cfa98da3c6eff126e69f88b297ef63"
+"@talend/react-forms@0.104.0":
+  version "0.104.0"
+  resolved "https://artifacts-zl.talend.com/nexus/content/groups/npm_group/@talend/react-forms/-/react-forms-0.104.0.tgz#56a9babbc574b2522bfe510c774e4171c3d002f6"
   dependencies:
     classnames "2.2.5"
     keycode "2.1.9"

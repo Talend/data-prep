@@ -23,7 +23,13 @@ $ mvn clean test -Dbackend.api.url=http://backend.api.server.url
 
 ## Report
 
-The cucumber report will be available on the target/cucumber directory
+The default cucumber report will be available on the target/cucumber directory. If you want a more lisible cucumber report just launch the command line:
+
+```
+$ mvn test verify
+```
+
+The cucumber report will be available on /site/cucumber-reports
 
 ## License
 

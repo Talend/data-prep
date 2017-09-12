@@ -1,5 +1,6 @@
 package org.talend.dataprep.dataset.store.noop;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.env.Environment;
 
 /**
- *
+ * Unit test for the {@link NoOpQuotaService}.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class NoOpQuotaServiceTest {
@@ -57,6 +58,14 @@ public class NoOpQuotaServiceTest {
 
         // then
         assertFalse(matches);
+    }
+
+    @Test
+    public void shouldReturnLongMaxValue() {
+        // when
+        final long availableSpace = service.getAvailableSpace();
+        // then
+        assertEquals(Long.MAX_VALUE, availableSpace);
     }
 
     private void givenQuotaProperty(String returnValue) {

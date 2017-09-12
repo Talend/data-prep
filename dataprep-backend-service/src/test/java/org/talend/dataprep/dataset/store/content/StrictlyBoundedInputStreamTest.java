@@ -14,13 +14,14 @@
 package org.talend.dataprep.dataset.store.content;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.talend.dataprep.exception.TDPException;
 
 public class StrictlyBoundedInputStreamTest {
 
@@ -63,6 +64,24 @@ public class StrictlyBoundedInputStreamTest {
 
         assertArrayEquals(bytes, result);
         assertTrue(2 == inputStream.getTotal());
+
+    }
+
+    @Test
+    public void exceptionShouldHaveMaxValue() throws IOException {
+        // Given
+        byte[] bytes = { 0, 1, 2 };
+        StrictlyBoundedInputStream inputStream = new StrictlyBoundedInputStream(new ByteArrayInputStream(bytes), 2);
+
+        // when
+        try {
+            byte[] result = new byte[3];
+            inputStream.read(result, 0, 3);
+        } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
+
+            // then
+            assertEquals(2, e.getMaxSize());
+        }
 
     }
 }

@@ -41,4 +41,12 @@ public class NoOpQuotaService implements QuotaService, Condition {
         final String property = context.getEnvironment().getProperty("dataset.quota.check.enabled");
         return !StringUtils.equals("true", property);
     }
+
+    /**
+     * @return Long.MAX_VALUE
+     */
+    @Override
+    public long getAvailableSpace() {
+        return Long.MAX_VALUE;
+    }
 }

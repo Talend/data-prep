@@ -25,4 +25,9 @@ public interface QuotaService {
      * @throws org.talend.dataprep.exception.TDPException if size exceeds available storage
      */
     void checkIfAddingSizeExceedsAvailableStorage(long size);
+
+    /**
+     * @return the available space.
+     */
+    long getAvailableSpace();
 }

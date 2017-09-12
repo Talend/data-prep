@@ -301,11 +301,19 @@ public class DataSetService extends BaseDataSetService {
         final Marker marker = Markers.dataset(id);
         LOG.debug(marker, "Creating...");
 
+        // sanity check
+        if (size < 0) {
+            LOG.warn("invalid size provided {}", size);
+            throw new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
+        }
+
         // check that the name is not already taken
         checkIfNameIsAvailable(name);
 
-        // check if the quota will not be exceeded
-        quotaService.checkIfAddingSizeExceedsAvailableStorage(size);
+        // if the size is provided, let's check if the quota will not be exceeded
+        if (size > 0) {
+            quotaService.checkIfAddingSizeExceedsAvailableStorage(size);
+        }
 
         // get the location out of the content type and the request body
         final DataSetLocation location;
@@ -324,14 +332,17 @@ public class DataSetService extends BaseDataSetService {
                     .location(location) //
                     .created(System.currentTimeMillis()) //
                     .tag(tag) //
-                    .dataSetSize(size) //
                     .build();
 
             dataSetMetadata.getLifecycle().setImporting(true); // Indicate data set is being imported
 
             // Save data set content
             LOG.debug(marker, "Storing content...");
-            contentStore.storeAsRaw(dataSetMetadata, new StrictlyBoundedInputStream(content, maximumInputStreamSize));
+            final long availableSpace = quotaService.getAvailableSpace();
+            final long maxDataSetSizeAllowed = maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
+            final StrictlyBoundedInputStream sizeCalculator = new StrictlyBoundedInputStream(content, maxDataSetSizeAllowed);
+            contentStore.storeAsRaw(dataSetMetadata, sizeCalculator);
+            dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
             LOG.debug(marker, "Content stored.");
 
             // Create the new data set
@@ -345,7 +356,7 @@ public class DataSetService extends BaseDataSetService {
             return id;
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
             hypotheticalException = new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, e,
-                    build().put("limit", maximumInputStreamSize));
+                    build().put("limit", e.getMaxSize()));
         } catch (TDPException e) {
             hypotheticalException = e;
         } catch (Exception e) {
@@ -564,7 +575,17 @@ public class DataSetService extends BaseDataSetService {
         }
 
         DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
-        quotaService.checkIfAddingSizeExceedsAvailableStorage(size - currentDataSetMetadata.getDataSetSize());
+
+        // just like the creation, let's make sure invalid size forbids dataset creation
+        if (size < 0) {
+            LOG.warn("invalid size provided {}", size);
+            throw new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
+        }
+
+        // check the size if it's available (quick win)
+        if (size > 0 && currentDataSetMetadata != null) {
+            quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
+        }
 
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         try {
@@ -582,9 +603,19 @@ public class DataSetService extends BaseDataSetService {
             final DataSetMetadata dataSetMetadata = datasetBuilder.build();
 
             // Save data set content
-            contentStore.storeAsRaw(dataSetMetadata, dataSetContent);
+            final long availableSpace = quotaService.getAvailableSpace();
+            final long maxDataSetSizeAllowed = maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
+            final StrictlyBoundedInputStream sizeCalculator = new StrictlyBoundedInputStream(dataSetContent,
+                    maxDataSetSizeAllowed);
+            contentStore.storeAsRaw(dataSetMetadata, sizeCalculator);
+            dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
+
             dataSetMetadataRepository.save(dataSetMetadata);
+
             publisher.publishEvent(new DataSetRawContentUpdateEvent(dataSetMetadata));
+        } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
+            throw new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, e,
+                    build().put("limit", e.getMaxSize()));
         } finally {
             lock.unlock();
         }

@@ -84,9 +84,20 @@ public class StrictlyBoundedInputStream extends InputStream {
 
     public static class InputStreamTooLargeException extends RuntimeException {
 
+        private long maxSize;
+
         public InputStreamTooLargeException(long maxSize) {
             super("The input stream exceeds the authorized size: " + maxSize);
+            this.maxSize = maxSize;
         }
+
+        /**
+         * @return the MaxSize
+         */
+        public long getMaxSize() {
+            return maxSize;
+        }
+
     }
 
 }

@@ -10,7 +10,7 @@ import org.talend.dataprep.qa.bean.FeatureContext;
 public class SpringContextConfiguration {
 
 
-    private static final String DEFAULT_BACKEND_API_URL="http://localhost:8888";
+    public static final String DEFAULT_BACKEND_API_URL = "http://localhost:8888";
 
     @Bean
     public DataPrepAPIHelper dataPrepAPIHelper() {
@@ -18,7 +18,7 @@ public class SpringContextConfiguration {
 
         // set properties, etc.
         String backendApiUrl = System.getProperty("backend.api.url");
-        if(StringUtils.isEmpty(backendApiUrl)) {
+        if (StringUtils.isEmpty(backendApiUrl)) {
             backendApiUrl = DEFAULT_BACKEND_API_URL;
         }
 
@@ -28,7 +28,7 @@ public class SpringContextConfiguration {
     }
 
     @Bean
-    public FeatureContext featureContext(){
+    public FeatureContext featureContext() {
         return new FeatureContext();
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Step dealing with preparation
  */
-public class PreparationStep extends DataPrepStep implements En{
+public class PreparationStep extends DataPrepStep implements En {
 
     /**
      * This class' logger.
@@ -38,10 +38,11 @@ public class PreparationStep extends DataPrepStep implements En{
                     List<String> steps = dpah.getPreparation(preparationId)
                             .then().statusCode(200)
                             .extract().body().jsonPath().getJsonObject("steps");
-                    dpah.executeFullRunExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename);
-
-
-
+                    String body = dpah.executeFullRunExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename)
+                            .then()
+                            .extract().body().asString();
+                    LOG.info(body);
+                    LOG.debug("youhou");
                 });
 
 

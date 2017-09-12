@@ -58,7 +58,7 @@ public class DataPrepAPIHelper {
                 .urlEncodingEnabled(false)
 //                .queryParam("folder", homeFolderId)
 //                .post(API_PREPARATIONS);
-                .post(API_PREPARATIONS_FOLDER + homeFolderId);
+                .post(baseUrl + API_PREPARATIONS_FOLDER + homeFolderId);
     }
 
     /**
@@ -80,7 +80,7 @@ public class DataPrepAPIHelper {
                 .contentType(ContentType.JSON)
                 .when()
                 .body(actionRequest)
-                .post(API_PREPARATIONS + preparationId + "/" + API_ACTIONS);
+                .post(baseUrl + API_PREPARATIONS + preparationId + "/" + API_ACTIONS);
     }
 
     /**
@@ -131,7 +131,7 @@ public class DataPrepAPIHelper {
     public Response getPreparation(String preparationId) {
         return given()
                 .when()
-                .get(API_PREPARATIONS + preparationId + "/" + API_DETAILS);
+                .get(baseUrl + API_PREPARATIONS + preparationId + "/" + API_DETAILS);
     }
 
     /**
@@ -162,7 +162,7 @@ public class DataPrepAPIHelper {
                 .contentType(ContentType.JSON)
                 .when()
                 .body(new FullRunRequest(exportType, datasetId, preparationId, stepId, delimiter, filename))
-                .post(API_FULLRUN_EXPORT);
+                .post(baseUrl + API_FULLRUN_EXPORT);
     }
 
     /**
@@ -184,12 +184,7 @@ public class DataPrepAPIHelper {
      * @return the home folder.
      */
     public String getHomeFolder() {
-//        return given()
-//                .when()
-//                .get("/api/user")
-//                .jsonPath().getString("homeFolderId");
         return "Lw==";
-//        return "/";
     }
 
     /**
@@ -201,6 +196,6 @@ public class DataPrepAPIHelper {
     public Response deletePreparation(String preparationId) {
         return given()
                 .when()
-                .delete(API_PREPARATIONS + preparationId);
+                .delete(baseUrl + API_PREPARATIONS + preparationId);
     }
 }

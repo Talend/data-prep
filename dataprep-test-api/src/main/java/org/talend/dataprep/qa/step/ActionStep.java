@@ -22,7 +22,7 @@ public class ActionStep extends DataPrepStep implements En {
         When("^I add a step \"(.*)\" to the column \"(.*)\" of the preparation \"(.*)\"$", (String actionName, String columnName, String preparationName) -> {
             LOG.debug("I add a step {} to the column {} of the preparation {}", actionName, columnName, preparationName);
             String preparationId = context.getPreparationId(preparationName);
-            dpah.addStep(preparationId, actionName, columnName, "00002");
+            dpah.addStep(preparationId, actionName, columnName, "0001");
         });
 
     }

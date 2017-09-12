@@ -20,6 +20,13 @@ public class GlobalStep extends DataPrepStep implements En {
     public GlobalStep() {
 
         After(() -> {
+            // cleaning preparation
+            context.getPreparationIds().forEach(preparationId -> {
+                dpah.deletePreparation(preparationId).then().statusCode(200);
+                LOG.debug("Suppression of preparation {}.", preparationId);
+            });
+            context.clearPreparation();
+
             // cleaning dataset
             context.getDatasetIds().forEach(datasetId -> {
                 dpah.deleteDataSet(datasetId).then().statusCode(200);
@@ -27,12 +34,6 @@ public class GlobalStep extends DataPrepStep implements En {
             });
             context.clearDataset();
 
-            // cleaning preparation
-            context.getPreparationIds().forEach(preparationId -> {
-                dpah.deletePreparation(preparationId).then().statusCode(200);
-                LOG.debug("Suppression of preparation {}.", preparationId);
-            });
-            context.clearPreparation();
         });
     }
 }

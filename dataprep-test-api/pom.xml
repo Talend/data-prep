@@ -17,6 +17,12 @@
         <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>2.9.0</log4j.version>
         <cucumber.version>1.2.5</cucumber.version>
+
+        <!--properties use for spring bean. Can be overwrite by -D args in command line -->
+        <backend.global.api.url>http://localhost:8888</backend.global.api.url>
+        <backend.upload.api.url>http://localhost:8888</backend.upload.api.url>
+        <backend.export.api.url>http://localhost:8888</backend.export.api.url>
+
     </properties>
 
     <dependencies>
@@ -68,6 +74,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

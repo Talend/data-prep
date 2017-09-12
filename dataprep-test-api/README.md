@@ -16,10 +16,16 @@ You can launch only one test by specify it in the command line:
 ```
 $ mvn test -Dcucumber.options="classpath:features/os/ExportPreparation.feature"
 ```
-By default cucumber test will call the backend api on localhost. You can set another value with the "backend.api.url" parameter:
+By default cucumber test will call the backend api on localhost:888. You can set another url value with the maven parameter:
 ```
-$ mvn clean test -Dbackend.api.url=http://backend.api.server.url
+$ mvn clean test -DmyKey=http://backend.api.server.url
 ```
+
+Available key are:
+
+* backend.global.api.url : to specify the global api base url
+* backend.upload.api.url : to specify the upload api base url
+* backend.export.api.url : to specify the export api base url
 
 ## Report
 

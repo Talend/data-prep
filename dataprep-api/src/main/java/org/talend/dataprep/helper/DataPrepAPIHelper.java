@@ -6,6 +6,7 @@ import io.restassured.http.Header;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.objects.*;
 
@@ -18,28 +19,21 @@ import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 @Component
 public class DataPrepAPIHelper {
 
+    //FIXME: Need to be replace by globalApiBaseUrl, uploadApiBaseUrl or exportApiBaseUrl
+    @Value("${backend.global.api.url:http://localhost:8888}")
     private String baseUrl;
+
+    @Value("${backend.global.api.url:http://localhost:8888}")
+    private String globalApiBaseUrl;
+
+    @Value("${backend.upload.api.url:http://localhost:8888}")
+    private String uploadApiBaseUrl;
+
+    @Value("${backend.export.api.url:http://localhost:8888}")
+    private String exportApiBaseUrl;
 
     private static RequestSpecification given() {
         return RestAssured.given().log().all(true);
-    }
-
-    /**
-     * Get the current base URL.
-     *
-     * @return the current base URL.
-     */
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    /**
-     * Set base URL.
-     *
-     * @param baseUrl the base URL to set.
-     */
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 
     /**
@@ -197,5 +191,17 @@ public class DataPrepAPIHelper {
         return given()
                 .when()
                 .delete(baseUrl + API_PREPARATIONS + preparationId);
+    }
+
+    public String getGlobalApiBaseUrl() {
+        return globalApiBaseUrl;
+    }
+
+    public String getUploadApiBaseUrl() {
+        return uploadApiBaseUrl;
+    }
+
+    public String getExportApiBaseUrl() {
+        return exportApiBaseUrl;
     }
 }

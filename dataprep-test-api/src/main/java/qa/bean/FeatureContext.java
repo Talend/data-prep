@@ -1,4 +1,4 @@
-package org.talend.dataprep.qa.bean;
+package qa.bean;
 
 import org.springframework.stereotype.Component;
 

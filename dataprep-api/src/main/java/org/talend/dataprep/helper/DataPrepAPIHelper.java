@@ -55,6 +55,9 @@ public class DataPrepAPIHelper {
                 .contentType(ContentType.JSON)
                 .when()
                 .body(new PreparationRequest(datasetID, preparationName))
+                .urlEncodingEnabled(false)
+//                .queryParam("folder", homeFolderId)
+//                .post(API_PREPARATIONS);
                 .post(API_PREPARATIONS_FOLDER + homeFolderId);
     }
 
@@ -181,10 +184,12 @@ public class DataPrepAPIHelper {
      * @return the home folder.
      */
     public String getHomeFolder() {
-        return given()
-                .when()
-                .get("/api/user")
-                .jsonPath().getString("homeFolderId");
+//        return given()
+//                .when()
+//                .get("/api/user")
+//                .jsonPath().getString("homeFolderId");
+        return "Lw==";
+//        return "/";
     }
 
     /**

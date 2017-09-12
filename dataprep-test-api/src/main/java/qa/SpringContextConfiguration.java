@@ -1,16 +1,16 @@
-package org.talend.dataprep.qa;
+package qa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.talend.dataprep.helper.DataPrepAPIHelper;
-import org.talend.dataprep.qa.bean.FeatureContext;
+import qa.bean.FeatureContext;
 
 @Configurable
 public class SpringContextConfiguration {
 
 
-    private static final String DEFAULT_BACKEND_API_URL="http://localhost";
+    private static final String DEFAULT_BACKEND_API_URL="http://localhost:8888";
 
     @Bean
     public DataPrepAPIHelper dataPrepAPIHelper() {

@@ -1,4 +1,4 @@
-package org.talend.dataprep.qa.step;
+package qa.step;
 
 import cucumber.api.java8.En;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import static org.junit.Assert.fail;
 /**
  * Step dealing with dataset
  */
-public class DatasetStep extends DataPrepStep implements En {
+public class DatasetStep extends DataPrepStep implements En{
 
     /**
      * This class' logger.
@@ -20,16 +20,17 @@ public class DatasetStep extends DataPrepStep implements En {
      * Default constructor
      */
     public DatasetStep() {
+
         Given("^I upload the dataset \"(.*)\" with name \"(.*)\"$", (String fileName, String name) -> {
             LOG.debug("I upload the dataset {} with name {}.", fileName, name);
             try {
                 String datasetId = dpah.uploadDataset(fileName, name)
-                        .then()
+                        .then().statusCode(200)
                         .extract().body().asString();
                 context.storeDatasetRef(datasetId, name);
             } catch (java.io.IOException ioException) {
                 LOG.error("Fail to upload file {}.", fileName, ioException);
-                fail();
+                Assert.fail();
             }
         });
 

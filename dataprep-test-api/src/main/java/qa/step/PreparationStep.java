@@ -1,4 +1,4 @@
-package org.talend.dataprep.qa.step;
+package qa.step;
 
 import cucumber.api.java8.En;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Step dealing with preparation
  */
-public class PreparationStep extends DataPrepStep implements En {
+public class PreparationStep extends DataPrepStep implements En{
 
     /**
      * This class' logger.

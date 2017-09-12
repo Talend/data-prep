@@ -14,11 +14,11 @@
   -->
 
 <div class="actions-suggestions">
-	<loader id="actions-ghost"
-			ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading">
-	</loader>
-
-	<sc-tabs ng-show="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
+    <div class="loader-wrapper"
+         ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading">
+        <loader id="actions-ghost"></loader>
+    </div>
+	<sc-tabs ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
 	         class="actions-scope"
 	         selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
 		<sc-tabs-item tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" is-default="true">

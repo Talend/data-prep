@@ -48,21 +48,23 @@ const InventoryCopyMoveComponent = {
 
                 <talend-button-loader
                         id="copy-move-move-btn"
-                        button-class="btn btn-primary modal-primary-button separated-button"
-                        disable-condition="$ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
+                        button-class="btn btn-primary modal-primary-button separated-button {{!$ctrl.destinationFolder ? 'disabled' : ''}}"
+                        disable-condition="!$ctrl.destinationFolder || $ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
                         loading="$ctrl.isMoving"
                         loading-class="icon"
-                        ng-click="$ctrl.move()">
+                        ng-click="$ctrl.move()"
+                        title="{{(!$ctrl.destinationFolder ? 'WAITING_FOLDERS_TITLE' : 'MOVE_HERE_ACTION') | translate}}">
                     <span translate-once="MOVE_HERE_ACTION"></span>
                 </talend-button-loader>
 
                 <talend-button-loader
                         id="copy-move-copy-btn"
-                        button-class="btn btn-primary modal-primary-button"
-                        disable-condition="$ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
+                        button-class="btn btn-primary modal-primary-button {{!$ctrl.destinationFolder ? 'disabled' : ''}}"
+                        disable-condition="!$ctrl.destinationFolder || $ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
                         loading="$ctrl.isCopying"
                         loading-class="icon"
-                        ng-click="$ctrl.copy()">
+                        ng-click="$ctrl.copy()"
+                        title="{{(!$ctrl.destinationFolder ? 'WAITING_FOLDERS_TITLE' : 'COPY_HERE_ACTION') | translate}}">
                     <span translate-once="COPY_HERE_ACTION"></span>
                 </talend-button-loader>
             </div>

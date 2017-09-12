@@ -16,8 +16,11 @@ $search-actions-height: 25px;
 
 .actions-suggestions {
 	@include flex-column();
-	position: relative;
 	height: calc(100% - #{$header-col-details});
+
+	.loader-wrapper {
+		position: relative;
+	}
 
 	.actions-scope {
 		flex-grow: 1;

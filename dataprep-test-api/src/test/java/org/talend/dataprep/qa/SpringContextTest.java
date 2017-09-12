@@ -1,4 +1,4 @@
-package org.talend.dataprep.qa.spring;
+package org.talend.dataprep.qa;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,7 +8,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.DataPrepAPIHelper;
-import org.talend.dataprep.qa.SpringContextConfiguration;
 
 /**
  * This unit test is here to check that all bean is injected correctly

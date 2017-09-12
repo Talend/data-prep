@@ -3,10 +3,11 @@ package org.talend.dataprep.qa;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.talend.dataprep.helper.DataPrepAPIHelper;
-import org.talend.dataprep.qa.bean.FeatureContext;
 
 @Configurable
+@ComponentScan(basePackages = {"org.talend.dataprep.qa", "org.talend.dataprep.helper"})
 public class SpringContextConfiguration {
 
 
@@ -16,7 +17,7 @@ public class SpringContextConfiguration {
     public DataPrepAPIHelper dataPrepAPIHelper() {
         DataPrepAPIHelper dataPrepAPIHelper = new DataPrepAPIHelper();
 
-        // set properties, etc.
+        //    set properties, etc.
         String backendApiUrl = System.getProperty("backend.api.url");
         if (StringUtils.isEmpty(backendApiUrl)) {
             backendApiUrl = DEFAULT_BACKEND_API_URL;
@@ -27,9 +28,5 @@ public class SpringContextConfiguration {
         return dataPrepAPIHelper;
     }
 
-    @Bean
-    public FeatureContext featureContext() {
-        return new FeatureContext();
-    }
 
 }

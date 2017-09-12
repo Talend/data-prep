@@ -1,4 +1,4 @@
-package org.talend.dataprep;
+package org.talend.dataprep.qa;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;

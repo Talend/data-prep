@@ -1,4 +1,4 @@
-package qa.step;
+package org.talend.dataprep.qa.step;
 
 import cucumber.api.java8.En;
 import org.slf4j.Logger;

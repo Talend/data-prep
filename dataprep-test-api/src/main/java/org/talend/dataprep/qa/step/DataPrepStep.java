@@ -1,11 +1,11 @@
-package qa.step;
+package org.talend.dataprep.qa.step;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.DataPrepAPIHelper;
-import qa.SpringContextConfiguration;
-import qa.bean.FeatureContext;
+import org.talend.dataprep.qa.SpringContextConfiguration;
+import org.talend.dataprep.qa.bean.FeatureContext;
 
 /**
  * Base class for all DataPrep step classes.

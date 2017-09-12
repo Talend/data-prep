@@ -1,10 +1,10 @@
-package qa;
+package org.talend.dataprep.qa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.talend.dataprep.helper.DataPrepAPIHelper;
-import qa.bean.FeatureContext;
+import org.talend.dataprep.qa.bean.FeatureContext;
 
 @Configurable
 public class SpringContextConfiguration {

@@ -30,7 +30,7 @@
         <slf4j.version>1.7.22</slf4j.version>
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
-        <tika.version>1.12</tika.version>
+        <tika.version>1.16</tika.version>
         <org.talend.daikon.version>0.18.0-SNAPSHOT</org.talend.daikon.version>
         <dataquality-libraries.version>1.7.1-SNAPSHOT</dataquality-libraries.version>
         <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
@@ -46,7 +46,7 @@
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
         <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
         <tql.version>6.3.1</tql.version>
-        <commons-compress.version>1.13</commons-compress.version>
+        <commons-compress.version>1.14</commons-compress.version>
         <!-- avro version must match the one in the studio -->
         <avro.version>1.7.7</avro.version>
         <apache.poi.version>3.15</apache.poi.version>
@@ -407,7 +407,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.2</version>
+                <version>1.9.3</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>

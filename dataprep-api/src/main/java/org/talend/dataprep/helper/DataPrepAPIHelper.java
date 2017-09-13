@@ -8,7 +8,10 @@ import io.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.objects.*;
+import org.talend.dataprep.helper.objects.Action;
+import org.talend.dataprep.helper.objects.ActionRequest;
+import org.talend.dataprep.helper.objects.Parameters;
+import org.talend.dataprep.helper.objects.PreparationRequest;
 
 import java.nio.charset.Charset;
 import java.util.LinkedList;
@@ -16,12 +19,12 @@ import java.util.List;
 
 import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 
+/**
+ * Utility class to allow dataprep-api integration tests.
+ */
 @Component
 public class DataPrepAPIHelper {
 
-    //FIXME: Need to be replace by globalApiBaseUrl, uploadApiBaseUrl or exportApiBaseUrl
-    @Value("${backend.global.api.url:http://localhost:8888}")
-    private String baseUrl;
 
     @Value("${backend.global.api.url:http://localhost:8888}")
     private String globalApiBaseUrl;
@@ -32,7 +35,7 @@ public class DataPrepAPIHelper {
     @Value("${backend.export.api.url:http://localhost:8888}")
     private String exportApiBaseUrl;
 
-    private static RequestSpecification given() {
+    public RequestSpecification given() {
         return RestAssured.given().log().all(true);
     }
 
@@ -46,13 +49,14 @@ public class DataPrepAPIHelper {
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
         return given()
+                .baseUri(globalApiBaseUrl)
                 .contentType(ContentType.JSON)
                 .when()
                 .body(new PreparationRequest(datasetID, preparationName))
                 .urlEncodingEnabled(false)
 //                .queryParam("folder", homeFolderId)
 //                .post(API_PREPARATIONS);
-                .post(baseUrl + API_PREPARATIONS_FOLDER + homeFolderId);
+                .post(API_PREPARATIONS_FOLDER + homeFolderId);
     }
 
     /**
@@ -71,10 +75,11 @@ public class DataPrepAPIHelper {
         actions.add(action);
         ActionRequest actionRequest = new ActionRequest(actions);
         return given()
+                .baseUri(globalApiBaseUrl)
                 .contentType(ContentType.JSON)
                 .when()
                 .body(actionRequest)
-                .post(baseUrl + API_PREPARATIONS + preparationId + "/" + API_ACTIONS);
+                .post(API_PREPARATIONS + preparationId + "/" + API_ACTIONS);
     }
 
     /**
@@ -88,10 +93,11 @@ public class DataPrepAPIHelper {
     public Response uploadDataset(String filename, String datasetName) throws java.io.IOException {
         Response response =
                 given().header(new Header("Content-Type", "text/plain"))
+                        .baseUri(uploadApiBaseUrl)
                         // FIXME : this way of sending datasets through Strings limits the dataset size to the JVM available memory
                         .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
                         .when()
-                        .post(baseUrl + API_DATASETS_NAME + datasetName);
+                        .post(API_DATASETS_NAME + datasetName);
         return response;
     }
 
@@ -102,9 +108,10 @@ public class DataPrepAPIHelper {
      * @return the response
      */
     public Response deleteDataSet(String dataSetId) {
-        return given().
-                when().
-                delete(baseUrl + API_DATASETS + dataSetId);
+        return given()
+                .baseUri(globalApiBaseUrl)
+                .when()
+                .delete(API_DATASETS + dataSetId);
     }
 
     /**
@@ -113,7 +120,9 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response getDatasetList() {
-        return given().get(baseUrl + API_DATASETS);
+        return given()
+                .baseUri(globalApiBaseUrl)
+                .get(API_DATASETS);
     }
 
     /**
@@ -124,8 +133,9 @@ public class DataPrepAPIHelper {
      */
     public Response getPreparation(String preparationId) {
         return given()
+                .baseUri(globalApiBaseUrl)
                 .when()
-                .get(baseUrl + API_PREPARATIONS + preparationId + "/" + API_DETAILS);
+                .get(API_PREPARATIONS + preparationId + "/" + API_DETAILS);
     }
 
     /**
@@ -136,6 +146,7 @@ public class DataPrepAPIHelper {
      */
     public Response getDataset(String datasetId) {
         return given()
+                .baseUri(globalApiBaseUrl)
                 .when()
                 .get(API_DATASETS + datasetId);
     }
@@ -153,24 +164,18 @@ public class DataPrepAPIHelper {
      */
     public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter, String filename) {
         return given()
+                .baseUri(exportApiBaseUrl)
                 .contentType(ContentType.JSON)
+                .urlEncodingEnabled(false)
                 .when()
-                .body(new FullRunRequest(exportType, datasetId, preparationId, stepId, delimiter, filename))
-                .post(baseUrl + API_FULLRUN_EXPORT);
+                .queryParam("preparationId", preparationId)
+                .queryParam("stepId", stepId)
+                .queryParam("datasetId", datasetId)
+                .queryParam("exportType", exportType)
+                .queryParam("exportParameters.csv_fields_delimiter", delimiter)
+                .queryParam("exportParameters.fileName", filename)
+                .get(API_BACKEND_EXPORT);
     }
-
-    /**
-     * Get the full run export history of a preparation.
-     *
-     * @param preparationId the preparation id.
-     * @return the response.
-     */
-    public Response getFullRunExportHistory(String preparationId) {
-        return given()
-                .when()
-                .get(API_FULLRUN_EXPORT + "/" + preparationId + "/" + API_HISTORY);
-    }
-
 
     /**
      * Get the default home folder.
@@ -189,8 +194,9 @@ public class DataPrepAPIHelper {
      */
     public Response deletePreparation(String preparationId) {
         return given()
+                .baseUri(globalApiBaseUrl)
                 .when()
-                .delete(baseUrl + API_PREPARATIONS + preparationId);
+                .delete(API_PREPARATIONS + preparationId);
     }
 
     public String getGlobalApiBaseUrl() {

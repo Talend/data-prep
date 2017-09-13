@@ -4,6 +4,10 @@ import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -30,7 +34,7 @@ public class PreparationStep extends DataPrepStep implements En {
             context.storePreparationRef(preparationId, preparationName);
         });
 
-        When("^I full run the preparation \"(.*)\" on the dataset \"(.*)\" and export the result in \"(.*)\" file.$",
+        When("^I export the preparation \"(.*)\" on the dataset \"(.*)\" and export the result in \"(.*)\" temporary file.$",
                 (String preparationName, String datasetName, String filename) -> {
                     LOG.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName, datasetName, filename);
                     String datasetId = context.getDatasetId(datasetName);
@@ -41,7 +45,19 @@ public class PreparationStep extends DataPrepStep implements En {
                     String body = dpah.executeFullRunExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename)
                             .then()
                             .extract().body().asString();
-                    LOG.info(body);
+                    // store the body content in a temporary File
+                    // FIXME : Quick and dirty split
+                    String[] filenameChunks = filename.split("\\.");
+
+                    try {
+                        Path path = Files.createTempFile(filenameChunks[0], "." + filenameChunks[1]);
+                        File tempFile = path.toFile();
+                        Files.write(path, body.getBytes());
+                        tempFile.deleteOnExit();
+                        context.storeTempFile(filename, tempFile);
+                    } catch (IOException ioException) {
+                        LOG.error("Cannot create temporary file.", ioException);
+                    }
                     LOG.debug("youhou");
                 });
 

@@ -4,7 +4,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Used to share data within steps.
@@ -13,8 +17,8 @@ import java.util.*;
 public class FeatureContext {
 
     private Map<String, String> datasetIdByName = new HashMap<>();
-
     private Map<String, String> preparationIdByName = new HashMap<>();
+    private Map<String, File> tempFileByName = new HashMap<>();
 
     /**
      * Store a new dataset reference. In order to delete it later.
@@ -37,6 +41,15 @@ public class FeatureContext {
     }
 
     /**
+     * Store a temporary {@link File}.
+     *
+     * @param file the temporary {@link File} to store.
+     */
+    public void storeTempFile(@NotNull String filename, @NotNull File file) {
+        tempFileByName.put(filename, file);
+    }
+
+    /**
      * List all created dataset id.
      *
      * @return a {@link List} of all created dataset id.
@@ -56,15 +69,6 @@ public class FeatureContext {
         return new ArrayList<>(preparationIdByName.values());
     }
 
-    /**
-     * List all created dataset name.
-     *
-     * @return a {@link Set} of all created dataset name.
-     */
-    @NotNull
-    public List<String> getDatasetNames() {
-        return new ArrayList<>(datasetIdByName.keySet());
-    }
 
     /**
      * Get the id of a stored dataset.
@@ -89,6 +93,17 @@ public class FeatureContext {
     }
 
     /**
+     * Get a stored temporary {@link File}.
+     *
+     * @param fileName the stored temporary {@link File}.
+     * @return the temporary stored {@link File}.
+     */
+    @Nullable
+    public File getTempFile(@NotNull String fileName) {
+        return tempFileByName.get(fileName);
+    }
+
+    /**
      * Clear the list of dataset.
      */
     public void clearDataset() {
@@ -100,5 +115,12 @@ public class FeatureContext {
      */
     public void clearPreparation() {
         preparationIdByName.clear();
+    }
+
+    /**
+     * Clear the list of temporary {@link File}.
+     */
+    public void clearTempFile() {
+        tempFileByName.clear();
     }
 }

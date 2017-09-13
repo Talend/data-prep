@@ -480,7 +480,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .post("/datasets");
 
         // then
-        assertEquals(413, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
     }
 
     @Test

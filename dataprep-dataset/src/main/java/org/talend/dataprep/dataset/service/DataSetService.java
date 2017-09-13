@@ -22,6 +22,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_CREATE_DATASET;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
@@ -322,7 +323,7 @@ public class DataSetService extends BaseDataSetService {
         // sanity check
         if (size < 0) {
             LOG.warn("invalid size provided {}", size);
-            throw new TDPException(LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
+            throw new TDPException(UNEXPECTED_CONTENT, build().put("size", size));
         }
 
         // check that the name is not already taken

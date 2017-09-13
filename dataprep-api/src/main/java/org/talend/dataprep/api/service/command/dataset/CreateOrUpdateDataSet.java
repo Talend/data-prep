@@ -13,7 +13,11 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.command.Defaults.*;
+import static org.talend.dataprep.command.Defaults.asString;
+import static org.talend.dataprep.command.Defaults.emptyString;
+import static org.talend.dataprep.command.Defaults.passthrough;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -27,8 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.APIErrorCodes;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 /**
  * Command in charge of mostly updating a dataset content.
@@ -57,14 +59,14 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
                 put.setEntity(new InputStreamEntity(dataSetContent));
                 return put;
             } catch (URISyntaxException e) {
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });
         onError(e -> {
             if (e instanceof TDPException) {
                 return passthrough().apply(e);
             }
-            return new TDPException(APIErrorCodes.UNABLE_TO_CREATE_DATASET, e);
+            return new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
         });
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyString());
         on(HttpStatus.OK).then(asString());

@@ -26,7 +26,6 @@
     <name>dataprep-api</name>
     <properties>
         <stack.param.name>DataPrepApiFQIN</stack.param.name>
-        <rest-assured.version>3.0.3</rest-assured.version>
     </properties>
     <dependencies>
         <dependency>
@@ -39,9 +38,9 @@
         </dependency>
         <!-- Rest-assured -->
         <dependency>
-            <groupId>io.rest-assured</groupId>
+            <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>${rest-assured.version}</version>
+            <scope>compile</scope>
         </dependency>
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>

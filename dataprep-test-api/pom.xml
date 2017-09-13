@@ -12,10 +12,10 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <spring.version>4.3.6.RELEASE</spring.version>
+        <spring.version>4.3.7.RELEASE</spring.version>
         <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.9.0</log4j.version>
+        <slf4j.version>1.7.24</slf4j.version>
+        <log4j.version>2.7</log4j.version>
         <cucumber.version>1.2.5</cucumber.version>
 
         <!--properties use for spring bean. Can be overwrite by -D args in command line -->

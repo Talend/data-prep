@@ -91,11 +91,19 @@ public class TaskExecution {
     }
 
     /**
+     * @return A {@link TaskExecutor} for non-blocking dataset serialization.
+     */
+    @Bean(name = "serializer#dataset#executor")
+    TaskExecutor getDatasetTaskExecutor() {
+        return getAsyncExecutor();
+    }
+
+    /**
      * @return an Authenticated task executor ready to run.
      */
     protected AsyncListenableTaskExecutor getAsyncExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
+        executor.setCorePoolSize(2);
         executor.setMaxPoolSize(10);
         executor.setWaitForTasksToCompleteOnShutdown(false);
         executor.initialize();

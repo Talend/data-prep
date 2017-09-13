@@ -63,6 +63,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -75,8 +76,10 @@ import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.user.UserData;
+import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.DataSetBaseTest;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
@@ -88,6 +91,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 
 public class DataSetServiceTest extends DataSetBaseTest {
+
+    @Autowired
+    private ContentCache cacheManager;
 
     @MockBean
     private QuotaService quotaService;
@@ -749,6 +755,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // then
         assertEquals(413, response.getStatusCode());
+        assertFalse(cacheManager.has(new UpdateDataSetCacheKey(datasetId)));
     }
 
     @Test
@@ -767,6 +774,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // then
         assertEquals(413, response.getStatusCode());
+        assertFalse(cacheManager.has(new UpdateDataSetCacheKey(datasetId)));
     }
 
     @Test

@@ -22,12 +22,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_CREATE_DATASET;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,12 +48,16 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,6 +84,8 @@ import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCache.TimeToLive;
 import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
@@ -85,6 +96,7 @@ import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
+import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
@@ -184,6 +196,12 @@ public class DataSetService extends BaseDataSetService {
 
     @Value("${dataset.local.file.size.limit:20000000}")
     private long maximumInputStreamSize;
+
+    @Autowired
+    private ContentCache cacheManager;
+
+    @Resource(name = "serializer#dataset#executor")
+    private TaskExecutor executor;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
@@ -304,7 +322,7 @@ public class DataSetService extends BaseDataSetService {
         // sanity check
         if (size < 0) {
             LOG.warn("invalid size provided {}", size);
-            throw new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
+            throw new TDPException(LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
         }
 
         // check that the name is not already taken
@@ -338,8 +356,7 @@ public class DataSetService extends BaseDataSetService {
 
             // Save data set content
             LOG.debug(marker, "Storing content...");
-            final long availableSpace = quotaService.getAvailableSpace();
-            final long maxDataSetSizeAllowed = maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
+            final long maxDataSetSizeAllowed = getMaxDataSetSizeAllowed();
             final StrictlyBoundedInputStream sizeCalculator = new StrictlyBoundedInputStream(content, maxDataSetSizeAllowed);
             contentStore.storeAsRaw(dataSetMetadata, sizeCalculator);
             dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
@@ -355,12 +372,12 @@ public class DataSetService extends BaseDataSetService {
             LOG.debug(marker, "Created!");
             return id;
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
-            hypotheticalException = new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, e,
+            hypotheticalException = new TDPException(LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, e,
                     build().put("limit", e.getMaxSize()));
         } catch (TDPException e) {
             hypotheticalException = e;
         } catch (Exception e) {
-            hypotheticalException = new TDPException(DataSetErrorCodes.UNABLE_CREATE_DATASET, e);
+            hypotheticalException = new TDPException(UNABLE_CREATE_DATASET, e);
         }
         dataSetMetadataRepository.remove(id);
         if (dataSetMetadata != null) {
@@ -579,13 +596,15 @@ public class DataSetService extends BaseDataSetService {
         // just like the creation, let's make sure invalid size forbids dataset creation
         if (size < 0) {
             LOG.warn("invalid size provided {}", size);
-            throw new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
+            throw new TDPException(LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, build().put("size", size));
         }
 
         // check the size if it's available (quick win)
         if (size > 0 && currentDataSetMetadata != null) {
             quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
         }
+
+        final UpdateDataSetCacheKey cacheKey = new UpdateDataSetCacheKey(dataSetId);
 
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         try {
@@ -602,21 +621,46 @@ public class DataSetService extends BaseDataSetService {
             }
             final DataSetMetadata dataSetMetadata = datasetBuilder.build();
 
-            // Save data set content
-            final long availableSpace = quotaService.getAvailableSpace();
-            final long maxDataSetSizeAllowed = maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
+            // Save data set content into cache to make sure there's enough space in the content store
+            final long maxDataSetSizeAllowed = getMaxDataSetSizeAllowed();
             final StrictlyBoundedInputStream sizeCalculator = new StrictlyBoundedInputStream(dataSetContent,
                     maxDataSetSizeAllowed);
-            contentStore.storeAsRaw(dataSetMetadata, sizeCalculator);
-            dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
+            final OutputStream cacheEntry = cacheManager.put(cacheKey, TimeToLive.DEFAULT);
+            IOUtils.copy(sizeCalculator, cacheEntry);
 
+            // once fully copied to the cache, we know for sure that the content store has enough space, so let's copy
+            // from the cache to the content store
+            PipedInputStream toContentStore = new PipedInputStream();
+            PipedOutputStream fromCache = new PipedOutputStream(toContentStore);
+            Runnable r = () -> {
+                try (final InputStream input = cacheManager.get(cacheKey)) {
+                    IOUtils.copy(input, fromCache);
+                    fromCache.close(); // it's important to close this stream
+                } catch (IOException e) {
+                    throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
+                }
+            };
+            executor.execute(r);
+            contentStore.storeAsRaw(dataSetMetadata, toContentStore);
+
+            // update the dataset metadata with its new size
+            dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
             dataSetMetadataRepository.save(dataSetMetadata);
 
+            // analyze the content
             publisher.publishEvent(new DataSetRawContentUpdateEvent(dataSetMetadata));
+
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
-            throw new TDPException(DataSetErrorCodes.LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, e,
-                    build().put("limit", e.getMaxSize()));
+            LOG.warn("Dataset update {} cannot be done, new content is too big", dataSetId);
+            throw new TDPException(LOCAL_DATA_SET_INPUT_STREAM_TOO_LARGE, e, build().put("limit", e.getMaxSize()));
+        } catch (IOException e) {
+            LOG.error("Error updating the dataset", e);
+            throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
         } finally {
+            // whatever the outcome the cache needs to be cleaned
+            if (cacheManager.has(cacheKey)) {
+                cacheManager.evict(cacheKey);
+            }
             lock.unlock();
         }
         // Content was changed, so queue events (format analysis, content indexing for search...)
@@ -1103,5 +1147,13 @@ public class DataSetService extends BaseDataSetService {
         if (dataSetName.contains("'")) {
             throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME, ExceptionContext.withBuilder().put("name", dataSetName).build());
         }
+    }
+
+    /**
+     * @return What is the maximum dataset size allowed.
+     */
+    private long getMaxDataSetSizeAllowed() {
+        final long availableSpace = quotaService.getAvailableSpace();
+        return maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
     }
 }

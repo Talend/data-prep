@@ -26,6 +26,7 @@
     <name>dataprep-api</name>
     <properties>
         <stack.param.name>DataPrepApiFQIN</stack.param.name>
+        <rest-assured.version>3.0.3</rest-assured.version>
     </properties>
     <dependencies>
         <dependency>
@@ -35,6 +36,12 @@
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>smtp</artifactId>
+        </dependency>
+        <!-- Rest-assured -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
         </dependency>
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>

@@ -19,7 +19,8 @@ public class GlobalStep extends DataPrepStep implements En {
      */
     public GlobalStep() {
 
-        After(() -> {
+        // this After method has "order 1" because we have first of all to delete all the data we have created
+        After(1, () -> {
             // cleaning temporary files
             context.clearTempFile();
 

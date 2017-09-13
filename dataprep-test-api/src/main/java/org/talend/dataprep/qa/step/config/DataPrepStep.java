@@ -1,4 +1,4 @@
-package org.talend.dataprep.qa.step;
+package org.talend.dataprep.qa.step.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

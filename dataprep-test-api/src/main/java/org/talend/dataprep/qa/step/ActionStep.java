@@ -3,6 +3,7 @@ package org.talend.dataprep.qa.step;
 import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.step.config.DataPrepStep;
 
 /**
  * Step dealing with action

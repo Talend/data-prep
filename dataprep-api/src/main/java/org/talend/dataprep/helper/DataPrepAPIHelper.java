@@ -14,6 +14,7 @@ import org.talend.dataprep.helper.objects.Parameters;
 import org.talend.dataprep.helper.objects.PreparationRequest;
 
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,9 +55,9 @@ public class DataPrepAPIHelper {
                 .when()
                 .body(new PreparationRequest(datasetID, preparationName))
                 .urlEncodingEnabled(false)
-//                .queryParam("folder", homeFolderId)
-//                .post(API_PREPARATIONS);
-                .post(API_PREPARATIONS_FOLDER + homeFolderId);
+                .queryParam("folder", homeFolderId)
+                .post(API_PREPARATIONS);
+//                .post(API_PREPARATIONS_FOLDER + homeFolderId);
     }
 
     /**
@@ -183,7 +184,7 @@ public class DataPrepAPIHelper {
      * @return the home folder.
      */
     public String getHomeFolder() {
-        return "Lw==";
+        return Base64.getEncoder().encodeToString("/".getBytes());
     }
 
     /**

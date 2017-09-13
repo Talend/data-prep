@@ -3,6 +3,7 @@ package org.talend.dataprep.qa.step;
 import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.step.config.DataPrepStep;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,12 +59,6 @@ public class PreparationStep extends DataPrepStep implements En {
                     } catch (IOException ioException) {
                         LOG.error("Cannot create temporary file.", ioException);
                     }
-                    LOG.debug("youhou");
                 });
-
-
-        Then("^I check that exported preparation equals \"(.*)\"$", (String expectedCSVFileName) -> {
-            LOG.debug("I check taht export preparation equals {}", expectedCSVFileName);
-        });
     }
 }

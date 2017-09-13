@@ -20,6 +20,9 @@ public class GlobalStep extends DataPrepStep implements En {
     public GlobalStep() {
 
         After(() -> {
+            // cleaning temporary files
+            context.clearTempFile();
+
             // cleaning preparation
             context.getPreparationIds().forEach(preparationId -> {
                 dpah.deletePreparation(preparationId).then().statusCode(200);

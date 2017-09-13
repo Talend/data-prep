@@ -57,7 +57,6 @@ public class DataPrepAPIHelper {
                 .urlEncodingEnabled(false)
                 .queryParam("folder", homeFolderId)
                 .post(API_PREPARATIONS);
-//                .post(API_PREPARATIONS_FOLDER + homeFolderId);
     }
 
     /**
@@ -95,10 +94,11 @@ public class DataPrepAPIHelper {
         Response response =
                 given().header(new Header("Content-Type", "text/plain"))
                         .baseUri(uploadApiBaseUrl)
-                        // FIXME : this way of sending datasets through Strings limits the dataset size to the JVM available memory
+                        // FIXME : this way of sending datasets through Strings could be an issue due to the limited JVM available memory
                         .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
                         .when()
-                        .post(API_DATASETS_NAME + datasetName);
+                        .queryParam("name", datasetName)
+                        .post(API_DATASETS);
         return response;
     }
 
@@ -158,7 +158,7 @@ public class DataPrepAPIHelper {
      * @param exportType    export format.
      * @param datasetId     the dataset id on which the full run will be applied.
      * @param preparationId the full run preparation id.
-     * @param stepId        the last step id. TODO : verify this assertion
+     * @param stepId        the last step id.
      * @param delimiter     the column delimiter.
      * @param filename      the name for the exported generated file.
      * @return the response.

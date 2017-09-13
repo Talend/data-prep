@@ -1,6 +1,7 @@
 package org.talend.dataprep.qa.step;
 
 import cucumber.api.java8.En;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
@@ -43,15 +44,13 @@ public class PreparationStep extends DataPrepStep implements En {
                     List<String> steps = dpah.getPreparation(preparationId)
                             .then().statusCode(200)
                             .extract().body().jsonPath().getJsonObject("steps");
+                    // extract the result as a String FIXME : that could be an issue with large dataset.
                     String body = dpah.executeFullRunExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename)
                             .then()
                             .extract().body().asString();
                     // store the body content in a temporary File
-                    // FIXME : Quick and dirty split
-                    String[] filenameChunks = filename.split("\\.");
-
                     try {
-                        Path path = Files.createTempFile(filenameChunks[0], "." + filenameChunks[1]);
+                        Path path = Files.createTempFile(FilenameUtils.getBaseName(filename), "." + FilenameUtils.getExtension(filename));
                         File tempFile = path.toFile();
                         Files.write(path, body.getBytes());
                         tempFile.deleteOnExit();

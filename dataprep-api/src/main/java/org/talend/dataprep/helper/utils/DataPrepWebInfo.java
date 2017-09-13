@@ -16,9 +16,7 @@ public class DataPrepWebInfo {
     public static final String API_EXPORT = "export";
 
     public static final String API_DATASETS = API + DATASETS + "/";
-    public static final String API_DATASETS_NAME = API + DATASETS + "?name=";
     public static final String API_PREPARATIONS = API + PREPARATIONS + "/";
-    public static final String API_PREPARATIONS_FOLDER = API + PREPARATIONS + "?folder=";
     public static final String API_BACKEND_EXPORT = API + "/" + API_EXPORT;
 
 

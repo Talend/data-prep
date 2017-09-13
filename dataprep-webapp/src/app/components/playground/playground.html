@@ -107,7 +107,11 @@
           ng-submit="playgroundCtrl.savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
         <folder-selection
-                ng-model="playgroundCtrl.destinationFolder"></folder-selection>
+                ng-model="playgroundCtrl.destinationFolder"
+                is-loading="playgroundCtrl.isFoldersLoading"
+                tree="playgroundCtrl.folders"
+        >
+        </folder-selection>
 
         <div class="modal-form-row">
             <label class="param-name" translate-once="PREPARATION_NAME"></label>
@@ -122,8 +126,6 @@
 
         <div class="modal-buttons">
             <button ng-click="playgroundCtrl.discardSaveOnClose()"
-                    ng-class="{'disabled': playgroundCtrl.isCancelDisabled()}"
-                    ng-disabled="playgroundCtrl.isCancelDisabled()"
                     type="button"
                     class="btn modal-secondary-button btn-link"
                     translate-once="NO_THANKS">

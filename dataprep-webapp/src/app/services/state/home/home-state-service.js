@@ -26,6 +26,8 @@ export const homeState = {
 			isVisible: false,
 			initialFolder: undefined,
 			preparation: undefined,
+			isTreeLoading: false,
+			tree: undefined,
 		},
 	},
 	about: {
@@ -37,6 +39,8 @@ export const homeState = {
 export function HomeStateService() {
 	return {
 		setBuilds,
+		setCopyMoveTree,
+		setCopyMoveTreeLoading,
 		setSidePanelDock,
 		toggleAbout,
 		toggleCopyMovePreparation,
@@ -57,6 +61,14 @@ export function HomeStateService() {
 		homeState.preparations.copyMove.isVisible = !homeState.preparations.copyMove.isVisible;
 		homeState.preparations.copyMove.initialFolder = initialFolder;
 		homeState.preparations.copyMove.preparation = preparation;
+	}
+
+	function setCopyMoveTree(tree) {
+		homeState.preparations.copyMove.tree = tree;
+	}
+
+	function setCopyMoveTreeLoading(bool) {
+		homeState.preparations.copyMove.isTreeLoading = bool;
 	}
 
 	function toggleFolderCreator() {

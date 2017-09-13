@@ -27,10 +27,13 @@ const PreparationCopyMoveContainer = {
               state="$ctrl.state.home.preparations.copyMove.isVisible"
               disable-enter="true">
 		    <inventory-copy-move
-		            initial-folder="$ctrl.state.home.preparations.copyMove.initialFolder"
-		            item="$ctrl.state.home.preparations.copyMove.preparation"
-		            on-copy="$ctrl.copy(item, destination, name)"
-		            on-move="$ctrl.move(item, destination, name)"></inventory-copy-move>
+				initial-folder="$ctrl.state.home.preparations.copyMove.initialFolder"
+				item="$ctrl.state.home.preparations.copyMove.preparation"
+				on-copy="$ctrl.copy(item, destination, name)"
+				on-move="$ctrl.move(item, destination, name)"
+				is-loading="$ctrl.state.home.preparations.copyMove.isTreeLoading"
+				tree="$ctrl.state.home.preparations.copyMove.tree">
+		    </inventory-copy-move>
 		</talend-modal>
 	`,
 	controller: PreparationCopyMoveCtrl,

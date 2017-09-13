@@ -12,29 +12,21 @@
  ============================================================================*/
 
 class FolderSelectionCtrl {
-	constructor($translate, FolderService) {
+	constructor($translate) {
 		'ngInject';
 
 		this.$translate = $translate;
-		this.folderService = FolderService;
-		this.tree = [];
 		this.searchFolderQuery = '';
-		this.isLoading = false;
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name $onInit
+	 * @name $onChange
 	 * @methodOf data-prep.folder-selection.controller:FolderSelectionCtrl
 	 * @description initializes the folders tree on controller creation
 	 **/
-	$onInit() {
-		this.isLoading = true;
-		this.folderService.tree()
-			.then(tree => this._initTree(tree))
-			.finally(() => {
-				this.isLoading = false;
-			});
+	$onChanges() {
+		this._initTree();
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -45,8 +37,10 @@ class FolderSelectionCtrl {
 	 * @name _initTree
 	 * @description Adapt the folder tree
 	 **/
-	_initTree(tree) {
-		this.tree = tree;
+	_initTree() {
+		if(!this.tree) {
+			return;
+		}
 
 		if (this.selectedFolder) {
 			const id = this.selectedFolder.id;

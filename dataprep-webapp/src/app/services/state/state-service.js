@@ -53,6 +53,8 @@ export function StateService(RouteStateService, routeState,
 
 		// home
 		setBuilds: HomeStateService.setBuilds,
+		setCopyMoveTree: HomeStateService.setCopyMoveTree,
+		setCopyMoveTreeLoading: HomeStateService.setCopyMoveTreeLoading,
 		setHomeSidePanelDock: HomeStateService.setSidePanelDock,
 		toggleHomeSidepanel: HomeStateService.toggleSidepanel,
 		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,

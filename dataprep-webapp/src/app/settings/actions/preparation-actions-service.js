@@ -59,6 +59,12 @@ export default class PreparationActionsService {
 				this.state.inventory.folder.metadata,
 				action.payload.model
 			);
+			this.StateService.setCopyMoveTreeLoading(true);
+			this.FolderService.tree()
+				.then(tree => this.StateService.setCopyMoveTree(tree))
+				.finally(() => {
+					this.StateService.setCopyMoveTreeLoading(false);
+				});
 			break;
 		case '@@preparation/SUBMIT_EDIT': {
 			const newName = action.payload.value;

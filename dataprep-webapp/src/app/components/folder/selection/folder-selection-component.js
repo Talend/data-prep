@@ -18,6 +18,8 @@ import template from './folder-selection.html';
 const FolderSelection = {
 	bindings: {
 		selectedFolder: '=ngModel',
+		isLoading: '<',
+		tree: '<',
 	},
 	controller: FolderSelectionCtrl,
 	templateUrl: template,

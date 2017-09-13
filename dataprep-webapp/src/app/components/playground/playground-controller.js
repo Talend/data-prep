@@ -28,12 +28,13 @@ import { PLAYGROUND_PREPARATION_ROUTE } from '../../index-route';
 export default function PlaygroundCtrl($state, $stateParams, state, StateService,
                                        PlaygroundService, DatasetService, PreparationService,
                                        PreviewService, FilterManagerService,
-                                       OnboardingService, LookupService) {
+                                       OnboardingService, LookupService, FolderService) {
 	'ngInject';
 
 	const vm = this;
 	vm.$stateParams = $stateParams;
 	vm.state = state;
+	vm.destinationFolder = this.state.inventory.folder.metadata;
 
 	vm.openFeedbackForm = () => StateService.showFeedback();
 	vm.toggleParameters = () => StateService.toggleDatasetParameters();
@@ -57,6 +58,22 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	 * @description Flag that controls the display of preparation picker form.
 	 */
 	vm.displayPreprationPicker = false;
+
+	/**
+	 * @ngdoc property
+	 * @name isFoldersLoading
+	 * @propertyOf data-prep.playground.controller:PlaygroundCtrl
+	 * @description Flag that controls the display of folder selector
+	 */
+	vm.isFoldersLoading = false;
+
+	/**
+	 * @ngdoc property
+	 * @name folders
+	 * @propertyOf data-prep.playground.controller:PlaygroundCtrl
+	 * @description The folders where we can save a preparation
+	 */
+	vm.folders = null;
 
 	//--------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------PREPARATION PICKER------------------------------------------
@@ -151,7 +168,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 		const isDraft = state.playground.preparation && state.playground.preparation.draft;
 		if (isDraft) {
 			if (state.playground.recipe.current.steps.length) {
-				vm.showNameValidation = true;
+				vm.showNameValidationModal();
 			}
 			else {
 				vm.discardSaveOnClose();
@@ -164,12 +181,18 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 
 	/**
 	 * @ngdoc method
-	 * @name isCancelDisabled
+	 * @name showNameValidationModal
 	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Know if cancel button is disabled
+	 * @description Show showNameValidationModal to create/save a new preparation
 	 */
-	vm.isCancelDisabled = () => {
-		return !vm.destinationFolder;
+	vm.showNameValidationModal = () => {
+		vm.showNameValidation = true;
+		vm.isFoldersLoading = true;
+		FolderService.tree()
+			.then(tree => vm.folders = tree)
+			.finally(() => {
+				vm.isFoldersLoading = false;
+			});
 	};
 
 	/**
@@ -179,7 +202,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	 * @description Know if submit button is disabled
 	 */
 	vm.isSubmitDisabled = () => {
-		return !vm.destinationFolder
+		return vm.isFoldersLoading
 			|| vm.savePreparationForm.$invalid
 			|| vm.isSubmitLoading();
 	};

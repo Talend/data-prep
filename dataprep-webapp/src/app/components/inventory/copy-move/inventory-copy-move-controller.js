@@ -26,6 +26,9 @@ class InventoryCopyMoveCtrl {
 		this.$element.find('#copy-move-name-input').eq(0)[0].focus();
 	}
 
+	isActionDisabled() {
+		return this.isLoading || this.copyMoveForm.$invalid || this.isMoving || this.isCopying;
+	}
 	/**
 	 * @ngdoc method
 	 * @name copy
@@ -33,6 +36,9 @@ class InventoryCopyMoveCtrl {
 	 * @description Perform a copy to the folder destination
 	 */
 	copy() {
+		if (this.isActionDisabled()) {
+			return;
+		}
 		this.isCopying = true;
 		this.copyMoveForm.$commitViewValue();
 
@@ -57,6 +63,9 @@ class InventoryCopyMoveCtrl {
 	 * @description Perform a move to the folder destination
 	 */
 	move() {
+		if (this.isActionDisabled()) {
+			return;
+		}
 		this.isMoving = true;
 		this.copyMoveForm.$commitViewValue();
 

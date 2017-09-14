@@ -30,8 +30,8 @@
         <dependency>
             <artifactId>dataprep-api</artifactId>
             <groupId>org.talend.dataprep</groupId>
+            <type>test-jar</type>
             <version>2.2.0-SNAPSHOT</version>
-            <classifier>lib</classifier>
         </dependency>
 
         <!-- Spring -->

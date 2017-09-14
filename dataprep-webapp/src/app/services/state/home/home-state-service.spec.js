@@ -57,6 +57,34 @@ describe('home state', () => {
 				expect(homeState.preparations.copyMove.preparation).toBe(preparation);
 			})
 		);
+
+		it('should set copy move tree',
+			inject((homeState, HomeStateService) => {
+				//given
+				homeState.preparations.copyMove.tree = { id: 'folder 1' };
+
+				const tree = { id: 'folder 2' };
+
+				//when
+				HomeStateService.setCopyMoveTree(tree);
+
+				//then
+				expect(homeState.preparations.copyMove.tree).toBe(tree);
+			})
+		);
+
+		it('should set copy move tree loading',
+			inject((homeState, HomeStateService) => {
+				//given
+				homeState.preparations.copyMove.isTreeLoading = false;
+
+				//when
+				HomeStateService.setCopyMoveTreeLoading(true);
+
+				//then
+				expect(homeState.preparations.copyMove.isTreeLoading).toBe(true);
+			})
+		);
 	});
 
 	describe('togglePreparationCreator', () => {

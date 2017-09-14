@@ -69,7 +69,7 @@ describe('Preparation actions service', () => {
 
 			// when
 			PreparationActionsService.dispatch(action);
-			
+
 			// then
 			expect(FolderService.remove).toHaveBeenCalledWith(action.payload);
 		}));
@@ -171,6 +171,53 @@ describe('Preparation actions service', () => {
 			// then
 			expect(StateService.toggleCopyMovePreparation)
 				.toHaveBeenCalledWith(folder, preparation);
+		}));
+
+		it('should show copy/move modal', inject(($q, StateService, FolderService, PreparationActionsService) => {
+			// given
+			const preparation = { id: 'prep 1' };
+			const action = {
+				type: '@@preparation/COPY_MOVE',
+				payload: {
+					method: 'toggleCopyMovePreparation',
+					args: [],
+					model: preparation,
+				}
+			};
+			spyOn(StateService, 'toggleCopyMovePreparation').and.returnValue();
+			spyOn(StateService, 'setCopyMoveTreeLoading').and.returnValue();
+			spyOn(FolderService, 'tree').and.returnValue($q.when());
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.setCopyMoveTreeLoading).toHaveBeenCalledWith(true);
+			expect(FolderService.tree).toHaveBeenCalled();
+		}));
+
+		it('should store folders after fetching', inject(($q, $rootScope, StateService, FolderService, PreparationActionsService) => {
+			// given
+			const preparation = { id: 'prep 1' };
+			const action = {
+				type: '@@preparation/COPY_MOVE',
+				payload: {
+					method: 'toggleCopyMovePreparation',
+					args: [],
+					model: preparation,
+				}
+			};
+			spyOn(StateService, 'toggleCopyMovePreparation').and.returnValue();
+			spyOn(StateService, 'setCopyMoveTreeLoading').and.returnValue();
+			spyOn(StateService, 'setCopyMoveTree').and.returnValue();
+			spyOn(FolderService, 'tree').and.returnValue($q.when({folders: []}));
+
+			// when
+			PreparationActionsService.dispatch(action);
+			$rootScope.$digest();
+
+			// then
+			expect(StateService.setCopyMoveTree).toHaveBeenCalledWith({folders: []});
 		}));
 	});
 

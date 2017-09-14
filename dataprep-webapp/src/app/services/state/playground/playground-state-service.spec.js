@@ -64,6 +64,52 @@ describe('Playground state service', () => {
         }));
     });
 
+    describe('saving preparation', () => {
+        it('should set NameValidation visibility', inject((playgroundState, PlaygroundStateService) => {
+            //given
+            expect(playgroundState.isNameValidationVisible).toBeFalsy();
+
+            //when
+            PlaygroundStateService.setIsNameValidationVisible(true);
+
+            //then
+            expect(playgroundState.isNameValidationVisible).toBe(true);
+        }));
+
+        it('should set preparation picker visibility', inject((playgroundState, PlaygroundStateService) => {
+            //given
+            expect(playgroundState.isPreprationPickerVisible).toBeFalsy();
+
+            //when
+            PlaygroundStateService.setIsPreprationPickerVisible(true);
+
+            //then
+            expect(playgroundState.isPreprationPickerVisible).toBe(true);
+        }));
+
+        it('should set saving preparation folders', inject((playgroundState, PlaygroundStateService) => {
+            //given
+            expect(playgroundState.savingPreparationFolders).toBeFalsy();
+
+            //when
+            PlaygroundStateService.setSavingPreparationFolders({folders :[]});
+
+            //then
+            expect(playgroundState.savingPreparationFolders).toEqual({folders :[]});
+        }));
+
+        it('should set saving preparation folders loading', inject((playgroundState, PlaygroundStateService) => {
+            //given
+            expect(playgroundState.isSavingPreparationFoldersLoading).toBeFalsy();
+
+            //when
+            PlaygroundStateService.setIsSavingPreparationFoldersLoading(true);
+
+            //then
+            expect(playgroundState.isSavingPreparationFoldersLoading).toBe(true);
+        }));
+    });
+
     describe('dataset', () => {
         it('should set dataset metadata in state', inject((playgroundState, PlaygroundStateService) => {
             //given
@@ -523,6 +569,10 @@ describe('Playground state service', () => {
             playgroundState.isSavingPreparation = true;
             playgroundState.isReadOnly = true;
             playgroundState.stepInEditionMode = {};
+            playgroundState.isNameValidationVisible = true;
+            playgroundState.isPreprationPickerVisible = true;
+            playgroundState.savingPreparationFolders = {};
+            playgroundState.isSavingPreparationFoldersLoading = true;
 
             //when
             PlaygroundStateService.reset();
@@ -538,6 +588,10 @@ describe('Playground state service', () => {
             expect(playgroundState.isSavingPreparation).toBe(false);
             expect(playgroundState.isReadOnly).toBe(false);
             expect(playgroundState.stepInEditionMode).toBe(null);
+            expect(playgroundState.isNameValidationVisible).toBe(false);
+            expect(playgroundState.isPreprationPickerVisible).toBe(false);
+            expect(playgroundState.savingPreparationFolders).toBe(null);
+            expect(playgroundState.isSavingPreparationFoldersLoading).toBe(false);
         }));
 
         it('should reset sub-states', inject((playgroundState, PlaygroundStateService, RecipeStateService, GridStateService, FilterStateService, LookupStateService, SuggestionsStateService, ParametersStateService) => {

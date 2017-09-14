@@ -37,6 +37,51 @@ describe('InventoryCopyMove controller', () => {
 		};
 	}));
 
+	describe('isActionDisabled', () => {
+		beforeEach(() => {
+			ctrl = createController();
+			ctrl.destinationFolder = { name: 'my folder name', path: '/parent/child' };
+			ctrl.copyMoveForm = {};
+			ctrl.copyMoveForm.$commitViewValue = jasmine.createSpy('$commitViewValue');
+		});
+
+		it('should return true if isLoading true', () => {
+			//given
+			ctrl.isLoading = true;
+
+			//then
+			expect(ctrl.isActionDisabled()).toBeTruthy();
+
+		});
+
+		it('should return true if copyMoveForm is invalid', () => {
+			//given
+			ctrl.copyMoveForm.$invalid = true;
+
+			//then
+			expect(ctrl.isActionDisabled()).toBeTruthy();
+
+		});
+
+		it('should return true if isMoving is true', () => {
+			//given
+			ctrl.isMoving = true;
+
+			//then
+			expect(ctrl.isActionDisabled()).toBeTruthy();
+
+		});
+
+		it('should return true if isCopying is true', () => {
+			//given
+			ctrl.isCopying = true;
+
+			//then
+			expect(ctrl.isActionDisabled()).toBeTruthy();
+
+		});
+	});
+
 	describe('copy', () => {
 		beforeEach(() => {
 			ctrl = createController();
@@ -44,6 +89,18 @@ describe('InventoryCopyMove controller', () => {
 			ctrl.copyMoveForm = {};
 			ctrl.copyMoveForm.$commitViewValue = jasmine.createSpy('$commitViewValue');
 		});
+
+		it('should not call copy service', inject(($q) => {
+			//given
+			ctrl.onCopy = jasmine.createSpy('onCopy').and.returnValue($q.when(true));
+			spyOn(ctrl, 'isActionDisabled').and.returnValue(true);
+
+			//when
+			ctrl.copy();
+
+			//then
+			expect(ctrl.copyMoveForm.$commitViewValue).not.toHaveBeenCalled();
+		}));
 
 		it('should call copy service', inject(($q) => {
 			//given
@@ -100,6 +157,18 @@ describe('InventoryCopyMove controller', () => {
 			ctrl.copyMoveForm = {};
 			ctrl.copyMoveForm.$commitViewValue = jasmine.createSpy('$commitViewValue');
 		});
+
+		it('should not call copy service', inject(($q) => {
+			//given
+			ctrl.onMove = jasmine.createSpy('onMove').and.returnValue($q.when(true));
+			spyOn(ctrl, 'isActionDisabled').and.returnValue(true);
+
+			//when
+			ctrl.move();
+
+			//then
+			expect(ctrl.copyMoveForm.$commitViewValue).not.toHaveBeenCalled();
+		}));
 
 		it('should call move service', inject(($q) => {
 			//given

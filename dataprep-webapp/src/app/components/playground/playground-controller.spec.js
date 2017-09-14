@@ -609,4 +609,46 @@ describe('Playground controller', () => {
 			expect(PreviewService.previewInProgress).toHaveBeenCalled();
 		}));
 	});
+
+	describe('Name Validation Modal', () => {
+		it('should show Name Validation modal', inject(($q, StateService, FolderService) => {
+			// given
+			spyOn(FolderService, 'tree').and.returnValue($q.when());
+			const ctrl = createController();
+
+			// when
+			ctrl.showNameValidationModal();
+
+			// then
+			expect(StateService.setIsNameValidationVisible).toHaveBeenCalledWith(true);
+			expect(StateService.setIsSavingPreparationFoldersLoading).toHaveBeenCalledWith(true);
+		}));
+
+		it('should fetch folders', inject(($q, StateService, FolderService) => {
+			// given
+			spyOn(FolderService, 'tree').and.returnValue($q.when());
+			const ctrl = createController();
+
+			// when
+			ctrl.showNameValidationModal();
+
+			// then
+			expect(FolderService.tree).toHaveBeenCalled();
+		}));
+
+		it('should store folders after fetching', inject(($q, StateService, FolderService) => {
+			// given
+			spyOn(FolderService, 'tree').and.returnValue($q.when({folders: []}));
+			const ctrl = createController();
+
+			// when
+			ctrl.showNameValidationModal();
+			scope.$digest();
+
+			// then
+			expect(StateService.setSavingPreparationFolders).toHaveBeenCalledWith({folders: []});
+			expect(StateService.setIsSavingPreparationFoldersLoading).toHaveBeenCalledWith(false);
+		}));
+	});
+
 });

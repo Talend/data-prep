@@ -122,13 +122,16 @@ public class SimpleFilterService implements FilterService {
         if (columnId == null && allowFullFilter(operation)) {
             // Full data set filter (no column)
             final List<ColumnMetadata> columns = rowMetadata.getColumns();
-            Predicate<DataSetRow> predicate = null;
+            Predicate<DataSetRow> predicate;
             if (!columns.isEmpty()) {
                 predicate = buildOperationFilter(currentNode, rowMetadata, columns.get(0).getId(), operation, value);
                 for (int i = 1; i < columns.size(); i++) {
                     predicate = predicate
                             .or(buildOperationFilter(currentNode, rowMetadata, columns.get(i).getId(), operation, value));
                 }
+            } else {
+                // We can't return a null filter, default to the neutral value
+                predicate = dsr -> true;
             }
             return predicate;
         } else {

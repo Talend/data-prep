@@ -1067,4 +1067,15 @@ public class SimpleFilterServiceTest {
         assertThat(filter.test(datasetRowFromValues), is(true));
     }
 
+    @Test
+    public void TDP_4291_shouldNotThrowAnException() throws Exception {
+        // given
+        final String filtersDefinition = "{\"or\":[{\"invalid\":{}},{\"empty\":{}}]}";
+
+        // when
+        service.build(filtersDefinition, new RowMetadata());
+
+        // then no NPE
+    }
+
 }

@@ -84,7 +84,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         boolean technicianIdentityReleased = false;
         securityProxy.asTechnicalUser();
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
-        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
+        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, true, true);
 
         try (final InputStream datasetContent = dataSetGet.execute();
                 final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {

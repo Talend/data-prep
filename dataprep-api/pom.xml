@@ -36,6 +36,12 @@
             <groupId>com.sun.mail</groupId>
             <artifactId>smtp</artifactId>
         </dependency>
+        <!-- Rest-assured -->
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>
             <groupId>org.talend.dataprep</groupId>

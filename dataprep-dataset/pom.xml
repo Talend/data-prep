@@ -29,13 +29,6 @@
         <stack.param.name>DataPrepDatasetFQIN</stack.param.name>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

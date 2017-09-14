@@ -43,38 +43,6 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.fetchCompatiblePreparations = datasetId => DatasetService.getCompatiblePreparations(datasetId);
 	vm.removeAllFilters = () => FilterManagerService.removeAllFilters();
 
-	/**
-	 * @ngdoc property
-	 * @name showNameValidation
-	 * @propertyOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Flag that controls the display of the save/discard window on implicit preparation close.
-	 */
-	vm.showNameValidation = false;
-
-	/**
-	 * @ngdoc property
-	 * @name displayPreprationPicker
-	 * @propertyOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Flag that controls the display of preparation picker form.
-	 */
-	vm.displayPreprationPicker = false;
-
-	/**
-	 * @ngdoc property
-	 * @name isFoldersLoading
-	 * @propertyOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Flag that controls the display of folder selector
-	 */
-	vm.isFoldersLoading = false;
-
-	/**
-	 * @ngdoc property
-	 * @name folders
-	 * @propertyOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description The folders where we can save a preparation
-	 */
-	vm.folders = null;
-
 	//--------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------PREPARATION PICKER------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
@@ -85,7 +53,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	 * @description Toggle preparation picker modal
 	 */
 	vm.showPreparationPicker = () => {
-		vm.displayPreparationPicker = true;
+		StateService.setIsPreprationPickerVisible(true);
 	};
 
 	/**
@@ -98,7 +66,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.applySteps = (preparationId) => {
 		return PlaygroundService.copySteps(preparationId)
 			.then(() => {
-				vm.displayPreparationPicker = false;
+				StateService.setIsPreprationPickerVisible(false);
 			});
 	};
 
@@ -186,12 +154,12 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	 * @description Show showNameValidationModal to create/save a new preparation
 	 */
 	vm.showNameValidationModal = () => {
-		vm.showNameValidation = true;
-		vm.isFoldersLoading = true;
+		StateService.setIsNameValidationVisible(true);
+		StateService.setIsSavingPreparationFoldersLoading(true);
 		FolderService.tree()
-			.then(tree => vm.folders = tree)
+			.then(tree => StateService.setSavingPreparationFolders(tree))
 			.finally(() => {
-				vm.isFoldersLoading = false;
+				StateService.setIsSavingPreparationFoldersLoading(false);
 			});
 	};
 
@@ -202,7 +170,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	 * @description Know if submit button is disabled
 	 */
 	vm.isSubmitDisabled = () => {
-		return vm.isFoldersLoading
+		return vm.state.playground.isSavingPreparationFoldersLoading
 			|| vm.savePreparationForm.$invalid
 			|| vm.isSubmitLoading();
 	};

@@ -55,6 +55,10 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setSampleType,
 		setReadOnlyMode,
 		setStepInEditionMode,
+		setIsNameValidationVisible,
+		setIsPreprationPickerVisible,
+		setSavingPreparationFolders,
+		setIsSavingPreparationFoldersLoading,
 
         // parameters
 		toggleDatasetParameters,
@@ -192,6 +196,22 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 	function setStepInEditionMode(step) {
 		playgroundState.stepInEditionMode = step;
 	}
+
+	function setIsNameValidationVisible(bool) {
+		playgroundState.isNameValidationVisible = bool;
+	}
+
+	function setIsPreprationPickerVisible(bool) {
+		playgroundState.isPreprationPickerVisible = bool;
+	}
+
+	function setSavingPreparationFolders(folders) {
+		playgroundState.savingPreparationFolders = folders;
+	}
+
+	function setIsSavingPreparationFoldersLoading(bool) {
+		playgroundState.isSavingPreparationFoldersLoading = bool;
+	}
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------PARAMETERS---------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
@@ -256,6 +276,10 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		playgroundState.sampleType = 'HEAD';
 		playgroundState.isReadOnly = false;
 		playgroundState.stepInEditionMode = null;
+		playgroundState.isNameValidationVisible = false;
+		playgroundState.isPreprationPickerVisible = false;
+		playgroundState.savingPreparationFolders = null;
+		playgroundState.isSavingPreparationFoldersLoading = false;
 
 		RecipeStateService.reset();
 		FilterStateService.reset();

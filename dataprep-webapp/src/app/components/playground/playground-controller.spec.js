@@ -82,7 +82,7 @@ describe('Playground controller', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(($rootScope, $q, $controller, $state, PlaygroundService, PreparationService) => {
+	beforeEach(inject(($rootScope, $q, $controller, $state, PlaygroundService, PreparationService, StateService) => {
 		scope = $rootScope.$new();
 
 		createController = () => {
@@ -93,6 +93,11 @@ describe('Playground controller', () => {
 		spyOn(PreparationService, 'setName').and.returnValue($q.when());
 		spyOn(PreparationService, 'move').and.returnValue($q.when());
 		spyOn($state, 'go').and.returnValue();
+
+		spyOn(StateService, 'setIsPreprationPickerVisible').and.returnValue();
+		spyOn(StateService, 'setIsNameValidationVisible').and.returnValue();
+		spyOn(StateService, 'setIsSavingPreparationFoldersLoading').and.returnValue();
+		spyOn(StateService, 'setSavingPreparationFolders').and.returnValue();
 	}));
 
 	afterEach(inject(($stateParams) => {
@@ -245,17 +250,17 @@ describe('Playground controller', () => {
 	});
 
 	describe('apply other preparation steps', () => {
-		it('should display modal', () => {
+		it('should display modal', inject((StateService) => {
 			// given
 			const ctrl = createController();
-			ctrl.displayPreparationPicker = false;
+			expect(StateService.setIsPreprationPickerVisible).not.toHaveBeenCalled();
 
 			// when
 			ctrl.showPreparationPicker();
 
 			// then
-			expect(ctrl.displayPreparationPicker).toBe(true);
-		});
+			expect(StateService.setIsPreprationPickerVisible).toHaveBeenCalledWith(true);
+		}));
 
 		it('should fetch compatible preparations', inject((DatasetService) => {
 			// given
@@ -285,19 +290,18 @@ describe('Playground controller', () => {
 			expect(PlaygroundService.copySteps).toHaveBeenCalledWith(referenceId);
 		}));
 
-		it('should hide picker after steps copy', inject(($q, PlaygroundService) => {
+		it('should hide picker after steps copy', inject(($q, PlaygroundService, StateService) => {
 			// given
 			const ctrl = createController();
-			ctrl.displayPreparationPicker = true;
-
 			spyOn(PlaygroundService, 'copySteps').and.returnValue($q.when());
+			expect(StateService.setIsPreprationPickerVisible).not.toHaveBeenCalled();
 
 			// when
 			ctrl.applySteps();
 			scope.$digest();
 
 			// then
-			expect(ctrl.displayPreparationPicker).toBe(false);
+			expect(StateService.setIsPreprationPickerVisible).toHaveBeenCalledWith(false);
 		}));
 	});
 
@@ -332,13 +336,14 @@ describe('Playground controller', () => {
 
 			it('should show preparation save/discard modal with implicit preparation if there are steps', () => {
 				// given
-				expect(ctrl.showNameValidation).toBeFalsy();
+				spyOn(ctrl, 'showNameValidationModal').and.returnValue();
 				stateMock.playground.recipe.current.steps = [{ id: '000' }];
+
 				// when
 				ctrl.beforeClose();
 
 				// then
-				expect(ctrl.showNameValidation).toBe(true);
+				expect(ctrl.showNameValidationModal).toHaveBeenCalled();
 			});
 
 			it('should discard the preparation if there are no steps', () => {
@@ -354,25 +359,6 @@ describe('Playground controller', () => {
 		});
 
 		describe('discard preparation', () => {
-			it('should determinate if cancel btn is disabled', () => {
-				// when
-				const isCancelDisabled = ctrl.isCancelDisabled();
-
-				// then
-				expect(isCancelDisabled).toBeTruthy();
-			});
-
-			it('should determinate if cancel btn is enabled', () => {
-				// given
-				ctrl.destinationFolder = { id: 'LW==', path: '' };
-
-				// when
-				const isCancelDisabled = ctrl.isCancelDisabled();
-
-				// then
-				expect(isCancelDisabled).toBeFalsy();
-			});
-
 			it('should call startLoader', inject((PlaygroundService) => {
 				// given
 				spyOn(PlaygroundService, 'startLoader');
@@ -418,6 +404,11 @@ describe('Playground controller', () => {
 
 		describe('save preparation', () => {
 			it('should determinate if submit is disabled', () => {
+				// given
+				ctrl.savePreparationForm = {
+					'$invalid': false,
+				};
+				stateMock.playground.isSavingPreparationFoldersLoading = true;
 				// when
 				const isSubmitDisabled = ctrl.isSubmitDisabled();
 
@@ -430,7 +421,7 @@ describe('Playground controller', () => {
 				ctrl.savePreparationForm = {
 					'$invalid': false,
 				};
-				ctrl.destinationFolder = { id: 'LW==', path: '' };
+				stateMock.playground.isSavingPreparationFoldersLoading = false;
 
 				// when
 				const isSubmitDisabled = ctrl.isSubmitDisabled();

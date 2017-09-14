@@ -137,6 +137,11 @@ describe('Playground directive', () => {
 				datasets: [],
 				sortList: sortList,
 				orderList: orderList,
+				folder: {
+					metadata: {
+						id: 'abcd'
+					}
+				}
 			},
 			export: {
 				exportTypes: exportTypes,

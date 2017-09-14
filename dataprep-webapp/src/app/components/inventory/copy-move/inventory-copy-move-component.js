@@ -66,7 +66,7 @@ const InventoryCopyMoveComponent = {
                 <talend-button-loader
                         id="copy-move-copy-btn"
                         button-class="btn btn-primary modal-primary-button {{$ctrl.isActionDisabled() ? 'disabled' : ''}}"
-                        disable-condition="$ctrl.isActionDisabled() || $ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
+                        disable-condition="$ctrl.isActionDisabled()"
                         loading="$ctrl.isCopying"
                         loading-class="icon"
                         ng-click="$ctrl.copy()"

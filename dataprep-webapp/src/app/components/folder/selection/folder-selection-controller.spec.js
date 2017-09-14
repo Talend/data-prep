@@ -14,101 +14,78 @@
 describe('Folder selection controller', () => {
 	let createController;
 	let scope;
-	let tree;
+	const tree = {
+		folder: { // HOME
+			id: '1',
+			name: 'HOME',
+			path: '/',
+		},
+		children: [
+			{
+				folder: { // /folder1
+					id: '2',
+					name: 'folder1',
+					path: '/folder1',
+				},
+				children: [
+					{
+						folder: { // /folder1/subfolder1
+							id: '4',
+							name: 'subfolder1',
+							path: '/folder1/subfolder1',
+						},
+						children: [],
+					},
+					{
+						folder: { // /folder1/subfolder2
+							id: '5',
+							name: 'subfolder2',
+							path: '/folder1/subfolder2',
+						},
+						children: [],
+					},
+				],
+			},
+			{
+				folder: { // /folder2
+					id: '3',
+					name: 'folder2',
+					path: '/folder2',
+				},
+				children: [
+					{
+						folder: { // /folder2/subfolder3
+							id: '6',
+							name: 'subfolder3',
+							path: '/folder2/subfolder3',
+						},
+						children: [],
+					},
+				],
+			},
+		],
+	};
 
 	beforeEach(angular.mock.module('data-prep.folder-selection'));
 
 	beforeEach(inject(($rootScope, $componentController) => {
 		scope = $rootScope.$new();
 
-		createController = (selectedFolder) => {
+		createController = (selectedFolder, tree) => {
 			return $componentController('folderSelection',
 				{ $scope: scope },
-				{ selectedFolder: selectedFolder });
-		};
-	}));
-
-	beforeEach(inject(($q, FolderService) => {
-		tree = {
-			folder: { // HOME
-				id: '1',
-				name: 'HOME',
-				path: '/',
-			},
-			children: [
-				{
-					folder: { // /folder1
-						id: '2',
-						name: 'folder1',
-						path: '/folder1',
-					},
-					children: [
-						{
-							folder: { // /folder1/subfolder1
-								id: '4',
-								name: 'subfolder1',
-								path: '/folder1/subfolder1',
-							},
-							children: [],
-						},
-						{
-							folder: { // /folder1/subfolder2
-								id: '5',
-								name: 'subfolder2',
-								path: '/folder1/subfolder2',
-							},
-							children: [],
-						},
-					],
-				},
-				{
-					folder: { // /folder2
-						id: '3',
-						name: 'folder2',
-						path: '/folder2',
-					},
-					children: [
-						{
-							folder: { // /folder2/subfolder3
-								id: '6',
-								name: 'subfolder3',
-								path: '/folder2/subfolder3',
-							},
-							children: [],
-						},
-					],
-				},
-			],
-		};
-		spyOn(FolderService, 'tree').and.returnValue($q.when(tree));
+				{ selectedFolder: selectedFolder, isLoading: false, tree: tree })
+		}
 	}));
 
 	describe('initialization', () => {
-		it('should fetch folder tree', inject((FolderService) => {
-			// given
-			const currentFolder = { id: '5' };
-			const ctrl = createController(currentFolder);
-			expect(FolderService.tree).not.toHaveBeenCalled();
-			expect(ctrl.isLoading).toBeFalsy();
-
-			// when
-			ctrl.$onInit();
-			expect(ctrl.isLoading).toBeTruthy();
-			scope.$digest();
-
-			// then
-			expect(FolderService.tree).toHaveBeenCalled();
-			expect(ctrl.tree).toBe(tree);
-			expect(ctrl.isLoading).toBeFalsy();
-		}));
-
 		it('should open path to selected folder', () => {
 			// given
 			const currentFolder = { id: '5' };
-			const ctrl = createController(currentFolder);
+			const ctrl = createController(currentFolder, tree);
 
 			// when
-			ctrl.$onInit();
+			ctrl.$onChanges();
 			scope.$digest();
 
 			// then
@@ -120,10 +97,10 @@ describe('Folder selection controller', () => {
 		it('should update selected folder', () => {
 			// given
 			const currentFolder = { id: '5' };
-			const ctrl = createController(currentFolder);
+			const ctrl = createController(currentFolder, tree);
 
 			// when
-			ctrl.$onInit();
+			ctrl.$onChanges();
 			scope.$digest();
 
 			// then
@@ -133,10 +110,10 @@ describe('Folder selection controller', () => {
 
 		it('should select HOME when ngModel is not set', () => {
 			// given
-			const ctrl = createController();
+			const ctrl = createController(null, tree);
 
 			// when
-			ctrl.$onInit();
+			ctrl.$onChanges();
 			scope.$digest();
 
 			// then
@@ -147,10 +124,10 @@ describe('Folder selection controller', () => {
 		it('should select HOME when ngModel folder id not in tree', () => {
 			// given
 			const currentFolder = { id: 'unknown' };
-			const ctrl = createController(currentFolder);
+			const ctrl = createController(currentFolder, tree);
 
 			// when
-			ctrl.$onInit();
+			ctrl.$onChanges();
 			scope.$digest();
 
 			// then
@@ -162,7 +139,7 @@ describe('Folder selection controller', () => {
 	describe('toggle', () => {
 		it('should toggle the folder opened flag', () => {
 			// given
-			const ctrl = createController();
+			const ctrl = createController(null, tree);
 			const node = { folder: { opened: false } };
 
 			// when
@@ -176,7 +153,7 @@ describe('Folder selection controller', () => {
 	describe('choose folder', () => {
 		it('should unselect previous folder', () => {
 			// given
-			const ctrl = createController();
+			const ctrl = createController(null, tree);
 			const previousFolder = { selected: true };
 			ctrl.selectedFolder = previousFolder;
 			const nextFolder = { selected: false };
@@ -190,7 +167,7 @@ describe('Folder selection controller', () => {
 
 		it('should update selectedFolder', () => {
 			// given
-			const ctrl = createController();
+			const ctrl = createController(null, tree);
 			ctrl.selectedFolder = { selected: true };
 			const nextFolder = { selected: false };
 
@@ -203,7 +180,7 @@ describe('Folder selection controller', () => {
 
 		it('should update new selected folder flag', () => {
 			// given
-			const ctrl = createController();
+			const ctrl = createController(null, tree);
 			ctrl.selectedFolder = { selected: true };
 			const nextFolder = { selected: false };
 
@@ -219,8 +196,8 @@ describe('Folder selection controller', () => {
 		let ctrl;
 
 		beforeEach(() => {
-			ctrl = createController();
-			ctrl.$onInit();
+			ctrl = createController(null, tree);
+			ctrl.$onChanges();
 			scope.$digest();
 		});
 

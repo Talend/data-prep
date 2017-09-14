@@ -28,16 +28,8 @@ describe('folder selection component', () => {
 
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new(true);
-
-        createElement = () => {
-            element = angular.element(`<folder-selection ng-model="selectedFolder"></folder-selection>`);
-            $compile(element)(scope);
-            scope.$digest();
-        };
-    }));
-
-    beforeEach(inject(($q, FolderService) => {
-        tree = {
+        scope.isLoading = false;
+        scope.tree = {
             folder: { // HOME
                 id: '1',
                 name: 'HOME',
@@ -88,7 +80,11 @@ describe('folder selection component', () => {
                 },
             ],
         };
-        spyOn(FolderService, 'tree').and.returnValue($q.when(tree));
+        createElement = () => {
+            element = angular.element(`<folder-selection ng-model="selectedFolder" tree="tree" is-loading="isLoading"></folder-selection>`);
+            $compile(element)(scope);
+            scope.$digest();
+        };
     }));
 
     afterEach(() => {
@@ -102,6 +98,16 @@ describe('folder selection component', () => {
 
         //then
         expect(element.find('input').length).toBe(1);
+    });
+
+    it('should render loader', () => {
+        //when
+        createElement();
+        scope.isLoading = true;
+        scope.$digest();
+
+        //then
+        expect(element.find('loader').length).toBe(1);
     });
 
     it('should render folder tree', () => {

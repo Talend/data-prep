@@ -92,8 +92,8 @@
 <talend-modal
         class="preparation-modal preparation-save-discard-modal"
         fullscreen="false"
-        ng-if="playgroundCtrl.showNameValidation"
-        state="playgroundCtrl.showNameValidation"
+        ng-if="playgroundCtrl.state.playground.isNameValidationVisible"
+        state="playgroundCtrl.state.playground.isNameValidationVisible"
         disable-enter="true"
         close-button="true">
     <div class="modal-title" translate-once="SAVE_CHANGE"></div>
@@ -107,9 +107,9 @@
           ng-submit="playgroundCtrl.savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
         <folder-selection
-                ng-model="playgroundCtrl.destinationFolder"
-                is-loading="playgroundCtrl.isFoldersLoading"
-                tree="playgroundCtrl.folders"
+            ng-model="playgroundCtrl.destinationFolder"
+            is-loading="playgroundCtrl.state.playground.isSavingPreparationFoldersLoading"
+            tree="playgroundCtrl.state.playground.savingPreparationFolders"
         >
         </folder-selection>
 

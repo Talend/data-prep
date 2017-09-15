@@ -216,4 +216,8 @@ $recipe-step-draggable-background-color: #808080 !default;
     height: 2px !important;
     background-color: $recipe-step-draggable-background-color;
   }
+
+  &-drag {
+    position: fixed;
+  }
 }

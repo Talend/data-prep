@@ -15,9 +15,7 @@ package org.talend.dataprep.transformation.service;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
@@ -28,17 +26,8 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -54,13 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -146,7 +129,7 @@ public class TransformationService extends BaseTransformationService {
     private ActionRegistry actionRegistry;
 
     /**
-     * he aggregation service.
+     * the aggregation service.
      */
     @Autowired
     private AggregationService aggregationService;
@@ -197,6 +180,50 @@ public class TransformationService extends BaseTransformationService {
             @ApiParam(value = "Preparation id to apply.") @RequestBody @Valid final ExportParameters parameters) {
         return executeSampleExportStrategy(parameters);
     }
+
+    @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)
+    @ApiOperation(value = "Run the transformation given the provided export parameters", notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
+    @VolumeMetered
+    public DataSetMetadata executeMetadata(@PathVariable("preparationId") String preparationId,
+                                           @PathVariable("stepId") String stepId) {
+        final Preparation preparation = getPreparation(preparationId);
+        if (preparation.getSteps().size() > 1) {
+            String headId = "head".equalsIgnoreCase(stepId) ? preparation.getHeadId() : stepId;
+            final TransformationMetadataCacheKey cacheKey = cacheKeyGenerator.generateMetadataKey(preparationId, headId, HEAD);
+
+            // No metadata in cache, recompute it
+            if (!contentCache.has(cacheKey)) {
+                try {
+                    LOG.debug("Metadata not available for preparation '{}' at step '{}'", preparationId, headId);
+                    final ExportParameters parameters = new ExportParameters();
+                    parameters.setPreparationId(preparationId);
+                    parameters.setExportType("JSON");
+                    parameters.setStepId(headId);
+                    parameters.setFrom(HEAD);
+                    execute(parameters);
+                } catch (Exception e) {
+                    throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND, e);
+                }
+            }
+
+            // Return transformation cached content (after sanity check)
+            if (!contentCache.has(cacheKey)) {
+                // Not expected: We've just ran a transformation, yet no metadata cached?
+                throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND);
+            }
+            try (InputStream stream = contentCache.get(cacheKey)) {
+                return mapper.readerFor(DataSetMetadata.class).readValue(stream);
+            } catch (IOException e) {
+                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            }
+        } else {
+            LOG.debug("No step in preparation '{}', falls back to get dataset metadata (id: {})", preparationId, preparation.getDataSetId());
+            DataSetGetMetadata getMetadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId());
+            return getMetadata.execute();
+        }
+
+    }
+
 
     /**
      * Apply the preparation to the dataset out of the given IDs.
@@ -514,15 +541,15 @@ public class TransformationService extends BaseTransformationService {
 
     private void applyActionsOnMetadata(RowMetadata metadata, String actionsAsJson) {
         List<RunnableAction> actions = actionParser.parse(actionsAsJson);
-        TransformationContext context = new TransformationContext();
+        TransformationContext transformationContext = new TransformationContext();
         try {
             for (RunnableAction action : actions) {
-                final ActionContext actionContext = context.create(action.getRowAction(), metadata);
+                final ActionContext actionContext = transformationContext.create(action.getRowAction(), metadata);
                 action.getRowAction().compile(actionContext);
             }
         } finally {
             // cleanup the transformation context is REALLY important as it can close open http connections
-            context.cleanup();
+            transformationContext.cleanup();
         }
     }
 

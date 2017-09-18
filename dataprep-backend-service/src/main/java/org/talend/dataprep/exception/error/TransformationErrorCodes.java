@@ -46,7 +46,8 @@ public enum TransformationErrorCodes implements ErrorCode {
     UNABLE_TO_PERFORM_PREVIEW(500),
     UNABLE_TO_PERFORM_EXPORT(500),
     EXPORT_NOT_FOUND(404, "id"),
-    UNABLE_TO_RESUME_EXECUTION(400, "id");
+    UNABLE_TO_RESUME_EXECUTION(400, "id"),
+    METADATA_NOT_FOUND(500);
 
     /** The http status to use. */
     private int httpStatus;

@@ -46,7 +46,7 @@ export const inventoryState = {
 		content: null,
 	},
 
-	homeFolderId: HOME_FOLDER.id,
+	homeFolder: HOME_FOLDER,
 	folder: {
 		sort: {
 			field: 'name',
@@ -225,8 +225,8 @@ export function InventoryStateService() {
 	 * @param {string} homeFolderId The home folder id
 	 */
 	function setHomeFolderId(homeFolderId) {
-		const currentIsHome = inventoryState.folder.metadata.id === inventoryState.homeFolderId;
-		inventoryState.homeFolderId = homeFolderId;
+		const currentIsHome = inventoryState.folder.metadata.id === inventoryState.homeFolder.id;
+		inventoryState.homeFolder.id = homeFolderId;
 		if (currentIsHome) {
 			inventoryState.folder.metadata.id = homeFolderId;
 		}

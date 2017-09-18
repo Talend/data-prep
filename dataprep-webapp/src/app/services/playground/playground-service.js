@@ -388,7 +388,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			promise = PreparationService.setName(state.playground.preparation.id, name);
 		}
 		else {
-			promise = PreparationService.create(state.playground.dataset.id, name, state.inventory.homeFolderId)
+			promise = PreparationService.create(state.playground.dataset.id, name, state.inventory.homeFolder.id)
 				.then((prepid) => {
 					$state.go(PLAYGROUND_PREPARATION_ROUTE, { prepid });
 					return PreparationService.getDetails(prepid);

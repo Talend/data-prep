@@ -27,7 +27,7 @@ const PreparationCopyMoveContainer = {
               state="$ctrl.state.home.preparations.copyMove.isVisible"
               disable-enter="true">
 		    <inventory-copy-move
-				initial-folder="$ctrl.state.home.preparations.copyMove.initialFolder"
+				initial-folder="$ctrl.state.inventory.homeFolder"
 				item="$ctrl.state.home.preparations.copyMove.preparation"
 				on-copy="$ctrl.copy(item, destination, name)"
 				on-move="$ctrl.move(item, destination, name)"

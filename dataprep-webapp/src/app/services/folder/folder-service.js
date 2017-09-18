@@ -76,7 +76,7 @@ export default function FolderService($q, $state, $timeout, state, StateService,
 	 * @returns {Promise} The GET promise
 	 */
 	function refresh(id) {
-		const folderId = id || state.inventory.homeFolderId;
+		const folderId = id || state.inventory.homeFolder.id;
 
 		const sort = state.inventory.folder.sort.field;
 		const order = state.inventory.folder.sort.isDescending ? 'desc' : 'asc';
@@ -204,7 +204,7 @@ export default function FolderService($q, $state, $timeout, state, StateService,
 	 * @param {string} parentId The parent id
 	 * @returns {Promise} The GET promise
 	 */
-	function children(parentId = state.inventory.homeFolderId) {
+	function children(parentId = state.inventory.homeFolder.id) {
 		return FolderRestService.children(parentId);
 	}
 
@@ -217,7 +217,7 @@ export default function FolderService($q, $state, $timeout, state, StateService,
 	 * @param {string} path The relative path to create (from parent)
 	 * @returns {Promise} The PUT promise
 	 */
-	function create(parentId = state.inventory.homeFolderId, path) {
+	function create(parentId = state.inventory.homeFolder.id, path) {
 		return FolderRestService.create(parentId, path);
 	}
 
@@ -230,7 +230,7 @@ export default function FolderService($q, $state, $timeout, state, StateService,
 	 * @param {string} newName The new name
 	 * @returns {Promise} The PUT promise
 	 */
-	function rename(folderId = state.inventory.homeFolderId, newName) {
+	function rename(folderId = state.inventory.homeFolder.id, newName) {
 		return FolderRestService.rename(folderId, newName);
 	}
 

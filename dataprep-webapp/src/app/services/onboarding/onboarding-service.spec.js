@@ -24,7 +24,7 @@ describe('Onboarding service', () => {
 	beforeEach(angular.mock.module('data-prep.services.onboarding', ($provide) => {
 		stateMock = {
 			inventory: {
-				homeFolderId: 'Lw==',
+				homeFolder: { id: 'Lw=='},
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -195,7 +195,7 @@ describe('Onboarding service', () => {
 		OnboardingService.startTour('preparation');
 
 		// then
-		expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
+		expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolder.id });
 	}));
 
 	it('should redirect BACK to "datasets" after redirecting to "preparations" ', inject(($timeout, $state, OnboardingService) => {
@@ -206,7 +206,7 @@ describe('Onboarding service', () => {
 
 		expect(OnboardingService.currentTour).toBeFalsy();
 		OnboardingService.startTour('preparation');
-		expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
+		expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolder.id });
 
 		// when
 		$timeout.flush(200);

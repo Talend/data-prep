@@ -127,7 +127,7 @@ export default class OnboardingService {
 		}
 		const isOnDatasetsRoute = this.$state.current.name === HOME_DATASETS_ROUTE;
 		if (isOnDatasetsRoute) {
-			this.$state.go(HOME_PREPARATIONS_ROUTE, { folderId: this.state.inventory.homeFolderId });
+			this.$state.go(HOME_PREPARATIONS_ROUTE, { folderId: this.state.inventory.homeFolder.id });
 		}
 		const onTourDone = () => {
 			this.setTourDone(tour);

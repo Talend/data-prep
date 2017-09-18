@@ -34,7 +34,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	const vm = this;
 	vm.$stateParams = $stateParams;
 	vm.state = state;
-	vm.destinationFolder = this.state.inventory.folder.metadata;
+	vm.destinationFolder = this.state.inventory.homeFolder;
 
 	vm.openFeedbackForm = () => StateService.showFeedback();
 	vm.toggleParameters = () => StateService.toggleDatasetParameters();
@@ -212,8 +212,8 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 		const prepId = state.playground.preparation.id;
 		const destinationId = vm.destinationFolder.id;
 		const cleanName = vm.state.playground.preparationName.trim();
-		if (destinationId !== state.inventory.homeFolderId) {
-			operation = PreparationService.move(prepId, state.inventory.homeFolderId, destinationId, cleanName);
+		if (destinationId !== state.inventory.homeFolder.id) {
+			operation = PreparationService.move(prepId, state.inventory.homeFolder.id, destinationId, cleanName);
 		}
 		else {
 			operation = PreparationService.setName(prepId, cleanName);

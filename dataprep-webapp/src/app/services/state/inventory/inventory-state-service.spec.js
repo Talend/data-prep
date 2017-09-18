@@ -207,7 +207,7 @@ describe('Inventory state service', () => {
 
 		it('should set user\'s home folder id', inject((inventoryState, InventoryStateService) => {
 			//given
-			inventoryState.homeFolderId = 'Lw==';
+			inventoryState.homeFolder = { id: 'Lw=='};
 			inventoryState.folder = {
 				metadata: { id: 'myFolderId' },
 				content: {
@@ -221,12 +221,12 @@ describe('Inventory state service', () => {
 			InventoryStateService.setHomeFolderId(homeId);
 
 			//then
-			expect(inventoryState.homeFolderId).toBe(homeId);
+			expect(inventoryState.homeFolder.id).toBe(homeId);
 		}));
 
 		it('should set current home folder to user\'s home folder id', inject((inventoryState, InventoryStateService) => {
 			//given
-			inventoryState.homeFolderId = 'Lw==';
+			inventoryState.homeFolder = { id: 'Lw=='};
 			inventoryState.folder = {
 				metadata: { id: 'Lw==' },
 				content: {

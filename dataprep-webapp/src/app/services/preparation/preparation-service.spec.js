@@ -17,7 +17,7 @@ describe('Preparation Service', () => {
     beforeEach(angular.mock.module('data-prep.services.preparation', ($provide) => {
         stateMock = {
             inventory: {
-                homeFolderId: 'LW==',
+                homeFolder: { id: 'LW==' },
                 preparations: null,
             },
         };

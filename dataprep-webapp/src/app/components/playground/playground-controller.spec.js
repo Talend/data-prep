@@ -70,7 +70,7 @@ describe('Playground controller', () => {
 				recipe: { current: { steps: [] } },
 			},
 			inventory: {
-				homeFolderId: 'LW==',
+				homeFolder: { id: 'LW==' },
 				currentFolder: { path: 'test' },
 				folder: {
 					metadata: {

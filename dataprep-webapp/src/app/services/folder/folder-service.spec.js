@@ -78,7 +78,7 @@ describe('Folder services', () => {
 	beforeEach(angular.mock.module('data-prep.services.folder', ($provide) => {
 		stateMock = {
 			inventory: {
-				homeFolderId: 'L215L2ZvbGRlcg==',
+				homeFolder: { id: 'L215L2ZvbGRlcg=='},
 				folder: {
 					sort: { field: 'name', isDescending: false },
 					metadata: { id: '3a574ba62c69' },
@@ -112,7 +112,7 @@ describe('Folder services', () => {
 			FolderService.children();
 
 			//then
-			expect(FolderRestService.children).toHaveBeenCalledWith(stateMock.inventory.homeFolderId);
+			expect(FolderRestService.children).toHaveBeenCalledWith(stateMock.inventory.homeFolder.id);
 		}));
 
 		it('should call rest create', inject((FolderService, FolderRestService) => {
@@ -135,7 +135,7 @@ describe('Folder services', () => {
 			FolderService.create(undefined, name);
 
 			//then
-			expect(FolderRestService.create).toHaveBeenCalledWith(stateMock.inventory.homeFolderId, name);
+			expect(FolderRestService.create).toHaveBeenCalledWith(stateMock.inventory.homeFolder.id, name);
 		}));
 
 		it('should call rest rename', inject((FolderService, FolderRestService) => {
@@ -158,7 +158,7 @@ describe('Folder services', () => {
 			FolderService.rename(undefined, newName);
 
 			//then
-			expect(FolderRestService.rename).toHaveBeenCalledWith(stateMock.inventory.homeFolderId, newName);
+			expect(FolderRestService.rename).toHaveBeenCalledWith(stateMock.inventory.homeFolder.id, newName);
 		}));
 	});
 
@@ -231,7 +231,7 @@ describe('Folder services', () => {
 			FolderService.init();
 
 			// then
-			expect(FolderRestService.getContent).toHaveBeenCalledWith(stateMock.inventory.homeFolderId, 'name', 'asc');
+			expect(FolderRestService.getContent).toHaveBeenCalledWith(stateMock.inventory.homeFolder.id, 'name', 'asc');
 		}));
 	});
 
@@ -313,7 +313,7 @@ describe('Folder services', () => {
 
 		it('should get folder metadata with homeFolderId', inject((FolderService, FolderRestService) => {
 			// given
-			stateMock.inventory.homeFolderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
+			stateMock.inventory.homeFolder = { id: 'L215L3BlcnNvbmFsL2ZvbGRlcg=='};
 
 			// when
 			FolderService.refresh();

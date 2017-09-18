@@ -116,7 +116,7 @@ describe('Playground Service', () => {
 				},
 			},
 			inventory: {
-				homeFolderId: 'Lw==',
+				homeFolder: { id: 'Lw=='},
 				currentFolder: { path: 'test' },
 				folder: {
 					metadata: {

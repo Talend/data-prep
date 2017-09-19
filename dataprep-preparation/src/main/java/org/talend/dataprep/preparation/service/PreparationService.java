@@ -295,7 +295,7 @@ public class PreparationService {
     private Stream<Preparation> searchByFolder(String folderId) {
         LOGGER.debug("looking for preparations in {}", folderId);
         final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
-        return entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+        return entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
     }
 
     /**
@@ -314,7 +314,7 @@ public class PreparationService {
         case 1:
             Folder folder = foldersToSearch.iterator().next();
             final Stream<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
-            preparationStream = entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+            preparationStream = entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
             break;
         case 0:
             throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));

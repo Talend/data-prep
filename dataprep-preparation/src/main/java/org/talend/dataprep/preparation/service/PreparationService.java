@@ -299,7 +299,7 @@ public class PreparationService {
         LOGGER.debug("looking for preparations in {}", folderId);
         final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
         return StreamSupport.stream(entries.spliterator(), false) //
-                .map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
+                .map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
     }
 
     /**
@@ -315,16 +315,16 @@ public class PreparationService {
         int size = foldersToSearch.size();
         Stream<Preparation> preparationStream;
         switch (size) {
-        case 1:
-            Folder folder = foldersToSearch.iterator().next();
-            final Iterable<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
-            preparationStream = StreamSupport.stream(entries.spliterator(), false) //
-                    .map(e -> preparationRepository.get(e.getContentId(), Preparation.class));
-            break;
-        case 0:
-            throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
-        default:
-            throw new TDPException(UNEXPECTED_EXCEPTION, ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
+            case 1:
+                Folder folder = foldersToSearch.iterator().next();
+                final Iterable<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
+                preparationStream = StreamSupport.stream(entries.spliterator(), false) //
+                        .map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
+                break;
+            case 0:
+                throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
+            default:
+                throw new TDPException(UNEXPECTED_EXCEPTION, ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
         }
         return preparationStream;
     }
@@ -1126,7 +1126,7 @@ public class PreparationService {
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns

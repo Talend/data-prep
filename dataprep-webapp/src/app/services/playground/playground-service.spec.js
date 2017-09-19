@@ -116,7 +116,7 @@ describe('Playground Service', () => {
 				},
 			},
 			inventory: {
-				homeFolder: { id: 'Lw=='},
+				homeFolder: { id: 'Lw==' },
 				currentFolder: { path: 'test' },
 				folder: {
 					metadata: {
@@ -555,7 +555,6 @@ describe('Playground Service', () => {
 		beforeEach(inject((StateService, StatisticsService) => {
 			spyOn(StatisticsService, 'updateStatistics').and.returnValue();
 			spyOn(StateService, 'updateDatasetStatistics').and.returnValue();
-			spyOn(StateService, 'updateDatasetRecord').and.returnValue();
 
 			stateMock.playground.preparation = { id: 'abc' };
 			stateMock.playground.dataset = { id: '1324d56456b84ef154', records: 15 };
@@ -563,21 +562,20 @@ describe('Playground Service', () => {
 
 		it('should get metadata and set its statistics in state', inject(($rootScope, $q, PlaygroundService, PreparationService, StateService) => {
 			// given
-			spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationMetadata));
+			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
 
 			// when
 			PlaygroundService.updateStatistics();
 			$rootScope.$digest();
 
 			// then
-			expect(PreparationService.getContent).toHaveBeenCalledWith('abc', 'head', 'HEAD');
+			expect(PreparationService.getMetadata).toHaveBeenCalledWith('abc', 'head');
 			expect(StateService.updateDatasetStatistics).toHaveBeenCalledWith(preparationMetadata.metadata);
-			expect(StateService.updateDatasetRecord).toHaveBeenCalledWith(1);
 		}));
 
 		it('should trigger statistics update', inject(($rootScope, $q, PreparationService, PlaygroundService, StatisticsService) => {
 			// given
-			spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationMetadata));
+			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
 
 			// when
 			PlaygroundService.updateStatistics();
@@ -590,7 +588,7 @@ describe('Playground Service', () => {
 		it('should reject promise when the statistics are not computed yet', inject(($rootScope, $q, PlaygroundService, PreparationService, StateService) => {
 			// given
 			let rejected = false;
-			spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationMetadataWithoutStatistics));
+			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadataWithoutStatistics.metadata));
 
 			// when
 			PlaygroundService.updateStatistics()

@@ -40,6 +40,7 @@ export default function PreparationRestService($http, RestURLs) {
         // getter : list, content, details
 		getContent,
 		getDetails,
+		getMetadata,
 
         // preview
 		getPreviewDiff,
@@ -57,11 +58,25 @@ export default function PreparationRestService($http, RestURLs) {
      * @param {string} preparationId The preparation id to load
      * @param {string} stepId The step id to load
      * @param {string} sampleType The sample type
-     * @description Get preparation records at the specific step
+     * @description Get preparation records/metadata at the specific step
      * @returns {promise} The GET promise
      */
 	function getContent(preparationId, stepId, sampleType) {
 		const url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
+		return $http.get(url).then(res => res.data);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getMetadata
+	 * @methodOf data-prep.services.preparation.service:PreparationRestService
+	 * @param {string} preparationId The preparation id to load
+	 * @param {string} stepId The step id to load
+	 * @description Get preparation metadata at the specific step
+	 * @returns {promise} The GET promise
+	 */
+	function getMetadata(preparationId, stepId) {
+		const url = `${RestURLs.preparationUrl}/${preparationId}/metadata?version=${stepId}`;
 		return $http.get(url).then(res => res.data);
 	}
 

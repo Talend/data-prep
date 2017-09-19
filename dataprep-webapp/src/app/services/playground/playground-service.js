@@ -265,14 +265,12 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 */
 	function getMetadata() {
 		if (state.playground.preparation) {
-			return PreparationService.getContent(state.playground.preparation.id, 'head', state.playground.sampleType)
+			return PreparationService.getMetadata(state.playground.preparation.id, 'head')
 				.then((response) => {
-					if (!response.metadata.columns[0].statistics.frequencyTable.length) {
+					if (!response.columns[0].statistics.frequencyTable.length) {
 						return $q.reject();
 					}
-
-					StateService.updateDatasetRecord(response.records.length);
-					return response.metadata;
+					return response;
 				});
 		}
 		else {

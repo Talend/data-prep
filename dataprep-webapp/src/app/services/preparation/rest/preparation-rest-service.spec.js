@@ -227,6 +227,26 @@ describe('Preparation REST Service', () => {
 			// then
 			expect(content).toEqual(records);
 		}));
+
+		it('should get the requested version of preparation metadata', inject(($rootScope, RestURLs, PreparationRestService) => {
+			// given
+			let content = null;
+			const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
+			$httpBackend
+				.expectGET(RestURLs.preparationUrl + '/' + preparationId + '/metadata?version=head')
+				.respond(200, records);
+
+			//when
+			PreparationRestService.getMetadata(preparationId, 'head')
+				.then((response) => {
+					content = response;
+				});
+			$httpBackend.flush();
+			$rootScope.$digest();
+
+			// then
+			expect(content).toEqual(records);
+		}));
 	});
 
 	describe('preparation step lifecycle', () => {

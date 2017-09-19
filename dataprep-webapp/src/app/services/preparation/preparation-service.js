@@ -27,6 +27,7 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 	return {
 		// details, content
 		getContent: PreparationRestService.getContent,
+		getMetadata: PreparationRestService.getMetadata,
 		getDetails: PreparationRestService.getDetails,
 
 		// preparation lifecycle

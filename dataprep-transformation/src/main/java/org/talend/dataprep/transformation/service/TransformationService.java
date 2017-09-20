@@ -15,7 +15,9 @@ package org.talend.dataprep.transformation.service;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
@@ -26,8 +28,17 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -43,7 +54,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -186,6 +203,9 @@ public class TransformationService extends BaseTransformationService {
     @VolumeMetered
     public DataSetMetadata executeMetadata(@PathVariable("preparationId") String preparationId,
                                            @PathVariable("stepId") String stepId) {
+
+        LOG.debug("getting preparation metadata for #{}, step {}", preparationId, stepId);
+
         final Preparation preparation = getPreparation(preparationId);
         if (preparation.getSteps().size() > 1) {
             String headId = "head".equalsIgnoreCase(stepId) ? preparation.getHeadId() : stepId;

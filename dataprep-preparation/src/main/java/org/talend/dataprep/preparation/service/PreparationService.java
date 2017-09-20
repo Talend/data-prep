@@ -1051,7 +1051,7 @@ public class PreparationService {
 
         LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
         LockedResource lockedResource = lockedResourceRepository.tryLock(preparation, userInfo);
-        if (lockedResourceRepository.lockOwned(lockedResource, userId)) {
+        if (lockedResourceRepository.isLockOwned(lockedResource, userId)) {
             LOGGER.debug("Preparation {} locked for user {}.", preparationId, userId);
         } else {
             LOGGER.debug("Unable to lock Preparation {} for user {}. Already locked by user {}", preparationId, userId,
@@ -1077,7 +1077,7 @@ public class PreparationService {
         }
         LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
         LockedResource lockedResource = lockedResourceRepository.tryUnlock(preparation, userInfo);
-        if (lockedResourceRepository.lockReleased(lockedResource)) {
+        if (lockedResourceRepository.isLockReleased(lockedResource)) {
             LOGGER.debug("Preparation {} unlocked by user {}.", preparationId, userId);
         } else {
             LOGGER.debug("Unable to unlock Preparation {} for user {}. Already locked by {}", preparationId, userId,

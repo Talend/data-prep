@@ -13,12 +13,12 @@
 
 package org.talend.dataprep.lock.store;
 
-import java.util.Collection;
-import java.util.Collections;
+import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Identifiable;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
 /**
@@ -28,76 +28,25 @@ import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 @ConditionalOnProperty(name = "lock.preparation.store", havingValue = "none", matchIfMissing = true)
 public class NoOpLockedResourceRepository implements LockedResourceRepository {
 
-    /**
-     * @see LockedResourceRepository#tryLock(Identifiable, LockUserInfo)
-     */
     @Override
-    public LockedResource tryLock(Identifiable resource, LockUserInfo userInfo) {
-        checkArguments(resource, userInfo);
+    public LockedResource tryLock(Preparation resource, LockUserInfo userInfo) {
+        notNull(resource, "A null resource cannot be locked/unlocked");
+        notEmpty(userInfo.getId(), "A null user-identifier cannot lock/unlock a resource...");
         return new LockedResource(resource.getId(), userInfo, 0);
     }
 
-    /**
-     * @see LockedResourceRepository#tryUnlock(Identifiable, LockUserInfo)
-     */
     @Override
-    public LockedResource tryUnlock(Identifiable resource, LockUserInfo userInfo) {
+    public LockedResource tryUnlock(Preparation resource, LockUserInfo userInfo) {
         return null;
     }
 
-    /**
-     * @see LockedResourceRepository#get(Identifiable)
-     */
     @Override
-    public LockedResource get(Identifiable resource) {
-        return null;
-    }
-
-    /**
-     * @see LockedResourceRepository#listAll()
-     */
-    @Override
-    public Collection<LockedResource> listAll() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * @see LockedResourceRepository#listByUser(String)
-     */
-    @Override
-    public Collection<LockedResource> listByUser(String userId) {
-        return Collections.emptyList();
-    }
-
-    /**
-     * @see LockedResourceRepository#clear()
-     */
-    @Override
-    public void clear() {
-        // Does nothing
-    }
-
-    /**
-     * @see LockedResourceRepository#remove(Identifiable)
-     */
-    @Override
-    public void remove(Identifiable resource) {
-        // Does nothing
-    }
-
-    /**
-     * @see LockedResourceRepository#lockOwned(LockedResource, String)
-     */
-    @Override
-    public boolean lockOwned(LockedResource lockedResource, String userId) {
+    public boolean isLockOwned(LockedResource lockedResource, String userId) {
         return true;
     }
 
-    /**
-     * @see LockedResourceRepository#lockReleased(LockedResource)
-     */
     @Override
-    public boolean lockReleased(LockedResource lockedResource) {
+    public boolean isLockReleased(LockedResource lockedResource) {
         return true;
     }
 }

@@ -13,42 +13,29 @@
 package org.talend.dataprep.lock.store;
 
 import static org.junit.Assert.*;
-import static org.talend.dataprep.lock.store.LockedResourceTestUtils.*;
+import static org.talend.dataprep.lock.store.LockedResourceTestUtils.getFirstResourceType;
+import static org.talend.dataprep.lock.store.LockedResourceTestUtils.randomLockUserInfo;
 
-import java.util.Collection;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.talend.dataprep.api.preparation.Identifiable;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
 public class NoOpLockedResourceRepositoryTest {
 
-    private final LockedResourceRepository repository = new NoOpLockedResourceRepository();
-
-    @Before
-    public void setUp() {
-        repository.clear();
-    }
-
-    @After
-    public void tearDown() {
-        repository.clear();
-    }
+    private final NoOpLockedResourceRepository repository = new NoOpLockedResourceRepository();
 
     @Test
     public void should_lock_resource_lock() {
         LockUserInfo owner = randomLockUserInfo();
         LockUserInfo preEmpter = randomLockUserInfo();
-        Identifiable resource = getFirstResourceType("1");
+        Preparation resource = getFirstResourceType("1");
 
         LockedResource lockedResource = repository.tryLock(resource, owner);
         LockedResource lockedByPreempter = repository.tryLock(resource, preEmpter);
 
         assertNotNull(lockedResource);
-        assertTrue(repository.lockOwned(lockedResource, owner.getId()));
-        assertTrue(repository.lockOwned(lockedByPreempter, preEmpter.getId()));
+        assertTrue(repository.isLockOwned(lockedResource, owner.getId()));
+        assertTrue(repository.isLockOwned(lockedByPreempter, preEmpter.getId()));
         assertNotEquals(lockedByPreempter, lockedResource);
     }
 
@@ -56,20 +43,20 @@ public class NoOpLockedResourceRepositoryTest {
     public void should_always_unlock() {
         LockUserInfo owner = randomLockUserInfo();
         LockUserInfo preEmpter = randomLockUserInfo();
-        Identifiable resource = getFirstResourceType("1");
+        Preparation resource = getFirstResourceType("1");
 
         LockedResource lockedResource = repository.tryLock(resource, owner);
-        LockedResource lockedByPreemter = repository.tryUnlock(resource, preEmpter);
+        LockedResource lockedByPreEmpter = repository.tryUnlock(resource, preEmpter);
 
         assertNotNull(lockedResource);
-        assertNull(lockedByPreemter);
-        assertTrue(repository.lockReleased(lockedByPreemter));
+        assertNull(lockedByPreEmpter);
+        assertTrue(repository.isLockReleased(lockedByPreEmpter));
     }
 
     @Test
     public void should_unlock_unlocked_resource() {
         LockUserInfo owner = randomLockUserInfo();
-        Identifiable resource = getFirstResourceType("1");
+        Preparation resource = getFirstResourceType("1");
 
         final LockedResource mustBeNull = repository.tryUnlock(resource, owner);
 
@@ -79,7 +66,7 @@ public class NoOpLockedResourceRepositoryTest {
     @Test
     public void lock_should_be_reentrant() {
         LockUserInfo owner = randomLockUserInfo();
-        Identifiable resource = getFirstResourceType("1");
+        Preparation resource = getFirstResourceType("1");
 
         LockedResource lockedResource = repository.tryLock(resource, owner);
         LockedResource lockedResource2 = repository.tryLock(resource, owner);
@@ -91,55 +78,4 @@ public class NoOpLockedResourceRepositoryTest {
         assertTrue(lockedResource.getExpirationTime() <= lockedResource2.getExpirationTime());
     }
 
-    @Test
-    public void should_always_list_empty_collection() {
-
-        LockUserInfo user1 = randomLockUserInfo();
-        LockUserInfo user2 = randomLockUserInfo();
-
-        Identifiable resource = getFirstResourceType("1");
-        Identifiable resource2 = getSecondResourceType("2");
-        Identifiable resource3 = getSecondResourceType("3");
-
-        repository.tryLock(resource, user1);
-        repository.tryLock(resource2, user2);
-        repository.tryLock(resource3, user2);
-        repository.tryUnlock(resource3, user2);
-
-        Collection<LockedResource> allLockedResources = repository.listAll();
-
-        assertNotNull(allLockedResources);
-        assertEquals(0, allLockedResources.size());
-    }
-
-    @Test
-    public void should_list_empty_collection_for_resources_locked_by_a_user() {
-        LockUserInfo user1 = randomLockUserInfo();
-        LockUserInfo user2 = randomLockUserInfo();
-        Identifiable resource = getFirstResourceType("1");
-        Identifiable resource2 = getSecondResourceType("2");
-        Identifiable resource3 = getSecondResourceType("3");
-
-        repository.tryLock(resource, user1);
-        repository.tryLock(resource2, user2);
-        repository.tryLock(resource3, user2);
-
-        Collection<LockedResource> allLockedResources = repository.listByUser(user2.getId());
-
-        assertNotNull(allLockedResources);
-        assertEquals(0, allLockedResources.size());
-    }
-
-    @Test
-    public void should_get_null_when_trying_to_get_locked_resource() {
-        LockUserInfo user1 = randomLockUserInfo();
-        Identifiable resource = getFirstResourceType("1");
-
-        repository.tryLock(resource, user1);
-
-        LockedResource mustBeNull = repository.get(resource);
-
-        assertNull(mustBeNull);
-        assertTrue(repository.lockReleased(mustBeNull));
-    }
 }

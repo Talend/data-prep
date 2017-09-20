@@ -61,14 +61,14 @@ public interface LockedResourceRepository {
      * @param userId the user identifier
      * @return true if the specified locked resource is owned by the specified user and false otherwise
      */
-    boolean isLockOwned(LockedResource lockedResource, String userId);
+    boolean isLockOwned(Preparation lockedResource, String userId);
 
     /**
      * Returns true if the specified locked resource is released and false otherwise.
      *
-     * @param lockedResource the locked resource object
-     * @return true if the specified locked resource is released and false otherwise
+     * @param preparation the locked preparation
+     * @return true if the specified preparation is released and false otherwise
      */
-    boolean isLockReleased(LockedResource lockedResource);
+    boolean isLockReleased(Preparation preparation);
 
 }

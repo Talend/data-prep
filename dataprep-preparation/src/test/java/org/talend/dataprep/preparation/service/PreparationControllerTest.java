@@ -42,7 +42,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
-import org.talend.dataprep.lock.store.LockedResource;
 import org.talend.dataprep.preparation.BasePreparationTest;
 import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.test.MockTDPException;
@@ -762,11 +761,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        // assert that the resource is no more locked
-        LockedResource lockedResource = lockRepository.get(expected);
-
-        // then
-        assertNull(lockedResource);
+        assertTrue(lockRepository.isLockReleased(expected));
     }
 
     @Test

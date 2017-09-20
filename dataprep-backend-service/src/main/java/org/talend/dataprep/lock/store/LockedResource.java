@@ -32,7 +32,7 @@ public class LockedResource {
     private String resourceId;
 
     /** . The time when the lock will be released. */
-    private long expirationTime;
+    private Instant expirationTime;
 
     /**
      * Constructs a locked resource with the specified lock delay.
@@ -45,7 +45,7 @@ public class LockedResource {
         this.resourceId = resourceId;
         this.userId = userInfo.getId();
         this.userDisplayName = userInfo.getDisplayName();
-        this.expirationTime = Instant.now().getEpochSecond() + delay;
+        this.expirationTime = Instant.now().plusSeconds(delay);
     }
 
     /**
@@ -71,47 +71,30 @@ public class LockedResource {
         return resourceId;
     }
 
-    /**
-     * @return the expiration time.
-     */
-    public long getExpirationTime() {
+    public Instant getExpirationTime() {
         return expirationTime;
     }
 
-    /**
-     * @return the UserDisplayName.
-     */
     public String getUserDisplayName() {
         return userDisplayName;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o)
             return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
             return false;
-        }
         LockedResource that = (LockedResource) o;
-        return expirationTime == that.expirationTime && Objects.equals(userId, that.userId)
-                && Objects.equals(resourceId, that.resourceId);
+        return Objects.equals(userId, that.userId) && Objects.equals(resourceId, that.resourceId)
+                && Objects.equals(expirationTime, that.expirationTime);
     }
 
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return Objects.hash(userId, resourceId, expirationTime);
     }
 
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return "LockedResource{" +
@@ -134,7 +117,7 @@ public class LockedResource {
 
         /**
          * Constructor.
-         * 
+         *
          * @param id the user id.
          * @param displayName the user display name.
          */

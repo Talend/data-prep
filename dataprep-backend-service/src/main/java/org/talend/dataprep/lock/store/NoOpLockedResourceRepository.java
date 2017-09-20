@@ -41,12 +41,11 @@ public class NoOpLockedResourceRepository implements LockedResourceRepository {
     }
 
     @Override
-    public boolean isLockOwned(LockedResource lockedResource, String userId) {
+    public boolean isLockOwned(Preparation lockedResource, String userId) {
         return true;
     }
 
-    @Override
-    public boolean isLockReleased(LockedResource lockedResource) {
+    public boolean isLockReleased(Preparation lockedResource) {
         return true;
     }
 }

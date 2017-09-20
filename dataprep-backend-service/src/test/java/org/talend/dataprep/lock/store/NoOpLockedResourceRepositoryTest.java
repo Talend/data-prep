@@ -34,8 +34,8 @@ public class NoOpLockedResourceRepositoryTest {
         LockedResource lockedByPreempter = repository.tryLock(resource, preEmpter);
 
         assertNotNull(lockedResource);
-        assertTrue(repository.isLockOwned(lockedResource, owner.getId()));
-        assertTrue(repository.isLockOwned(lockedByPreempter, preEmpter.getId()));
+        assertTrue(repository.isLockOwned(resource, owner.getId()));
+        assertTrue(repository.isLockOwned(resource, preEmpter.getId()));
         assertNotEquals(lockedByPreempter, lockedResource);
     }
 
@@ -50,7 +50,7 @@ public class NoOpLockedResourceRepositoryTest {
 
         assertNotNull(lockedResource);
         assertNull(lockedByPreEmpter);
-        assertTrue(repository.isLockReleased(lockedByPreEmpter));
+        assertTrue(repository.isLockReleased(resource));
     }
 
     @Test
@@ -75,7 +75,8 @@ public class NoOpLockedResourceRepositoryTest {
         assertNotNull(lockedResource2);
         assertEquals(lockedResource.getUserId(), lockedResource2.getUserId());
         assertEquals(lockedResource.getResourceId(), lockedResource2.getResourceId());
-        assertTrue(lockedResource.getExpirationTime() <= lockedResource2.getExpirationTime());
+        assertTrue(lockedResource.getExpirationTime().isBefore(lockedResource2.getExpirationTime())
+                || lockedResource.getExpirationTime().equals(lockedResource2.getExpirationTime()));
     }
 
 }

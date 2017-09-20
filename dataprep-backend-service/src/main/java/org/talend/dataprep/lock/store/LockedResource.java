@@ -16,6 +16,8 @@ package org.talend.dataprep.lock.store;
 import java.time.Instant;
 import java.util.Objects;
 
+import org.talend.dataprep.api.preparation.BasicUserLock;
+
 /**
  * Represents a user locked-Resource. It keeps track of the identifier of the locked resource, the user locking it and
  * the expiration time of the lock. The lock will be released when the expiration time is reached.
@@ -41,7 +43,7 @@ public class LockedResource {
      * @param userInfo the specified user info.
      * @param delay the specified lock delay.
      */
-    public LockedResource(String resourceId, LockUserInfo userInfo, long delay) {
+    public LockedResource(String resourceId, BasicUserLock userInfo, long delay) {
         this.resourceId = resourceId;
         this.userId = userInfo.getId();
         this.userDisplayName = userInfo.getDisplayName();
@@ -104,40 +106,4 @@ public class LockedResource {
                 '}';
     }
 
-    /**
-     * Class used to group user related information in a lock.
-     */
-    public static class LockUserInfo {
-
-        /** The user id. */
-        private String id;
-
-        /** The user display name. */
-        private String displayName;
-
-        /**
-         * Constructor.
-         *
-         * @param id the user id.
-         * @param displayName the user display name.
-         */
-        public LockUserInfo(String id, String displayName) {
-            this.id = id;
-            this.displayName = displayName;
-        }
-
-        /**
-         * @return the Id.
-         */
-        public String getId() {
-            return id;
-        }
-
-        /**
-         * @return the DisplayName.
-         */
-        public String getDisplayName() {
-            return displayName;
-        }
-    }
 }

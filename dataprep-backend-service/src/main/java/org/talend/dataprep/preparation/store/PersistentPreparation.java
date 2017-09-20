@@ -15,7 +15,9 @@ package org.talend.dataprep.preparation.store;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.data.annotation.Version;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.preparation.BasicUserLock;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -29,6 +31,9 @@ public class PersistentPreparation extends PersistentIdentifiable {
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
+
+    @Version
+    private Long version;
 
     /** The dataset id. */
     private String dataSetId;
@@ -57,6 +62,9 @@ public class PersistentPreparation extends PersistentIdentifiable {
 
     /** List of the steps id for this preparation. */
     private List<String> steps;
+
+    /** The user locking the preparation. */
+    private BasicUserLock lockingUser;
 
     /**
      * Default empty constructor.
@@ -155,11 +163,18 @@ public class PersistentPreparation extends PersistentIdentifiable {
         this.appVersion = appVersion;
     }
 
+    public BasicUserLock getLockingUser() {
+        return lockingUser;
+    }
+
+    public void setLockingUser(BasicUserLock lockingUser) {
+        this.lockingUser = lockingUser;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("dataSetId", dataSetId).append("author", author)
                 .append("name", name).append("creationDate", creationDate).append("lastModificationDate", lastModificationDate)
                 .append("headId", headId).toString();
     }
-
 }

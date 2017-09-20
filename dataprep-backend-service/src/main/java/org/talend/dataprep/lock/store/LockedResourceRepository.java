@@ -14,9 +14,9 @@
 package org.talend.dataprep.lock.store;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.preparation.BasicUserLock;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
 /**
  * Base interface of user locked-resources repositories (mongodb, file-system).
@@ -36,11 +36,12 @@ public interface LockedResourceRepository {
      * locked resource is returned. This locked resource could be used to retrieve the user currently locking the
      * resource.
      *
-     * @param resource the specified identifiable object
-     * @param userInfo the specified information about the user who is requesting the lock of the resource
+     * @param preparationId
+     * @param userId
+     * @param displayName
      * @return the locked resource which gives information about the user locking the resource
      */
-    LockedResource tryLock(Preparation resource, LockUserInfo userInfo);
+    void tryLock(String preparationId, String userId, String displayName);
 
     /**
      * Tries to unlock the specified resource. If no other user has the lock or it is locked by the specified user, then
@@ -52,7 +53,7 @@ public interface LockedResourceRepository {
      * @return either null if the resource has been unlocked or the locked resource which gives information about the
      * user locking the resource otherwise
      */
-    LockedResource tryUnlock(Preparation resource,  LockUserInfo userInfo);
+    LockedResource tryUnlock(Preparation resource,  BasicUserLock userInfo);
 
     /**
      * Returns true if the specified locked resource is owned by the specified user and false otherwise.

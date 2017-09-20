@@ -21,11 +21,9 @@ import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.CONFLICT_TO_LOCK_RESOURCE;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 import java.io.IOException;
@@ -1040,24 +1038,7 @@ public class PreparationService {
      * @throws TDPException if the lock is hold by another user
      */
     private void lock(String preparationId) {
-
-        final String userId = security.getUserId();
-
-        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        if (preparation == null) {
-            LOGGER.warn("Preparation #{} does not exist.", preparationId);
-            return;
-        }
-
-        LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
-        LockedResource lockedResource = lockedResourceRepository.tryLock(preparation, userInfo);
-        if (lockedResourceRepository.isLockOwned(preparation, userId)) {
-            LOGGER.debug("Preparation {} locked for user {}.", preparationId, userId);
-        } else {
-            LOGGER.debug("Unable to lock Preparation {} for user {}. Already locked by user {}", preparationId, userId,
-                    lockedResource.getUserId());
-            throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()));
-        }
+        lockedResourceRepository.tryLock(preparationId, security.getUserId(), security.getUserDisplayName());
     }
 
     /**
@@ -1075,7 +1056,7 @@ public class PreparationService {
             LOGGER.debug("Preparation {} you are trying to lock does not exist.", preparationId);
             return;
         }
-        LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
+        BasicUserLock userInfo = new BasicUserLock(userId, security.getUserDisplayName());
         LockedResource lockedResource = lockedResourceRepository.tryUnlock(preparation, userInfo);
         if (lockedResourceRepository.isLockReleased(preparation)) {
             LOGGER.debug("Preparation {} unlocked by user {}.", preparationId, userId);

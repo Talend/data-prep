@@ -65,6 +65,9 @@ public class Preparation extends Identifiable implements Serializable {
     /** List of the steps id for this preparation. */
     private List<Step> steps = Collections.singletonList(Step.ROOT_STEP);
 
+    /** The user locking the preparation. */
+    private BasicUserLock lock;
+
     /**
      * Default empty constructor.
      */
@@ -205,6 +208,14 @@ public class Preparation extends Identifiable implements Serializable {
 
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
+    }
+
+    public BasicUserLock getLock() {
+        return lock;
+    }
+
+    public void setLock(BasicUserLock lock) {
+        this.lock = lock;
     }
 
     public void updateLastModificationDate() {

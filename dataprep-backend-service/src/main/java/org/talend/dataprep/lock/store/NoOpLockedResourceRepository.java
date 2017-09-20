@@ -13,13 +13,10 @@
 
 package org.talend.dataprep.lock.store;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.preparation.BasicUserLock;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
 /**
  * No op implementation of the LockedResourceRepository.
@@ -29,14 +26,11 @@ import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 public class NoOpLockedResourceRepository implements LockedResourceRepository {
 
     @Override
-    public LockedResource tryLock(Preparation resource, LockUserInfo userInfo) {
-        notNull(resource, "A null resource cannot be locked/unlocked");
-        notEmpty(userInfo.getId(), "A null user-identifier cannot lock/unlock a resource...");
-        return new LockedResource(resource.getId(), userInfo, 0);
+    public void tryLock(String preparationId, String userId, String displayName) {
     }
 
     @Override
-    public LockedResource tryUnlock(Preparation resource, LockUserInfo userInfo) {
+    public LockedResource tryUnlock(Preparation resource, BasicUserLock userInfo) {
         return null;
     }
 

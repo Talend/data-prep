@@ -17,8 +17,8 @@ import static org.talend.dataprep.lock.store.LockedResourceTestUtils.getFirstRes
 import static org.talend.dataprep.lock.store.LockedResourceTestUtils.randomLockUserInfo;
 
 import org.junit.Test;
+import org.talend.dataprep.api.preparation.BasicUserLock;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
 public class NoOpLockedResourceRepositoryTest {
 
@@ -26,12 +26,12 @@ public class NoOpLockedResourceRepositoryTest {
 
     @Test
     public void should_lock_resource_lock() {
-        LockUserInfo owner = randomLockUserInfo();
-        LockUserInfo preEmpter = randomLockUserInfo();
+        BasicUserLock owner = randomLockUserInfo();
+        BasicUserLock preEmpter = randomLockUserInfo();
         Preparation resource = getFirstResourceType("1");
 
-        LockedResource lockedResource = repository.tryLock(resource, owner);
-        LockedResource lockedByPreempter = repository.tryLock(resource, preEmpter);
+        LockedResource lockedResource = repository.tryLock(resource.getId(), owner.getId(), owner.getDisplayName());
+        LockedResource lockedByPreempter = repository.tryLock(resource.getId(), preEmpter.getId(), preEmpter.getDisplayName());
 
         assertNotNull(lockedResource);
         assertTrue(repository.isLockOwned(resource, owner.getId()));
@@ -41,11 +41,11 @@ public class NoOpLockedResourceRepositoryTest {
 
     @Test
     public void should_always_unlock() {
-        LockUserInfo owner = randomLockUserInfo();
-        LockUserInfo preEmpter = randomLockUserInfo();
+        BasicUserLock owner = randomLockUserInfo();
+        BasicUserLock preEmpter = randomLockUserInfo();
         Preparation resource = getFirstResourceType("1");
 
-        LockedResource lockedResource = repository.tryLock(resource, owner);
+        LockedResource lockedResource = repository.tryLock(resource.getId(), owner.getId(), owner.getDisplayName());
         LockedResource lockedByPreEmpter = repository.tryUnlock(resource, preEmpter);
 
         assertNotNull(lockedResource);
@@ -55,7 +55,7 @@ public class NoOpLockedResourceRepositoryTest {
 
     @Test
     public void should_unlock_unlocked_resource() {
-        LockUserInfo owner = randomLockUserInfo();
+        BasicUserLock owner = randomLockUserInfo();
         Preparation resource = getFirstResourceType("1");
 
         final LockedResource mustBeNull = repository.tryUnlock(resource, owner);
@@ -65,11 +65,11 @@ public class NoOpLockedResourceRepositoryTest {
 
     @Test
     public void lock_should_be_reentrant() {
-        LockUserInfo owner = randomLockUserInfo();
+        BasicUserLock owner = randomLockUserInfo();
         Preparation resource = getFirstResourceType("1");
 
-        LockedResource lockedResource = repository.tryLock(resource, owner);
-        LockedResource lockedResource2 = repository.tryLock(resource, owner);
+        LockedResource lockedResource = repository.tryLock(resource.getId(), owner.getId(), owner.getDisplayName());
+        LockedResource lockedResource2 = repository.tryLock(resource.getId(), owner.getId(), owner.getDisplayName());
 
         assertNotNull(lockedResource);
         assertNotNull(lockedResource2);

@@ -1,8 +1,9 @@
 package org.talend.dataprep.qa.step.config;
 
-import cucumber.api.java8.En;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import cucumber.api.java8.En;
 
 /**
  * Storage for Before and After actions.
@@ -39,6 +40,8 @@ public class GlobalStep extends DataPrepStep implements En {
             });
             context.clearDataset();
 
+            // cleaning all features context object
+            context.clearObject();
         });
     }
 }

@@ -7,6 +7,8 @@ import org.talend.dataprep.helper.DataPrepAPIHelper;
 import org.talend.dataprep.qa.SpringContextConfiguration;
 import org.talend.dataprep.qa.bean.FeatureContext;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Base class for all DataPrep step classes.
  */
@@ -15,7 +17,9 @@ public abstract class DataPrepStep {
 
     @Autowired
     protected FeatureContext context;
+
     @Autowired
     protected DataPrepAPIHelper dpah;
 
+    protected ObjectMapper objectMapper = new ObjectMapper();
 }

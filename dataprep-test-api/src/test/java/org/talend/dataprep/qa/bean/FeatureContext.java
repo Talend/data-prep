@@ -1,14 +1,15 @@
 package org.talend.dataprep.qa.bean;
 
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.stereotype.Component;
 
 /**
  * Used to share data within steps.
@@ -19,6 +20,11 @@ public class FeatureContext {
     private Map<String, String> datasetIdByName = new HashMap<>();
     private Map<String, String> preparationIdByName = new HashMap<>();
     private Map<String, File> tempFileByName = new HashMap<>();
+
+    /**
+     * All object store on a feature execution.
+     */
+    private Map<String, Object> featureContext = new HashMap<>();
 
     /**
      * Store a new dataset reference. In order to delete it later.
@@ -122,5 +128,21 @@ public class FeatureContext {
      */
     public void clearTempFile() {
         tempFileByName.clear();
+    }
+
+    public void storeObject(@NotNull String key, @NotNull Object object) {
+        featureContext.put(key, object);
+    }
+
+    public void removeObject(@NotNull String key) {
+        featureContext.remove(key);
+    }
+
+    public Object getObject(@NotNull String key) {
+        return featureContext.get(key);
+    }
+
+    public void clearObject() {
+        featureContext.clear();
     }
 }

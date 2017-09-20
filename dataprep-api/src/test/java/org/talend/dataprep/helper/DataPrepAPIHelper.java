@@ -1,10 +1,12 @@
 package org.talend.dataprep.helper;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
+
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,12 +15,11 @@ import org.talend.dataprep.helper.objects.ActionRequest;
 import org.talend.dataprep.helper.objects.Parameters;
 import org.talend.dataprep.helper.objects.PreparationRequest;
 
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -198,6 +199,16 @@ public class DataPrepAPIHelper {
                 .baseUri(globalApiBaseUrl)
                 .when()
                 .delete(API_PREPARATIONS + preparationId);
+    }
+
+    public Response getDataSetMetaData(String dataSetMetaDataId) {
+        // @formatter:off
+        return
+            given()
+                .baseUri(globalApiBaseUrl)
+            .when()
+                .get("/api/datasets/" + dataSetMetaDataId);
+        // @formatter:on
     }
 
     public String getGlobalApiBaseUrl() {

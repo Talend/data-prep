@@ -40,14 +40,13 @@ export default function RestErrorMessageHandler($q, MessageService) {
 		 * @description Display the error message depending on the error status and error code
 		 */
 		responseError(rejection) {
-			const config = rejection.config;
+			const { config, status } = rejection;
 
 			// user cancel the request or the request should fail silently : we do not show message
 			if (config && (config.failSilently || (config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
 				return $q.reject(rejection);
 			}
 
-			const { status } = rejection;
 			if (status <= 0) {
 				MessageService.error('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 			}

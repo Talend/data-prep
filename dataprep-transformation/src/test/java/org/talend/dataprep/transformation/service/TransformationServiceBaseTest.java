@@ -129,6 +129,20 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
         assertNotNull(dataSet);
 
         return dataSet.getMetadata();
+    }
+
+    protected DataSet getDataset(final String dataSetId) throws IOException {
+
+        final Response get = given() //
+                .contentType(ContentType.JSON) //
+                .expect().statusCode(200).log().ifError() //
+                .when() //
+                .get("/datasets/{id}/content", dataSetId);
+
+        final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(get.asInputStream());
+        assertNotNull(dataSet);
+
+        return dataSet;
 
     }
 

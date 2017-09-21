@@ -12,7 +12,12 @@
 
 package org.talend.dataprep.conversions;
 
-import static java.util.stream.Stream.of;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -20,12 +25,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.BiFunction;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.stereotype.Service;
+import static java.util.stream.Stream.of;
 
 /**
  * This service provides methods to convert beans to other beans (DTOs, transient beans...). This service helps code to
@@ -134,7 +134,7 @@ public class BeanConversionService implements ConversionService {
 
             List<Registration<Object>> registrationsFound = getRegistrationsForSourceClass(source.getClass());
 
-            List<BiFunction<? super Object, U, U>> customs = new ArrayList<>();
+            List<BiFunction<Object, U, U>> customs = new ArrayList<>();
             for (Registration<Object> registrationFound : registrationsFound) {
                 customs.addAll(getRegistrationFunctions(targetClass, registrationFound));
             }
@@ -162,12 +162,12 @@ public class BeanConversionService implements ConversionService {
     }
 
     /** Get all available transformations in this registration. */
-    private <T, U> List<BiFunction<? super T, U, U>> getRegistrationFunctions(Class<U> targetClass,
+    private <T, U> List<BiFunction<T, U, U>> getRegistrationFunctions(Class<U> targetClass,
                                                                                   Registration<T> registration) {
-        List<BiFunction<? super T, U, U>> customs = new ArrayList<>();
+        List<BiFunction<T, U, U>> customs = new ArrayList<>();
         Class<U> currentClass = targetClass;
         while (currentClass != null) {
-            final BiFunction<? super T, U, U> custom = registration.getCustom(currentClass);
+            final BiFunction<T, U, U> custom = registration.getCustom(currentClass);
             if (custom != null) {
                 customs.add(custom);
             }

@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
@@ -24,9 +23,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.service.command.info.VersionCommand;
+import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.info.ManifestInfo;
 import org.talend.dataprep.info.Version;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -38,6 +37,9 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class VersionServiceAPI extends APIService {
+
+    @Autowired
+    private VersionService versionService;
 
     @Autowired
     private ObjectMapper mapper;
@@ -61,10 +63,11 @@ public class VersionServiceAPI extends APIService {
     @Timed
     @PublicAPI
     public Version[] allVersions() {
-        Version[] versions = new Version[4];
-        ManifestInfo manifestInfo = ManifestInfo.getInstance();
+        final Version[] versions = new Version[4];
 
-        versions[0] = new Version(manifestInfo.getVersionId(), manifestInfo.getBuildId(), "API");
+        final Version apiVersion = versionService.version();
+        apiVersion.setServiceName("API");
+        versions[0] = apiVersion;
         versions[1] = callVersionService(datasetServiceUrl, "DATASET");
         versions[2] = callVersionService(preparationServiceUrl, "PREPARATION");
         versions[3] = callVersionService(transformationServiceUrl, "TRANSFORMATION");

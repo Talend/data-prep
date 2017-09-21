@@ -16,9 +16,9 @@ import java.time.Instant;
  */
 public class BasicUserLock {
 
-    private String id;
+    private String userId;
 
-    private String displayName;
+    private String userDisplayName;
 
     private Instant expirationTime;
 
@@ -28,17 +28,30 @@ public class BasicUserLock {
      */
     private int holdCount;
 
-    public BasicUserLock(String id, String displayName) {
-        this.id = id;
-        this.displayName = displayName;
+    // For Jackson/Mongo de/serialization
+    public BasicUserLock() {
     }
 
-    public String getId() {
-        return id;
+    /**
+     * Init a new lock to store in Preparation with a 0 hold count.
+     *
+     * @param userId ID of the user locking
+     * @param userDisplayName a end-user displayable name of the locking user
+     * @param expirationTime the date this lock will no longer be valid
+     */
+    public BasicUserLock(String userId, String userDisplayName, Instant expirationTime) {
+        this.userId = userId;
+        this.userDisplayName = userDisplayName;
+        this.expirationTime = expirationTime;
+        this.holdCount = 0;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserDisplayName() {
+        return userDisplayName;
     }
 
     public Instant getExpirationTime() {
@@ -55,5 +68,13 @@ public class BasicUserLock {
 
     public void setHoldCount(int holdCount) {
         this.holdCount = holdCount;
+    }
+
+    public int decrementHoldCount() {
+        return --holdCount;
+    }
+
+    public int incrementHoldCount() {
+        return ++holdCount;
     }
 }

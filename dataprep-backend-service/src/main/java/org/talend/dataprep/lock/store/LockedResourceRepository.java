@@ -14,7 +14,6 @@
 package org.talend.dataprep.lock.store;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.preparation.BasicUserLock;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.api.preparation.Preparation;
 
@@ -41,35 +40,17 @@ public interface LockedResourceRepository {
      * @param displayName
      * @return the locked resource which gives information about the user locking the resource
      */
-    void tryLock(String preparationId, String userId, String displayName);
+    Preparation tryLock(String preparationId, String userId, String displayName);
 
     /**
      * Tries to unlock the specified resource. If no other user has the lock or it is locked by the specified user, then
      * it is unlocked and removed from the repository. Otherwise, (it is locked by another user) the locked resource
      * object is returned
      *
-     * @param resource the specified identifiable object
-     * @param userInfo the specified information about the user who is requesting the lock of the resource
      * @return either null if the resource has been unlocked or the locked resource which gives information about the
      * user locking the resource otherwise
+     * @param preparationId
      */
-    LockedResource tryUnlock(Preparation resource,  BasicUserLock userInfo);
-
-    /**
-     * Returns true if the specified locked resource is owned by the specified user and false otherwise.
-     *
-     * @param lockedResource the locked resource object
-     * @param userId the user identifier
-     * @return true if the specified locked resource is owned by the specified user and false otherwise
-     */
-    boolean isLockOwned(Preparation lockedResource, String userId);
-
-    /**
-     * Returns true if the specified locked resource is released and false otherwise.
-     *
-     * @param preparation the locked preparation
-     * @return true if the specified preparation is released and false otherwise
-     */
-    boolean isLockReleased(Preparation preparation);
+    void unlock(String preparationId, String userId);
 
 }

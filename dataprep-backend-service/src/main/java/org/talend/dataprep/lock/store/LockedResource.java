@@ -45,8 +45,8 @@ public class LockedResource {
      */
     public LockedResource(String resourceId, BasicUserLock userInfo, long delay) {
         this.resourceId = resourceId;
-        this.userId = userInfo.getId();
-        this.userDisplayName = userInfo.getDisplayName();
+        this.userId = userInfo.getUserId();
+        this.userDisplayName = userInfo.getUserDisplayName();
         this.expirationTime = Instant.now().plusSeconds(delay);
     }
 

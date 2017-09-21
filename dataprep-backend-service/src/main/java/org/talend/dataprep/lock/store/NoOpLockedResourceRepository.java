@@ -13,10 +13,11 @@
 
 package org.talend.dataprep.lock.store;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.BasicUserLock;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.preparation.store.PreparationRepository;
 
 /**
  * No op implementation of the LockedResourceRepository.
@@ -25,21 +26,15 @@ import org.talend.dataprep.api.preparation.Preparation;
 @ConditionalOnProperty(name = "lock.preparation.store", havingValue = "none", matchIfMissing = true)
 public class NoOpLockedResourceRepository implements LockedResourceRepository {
 
+    @Autowired
+    private PreparationRepository preparationRepository;
+
     @Override
-    public void tryLock(String preparationId, String userId, String displayName) {
+    public Preparation tryLock(String preparationId, String userId, String displayName) {
+        return preparationRepository.get(preparationId, Preparation.class);
     }
 
     @Override
-    public LockedResource tryUnlock(Preparation resource, BasicUserLock userInfo) {
-        return null;
-    }
+    public void unlock(String preparationId, String userId) {}
 
-    @Override
-    public boolean isLockOwned(Preparation lockedResource, String userId) {
-        return true;
-    }
-
-    public boolean isLockReleased(Preparation lockedResource) {
-        return true;
-    }
 }

@@ -121,7 +121,6 @@ public class Preparation extends Identifiable implements Serializable {
 
     /**
      * @return List of the steps id for this preparation.
-     * @see org.talend.dataprep.preparation.store.PreparationRepository#get(String, Class)
      */
     public List<Step> getSteps() {
         return steps;

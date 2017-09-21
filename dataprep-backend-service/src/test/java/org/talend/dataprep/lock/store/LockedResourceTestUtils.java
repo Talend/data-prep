@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.lock.store;
 
+import static java.time.Instant.now;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -33,6 +35,6 @@ public class LockedResourceTestUtils {
         final String userId = UUID.randomUUID().toString();
         final String displayName = "display name for " + random.nextInt(100) + 1;
 
-        return new BasicUserLock(userId, displayName);
+        return new BasicUserLock(userId, displayName, now().plusSeconds(10));
     }
 }

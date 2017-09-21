@@ -53,11 +53,9 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.lock.store.LockedResource;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.task.PreparationCleaner;
@@ -432,7 +430,7 @@ public class PreparationService {
         }
 
         // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
+        original = lock(preparationId);
 
         try {
             // set the target name
@@ -474,7 +472,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        preparationToDelete = lock(id);
         preparationRepository.remove(preparationToDelete);
 
         for (Step step : preparationToDelete.getSteps()) {
@@ -520,7 +518,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        previousPreparation = lock(id);
         LOGGER.debug("Updating preparation with id {}: {}", preparation.getId(), previousPreparation);
 
         Preparation updated = previousPreparation.merge(preparation);
@@ -709,13 +707,13 @@ public class PreparationService {
 
         LOGGER.debug("Adding actions to preparation #{}", id);
 
-        final Preparation preparation = getPreparation(id);
+        Preparation preparation = getPreparation(id);
         // no preparation found
         if (preparation == null) {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        preparation = lock(id);
 
         LOGGER.debug("Current head for preparation #{}: {}", id, preparation.getHeadId());
 
@@ -740,14 +738,14 @@ public class PreparationService {
         checkActionStepConsistency(newStep);
 
         LOGGER.debug("Modifying actions in preparation #{}", preparationId);
-        final Preparation preparation = getPreparation(preparationId);
+        Preparation preparation = getPreparation(preparationId);
 
         // no preparation found
         if (preparation == null) {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
+        preparation = lock(preparationId);
         LOGGER.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
 
         // Get steps from "step to modify" to the head
@@ -1037,8 +1035,8 @@ public class PreparationService {
      * @param preparationId the specified preparation identifier
      * @throws TDPException if the lock is hold by another user
      */
-    private void lock(String preparationId) {
-        lockedResourceRepository.tryLock(preparationId, security.getUserId(), security.getUserDisplayName());
+    private Preparation lock(String preparationId) {
+        return lockedResourceRepository.tryLock(preparationId, security.getUserId(), security.getUserDisplayName());
     }
 
     /**
@@ -1049,24 +1047,7 @@ public class PreparationService {
      * @throws TDPException if the lock is hold by another user
      */
     private void unlock(String preparationId) {
-        final String userId = security.getUserId();
-        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        // TODO: A hack to avoid sending error until TDP-2124 is fixed
-        if (preparation == null) {
-            LOGGER.debug("Preparation {} you are trying to lock does not exist.", preparationId);
-            return;
-        }
-        BasicUserLock userInfo = new BasicUserLock(userId, security.getUserDisplayName());
-        LockedResource lockedResource = lockedResourceRepository.tryUnlock(preparation, userInfo);
-        if (lockedResourceRepository.isLockReleased(preparation)) {
-            LOGGER.debug("Preparation {} unlocked by user {}.", preparationId, userId);
-        } else {
-            LOGGER.debug("Unable to unlock Preparation {} for user {}. Already locked by {}", preparationId, userId,
-                    lockedResource.getUserId());
-            // TODO: We must find a way to avoid printing stack trace when such a kind of non critical exceptions occurs
-            throw new TDPException(CommonErrorCodes.CONFLICT_TO_UNLOCK_RESOURCE,
-                    build().put("id", lockedResource.getUserDisplayName()));
-        }
+        lockedResourceRepository.unlock(preparationId, security.getUserId());
     }
 
     // ------------------------------------------------------------------------------------------------------------------

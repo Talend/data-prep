@@ -64,7 +64,7 @@ public class PersistentPreparation extends PersistentIdentifiable {
     private List<String> steps;
 
     /** The user locking the preparation. */
-    private BasicUserLock lockingUser;
+    private BasicUserLock lock;
 
     /**
      * Default empty constructor.
@@ -163,12 +163,12 @@ public class PersistentPreparation extends PersistentIdentifiable {
         this.appVersion = appVersion;
     }
 
-    public BasicUserLock getLockingUser() {
-        return lockingUser;
+    public BasicUserLock getLock() {
+        return lock;
     }
 
-    public void setLockingUser(BasicUserLock lockingUser) {
-        this.lockingUser = lockingUser;
+    public void setLock(BasicUserLock lock) {
+        this.lock = lock;
     }
 
     @Override

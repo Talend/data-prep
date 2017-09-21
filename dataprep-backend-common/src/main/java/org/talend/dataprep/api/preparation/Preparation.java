@@ -230,6 +230,7 @@ public class Preparation extends Identifiable implements Serializable {
         merge.creationDate = min(other.creationDate, creationDate);
         merge.lastModificationDate = max(other.lastModificationDate, lastModificationDate);
         merge.headId = other.headId != null ? other.headId : headId;
+        merge.lock = other.lock != null ? other.lock : lock;
         return merge;
     }
 

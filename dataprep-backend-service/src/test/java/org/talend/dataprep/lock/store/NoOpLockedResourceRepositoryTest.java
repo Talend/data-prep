@@ -11,11 +11,18 @@
 
 package org.talend.dataprep.lock.store;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,16 +36,35 @@ public class NoOpLockedResourceRepositoryTest {
 
     @Test
     public void tryLock() throws Exception {
+        // given
+        String preparationId = "preparation id";
+        Preparation preparationMock = mock(Preparation.class);
+        when(preparationRepository.get(preparationId, Preparation.class)).thenReturn(preparationMock);
 
-        // TODO
+        // when
+        Preparation preparation = noOpLockedResourceRepository.tryLock(preparationId, "Toto", "toto de Charleville-Mézières");
 
+        // then
+        assertEquals(preparationMock,preparation);
+        verify(preparationRepository).get(preparationId, Preparation.class);
     }
 
     @Test
-    public void unlock() throws Exception {
+    public void tryLock_nullPrepThenException() throws Exception {
+        // given
+        String preparationId = "preparation id";
+        when(preparationRepository.get(preparationId, Preparation.class)).thenReturn(null);
 
-        // TODO
+        // when
+        try{
+            noOpLockedResourceRepository.tryLock(preparationId, "toto", "Toto de Charleville-Mézières");
+            fail();
+        } catch (TDPException e) {
 
+            // then
+            assertEquals(e.getCode(), PREPARATION_DOES_NOT_EXIST);
+        }
+        verify(preparationRepository).get(preparationId, Preparation.class);
     }
 
 }

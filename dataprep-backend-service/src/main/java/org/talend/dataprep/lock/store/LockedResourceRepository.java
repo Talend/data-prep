@@ -16,6 +16,7 @@ package org.talend.dataprep.lock.store;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.exception.TDPException;
 
 /**
  * Base interface of user locked-resources repositories (mongodb, file-system).
@@ -30,26 +31,14 @@ import org.talend.dataprep.api.preparation.Preparation;
 public interface LockedResourceRepository {
 
     /**
-     * Tries to lock the specified resource for the specified user. If no other user has the lock, it is locked and
-     * added into this repository. If the resource could not be locked (because it is locked by another user), the
-     * locked resource is returned. This locked resource could be used to retrieve the user currently locking the
-     * resource.
+     * Tries to lock the preparation. If already locked, increments the lock.
      *
-     * @param preparationId
-     * @param userId
-     * @param displayName
-     * @return the locked resource which gives information about the user locking the resource
+     * @throws TDPException PREPARATION_DOES_NOT_EXIST if the preparation does not exists.
      */
     Preparation tryLock(String preparationId, String userId, String displayName);
 
     /**
-     * Tries to unlock the specified resource. If no other user has the lock or it is locked by the specified user, then
-     * it is unlocked and removed from the repository. Otherwise, (it is locked by another user) the locked resource
-     * object is returned
-     *
-     * @return either null if the resource has been unlocked or the locked resource which gives information about the
-     * user locking the resource otherwise
-     * @param preparationId
+     * Unlock the specified preparation. It can only throw an exception if the preparation is held by another user.
      */
     void unlock(String preparationId, String userId);
 

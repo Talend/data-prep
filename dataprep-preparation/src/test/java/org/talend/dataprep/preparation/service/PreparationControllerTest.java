@@ -761,7 +761,6 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        assertTrue(lockRepository.isLockReleased(expected));
     }
 
     @Test

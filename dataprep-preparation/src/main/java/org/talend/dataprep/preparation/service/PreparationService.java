@@ -167,7 +167,7 @@ public class PreparationService {
 
         LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
         // Lock the freshly created preparation
-        lock(id);
+        lockPreparation(id);
         return id;
     }
 
@@ -421,17 +421,8 @@ public class PreparationService {
 
         LOGGER.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);
 
-        // get the preparation to move
-        Preparation original = preparationRepository.get(preparationId, Preparation.class);
-
-        // no preparation found
-        if (original == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
-        }
-
-        // Ensure that the preparation is not locked elsewhere
-        original = lock(preparationId);
-
+        // get and lock the preparation to move
+        Preparation original = lockPreparation(preparationId);
         try {
             // set the target name
             final String targetName = StringUtils.isEmpty(newName) ? original.getName() : newName;
@@ -452,7 +443,7 @@ public class PreparationService {
             LOGGER.info("preparation {} moved from {} to {} with the new name {}", preparationId, folder, destination,
                     targetName);
         } finally {
-            unlock(preparationId);
+            unlockPreparation(preparationId);
         }
     }
 
@@ -465,14 +456,7 @@ public class PreparationService {
 
         LOGGER.debug("Deletion of preparation #{} requested.", id);
 
-        Preparation preparationToDelete = preparationRepository.get(id, Preparation.class);
-
-        // no preparation found
-        if (preparationToDelete == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
-        }
-        // Ensure that the preparation is not locked elsewhere
-        preparationToDelete = lock(id);
+        Preparation preparationToDelete = lockPreparation(id);
         preparationRepository.remove(preparationToDelete);
 
         for (Step step : preparationToDelete.getSteps()) {
@@ -518,7 +502,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        previousPreparation = lock(id);
+        previousPreparation = lockPreparation(id);
         LOGGER.debug("Updating preparation with id {}: {}", preparation.getId(), previousPreparation);
 
         Preparation updated = previousPreparation.merge(preparation);
@@ -702,24 +686,27 @@ public class PreparationService {
     /**
      * Append step(s) in a preparation.
      */
-    public void appendSteps(String id, final List<AppendStep> stepsToAppend) {
+    public void appendSteps(String preparationId, final List<AppendStep> stepsToAppend) {
         stepsToAppend.forEach(this::checkActionStepConsistency);
 
-        LOGGER.debug("Adding actions to preparation #{}", id);
+        LOGGER.debug("Adding actions to preparation #{}", preparationId);
 
-        Preparation preparation = getPreparation(id);
+        Preparation preparation = getPreparation(preparationId);
         // no preparation found
         if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
-        preparation = lock(id);
+        preparation = lockPreparation(preparationId);
+        try {
+            LOGGER.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
 
-        LOGGER.debug("Current head for preparation #{}: {}", id, preparation.getHeadId());
-
-        // rebuild history from head
-        replaceHistory(preparation, preparation.getHeadId(), stepsToAppend);
-        LOGGER.debug("Added head to preparation #{}: head is now {}", id, preparation.getHeadId());
+            // rebuild history from head
+            replaceHistory(preparation, preparation.getHeadId(), stepsToAppend);
+            LOGGER.debug("Added head to preparation #{}: head is now {}", preparationId, preparation.getHeadId());
+        } finally {
+            unlockPreparation(preparationId);
+        }
     }
 
     /**
@@ -738,41 +725,40 @@ public class PreparationService {
         checkActionStepConsistency(newStep);
 
         LOGGER.debug("Modifying actions in preparation #{}", preparationId);
-        Preparation preparation = getPreparation(preparationId);
 
-        // no preparation found
-        if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
+        Preparation preparation = lockPreparation(preparationId);
+
+        try {
+            LOGGER.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
+
+            // Get steps from "step to modify" to the head
+            final List<String> steps = extractSteps(preparation, stepToModifyId); // throws an exception if stepId is not in
+            // the preparation
+            LOGGER.debug("Rewriting history for {} steps.", steps.size());
+
+            // Extract created columns ids diff info
+            final Step stm = getStep(stepToModifyId);
+            final List<String> originalCreatedColumns = stm.getDiff().getCreatedColumns();
+            final List<String> updatedCreatedColumns = newStep.getDiff().getCreatedColumns();
+            final List<String> deletedColumns = originalCreatedColumns.stream() // columns that the step was creating but
+                    // not anymore
+                    .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
+            final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
+            final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
+                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
+
+            // Build list of actions from modified one to the head
+            final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
+                    maxCreatedColumnIdBeforeUpdate, columnsDiffNumber);
+            actionsSteps.add(0, newStep);
+
+            // Rebuild history from modified step
+            final Step stepToModify = getStep(stepToModifyId);
+            replaceHistory(preparation, stepToModify.getParent(), actionsSteps);
+            LOGGER.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
+        } finally {
+            unlockPreparation(preparationId);
         }
-        // Ensure that the preparation is not locked elsewhere
-        preparation = lock(preparationId);
-        LOGGER.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
-
-        // Get steps from "step to modify" to the head
-        final List<String> steps = extractSteps(preparation, stepToModifyId); // throws an exception if stepId is not in
-        // the preparation
-        LOGGER.debug("Rewriting history for {} steps.", steps.size());
-
-        // Extract created columns ids diff info
-        final Step stm = getStep(stepToModifyId);
-        final List<String> originalCreatedColumns = stm.getDiff().getCreatedColumns();
-        final List<String> updatedCreatedColumns = newStep.getDiff().getCreatedColumns();
-        final List<String> deletedColumns = originalCreatedColumns.stream() // columns that the step was creating but
-                // not anymore
-                .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
-        final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
-
-        // Build list of actions from modified one to the head
-        final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
-                maxCreatedColumnIdBeforeUpdate, columnsDiffNumber);
-        actionsSteps.add(0, newStep);
-
-        // Rebuild history from modified step
-        final Step stepToModify = getStep(stepToModifyId);
-        replaceHistory(preparation, stepToModify.getParent(), actionsSteps);
-        LOGGER.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
     }
 
     /**
@@ -798,33 +784,27 @@ public class PreparationService {
             throw new TDPException(PREPARATION_ROOT_STEP_CANNOT_BE_DELETED);
         }
 
-        // get steps from 'step to delete' to head
-        final Preparation preparation = getPreparation(id);
-        // no preparation found
-        if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
+        final Preparation preparation = lockPreparation(id);
+        try {
+            deleteAction(preparation, stepToDeleteId);
+        } finally {
+            unlockPreparation(id);
         }
-        // Ensure that the preparation is not locked elsewhere
-        lock(id);
-        deleteAction(preparation, stepToDeleteId);
 
     }
 
     public void setPreparationHead(final String preparationId, final String headId) {
-
         final Step head = getStep(headId);
         if (head == null) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparationId).put("stepId", headId));
         }
 
-        final Preparation preparation = getPreparation(preparationId);
-        // no preparation found
-        if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
+        final Preparation preparation = lockPreparation(preparationId);
+        try {
+            setPreparationHead(preparation, head);
+        } finally {
+            unlockPreparation(preparationId);
         }
-        // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
-        setPreparationHead(preparation, head);
     }
 
     /**
@@ -863,14 +843,6 @@ public class PreparationService {
         return errors;
     }
 
-    public void lockPreparation(final String preparationId) {
-        lock(preparationId);
-    }
-
-    public void unlockPreparation(final String preparationId) {
-        unlock(preparationId);
-    }
-
     public boolean isDatasetUsedInPreparation(final String datasetId) {
         final boolean preparationUseDataSet = isDatasetBaseOfPreparation(datasetId);
         final boolean dataSetUsedInLookup = isDatasetUsedToLookupInPreparationHead(datasetId);
@@ -898,16 +870,13 @@ public class PreparationService {
      * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     public void moveStep(final String preparationId, String stepId, String parentStepId) {
-        //@formatter:on
-
         LOGGER.debug("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
-
-        final Preparation preparation = getPreparation(preparationId);
-
-        // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
-
-        reorderSteps(preparation, stepId, parentStepId);
+        final Preparation preparation = lockPreparation(preparationId);
+        try {
+            reorderSteps(preparation, stepId, parentStepId);
+        } finally {
+            unlockPreparation(preparationId);
+        }
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -1035,7 +1004,7 @@ public class PreparationService {
      * @param preparationId the specified preparation identifier
      * @throws TDPException if the lock is hold by another user
      */
-    private Preparation lock(String preparationId) {
+    public Preparation lockPreparation(String preparationId) {
         return lockedResourceRepository.tryLock(preparationId, security.getUserId(), security.getUserDisplayName());
     }
 
@@ -1046,7 +1015,7 @@ public class PreparationService {
      * @param preparationId the specified preparation identifier
      * @throws TDPException if the lock is hold by another user
      */
-    private void unlock(String preparationId) {
+    public void unlockPreparation(String preparationId) {
         lockedResourceRepository.unlock(preparationId, security.getUserId());
     }
 

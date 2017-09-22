@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -73,6 +73,7 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
 
                 WindowActions.EXTERNAL_DOCUMENTATION,
                 externalHelpActionsProvider.getExternalHelpAction(),
+                externalHelpActionsProvider.getExternalCommunityAction(),
                 WindowActions.MODAL_ABOUT,
                 WindowActions.MODAL_FEEDBACK,
                 WindowActions.ONBOARDING_PREPARATION,

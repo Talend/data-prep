@@ -1,5 +1,6 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -253,14 +254,14 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(headerHelp.getIcon(), is("talend-question-circle"));
         assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
         assertThat(headerHelp.getAction(), is("external:help"));
-        assertThat(headerHelp.getItems(), contains("external:help", "onboarding:preparation", "modal:about", "modal:feedback"));
+        assertThat(headerHelp.getItems(), contains("external:help", "external:community", "onboarding:preparation", "modal:about", "modal:feedback"));
 
         final ActionSplitDropdownSettings playgroundHeaderHelp = (ActionSplitDropdownSettings) settings.getActions().get("playground:headerbar:help");
         assertThat(playgroundHeaderHelp.getName(), is("Help"));
         assertThat(playgroundHeaderHelp.getIcon(), is("talend-question-circle"));
         assertThat(playgroundHeaderHelp.getType(), is("@@headerbar/HELP"));
         assertThat(playgroundHeaderHelp.getAction(), is("external:help"));
-        assertThat(playgroundHeaderHelp.getItems(), contains("external:help", "onboarding:playground", "modal:about", "modal:feedback"));
+        assertThat(playgroundHeaderHelp.getItems(), contains("external:help", "external:community", "onboarding:playground", "modal:about", "modal:feedback"));
     }
 
     @Test

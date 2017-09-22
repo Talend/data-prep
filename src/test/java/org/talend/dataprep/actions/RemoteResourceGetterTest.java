@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.actions;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -21,9 +22,9 @@ import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
-import org.apache.tika.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -198,7 +199,7 @@ public class RemoteResourceGetterTest {
 
         // then
         assertNotNull(actual);
-        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("preparation.json")), actual);
+        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("preparation.json"), UTF_8), actual);
     }
 
     @Test
@@ -217,6 +218,6 @@ public class RemoteResourceGetterTest {
 
         // then
         assertNotNull(actual);
-        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("preparation.json")), actual);
+        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("preparation.json"), UTF_8), actual);
     }
 }

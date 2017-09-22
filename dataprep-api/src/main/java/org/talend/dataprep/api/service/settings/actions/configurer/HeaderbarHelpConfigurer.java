@@ -40,7 +40,12 @@ public class HeaderbarHelpConfigurer extends AppSettingsConfigurer<ActionSetting
     @Override
     public ActionSettings configure(final ActionSettings actionSettings) {
         return ActionSplitDropdownSettings.from((ActionSplitDropdownSettings) actionSettings) //
-                .items(Arrays.asList(externalHelpActionsProvider.getExternalHelpAction().getId(), ONBOARDING_PREPARATION.getId(), MODAL_ABOUT.getId(), MODAL_FEEDBACK.getId())) //
+                .items(Arrays.asList( //
+                        externalHelpActionsProvider.getExternalHelpAction().getId(), //
+                        externalHelpActionsProvider.getExternalCommunityAction().getId(), //
+                        ONBOARDING_PREPARATION.getId(), //
+                        MODAL_ABOUT.getId(), //
+                        MODAL_FEEDBACK.getId())) //
                 .build();
     }
 }

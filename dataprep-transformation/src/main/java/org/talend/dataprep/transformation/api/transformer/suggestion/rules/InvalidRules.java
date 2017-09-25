@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.actions.clear.ClearInvalid;
+import org.talend.dataprep.transformation.actions.dataquality.StandardizeInvalid;
 import org.talend.dataprep.transformation.actions.delete.DeleteInvalid;
 import org.talend.dataprep.transformation.actions.fill.FillInvalid;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
@@ -75,6 +76,21 @@ public class InvalidRules extends BasicRules {
     @Bean
     public SuggestionEngineRule clearInvalidRule() {
         return forActions(ClearInvalid.ACTION_NAME) //
+                .then(columnMetadata -> {
+                    if (getInvalidCount(columnMetadata) > invalidThreshold) {
+                        return INVALID_MGT;
+                    }
+                    return NEGATIVE;
+                }) //
+                .build();
+    }
+
+    /**
+     * @return A {@link SuggestionEngineRule rule} that hides "standardize invalid" if no invalid.
+     */
+    @Bean
+    public SuggestionEngineRule standardizeInvalidRule() {
+        return forActions(StandardizeInvalid.ACTION_NAME) //
                 .then(columnMetadata -> {
                     if (getInvalidCount(columnMetadata) > invalidThreshold) {
                         return INVALID_MGT;

@@ -56,21 +56,18 @@ public class RowMetadataUtils {
     public static Schema toSchema(String name, List<ColumnMetadata> columns) {
 
         final Map<String, Integer> uniqueSuffixes = new HashMap<>();
-        final List<ColumnMetadata> uniqueColumns = columns.stream() //
+        final List<Schema.Field> fields = columns.stream() //
                 .peek(columnMetadata -> {
-                    if (uniqueSuffixes.containsKey(columnMetadata.getName())) {
+                    final Integer suffix = uniqueSuffixes.get(columnMetadata.getName());
+                    if (suffix != null) {
                         // Modify column name
-                        final int suffix = uniqueSuffixes.get(columnMetadata.getName());
                         uniqueSuffixes.put(columnMetadata.getName(), suffix + 1);
                         columnMetadata.setName(columnMetadata.getName() + '_' + suffix);
                     } else {
                         // Don't modify column name
                         uniqueSuffixes.put(columnMetadata.getName(), 1);
                     }
-                })
-                .collect(Collectors.toList());
-
-        final List<Schema.Field> fields = uniqueColumns.stream() //
+                }) //
                 .map(RowMetadataUtils::toField) //
                 .collect(Collectors.toList());
 

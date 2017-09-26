@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -15,7 +14,9 @@ package org.talend.dataprep.api.dataset.row;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
@@ -29,22 +30,15 @@ import org.talend.dataprep.api.type.Type;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-// FHU TODO Add test for schema conversion
 public class RowMetadataUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RowMetadataUtils.class);
 
-    public static final String DATAPREP_FIELD_PREFIX = "DP_";
+    private static final String DATAPREP_FIELD_PREFIX = "DP_";
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private RowMetadataUtils() {
-    }
-
-    public static ColumnMetadata toColumnMetadata(Schema.Field field) {
-        return new ColumnMetadataWrapper(field);
-    }
-
-    public static RowMetadata toRowMetadata(Schema schema) {
-        return new RowMetadataWrapper(schema);
     }
 
     public static Schema toSchema(RowMetadata rowMetadata) {
@@ -61,7 +55,22 @@ public class RowMetadataUtils {
 
     public static Schema toSchema(String name, List<ColumnMetadata> columns) {
 
-        List<Schema.Field> fields = columns.stream() //
+        final Map<String, Integer> uniqueSuffixes = new HashMap<>();
+        final List<ColumnMetadata> uniqueColumns = columns.stream() //
+                .peek(columnMetadata -> {
+                    if (uniqueSuffixes.containsKey(columnMetadata.getName())) {
+                        // Modify column name
+                        final int suffix = uniqueSuffixes.get(columnMetadata.getName());
+                        uniqueSuffixes.put(columnMetadata.getName(), suffix + 1);
+                        columnMetadata.setName(columnMetadata.getName() + '_' + suffix);
+                    } else {
+                        // Don't modify column name
+                        uniqueSuffixes.put(columnMetadata.getName(), 1);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        final List<Schema.Field> fields = uniqueColumns.stream() //
                 .map(RowMetadataUtils::toField) //
                 .collect(Collectors.toList());
 
@@ -70,7 +79,7 @@ public class RowMetadataUtils {
                 "a dataprep preparation", //
                 "org.talend.dataprep", //
                 false //
-                );
+        );
 
         schema.setFields(fields);
         return schema;
@@ -81,10 +90,10 @@ public class RowMetadataUtils {
         final Schema.Field field = new Schema.Field(name, Schema.create(Schema.Type.STRING), StringUtils.EMPTY, null);
         try {
             final StringWriter writer = new StringWriter();
-            new ObjectMapper().writerWithType(ColumnMetadata.class).writeValue(writer, column);
+            mapper.writerWithType(ColumnMetadata.class).writeValue(writer, column);
             field.addProp("_dp_column", writer.toString());
         } catch (IOException e) {
-            LOGGER.error("Unable to convert to field.", e);
+            LOGGER.error("Unable to add column metadata to field '{}'.", name, e);
         }
         return field;
     }
@@ -97,8 +106,11 @@ public class RowMetadataUtils {
             if (i == 0) {
                 if (!Character.isLetter(currentChar)) {
                     columnName.append(DATAPREP_FIELD_PREFIX);
+                } else if (!Character.isJavaIdentifierPart(currentChar)) {
+                    columnName.append('_');
+                } else {
+                    columnName.append(currentChar);
                 }
-                columnName.append(currentChar);
             }
             if (i > 0) {
                 if (!Character.isJavaIdentifierPart(currentChar)) {
@@ -130,18 +142,4 @@ public class RowMetadataUtils {
         return null;
     }
 
-    /**
-     * Return the count of the most used pattern.
-     *
-     * @param column the column to work on.
-     * @return the count of the most used pattern.
-     */
-    public static long getMostUsedPatternCount(ColumnMetadata column) {
-        final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
-        if (patternFrequencies.isEmpty()) {
-            return 1;
-        }
-        patternFrequencies.sort((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()));
-        return patternFrequencies.get(0).getOccurrences();
-    }
 }

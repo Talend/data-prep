@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
@@ -32,8 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.api.action.ActionDefinition;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class StandalonePreparationFactoryTest {
@@ -43,8 +40,6 @@ public class StandalonePreparationFactoryTest {
     private StandalonePreparationFactory factory = new StandalonePreparationFactory();
 
     private static DictionaryResource dictionaryResource = new DictionaryResource(new TdqCategories(null, null, null, null));
-
-    private ObjectMapper mapper = new ObjectMapper();
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidJSON() throws Exception {
@@ -554,7 +549,7 @@ public class StandalonePreparationFactoryTest {
         assertTrue(String.valueOf(result.get(0)).contains("@"));
     }
 
-    @Test(expected = AvroRuntimeException.class)
+    @Test
     public void testDuplicateColumnName() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "My String" });
@@ -566,7 +561,10 @@ public class StandalonePreparationFactoryTest {
 
         // Then
         assertSerializable(function);
-        function.apply(record); // Preparation tries to create a new column with a name that previously existed.
+        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that previously existed, but ok.
+        assertEquals(2, apply.getSchema().getFields().size());
+        assertNotNull(apply.getSchema().getField("a1"));
+        assertNotNull(apply.getSchema().getField("a1_1"));
     }
 
     @Test

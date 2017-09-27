@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.http.Header;
@@ -608,7 +607,7 @@ public class DefaultActionParserTest {
         assertTrue(String.valueOf(result.get(0)).contains("@"));
     }
 
-    @Test(expected = AvroRuntimeException.class)
+    @Test
     public void testDuplicateColumnName() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] {"My String"});
@@ -622,7 +621,10 @@ public class DefaultActionParserTest {
 
         // Then
         assertSerializable(function);
-        function.apply(record); // Preparation tries to create a new column with a name that previously existed.
+        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that previously existed, but ok.
+        assertEquals(2, apply.getSchema().getFields().size());
+        assertNotNull(apply.getSchema().getField("a1"));
+        assertNotNull(apply.getSchema().getField("a1_1"));
     }
 
     @Test

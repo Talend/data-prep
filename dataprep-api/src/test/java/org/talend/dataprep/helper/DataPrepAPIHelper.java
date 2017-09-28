@@ -1,13 +1,15 @@
 package org.talend.dataprep.helper;
 
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_ACTIONS;
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_BACKEND_EXPORT;
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_DATASETS;
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_DETAILS;
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_PREPARATIONS;
 
-import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.objects.Action;
@@ -95,8 +97,7 @@ public class DataPrepAPIHelper {
         Response response =
                 given().header(new Header("Content-Type", "text/plain"))
                         .baseUri(uploadApiBaseUrl)
-                        // FIXME : this way of sending datasets through Strings could be an issue due to the limited JVM available memory
-                        .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                        .body(this.getClass().getResourceAsStream(filename))
                         .when()
                         .queryParam("name", datasetName)
                         .post(API_DATASETS);

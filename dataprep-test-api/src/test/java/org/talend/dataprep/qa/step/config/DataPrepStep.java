@@ -19,7 +19,7 @@ public abstract class DataPrepStep {
     protected FeatureContext context;
 
     @Autowired
-    protected DataPrepAPIHelper dpah;
+    protected DataPrepAPIHelper api;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 }

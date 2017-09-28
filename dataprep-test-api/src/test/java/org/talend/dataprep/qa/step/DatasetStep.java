@@ -1,38 +1,28 @@
 package org.talend.dataprep.qa.step;
 
-import cucumber.api.java8.En;
-import org.junit.Assert;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
 
+import cucumber.api.java.en.Given;
+
 /**
- * Step dealing with dataset
+ * Step dealing with dataset.
  */
-public class DatasetStep extends DataPrepStep implements En{
+public class DatasetStep extends DataPrepStep {
 
-    /**
-     * This class' logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(DatasetStep.class);
+    /** This class' logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetStep.class);
 
-    /**
-     * Default constructor
-     */
-    public DatasetStep() {
-
-        Given("^I upload the dataset \"(.*)\" with name \"(.*)\"$", (String fileName, String name) -> {
-            LOG.debug("I upload the dataset {} with name {}.", fileName, name);
-            try {
-                String datasetId = dpah.uploadDataset(fileName, name)
-                        .then().statusCode(200)
-                        .extract().body().asString();
-                context.storeDatasetRef(datasetId, name);
-            } catch (java.io.IOException ioException) {
-                LOG.error("Fail to upload file {}.", fileName, ioException);
-                Assert.fail();
-            }
-        });
-
+    @Given("^I upload the dataset \"(.*)\" with name \"(.*)\"$")
+    public void givenIUploadTheDataSet(String fileName, String name) throws IOException {
+        LOGGER.debug("I upload the dataset {} with name {}.", fileName, name);
+        String datasetId = api.uploadDataset(fileName, name) //
+                .then().statusCode(200) //
+                .extract().body().asString();
+        context.storeDatasetRef(datasetId, name);
     }
+
 }

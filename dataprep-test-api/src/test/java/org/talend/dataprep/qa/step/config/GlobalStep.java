@@ -28,14 +28,14 @@ public class GlobalStep extends DataPrepStep implements En {
 
             // cleaning preparation
             context.getPreparationIds().forEach(preparationId -> {
-                dpah.deletePreparation(preparationId).then().statusCode(200);
+                api.deletePreparation(preparationId).then().statusCode(200);
                 LOG.debug("Suppression of preparation {}.", preparationId);
             });
             context.clearPreparation();
 
             // cleaning dataset
             context.getDatasetIds().forEach(datasetId -> {
-                dpah.deleteDataSet(datasetId).then().statusCode(200);
+                api.deleteDataSet(datasetId).then().statusCode(200);
                 LOG.debug("Suppression of dataset {}.", datasetId);
             });
             context.clearDataset();

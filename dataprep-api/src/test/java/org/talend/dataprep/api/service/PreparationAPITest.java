@@ -143,13 +143,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
         String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
 
         // when : short format
-        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/").jsonPath();
+        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/").jsonPath();
 
         // then
         assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
 
         // when
-        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto").jsonPath();
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
 
         // then
         assertThat(shouldBeEmpty.<String>getList(""), is(empty()));

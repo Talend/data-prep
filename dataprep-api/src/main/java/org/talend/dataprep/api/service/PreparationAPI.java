@@ -79,14 +79,14 @@ public class PreparationAPI extends APIService {
             @ApiParam(name = "format", value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.")
             @RequestParam(value = "format", defaultValue = "summary") Format format,
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
-            @ApiParam(name = "path", value = "Filter preparations by path.") @RequestParam(required = false) String path,
+            @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
             @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
         }
 
-        GenericCommand<InputStream> command = getCommand(PreparationList.class, format, name, path, sort, order);
+        GenericCommand<InputStream> command = getCommand(PreparationList.class, format, name, folderPath, sort, order);
         return CommandHelper.toStreaming(command);
     }
 

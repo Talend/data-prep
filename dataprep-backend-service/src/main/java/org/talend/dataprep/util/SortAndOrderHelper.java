@@ -12,8 +12,19 @@
 
 package org.talend.dataprep.util;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorSupport;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -25,91 +36,13 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.service.UserPreparation;
 
-import javax.annotation.Nullable;
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorSupport;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
 
 /**
  * Utility class used to sort and order DataSets or Preparations.
  */
 public final class SortAndOrderHelper {
-
-    private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
-
-    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
-            .converterTo(CaseFormat.UPPER_UNDERSCORE);
-
-    private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
-            .converterTo(CaseFormat.LOWER_CAMEL);
-
-    private SortAndOrderHelper() {
-    }
-
-    private static class SortPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Sort value;
-            try {
-                value = Sort.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.debug("Could not read Sort parameter as snake case.", e);
-                try {
-                    value = Sort.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.debug("Could not read Sort parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
-    private static class OrderPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Order value;
-            try {
-                value = Order.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.debug("Could not read Order parameter as camel case.", e);
-                try {
-                    value = Order.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.debug("Could not read Order parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
-    /**
-     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Order} in
-     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
-     */
-    public static PropertyEditor getOrderPropertyEditor() {
-        return new OrderPropertyEditor();
-    }
-
-    /**
-     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Sort} in
-     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
-     */
-    public static PropertyEditor getSortPropertyEditor() {
-        return new SortPropertyEditor();
-    }
 
     /** Order to apply to a sort. */
     public enum Order {
@@ -156,6 +89,116 @@ public final class SortAndOrderHelper {
         public String camelName() {
             return snakeToCamelCaseConverter.convert(name());
         }
+    }
+
+    /**
+     * Representation style of entities. Create for Preparations formats available.
+     */
+    public enum Format {
+        /** Smallest size only IDs. */
+        SHORT,
+        /** Small summary. */
+        SUMMARY,
+        /** Complete detailed format. */
+        LONG
+    }
+
+    private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
+
+    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
+            .converterTo(CaseFormat.UPPER_UNDERSCORE);
+
+    private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
+            .converterTo(CaseFormat.LOWER_CAMEL);
+
+    private SortAndOrderHelper() {
+    }
+
+    private static class SortPropertyEditor extends PropertyEditorSupport {
+
+        @Override
+        public void setAsText(String text) {
+            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
+            Sort value;
+            try {
+                value = Sort.valueOf(fromCamelCase);
+            } catch (IllegalArgumentException e) {
+                LOGGER.trace("Could not read Sort parameter as camel case.", e);
+                try {
+                    value = Sort.valueOf(text.toUpperCase());
+                } catch (IllegalArgumentException e2) {
+                    LOGGER.trace("Could not read Sort parameter as snake case.", e2);
+                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
+                }
+            }
+            setValue(value);
+        }
+    }
+
+    private static class OrderPropertyEditor extends PropertyEditorSupport {
+
+        @Override
+        public void setAsText(String text) {
+            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
+            Order value;
+            try {
+                value = Order.valueOf(fromCamelCase);
+            } catch (IllegalArgumentException e) {
+                LOGGER.trace("Could not read Order parameter as camel case.", e);
+                try {
+                    value = Order.valueOf(text.toUpperCase());
+                } catch (IllegalArgumentException e2) {
+                    LOGGER.trace("Could not read Order parameter as snake case.", e2);
+                    throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, e2);
+                }
+            }
+            setValue(value);
+        }
+    }
+
+    private static class FormatPropertyEditor extends PropertyEditorSupport {
+
+        @Override
+        public void setAsText(String text) {
+            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
+            Enum value;
+            try {
+                value = Format.valueOf(fromCamelCase);
+            } catch (IllegalArgumentException e) {
+                LOGGER.trace("Could not read Sort parameter as camel case.", e);
+                try {
+                    value = Format.valueOf(text.toUpperCase());
+                } catch (IllegalArgumentException e2) {
+                    LOGGER.trace("Could not read Sort parameter as snake case.", e2);
+                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
+                }
+            }
+            setValue(value);
+        }
+    }
+
+    /**
+     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Order} in
+     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
+     */
+    public static PropertyEditor getOrderPropertyEditor() {
+        return new OrderPropertyEditor();
+    }
+
+    /**
+     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Sort} in
+     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
+     */
+    public static PropertyEditor getSortPropertyEditor() {
+        return new SortPropertyEditor();
+    }
+
+    /**
+     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Format} in
+     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
+     */
+    public static PropertyEditor getFormatPropertyEditor() {
+        return new FormatPropertyEditor();
     }
 
     /**

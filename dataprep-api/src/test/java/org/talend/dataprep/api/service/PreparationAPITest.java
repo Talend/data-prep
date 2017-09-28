@@ -12,21 +12,13 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
@@ -43,13 +35,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -137,7 +123,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void testPreparationsList_withFilter() throws Exception {
+    public void testPreparationsList_withFilterOnName() throws Exception {
         // given
         String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
         String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
@@ -148,6 +134,25 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         final List<String> values = shortFormat.getList("");
         assertThat(values.get(0), is(preparationId));
+    }
+
+    @Test
+    public void testPreparationsList_withFilterOnPath() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
+
+        // when : short format
+        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/").jsonPath();
+
+        // then
+        assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
+
+        // when
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto").jsonPath();
+
+        // then
+        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
     }
 
     @Test

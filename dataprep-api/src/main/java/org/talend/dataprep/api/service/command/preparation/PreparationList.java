@@ -29,40 +29,40 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 
 @Component
 @Scope("request")
 public class PreparationList extends GenericCommand<InputStream> {
 
-    private PreparationList(Format format, String name, Sort sort, Order order) {
+    private PreparationList(SortAndOrderHelper.Format format, String name, String path, Sort sort, Order order) {
         super(GenericCommand.PREPARATION_GROUP);
-        execute(() -> onExecute(name, sort, order, format));
+        execute(() -> onExecute(format, name, path, sort, order));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_LIST, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private PreparationList(Format format, Sort sort, Order order) {
-        this(format, null, sort, order);
+    private PreparationList(SortAndOrderHelper.Format format, Sort sort, Order order) {
+        this(format, null, null, sort, order);
     }
 
-    private PreparationList(Format format) {
-        this(format, null, Sort.NAME, Order.ASC);
-    }
-
-    private HttpRequestBase onExecute(String name, Sort sort, Order order, Format format) {
+    private HttpRequestBase onExecute(SortAndOrderHelper.Format format, String name, String path, Sort sort, Order order) {
         try {
             URIBuilder uriBuilder;
-            if (Format.SHORT.equals(format)) {
+            if (SortAndOrderHelper.Format.SHORT.equals(format)) {
                 uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations"); //$NON-NLS-1$
-            } else if (Format.SUMMARY.equals(format)) {
+            } else if (SortAndOrderHelper.Format.SUMMARY.equals(format)) {
                 uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/summaries"); //$NON-NLS-1$
             } else {
                 uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/details"); //$NON-NLS-1$
             }
             if (name != null) {
                 uriBuilder.addParameter("name", name);
+            }
+            if (path != null) {
+                uriBuilder.addParameter("path", path);
             }
             uriBuilder.addParameter("sort", sort.camelName());
             uriBuilder.addParameter("order", order.camelName());
@@ -72,9 +72,4 @@ public class PreparationList extends GenericCommand<InputStream> {
         }
     }
 
-    public enum Format {
-        SHORT,
-        SUMMARY,
-        LONG
-    }
 }

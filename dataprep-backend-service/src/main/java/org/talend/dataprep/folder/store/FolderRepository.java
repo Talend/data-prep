@@ -12,8 +12,11 @@
 
 package org.talend.dataprep.folder.store;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.folder.Folder;
@@ -203,4 +206,16 @@ public interface FolderRepository {
 
         return hierarchy;
     }
+
+    /**
+     * Builds a Map with preparations IDs as key and their folder path as values.
+     */
+    default Map<String, String> getPreparationsFolderPaths() {
+        return searchFolders("", false) //
+                .flatMap( //
+                        f -> entries(f.getId(), FolderContentType.PREPARATION).map(e -> new SimpleEntry<>(f.getPath(), e.getContentId())) //
+                ) //
+                .collect(Collectors.toMap(SimpleEntry::getValue, SimpleEntry::getKey));
+    }
+
 }

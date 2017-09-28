@@ -14,8 +14,6 @@ package org.talend.dataprep.preparation.service;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -170,44 +168,31 @@ public class PreparationService {
     }
 
     /**
-     * List all the preparations id.
-     *
-     * @param name if not null, only list ids of preparation having this name.
-     * @param sort how the preparation should be sorted (default is 'last modification date').
-     * @param order how to apply the sort.
-     * @return the preparations id list.
-     */
-    public Stream<String> list(String name, Sort sort, Order order) {
-        LOGGER.debug("Get list of preparations (summary).");
-        Stream<Preparation> preparationStream;
-        if (name == null) {
-            preparationStream = preparationRepository.list(Preparation.class);
-        } else {
-            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
-        }
-        return preparationStream //
-                .map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
-                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId()))) //
-                .map(Preparation::id);
-    }
-
-    /**
      * List all preparation details.
      *
+     * @param path filter on the preparation path.
      * @param sort how to sort the preparations.
      * @param order how to order the sort.
      * @return the preparation details.
      */
-    public Stream<UserPreparation> listAll(String name, Sort sort, Order order) {
+    public Stream<UserPreparation> listAll(String name, String path, Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (with details).");
         Stream<Preparation> preparationStream;
+
+        // filter on name
         if (name == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
             preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
         }
-        return preparationStream //
-                .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
+
+        // filter on path
+        if (path != null) {
+            Map<String, String> preparationsFolderPaths = folderRepository.getPreparationsFolderPaths();
+            preparationStream = preparationStream.filter(p -> preparationsFolderPaths.get(p.getId()).equals(path));
+        }
+
+        return preparationStream.map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
                 .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
     }
 
@@ -216,17 +201,8 @@ public class PreparationService {
      *
      * @return the preparation summaries, sorted by descending last modification date.
      */
-    public Stream<PreparationSummary> listSummary(String name) {
-        LOGGER.debug("Get list of preparations (summary).");
-        Stream<Preparation> preparationStream;
-        if (name == null) {
-            preparationStream = preparationRepository.list(Preparation.class);
-        } else {
-            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
-        }
-        return preparationStream //
-                .map(p -> beanConversionService.convert(p, PreparationSummary.class)) //
-                .sorted(comparing(PreparationSummary::getLastModificationDate, reverseOrder()));
+    public Stream<PreparationSummary> listSummary(String name, String path, Sort sort, Order order) {
+        return listAll(name, path, sort, order).map(p -> beanConversionService.convert(p, PreparationSummary.class));
     }
 
     /**

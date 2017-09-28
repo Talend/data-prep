@@ -77,8 +77,10 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
                 parameters.getPreparationId(), //
                 getCleanStepId(preparation, parameters.getStepId()), //
                 parameters.getExportType(), //
-                parameters.getFrom(),
-                parameters.getArguments());
+                parameters.getFrom(), //
+                parameters.getArguments(), //
+                parameters.getFilter() //
+        );
     }
 
 }

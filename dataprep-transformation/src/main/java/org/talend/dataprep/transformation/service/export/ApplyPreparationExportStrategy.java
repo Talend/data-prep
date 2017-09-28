@@ -84,7 +84,8 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         boolean technicianIdentityReleased = false;
         securityProxy.asTechnicalUser();
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
-        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, true, true);
+        final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
+        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, fullContent, true);
 
         try (final InputStream datasetContent = dataSetGet.execute();
                 final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
@@ -102,8 +103,15 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             final String actions = getActions(preparationId, version);
 
             // create tee to broadcast to cache + service output
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(dataSetId, preparationId, version, formatName,
-                    parameters.getFrom(), parameters.getArguments());
+            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                    dataSetId, //
+                    preparationId, //
+                    version, //
+                    formatName, //
+                    parameters.getFrom(), //
+                    parameters.getArguments(), //
+                    parameters.getFilter() //
+            );
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
             try (final TeeOutputStream tee = new TeeOutputStream(outputStream,

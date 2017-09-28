@@ -146,12 +146,13 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
                 content.flush();
             }
 
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                    datasetId,
-                    preparation,
-                    step.id(),
-                    format,
-                    HEAD
+            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                    datasetId, //
+                    preparation, //
+                    step.id(), //
+                    format, //
+                    HEAD, //
+                    "" //
             );
             try (OutputStream content = contentCache.put(key, ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
@@ -185,12 +186,13 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
                 content.flush();
             }
 
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                    datasetId,
-                    preparation,
-                    step.id(),
-                    format,
-                    HEAD
+            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                    datasetId, //
+                    preparation, //
+                    step.id(), //
+                    format, //
+                    HEAD, //
+                    "" // no filter
             );
             try (OutputStream content = contentCache.put(key, ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{\"records\": [{\"0000\": \"a\"}]}".getBytes());

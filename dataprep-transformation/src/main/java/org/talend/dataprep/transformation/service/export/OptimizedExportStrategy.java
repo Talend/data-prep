@@ -110,13 +110,14 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             LOGGER.debug("Running optimized strategy for preparation {} @ step #{}", preparationId, version);
 
             // create tee to broadcast to cache + service output
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                    dataSetId,
-                    preparationId,
-                    version,
-                    parameters.getExportType(),
-                    parameters.getFrom(),
-                    parameters.getArguments()
+            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                    dataSetId, //
+                    preparationId, //
+                    version, //
+                    parameters.getExportType(), //
+                    parameters.getFrom(), //
+                    parameters.getArguments(), //
+                    parameters.getFilter() //
             );
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
@@ -199,6 +200,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
 
         private String previousVersion;
 
+        private String filter;
+
         private OptimizedPreparationInput(ExportParameters parameters) {
             this.stepId = parameters.getStepId();
             this.preparationId = parameters.getPreparationId();
@@ -214,6 +217,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                 this.dataSetId = parameters.getDatasetId();
             }
             this.formatName = parameters.getExportType();
+            this.filter = parameters.getFilter();
         }
 
         private String getDataSetId() {
@@ -226,6 +230,10 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
 
         private DataSetMetadata getMetadata() {
             return metadata;
+        }
+
+        private String getFilter() {
+            return filter;
         }
 
         private TransformationCacheKey getTransformationCacheKey() {
@@ -273,12 +281,13 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             try (InputStream input = contentCache.get(transformationMetadataCacheKey)) {
                 metadata = mapper.readerFor(DataSetMetadata.class).readValue(input);
             }
-            transformationCacheKey = cacheKeyGenerator.generateContentKey(
-                    dataSetId,
-                    preparationId,
-                    previousVersion,
-                    formatName,
-                    sourceType
+            transformationCacheKey = cacheKeyGenerator.generateContentKey( //
+                    dataSetId, //
+                    preparationId, //
+                    previousVersion, //
+                    formatName, //
+                    sourceType, //
+                    filter //
             );
             LOGGER.debug("Previous content cache key: " + transformationCacheKey.getKey());
             LOGGER.debug("Previous content cache key details: " + transformationCacheKey.toString());

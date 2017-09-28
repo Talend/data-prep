@@ -14,6 +14,7 @@ package org.talend.dataprep.transformation.service.export;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,8 +53,7 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         preparation.setHeadId("0");
         preparationRepository.add(preparation);
 
-        final TransformationCacheKey cacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text",
-                ExportParameters.SourceType.HEAD);
+        final TransformationCacheKey cacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
         try (OutputStream text = cache.put(cacheKey, ContentCache.TimeToLive.DEFAULT)) {
             text.write("{}".getBytes());
         } catch (IOException e) {
@@ -70,7 +70,7 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         parameters.setPreparationId("1234");
         parameters.setStepId("0");
         parameters.setExportType("text");
-        parameters.setFrom(ExportParameters.SourceType.HEAD);
+        parameters.setFrom(HEAD);
 
         // Then
         assertTrue(cachedExportStrategy.accept(parameters));
@@ -84,7 +84,7 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         parameters.setPreparationId("2345"); // Preparation differs from key.
         parameters.setStepId("0");
         parameters.setExportType("text");
-        parameters.setFrom(ExportParameters.SourceType.HEAD);
+        parameters.setFrom(HEAD);
 
         // Then
         assertFalse(cachedExportStrategy.accept(parameters));

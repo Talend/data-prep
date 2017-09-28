@@ -15,7 +15,11 @@ package org.talend.dataprep.api.service;
 import static com.jayway.restassured.RestAssured.given;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -404,7 +408,9 @@ public class TransformAPITest extends ApiServiceTestBase {
                 preparationId, //
                 preparation.getHeadId(), //
                 "JSON", //
-                HEAD);
+                HEAD, //
+                "" // no filter
+        );
         assertTrue(contentCache.has(transformationCacheKey));
 
         // when

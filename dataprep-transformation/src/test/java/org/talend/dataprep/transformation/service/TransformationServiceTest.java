@@ -17,7 +17,10 @@ import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
@@ -45,10 +48,10 @@ import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
-import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 /**
  * Integration tests on actions.
@@ -191,12 +194,13 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         final Preparation preparation = getPreparation(prepId);
         final String headId = preparation.getHeadId();
 
-        final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                dsId,
-                preparation.getId(),
-                headId,
-                JSON,
-                HEAD
+        final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                dsId, //
+                preparation.getId(), //
+                headId, //
+                JSON, //
+                HEAD, //
+                "" // no filter
         );
         assertFalse(contentCache.has(key));
 
@@ -299,12 +303,13 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // System.out.println("\n\n\net voila le résultat de la transformation : " + result + "\n\n\n");
 
         // (make sure the result was not cached)
-        final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                dataSetId,
-                preparationId,
-                preparationRepository.get(preparationId, Preparation.class).getHeadId(),
-                JSON,
-                HEAD
+        final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                dataSetId, //
+                preparationId, //
+                preparationRepository.get(preparationId, Preparation.class).getHeadId(), //
+                JSON, //
+                HEAD, //
+                "" // no filter
         );
 
         // Thread.sleep(500L);

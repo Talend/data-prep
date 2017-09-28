@@ -105,13 +105,14 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 // get the actions to apply (no preparation ==> dataset export ==> no actions)
                 final String actions = getActions(preparationId, version);
 
-                final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
-                        dataSetId,
-                        preparationId,
-                        version,
-                        formatName,
-                        parameters.getFrom(),
-                        parameters.getArguments()
+                final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
+                        dataSetId, //
+                        preparationId, //
+                        version, //
+                        formatName, //
+                        parameters.getFrom(), //
+                        parameters.getArguments(), //
+                        parameters.getFilter() //
                 );
                 LOGGER.debug("Cache key: " + key.getKey());
                 LOGGER.debug("Cache key details: " + key.toString());

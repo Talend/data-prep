@@ -39,6 +39,7 @@ public class PreparationCacheListener {
                 null, //
                 null, //
                 null, //
+                null, //
                 null);
         contentCache.evictMatch(transformationCacheKey);
     }

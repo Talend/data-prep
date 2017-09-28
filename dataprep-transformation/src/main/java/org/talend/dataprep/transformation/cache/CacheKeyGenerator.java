@@ -37,7 +37,7 @@ public class CacheKeyGenerator {
      * Build a cache key to identify the transformation result content
      */
     public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, final String stepId,
-            final String format, final SourceType sourceType, String filter) {
+            final String format, final SourceType sourceType, final String filter) {
         return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, Collections.emptyMap(), filter);
     }
 
@@ -61,7 +61,7 @@ public class CacheKeyGenerator {
             final String format, //
             final SourceType sourceType, //
             final Map<String, String> parameters, //
-            String filter) {
+            final String filter) {
 
         final String actualParameters = parameters == null ? StringUtils.EMPTY : parameters.entrySet().stream() //
                 .sorted(Comparator.comparing(Map.Entry::getKey)) //

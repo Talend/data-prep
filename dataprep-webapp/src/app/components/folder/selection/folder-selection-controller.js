@@ -38,7 +38,7 @@ class FolderSelectionCtrl {
 	 * @description Adapt the folder tree
 	 **/
 	_initTree() {
-		if(!this.tree) {
+		if (!this.tree) {
 			return;
 		}
 

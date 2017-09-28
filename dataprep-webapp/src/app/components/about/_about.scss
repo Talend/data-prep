@@ -50,9 +50,9 @@ $large-screen: 860em !default;
 			.modal-body {
 				text-align: center;
 
-				#about-dataprep-logo {
-					font-size: 2em;
-					color: $blue;
+				#about-dataprep-logo svg {
+					width: 3.5em;
+					height: 3.5em;
 				}
 
 				.version-copyrights {

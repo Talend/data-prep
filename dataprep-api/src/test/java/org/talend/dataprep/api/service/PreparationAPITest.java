@@ -49,10 +49,12 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationSummary;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 
@@ -97,29 +99,48 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(values.get(0), is(preparationId));
 
         // when : long format
-        final JsonPath longFormat = when().get("/api/preparations/?format=long").jsonPath();
+        Response response1 = when().get("/api/preparations/?format=long");
 
         // then
-        assertThat(longFormat.getList("dataSetId").size(), is(1));
-        assertThat(longFormat.getList("dataSetId").get(0), is(tagadaId));
-        assertThat(longFormat.getList("author").size(), is(1));
-        assertThat(longFormat.getList("author").get(0), is(security.getUserId()));
-        assertThat(longFormat.getList("id").size(), is(1));
-        assertThat(longFormat.getList("id").get(0), is(preparationId));
-        assertThat(longFormat.getList("actions").size(), is(1));
-        assertThat(((List) longFormat.getList("actions").get(0)).size(), is(0));
+        List<UserPreparation> preparations = mapper.readerFor(UserPreparation.class)
+                .<UserPreparation>readValues(response1.asInputStream()).readAll();
+        assertEquals(1, preparations.size());
+        UserPreparation userPreparation = preparations.iterator().next();
+        assertThat(userPreparation.getDataSetId(), is(tagadaId));
+        assertThat(userPreparation.getAuthor(), is(security.getUserId()));
+        assertThat(userPreparation.getId(), is(preparationId));
+        assertThat(userPreparation.getActions(), is(empty()));
 
         // when : summary format
-        final JsonPath summaryFormat = when().get("/api/preparations/?format=summary").jsonPath();
+        Response response = when().get("/api/preparations/?format=summary");
 
         // then
-        assertThat(summaryFormat.getList("id").size(), is(1));
-        assertThat(summaryFormat.getList("id").get(0), is(preparationId));
-        assertThat(summaryFormat.getList("name").size(), is(1));
-        assertThat(summaryFormat.getList("name").get(0), is("testPreparation"));
-        assertThat(summaryFormat.getList("owner").size(), is(1));
-        assertThat(summaryFormat.getList("lastModificationDate").size(), is(1));
-        assertThat(summaryFormat.getList("allowDistributedRun").size(), is(1));
+        List<PreparationSummary> preparationSummaries = mapper.readerFor(PreparationSummary.class)
+                .<PreparationSummary>readValues(response.asInputStream()).readAll();
+        assertEquals(1, preparationSummaries.size());
+        PreparationSummary preparationSummary = preparationSummaries.iterator().next();
+        assertThat(preparationSummary.getId(), is(preparationId));
+        assertThat(preparationSummary.getName(), is("testPreparation"));
+        assertThat(preparationSummary.getLastModificationDate(), is(notNullValue()));
+        assertThat(preparationSummary.isAllowDistributedRun(), is(notNullValue()));
+    }
+
+    @Test
+    public void testPreparationsGet() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
+
+        // when : long format
+        Response response1 = when().get("/api/preparations/{preparationId}/details", preparationId);
+
+        // then
+        EnrichedPreparation userPreparation = mapper.readerFor(EnrichedPreparation.class).readValue(response1.asInputStream());
+        assertThat(userPreparation.getDataSetId(), is(tagadaId));
+        assertThat(userPreparation.getAuthor(), is(security.getUserId()));
+        assertThat(userPreparation.getId(), is(preparationId));
+        assertThat(userPreparation.getActions(), is(empty()));
+        assertThat(userPreparation.getFolder().getPath(), is(home.getPath()));
     }
 
     @Test

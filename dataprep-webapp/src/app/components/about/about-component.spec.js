@@ -111,7 +111,7 @@ describe('Breadcrumb component', () => {
 			createElement();
 
 			// then
-			expect(element.find('#about-dataprep-logo').attr('data-icon')).toBe('c');
+			expect(element.find('#about-dataprep-logo').attr('name')).toBe('\'talend-tdp-colored\'');
 		});
 
 		it('should render data-prep current version', () => {

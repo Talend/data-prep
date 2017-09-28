@@ -210,10 +210,10 @@ public interface FolderRepository {
     /**
      * Builds a Map with preparations IDs as key and their folder path as values.
      */
-    default Map<String, String> getPreparationsFolderPaths() {
+    default Map<String, Folder> getPreparationsFolderPaths() {
         return searchFolders("", false) //
                 .flatMap( //
-                        f -> entries(f.getId(), FolderContentType.PREPARATION).map(e -> new SimpleEntry<>(f.getPath(), e.getContentId())) //
+                        f -> entries(f.getId(), FolderContentType.PREPARATION).map(e -> new SimpleEntry<>(f, e.getContentId())) //
                 ) //
                 .collect(Collectors.toMap(SimpleEntry::getValue, SimpleEntry::getKey));
     }

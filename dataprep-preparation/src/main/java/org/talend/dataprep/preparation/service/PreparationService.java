@@ -16,12 +16,10 @@ import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 import java.io.IOException;
@@ -29,6 +27,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -176,20 +175,33 @@ public class PreparationService {
      * @return the preparation details.
      */
     public Stream<UserPreparation> listAll(String name, String path, Sort sort, Order order) {
+        return listAll(filterPreparation().byName(name).byFolderPath(path), sort, order);
+    }
+
+    public Stream<UserPreparation> listAll(PreparationSearchCriterion searchCriterion, Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (with details).");
         Stream<Preparation> preparationStream;
 
-        // filter on name
-        if (name == null) {
+        if (searchCriterion.getName() == null && searchCriterion.getDataSetId() == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
-            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
+            String nameFilter = searchCriterion.getName() == null ? null : getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
+            String dataSetIdFilter = searchCriterion.getDataSetId() == null ? null : "dataSetId='" + searchCriterion.getDataSetId() + "'";
+            String filter = Stream.of(nameFilter, dataSetIdFilter).filter(Objects::nonNull).collect(Collectors.joining(" && "));
+            preparationStream = preparationRepository.list(Preparation.class, filter);
         }
 
         // filter on path
-        if (path != null) {
-            Map<String, String> preparationsFolderPaths = folderRepository.getPreparationsFolderPaths();
-            preparationStream = preparationStream.filter(p -> preparationsFolderPaths.get(p.getId()).equals(path));
+        if (searchCriterion.getFolderPath() != null || searchCriterion.getFolderId() != null) {
+            Map<String, Folder> preparationsFolder = folderRepository.getPreparationsFolderPaths();
+            if (searchCriterion.getFolderPath() != null) {
+                preparationStream = preparationStream.filter(
+                        p -> preparationsFolder.get(p.getId()).getPath().equals(searchCriterion.getFolderPath()));
+            }
+            if (searchCriterion.getFolderId() != null) {
+                preparationStream = preparationStream.filter(
+                        p -> preparationsFolder.get(p.getId()).getId().equals(searchCriterion.getFolderId()));
+            }
         }
 
         return preparationStream.map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
@@ -228,70 +240,14 @@ public class PreparationService {
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
                                                       String path, Sort sort, Order order) {
-        final Stream<Preparation> result;
-
-        if (dataSetId != null) {
-            result = searchByDataSet(dataSetId);
-        } else if (folderId != null) {
-            result = searchByFolder(folderId);
-        } else if (path != null) {
-            result = searchByFolderPath(path);
-        } else {
-            result = searchByName(name, exactMatch);
-        }
-
-        // convert & sort the result
-        return result.map(p -> beanConversionService.convert(p, UserPreparation.class)) //
-                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
-    }
-
-    /**
-     * Return the preparations that are based on the given dataset.
-     *
-     * @param dataSetId the dataset id.
-     * @return the preparations that are based on the given dataset.
-     */
-    private Stream<Preparation> searchByDataSet(String dataSetId) {
-        LOGGER.debug("looking for preparations based on dataset #{}", dataSetId);
-        return preparationRepository.list(Preparation.class, "dataSetId = '" + dataSetId + "'");
-    }
-
-    /**
-     * List all preparations details in the given folder.
-     *
-     * @param folderId the folder where to look for preparations.
-     * @return the list of preparations details for the given folder path.
-     */
-    private Stream<Preparation> searchByFolder(String folderId) {
-        LOGGER.debug("looking for preparations in {}", folderId);
-        final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
-        return entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
-    }
-
-    /**
-     * List all preparations details in the given folder.
-     *
-     * @param path the folder where to look for preparations.
-     * @return the list of preparations details for the given folder path.
-     */
-    private Stream<Preparation> searchByFolderPath(String path) {
-        LOGGER.debug("looking for preparations in {}", path);
-        final List<Folder> foldersToSearch = stream(folderRepository.searchFolders("", false).spliterator(), false)
-                .filter(f -> f.getPath().equals(path)).collect(toList());
-        int size = foldersToSearch.size();
-        Stream<Preparation> preparationStream;
-        switch (size) {
-        case 1:
-            Folder folder = foldersToSearch.iterator().next();
-            final Stream<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
-            preparationStream = entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
-            break;
-        case 0:
-            throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
-        default:
-            throw new TDPException(UNEXPECTED_EXCEPTION, ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
-        }
-        return preparationStream;
+        return listAll( //
+                filterPreparation() //
+                        .byDataSetId(dataSetId) //
+                        .byFolderId(folderId) //
+                        .byName(name) //
+                        .withNameExactMatch(exactMatch) //
+                        .byFolderPath(path), //
+                sort, order);
     }
 
     /**
@@ -301,7 +257,7 @@ public class PreparationService {
      * @param exactMatch true if the name must match exactly.
      * @return all the preparations that matches the given name.
      */
-    private Stream<Preparation> searchByName(String name, boolean exactMatch) {
+    private String getNameFilter(String name, boolean exactMatch) {
         LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
         final String filter;
         final String regex = "(?i)" + name;
@@ -310,7 +266,7 @@ public class PreparationService {
         } else {
             filter = "name ~ '^.*" + regex + ".*$'";
         }
-        return preparationRepository.list(Preparation.class, filter);
+        return filter;
     }
 
     /**

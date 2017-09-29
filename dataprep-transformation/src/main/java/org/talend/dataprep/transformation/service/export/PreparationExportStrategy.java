@@ -129,6 +129,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                             .stepId(version) //
                             .volume(Configuration.Volume.SMALL) //
                             .output(tee) //
+                            .limit(limit) //
                             .build();
                     factory.get(configuration).buildExecutable(dataSet, configuration).execute();
                     tee.flush();

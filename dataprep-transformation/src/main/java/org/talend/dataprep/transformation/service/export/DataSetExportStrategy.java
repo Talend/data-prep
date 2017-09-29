@@ -68,6 +68,7 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
                             .format(format.getName()) //
                             .volume(Configuration.Volume.SMALL) //
                             .output(outputStream) //
+                            .limit(limit) //
                             .build();
                     factory.get(configuration).buildExecutable(dataSet, configuration).execute();
                 }

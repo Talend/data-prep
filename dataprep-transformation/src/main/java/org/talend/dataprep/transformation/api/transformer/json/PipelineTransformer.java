@@ -93,13 +93,15 @@ public class PipelineTransformer implements Transformer {
         final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getRowMetadata()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
-        final Pipeline pipeline = Pipeline.Builder.builder().withAnalyzerService(analyzerService) //
+        final Pipeline pipeline = Pipeline.Builder.builder() //
+                .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
                 .withPreparation(preparation) //
                 .withActions(actionParser.parse(configuration.getActions())) //
                 .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
                 .withMonitor(configuration.getMonitor()) //
                 .withFilter(configuration.getFilter()) //
+                .withLimit(configuration.getLimit()) //
                 .withFilterOut(configuration.getOutFilter()) //
                 .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata)) //
                 .withStatisticsAdapter(adapter) //

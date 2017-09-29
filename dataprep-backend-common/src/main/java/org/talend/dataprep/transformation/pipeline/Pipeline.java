@@ -45,6 +45,7 @@ import org.talend.dataprep.transformation.pipeline.builder.ActionNodesBuilder;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.FilteredNode;
+import org.talend.dataprep.transformation.pipeline.node.LimitNode;
 
 public class Pipeline implements Node, RuntimeNode, Serializable {
 
@@ -212,6 +213,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private Function<Step, RowMetadata> rowMetadataSupplier = s -> null;
 
+        private Long limit = null;
+
         public static Builder builder() {
             return new Builder();
         }
@@ -282,6 +285,11 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return this;
         }
 
+        public Builder withLimit(Long limit) {
+            this.limit = limit;
+            return this;
+        }
+
         public Pipeline build() {
             final NodeBuilder current;
             if (inFilter != null) {
@@ -345,10 +353,21 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (outFilter != null) {
                 current.to(new FilteredNode(outFilter));
             }
+
+            Pipeline pipeline = new Pipeline();
+
+            // set the maximum number of output rows
+            if (limit != null && limit > 0) {
+                current.to(new LimitNode(limit, () -> pipeline.signal(Signal.STOP))); // limit the output
+            }
+
             current.to(outputSupplier.get());
             current.to(monitorSupplier.get());
+
+            pipeline.setNode(current.build());
+
             // Finally build pipeline
-            return new Pipeline(current.build());
+            return pipeline;
         }
     }
 }

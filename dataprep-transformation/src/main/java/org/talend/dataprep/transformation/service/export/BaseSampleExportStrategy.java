@@ -13,7 +13,17 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 
+/**
+ * Base class for all SampleExport strategies.
+ *
+ * By default the sample is 10k lines.
+ */
 public abstract class BaseSampleExportStrategy extends BaseExportStrategy implements SampleExportStrategy {
+
+    @Value("${dataset.records.limit:10000}")
+    protected long limit;
+
 }

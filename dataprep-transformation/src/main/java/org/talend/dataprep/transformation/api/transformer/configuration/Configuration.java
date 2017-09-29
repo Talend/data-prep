@@ -77,6 +77,9 @@ public class Configuration {
 
     private PreparationMessage preparation;
 
+    /** Limit the output number of rows. */
+    private Long limit = null;
+
     /**
      * Constructor for the transformer configuration.
      */
@@ -92,7 +95,8 @@ public class Configuration {
                             final String stepId, //
                             boolean allowMetadataChange, //
                             boolean globalStatistics, //
-                            final Volume dataVolume) {
+            final Volume dataVolume, //
+            final Long limit) {
         this.output = output;
         this.filter = filter;
         this.outFilter = outFilter;
@@ -106,6 +110,7 @@ public class Configuration {
         this.allowMetadataChange = allowMetadataChange;
         this.globalStatistics = globalStatistics;
         this.dataVolume = dataVolume;
+        this.limit = limit;
     }
 
     /**
@@ -183,6 +188,10 @@ public class Configuration {
         return preparation;
     }
 
+    public Long getLimit() {
+        return limit;
+    }
+
     public enum Volume {
         LARGE,
         SMALL
@@ -237,6 +246,9 @@ public class Configuration {
 
         private boolean globalStatistics = true;
 
+        /** Limit the output number of rows. */
+        private Long limit = null;
+
         public Builder monitor(Supplier<Node> monitorSupplier) {
             this.monitorSupplier = monitorSupplier;
             return this;
@@ -255,7 +267,8 @@ public class Configuration {
          * @return a new {@link Configuration} from the mapper setup.
          */
         public Configuration build() {
-            return new Configuration(output, filter, outFilter, monitorSupplier, sourceType, format, actions, arguments, preparation, stepId, allowMetadataChange, globalStatistics, dataVolume);
+            return new Configuration(output, filter, outFilter, monitorSupplier, sourceType, format, actions, arguments,
+                    preparation, stepId, allowMetadataChange, globalStatistics, dataVolume, limit);
         }
 
         /**
@@ -337,6 +350,11 @@ public class Configuration {
 
         public Builder outFilter(Function<RowMetadata, Predicate<DataSetRow>> outFilter) {
             this.outFilter = outFilter;
+            return this;
+        }
+
+        public Builder limit(Long limit) {
+            this.limit = limit;
             return this;
         }
     }

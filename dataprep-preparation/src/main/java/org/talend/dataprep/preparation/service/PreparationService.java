@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
 import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
@@ -169,13 +170,30 @@ public class PreparationService {
     /**
      * List all preparation details.
      *
-     * @param path filter on the preparation path.
+     * @param folderPath filter on the preparation path.
+     * @param path preparation full path in the form folder_path/preparation_name. Overrides folderPath and name if present.
      * @param sort how to sort the preparations.
      * @param order how to order the sort.
      * @return the preparation details.
      */
-    public Stream<UserPreparation> listAll(String name, String path, Sort sort, Order order) {
-        return listAll(filterPreparation().byName(name).byFolderPath(path), sort, order);
+    public Stream<UserPreparation> listAll(String name, String folderPath, String path, Sort sort, Order order) {
+        if (path != null) {
+            // Transform path argument into folder path + preparation name
+            if (path.contains(PATH_SEPARATOR.toString())) {
+                folderPath = org.apache.commons.lang3.StringUtils.substringBeforeLast(path, PATH_SEPARATOR.toString());
+                // Special case if the preparation is in the root folder
+                if (org.apache.commons.lang3.StringUtils.isEmpty(folderPath)) {
+                    folderPath = PATH_SEPARATOR.toString();
+                }
+                name = org.apache.commons.lang3.StringUtils.substringAfterLast(path, PATH_SEPARATOR.toString());
+            } else {
+                folderPath = PATH_SEPARATOR.toString();
+                name = path;
+                LOGGER.warn("Using path argument without '{}'. {} filter has been transformed into {}{}.", PATH_SEPARATOR, path, PATH_SEPARATOR, name);
+            }
+        }
+
+        return listAll(filterPreparation().byName(name).withNameExactMatch(true).byFolderPath(folderPath), sort, order);
     }
 
     public Stream<UserPreparation> listAll(PreparationSearchCriterion searchCriterion, Sort sort, Order order) {
@@ -213,8 +231,8 @@ public class PreparationService {
      *
      * @return the preparation summaries, sorted by descending last modification date.
      */
-    public Stream<PreparationSummary> listSummary(String name, String path, Sort sort, Order order) {
-        return listAll(name, path, sort, order).map(p -> beanConversionService.convert(p, PreparationSummary.class));
+    public Stream<PreparationSummary> listSummary(String name, String folderPath, String path, Sort sort, Order order) {
+        return listAll(name, folderPath, path, sort, order).map(p -> beanConversionService.convert(p, PreparationSummary.class));
     }
 
     /**

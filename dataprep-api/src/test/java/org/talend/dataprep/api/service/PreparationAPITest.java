@@ -158,19 +158,41 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void testPreparationsList_withFilterOnPath() throws Exception {
+    public void testPreparationsList_withFilterOnFolderPath() throws Exception {
         // given
         String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
-        String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
+        String preparationName = "tagadaPreparation";
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, preparationName, home.getId());
 
         // when : short format
-        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/").jsonPath();
+        final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
+
+        // then
+        List<String> result = mapper.readerFor(String.class).<String>readValues(shouldNotBeEmpty.asInputStream()).readAll();
+        assertThat(result.get(0), is(preparationId));
+
+        // when
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
+
+        // then
+        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
+    }
+
+    @Test
+    public void testPreparationsList_withFilterOnFullPath() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        String preparationName = "tagadaPreparation";
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, preparationName, home.getId());
+
+        // when : short format
+        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/" + preparationName).jsonPath();
 
         // then
         assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
 
         // when
-        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName).jsonPath();
 
         // then
         assertThat(shouldBeEmpty.<String>getList(""), is(empty()));

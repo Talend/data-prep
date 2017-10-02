@@ -41,8 +41,20 @@ public class DataPrepAPIHelper {
     @Value("${backend.export.api.url:http://localhost:8888}")
     private String exportApiBaseUrl;
 
+    @Value("${restassured.debug:false}")
+    private boolean enableRestAssuredDebug;
+
+    /**
+     * Wraps the {@link RestAssured#given()} method so that we can add behavior
+     *
+     * @return the request specification to use.
+     */
     public RequestSpecification given() {
-        return RestAssured.given().log().all(true);
+        RequestSpecification given = RestAssured.given();
+        if (enableRestAssuredDebug) {
+            given = given.log().all(true);
+        }
+        return given;
     }
 
     /**

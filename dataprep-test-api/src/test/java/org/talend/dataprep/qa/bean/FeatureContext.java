@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FeatureContext {
 
+    public static final String FULL_RUN_PREFIX = "fullrun_";
     private Map<String, String> datasetIdByName = new HashMap<>();
     private Map<String, String> preparationIdByName = new HashMap<>();
     private Map<String, File> tempFileByName = new HashMap<>();

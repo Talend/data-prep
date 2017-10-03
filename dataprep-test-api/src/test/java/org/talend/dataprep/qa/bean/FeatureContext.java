@@ -1,15 +1,14 @@
 package org.talend.dataprep.qa.bean;
 
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.stereotype.Component;
 
 /**
  * Used to share data within steps.
@@ -17,7 +16,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class FeatureContext {
 
-    public static final String FULL_RUN_PREFIX = "fullrun_";
+    /**
+     * Prefix used to build storage key, for fullrun references.
+     */
+    public static final String FULL_RUN_PREFIX = "fullrun-";
+
     private Map<String, String> datasetIdByName = new HashMap<>();
     private Map<String, String> preparationIdByName = new HashMap<>();
     private Map<String, File> tempFileByName = new HashMap<>();

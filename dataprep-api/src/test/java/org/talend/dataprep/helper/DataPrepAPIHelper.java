@@ -1,16 +1,10 @@
 package org.talend.dataprep.helper;
 
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_ACTIONS;
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_BACKEND_EXPORT;
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_DATASETS;
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_DETAILS;
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.API_PREPARATIONS;
-
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,11 +13,12 @@ import org.talend.dataprep.helper.objects.ActionRequest;
 import org.talend.dataprep.helper.objects.Parameters;
 import org.talend.dataprep.helper.objects.PreparationRequest;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 
 /**
  * Utility class to allow dataprep-api integration tests.

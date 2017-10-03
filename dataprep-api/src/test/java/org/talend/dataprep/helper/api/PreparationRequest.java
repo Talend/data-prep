@@ -1,10 +1,7 @@
-package org.talend.dataprep.helper.objects;
+package org.talend.dataprep.helper.api;
 
 /**
- * POJO representation of a preparation.
- *
- * @author vferreira
- * @since 19/07/17
+ * POJO representation of a preparation creation request.
  */
 public class PreparationRequest {
 

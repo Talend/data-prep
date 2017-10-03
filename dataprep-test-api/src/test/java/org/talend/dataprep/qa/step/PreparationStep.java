@@ -1,5 +1,7 @@
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
@@ -23,20 +26,25 @@ import cucumber.api.java.en.When;
 public class PreparationStep extends DataPrepStep {
 
     /** This class' logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(PreparationStep.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationStep.class);
 
     @Given("^I create a preparation with name \"(.*)\", based on \"(.*)\" dataset$")
     public void givenICreateAPreparation(String preparationName, String datasetName) {
-        LOG.debug("I create a preparation with name {}", preparationName);
+        LOGGER.debug("I create a preparation with name {}", preparationName);
         String homeFolder = api.getHomeFolder();
-        String preparationId = api.createPreparation(context.getDatasetId(datasetName), preparationName, homeFolder).then()
-                .statusCode(200).extract().body().asString();
+        final String datasetId = context.getDatasetId(datasetName);
+        if (StringUtils.isBlank(datasetId)) {
+            fail("could not find dataset id from name '" + datasetName + "' in the context");
+        }
+        String preparationId = api.createPreparation(datasetId, preparationName, homeFolder).then() //
+                .statusCode(200) //
+                .extract().body().asString();
         context.storePreparationRef(preparationId, preparationName);
     }
 
     @When("^I export the preparation \"(.*)\" on the dataset \"(.*)\" and export the result in \"(.*)\" temporary file.$")
     public void whenIExportThePreparationInto(String preparationName, String datasetName, String filename) throws IOException {
-        LOG.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName,
+        LOGGER.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName,
                 datasetName, filename);
         String datasetId = context.getDatasetId(datasetName);
         String preparationId = context.getPreparationId(preparationName);

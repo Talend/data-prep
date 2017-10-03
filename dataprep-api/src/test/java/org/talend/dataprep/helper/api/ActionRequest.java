@@ -1,22 +1,26 @@
-package org.talend.dataprep.helper.objects;
-
-import com.fasterxml.jackson.annotation.*;
+package org.talend.dataprep.helper.api;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 /**
  * Created by vferreira on 01/08/17.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "actions"
-})
+@JsonPropertyOrder({ "actions" })
 public class ActionRequest {
 
     @JsonProperty("actions")
     private List<Action> actions = null;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 

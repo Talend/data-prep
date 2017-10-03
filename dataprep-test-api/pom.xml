@@ -18,12 +18,6 @@
         <log4j.version>2.7</log4j.version>
         <cucumber.version>1.2.5</cucumber.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!--properties use for spring bean. Can be overwrite by -D args in command line -->
-        <backend.global.api.url>http://localhost:8888</backend.global.api.url>
-        <backend.upload.api.url>http://localhost:8888</backend.upload.api.url>
-        <backend.export.api.url>http://localhost:8888</backend.export.api.url>
-
     </properties>
 
     <dependencies>

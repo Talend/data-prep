@@ -1,12 +1,13 @@
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
@@ -31,7 +32,7 @@ public class FileStep extends DataPrepStep {
         InputStream tempFileStream = Files.newInputStream(tempFile.toPath());
         InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedCSVFilename);
         if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-            Assert.fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedCSVFilename);
+            fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedCSVFilename);
         }
     }
 

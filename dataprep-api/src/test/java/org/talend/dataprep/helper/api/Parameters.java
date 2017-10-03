@@ -1,27 +1,31 @@
-package org.talend.dataprep.helper.objects;
-
-import com.fasterxml.jackson.annotation.*;
+package org.talend.dataprep.helper.api;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "scope",
-        "column_id",
-        "column_name",
-        "row_id"
-})
+@JsonPropertyOrder({ "scope", "column_id", "column_name", "row_id" })
 public class Parameters {
 
     @JsonProperty("scope")
     private String scope;
+
     @JsonProperty("column_id")
     private String columnId;
+
     @JsonProperty("column_name")
     private String columnName;
+
     @JsonProperty("row_id")
     private Object rowId;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 

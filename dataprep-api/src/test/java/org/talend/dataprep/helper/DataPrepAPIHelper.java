@@ -1,24 +1,25 @@
 package org.talend.dataprep.helper;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import static com.jayway.restassured.http.ContentType.JSON;
+
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.objects.Action;
-import org.talend.dataprep.helper.objects.ActionRequest;
-import org.talend.dataprep.helper.objects.Parameters;
-import org.talend.dataprep.helper.objects.PreparationRequest;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.ActionRequest;
+import org.talend.dataprep.helper.api.Parameters;
+import org.talend.dataprep.helper.api.PreparationRequest;
 
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.LinkedList;
-import java.util.List;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 
-import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -27,14 +28,8 @@ import static org.talend.dataprep.helper.utils.DataPrepWebInfo.*;
 public class DataPrepAPIHelper {
 
 
-    @Value("${backend.global.api.url:http://localhost:8888}")
-    private String globalApiBaseUrl;
-
-    @Value("${backend.upload.api.url:http://localhost:8888}")
-    private String uploadApiBaseUrl;
-
-    @Value("${backend.export.api.url:http://localhost:8888}")
-    private String exportApiBaseUrl;
+    @Value("${backend.api.url:http://localhost:8888}")
+    private String apiBaseUrl;
 
     @Value("${restassured.debug:false}")
     private boolean enableRestAssuredDebug;
@@ -61,14 +56,14 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .contentType(ContentType.JSON)
-                .when()
-                .body(new PreparationRequest(datasetID, preparationName))
-                .urlEncodingEnabled(false)
-                .queryParam("folder", homeFolderId)
-                .post(API_PREPARATIONS);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .when() //
+                .body(new PreparationRequest(datasetID, preparationName)) //
+                .urlEncodingEnabled(false) //
+                .queryParam("folder", homeFolderId) //
+                .post("/api/preparations");
     }
 
     /**
@@ -82,16 +77,14 @@ public class DataPrepAPIHelper {
      */
     public Response addStep(String preparationId, String actionName, String columnName, String columnId) {
         Parameters parameters = new Parameters(columnId, columnName, null, "column");
-        Action action = new Action(actionName, parameters);
-        List<Action> actions = new LinkedList<>();
-        actions.add(action);
+        List<Action> actions = Arrays.asList(new Action(actionName, parameters));
         ActionRequest actionRequest = new ActionRequest(actions);
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .contentType(ContentType.JSON)
-                .when()
-                .body(actionRequest)
-                .post(API_PREPARATIONS + preparationId + "/" + API_ACTIONS);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .when() //
+                .body(actionRequest) //
+                .post("/api/preparations/" + preparationId + "/actions");
     }
 
     /**
@@ -103,15 +96,14 @@ public class DataPrepAPIHelper {
      * @throws java.io.IOException if creation isn't possible
      */
     public Response uploadDataset(String filename, String datasetName) throws java.io.IOException {
-        Response response =
-                given().header(new Header("Content-Type", "text/plain"))
-                        .baseUri(uploadApiBaseUrl)
-                        .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
-                        .when()
-                        .queryParam("name", datasetName)
-                        .post(API_DATASETS);
-        return response;
+        return given() //
+                .header(new Header("Content-Type", "text/plain")) //
+                .baseUri(apiBaseUrl) //
+                .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
+                .queryParam("name", datasetName) //
+                .post("/api/datasets");
     }
+
 
     /**
      * Delete a given dataset.
@@ -120,10 +112,10 @@ public class DataPrepAPIHelper {
      * @return the response
      */
     public Response deleteDataSet(String dataSetId) {
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .when()
-                .delete(API_DATASETS + dataSetId);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .delete("/api/datasets/" + dataSetId);
     }
 
     /**
@@ -132,9 +124,9 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response getDatasetList() {
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .get(API_DATASETS);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .get("/api/datasets");
     }
 
     /**
@@ -144,10 +136,10 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response getPreparation(String preparationId) {
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .when()
-                .get(API_PREPARATIONS + preparationId + "/" + API_DETAILS);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/preparations/" + preparationId + "/details");
     }
 
     /**
@@ -157,10 +149,10 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response getDataset(String datasetId) {
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .when()
-                .get(API_DATASETS + datasetId);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/datasets/" + datasetId);
     }
 
     /**
@@ -175,18 +167,18 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter, String filename) {
-        return given()
-                .baseUri(exportApiBaseUrl)
-                .contentType(ContentType.JSON)
-                .urlEncodingEnabled(false)
-                .when()
-                .queryParam("preparationId", preparationId)
-                .queryParam("stepId", stepId)
-                .queryParam("datasetId", datasetId)
-                .queryParam("exportType", exportType)
-                .queryParam("exportParameters.csv_fields_delimiter", delimiter)
-                .queryParam("exportParameters.fileName", filename)
-                .get(API_BACKEND_EXPORT);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .urlEncodingEnabled(false) //
+                .when() //
+                .queryParam("preparationId", preparationId) //
+                .queryParam("stepId", stepId) //
+                .queryParam("datasetId", datasetId) //
+                .queryParam("exportType", exportType) //
+                .queryParam("exportParameters.csv_fields_delimiter", delimiter) //
+                .queryParam("exportParameters.fileName", filename) //
+                .get("/api/export");
     }
 
     /**
@@ -205,28 +197,21 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response deletePreparation(String preparationId) {
-        return given()
-                .baseUri(globalApiBaseUrl)
-                .when()
-                .delete(API_PREPARATIONS + preparationId);
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .delete("/api/preparations/" + preparationId);
     }
 
     public Response getDataSetMetaData(String dataSetMetaDataId) {
         return given() //
-                .baseUri(globalApiBaseUrl) //
+                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/datasets/" + dataSetMetaDataId + "/metadata");
     }
 
-    public String getGlobalApiBaseUrl() {
-        return globalApiBaseUrl;
+    public String getApiBaseUrl() {
+        return apiBaseUrl;
     }
 
-    public String getUploadApiBaseUrl() {
-        return uploadApiBaseUrl;
-    }
-
-    public String getExportApiBaseUrl() {
-        return exportApiBaseUrl;
-    }
 }

@@ -13,6 +13,7 @@
 package org.talend.dataprep.preparation.task;
 
 import static java.util.stream.Collectors.toSet;
+import static org.talend.tql.api.TqlBuilder.eq;
 
 import java.util.List;
 import java.util.Set;
@@ -96,7 +97,7 @@ public class PreparationCleaner {
 
                 // Remove actions linked to step
                 // if this step re-use an existing actions we don't delete the actions
-                boolean criterion = repository.exist(PersistentStep.class, "contentId='" + step.getContent() + "'");
+                boolean criterion = repository.exist(PersistentStep.class, eq("contentId", step.getContent()));
                 if (criterion) {
                     LOGGER.debug("Don't removing step content {} it still used by another step.", step.getContent());
                 } else {

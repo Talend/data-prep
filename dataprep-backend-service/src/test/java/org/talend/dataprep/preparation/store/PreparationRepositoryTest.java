@@ -13,9 +13,8 @@
 package org.talend.dataprep.preparation.store;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.talend.tql.api.TqlBuilder.eq;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,7 +63,7 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
 
         // get preparation by name
         final Preparation expected = preparations.get(1);
-        final Collection<Preparation> actual = getRepository().list(Preparation.class, "dataSetId = '" + expected.getDataSetId() + "'").collect(Collectors.toList());
+        final Collection<Preparation> actual = getRepository().list(Preparation.class, eq("dataSetId", expected.getDataSetId())).collect(Collectors.toList());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(expected));
@@ -74,17 +73,17 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
     @Test
     public void findOneByDataset_should_return_a_preparation_that_use_dataset() {
         // given
-        final String datasetId = "789b61f3128a9bc24a684";
+        final String dataSetId = "789b61f3128a9bc24a684";
         final Preparation prep1 = new Preparation();
         prep1.setDataSetId("other_dataset");
         final Preparation prep2 = new Preparation();
-        prep2.setDataSetId(datasetId);
+        prep2.setDataSetId(dataSetId);
 
         getRepository().add(prep1);
         getRepository().add(prep2);
 
         // when
-        final boolean result = getRepository().exist(Preparation.class, "dataSetId = '" + datasetId + "'");
+        final boolean result = getRepository().exist(Preparation.class, eq("dataSetId", dataSetId));
 
         // then
         assertThat(result, is(true));
@@ -93,7 +92,7 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
     @Test
     public void findOneByDataset_should_return_null_when_no_preparation_use_dataset() {
         // given
-        final String datasetId = "789b61f3128a9bc24a684";
+        final String dataSetId = "789b61f3128a9bc24a684";
         final Preparation prep1 = new Preparation();
         prep1.setDataSetId("other_dataset");
         final Preparation prep2 = new Preparation();
@@ -103,7 +102,7 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
         getRepository().add(prep2);
 
         // when
-        final boolean result = getRepository().exist(Preparation.class, "dataSetId = '" + datasetId + "'");
+        final boolean result = getRepository().exist(Preparation.class, eq("dataSetId", dataSetId));
 
         // then
         assertThat(result, is(false));

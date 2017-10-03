@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.tql.model.Expression;
 
 /**
  * A {@link PreparationRepository} implementation that splits {@link Identifiable identifiable} into multiple ones for
@@ -48,9 +49,9 @@ public class PersistentPreparationRepository implements PreparationRepository {
     }
 
     @Override
-    public <T extends Identifiable> boolean exist(Class<T> clazz, String filter) {
+    public <T extends Identifiable> boolean exist(Class<T> clazz, Expression expression) {
         final Class<? extends Identifiable> targetClass = selectPersistentClass(clazz);
-        return delegate.exist(targetClass, filter);
+        return delegate.exist(targetClass, expression);
     }
 
     @Override
@@ -70,9 +71,9 @@ public class PersistentPreparationRepository implements PreparationRepository {
     }
 
     @Override
-    public <T extends Identifiable> Stream<T> list(Class<T> clazz, String filter) {
+    public <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression expression) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass, filter).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz, clazz));
+        return Stream.concat(delegate.list(persistentClass, expression).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz, clazz));
     }
 
     @Override

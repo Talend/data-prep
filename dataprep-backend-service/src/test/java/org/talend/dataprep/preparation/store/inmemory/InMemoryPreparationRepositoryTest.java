@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.preparation.store.inmemory;
 
+import static org.talend.tql.api.TqlBuilder.eq;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
@@ -78,7 +80,7 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
         }
 
         // run the test
-        Collection<Preparation> actual = getRepository().list(Preparation.class, "dataSetId = '" + dataSetId + "'").collect(Collectors.toList());
+        Collection<Preparation> actual = getRepository().list(Preparation.class, eq("dataSetId", dataSetId)).collect(Collectors.toList());
 
         // check the result
         Assert.assertEquals(3, actual.size());

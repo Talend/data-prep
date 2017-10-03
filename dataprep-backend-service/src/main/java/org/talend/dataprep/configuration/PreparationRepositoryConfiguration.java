@@ -13,6 +13,7 @@
 package org.talend.dataprep.configuration;
 
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+import static org.talend.tql.api.TqlBuilder.in;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -127,11 +127,8 @@ public class PreparationRepositoryConfiguration {
                             if (preparationSteps.isEmpty()) {
                                 preparation.setSteps(Collections.singletonList(Step.ROOT_STEP));
                             } else {
-                                final String stepIds = preparationSteps.stream() //
-                                        .map(id -> "'" + id + "'") //
-                                        .collect(Collectors.joining(","));
                                 final Stream<PersistentStep> stream = repository
-                                        .list(PersistentStep.class, "id in [" + stepIds + "]")
+                                        .list(PersistentStep.class, in("id", preparationSteps.toArray(new String[]{})))
                                         .sorted(Comparator.comparingInt(o -> preparationSteps.indexOf(o.getId())));
                                 final List<Step> steps = stream.map(s -> conversionService.convert(s, Step.class)) //
                                         .collect(Collectors.toList());

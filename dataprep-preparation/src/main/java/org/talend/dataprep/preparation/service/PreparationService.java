@@ -25,6 +25,8 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.match;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -183,7 +185,7 @@ public class PreparationService {
         if (name == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
-            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
+            preparationStream = preparationRepository.list(Preparation.class, eq("name", name));
         }
         return preparationStream //
                 .map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
@@ -204,7 +206,7 @@ public class PreparationService {
         if (name == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
-            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
+            preparationStream = preparationRepository.list(Preparation.class, eq("name", name));
         }
         return preparationStream //
                 .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
@@ -222,7 +224,7 @@ public class PreparationService {
         if (name == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
-            preparationStream = preparationRepository.list(Preparation.class, "name='" + name + "'");
+            preparationStream = preparationRepository.list(Preparation.class, eq("name", name));
         }
         return preparationStream //
                 .map(p -> beanConversionService.convert(p, PreparationSummary.class)) //
@@ -277,7 +279,7 @@ public class PreparationService {
      */
     private Stream<Preparation> searchByDataSet(String dataSetId) {
         LOGGER.debug("looking for preparations based on dataset #{}", dataSetId);
-        return preparationRepository.list(Preparation.class, "dataSetId = '" + dataSetId + "'");
+        return preparationRepository.list(Preparation.class, eq("dataSetId", dataSetId));
     }
 
     /**
@@ -327,14 +329,14 @@ public class PreparationService {
      */
     private Stream<Preparation> searchByName(String name, boolean exactMatch) {
         LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
-        final String filter;
-        final String regex = "(?i)" + name;
+        final String regex;
+        final String regexMainPart = "(?i)" + name;
         if (exactMatch) {
-            filter = "name ~ '^" + regex + "$'";
+            regex = "^" + regexMainPart + "$";
         } else {
-            filter = "name ~ '^.*" + regex + ".*$'";
+            regex = "^.*" + regexMainPart + ".*$";
         }
-        return preparationRepository.list(Preparation.class, filter);
+        return preparationRepository.list(Preparation.class, match("name", regex));
     }
 
     /**
@@ -466,7 +468,7 @@ public class PreparationService {
                     preparationRepository.remove(rowMetadata);
 
                     // Remove preparation action (if it's the only step using these actions)
-                    final Stream<Step> steps = preparationRepository.list(Step.class, "contentId='" + step.getContent() + "'");
+                    final Stream<Step> steps = preparationRepository.list(Step.class,  eq("contentId", step.getContent()));
                     if (steps.count() == 1) {
                         // Remove action
                         final PreparationActions preparationActions = new PreparationActions();
@@ -843,7 +845,7 @@ public class PreparationService {
     }
 
     private boolean isDatasetBaseOfPreparation(String datasetId) {
-        return preparationRepository.exist(Preparation.class, "dataSetId = '" + datasetId + "'");
+        return preparationRepository.exist(Preparation.class, eq("dataSetId", datasetId));
     }
 
     /** Check if the preparation uses this dataset in its head version. */

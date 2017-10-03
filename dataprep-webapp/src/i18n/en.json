@@ -254,7 +254,7 @@
   "STARTS_WITH": "Starts with",
   "ENDS_WITH": "Ends with",
   "REGEX": "RegEx",
-  "TYPE_FORMAT_ERROR": "This must be a {{type}}",
+  "TYPE_FORMAT_ERROR_INTEGER": "This must be an integer",
   "NONE": "None",
 
   "_comment": "Action panel",

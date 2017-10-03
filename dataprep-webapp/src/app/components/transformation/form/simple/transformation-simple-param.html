@@ -82,8 +82,7 @@
         </div>
         <div class="param-error error"
              ng-if="parentForm.$error.isTypeValidation || parentForm.$error.number">
-            <span translate="TYPE_FORMAT_ERROR"
-                  translate-values="{type: simpleParamCtrl.parameter.type}"></span>
+            <span translate="{{'TYPE_FORMAT_ERROR_' + simpleParamCtrl.parameter.type.toUpperCase()}}"/>
         </div>
     </div>
 </div>

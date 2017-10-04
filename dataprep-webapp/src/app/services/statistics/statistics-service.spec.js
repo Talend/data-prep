@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-xdescribe('Statistics service', () => {
+describe('Statistics service', () => {
     const barChartNumCol = {
         domain: 'barchartAndNumeric',
         type: 'numeric',

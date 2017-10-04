@@ -56,12 +56,7 @@ public class PreparationStep extends DataPrepStep {
                 .asInputStream();
 
         // store the body content in a temporary File
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(filename), "." + FilenameUtils.getExtension(filename));
-        File tempFile = path.toFile();
-        FileOutputStream fos = new FileOutputStream(path.toFile());
-        IOUtils.copy(csv, fos);
-        fos.close();
-        tempFile.deleteOnExit();
+        File tempFile = api.storeInputStreamAsTempFile(filename, csv);
         context.storeTempFile(filename, tempFile);
     }
 }

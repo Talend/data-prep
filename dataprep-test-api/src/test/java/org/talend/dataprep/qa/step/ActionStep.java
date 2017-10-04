@@ -1,12 +1,26 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.qa.step;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.When;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
 
-import java.util.Map;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with action
@@ -14,20 +28,15 @@ import java.util.Map;
 public class ActionStep extends DataPrepStep {
 
     public static final String PREPARATION_NAME = "preparationName";
-    public static final String ACTION_NAME = "actionName";
-    public static final String COLUMN_NAME = "columnName";
-    public static final String COLUMN_ID = "columnId";
 
+    public static final String ACTION_NAME = "actionName";
+
+    public static final String COLUMN_NAME = "columnName";
+
+    public static final String COLUMN_ID = "columnId";
 
     /** This class' logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ActionStep.class);
-
-    @When("^I add a step \"(.*)\" to the column \"(.*)\" of the preparation \"(.*)\"$")
-    public void whenIAddAStepToAPreparation(String actionName, String columnName, String preparationName) {
-        LOG.debug("I add a step {} to the column {} of the preparation {}", actionName, columnName, preparationName);
-        String preparationId = context.getPreparationId(preparationName);
-        api.addStep(preparationId, actionName, columnName, "0001");
-    }
 
     @When("^I add a step with parameters :$")
     public void whenIAddAStepToAPreparation(DataTable dataTable) {

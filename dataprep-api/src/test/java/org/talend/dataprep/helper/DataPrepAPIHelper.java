@@ -1,12 +1,32 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.helper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,13 +40,11 @@ import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 
-
 /**
  * Utility class to allow dataprep-api integration tests.
  */
 @Component
 public class DataPrepAPIHelper {
-
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -50,9 +68,9 @@ public class DataPrepAPIHelper {
     /**
      * Create a preparation from a dataset and a home folder.
      *
-     * @param datasetID       the dataset id to create the preparation from.
+     * @param datasetID the dataset id to create the preparation from.
      * @param preparationName name for the new preparation.
-     * @param homeFolderId    new preparation folder.
+     * @param homeFolderId new preparation folder.
      * @return the response.
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
@@ -70,9 +88,9 @@ public class DataPrepAPIHelper {
      * Add an action to a preparation.
      *
      * @param preparationId the preparation Id.
-     * @param actionName    the action name to add as a step.
-     * @param columnName    the column name on which the action will be executed.
-     * @param columnId      the column id on which the action will be executed.
+     * @param actionName the action name to add as a step.
+     * @param columnName the column name on which the action will be executed.
+     * @param columnId the column id on which the action will be executed.
      * @return the response.
      */
     public Response addStep(String preparationId, String actionName, String columnName, String columnId) {
@@ -90,7 +108,7 @@ public class DataPrepAPIHelper {
     /**
      * Upload a dataset into dataprep.
      *
-     * @param filename    the file to upload
+     * @param filename the file to upload
      * @param datasetName the dataset basename
      * @return the response
      * @throws java.io.IOException if creation isn't possible
@@ -103,7 +121,6 @@ public class DataPrepAPIHelper {
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
-
 
     /**
      * Delete a given dataset.
@@ -158,15 +175,16 @@ public class DataPrepAPIHelper {
     /**
      * Execute a preparation full run on a dataset followed by an export.
      *
-     * @param exportType    export format.
-     * @param datasetId     the dataset id on which the full run will be applied.
+     * @param exportType export format.
+     * @param datasetId the dataset id on which the full run will be applied.
      * @param preparationId the full run preparation id.
-     * @param stepId        the last step id.
-     * @param delimiter     the column delimiter.
-     * @param filename      the name for the exported generated file.
+     * @param stepId the last step id.
+     * @param delimiter the column delimiter.
+     * @param filename the name for the exported generated file.
      * @return the response.
      */
-    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter, String filename) {
+    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
+            String delimiter, String filename) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
@@ -214,4 +232,20 @@ public class DataPrepAPIHelper {
         return apiBaseUrl;
     }
 
+    /**
+     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT context.
+     *
+     * @param tempFilename the temporary {@link File} filename
+     * @param input the {@link InputStream} to store.
+     * @throws IOException in case of IO exception.
+     */
+    public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        File tempFile = path.toFile();
+        FileOutputStream fos = new FileOutputStream(path.toFile());
+        IOUtils.copy(input, fos);
+        fos.close();
+        tempFile.deleteOnExit();
+        return tempFile;
+    }
 }

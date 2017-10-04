@@ -47,6 +47,7 @@ import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
+import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -343,7 +344,7 @@ public class DataSetAPI extends APIService {
                     .collectList() //
                     .cache(); // Keep it in cache for later reuse
             // get list of preparations
-            GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, PreparationList.Format.LONG, sort, order);
+            GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, SortAndOrderHelper.Format.LONG, sort, order);
             return Flux.from(toPublisher(Preparation.class, mapper, preparationList)) //
                     .filter(p -> compatibleList.flatMapIterable(l -> l) //
                             .map(DataSetMetadata::getId) //

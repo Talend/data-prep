@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.preparation.service;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,8 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
 public class PreparationController {
+
+    private static final Logger LOGGER = getLogger(PreparationController.class);
 
     @Autowired
     private PreparationService preparationService;
@@ -71,9 +75,12 @@ public class PreparationController {
     @Timed
     public Stream<String> list(
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
+            @ApiParam(name = "folder_path", value = "Filter preparations by folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
+            @ApiParam(name = "path", value = "Filter preparations by full path (<folder path>/<preparation name>).") @RequestParam(required = false, name = "path") String path,
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
-        return preparationService.list(name, sort, order);
+        LOGGER.debug("Get list of preparations (summary).");
+        return preparationService.listAll(name, folderPath, path, sort, order).map(Preparation::id);
     }
 
     /**
@@ -88,9 +95,11 @@ public class PreparationController {
     @Timed
     public Stream<UserPreparation> listAll(
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
+            @ApiParam(name = "folder_path", value = "Filter preparations by folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
+            @ApiParam(name = "path", value = "Filter preparations by full path (<folder path>/<preparation name>).") @RequestParam(required = false, name = "path") String path,
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
-        return preparationService.listAll(name, sort, order);
+        return preparationService.listAll(name, folderPath, path, sort, order);
     }
 
     /**
@@ -102,8 +111,13 @@ public class PreparationController {
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations summaries the current user is allowed to see. Creation date is always displayed in UTC time zone.")
     @Timed
     public Stream<PreparationSummary> listSummary(
-            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name) {
-        return preparationService.listSummary(name);
+            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
+            @ApiParam(name = "folder_path", value = "Filter preparations by folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
+            @ApiParam(name = "path", value = "Filter preparations by full path (<folder path>/<preparation name>).") @RequestParam(required = false, name = "path") String path,
+            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
+        LOGGER.debug("Get list of preparations (summary).");
+        return preparationService.listSummary(name, folderPath, path, sort, order);
     }
 
     /**

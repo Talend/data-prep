@@ -14,19 +14,15 @@ package org.talend.dataprep.preparation.service;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
-import static org.talend.tql.api.TqlBuilder.eq;
-import static org.talend.tql.api.TqlBuilder.match;
+import static org.talend.tql.api.TqlBuilder.*;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -71,6 +67,7 @@ import org.talend.dataprep.transformation.api.action.validation.ActionMetadataVa
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.tql.model.Expression;
 
 @Service
 public class PreparationService {
@@ -172,44 +169,66 @@ public class PreparationService {
     }
 
     /**
-     * List all the preparations id.
-     *
-     * @param name if not null, only list ids of preparation having this name.
-     * @param sort how the preparation should be sorted (default is 'last modification date').
-     * @param order how to apply the sort.
-     * @return the preparations id list.
-     */
-    public Stream<String> list(String name, Sort sort, Order order) {
-        LOGGER.debug("Get list of preparations (summary).");
-        Stream<Preparation> preparationStream;
-        if (name == null) {
-            preparationStream = preparationRepository.list(Preparation.class);
-        } else {
-            preparationStream = preparationRepository.list(Preparation.class, eq("name", name));
-        }
-        return preparationStream //
-                .map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
-                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId()))) //
-                .map(Preparation::id);
-    }
-
-    /**
      * List all preparation details.
      *
+     * @param folderPath filter on the preparation path.
+     * @param path preparation full path in the form folder_path/preparation_name. Overrides folderPath and name if present.
      * @param sort how to sort the preparations.
      * @param order how to order the sort.
      * @return the preparation details.
      */
-    public Stream<UserPreparation> listAll(String name, Sort sort, Order order) {
+    public Stream<UserPreparation> listAll(String name, String folderPath, String path, Sort sort, Order order) {
+        if (path != null) {
+            // Transform path argument into folder path + preparation name
+            if (path.contains(PATH_SEPARATOR.toString())) {
+                folderPath = org.apache.commons.lang3.StringUtils.substringBeforeLast(path, PATH_SEPARATOR.toString());
+                // Special case if the preparation is in the root folder
+                if (org.apache.commons.lang3.StringUtils.isEmpty(folderPath)) {
+                    folderPath = PATH_SEPARATOR.toString();
+                }
+                name = org.apache.commons.lang3.StringUtils.substringAfterLast(path, PATH_SEPARATOR.toString());
+            } else {
+                folderPath = PATH_SEPARATOR.toString();
+                name = path;
+                LOGGER.warn("Using path argument without '{}'. {} filter has been transformed into {}{}.", PATH_SEPARATOR, path, PATH_SEPARATOR, name);
+            }
+        }
+
+        return listAll(filterPreparation().byName(name).withNameExactMatch(true).byFolderPath(folderPath), sort, order);
+    }
+
+    public Stream<UserPreparation> listAll(PreparationSearchCriterion searchCriterion, Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (with details).");
         Stream<Preparation> preparationStream;
-        if (name == null) {
+
+        if (searchCriterion.getName() == null && searchCriterion.getDataSetId() == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
-            preparationStream = preparationRepository.list(Preparation.class, eq("name", name));
+            Expression filter = null;
+            if (searchCriterion.getName() == null) {
+                filter = getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
+            }
+            if (searchCriterion.getDataSetId() == null){
+                Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
+                filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
+            }
+            preparationStream = preparationRepository.list(Preparation.class, filter);
         }
-        return preparationStream //
-                .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
+
+        // filter on path
+        if (searchCriterion.getFolderPath() != null || searchCriterion.getFolderId() != null) {
+            Map<String, Folder> preparationsFolder = folderRepository.getPreparationsFolderPaths();
+            if (searchCriterion.getFolderPath() != null) {
+                preparationStream = preparationStream.filter(
+                        p -> preparationsFolder.get(p.getId()).getPath().equals(searchCriterion.getFolderPath()));
+            }
+            if (searchCriterion.getFolderId() != null) {
+                preparationStream = preparationStream.filter(
+                        p -> preparationsFolder.get(p.getId()).getId().equals(searchCriterion.getFolderId()));
+            }
+        }
+
+        return preparationStream.map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
                 .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
     }
 
@@ -218,17 +237,8 @@ public class PreparationService {
      *
      * @return the preparation summaries, sorted by descending last modification date.
      */
-    public Stream<PreparationSummary> listSummary(String name) {
-        LOGGER.debug("Get list of preparations (summary).");
-        Stream<Preparation> preparationStream;
-        if (name == null) {
-            preparationStream = preparationRepository.list(Preparation.class);
-        } else {
-            preparationStream = preparationRepository.list(Preparation.class, eq("name", name));
-        }
-        return preparationStream //
-                .map(p -> beanConversionService.convert(p, PreparationSummary.class)) //
-                .sorted(comparing(PreparationSummary::getLastModificationDate, reverseOrder()));
+    public Stream<PreparationSummary> listSummary(String name, String folderPath, String path, Sort sort, Order order) {
+        return listAll(name, folderPath, path, sort, order).map(p -> beanConversionService.convert(p, PreparationSummary.class));
     }
 
     /**
@@ -254,70 +264,14 @@ public class PreparationService {
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
                                                       String path, Sort sort, Order order) {
-        final Stream<Preparation> result;
-
-        if (dataSetId != null) {
-            result = searchByDataSet(dataSetId);
-        } else if (folderId != null) {
-            result = searchByFolder(folderId);
-        } else if (path != null) {
-            result = searchByFolderPath(path);
-        } else {
-            result = searchByName(name, exactMatch);
-        }
-
-        // convert & sort the result
-        return result.map(p -> beanConversionService.convert(p, UserPreparation.class)) //
-                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
-    }
-
-    /**
-     * Return the preparations that are based on the given dataset.
-     *
-     * @param dataSetId the dataset id.
-     * @return the preparations that are based on the given dataset.
-     */
-    private Stream<Preparation> searchByDataSet(String dataSetId) {
-        LOGGER.debug("looking for preparations based on dataset #{}", dataSetId);
-        return preparationRepository.list(Preparation.class, eq("dataSetId", dataSetId));
-    }
-
-    /**
-     * List all preparations details in the given folder.
-     *
-     * @param folderId the folder where to look for preparations.
-     * @return the list of preparations details for the given folder path.
-     */
-    private Stream<Preparation> searchByFolder(String folderId) {
-        LOGGER.debug("looking for preparations in {}", folderId);
-        final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
-        return entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
-    }
-
-    /**
-     * List all preparations details in the given folder.
-     *
-     * @param path the folder where to look for preparations.
-     * @return the list of preparations details for the given folder path.
-     */
-    private Stream<Preparation> searchByFolderPath(String path) {
-        LOGGER.debug("looking for preparations in {}", path);
-        final List<Folder> foldersToSearch = stream(folderRepository.searchFolders("", false).spliterator(), false)
-                .filter(f -> f.getPath().equals(path)).collect(toList());
-        int size = foldersToSearch.size();
-        Stream<Preparation> preparationStream;
-        switch (size) {
-        case 1:
-            Folder folder = foldersToSearch.iterator().next();
-            final Stream<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
-            preparationStream = entries.map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
-            break;
-        case 0:
-            throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
-        default:
-            throw new TDPException(UNEXPECTED_EXCEPTION, ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
-        }
-        return preparationStream;
+        return listAll( //
+                filterPreparation() //
+                        .byDataSetId(dataSetId) //
+                        .byFolderId(folderId) //
+                        .byName(name) //
+                        .withNameExactMatch(exactMatch) //
+                        .byFolderPath(path), //
+                sort, order);
     }
 
     /**
@@ -327,7 +281,7 @@ public class PreparationService {
      * @param exactMatch true if the name must match exactly.
      * @return all the preparations that matches the given name.
      */
-    private Stream<Preparation> searchByName(String name, boolean exactMatch) {
+    private Expression getNameFilter(String name, boolean exactMatch) {
         LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
         final String regex;
         final String regexMainPart = "(?i)" + name;
@@ -336,7 +290,7 @@ public class PreparationService {
         } else {
             regex = "^.*" + regexMainPart + ".*$";
         }
-        return preparationRepository.list(Preparation.class, match("name", regex));
+        return match("name", regex);
     }
 
     /**
@@ -468,7 +422,7 @@ public class PreparationService {
                     preparationRepository.remove(rowMetadata);
 
                     // Remove preparation action (if it's the only step using these actions)
-                    final Stream<Step> steps = preparationRepository.list(Step.class,  eq("contentId", step.getContent()));
+                    final Stream<Step> steps = preparationRepository.list(Step.class, eq("contentId", step.getContent()));
                     if (steps.count() == 1) {
                         // Remove action
                         final PreparationActions preparationActions = new PreparationActions();
@@ -1076,7 +1030,7 @@ public class PreparationService {
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns

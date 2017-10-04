@@ -12,21 +12,13 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
@@ -43,13 +35,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -63,10 +49,12 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationSummary;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 
@@ -111,33 +99,52 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(values.get(0), is(preparationId));
 
         // when : long format
-        final JsonPath longFormat = when().get("/api/preparations/?format=long").jsonPath();
+        Response response1 = when().get("/api/preparations/?format=long");
 
         // then
-        assertThat(longFormat.getList("dataSetId").size(), is(1));
-        assertThat(longFormat.getList("dataSetId").get(0), is(tagadaId));
-        assertThat(longFormat.getList("author").size(), is(1));
-        assertThat(longFormat.getList("author").get(0), is(security.getUserId()));
-        assertThat(longFormat.getList("id").size(), is(1));
-        assertThat(longFormat.getList("id").get(0), is(preparationId));
-        assertThat(longFormat.getList("actions").size(), is(1));
-        assertThat(((List) longFormat.getList("actions").get(0)).size(), is(0));
+        List<UserPreparation> preparations = mapper.readerFor(UserPreparation.class)
+                .<UserPreparation>readValues(response1.asInputStream()).readAll();
+        assertEquals(1, preparations.size());
+        UserPreparation userPreparation = preparations.iterator().next();
+        assertThat(userPreparation.getDataSetId(), is(tagadaId));
+        assertThat(userPreparation.getAuthor(), is(security.getUserId()));
+        assertThat(userPreparation.getId(), is(preparationId));
+        assertThat(userPreparation.getActions(), is(empty()));
 
         // when : summary format
-        final JsonPath summaryFormat = when().get("/api/preparations/?format=summary").jsonPath();
+        Response response = when().get("/api/preparations/?format=summary");
 
         // then
-        assertThat(summaryFormat.getList("id").size(), is(1));
-        assertThat(summaryFormat.getList("id").get(0), is(preparationId));
-        assertThat(summaryFormat.getList("name").size(), is(1));
-        assertThat(summaryFormat.getList("name").get(0), is("testPreparation"));
-        assertThat(summaryFormat.getList("owner").size(), is(1));
-        assertThat(summaryFormat.getList("lastModificationDate").size(), is(1));
-        assertThat(summaryFormat.getList("allowDistributedRun").size(), is(1));
+        List<PreparationSummary> preparationSummaries = mapper.readerFor(PreparationSummary.class)
+                .<PreparationSummary>readValues(response.asInputStream()).readAll();
+        assertEquals(1, preparationSummaries.size());
+        PreparationSummary preparationSummary = preparationSummaries.iterator().next();
+        assertThat(preparationSummary.getId(), is(preparationId));
+        assertThat(preparationSummary.getName(), is("testPreparation"));
+        assertThat(preparationSummary.getLastModificationDate(), is(notNullValue()));
+        assertThat(preparationSummary.isAllowDistributedRun(), is(notNullValue()));
     }
 
     @Test
-    public void testPreparationsList_withFilter() throws Exception {
+    public void testPreparationsGet() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
+
+        // when : long format
+        Response response1 = when().get("/api/preparations/{preparationId}/details", preparationId);
+
+        // then
+        EnrichedPreparation userPreparation = mapper.readerFor(EnrichedPreparation.class).readValue(response1.asInputStream());
+        assertThat(userPreparation.getDataSetId(), is(tagadaId));
+        assertThat(userPreparation.getAuthor(), is(security.getUserId()));
+        assertThat(userPreparation.getId(), is(preparationId));
+        assertThat(userPreparation.getActions(), is(empty()));
+        assertThat(userPreparation.getFolder().getPath(), is(home.getPath()));
+    }
+
+    @Test
+    public void testPreparationsList_withFilterOnName() throws Exception {
         // given
         String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
         String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
@@ -148,6 +155,47 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         final List<String> values = shortFormat.getList("");
         assertThat(values.get(0), is(preparationId));
+    }
+
+    @Test
+    public void testPreparationsList_withFilterOnFolderPath() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        String preparationName = "tagadaPreparation";
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, preparationName, home.getId());
+
+        // when : short format
+        final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
+
+        // then
+        List<String> result = mapper.readerFor(String.class).<String>readValues(shouldNotBeEmpty.asInputStream()).readAll();
+        assertThat(result.get(0), is(preparationId));
+
+        // when
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
+
+        // then
+        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
+    }
+
+    @Test
+    public void testPreparationsList_withFilterOnFullPath() throws Exception {
+        // given
+        String tagadaId = testClient.createDataset("dataset/dataset.csv", "tagada");
+        String preparationName = "tagadaPreparation";
+        String preparationId = testClient.createPreparationFromDataset(tagadaId, preparationName, home.getId());
+
+        // when : short format
+        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/" + preparationName).jsonPath();
+
+        // then
+        assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
+
+        // when
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName).jsonPath();
+
+        // then
+        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
     }
 
     @Test

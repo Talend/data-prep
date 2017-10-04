@@ -86,6 +86,7 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
+                                    <skip>${skipTests}</skip>
                                     <arguments>test</arguments>
                                 </configuration>
                             </execution>
@@ -166,11 +167,7 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>
-                                        <argument>install</argument>
-                                        <argument>--force</argument>
-                                        <argument>--prefer-offline</argument>
-                                    </arguments>
+                                    <arguments>install --force --prefer-offline</arguments>
                                 </configuration>
                             </execution>
                             <execution>
@@ -180,10 +177,7 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>
-                                        <argument>run</argument>
-                                        <argument>build:dist</argument>
-                                    </arguments>
+                                    <arguments>run build:dist</arguments>
                                 </configuration>
                             </execution>
                             <execution>
@@ -193,10 +187,8 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>
-                                        <argument>run</argument>
-                                        <argument>test:ci</argument>
-                                    </arguments>
+                                    <skip>${skipTests}</skip>
+                                    <arguments>run test:ci</arguments>
                                 </configuration>
                             </execution>
                         </executions>

@@ -12,12 +12,12 @@
 
 package org.talend.dataprep.cache;
 
-import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.metrics.VolumeMetered;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
+
+import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.metrics.VolumeMetered;
 
 /**
  * A component to hold versions of a preparation at different steps. Each implementation may implement different
@@ -120,29 +120,33 @@ public interface ContentCache {
      */
     enum TimeToLive {
         /**
-         * Default time to live for a content in cache (1 hour).
+         * A very short expiration time (using ContentCache.EVICTION_PERIOD). Useful for tests on eviction.
          */
-        DEFAULT(TimeUnit.HOURS.toMillis(1)),
-        /**
-         * Short time to live (short period -> 1 minute).
-         */
-        SHORT(TimeUnit.MINUTES.toMillis(1)),
-        /**
-         * Long time to live (long period -> 1 day).
-         */
-        LONG(TimeUnit.DAYS.toMillis(1)),
+        IMMEDIATE(ContentCache.EVICTION_PERIOD + 500L),
         /**
          * A very short expiration time (5 seconds).
          */
         VERY_SHORT(TimeUnit.SECONDS.toMillis(5)),
         /**
-         * A very short expiration time (using ContentCache.EVICTION_PERIOD). Useful for tests on eviction.
+         * Short time to live (short period -> 1 minute).
          */
-        IMMEDIATE(ContentCache.EVICTION_PERIOD + 500L),
+        SHORT(TimeUnit.MINUTES.toMillis(1)),
+        /**
+         * Normal time to live (1 hour).
+         */
+        NORMAL(TimeUnit.HOURS.toMillis(1)),
+        /**
+         * Long time to live (long period -> 1 day).
+         */
+        LONG(TimeUnit.DAYS.toMillis(1)),
         /**
          * A infinite expiration time (it is up to caller to evict the cache entry).
          */
-        PERMANENT(-1);
+        PERMANENT(-1),
+        /**
+         * Default time to live for a content in cache (1 hour).
+         */
+        DEFAULT(NORMAL.time);
 
         private final long time;
 

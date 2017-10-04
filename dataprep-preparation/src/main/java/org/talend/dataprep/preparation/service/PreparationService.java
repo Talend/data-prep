@@ -205,10 +205,10 @@ public class PreparationService {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
             Expression filter = null;
-            if (searchCriterion.getName() == null) {
+            if (searchCriterion.getName() != null) {
                 filter = getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
             }
-            if (searchCriterion.getDataSetId() == null){
+            if (searchCriterion.getDataSetId() != null){
                 Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
                 filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
             }

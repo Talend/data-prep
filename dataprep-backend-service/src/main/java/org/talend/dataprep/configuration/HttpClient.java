@@ -15,11 +15,8 @@ package org.talend.dataprep.configuration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
@@ -27,10 +24,8 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
@@ -53,6 +48,9 @@ public class HttpClient {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClient.class);
+
+    @Value("${live.dataset.url:}")
+    private String ticPublicApiUrl;
 
     /** Maximum connection pool size. */
     @Value("${http.pool.size:50}")
@@ -104,6 +102,7 @@ public class HttpClient {
     @Bean(destroyMethod = "close")
     public CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager) {
         return HttpClientBuilder.create() //
+                .setDefaultCookieStore(new TDPCookieStore(ticPublicApiUrl)) //
                 .setConnectionManager(connectionManager) //
                 .setKeepAliveStrategy(getKeepAliveStrategy()) //
                 .setDefaultRequestConfig(getRequestConfig()) //
@@ -117,9 +116,7 @@ public class HttpClient {
      */
     private RequestConfig getRequestConfig() {
         return RequestConfig.custom() //
-                .setContentCompressionEnabled(true)
-                .setConnectionRequestTimeout(connectionRequestTimeout)
-                .build();
+                .setContentCompressionEnabled(true).setConnectionRequestTimeout(connectionRequestTimeout).build();
     }
 
     /**
@@ -137,7 +134,7 @@ public class HttpClient {
                 if (value != null && "timeout".equalsIgnoreCase(param)) {
                     try {
                         return Long.parseLong(value) * 1000;
-                    } catch(NumberFormatException ignore) {
+                    } catch (NumberFormatException ignore) {
                         // let's move on the next header value
                         break;
                     }
@@ -178,4 +175,24 @@ public class HttpClient {
 
     }
 
+    private class TDPCookieStore extends BasicCookieStore {
+
+        private String ticPublicApiUrl;
+
+        public TDPCookieStore(String ticPublicApiUrl) {
+            this.ticPublicApiUrl = ticPublicApiUrl;
+        }
+
+        @Override
+        public synchronized void addCookie(Cookie cookie) {
+            if (StringUtils.isNotEmpty(ticPublicApiUrl)) {
+                if (cookie != null && "JSESSIONID".equals(cookie.getName()) && ticPublicApiUrl.contains(cookie.getDomain())) {
+                    LOGGER.info("don't add cookie from IPAAS: name={}, domain=", cookie.getName(), cookie.getDomain());
+                    return;
+                }
+            }
+            super.addCookie(cookie);
+        }
+
+    }
 }

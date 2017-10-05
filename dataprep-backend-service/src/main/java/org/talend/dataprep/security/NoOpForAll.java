@@ -44,7 +44,7 @@ public class NoOpForAll implements ForAll {
                 LOGGER.debug("Unable to run '{}' (condition disallowed run of it).", runnable);
             }
         } catch (Exception e) {
-            LOGGER.warn("Unable to execute run '{}'. Skip execution.");
+            LOGGER.warn("Unable to execute run '{}'. Skip execution.", runnable);
             LOGGER.debug("Unable to execute run '{}'. Skip execution error.", e);
         }
     }

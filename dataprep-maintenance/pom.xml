@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+  ~ ============================================================================
+  ~ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~ This source code is available under agreement available at
+  ~ https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~ You should have received a copy of the agreement
+  ~ along with this program; if not, write to Talend SA
+  ~ 9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.talend.dataprep</groupId>
+        <artifactId>dataprep-backend-service-parent</artifactId>
+        <version>2.2.0-SNAPSHOT</version>
+        <relativePath>../dataprep-backend-service-parent/pom.xml</relativePath>
+    </parent>
+    <artifactId>dataprep-maintenance</artifactId>
+    <version>2.2.0-SNAPSHOT</version>
+    <name>dataprep-maintenance</name>
+    <properties>
+        <start-class>org.talend.dataprep.maintenance.Application</start-class>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-preparation</artifactId>
+            <type>test-jar</type>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

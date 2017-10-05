@@ -43,7 +43,6 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.preparation.BasePreparationTest;
-import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.test.MockTDPException;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.util.SortAndOrderHelper;
@@ -62,9 +61,6 @@ public class PreparationControllerTest extends BasePreparationTest {
 
     @Autowired
     private PreparationUtils preparationUtils;
-
-    @Autowired
-    private PreparationCleaner cleaner;
 
     @Test
     public void CORSHeaders() throws Exception {

@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.preparation.task;
+package org.talend.dataprep.maintenance.preparation;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.*;
@@ -36,7 +35,6 @@ import org.talend.dataprep.security.SecurityProxy;
  * Scheduler that clean the repository. It removes all the steps that do NOT belong to any preparation
  */
 @Component
-@EnableScheduling
 public class PreparationCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
@@ -53,7 +51,7 @@ public class PreparationCleaner {
     @Autowired
     private PreparationUtils preparationUtils;
 
-    @Autowired
+    @Autowired(required = false)
     private List<OrphanStepsFinder> orphanStepsFinders;
 
     @Autowired

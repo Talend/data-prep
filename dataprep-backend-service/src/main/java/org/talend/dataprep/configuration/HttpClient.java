@@ -116,7 +116,9 @@ public class HttpClient {
      */
     private RequestConfig getRequestConfig() {
         return RequestConfig.custom() //
-                .setContentCompressionEnabled(true).setConnectionRequestTimeout(connectionRequestTimeout).build();
+                .setContentCompressionEnabled(true) //
+                .setConnectionRequestTimeout(connectionRequestTimeout) //
+                .build();
     }
 
     /**

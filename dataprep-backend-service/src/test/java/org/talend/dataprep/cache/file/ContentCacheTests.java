@@ -33,6 +33,7 @@ import org.talend.ServiceBaseTest;
 import org.talend.dataprep.cache.CacheJanitor;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.noop.NoOpCacheJanitor;
 
 /**
  * Standard tests for a {@link ContentCache}
@@ -45,7 +46,7 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
     ContentCache cache;
 
     @Autowired
-    CacheJanitor janitor;
+    CacheJanitor janitor = new NoOpCacheJanitor();
 
     @After
     public void tearDown() throws Exception {

@@ -38,11 +38,6 @@
     <profiles>
         <profile>
             <id>dev</id>
-            <activation>
-                <property>
-                    <name>!use.docker.tool</name>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>

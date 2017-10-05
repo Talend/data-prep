@@ -34,7 +34,8 @@ public enum ActionCategory {
     DATA_BLENDING("data_blending"), //
     DATA_MASKING("data masking"), //
     PHONE_NUMBER("phones"), //
-    CONVERSIONS("conversions");
+    CONVERSIONS("conversions"), //
+    TABLE("table");
 
     /** The category display name. */
     private final String displayName;

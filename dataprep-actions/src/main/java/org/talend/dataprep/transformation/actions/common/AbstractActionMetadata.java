@@ -22,6 +22,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.parameters.Parameter;

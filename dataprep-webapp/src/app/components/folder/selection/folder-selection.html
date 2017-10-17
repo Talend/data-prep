@@ -26,7 +26,9 @@
 
     <div class="folders"
          ng-switch="$ctrl.isLoading">
-        <loader ng-switch-when="true"></loader>
+        <div ng-switch-when="true" class="loader-container">
+            <loader></loader>
+        </div>
         <div ng-switch-when="false"
              ng-switch="!!$ctrl.searchFolderQuery">
             <folder-tree ng-switch-when="false"

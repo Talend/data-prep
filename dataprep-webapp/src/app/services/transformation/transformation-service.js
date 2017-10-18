@@ -142,7 +142,6 @@ export default class TransformationService {
 	 * @returns {Promise} The process promise
 	 */
 	initTransformations(scope, entity) {
-
 		if (this.state.playground.isReadOnly) {
 			return this.$q.when([]);
 		}

@@ -138,39 +138,76 @@ describe('Step Description controller', () => {
 			expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">Delete Line</span> <span class="step-scope">#125</span>');
 		});
 
-		it('should translate description on scope: dataset', () => {
-        			//given
-        			const ctrl = createController();
-        			ctrl.index = 6;
-        			ctrl.step = {
-        				column: { id: '0', name: 'col1' },
-        				transformation: {
-        					stepId: '13a24e8765ef4',
-        					name: 'Dedup',
-        					label: 'Dedup',
-        					category: 'Dedup',
-        					parameters: [],
-        					items: [],
-        				},
-        				actionParameters: {
-        					action: 'Dedup',
-        					parameters: {
-        						scope: 'dataset',
-        						column_id: '0',
-        						pattern: '/',
-        					},
-        				},
-        			};
 
-        			//when
-        			ctrl.$onChanges();
-        			scope.$digest();
+        describe('translate description on scope: hidden,', () => {
+            it('should translate description for reordering step', () => {
+                //given
+                const ctrl = createController();
+                ctrl.index = 0;
+                ctrl.step = {
+                    column: { id: '0', name: 'col1' },
+                    transformation: {
+                        stepId: '13a24e8765ef4',
+                        name: 'reorder',
+                        label: 'reorder',
+                        category: 'columns',
+                        parameters: [{ name: 'pattern', type: 'string' }],
+                        items: [],
+                    },
+                    actionParameters: {
+                        action: 'reorder',
+                        parameters: {
+                            selected_column: '0003',
+                            column_id: '0000',
+                            scope: 'hidden',
+                            column_name: 'name',
+                            dataset_action_display_type: 'column',
+                        },
+                    },
+                };
 
-        			//then
-        			expect(ctrl.stepDescription).toBe('<span class="step-number">7</span> <span class="step-label">Dedup</span> on table');
-        		});
+                //when
+                ctrl.$onChanges();
+                scope.$digest();
+
+                //then
+                expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">reorder</span> on column <div class="step-scope" title="col1">col1</div>');
+            });
+		});
 
 		describe('translate description on scope: dataset,', () => {
+            it('on action changes', () => {
+                //given
+                const ctrl = createController();
+                ctrl.index = 6;
+                ctrl.step = {
+                    column: { id: '0', name: 'col1' },
+                    transformation: {
+                        stepId: '13a24e8765ef4',
+                        name: 'Dedup',
+                        label: 'Dedup',
+                        category: 'Dedup',
+                        parameters: [],
+                        items: [],
+                    },
+                    actionParameters: {
+                        action: 'Dedup',
+                        parameters: {
+                            scope: 'dataset',
+                            column_id: '0',
+                            pattern: '/',
+                        },
+                    },
+                };
+
+                //when
+                ctrl.$onChanges();
+                scope.$digest();
+
+                //then
+                expect(ctrl.stepDescription).toBe('<span class="step-number">7</span> <span class="step-label">Dedup</span> on table');
+            });
+
 			describe('on lookup action', () => {
 				it('should translate description with 1 column', () => {
 					//given
@@ -318,42 +355,6 @@ describe('Step Description controller', () => {
 
 					//then
 					expect(ctrl.stepDescription).toBe('<span class="step-number">3</span> <span class="step-label">Lookup</span> done with dataset <div class="step-scope" title="customers_100_with_pb">customers_100_with_pb</div>. Join has been set between <div class="step-scope" title="id">id</div> and <div class="step-scope" title="id">id</div>. The columns <div class="step-scope" title="firstname">firstname</div>, <div class="step-scope" title="lastname">lastname</div> and <span title="state, registration">2</span> other(s) have been added.');
-				});
-			});
-
-			describe('on reorder action', () => {
-				it('should translate description for reordering step', () => {
-					//given
-					const ctrl = createController();
-					ctrl.index = 0;
-					ctrl.step = {
-						column: { id: '0', name: 'col1' },
-						transformation: {
-							stepId: '13a24e8765ef4',
-							name: 'reorder',
-							label: 'Split',
-							category: 'split',
-							parameters: [{ name: 'pattern', type: 'string' }],
-							items: [],
-						},
-						actionParameters: {
-							action: 'split',
-							parameters: {
-								selected_column: '0003',
-								column_id: '0000',
-								scope: 'dataset',
-								column_name: 'name',
-								dataset_action_display_type: 'column',
-							},
-						},
-					};
-
-					//when
-					ctrl.$onChanges();
-					scope.$digest();
-
-					//then
-					expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">Split</span> on column <div class="step-scope" title="col1">col1</div>');
 				});
 			});
 		});

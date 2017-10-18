@@ -172,7 +172,7 @@ export default function DatagridColumnService($rootScope, $compile, $translate,
 
 		const params = {
 			selected_column: result.target,
-			scope: 'dataset',
+			scope: 'hidden',
 			column_id: result.selected,
 			column_name: result.name,
 			dataset_action_display_type: 'column',

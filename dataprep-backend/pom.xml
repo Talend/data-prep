@@ -69,6 +69,7 @@
         <module>../dataprep-transformation</module>
         <module>../dataprep-preparation</module>
         <module>../dataprep-api</module>
+        <module>../dataprep-maintenance</module>
     </modules>
     <dependencyManagement>
         <dependencies>

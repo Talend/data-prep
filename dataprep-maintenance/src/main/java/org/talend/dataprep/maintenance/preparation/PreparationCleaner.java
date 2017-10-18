@@ -25,14 +25,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.ForAll;
 import org.talend.dataprep.security.SecurityProxy;
 
 /**
- * Scheduler that clean the repository. It removes all the steps that do NOT belong to any preparation
+ * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.
  */
 @Component
 public class PreparationCleaner {

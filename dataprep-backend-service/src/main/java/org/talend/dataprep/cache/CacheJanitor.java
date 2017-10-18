@@ -15,7 +15,7 @@ package org.talend.dataprep.cache;
 public interface CacheJanitor {
 
     /**
-     * A clean up process that starts a minute after the previous ended.
+     * A clean up process that cleans the cache of obsolete cache entries.
      */
     void janitor();
 }

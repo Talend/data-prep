@@ -23,7 +23,6 @@
     <modules>
         <module>dataprep-backend</module>
         <module>dataprep-webapp</module>
-    <module>dataprep-maintenance</module>
   </modules>
     <licenses>
         <license>

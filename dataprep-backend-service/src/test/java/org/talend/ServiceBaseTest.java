@@ -13,6 +13,7 @@
 package org.talend;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.talend.ServiceBaseTest.TEST_LOCALE;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,8 +36,10 @@ import com.jayway.restassured.RestAssured;
 @RunWith(SpringRunner.class)
 @Import(LocalContentServiceConfiguration.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false",
-        "content-service.store=local", "live.dataset.location=tac"})
+        "content-service.store=local", "live.dataset.location=tac", "dataprep.locale:" + TEST_LOCALE})
 public abstract class ServiceBaseTest {
+
+    public static final String TEST_LOCALE = "vi_VN";
 
     @Configuration
     @ComponentScan(basePackages = {"org.talend.daikon.content", "org.talend.dataprep"})

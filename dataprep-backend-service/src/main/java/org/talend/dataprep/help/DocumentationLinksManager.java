@@ -1,6 +1,7 @@
 package org.talend.dataprep.help;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -8,9 +9,6 @@ public class DocumentationLinksManager {
 
     @Value("${help.facets.version:}")
     private String versionFacet;
-
-    @Value("${help.facets.language:}")
-    private String languageFacet;
 
     @Value("${help.search.url:https://www.talendforge.org/find/api/THC.php}")
     private String searchUrl;
@@ -26,7 +24,7 @@ public class DocumentationLinksManager {
     }
 
     public String getLanguageFacet() {
-        return languageFacet;
+        return LocaleContextHolder.getLocale().toString();
     }
 
     public String getSearchUrl() {

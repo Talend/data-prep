@@ -35,6 +35,8 @@ public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements Co
      */
     public static final String ACTION_NAME = "remove_non_alpha_num_chars"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_only_alpha";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -51,10 +53,15 @@ public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements Co
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toCut = row.get(columnId);
-        row.set(columnId, apply(toCut));
+        row.set(getTargetColumnId(context), apply(toCut));
     }
 
     protected String apply(String from) {

@@ -28,7 +28,6 @@ import java.time.chrono.AbstractChronology;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -37,6 +36,7 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -45,15 +45,12 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see DateCalendarConverter
  */
-public class DateCalendarConverterTest extends BaseDateTest {
-
-    /** The action to test. */
-    private DateCalendarConverter action = new DateCalendarConverter();
+public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverter> {
 
     private Map<String, String> parameters;
 
-    @Before
-    public void init() throws IOException {
+    public DateCalendarConverterTest() {
+        super(new DateCalendarConverter());
     }
 
     @Test
@@ -77,10 +74,15 @@ public class DateCalendarConverterTest extends BaseDateTest {
         assertThat(name, is("date_calendar_converter"));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList(TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER, FROM_MODE, "new_pattern",
+        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER, FROM_MODE, "new_pattern",
                 COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
 
         // when
@@ -88,7 +90,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
         // then
         assertNotNull(parameters);
-        assertEquals(5, parameters.size());
+        assertEquals(6, parameters.size());
         final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName)
                 .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
@@ -449,6 +451,11 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 DateCalendarConverter.CalendarUnit.EPOCH_DAY);
     }
 
+    @Test
+    public void test_apply_inplace() {
+        testChronologyToJulianDaySameInstance();
+    }
+
     /**
      * row1 and row2 should use one instance DateCalendarConverter.Just cover the test code and no assert the Mpa 'dateCalendarConverterMap'.
      * Because the Map is private.
@@ -482,6 +489,44 @@ public class DateCalendarConverterTest extends BaseDateTest {
         assertEquals("2440588", row1.get("0001"));
         assertEquals("1721426", row2.get("0001"));
     }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        Map<String, String> rowContent = new HashMap<>();
+        //row1
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "1970-01-01");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
+                .add(new PatternFrequency("yyyy-MM-dd", 1));
+
+        // row 2
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "0001-01-01");
+        final DataSetRow row2 = new DataSetRow(rowContent);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+
+        // then
+        // assert that original column is unchanged:
+        assertEquals("1970-01-01", row1.get("0001"));
+        assertEquals("0001-01-01", row2.get("0001"));
+
+        // assert that new column is created:
+        assertEquals("2440588", row1.get("0002"));
+        assertEquals("1721426", row2.get("0002"));
+    }
+
     @Test
     public void should_not_chronologyToJulianDay() {
         testConversion("1970-01-01", DateCalendarConverter.CalendarUnit.ISO, null, "1970-01-01",

@@ -44,12 +44,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class ContainsTest extends AbstractMetadataBaseTest {
 
-    /**
-     * The action to test.
-     */
-    private Contains action = new Contains();
-
     private Map<String, String> parameters;
+
+    public ContainsTest() {
+        super(new Contains());
+    }
 
     @Before
     public void init() throws IOException {
@@ -69,8 +68,18 @@ public class ContainsTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_set_new_column_name_constant_mode() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final DataSetRow row = builder() //
                 .with(value("first").type(Type.STRING).name("source")) //

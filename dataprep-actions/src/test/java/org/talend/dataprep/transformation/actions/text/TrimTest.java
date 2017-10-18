@@ -32,6 +32,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -42,10 +43,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class TrimTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private Trim action = new Trim();
-
     private Map<String, String> parameters;
+
+    public TrimTest() {
+        super(new Trim());
+    }
 
     @Before
     public void init() throws IOException {
@@ -64,8 +66,33 @@ public class TrimTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_remove_whiteSpace_value() {
+    public void test_apply_in_newcolumn() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", " the beatles ");
+        final DataSetRow row = new DataSetRow(values);
+        DataSetRow expectedRow = getRow(" the beatles ", "the beatles");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedRow, row);
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0000_trim").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0001");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", " the beatles ");

@@ -57,6 +57,13 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     /** Custom repeated char  */
     protected static final String CUSTOM_REPEAT_CHAR_PARAMETER = "custom_repeat_chars";
 
+    protected static final String NEW_COLUMN_SUFFIX = "_without_consecutive";
+
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
     @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
@@ -97,7 +104,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         }
         final DuplicateCharEraser duplicateCharEraser = context.get(DUPLICATE_CHAR_ERASER_KEY);
         String cleanValue = duplicateCharEraser.removeRepeatedChar(originalValue);
-        row.set(columnId, cleanValue);
+        row.set(getTargetColumnId(context), cleanValue);
     }
 
     @Override

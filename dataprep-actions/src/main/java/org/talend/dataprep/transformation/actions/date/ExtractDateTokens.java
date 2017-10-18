@@ -139,9 +139,18 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
+    protected void createNewColumn(ActionContext context) {
+        if (doesCreateNewColumn(context.getParameters())) {
             final RowMetadata rowMetadata = context.getRowMetadata();
             final String columnId = context.getColumnId();
             final Map<String, String> parameters = context.getParameters();

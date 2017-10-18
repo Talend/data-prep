@@ -25,7 +25,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -67,8 +66,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     public static final String COLUMN_MODE = "other_column_mode";
 
-    public static final String NEW_COLUMN = "new_column";
-
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -90,8 +87,18 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = super.getParameters(locale);
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            final List<Parameter> parameters = super.getParameters(locale);
 
         Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                 .setType(ParameterType.STRING)
@@ -112,27 +119,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         return parameters;
     }
 
-    @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            checkParameters(context.getParameters(), context.getRowMetadata());
-            // Create new column
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final String columnId = context.getColumnId();
-            final Map<String, String> parameters = context.getParameters();
-            context.column(NEW_COLUMN, (r) -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(evalNewColumnName(rowMetadata, parameters)) //
-                        .type(Type.STRING) //
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-        }
-    }
-
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
      */
@@ -140,8 +126,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final RowMetadata rowMetadata = context.getRowMetadata();
         final Map<String, String> parameters = context.getParameters();
-
-        String newColumn = context.column("new_column");
 
         String newValue = "";
         switch (parameters.get(MODE_PARAMETER)) {
@@ -158,12 +142,14 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         default:
         }
 
-        row.set(newColumn, newValue);
+        row.set(getTargetColumnId(context), newValue);
     }
 
-    private String evalNewColumnName(RowMetadata rowMetadata, Map<String, String> parameters) {
+    @Override
+    public String getCreatedColumnName(ActionContext context){
+        final Map<String, String> parameters = context.getParameters();
         if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE)) {
-            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            ColumnMetadata selectedColumn =context.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             return selectedColumn.getName() + CopyColumnMetadata.COPY_APPENDIX;
         } else {
             return "new column";

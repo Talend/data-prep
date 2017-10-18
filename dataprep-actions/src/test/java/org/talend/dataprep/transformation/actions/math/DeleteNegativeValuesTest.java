@@ -41,10 +41,16 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DeleteNegativeValuesTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private DeleteNegativeValues action = new DeleteNegativeValues();
-
     private Map<String, String> parameters;
+
+    public DeleteNegativeValuesTest() {
+        super(new DeleteNegativeValues());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
+    }
 
     @Before
     public void init() throws IOException {

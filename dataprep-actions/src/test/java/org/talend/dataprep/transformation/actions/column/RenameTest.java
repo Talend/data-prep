@@ -45,10 +45,16 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class RenameTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private Rename action = new Rename();
-
     private Map<String, String> parameters;
+
+    public RenameTest() {
+        super(new Rename());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
+    }
 
     @Before
     public void init() throws IOException {

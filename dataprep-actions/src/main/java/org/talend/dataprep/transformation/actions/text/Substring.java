@@ -28,7 +28,6 @@ import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Substring.SUBSTRING_ACTION_NAME)
@@ -119,9 +118,14 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
                 .defaultValue(FROM_BEGINNING) //
                 .build(this);
 
-        final List<Parameter> parameters = ImplicitParameters.getParameters(locale);
+        final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(fromParameters);
         return parameters;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
     }
 
     @Override
@@ -130,27 +134,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            // Create result column
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final String columnId = context.getColumnId();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            context.column(column.getName() + APPENDIX, r -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + APPENDIX) //
-                        .type(Type.get(column.getType())) //
-                        .empty(column.getQuality().getEmpty()) //
-                        .invalid(column.getQuality().getInvalid()) //
-                        .valid(column.getQuality().getValid()) //
-                        .headerSize(column.getHeaderSize()) //
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-        }
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + APPENDIX;
     }
 
     @Override
@@ -159,7 +144,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         final RowMetadata rowMetadata = context.getRowMetadata();
         final String columnId = context.getColumnId();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final String substringColumn = context.column(column.getName() + APPENDIX);
+        final String substringColumn = getTargetColumnId(context);
 
         // Perform substring
         final String value = row.get(columnId);

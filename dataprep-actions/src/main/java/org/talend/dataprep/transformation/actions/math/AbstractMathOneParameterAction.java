@@ -110,7 +110,6 @@ public abstract class AbstractMathOneParameterAction extends AbstractMathAction 
             LOGGER.debug(e.getMessage(), e);
         }
 
-        String newColumnId = context.column("result");
-        row.set(newColumnId, result);
+        row.set(getTargetColumnId(context), result);
     }
 }

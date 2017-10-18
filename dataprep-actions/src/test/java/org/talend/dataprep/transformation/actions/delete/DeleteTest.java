@@ -37,7 +37,14 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DeleteTest extends AbstractMetadataBaseTest {
 
-    private Delete action = new Delete();
+    public DeleteTest() {
+        super(new Delete());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
+    }
 
     @Test
     public void should_be_in_data_cleansing_category() {

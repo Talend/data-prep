@@ -21,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Before;
@@ -32,6 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -41,10 +43,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class ProperCaseTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private ProperCase action = new ProperCase();
-
     private Map<String, String> parameters;
+
+    public ProperCaseTest() {
+        super(new ProperCase());
+    }
 
     @Before
     public void init() throws IOException {
@@ -63,8 +66,40 @@ public class ProperCaseTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_transform_lower_to_proper() {
+    public void test_apply_in_newcolumn() {
+        // given
+        final Map<String, String> values = new LinkedHashMap<>();
+        values.put("0000", "jimi HENDRIX experience");
+        values.put("0001", "experience");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "jimi HENDRIX experience");
+        expectedValues.put("0001", "experience");
+        expectedValues.put("0002", "May 20th 2015");
+        expectedValues.put("0003", "Jimi Hendrix Experience");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_title").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "the beatles");

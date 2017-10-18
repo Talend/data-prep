@@ -33,6 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -40,12 +41,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see RemoveNonNumChars
  */
-public class RemoveNonNumCharsTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private RemoveNonNumChars action = new RemoveNonNumChars();
+public class RemoveNonNumCharsTest extends AbstractMetadataBaseTest<RemoveNonNumChars> {
 
     private Map<String, String> parameters;
+
+    public RemoveNonNumCharsTest() {
+        super(new RemoveNonNumChars());
+    }
 
     @Before
     public void init() throws IOException {
@@ -65,8 +67,40 @@ public class RemoveNonNumCharsTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS_ADVANCED.getDisplayName(Locale.US)));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
-    public void test_basic() {
+    public void test_apply_in_newcolumn() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "€10k");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "€10k");
+        expectedValues.put("0003", "10");
+        expectedValues.put("0002", "May 20th 2015");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_non_numeric").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");

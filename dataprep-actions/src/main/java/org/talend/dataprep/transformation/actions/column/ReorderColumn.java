@@ -74,6 +74,10 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
         return parameters;
     }
 
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
     @Override
     public List<String> getActionScope() {
         return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());

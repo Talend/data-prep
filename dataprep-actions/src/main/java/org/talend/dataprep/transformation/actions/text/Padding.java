@@ -55,6 +55,8 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     public static final String RIGHT_POSITION = "right";
 
+    protected static final String NEW_COLUMN_SUFFIX = "_padded";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -96,6 +98,11 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final Map<String, String> parameters = context.getParameters();
@@ -105,7 +112,7 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         final char paddingChar = parameters.get(PADDING_CHAR_PARAMETER).charAt(0);
         final String paddingPosition = parameters.get(PADDING_POSITION_PARAMETER);
 
-        row.set(columnId, apply(original, size, paddingChar, paddingPosition));
+        row.set(getTargetColumnId(context), apply(original, size, paddingChar, paddingPosition));
     }
 
     protected String apply(String from, int size, char paddingChar, String position) {

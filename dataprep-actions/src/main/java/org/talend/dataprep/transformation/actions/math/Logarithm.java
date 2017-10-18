@@ -40,8 +40,8 @@ public class Logarithm extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "logarithm";
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + "_logarithm";
     }
 
     @Override

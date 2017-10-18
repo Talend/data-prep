@@ -57,6 +57,16 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + "_absolute";
+    }
+
+    @Override
+    public Type getColumnType(ActionContext context){
+        return Type.DOUBLE;
+    }
+
+    @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.FLOAT.equals(Type.get(column.getType())) //
                 || Type.DOUBLE.equals(Type.get(column.getType())) //
@@ -75,7 +85,7 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
             absValueStr = BigDecimalParser.toBigDecimal(value).abs().toPlainString();
         }
         if (absValueStr != null) {
-            row.set(columnId, absValueStr);
+            row.set(getTargetColumnId(context), absValueStr);
         }
     }
 

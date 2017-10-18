@@ -24,9 +24,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
@@ -195,32 +193,24 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
 
-            String columnId = context.getColumnId();
-            RowMetadata rowMetadata = context.getRowMetadata();
-            ColumnMetadata column = rowMetadata.getById(columnId);
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
 
-            // create new column and append it after current column
-            context.column("result", r -> {
-                ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + "_number") //
-                        .type(Type.STRING) // Leave actual type detection to transformation
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-        }
+    @Override
+    public String getCreatedColumnName(ActionContext context){
+        return context.getColumnName() + "_number";
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
-        final String newColumnId = context.column("result");
-        row.set(newColumnId, extractNumber(row.get(columnId)));
+        row.set(getTargetColumnId(context), extractNumber(row.get(columnId)));
     }
 
     @Override

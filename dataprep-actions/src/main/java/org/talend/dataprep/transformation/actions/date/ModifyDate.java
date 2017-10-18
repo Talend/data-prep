@@ -62,14 +62,21 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
     private static final String AMOUNT_CONTEXT_KEY = "amount"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_modified";
+
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        List<Parameter> parameters = super.getParameters(locale);
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            List<Parameter> parameters = super.getParameters(locale);
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
@@ -158,7 +165,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
             date = date.plus(amount, context.get(UNIT_CONTEXT_KEY));
 
-            row.set(columnId, outputPattern.getFormatter().format(date));
+            row.set(getTargetColumnId(context), outputPattern.getFormatter().format(date));
 
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is

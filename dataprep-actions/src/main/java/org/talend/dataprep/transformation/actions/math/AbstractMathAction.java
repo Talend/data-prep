@@ -34,6 +34,11 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
     protected static final String ERROR_RESULT = StringUtils.EMPTY;
 
     @Override
+    public Type getColumnType(ActionContext context){
+        return Type.DOUBLE;
+    }
+
+    @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.NUMERIC.isAssignableFrom(column.getType());
     }
@@ -41,30 +46,6 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.MATH.getDisplayName(locale);
-    }
-
-    protected abstract String getColumnNameSuffix(Map<String, String> parameters);
-
-    @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-
-            String columnId = context.getColumnId();
-            RowMetadata rowMetadata = context.getRowMetadata();
-            ColumnMetadata column = rowMetadata.getById(columnId);
-
-            // create new column and append it after current column
-            context.column("result", r -> {
-                ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + "_" + getColumnNameSuffix(context.getParameters())) //
-                        .type(Type.STRING) // Leave actual type detection to transformation
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-        }
     }
 
     @Override

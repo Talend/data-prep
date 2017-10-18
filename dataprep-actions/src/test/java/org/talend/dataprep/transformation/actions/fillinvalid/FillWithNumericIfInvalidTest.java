@@ -42,12 +42,18 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  */
 public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private FillInvalid fillInvalid = new FillInvalid();
+    public FillWithNumericIfInvalidTest() {
+        super(new FillInvalid());
+    }
 
     @PostConstruct
     public void init() {
-        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
+        action = (FillInvalid) action.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test
@@ -67,10 +73,10 @@ public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
-        final RunnableAction action = factory.create(fillInvalid, parameters);
+        final RunnableAction runnableAction = factory.create(action, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        runnableAction.getRowAction().apply(row, context);
 
         // then
         assertEquals("25", row.get("0001"));
@@ -93,10 +99,10 @@ public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
-        final RunnableAction action = factory.create(fillInvalid, parameters);
+        final RunnableAction runnableAction = factory.create(action, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        runnableAction.getRowAction().apply(row, context);
 
         // then
         assertEquals("30", row.get("0001"));
@@ -105,27 +111,27 @@ public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptField(getColumn(Type.NUMERIC)));
-        assertTrue(fillInvalid.acceptField(getColumn(Type.DOUBLE)));
-        assertTrue(fillInvalid.acceptField(getColumn(Type.FLOAT)));
-        assertTrue(fillInvalid.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
     }
 
     @Test
     public void should_adapt_null() throws Exception {
-        assertThat(fillInvalid.adapt((ColumnMetadata) null), is(fillInvalid));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, fillInvalid.getBehavior().size());
-        assertTrue(fillInvalid.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
-        assertTrue(fillInvalid.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

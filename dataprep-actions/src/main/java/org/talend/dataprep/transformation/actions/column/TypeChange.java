@@ -66,6 +66,11 @@ public class TypeChange extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     public void compile(ActionContext context) {
         super.compile(context);
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {

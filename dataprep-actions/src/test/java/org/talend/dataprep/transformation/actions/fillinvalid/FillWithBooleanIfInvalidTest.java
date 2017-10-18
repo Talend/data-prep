@@ -43,12 +43,18 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  */
 public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private FillInvalid fillInvalid = new FillInvalid();
+    public FillWithBooleanIfInvalidTest() {
+        super(new FillInvalid());
+    }
 
     @PostConstruct
     public void init() {
-        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
+        action = (FillInvalid) action.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test
@@ -69,10 +75,10 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        final RunnableAction action = factory.create(fillInvalid, parameters);
+        final RunnableAction runnableAction = factory.create(action, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        runnableAction.getRowAction().apply(row, context);
 
         // then
         assertEquals("True", row.get("0002"));
@@ -96,10 +102,10 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        final RunnableAction action = factory.create(fillInvalid, parameters);
+        final RunnableAction runnableAction = factory.create(action, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        runnableAction.getRowAction().apply(row, context);
 
         // then
         assertEquals("False", row.get("0002"));
@@ -108,24 +114,24 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptField(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void should_adapt_null() throws Exception {
-        assertThat(fillInvalid.adapt((ColumnMetadata) null), is(fillInvalid));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, fillInvalid.getBehavior().size());
-        assertTrue(fillInvalid.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
-        assertTrue(fillInvalid.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

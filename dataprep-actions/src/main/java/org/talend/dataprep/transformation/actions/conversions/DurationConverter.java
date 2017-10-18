@@ -55,6 +55,8 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
 
     protected static final String TARGET_PRECISION = "precision";
 
+    protected static final String NEW_COLUMN_SEPARATOR = "_in_";
+
     /**
      * Converter help class.
      */
@@ -71,8 +73,18 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = super.getParameters(locale);
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER);
+    }
+
+    @Override
+    public Type getColumnType(ActionContext context){
+        return Type.DOUBLE;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            final List<Parameter> parameters = super.getParameters(locale);
 
         //@formatter:off
         SelectParameterBuilder builder = SelectParameter.selectParameter(locale)
@@ -137,7 +149,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
                 valueToString = colValue;
             }
 
-            row.set(columnId, valueToString);
+            row.set(getTargetColumnId(context), valueToString);
         }
     }
 

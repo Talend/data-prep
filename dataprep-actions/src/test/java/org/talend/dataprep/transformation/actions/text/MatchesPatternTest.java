@@ -39,14 +39,13 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see Split
  */
-public class MatchesPatternTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private MatchesPattern action = new MatchesPattern();
+public class MatchesPatternTest extends AbstractMetadataBaseTest<MatchesPattern> {
 
     private Map<String, String> parameters;
+
+    public MatchesPatternTest() {
+        super(new MatchesPattern());
+    }
 
     @Before
     public void init() throws IOException {
@@ -65,8 +64,18 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void shouldMatchPattern() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

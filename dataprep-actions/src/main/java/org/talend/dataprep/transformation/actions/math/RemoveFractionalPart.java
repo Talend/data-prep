@@ -13,13 +13,9 @@
 package org.talend.dataprep.transformation.actions.math;
 
 import java.math.RoundingMode;
-import java.util.List;
-import java.util.Locale;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
 /**
  * Round towards zero. Never increments the digit prior to a discarded fraction (i.e. truncates)
@@ -32,9 +28,8 @@ public class RemoveFractionalPart extends AbstractRound {
     /** The action name. */
     public static final String ACTION_NAME = "round_down"; //$NON-NLS-1$
 
-    @Override
-    public List<Parameter> getParameters(Locale locale) {
-        return ImplicitParameters.getParameters(locale);
+    protected boolean hasPrecisionField() {
+        return false;
     }
 
     @Override

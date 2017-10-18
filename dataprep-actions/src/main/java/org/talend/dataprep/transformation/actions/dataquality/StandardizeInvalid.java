@@ -72,6 +72,11 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     }
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         Parameter startParameter = SelectParameter.selectParameter(locale)

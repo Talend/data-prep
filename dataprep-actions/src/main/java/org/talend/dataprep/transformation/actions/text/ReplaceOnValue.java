@@ -78,6 +78,11 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context){
+        return context.getColumnName() + "_replace";
+    }
+
+    @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
@@ -106,7 +111,6 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         apply(row, context);
     }
 
-
     /**
      * Apply the action.
      *
@@ -122,7 +126,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         }
 
         final String newValue = computeNewValue(context, value);
-        row.set(context.getColumnId(), newValue);
+        row.set(getTargetColumnId(context), newValue);
     }
 
     /**

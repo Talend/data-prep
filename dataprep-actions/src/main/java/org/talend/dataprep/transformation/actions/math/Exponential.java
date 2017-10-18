@@ -38,8 +38,8 @@ public class Exponential extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "exponential";
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + "_exponential";
     }
 
     @Override

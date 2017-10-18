@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.actions.text;
 
 import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 import java.util.*;
@@ -72,8 +71,18 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = super.getParameters(locale);
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            final List<Parameter> parameters = super.getParameters(locale);
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
@@ -99,29 +108,13 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            final String columnId = context.getColumnId();
-            // create new column and append it after current column
-            RowMetadata rowMetadata = context.getRowMetadata();
-            ColumnMetadata column = rowMetadata.getById(columnId);
+    public Type getColumnType(ActionContext context){
+        return Type.BOOLEAN;
+    }
 
-            context.column(column.getName() + APPENDIX, r -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + APPENDIX) //
-                        .type(BOOLEAN) //
-                        .typeForce(true) //
-                        .empty(column.getQuality().getEmpty()) //
-                        .invalid(column.getQuality().getInvalid()) //
-                        .valid(column.getQuality().getValid()) //
-                        .headerSize(column.getHeaderSize()) //
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-        }
+    @Override
+    public String getCreatedColumnName(ActionContext context){
+        return context.getColumnName() + APPENDIX;
     }
 
     @Override
@@ -133,9 +126,6 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
 
         // create new column and append it after current column
         RowMetadata rowMetadata = context.getRowMetadata();
-        ColumnMetadata column = rowMetadata.getById(columnId);
-
-        final String fuzzyMatches = context.column(column.getName() + APPENDIX);
 
         String value = row.get(context.getColumnId());
         String referenceValue;
@@ -148,7 +138,7 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
         }
 
         final String columnValue = toStringTrueFalse(fuzzyMatches(value, referenceValue, sensitivity));
-        row.set(fuzzyMatches, columnValue);
+        row.set(getTargetColumnId(context), columnValue);
     }
 
     private boolean fuzzyMatches(String value, String reference, int sensitivity) {

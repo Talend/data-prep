@@ -81,6 +81,11 @@ public class Rename extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);

@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static org.talend.dataprep.api.type.Type.INTEGER;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
 
@@ -32,7 +31,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -90,8 +89,13 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        List<Parameter> parameters = super.getParameters(locale);
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            List<Parameter> parameters = super.getParameters(locale);
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
@@ -123,27 +127,22 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     @Override
+    public Type getColumnType(ActionContext context){
+        return Type.INTEGER;
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context){
+        TemporalUnit unit = ChronoUnit.valueOf(context.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase());
+        return PREFIX + context.getColumnName() + SUFFIX + unit.toString().toLowerCase();
+    }
+
+    @Override
     public void compile(ActionContext context) {
         super.compile(context);
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
             // Create new column
             Map<String, String> parameters = context.getParameters();
-            String columnId = context.getColumnId();
-            TemporalUnit unit = ChronoUnit.valueOf(parameters.get(TIME_UNIT_PARAMETER).toUpperCase());
-            ColumnMetadata column = context.getRowMetadata().getById(columnId);
-            context.column("result", r -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .copy(column)//
-                        .computedId(StringUtils.EMPTY) //
-                        .name(PREFIX + column.getName() + SUFFIX + unit.toString().toLowerCase()) //
-                        .computedId(null) // remove the id
-                        .statistics(new Statistics()) // clear the statistics
-                        .type(INTEGER)//
-                        .build();
-                context.getRowMetadata().insertAfter(columnId, c);
-                return c;
-            });
             context.get(SINCE_WHEN_PARAMETER, m -> parameters.containsKey(SINCE_WHEN_PARAMETER) ?
                     parameters.get(SINCE_WHEN_PARAMETER) :
                     NOW_SERVER_SIDE_MODE);
@@ -156,8 +155,6 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         RowMetadata rowMetadata = context.getRowMetadata();
         Map<String, String> parameters = context.getParameters();
         String columnId = context.getColumnId();
-
-        final String newColumnId = context.column("result");
 
         TemporalUnit unit = ChronoUnit.valueOf(parameters.get(TIME_UNIT_PARAMETER).toUpperCase());
         String newValue;
@@ -191,7 +188,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             // Nothing to do: in this case, temporalAccessor is left null
             newValue = StringUtils.EMPTY;
         }
-        row.set(newColumnId, newValue);
+        row.set(getTargetColumnId(context), newValue);
     }
 
     @Override

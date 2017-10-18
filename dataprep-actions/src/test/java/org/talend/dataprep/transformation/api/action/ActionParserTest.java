@@ -23,22 +23,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
+import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 /**
  * Unit test for the ActionParser class.
  */
-public class ActionParserTest extends AbstractMetadataBaseTest {
+public class ActionParserTest {
 
+    /** The dataprep ready jackson builder. */
+    protected final ObjectMapper mapper = new ObjectMapper();
+
+    protected final ActionFactory factory = new ActionFactory();
+
+    protected final ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
+    
     private final ActionParser actionParser = new ActionParser(factory, actionRegistry, mapper);
 
     @Test(expected = IllegalArgumentException.class)

@@ -390,6 +390,14 @@
         "label": "Scope"
       },
       {
+        "name": "create_new_column",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": false,
+        "label": "Create new column",
+        "default": "false"
+      },
+      {
         "name": "filter",
         "type": "filter",
         "implicit": true,
@@ -565,6 +573,14 @@
         "default": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter"
+      },
+      {
+        "name": "create_new_column",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": false,
+        "label": "Create new column",
+        "default": "true"
       },
       {
         "name": "time_unit",
@@ -861,6 +877,14 @@
         "default": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter"
+      },
+      {
+        "name": "create_new_column",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": false,
+        "label": "Create new column",
+        "default": "false"
       },
       {
         "name": "cell_value",

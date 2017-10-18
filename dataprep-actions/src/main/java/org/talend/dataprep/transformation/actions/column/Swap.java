@@ -45,6 +45,11 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
     private static final Logger LOGGER = LoggerFactory.getLogger(Swap.class);
 
     @Override
+    public boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     public String getName() {
         return SWAP_COLUMN_ACTION_NAME;
     }

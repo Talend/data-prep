@@ -23,11 +23,13 @@ import java.util.stream.Collectors;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.converters.DistanceEnum;
@@ -39,11 +41,9 @@ import org.talend.dataquality.converters.DistanceEnum;
  */
 public class DistanceConverterTest extends AbstractMetadataBaseTest {
 
-
-    /**
-     * The action to test.
-     */
-    private DistanceConverter action = new DistanceConverter();
+    public DistanceConverterTest() {
+        super(new DistanceConverter());
+    }
 
     @Test
     public void testCategory() {
@@ -61,6 +61,11 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(name, Is.is("distance_converter"));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Test
@@ -87,7 +92,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("from_unit", "to_unit", "precision", "column_id", "row_id",
+        List<String> parameterNames = Arrays.asList("create_new_column", "from_unit", "to_unit", "precision", "column_id", "row_id",
                 "scope", "filter");
 
         // when
@@ -95,7 +100,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
 
         // then
         assertNotNull(parameters);
-        assertEquals(7, parameters.size()); // 4 implicit parameters + 3 specific
+        assertEquals(8, parameters.size()); // 4 implicit parameters + 3 specific
         final List<String> expectedParametersNotFound = parameters.stream() //
                 .map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)) //
@@ -164,7 +169,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
     public void mile2kilometer() { testConversion("1.0", DistanceEnum.MILE, "1.609344000", DistanceEnum.KILOMETER, "9"); }
 
     @Test
-    public void kilometer2mile() { testConversion("1.0", DistanceEnum.KILOMETER, "0.621371192", DistanceEnum.MILE, "9"); }
+    public void test_apply_inplace() { testConversion("1.0", DistanceEnum.KILOMETER, "0.621371192", DistanceEnum.MILE, "9"); }
 
     private void testConversion(String from, DistanceEnum deFrom, String expected, DistanceEnum deTo, String precision) {
         // given
@@ -186,6 +191,36 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
 
         // then
         assertEquals(expected, row1.get("0001"));
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "1.0");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(123L);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_unit", DistanceEnum.KILOMETER.name());
+        parameters.put("to_unit", DistanceEnum.MILE.name());
+        parameters.put("precision", "9");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("1.0", row1.get("0001"));
+        assertEquals("0.621371192", row1.get("0002"));
+
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(2).name("0001_in_MILE").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row1.getRowMetadata().getById("0002");
+        assertEquals(expected, actual);
     }
 
 }

@@ -39,6 +39,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -47,10 +48,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see NumericOperations
  */
-public class NumericOperationsTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private NumericOperations action = new NumericOperations();
+public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOperations> {
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -58,8 +56,13 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    public NumericOperationsTest() {
+        super(new NumericOperations());
+    }
+
     @Before
     public void setUp() throws Exception {
+        action = new NumericOperations();
         final InputStream parametersSource = NumericOperationsTest.class.getResourceAsStream("numericOpsAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
@@ -72,7 +75,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     @Test
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
-        assertEquals(6, parameters.size());
+        assertEquals(7, parameters.size());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "operator")).findFirst().isPresent());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
     }
@@ -87,6 +90,10 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.MATH.getDisplayName(Locale.US)));
+    }
+
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Test
@@ -174,7 +181,24 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_apply_on_column() {
+    public void test_apply_in_newcolumn() {
+        // given
+        DataSetRow row = getRow("5", "3", "Done !");
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        DataSetRow rowExpected = getRow("5", "3", "Done !", "8");
+        assertEquals(rowExpected, row);
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000 + 0001").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
 
@@ -182,7 +206,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        DataSetRow expected = getRow("5", "3", "Done !", "8");
+        DataSetRow expected = getRow("8", "3", "Done !");
         assertEquals(expected, row);
     }
 
@@ -190,6 +214,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     public void should_apply_on_created_column() {
         // given
         DataSetRow row = getRow("5", "3");
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
@@ -210,6 +235,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         parameters.remove(NumericOperations.SELECTED_COLUMN_PARAMETER);
         parameters.put(NumericOperations.MODE_PARAMETER, NumericOperations.CONSTANT_MODE);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -229,6 +255,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
                 .build();
         parameters.remove(NumericOperations.OPERAND_PARAMETER);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -250,6 +277,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         parameters.remove(NumericOperations.SELECTED_COLUMN_PARAMETER);
         parameters.put(NumericOperations.MODE_PARAMETER, NumericOperations.CONSTANT_MODE);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

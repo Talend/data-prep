@@ -42,14 +42,19 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DeleteEmptyTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private DeleteEmpty action = new DeleteEmpty();
-
     private Map<String, String> parameters;
 
+    public DeleteEmptyTest() {
+        super(new DeleteEmpty());
+    }
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters(DeleteEmptyTest.class.getResourceAsStream("deleteEmptyAction.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

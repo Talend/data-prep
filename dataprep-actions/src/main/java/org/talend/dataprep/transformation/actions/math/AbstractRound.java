@@ -40,6 +40,7 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     /** Number of digit after the decimal symbol. */
     protected static final String PRECISION = "precision"; //$NON-NLS-1$
 
+    protected static  final String NEW_COLUMN_SUFFIX = "_rounded";
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.NUMBERS.getDisplayName(locale);
@@ -48,9 +49,20 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter(locale).setName(PRECISION).setType(INTEGER).setDefaultValue("0").build(
-                this));
+        if (hasPrecisionField()) {
+            parameters.add(Parameter.parameter(locale).setName(PRECISION).setType(INTEGER).setDefaultValue("0").build(
+                    this));
+        }
         return parameters;
+    }
+
+    protected boolean hasPrecisionField() {
+        return true;
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
     }
 
     @Override
@@ -77,7 +89,7 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
         if (NumericHelper.isBigDecimal(value)) {
             BigDecimal bd = BigDecimalParser.toBigDecimal(value);
             bd = bd.setScale(precision, getRoundingMode());
-            row.set(columnId, String.valueOf(bd));
+            row.set(getTargetColumnId(context), String.valueOf(bd));
         }
     }
 
@@ -88,6 +100,11 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
         Type columnType = Type.get(column.getType());
         // in order to 'clean' integer typed columns, this function needs to be allowed on any numeric types
         return Type.NUMERIC.isAssignableFrom(columnType);
+    }
+
+    @Override
+    public Type getColumnType(ActionContext context){
+        return Type.DOUBLE;
     }
 
     @Override

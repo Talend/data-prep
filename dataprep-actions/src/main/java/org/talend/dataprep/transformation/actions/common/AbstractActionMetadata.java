@@ -12,16 +12,15 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.i18n.DocumentationLinkGenerator;
 import org.talend.dataprep.i18n.MessagesBundle;
@@ -33,6 +32,8 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+
 /**
  * Adapter for {@link ActionDefinition} to have default implementation and behavior for actions. Every dataprep actions
  * derive from it but it is not an obligation.
@@ -41,6 +42,16 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     public static final String ACTION_BEAN_PREFIX = "action#"; //$NON-NLS-1$
 
+    /**
+     * Key for the "Create new column" parameter.
+     */
+    public static final String CREATE_NEW_COLUMN = "create_new_column";
+
+    /**
+     * Key for the context map to retrieve column created by "Create new comumn" parameter.
+     */
+    private static final String TARGET_COLUMN = "target";
+
     @Override
     public ActionDefinition adapt(ColumnMetadata column) {
         return this;
@@ -48,8 +59,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     /**
      * <p>
-     * Adapts the current action metadata to the scope. This method may return <code>this</code> if no action specific
-     * change should be done. It may return a different instance with information from scope (like a different label).
+     * Adapts the current action metadata to the scope. This method may return <code>this</code> if no action specific change
+     * should be done. It may return a different instance with information from scope (like a different label).
      * </p>
      *
      * @param scope A {@link ScopeCategory scope}.
@@ -163,8 +174,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * Called by transformation process <b>before</b> the first transformation occurs. This method allows action
      * implementation to compute reusable objects in actual transformation execution. Implementations may also indicate
-     * that action is not applicable and should be discarded (
-     * {@link ActionContext.ActionStatus#CANCELED}.
+     * that action is not applicable and should be discarded ( {@link ActionContext.ActionStatus#CANCELED}.
      *
      * @param actionContext The action context that contains the parameters and allows compile step to change action
      * status.
@@ -183,6 +193,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
                     actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
                     return;
                 }
+                createNewColumn(actionContext);
                 break;
             case LINE:
             case DATASET:
@@ -210,7 +221,20 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return ImplicitParameters.getParameters(locale);
+        final List<Parameter> parameters = ImplicitParameters.getParameters(locale);
+
+        // For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
+        // creates a new column:
+        if (createNewColumnParamVisible()) {
+            parameters.add(Parameter.parameter(locale).setName(CREATE_NEW_COLUMN)
+                    .setType(BOOLEAN)
+                    .setDefaultValue("" + getCreateNewColumnDefaultValue())
+                    .setCanBeBlank(false)
+                    .setImplicit(false)
+                    .build(this));
+        }
+
+        return parameters;
     }
 
     @JsonIgnore
@@ -221,4 +245,185 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     public Function<GenericRecord, GenericRecord> action(List<Parameter> parameters) {
         return r -> r;
     }
+
+    /**
+     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
+     * creates a new column.
+     * This method will be use by framework to define if the parameter is visible for this action or not.
+     * For most actions, checkbox is visible, but other actions (like 'mask data' that is always 'in place' or 'split' that
+     * always creates new columns) the checkbox will not be visible. In this case, these actions should override this method.
+     *
+     * @return 'true' if the 'create new column' checkbox is visible, 'false' otherwise
+     */
+    protected boolean createNewColumnParamVisible() {
+        return true;
+    }
+
+    /**
+     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
+     * creates a new column.
+     * This method will be use by framework to define:
+     * - the default value of the checkbox, if it's visible
+     * - the value of the parameter if the checkbox is not visible
+     *
+     * For most actions, default will be 'false', but for some actions (like 'compare numbers') it will be 'true'. In this case,
+     * these actions should override this method.
+     *
+     * @return 'true' if the 'create new column' is checked by default, 'false' otherwise
+     */
+    public boolean getCreateNewColumnDefaultValue() {
+        return false;
+    }
+
+    /**
+     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
+     * creates a new column.
+     * This method is used by framework to evaluate if this step (action+parameters) creates a new column or is applied in place.
+     *
+     * For most actions, the default implementation is ok, but some actions (like 'split' that always creates new column) may
+     * override it. In this case, no need to override createNewColumnParamVisible() and getCreateNewColumnDefaultValue().
+     *
+     * @param parameters
+     * @return 'true' if this step (action+parameters) creates a new column, 'false' if it's applied in-place.
+     */
+    public boolean doesCreateNewColumn(Map<String, String> parameters) {
+        if (parameters.containsKey(AbstractActionMetadata.CREATE_NEW_COLUMN)) {
+            return Boolean.parseBoolean(parameters.get(CREATE_NEW_COLUMN));
+        }
+        return getCreateNewColumnDefaultValue();
+    }
+
+    /**
+     * Used by compile(ActionContext actionContext), evaluate if a new column needs to be created, if yes creates one.
+     *
+     * Actions that creates more than one column ('split', 'extract email parts', etc...) should manage this on their own.
+     */
+    protected void createNewColumn(ActionContext context) {
+        if (doesCreateNewColumn(context.getParameters())) {
+            String columnId = context.getColumnId();
+            RowMetadata rowMetadata = context.getRowMetadata();
+
+            context.get(TARGET_COLUMN, r -> {
+                final List<String> cols = new ArrayList<String>();
+
+                String nextId = columnId; // id of the column to put the new one after, initially the current column
+
+                    for (AdditionnalColumn additionnalColumn : getAdditionnalColumns(context)) {
+                        ColumnMetadata.Builder c = ColumnMetadata.Builder.column();
+
+                        if (additionnalColumn.getCopyFrom() != null) {
+                            c.copy(additionnalColumn.getCopyFrom())//
+                             .computedId(StringUtils.EMPTY);
+                        }
+                        c.name(additionnalColumn.getName()) //
+                         .type(additionnalColumn.getType()); //
+
+                    ColumnMetadata columnMetadata = c.build();
+                    rowMetadata.insertAfter(nextId, columnMetadata);
+                    nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
+                    cols.add(columnMetadata.getId());
+                }
+
+                return cols;
+            });
+        }
+    }
+
+    /**
+     * Helper to retrieve the target column Id stored in the context.
+     *
+     * @param context the action context
+     * @return the target column ID
+     */
+    public String getTargetColumnId(ActionContext context) {
+        if (doesCreateNewColumn(context.getParameters())) {
+            final List<String> newColumns = context.get(TARGET_COLUMN);
+            return newColumns.get(0);
+        } else {
+            return context.getColumnId();
+        }
+    }
+
+    /**
+     * ça n'est pas très beau de gérer ça comme ça. ça et la méthode du dessus.
+     */
+    public List<String> getTargetColumnIds(ActionContext context) {
+        if (doesCreateNewColumn(context.getParameters())) {
+            final List<String> newColumns = context.get(TARGET_COLUMN);
+            return newColumns;
+        } else {
+            throw new RuntimeException("bizarre");
+        }
+    }
+
+    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
+        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+
+        additionnalColumns.add(new AdditionnalColumn(getColumnType(context), getCreatedColumnName(context)));
+
+        return additionnalColumns;
+    }
+
+    /**
+     * Used by createNewColumn(ActionContext context) to know which column Type to use when creating a new column.
+     *
+     * Default implementation is STRING, actions that creates a column of a different type should override this method.
+     *
+     * @return The Type of the new column
+     */
+    public Type getColumnType(ActionContext context) {
+        return Type.STRING;
+    }
+
+    /**
+     * Used by createNewColumn(ActionContext context) to know which name to use when creating a new column.
+     *
+     * @return The name of the new column
+     */
+    public String getCreatedColumnName(ActionContext context) {
+        return null; // Must be implemented for all actions but those which always applies in place
+    }
+
+    protected class AdditionnalColumn {
+
+        private String name;
+
+        private Type type = Type.STRING;
+
+        private ColumnMetadata copyFrom;
+
+        public AdditionnalColumn(String name) {
+            this.name = name;
+        }
+
+        public AdditionnalColumn(Type type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public void setType(Type type) {
+            this.type = type;
+        }
+
+        public ColumnMetadata getCopyFrom() {
+            return copyFrom;
+        }
+
+        public void setCopyFrom(ColumnMetadata from) {
+            this.copyFrom = from;
+        }
+    }
+
 }

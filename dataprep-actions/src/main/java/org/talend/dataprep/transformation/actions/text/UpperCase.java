@@ -37,6 +37,8 @@ public class UpperCase extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String UPPER_CASE_ACTION_NAME = "uppercase"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_upper";
+
     @Override
     public String getName() {
         return UPPER_CASE_ACTION_NAME;
@@ -53,11 +55,16 @@ public class UpperCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toUpperCase = row.get(columnId);
         if (toUpperCase != null) {
-            row.set(columnId, toUpperCase.toUpperCase());
+            row.set(getTargetColumnId(context), toUpperCase.toUpperCase());
         }
     }
 

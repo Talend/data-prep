@@ -33,6 +33,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -42,8 +43,9 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class FillWithIntegerIfEmptyTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private FillIfEmpty action = new FillIfEmpty();
+    public FillWithIntegerIfEmptyTest() {
+        super(new FillIfEmpty());
+    }
 
     @PostConstruct
     public void init() {
@@ -57,8 +59,18 @@ public class FillWithIntegerIfEmptyTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt(column), not(is(action)));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_fill_empty_integer() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Alwyas in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "David Bowie");

@@ -35,11 +35,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class DomainChangeTest extends AbstractMetadataBaseTest {
 
-    private DomainChange domainChange = new DomainChange();
-
     private Map<String, String> parameters;
 
     private DataSetRow row;
+
+    public DomainChangeTest() {
+        super(new DomainChange());
+    }
 
     @Before
     public void init() {
@@ -63,10 +65,20 @@ public class DomainChangeTest extends AbstractMetadataBaseTest {
         parameters.put(NEW_DOMAIN_LABEL_PARAMETER_KEY, "Australian Beer");
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_change_domain() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Nothing to test, this action is always applied in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(domainChange, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         final ColumnMetadata column = row.getRowMetadata().getById("0002");
@@ -77,7 +89,7 @@ public class DomainChangeTest extends AbstractMetadataBaseTest {
     @Test
     public void should_set_column_in_forced_columns() throws Exception {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(domainChange, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row.getRowMetadata().getById("0002").isDomainForced()).isTrue();
@@ -107,8 +119,8 @@ public class DomainChangeTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, domainChange.getBehavior().size());
-        assertTrue(domainChange.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_TYPE));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_TYPE));
     }
 
 }

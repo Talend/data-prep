@@ -40,14 +40,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DeduplicateTest extends AbstractMetadataBaseTest {
 
-    /**
-     * The action to test.
-     */
-    private Deduplicate action = new Deduplicate();
-
     private Map<String, String> parameters;
 
     final private DecimalFormat format = new DecimalFormat("0000");
+
+    public DeduplicateTest(){
+        super(new Deduplicate());
+    }
 
     private void initParameters() {
         parameters = new HashMap<>();
@@ -61,6 +60,12 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
             rowContent.put(format.format(j), values[j]);
         }
         return new DataSetRow(rowContent);
+    }
+
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

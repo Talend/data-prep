@@ -24,13 +24,16 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.date.BaseDateTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataquality.converters.DistanceEnum;
 
 /**
  * Test class for DurationConverter action. Creates one consumer, and test it.
@@ -39,13 +42,10 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DurationConverterTest extends BaseDateTest {
 
-    /** The action to test. */
-    private DurationConverter action = new DurationConverter();
-
     private Map<String, String> parameters;
 
-    @Before
-    public void init() throws IOException {
+    public DurationConverterTest() {
+        super(new DurationConverter());
     }
 
     @Test
@@ -62,17 +62,22 @@ public class DurationConverterTest extends BaseDateTest {
         assertThat(name, is("duration_converter"));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("from_unit", "to_unit", "precision","column_id", "row_id", "scope", "filter");
+        List<String> parameterNames = Arrays.asList("create_new_column", "from_unit", "to_unit", "precision","column_id", "row_id", "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         assertNotNull(parameters);
-        assertEquals(7, parameters.size());
+        assertEquals(8, parameters.size());
         final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
@@ -93,6 +98,63 @@ public class DurationConverterTest extends BaseDateTest {
     private static double second = 31536000;// 3.1536E7; //31536000;// 365 * 24 * 60 * 60;
 
     private static double millisecond = 31536000000L;// (365 * 24 * 60 * 60 * 1000);
+
+    @Test
+    public void test_apply_inplace() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "365");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(123L);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_unit", ChronoUnit.DAYS.name());
+        parameters.put("to_unit", ChronoUnit.YEARS.name());
+        parameters.put("precision", "0");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("1", row1.get("0001"));
+
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0001").type(Type.STRING).build();
+        ColumnMetadata actual = row1.getRowMetadata().getById("0001");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "365");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(123L);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_unit", ChronoUnit.DAYS.name());
+        parameters.put("to_unit", ChronoUnit.YEARS.name());
+        parameters.put("precision", "0");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("365", row1.get("0001"));
+        assertEquals("1", row1.get("0002"));
+
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(2).name("0001_in_YEARS").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row1.getRowMetadata().getById("0002");
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void testConversionDaysTo() {

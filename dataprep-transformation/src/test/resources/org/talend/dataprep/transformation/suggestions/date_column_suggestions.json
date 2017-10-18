@@ -47,6 +47,7 @@
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter"
       }
+
     ],
     "description": "Clear cells that contain a value recognized as invalid",
     "label": "Clear the cells with invalid values",
@@ -400,6 +401,14 @@
         "label": "Filter"
       },
       {
+        "name": "create_new_column",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": false,
+        "label": "Create new column",
+        "default": "false"
+      },
+      {
         "name": "from_pattern_mode",
         "type": "select",
         "implicit": false,
@@ -565,6 +574,14 @@
         "default": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter"
+      },
+      {
+        "name": "create_new_column",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": false,
+        "label": "Create new column",
+        "default": "true"
       },
       {
         "name": "time_unit",

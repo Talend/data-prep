@@ -37,6 +37,8 @@ public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "negate";
 
+    protected static final String NEW_COLUMN_SUFFIX = "_negate";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -53,12 +55,22 @@ public class Negate extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
+    public Type getColumnType(ActionContext context){
+        return Type.BOOLEAN;
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
         if (isBoolean(value)) {
             final Boolean boolValue = Boolean.valueOf(value);
-            row.set(columnId, WordUtils.capitalizeFully("" + !boolValue));
+            row.set(getTargetColumnId(context), WordUtils.capitalizeFully("" + !boolValue));
         }
     }
 

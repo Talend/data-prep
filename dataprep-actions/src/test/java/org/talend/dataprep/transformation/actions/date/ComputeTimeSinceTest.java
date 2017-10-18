@@ -47,6 +47,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -56,10 +57,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class ComputeTimeSinceTest extends BaseDateTest {
 
-    /** The action to test. */
-    private ComputeTimeSince action = new ComputeTimeSince();
-
     private Map<String, String> parameters;
+
+    public ComputeTimeSinceTest() {
+        super(new ComputeTimeSince());
+    }
 
     @Before
     public void init() throws IOException {
@@ -80,20 +82,48 @@ public class ComputeTimeSinceTest extends BaseDateTest {
         Assert.assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.VISIBLE_ENABLED;
+    }
+
     @Test
     public void testParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
-        Assert.assertThat(parameters.size(), is(6));
+        Assert.assertThat(parameters.size(), is(7));
 
         // Test on items label for TDP-2943:
-        final SelectParameter selectParameter = (SelectParameter) parameters.get(5);
+        final SelectParameter selectParameter = (SelectParameter) parameters.get(6);
         assertEquals("Now", selectParameter.getItems().get(0).getLabel());
         assertEquals("Specific date", selectParameter.getItems().get(1).getLabel());
         assertEquals("Other column", selectParameter.getItems().get(2).getLabel());
     }
 
     @Test
-    public void should_compute_years() throws IOException {
+    public void test_apply_inplace() throws IOException {
+        //given
+        final String date = "01/01/2010";
+        final String result = computeTimeSince(date, "MM/dd/yyyy", YEARS);
+
+        final DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy.json");
+        row.set("0001", date);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", result);
+        expectedValues.put("0002", "Bacon");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() throws IOException {
         //given
         final String date = "01/01/2010";
         final String result = computeTimeSince(date, "MM/dd/yyyy", YEARS);

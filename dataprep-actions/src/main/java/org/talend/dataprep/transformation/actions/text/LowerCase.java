@@ -37,6 +37,8 @@ public class LowerCase extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String LOWER_CASE_ACTION_NAME = "lowercase"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_lower";
+
     @Override
     public String getName() {
         return LOWER_CASE_ACTION_NAME;
@@ -53,11 +55,16 @@ public class LowerCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toLowerCase = row.get(columnId);
         if (toLowerCase != null) {
-            row.set(columnId, toLowerCase.toLowerCase());
+            row.set(getTargetColumnId(context), toLowerCase.toLowerCase());
         }
     }
 

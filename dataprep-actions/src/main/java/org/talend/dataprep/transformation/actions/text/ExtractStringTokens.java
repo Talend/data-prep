@@ -111,6 +111,16 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
     }
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
     public void compile(ActionContext context) {
         super.compile(context);
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
@@ -131,33 +141,36 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
                 LOGGER.debug("Invalid pattern {} --> {}, action canceled", regex, e.getMessage(), e);
                 context.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
-            // Create result column
-            final Map<String, String> parameters = context.getParameters();
-            final String columnId = context.getColumnId();
+        }
+    }
 
-            // create the new columns
-            int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT))
-                    : 1;
+    @Override
+    protected void createNewColumn(ActionContext context) {
+        // Create result column
+        final Map<String, String> parameters = context.getParameters();
+        final String columnId = context.getColumnId();
 
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            final List<String> newColumns = new ArrayList<>();
-            final Deque<String> lastColumnId = new ArrayDeque<>();
-            lastColumnId.push(columnId);
-            for (int i = 0; i < limit; i++) {
-                final int newColumnIndex = i + 1;
-                newColumns.add(context.column(column.getName() + APPENDIX + i, r -> {
-                    final ColumnMetadata c = ColumnMetadata.Builder //
-                            .column() //
-                            .type(Type.STRING) //
-                            .computedId(StringUtils.EMPTY) //
-                            .name(column.getName() + APPENDIX + newColumnIndex) //
-                            .build();
-                    lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
-                    return c;
-                }));
-            }
+        // create the new columns
+        int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT))
+                : 1;
 
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final ColumnMetadata column = rowMetadata.getById(columnId);
+        final List<String> newColumns = new ArrayList<>();
+        final Deque<String> lastColumnId = new ArrayDeque<>();
+        lastColumnId.push(columnId);
+        for (int i = 0; i < limit; i++) {
+            final int newColumnIndex = i + 1;
+            newColumns.add(context.column(column.getName() + APPENDIX + i, r -> {
+                final ColumnMetadata c = ColumnMetadata.Builder //
+                        .column() //
+                        .type(Type.STRING) //
+                        .computedId(StringUtils.EMPTY) //
+                        .name(column.getName() + APPENDIX + newColumnIndex) //
+                        .build();
+                lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
+                return c;
+            }));
         }
     }
 

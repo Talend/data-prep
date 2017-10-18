@@ -44,23 +44,28 @@ import org.talend.dataquality.datamasking.semantic.MaskableCategoryEnum;
  */
 public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private MaskDataByDomain maskDataByDomain;
-
     private Map<String, String> parameters;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MaskDataByDomainTest.class);
 
+    public MaskDataByDomainTest() {
+        super(new MaskDataByDomain());
+    }
+
     @Before
     public void init() throws IOException {
-        maskDataByDomain = new MaskDataByDomain();
         parameters = ActionMetadataTestUtils
                 .parseParameters(MaskDataByDomainTest.class.getResourceAsStream("maskDataByDomainAction.json"));
     }
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(maskDataByDomain.getCategory(Locale.US), is(ActionCategory.DATA_MASKING.getDisplayName(Locale.US)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATA_MASKING.getDisplayName(Locale.US)));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
     }
 
     @Test
@@ -75,7 +80,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
                 .build();
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         final String resultValue = row.values().get("0000").toString();
@@ -84,7 +89,12 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void testShouldMaskEmail() {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_inplace() {
 
         // given
         final DataSetRow row = builder() //
@@ -95,7 +105,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
         expectedValues.put("0000", "XXXXXX@talend.com");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -109,7 +119,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
                 .build();
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         int realValueAsInteger = Integer.parseInt((String) row.values().get("0000"));
@@ -125,7 +135,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
                 .build();
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         float realValueAsFloat = Float.parseFloat((String) row.values().get("0000"));
@@ -141,7 +151,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
                 .build();
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         float realValueAsFloat = Float.parseFloat((String) row.values().get("0000"));
@@ -157,7 +167,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
                 .build();
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         int realValueAsInteger = Integer.parseInt((String) row.values().get("0000"));
@@ -177,7 +187,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
         expectedValues.put("0000", " ");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -196,7 +206,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
         expectedValues.put("0000", "XXXXXXX");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -214,7 +224,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
         expectedValues.put("0000", "azerty@talend.com");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(maskDataByDomain, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -222,24 +232,24 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(maskDataByDomain.acceptField(getColumn(Type.STRING)));
-        assertTrue(maskDataByDomain.acceptField(getColumn(Type.DATE)));
-        assertTrue(maskDataByDomain.acceptField(getColumn(Type.NUMERIC)));
-        assertTrue(maskDataByDomain.acceptField(getColumn(Type.INTEGER)));
-        assertTrue(maskDataByDomain.acceptField(getColumn(Type.FLOAT)));
-        assertTrue(maskDataByDomain.acceptField(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(maskDataByDomain.acceptField(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, maskDataByDomain.getBehavior().size());
-        assertTrue(maskDataByDomain.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
-        assertTrue(maskDataByDomain.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
     }
 
 }

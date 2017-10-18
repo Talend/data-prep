@@ -33,6 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -41,12 +42,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ComputeTimeSince
  */
-public class CompareDatesTest extends BaseDateTest {
-
-    /** The action to test. */
-    private CompareDates action = new CompareDates();
+public class CompareDatesTest extends BaseDateTest<CompareDates> {
 
     private Map<String, String> parameters;
+
+    public CompareDatesTest() {
+        super(new CompareDates());
+    }
 
     @Before
     public void init() throws IOException {
@@ -72,7 +74,7 @@ public class CompareDatesTest extends BaseDateTest {
         final List<Parameter> actionParameters = action.getParameters(Locale.US);
 
         // then
-        assertEquals(6, actionParameters.size());
+        assertEquals(7, actionParameters.size());
     }
 
     @Test
@@ -86,6 +88,11 @@ public class CompareDatesTest extends BaseDateTest {
         assertFalse(action.acceptField(getColumn(Type.FLOAT)));
         assertFalse(action.acceptField(getColumn(Type.STRING)));
         assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_ENABLED;
     }
 
     @Test
@@ -112,6 +119,9 @@ public class CompareDatesTest extends BaseDateTest {
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "true"));
 
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("last update_gt_02/21/2008?").type(Type.BOOLEAN).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0001");
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -167,7 +177,32 @@ public class CompareDatesTest extends BaseDateTest {
     }
 
     @Test
-    public void simple_greater_result_with_column() throws Exception {
+    public void test_apply_inplace() throws Exception {
+
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "02/01/2012");
+
+        RowMetadata rowMetadata = new RowMetadata();
+        rowMetadata.addColumn(createMetadata("0000", "last update", Type.DATE, "statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+        parameters.put(CompareDates.CONSTANT_VALUE, "02/02/2012");
+
+        parameters.put(CompareDates.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()) //
+                .hasSize(1) //
+                .containsExactly(MapEntry.entry("0000", "false"));
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() throws Exception {
 
         // given
         final Map<String, String> values = new HashMap<>();

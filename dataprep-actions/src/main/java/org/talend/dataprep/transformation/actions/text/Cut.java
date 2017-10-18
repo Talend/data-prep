@@ -38,6 +38,8 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String CUT_ACTION_NAME = "cut"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_cut";
+
     /**
      * The pattern "where to cut" parameter name
      */
@@ -61,6 +63,11 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
         parameters.add(Parameter.parameter(locale).setName(PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
                 this));
         return parameters;
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
     }
 
     @Override
@@ -97,10 +104,10 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
             if (replaceOnValueParameter.matches(toCut)) {
                 if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
                     String value = toCut.replaceAll(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
-                    row.set(columnId, value);
+                    row.set(getTargetColumnId(context), value);
                 } else {
                     String value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
-                    row.set(columnId, value);
+                    row.set(getTargetColumnId(context), value);
 
                 }
             }

@@ -56,6 +56,11 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
     public abstract boolean shouldBeProcessed(DataSetRow dataSetRow, String columnId);
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
@@ -96,7 +101,7 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
             }
 
             // At the end, set the new value:
-            row.set(columnId, newValue);
+            row.set(getTargetColumnId(context), newValue);
         }
     }
 

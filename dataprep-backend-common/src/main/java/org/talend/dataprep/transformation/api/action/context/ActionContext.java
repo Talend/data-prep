@@ -235,6 +235,10 @@ public class ActionContext implements Serializable {
         return parameters.get(ImplicitParameters.COLUMN_ID.getKey());
     }
 
+    public String getColumnName() {
+        return getRowMetadata().getById(getColumnId()).getName();
+    }
+
     public Map<String, String> getParameters() {
         return parameters;
     }

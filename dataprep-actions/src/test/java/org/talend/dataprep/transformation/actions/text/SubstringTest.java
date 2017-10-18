@@ -33,6 +33,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -43,9 +44,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class SubstringTest extends AbstractMetadataBaseTest {
 
-    private Substring action = new Substring();
-
     private Map<String, String> parameters;
+
+    public SubstringTest() {
+        super(new Substring());
+    }
 
     @Before
     public void init() throws IOException {
@@ -70,11 +73,39 @@ public class SubstringTest extends AbstractMetadataBaseTest {
         final List<Parameter> actionParameters = action.getParameters(Locale.US);
 
         // then
-        assertEquals(5, actionParameters.size());
+        assertEquals(6, actionParameters.size());
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_ENABLED;
     }
 
     @Test
-    public void should_substring() {
+    public void test_apply_inplace() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", " ipsum ");
+        expectedValues.put("0002", "01/01/2015");
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

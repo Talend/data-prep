@@ -38,6 +38,8 @@ public class Normalize extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String ACTION_NAME = "normalize"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_normalized";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -54,11 +56,16 @@ public class Normalize extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
         if (value != null) {
-            row.set(columnId, normalize(value));
+            row.set(getTargetColumnId(context), normalize(value));
         }
     }
 

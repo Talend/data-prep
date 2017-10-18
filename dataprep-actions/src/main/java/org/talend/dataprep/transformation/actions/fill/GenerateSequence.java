@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -52,24 +53,39 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     /** Class logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateSequence.class);
 
+    protected static final String NEW_COLUMN_SUFFIX = "_sequence";
+
     @Override
     public String getName() {
         return GenerateSequence.ACTION_NAME;
     }
 
     @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+
         Parameter startParameter = Parameter.parameter(locale).setName(START_VALUE)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
                 .build(this);
         parameters.add(startParameter);
+
         Parameter stepParameter = Parameter.parameter(locale).setName(STEP_VALUE)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
                 .build(this);
         parameters.add(stepParameter);
+
         return parameters;
     }
 
@@ -108,8 +124,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             return;
         }
         final CalcSequence sequence = context.get(SEQUENCE);
-        final String columnId = context.getColumnId();
-        row.set(columnId, sequence.getNextValue());
+        row.set(getTargetColumnId(context), sequence.getNextValue());
     }
 
     /** this class is used to calculate the sequence next step */
@@ -129,5 +144,6 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             nextValue = nextValue.add(step);
             return toReturn;
         }
+
     }
 }

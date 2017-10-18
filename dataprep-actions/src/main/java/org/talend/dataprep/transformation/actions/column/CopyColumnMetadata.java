@@ -13,13 +13,11 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -45,8 +43,6 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
      */
     public static final String COPY_APPENDIX = "_copy"; //$NON-NLS-1$
 
-    private static final String TARGET_COLUMN_ID_KEY = "TARGET_COLUMN_ID_KEY";
-
     @Override
     public String getName() {
         return COPY_ACTION_NAME;
@@ -68,30 +64,41 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public void compile(ActionContext actionContext) {
-        super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            final RowMetadata rowMetadata = actionContext.getRowMetadata();
-            final String columnId = actionContext.getColumnId();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            String copyColumnId = actionContext.column(column.getName() + COPY_APPENDIX, r -> {
-                final ColumnMetadata newColumn = column() //
-                        .copy(column) //
-                        .computedId(StringUtils.EMPTY) //
-                        .name(column.getName() + COPY_APPENDIX) //
-                        .build();
-                rowMetadata.insertAfter(columnId, newColumn);
-                return newColumn;
-            });
-            actionContext.get(TARGET_COLUMN_ID_KEY, m -> copyColumnId);
-        }
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context){
+        return context.getColumnName() + COPY_APPENDIX;
+    }
+
+    @Override
+    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
+        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
+
+        additionnalColumns.add(new AdditionnalColumn(getCreatedColumnName(context)) {
+
+            {
+                setCopyFrom(column);
+            }
+        });
+
+        return additionnalColumns;
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String copyColumn = context.get(TARGET_COLUMN_ID_KEY);
         final String columnId = context.getColumnId();
-        row.set(copyColumn, row.get(columnId));
+        row.set(getTargetColumnId(context), row.get(columnId));
     }
 
     @Override

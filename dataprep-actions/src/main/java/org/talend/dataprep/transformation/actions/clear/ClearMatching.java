@@ -72,8 +72,13 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = super.getParameters(locale);
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            final List<Parameter> parameters = super.getParameters(locale);
         if (this.type == Type.BOOLEAN) {
             parameters.add(SelectParameter.selectParameter(locale) //
                     .name(VALUE_PARAMETER) //

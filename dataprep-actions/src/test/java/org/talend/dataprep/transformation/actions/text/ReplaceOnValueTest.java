@@ -20,7 +20,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
+import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.NEW_VALUE_PARAMETER;
+import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.ORIGINAL_VALUE_PARAMETER;
 import static org.talend.dataprep.transformation.actions.text.ReplaceOnValue.*;
 
 import java.util.HashMap;
@@ -33,8 +36,10 @@ import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -44,9 +49,16 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 /**
  * Test class for Replace value action
  */
-public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
+public class ReplaceOnValueTest extends AbstractMetadataBaseTest<ReplaceOnValue> {
 
-    private ReplaceOnValue action = new ReplaceOnValue();
+    public ReplaceOnValueTest() {
+        super(new ReplaceOnValue());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
 
     private ActionContext buildPatternActionContext(String regex, String replacement, boolean replace) {
         ActionContext context = new ActionContext(new TransformationContext());
@@ -75,10 +87,11 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         final List<Parameter> actionParams = action.getParameters(Locale.US);
 
         // then
-        assertThat(actionParams, hasSize(7));
+        assertThat(actionParams, hasSize(8));
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
         assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder(COLUMN_ID.getKey(), //
+                AbstractActionMetadata.CREATE_NEW_COLUMN, //
                 ROW_ID.getKey(), //
                 SCOPE.getKey(), //
                 FILTER.getKey(), //
@@ -114,7 +127,36 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_replace_the_value_that_match_on_the_specified_column_entire() {
+    public void test_apply_in_newcolumn() {
+        // given
+        final String columnId = "0000";
+
+        final Map<String, String> values = new HashMap<>();
+        values.put(columnId, "James Hetfield");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(CELL_VALUE_PARAMETER, generateJson("James", ReplaceOnValueHelper.STARTS_WITH_MODE));
+        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "true");
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
+
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertThat(row.get(columnId), is("James Hetfield"));
+        assertThat(row.get("0001"), is("Jimmy"));
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0000_replace").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0001");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         final String columnId = "0000";
 

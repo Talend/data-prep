@@ -32,7 +32,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -51,6 +50,10 @@ public class SplitTest extends AbstractMetadataBaseTest {
      * The action to test.
      */
     private Split action = new Split();
+
+    public SplitTest() {
+        super(new Split());
+    }
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -90,7 +93,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_split_row() {
+    public void test_apply_in_newcolumn() {
         // given
         final DataSetRow row = getRow("lorem bacon", "Bacon ipsum dolor amet swine leberkas pork belly", "01/01/2015");
 
@@ -324,9 +327,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_split_row_with_separator_at_the_end() {
         // given
@@ -346,9 +346,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_split_row_no_separator() {
         // given
@@ -368,9 +365,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -394,9 +388,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata_twice() {
         // given
@@ -530,6 +521,16 @@ public class SplitTest extends AbstractMetadataBaseTest {
                 .invalid(2)
                 .valid(5)
                 .build();
+    }
+
+    @Test
+    public void test_apply_inplace() {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
 }

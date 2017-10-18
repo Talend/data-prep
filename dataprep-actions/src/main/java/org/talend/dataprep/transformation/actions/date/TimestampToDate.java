@@ -15,7 +15,10 @@ package org.talend.dataprep.transformation.actions.date;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
@@ -66,32 +69,30 @@ public class TimestampToDate extends AbstractDate implements ColumnAction {
     }
 
     @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context){
+        return context.getColumnName() + APPENDIX;
+    }
+
+    @Override
+    public Type getColumnType(ActionContext context) {
+        if ("custom".equals(context.getParameters().get(NEW_PATTERN))) {
+            // Custom pattern might not be detected as a valid date, create the new column as string for the most
+            // permissive type detection.
+            return Type.STRING;
+        } else {
+            return Type.DATE;
+        }
+    }
+
+    @Override
     public void compile(ActionContext context) {
         super.compile(context);
         compileDatePattern(context);
-        // create new column and append it after current column
-        final String columnId = context.getColumnId();
-        final Map<String, String> parameters = context.getParameters();
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
-        context.column(column.getName() + APPENDIX, (r) -> {
-            final Type type;
-            if ("custom".equals(parameters.get(NEW_PATTERN))) {
-                // Custom pattern might not be detected as a valid date, create the new column as string for the most
-                // permissive type detection.
-                type = Type.STRING;
-            } else {
-                type = Type.DATE;
-            }
-            final ColumnMetadata c = ColumnMetadata.Builder //
-                    .column() //
-                    .name(column.getName() + APPENDIX) //
-                    .type(type) //
-                    .headerSize(column.getHeaderSize()) //
-                    .build();
-            rowMetadata.insertAfter(columnId, c);
-            return c;
-        });
     }
 
     /**
@@ -104,7 +105,7 @@ public class TimestampToDate extends AbstractDate implements ColumnAction {
         // create new column and append it after current column
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final String newColumn = context.column(column.getName() + APPENDIX);
+        final String newColumn = getTargetColumnId(context);
 
         final String value = row.get(columnId);
         row.set(newColumn, getTimeStamp(value, context.<DatePattern> get(COMPILED_DATE_PATTERN).getFormatter()));

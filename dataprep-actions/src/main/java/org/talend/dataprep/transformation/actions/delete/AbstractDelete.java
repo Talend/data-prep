@@ -34,6 +34,11 @@ public abstract class AbstractDelete extends AbstractActionMetadata implements C
         return DATA_CLEANSING.getDisplayName(locale);
     }
 
+    @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
     /**
      * Return true if the given value should be deleted.
      *

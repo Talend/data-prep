@@ -46,14 +46,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
 
     /**
-     * The action to test.
-     */
-    private ExtractStringTokens action = new ExtractStringTokens();
-
-    /**
      * The action parameters.
      */
     private Map<String, String> parameters;
+
+    public ExtractStringTokensTest() {
+        super(new ExtractStringTokens());
+    }
 
     @Before
     public void init() throws IOException {
@@ -87,8 +86,18 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_extract_tokens_1() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final DataSetRow row = getRow("lorem bacon", "Great #bigdata presentations at #TalendConnect", "01/01/2015");
 

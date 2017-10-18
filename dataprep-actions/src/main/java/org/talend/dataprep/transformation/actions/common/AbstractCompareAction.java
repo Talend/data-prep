@@ -40,6 +40,11 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompareAction.class);
 
     @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
+
+    @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
@@ -95,33 +100,25 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            final String columnId = context.getColumnId();
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final Map<String, String> parameters = context.getParameters();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            final String compareMode = getCompareMode(parameters);
+    public Type getColumnType(ActionContext context){
+        return Type.BOOLEAN;
+    }
 
-            String compareToLabel;
-            if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
-                compareToLabel = parameters.get(CONSTANT_VALUE);
-            } else {
-                final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-                compareToLabel = selectedColumn.getName();
-            }
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final Map<String, String> parameters = context.getParameters();
+        final String compareMode = getCompareMode(parameters);
 
-            context.column("result", (r) -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + "_" + compareMode + "_" + compareToLabel + "?") //
-                        .type(Type.BOOLEAN) //
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
+        String compareToLabel;
+        if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
+            compareToLabel = parameters.get(CONSTANT_VALUE);
+        } else {
+            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            compareToLabel = selectedColumn.getName();
         }
+
+        return context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?";
     }
 
     /**
@@ -133,8 +130,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         final Map<String, String> parameters = context.getParameters();
         final String compareMode = getCompareMode(parameters);
 
-        // create new column and append it after current column
-        final String newColumnId = context.column("result");
+        final String newColumnId = getTargetColumnId(context);
 
         ComparisonRequest comparisonRequest = new ComparisonRequest() //
                 .setMode(compareMode) //

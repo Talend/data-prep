@@ -36,14 +36,21 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class DeleteLinesTest extends AbstractMetadataBaseTest {
 
-    private DeleteLines action = new DeleteLines();
-
     private Map<String, String> parameters;
+
+    public DeleteLinesTest() {
+        super(new DeleteLines());
+    }
 
     @Before
     public void setUp() throws Exception {
         parameters = ActionMetadataTestUtils.parseParameters( //
                 DeleteLinesTest.class.getResourceAsStream("deleteLines.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

@@ -64,24 +64,30 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            final String columnId = context.getColumnId();
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
 
-            String lastId = column.getId();
-            for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-                final String columnName = column.getName() + urlTokenExtractor.getTokenName();
-                String columnToInsertAfter = lastId;
-                lastId = context.column(columnName, r -> {
-                    final ColumnMetadata newColumn = column().name(columnName).type(urlTokenExtractor.getType()).build();
-                    rowMetadata.insertAfter(columnToInsertAfter, newColumn);
-                    return newColumn;
-                });
-            }
+    @Override
+    public boolean getCreateNewColumnDefaultValue() {
+        return true;
+    }
 
+    @Override
+    protected void createNewColumn(ActionContext context) {
+        final String columnId = context.getColumnId();
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final ColumnMetadata column = rowMetadata.getById(columnId);
+
+        String lastId = column.getId();
+        for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
+            final String columnName = column.getName() + urlTokenExtractor.getTokenName();
+            String columnToInsertAfter = lastId;
+            lastId = context.column(columnName, r -> {
+                final ColumnMetadata newColumn = column().name(columnName).type(urlTokenExtractor.getType()).build();
+                rowMetadata.insertAfter(columnToInsertAfter, newColumn);
+                return newColumn;
+            });
         }
     }
 

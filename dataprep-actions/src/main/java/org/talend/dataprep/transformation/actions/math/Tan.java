@@ -14,8 +14,6 @@ package org.talend.dataprep.transformation.actions.math;
 
 import static org.talend.dataprep.transformation.actions.math.Tan.TAN_NAME;
 
-import java.util.Map;
-
 import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
@@ -30,6 +28,8 @@ public class Tan extends AbstractMathNoParameterAction {
 
     protected static final String TAN_NAME = "tan_numbers";
 
+    protected static final String TAN_SUFFIX = "_tan";
+
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
         double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
@@ -40,8 +40,8 @@ public class Tan extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "tan";
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + TAN_SUFFIX;
     }
 
     @Override

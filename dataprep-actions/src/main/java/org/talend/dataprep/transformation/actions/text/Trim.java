@@ -55,6 +55,8 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
 
     public static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_trim";
+
     @Override
     public String getName() {
         return TRIM_ACTION_NAME;
@@ -71,8 +73,13 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = super.getParameters(locale);
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            final List<Parameter> parameters = super.getParameters(locale);
 
         // @formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
@@ -105,9 +112,9 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
             final Map<String, String> parameters = context.getParameters();
             final StringTrimmer stringTrimmer = context.get(STRING_TRIMMER);
             if (CUSTOM.equals(parameters.get(PADDING_CHAR_PARAMETER))) {
-                row.set(columnId, stringTrimmer.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER)));
+                row.set(getTargetColumnId(context), stringTrimmer.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER)));
             } else {
-                row.set(columnId, stringTrimmer.removeTrailingAndLeadingWhitespaces(toTrim));
+                row.set(getTargetColumnId(context), stringTrimmer.removeTrailingAndLeadingWhitespaces(toTrim));
             }
         }
     }

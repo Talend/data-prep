@@ -55,6 +55,8 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
     /** Target row ID. */
     private static final String TARGET_ROW_ID_KEY = "targetRowId";
 
+    protected static final String NEW_COLUMN_SUFFIX = "_replace";
+
     @Override
     public String getName() {
         return REPLACE_CELL_VALUE_ACTION_NAME;
@@ -75,6 +77,11 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
                 Parameter.parameter(locale).setName(NEW_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(
                         this));
         return parameters;
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
     }
 
     @Override
@@ -106,9 +113,7 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
                 LOGGER.info("no replacement value specified in parameters {}, action canceled", parameters);
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
-
         }
-
     }
 
     /**
@@ -124,7 +129,7 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
         final String replacement = context.getParameters().get(NEW_VALUE_PARAMETER);
         final String columnId = context.getColumnId();
         final String oldValue = row.get(columnId);
-        row.set(columnId, replacement);
+        row.set(getTargetColumnId(context), replacement);
         LOGGER.debug("{} replaced by {} in row {}, column {}", oldValue, replacement, row.getTdpId(), columnId);
 
         // all done

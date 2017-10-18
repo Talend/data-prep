@@ -21,6 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Calculate Max with a constant or an other column
@@ -36,8 +37,8 @@ public class Max extends AbstractMathOneParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "max";
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + "_max";
     }
 
     @Override

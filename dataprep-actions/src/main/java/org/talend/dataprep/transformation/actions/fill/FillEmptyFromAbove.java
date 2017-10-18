@@ -58,6 +58,11 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
     public Set<Behavior> getBehavior() {  return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED); }
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
@@ -80,10 +85,11 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
         // Empty means null, empty string and any whitespace only strings
         if (StringUtils.isBlank(value)) {
             if (holder.getValue() != null) {
-                row.set(columnId, holder.getValue());
+                row.set(getTargetColumnId(context), holder.getValue());
             }
         } else {
             holder.setValue(value);
+            row.set(getTargetColumnId(context), value);
         }
     }
 

@@ -80,6 +80,8 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     static final String TYPE_RFC3966 = "RFC3966"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_formatted";
+
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
@@ -105,7 +107,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
         final String formatedStr = formatIfValid(regionCode,
                 context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
-        row.set(columnId, formatedStr);
+        row.set(getTargetColumnId(context), formatedStr);
     }
 
     /**
@@ -196,6 +198,11 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.PHONE_NUMBER.getDisplayName(locale);
+    }
+
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
     }
 
     @Override

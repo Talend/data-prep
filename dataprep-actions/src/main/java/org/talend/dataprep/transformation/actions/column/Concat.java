@@ -22,7 +22,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -64,11 +63,6 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
      * The separator use in the new column name.
      */
     public static final String COLUMN_NAMES_SEPARATOR = "_"; //$NON-NLS-1$
-
-    /**
-     * The parameter used to lookup for the newly created column.
-     */
-    public static final String CONCAT_NEW_COLUMN = "new_column";
 
     /**
      * The parameter used to defined the strategy to add or not the separator
@@ -135,22 +129,6 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         super.compile(context);
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
             checkSelectedColumnParameter(context.getParameters(), context.getRowMetadata());
-            // Create concat result column
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final String columnId = context.getColumnId();
-            final Map<String, String> parameters = context.getParameters();
-            final ColumnMetadata sourceColumn = rowMetadata.getById(columnId);
-            final String newColumnName = evalNewColumnName(sourceColumn.getName(), rowMetadata, parameters);
-            context.column(CONCAT_NEW_COLUMN, r -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(newColumnName) //
-                        .type(Type.STRING) //
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-            context.setActionStatus(ActionContext.ActionStatus.OK);
         }
     }
 
@@ -162,8 +140,6 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         final RowMetadata rowMetadata = context.getRowMetadata();
         final String columnId = context.getColumnId();
         final Map<String, String> parameters = context.getParameters();
-
-        String concatColumn = context.column(CONCAT_NEW_COLUMN);
 
         String separatorCondition = parameters.get(SEPARATOR_CONDITION);
 
@@ -196,15 +172,18 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
 
         newValue.append(getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY));
 
-        row.set(concatColumn, newValue.toString());
+        row.set(getTargetColumnId(context), newValue.toString());
     }
 
-    private String evalNewColumnName(String sourceColumnName, RowMetadata rowMetadata, Map<String, String> parameters) {
+    @Override
+    public String getCreatedColumnName(ActionContext context) {
+        ColumnMetadata selectedColumn = context.getRowMetadata().getById(context.getParameters().get(SELECTED_COLUMN_PARAMETER));
+        String sourceColumnName = context.getColumnName();
+        final Map<String, String> parameters = context.getParameters();
         final String prefix = getParameter(parameters, PREFIX_PARAMETER, StringUtils.EMPTY);
         final String suffix = getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY);
 
         if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
-            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             return sourceColumnName + COLUMN_NAMES_SEPARATOR + selectedColumn.getName();
         } else {
             return prefix + sourceColumnName + suffix;

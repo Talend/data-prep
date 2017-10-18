@@ -44,12 +44,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
 
-    /**
-     * The action to test.
-     */
-    private FuzzyMatching action = new FuzzyMatching();
-
     private Map<String, String> parameters;
+
+    public FuzzyMatchingTest() {
+        super(new FuzzyMatching());
+    }
 
     @Before
     public void init() throws IOException {
@@ -67,8 +66,18 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_be_true_as_less_than_distance_with_constant() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "pale ale");

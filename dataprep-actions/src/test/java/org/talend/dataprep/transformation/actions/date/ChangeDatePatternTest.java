@@ -35,6 +35,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -45,10 +46,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class ChangeDatePatternTest extends BaseDateTest {
 
-    /** The action to test. */
-    private ChangeDatePattern action = new ChangeDatePattern();
-
     private Map<String, String> parameters;
+
+    public ChangeDatePatternTest() {
+        super(new ChangeDatePattern());
+    }
 
     @Before
     public void init() throws IOException {
@@ -63,11 +65,15 @@ public class ChangeDatePatternTest extends BaseDateTest {
     @Test
     public void testParameters() throws Exception {
         // 4 predefined patterns + custom = 6
-        assertThat(action.getParameters(Locale.US).size(), is(6));
+        assertThat(action.getParameters(Locale.US).size(), is(7));
 
         // Test on items label for TDP-2944:
-        final SelectParameter newFormatParam = (SelectParameter) action.getParameters(Locale.US).get(5);
+        final SelectParameter newFormatParam = (SelectParameter) action.getParameters(Locale.US).get(6);
         assertEquals("American standard", newFormatParam.getItems().get(0).getLabel());
+    }
+
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Test
@@ -114,7 +120,25 @@ public class ChangeDatePatternTest extends BaseDateTest {
     }
 
     @Test
-    public void should_process_row() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.DATE).name("last update")) //
+                .build();
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata", "25 - Apr - 1999");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
@@ -137,6 +161,23 @@ public class ChangeDatePatternTest extends BaseDateTest {
         setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
         parameters.put(ChangeDatePattern.NEW_PATTERN, "custom");
         parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "ff");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
+    public void test_TDP_1108_invalid_pattern_newcolumn() throws Exception {
+        // given
+        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
+        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        parameters.put(ChangeDatePattern.NEW_PATTERN, "custom");
+        parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "ff");
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -177,6 +218,35 @@ public class ChangeDatePatternTest extends BaseDateTest {
         // then
         final List<PatternFrequency> patternFrequencies = row.getRowMetadata() //
                 .getById("0001") //
+                .getStatistics() //
+                .getPatternFrequencies();
+
+        String newPattern = parameters.get("new_pattern");
+        final Optional<PatternFrequency> newPatternSet = patternFrequencies //
+                .stream() //
+                .filter(p -> StringUtils.equals(newPattern, p.getPattern())) //
+                .findFirst();
+
+        assertTrue(newPatternSet.isPresent());
+        assertEquals(newPatternSet.get().getOccurrences(), 48);
+    }
+
+    @Test
+    public void should_set_new_pattern_as_most_used_one_newcolumn() throws Exception {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.DATE).name("last update")) //
+                .build();
+        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final List<PatternFrequency> patternFrequencies = row.getRowMetadata() //
+                .getById("0003") //
                 .getStatistics() //
                 .getPatternFrequencies();
 

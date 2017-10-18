@@ -88,6 +88,8 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     public static final String SEPARATOR = "_separator";
 
+    protected static final String NEW_COLUMN_SUFFIX = "_formatted";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeNumberFormat.class);
 
     /**
@@ -117,8 +119,13 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = super.getParameters(locale);
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    }
+
+    @Override
+        public List<Parameter> getParameters(Locale locale) {
+            final List<Parameter> parameters = super.getParameters(locale);
 
         // @formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
@@ -302,7 +309,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         }
 
         String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);
-        row.set(columnId, newValue);
+        row.set(getTargetColumnId(context), newValue);
     }
 
     /**

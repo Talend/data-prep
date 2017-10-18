@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -35,6 +36,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.date.ChangeDatePatternTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -45,8 +47,9 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class FillWithDateIfEmptyTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
-    private FillIfEmpty action = new FillIfEmpty();
+    public FillWithDateIfEmptyTest() {
+        super(new FillIfEmpty());
+    }
 
     @PostConstruct
     public void init() {
@@ -60,8 +63,18 @@ public class FillWithDateIfEmptyTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt(column), not(is(action)));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_fill_empty_date() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Always in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final DataSetRow row = builder() //
                 .with(value("David Bowie").type(Type.STRING)) //

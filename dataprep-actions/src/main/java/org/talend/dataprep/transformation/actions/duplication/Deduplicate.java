@@ -62,6 +62,11 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
     }
 
     @Override
+    protected boolean createNewColumnParamVisible() {
+        return false;
+    }
+
+    @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         final Set<String> hashes = new HashSet<>();

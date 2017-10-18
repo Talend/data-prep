@@ -35,8 +35,8 @@ public class Negate extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "negate";
+    public String getCreatedColumnName(ActionContext context) {
+        return context.getColumnName() + "_negate";
     }
 
     @Override

@@ -53,7 +53,7 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType()));
+        return true;
     }
 
     @Override
@@ -80,9 +80,7 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
         String data = sha256Hex(columnContents.toString());
 
-        if (!hashes.contains(data)) {
-            hashes.add(data);
-        } else {
+        if (!hashes.add(data)) {
             row.setDeleted(true);
         }
     }

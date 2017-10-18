@@ -22,6 +22,7 @@ describe('Step Description controller', () => {
 			RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
 			RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
 			RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
+			RECIPE_ITEM_ON_DATASET: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on table',
 			LOOKUP_STEP_DESCRIPTION: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> done with dataset <div class="step-scope" title="{{lookupDsName}}">{{lookupDsName}}</div>. Join has been set between <div class="step-scope" title="{{mainColName}}">{{mainColName}}</div> and <div class="step-scope" title="{{lookupColName}}">{{lookupColName}}</div>. ',
 			ONLY_1_ADDED_COL: 'The column <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> has been added.',
 			ONLY_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> have been added.',
@@ -136,6 +137,38 @@ describe('Step Description controller', () => {
 			//then
 			expect(ctrl.stepDescription).toBe('<span class="step-number">1</span> <span class="step-label">Delete Line</span> <span class="step-scope">#125</span>');
 		});
+
+		it('should translate description on scope: dataset', () => {
+        			//given
+        			const ctrl = createController();
+        			ctrl.index = 6;
+        			ctrl.step = {
+        				column: { id: '0', name: 'col1' },
+        				transformation: {
+        					stepId: '13a24e8765ef4',
+        					name: 'Dedup',
+        					label: 'Dedup',
+        					category: 'Dedup',
+        					parameters: [],
+        					items: [],
+        				},
+        				actionParameters: {
+        					action: 'Dedup',
+        					parameters: {
+        						scope: 'dataset',
+        						column_id: '0',
+        						pattern: '/',
+        					},
+        				},
+        			};
+
+        			//when
+        			ctrl.$onChanges();
+        			scope.$digest();
+
+        			//then
+        			expect(ctrl.stepDescription).toBe('<span class="step-number">7</span> <span class="step-label">Dedup</span> on table');
+        		});
 
 		describe('translate description on scope: dataset,', () => {
 			describe('on lookup action', () => {

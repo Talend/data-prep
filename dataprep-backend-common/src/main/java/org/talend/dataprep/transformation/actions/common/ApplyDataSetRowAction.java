@@ -71,6 +71,8 @@ public class ApplyDataSetRowAction implements DataSetRowAction {
             case DATASET:
                 ((DataSetAction) metadata).applyOnDataSet(actionRow, context);
                 break;
+            case HIDDEN:
+                break;
             default:
                 LOGGER.warn("Is there a new action scope ??? {}", scope);
                 break;

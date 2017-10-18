@@ -18,7 +18,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import java.util.EnumSet;
@@ -31,7 +31,7 @@ import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
  *  Keep only one occurrence of duplicated rows.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Deduplicate.DEDUPLICATION_ACTION_NAME)
-public class Deduplicate extends AbstractActionMetadata implements ColumnAction {
+public class Deduplicate extends AbstractActionMetadata implements DataSetAction {
 
     /**
      * The action code name.
@@ -69,7 +69,7 @@ public class Deduplicate extends AbstractActionMetadata implements ColumnAction 
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
+    public void applyOnDataSet(DataSetRow row, ActionContext context) {
         Set<String> hashes = context.get(HASHES_NAME);
 
         StringBuilder columnContents= new StringBuilder();

@@ -15,7 +15,7 @@ export const filterState = {
 	gridFilters: [],
 	applyTransformationOnFilters: false,
 	enabled: true,
-	isTQL: true,
+	isTQL: false,
 };
 
 export function FilterStateService() {

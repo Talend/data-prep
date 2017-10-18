@@ -45,7 +45,6 @@
     "d3": "^3.5.5",
     "d3-tip": "^0.6.7",
     "i18next": "^10.0.3",
-    "i18next-xhr-backend": "^1.4.3",
     "intro.js": "^1.1.1",
     "jquery": "2.1.4",
     "jquery-datetimepicker": "2.5.4",

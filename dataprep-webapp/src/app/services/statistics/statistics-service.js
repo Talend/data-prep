@@ -339,7 +339,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		const parameters = {
 			rangeData: state.playground.statistics.histogram.data,
 			patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
-                .pluck('pattern')
+                .map('pattern')
                 .map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
                 .value(),
 			filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null,

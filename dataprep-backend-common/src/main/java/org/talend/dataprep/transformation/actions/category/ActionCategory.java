@@ -35,7 +35,7 @@ public enum ActionCategory {
     DATA_MASKING("data masking"), //
     PHONE_NUMBER("phones"), //
     CONVERSIONS("conversions"), //
-    TABLE("table");
+    DEDUPLICATION("deduplication");
 
     /** The category display name. */
     private final String displayName;

@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.actions.duplication;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
@@ -48,7 +47,7 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     @Override
     public String getCategory() {
-        return ActionCategory.TABLE.getDisplayName();
+        return ActionCategory.DEDUPLICATION.getDisplayName();
     }
 
     @Override

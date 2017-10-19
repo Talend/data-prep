@@ -71,10 +71,7 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptField(getColumn(Type.DATE)));
-        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
@@ -86,7 +83,7 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.TABLE.getDisplayName()));
+        assertThat(action.getCategory(), is(ActionCategory.DEDUPLICATION.getDisplayName()));
     }
 
     @Test

@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.dataset.store.metadata;
 
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
@@ -9,10 +21,10 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.filter.ObjectPredicateVisitor;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.tql.bean.BeanPredicateVisitor;
 import org.talend.tql.parser.Tql;
 
 public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRepositoryAdapter {
@@ -23,9 +35,8 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
 
     @Override
     public boolean exist(String filter) {
-        final Predicate<Object> accept = (Predicate<Object>) Tql.parse(filter)
-                .accept(new ObjectPredicateVisitor(DataSetMetadata.class));
-        return source().filter(accept).findAny().isPresent();
+        final Predicate<DataSetMetadata> accept = Tql.parse(filter).accept(new BeanPredicateVisitor<>(DataSetMetadata.class));
+        return source().anyMatch(accept);
     }
 
     @Override
@@ -35,8 +46,7 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
 
     @Override
     public Stream<DataSetMetadata> list(String filter, Sort sortField, Order sortDirection) {
-        final Predicate<Object> accept = (Predicate<Object>) Tql.parse(filter)
-                .accept(new ObjectPredicateVisitor(DataSetMetadata.class));
+        final Predicate<DataSetMetadata> accept = Tql.parse(filter).accept(new BeanPredicateVisitor<>(DataSetMetadata.class));
         final Stream<DataSetMetadata> stream = source().filter(accept);
         if (sortField != null) {
             final Comparator<DataSetMetadata> dataSetMetadataComparator = getDataSetMetadataComparator(sortField, sortDirection);
@@ -70,9 +80,7 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
 
     @Override
     public long countAllDataSetsSize() {
-        return list() //
-                .mapToLong(m -> m.getDataSetSize()) //
-                .sum();
+        return list().mapToLong(DataSetMetadata::getDataSetSize).sum();
     }
 
 }

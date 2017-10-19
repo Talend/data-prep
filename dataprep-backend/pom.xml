@@ -501,6 +501,11 @@
                 <version>${tql.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>daikon-tql-bean</artifactId>
+                <version>${tql.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.measure</groupId>
                 <artifactId>jsr-275</artifactId>
                 <version>${javax.measure.jsr-275.version}</version>

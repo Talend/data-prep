@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,13 +13,12 @@
 package org.talend.dataprep.lock;
 
 /**
- * Factory used to generate locks. This class is used to generate prototype DistributedLock and hide the hazelcast
- * implementation.
+ * Factory used to generate locks. This class is used to generate prototype DistributedLock.
  */
 public interface LockFactory {
 
     /** Prefix for the shared lock when working on a dataset. */
-    String DATASET_LOCK_PREFIX = "dataset#"; //$NON-NLS-1$
+    String DATASET_LOCK_PREFIX = "dataset#";
 
     /**
      * @param id An id for the distributed lock. It is up to the caller to decide any naming rules or for uniqueness of

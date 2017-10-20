@@ -179,8 +179,7 @@ export default class FilterService {
 			createFilter = () => {
 				let filterAdaptaterService;
 				if (this.TQL_ENABLED) {
-					filterFn = () => {
-					};
+					filterFn = () => {};
 					filterAdaptaterService = this.TqlFilterAdapterService;
 				}
 				else {

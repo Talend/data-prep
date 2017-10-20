@@ -19,18 +19,39 @@ const INVALID_RECORDS = 'invalid_records';
 const EMPTY_RECORDS = 'empty_records';
 const VALID_RECORDS = 'valid_records';
 // const INSIDE_RANGE = 'inside_range';
-// const MATCHES = 'matches';
+const MATCHES = 'matches';
 const QUALITY = 'quality';
 
 const OPERATORS = {
-	EQUAL: '=',
-	CONTAINS: 'contains',
+	EQUAL: {
+		value: '=',
+		hasOperand: true,
+	},
+	CONTAINS: {
+		value: 'contains',
+		hasOperand: true,
+	},
+	IS_VALID: {
+		value: 'is valid',
+		hasOperand: false,
+	},
+	IS_INVALID: {
+		value: 'is invalid',
+		hasOperand: false,
+	},
+	MATCHES: {
+		value: 'complies to',
+		hasOperand: true,
+	},
 };
 
 export default function TqlFilterAdapterService() {
 	const CONVERTERS = {
 		[CONTAINS]: convertContainsFilterToTQL,
 		[EXACT]: convertExactFilterToTQL,
+		[VALID_RECORDS]: convertValidFilterToTQL,
+		[INVALID_RECORDS]: convertInvalidFilterToTQL,
+		[MATCHES]: convertPatternFilterToTQL,
 	};
 
 
@@ -78,7 +99,6 @@ export default function TqlFilterAdapterService() {
 	function getFilterValueGetter() {
 		switch (this.type) {
 		case CONTAINS:
-			return this.args.phrase;
 		case EXACT:
 			return this.args.phrase;
 		}
@@ -114,8 +134,6 @@ export default function TqlFilterAdapterService() {
 	function getFilterValueSetter(newValue) {
 		switch (this.type) {
 		case CONTAINS:
-			this.args.phrase = newValue;
-			break;
 		case EXACT:
 			this.args.phrase = newValue;
 			break;
@@ -156,21 +174,37 @@ export default function TqlFilterAdapterService() {
 	}
 
 	function convertContainsFilterToTQL(fieldId, value) {
-		return buildQuery(fieldId, value, OPERATORS.CONTAINS);
+		return buildQuery(fieldId, OPERATORS.CONTAINS, value);
 	}
 
 	function convertExactFilterToTQL(fieldId, value) {
-		return buildQuery(fieldId, value, OPERATORS.EQUAL);
+		return buildQuery(fieldId, OPERATORS.EQUAL, value);
 	}
 
-	function buildQuery(fieldId, value, operator) {
+	function convertValidFilterToTQL(fieldId) {
+		return buildQuery(fieldId, OPERATORS.IS_VALID);
+	}
+
+	function convertInvalidFilterToTQL(fieldId) {
+		return buildQuery(fieldId, OPERATORS.IS_INVALID);
+	}
+
+	function convertPatternFilterToTQL(fieldId, value) {
+		return buildQuery(fieldId, OPERATORS.MATCHES, value);
+	}
+
+	function buildQuery(fieldId, operator, value) {
 		function wrap(value) {
 			return typeof value === 'string' ? `'${value}'` : value;
 		}
 
-		if (value && value.length) {
-			return `(${fieldId} ${operator} ${wrap(value)})`;
+		if (operator.hasOperand && value && value.length) {
+			return `(${fieldId} ${operator.value} ${wrap(value)})`;
 		}
+		else if (!operator.hasOperand) {
+			return `(${fieldId} ${operator.value})`;
+		}
+
 		return `(${fieldId} is empty)`;
 	}
 

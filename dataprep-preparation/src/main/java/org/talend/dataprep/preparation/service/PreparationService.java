@@ -340,17 +340,18 @@ public class PreparationService {
     private void checkIfPreparationNameIsAvailable(String folderId, String name) {
 
         // make sure the preparation does not already exist in the target folderId
-        final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
-        entries.forEach(folderEntry -> {
-            Preparation preparation = preparationRepository.get(folderEntry.getContentId(), Preparation.class);
-            if (preparation != null && StringUtils.equals(name, preparation.getName())) {
-                final ExceptionContext context = build() //
-                        .put("id", folderEntry.getContentId()) //
-                        .put("folderId", folderId) //
-                        .put("name", name);
-                throw new TDPException(PREPARATION_NAME_ALREADY_USED, context);
-            }
-        });
+        try (final Stream<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION)) {
+            entries.forEach(folderEntry -> {
+                Preparation preparation = preparationRepository.get(folderEntry.getContentId(), Preparation.class);
+                if (preparation != null && StringUtils.equals(name, preparation.getName())) {
+                    final ExceptionContext context = build() //
+                            .put("id", folderEntry.getContentId()) //
+                            .put("folderId", folderId) //
+                            .put("name", name);
+                    throw new TDPException(PREPARATION_NAME_ALREADY_USED, context);
+                }
+            });
+        }
     }
 
     /**
@@ -426,10 +427,11 @@ public class PreparationService {
             }
 
             // delete the associated folder entries
-            folderRepository.findFolderEntries(preparationId, PREPARATION)
-                    .forEach(e -> folderRepository.removeFolderEntry(e.getFolderId(), preparationId, PREPARATION));
+            try (final Stream<FolderEntry> entries = folderRepository.findFolderEntries(preparationId, PREPARATION)) {
 
-            LOGGER.info("Deletion of preparation #{} done.", preparationId);
+                entries.forEach(e -> folderRepository.removeFolderEntry(e.getFolderId(), preparationId, PREPARATION));
+                LOGGER.info("Deletion of preparation #{} done.", preparationId);
+            }
         } finally {
             // Just in case remove failed
             unlockPreparation(preparationId);

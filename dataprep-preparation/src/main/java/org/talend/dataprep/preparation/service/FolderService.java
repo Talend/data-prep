@@ -199,10 +199,10 @@ public class FolderService {
     }
 
     private FolderTreeNode getTree(final Folder root) {
-        final Stream<Folder> children = folderRepository.children(root.getId());
-        final List<FolderTreeNode> childrenSubtrees = StreamSupport.stream(children.spliterator(), false)
-                .map(this::getTree)
-                .collect(toList());
-        return new FolderTreeNode(root, childrenSubtrees);
+        try (final Stream<Folder> children = folderRepository.children(root.getId())) {
+            final List<FolderTreeNode> childrenSubtrees = StreamSupport.stream(children.spliterator(), false).map(this::getTree)
+                    .collect(toList());
+            return new FolderTreeNode(root, childrenSubtrees);
+        }
     }
 }

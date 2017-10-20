@@ -146,7 +146,9 @@ public class FileSystemFolderRepository implements FolderRepository {
 
     @Override
     public long count(String folder, FolderContentType type) {
-        return entries(folder, type).count();
+        try (Stream<FolderEntry> entriesStream = entries(folder, type)) {
+            return entriesStream.count();
+        }
     }
 
     @Override
@@ -342,8 +344,8 @@ public class FileSystemFolderRepository implements FolderRepository {
 
     @Override
     public Folder locateEntry(String contentId, FolderContentType type) {
-        try {
-            return Files.walk(pathsConverter.getRootFolder()) //
+        try (Stream<Path> entriesStream = Files.walk(pathsConverter.getRootFolder())) {
+            return entriesStream //
                     .filter(Files::isRegularFile) //
                     .filter(file -> {
                         FolderEntry folderEntry = FileSystemUtils.toFolderEntry(file);

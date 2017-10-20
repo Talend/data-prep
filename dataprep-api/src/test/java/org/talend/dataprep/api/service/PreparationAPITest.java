@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -271,14 +273,20 @@ public class PreparationAPITest extends ApiServiceTestBase {
         String copyId = response.asString();
 
         // check the folder entry
-        final Iterator<FolderEntry> iterator = folderRepository.entries(destination.getId(), PREPARATION).iterator();
-        assertTrue(iterator.hasNext());
-        final FolderEntry entry = iterator.next();
+        final List<FolderEntry> entries = getEntries(destination.getId());
+        assertThat(entries.size(), greaterThan(0));
+        final FolderEntry entry = entries.get(0);
         assertEquals(entry.getContentId(), copyId);
 
         // check the name
         final Preparation actual = preparationRepository.get(copyId, Preparation.class);
         assertEquals(newPreparationName, actual.getName());
+    }
+
+    private List<FolderEntry> getEntries(String folderId) {
+        try (final Stream<FolderEntry> entriesStream = folderRepository.entries(folderId, PREPARATION)) {
+            return entriesStream.collect(Collectors.toList());
+        }
     }
 
     @Test
@@ -316,9 +324,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertEquals(200, response.getStatusCode());
 
         // check the folder entry
-        final Iterator<FolderEntry> iterator = folderRepository.entries(destination.getId(), PREPARATION).iterator();
-        assertTrue(iterator.hasNext());
-        final FolderEntry entry = iterator.next();
+        final List<FolderEntry> entries = getEntries(destination.getId());
+        assertThat(entries.size(), greaterThan(0));
+        final FolderEntry entry = entries.get(0);
         assertEquals(entry.getContentId(), id);
 
         // check the name
@@ -685,19 +693,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // given
         Folder home = folderRepository.getHome();
-        Iterator<FolderEntry> entries = folderRepository.entries(home.getId(), PREPARATION).iterator();
-        assertFalse(entries.hasNext());
+        List<FolderEntry> entries = getEntries(home.getId());
+        assertTrue(entries.isEmpty());
 
         // when
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", home.getId());
 
         // then
-        entries = folderRepository.entries(home.getId(), PREPARATION).iterator();
-        assertTrue(entries.hasNext());
-        final FolderEntry entry = entries.next();
+        entries = getEntries(home.getId());
+        assertThat(entries.size(), is(1));
+        final FolderEntry entry = entries.get(0);
         assertThat(entry.getContentId(), is(preparationId));
         assertThat(entry.getContentType(), is(PREPARATION));
-        assertFalse(entries.hasNext());
     }
 
     @Test
@@ -706,27 +713,26 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         final String path = "/folder-1/sub-folder-2";
         Folder folder = folderRepository.addFolder(folderRepository.getHome().getId(), path);
-        Iterator<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION).iterator();
-        assertFalse(entries.hasNext());
+        List<FolderEntry> entries = getEntries(folder.getId());
+        assertThat(entries.size(), is(0));
 
         // when
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", folder.getId());
 
         // then
-        entries = folderRepository.entries(folder.getId(), PREPARATION).iterator();
-        assertTrue(entries.hasNext());
-        final FolderEntry entry = entries.next();
+        entries = getEntries(folder.getId());
+        assertThat(entries.size(), is(1));
+        final FolderEntry entry = entries.get(0);
         assertThat(entry.getContentId(), is(preparationId));
         assertThat(entry.getContentType(), is(PREPARATION));
-        assertFalse(entries.hasNext());
     }
 
     @Test
     public void shouldNotAcceptPreparationWithoutRowMetadata() throws Exception {
         // given
         Folder home = folderRepository.getHome();
-        Iterator<FolderEntry> entries = folderRepository.entries(home.getId(), PREPARATION).iterator();
-        assertFalse(entries.hasNext());
+        final List<FolderEntry> entries = getEntries(home.getId());
+        assertThat(entries.size(), is(0));
         String dataSetId = testClient.createDataset("dataset/dataset.csv", "testCreatePreparation");
 
         final Response response = given() //

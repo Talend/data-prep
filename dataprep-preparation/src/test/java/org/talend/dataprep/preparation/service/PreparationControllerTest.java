@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.IOUtils;
@@ -378,16 +379,23 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        final Iterator<FolderEntry> iterator = folderRepository.entries(toFolder.getId(), PREPARATION).iterator();
-        assertTrue(iterator.hasNext());
-        final FolderEntry copy = iterator.next();
-        assertEquals(copy.getContentId(), copyId);
+        assertThatPreparationIsFirstInsideFolder(copyId, toFolder.getId());
         assertEquals("the new preparation", repository.get(copyId, Preparation.class).getName());
 
         // Assert that the author is the system user, and not the original author of the prep:
         assertEquals(System.getProperty("user.name"), repository.get(copyId, Preparation.class).getAuthor());
         // row metadata its nullity after copy caused https://jira.talendforge.org/browse/TDP-3379
         assertNotNull(repository.get(copyId, Preparation.class).getRowMetadata());
+    }
+
+    private FolderEntry assertThatPreparationIsFirstInsideFolder(String expectedPreparationId, String folderId) {
+        try (Stream<FolderEntry> folderEntriesStream = folderRepository.entries(folderId, PREPARATION)) {
+            final Iterator<FolderEntry> iterator = folderEntriesStream.iterator();
+            assertTrue(iterator.hasNext());
+            final FolderEntry copy = iterator.next();
+            assertEquals(copy.getContentId(), expectedPreparationId);
+            return copy;
+        }
     }
 
     @Test
@@ -427,16 +435,20 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        final Iterator<FolderEntry> iterator = folderRepository.entries(toFolder.getId(), PREPARATION).iterator();
-        boolean found = false;
-        while (iterator.hasNext()) {
-            final FolderEntry entry = iterator.next();
-            if (entry.getContentId().equals(copyId)) {
-                found = true;
-                assertEquals("prep_1 Copy", repository.get(entry.getContentId(), Preparation.class).getName());
+        final Iterator<FolderEntry> iterator;
+        try (Stream<FolderEntry> folderEntriesStream = folderRepository.entries(toFolder.getId(), PREPARATION)) {
+            iterator = folderEntriesStream.iterator();
+
+            boolean found = false;
+            while (iterator.hasNext()) {
+                final FolderEntry entry = iterator.next();
+                if (entry.getContentId().equals(copyId)) {
+                    found = true;
+                    assertEquals("prep_1 Copy", repository.get(entry.getContentId(), Preparation.class).getName());
+                }
             }
+            assertTrue(found);
         }
-        assertTrue(found);
     }
 
     @Test
@@ -459,10 +471,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        final Iterator<FolderEntry> iterator = folderRepository.entries(toFolder.getId(), PREPARATION).iterator();
-        assertTrue(iterator.hasNext());
-        final FolderEntry copy = iterator.next();
-        assertEquals(copy.getContentId(), originalId);
+        assertThatPreparationIsFirstInsideFolder(originalId, toFolder.getId());
         assertEquals("moved preparation", repository.get(originalId, Preparation.class).getName());
     }
 
@@ -507,10 +516,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        final Iterator<FolderEntry> iterator = folderRepository.entries(toFolder.getId(), PREPARATION).iterator();
-        assertTrue(iterator.hasNext());
-        final FolderEntry copy = iterator.next();
-        assertEquals(copy.getContentId(), originalId);
+        assertThatPreparationIsFirstInsideFolder(originalId, toFolder.getId());
         assertEquals("yap", repository.get(originalId, Preparation.class).getName());
     }
 
@@ -571,8 +577,10 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        final Folder actual = mapper.readValue(response.asInputStream(), Folder.class);
-        assertEquals(bar.getId(), actual.getId());
+        try (InputStream responseAsInputStream = response.asInputStream()) {
+            final Folder actual = mapper.readValue(responseAsInputStream, Folder.class);
+            assertEquals(bar.getId(), actual.getId());
+        }
     }
 
     @Test
@@ -811,16 +819,17 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final String path = "/test/create/preparation";
         final Folder folder = folderRepository.addFolder(home.getId(), path);
-        assertThat(folderRepository.entries(folder.getId(), PREPARATION).iterator().hasNext(), is(false));
+        final Iterator<FolderEntry> iterator;
+        try (Stream<FolderEntry> folderEntriesStream = folderRepository.entries(folder.getId(), PREPARATION)) {
+            iterator = folderEntriesStream.iterator();
+            assertThat(iterator.hasNext(), is(false));
+        }
 
         // when
         final String preparationId = clientTest.createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).id();
 
         // then
-        final Iterator<FolderEntry> iterator = folderRepository.entries(folder.getId(), PREPARATION).iterator();
-        assertThat(iterator.hasNext(), is(true));
-        final FolderEntry entry = iterator.next();
-        assertThat(entry.getContentId(), is(preparationId));
+        final FolderEntry entry = assertThatPreparationIsFirstInsideFolder(preparationId, folder.getId());
         assertThat(entry.getContentType(), is(PREPARATION));
     }
 
@@ -856,14 +865,20 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Preparation preparation = preparations.iterator().next();
         assertThat(preparation.id(), is(preparationId));
         assertThat(preparation.getName(), is("test_name"));
-        assertThat(folderRepository.findFolderEntries(preparationId, PREPARATION).iterator().hasNext(), is(true));
+        assertThat(doesPreparationExists(preparationId), is(true));
 
         // when
         clientTest.deletePreparation(preparationId);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(0L));
-        assertThat(folderRepository.findFolderEntries(preparationId, PREPARATION).iterator().hasNext(), is(false));
+        assertThat(doesPreparationExists(preparationId), is(false));
+    }
+
+    private boolean doesPreparationExists(String preparationId) {
+        try (Stream<FolderEntry> folderEntriesStream = folderRepository.findFolderEntries(preparationId, PREPARATION)) {
+            return folderEntriesStream.iterator().hasNext();
+        }
     }
 
     @Test

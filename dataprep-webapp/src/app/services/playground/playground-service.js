@@ -96,6 +96,7 @@ export default function PlaygroundService(
 		errorGoBack,
 
 		updateDatasetDatagrid,
+		updateDatagrid,
 
 		// preparation
 		createOrUpdatePreparation,
@@ -156,7 +157,7 @@ export default function PlaygroundService(
 		StateService.setCurrentPreparation(preparation);
 		StateService.setCurrentSampleType(sampleType);
 		FilterService.initFilters(dataset, preparation);
-		this.updateDatagrid();
+		updateDatagrid();
 		updateGridSelection(dataset, preparation);
 		this.updatePreparationDetails().then(() => {
 			if (state.playground.recipe.current.steps.length) {
@@ -944,13 +945,13 @@ export default function PlaygroundService(
 	function updateDatagrid() {
 		const { filter, preparation } = state.playground;
 		if (preparation && preparation.id) {
-			return this.updatePreparationDatagrid();
+			return updatePreparationDatagrid();
 		}
 		const tql =
 			filter.enabled &&
 			filter.isTQL &&
 			FilterService.stringify(filter.gridFilters);
-		return this.updateDatasetDatagrid(tql);
+		return updateDatasetDatagrid(tql);
 	}
 
 	// TODO : temporary fix because asked to.

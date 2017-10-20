@@ -317,5 +317,9 @@ module.exports = (options) => {
 		addLinterConfig(config);
 	}
 
+	config.node = {
+		fs: 'empty',
+	};
+
 	return config;
 };

@@ -26,6 +26,7 @@
     <name>dataprep-api</name>
     <properties>
         <stack.param.name>DataPrepApiFQIN</stack.param.name>
+        <start-class>org.talend.dataprep.api.Application</start-class>
     </properties>
     <dependencies>
         <dependency>

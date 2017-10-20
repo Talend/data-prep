@@ -12,12 +12,10 @@
 
 package org.talend.dataprep.cache;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 public interface CacheJanitor {
+
     /**
-     * A clean up process that starts a minute after the previous ended.
+     * A clean up process that cleans the cache of obsolete cache entries.
      */
-    @Scheduled(fixedDelay = 60000)
     void janitor();
 }

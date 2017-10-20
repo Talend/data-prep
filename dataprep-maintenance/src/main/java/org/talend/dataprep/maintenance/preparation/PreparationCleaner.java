@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.preparation.task;
+package org.talend.dataprep.maintenance.preparation;
 
 import static java.util.stream.Collectors.toSet;
 import static org.talend.tql.api.TqlBuilder.eq;
@@ -24,20 +24,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.ForAll;
 import org.talend.dataprep.security.SecurityProxy;
 
 /**
- * Scheduler that clean the repository. It removes all the steps that do NOT belong to any preparation
+ * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.
  */
 @Component
-@EnableScheduling
 public class PreparationCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
@@ -54,7 +56,7 @@ public class PreparationCleaner {
     @Autowired
     private PreparationUtils preparationUtils;
 
-    @Autowired
+    @Autowired(required = false)
     private List<OrphanStepsFinder> orphanStepsFinders;
 
     @Autowired

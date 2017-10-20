@@ -39,4 +39,4 @@ The cucumber report will be available on /site/cucumber-reports
 
 ## License
 
-Copyright (c) 2006-2015 Talend
+Copyright (c) 2006-2017 Talend

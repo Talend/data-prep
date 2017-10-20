@@ -1,14 +1,28 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.qa.bean;
 
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.stereotype.Component;
 
 /**
  * Used to share data within steps.
@@ -22,7 +36,9 @@ public class FeatureContext {
     public static final String FULL_RUN_PREFIX = "fullrun-";
 
     private Map<String, String> datasetIdByName = new HashMap<>();
+
     private Map<String, String> preparationIdByName = new HashMap<>();
+
     private Map<String, File> tempFileByName = new HashMap<>();
 
     /**
@@ -33,7 +49,7 @@ public class FeatureContext {
     /**
      * Store a new dataset reference. In order to delete it later.
      *
-     * @param id   the dataset id.
+     * @param id the dataset id.
      * @param name the dataset name.
      */
     public void storeDatasetRef(@NotNull String id, @NotNull String name) {
@@ -43,7 +59,7 @@ public class FeatureContext {
     /**
      * Store a new preparation reference. In order to delete it later.
      *
-     * @param id   the preparation id.
+     * @param id the preparation id.
      * @param name the preparation name.
      */
     public void storePreparationRef(@NotNull String id, @NotNull String name) {
@@ -78,7 +94,6 @@ public class FeatureContext {
     public List<String> getPreparationIds() {
         return new ArrayList<>(preparationIdByName.values());
     }
-
 
     /**
      * Get the id of a stored dataset.

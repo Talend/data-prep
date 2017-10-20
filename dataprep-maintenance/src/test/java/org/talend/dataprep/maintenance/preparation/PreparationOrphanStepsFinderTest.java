@@ -10,49 +10,50 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.preparation.task;
+package org.talend.dataprep.maintenance.preparation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.preparation.BasePreparationTest;
+import org.talend.dataprep.maintenance.BaseMaintenanceTest;
+import org.talend.dataprep.preparation.store.PreparationRepository;
 
 /**
  * Unit tests for the PreparationOrphanStepFinder.
  *
  * @see PreparationOrphanStepsFinder
  */
-public class PreparationOrphanStepsFinderTest extends BasePreparationTest {
+public class PreparationOrphanStepsFinderTest extends BaseMaintenanceTest {
 
-    @Autowired
+    @InjectMocks
     private PreparationOrphanStepsFinder finder;
 
-    @Before
-    public void localSetup() throws Exception {
-        repository.clear();
-    }
+    @Mock
+    private PreparationRepository repository;
 
     @Test
     public void shouldListOrphanSteps() {
-
         // given
         final Step firstStep = new Step(Step.ROOT_STEP.id(), "first", "2.1");
         final Step secondStep = new Step(firstStep.id(), "second", "2.1");
-        final Preparation preparation = new Preparation("#123", "1", secondStep.id(), "2.1");
-
-        repository.add(firstStep);
-        repository.add(secondStep);
-        repository.add(preparation);
-
         final Step orphanStep = new Step(Step.ROOT_STEP.id(), "orphan", "2.1");
-        repository.add(orphanStep);
+        when(repository.list(eq(Step.class))).thenReturn(Stream.of(firstStep, secondStep, orphanStep));
+        when(repository.get(eq(firstStep.id()), eq(Step.class))).thenReturn(firstStep);
+        when(repository.get(eq(secondStep.id()), eq(Step.class))).thenReturn(secondStep);
+        when(repository.get(eq(orphanStep.id()), eq(Step.class))).thenReturn(orphanStep);
+
+        final Preparation preparation = new Preparation("#123", "1", secondStep.id(), "2.1");
+        when(repository.list(eq(Preparation.class))).thenReturn(Stream.of(preparation));
 
         // when
         final Set<Step> orphanSteps = finder.getOrphanSteps();

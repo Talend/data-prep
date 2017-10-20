@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--
   ~ ============================================================================
   ~ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
@@ -12,24 +12,30 @@
   ~
   ~ ============================================================================
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>dataprep-dataset</artifactId>
-    <packaging>jar</packaging>
-    <name>dataprep-dataset</name>
-    <description>Talend Data Preparation - Data Set service</description>
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-backend-service-parent</artifactId>
         <version>2.3.0-SNAPSHOT</version>
         <relativePath>../dataprep-backend-service-parent/pom.xml</relativePath>
     </parent>
+    <artifactId>dataprep-maintenance</artifactId>
+    <version>2.3.0-SNAPSHOT</version>
+    <name>dataprep-maintenance</name>
     <properties>
-        <stack.param.name>DataPrepDatasetFQIN</stack.param.name>
-        <start-class>org.talend.dataprep.dataset.Application</start-class>
+        <start-class>org.talend.dataprep.maintenance.Application</start-class>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-preparation</artifactId>
+            <type>test-jar</type>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

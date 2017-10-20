@@ -56,7 +56,6 @@ import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -117,9 +116,6 @@ public class PreparationService {
 
     @Autowired
     private LockedResourceRepository lockedResourceRepository;
-
-    @Autowired
-    private PreparationCleaner preparationCleaner;
 
     @Autowired
     private MetadataChangesOnActionsGenerator stepDiffDelegate;

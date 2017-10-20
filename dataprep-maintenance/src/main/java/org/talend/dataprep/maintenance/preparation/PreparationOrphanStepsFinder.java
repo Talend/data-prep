@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.preparation.task;
+package org.talend.dataprep.maintenance.preparation;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -32,15 +32,13 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 @Component
 public class PreparationOrphanStepsFinder implements OrphanStepsFinder {
 
+    private final PreparationUtils preparationUtils = new PreparationUtils();
+
     @Autowired
     private PreparationRepository repository;
 
-    @Autowired
-    private PreparationUtils preparationUtils;
-
     @Override
     public Set<Step> getOrphanSteps() {
-
         final Collection<Step> steps = repository.list(Step.class).collect(toList());
         final Set<String> preparationStepIds = getUsedSteps();
 

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -16,8 +15,8 @@ package org.talend.dataprep.api.dataset.json;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.dataprep.BaseErrorCodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -25,6 +24,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class DataSetRowStreamSerializer extends JsonSerializer<Stream<DataSetRow>> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSetRowStreamSerializer.class);
 
     @Override
     public void serialize(Stream<DataSetRow> value, JsonGenerator generator, SerializerProvider provider) throws IOException {
@@ -34,7 +35,7 @@ public class DataSetRowStreamSerializer extends JsonSerializer<Stream<DataSetRow
                 try {
                     generator.writeObject(row.valuesWithId());
                 } catch (IOException e) {
-                    new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_JSON, e);
+                    LOGGER.error("Unable to write row '{}'", row, e);
                 }
             });
         } finally {

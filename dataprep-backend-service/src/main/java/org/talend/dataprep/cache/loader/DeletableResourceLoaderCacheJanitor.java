@@ -18,22 +18,21 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.content.ContentServiceEnabled;
 import org.talend.daikon.content.DeletableResource;
 import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.cache.CacheJanitor;
-import org.talend.dataprep.security.ForAll;
 
 @Component
-@ConditionalOnBean(ResourceResolver.class)
-@EnableScheduling
+@ConditionalOnBean(ContentServiceEnabled.class)
 public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeletableResourceLoaderCacheJanitor.class);
@@ -41,19 +40,18 @@ public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
     @Autowired
     private ResourceResolver deletablePathResolver;
 
-    @Autowired
-    private ForAll forAll;
+    @PostConstruct
+    public void init() {
+        LOGGER.info("Using resource loader cache janitor.");
+    }
 
     @Override
-    @Scheduled(fixedDelay = 60000)
     public void janitor() {
         final AtomicLong deletedCount = new AtomicLong();
         final AtomicLong totalCount = new AtomicLong();
-        LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
+        performCleanUp(deletedCount, totalCount);
 
-        forAll.execute(() -> performCleanUp(deletedCount, totalCount));
-
-        LOGGER.debug("Janitor process ended @ {} ({}/{} files successfully deleted).", System.currentTimeMillis(), deletedCount,
+        LOGGER.debug("Janitor process end ({}/{} files successfully deleted).", System.currentTimeMillis(), deletedCount,
                 totalCount);
     }
 

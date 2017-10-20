@@ -39,7 +39,7 @@ const OPERATORS = {
 		value: 'is invalid',
 		hasOperand: false,
 	},
-	MATCHES: {
+	COMPLIES_TO: {
 		value: 'complies to',
 		hasOperand: true,
 	},
@@ -190,7 +190,7 @@ export default function TqlFilterAdapterService() {
 	}
 
 	function convertPatternFilterToTQL(fieldId, value) {
-		return buildQuery(fieldId, OPERATORS.MATCHES, value);
+		return buildQuery(fieldId, OPERATORS.COMPLIES_TO, value);
 	}
 
 	function buildQuery(fieldId, operator, value) {

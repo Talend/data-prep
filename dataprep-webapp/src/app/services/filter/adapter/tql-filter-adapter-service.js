@@ -93,21 +93,13 @@ export default function TqlFilterAdapterService() {
 	 */
 	function getBadgeClass() {
 		if (this.type === QUALITY) {
-			let className = '';
+			const classes = {
+				[VALID_RECORDS]: !!this.args.valid,
+				[EMPTY_RECORDS]: !!this.args.empty,
+				[INVALID_RECORDS]: !!this.args.invalid,
+			};
 
-			if (this.args.valid) {
-				className += ` ${VALID_RECORDS}`;
-			}
-
-			if (this.args.empty) {
-				className += ` ${EMPTY_RECORDS}`;
-			}
-
-			if (this.args.invalid) {
-				className += ` ${INVALID_RECORDS}`;
-			}
-
-			return className;
+			return Object.keys(classes).filter(n => classes[n]).join(' ');
 		}
 		return this.type;
 	}
@@ -162,7 +154,6 @@ export default function TqlFilterAdapterService() {
 				.reduce(reduceOrFn);
 		}
 	}
-
 
 	function convertContainsFilterToTQL(fieldId, value) {
 		return buildQuery(fieldId, value, OPERATORS.CONTAINS);

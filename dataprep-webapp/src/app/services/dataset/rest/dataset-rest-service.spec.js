@@ -463,6 +463,27 @@ describe('Dataset Rest Service', () => {
 			//then
 			expect(result).toEqual(data);
 		}));
+
+		it('should call dataset get content rest service with TQL', inject(($rootScope, DatasetRestService, RestURLs) => {
+			//given
+			let result = null;
+			const datasetId = 'e85afAa78556d5425bc2';
+			const data = [{ column: [], records: [] }];
+			const tql = "(0001='charles')";
+			$httpBackend
+				.expectGET(RestURLs.datasetUrl + "/e85afAa78556d5425bc2?filter=(0001%253D'charles')&includeTechnicalProperties=true&metadata=false")
+				.respond(200, data);
+
+			//when
+			DatasetRestService.getContent(datasetId, false, tql).then((data) => {
+				result = data;
+			});
+			$httpBackend.flush();
+			$rootScope.$digest();
+
+			//then
+			expect(result).toEqual(data);
+		}));
 	});
 
 	describe('sheet preview', () => {

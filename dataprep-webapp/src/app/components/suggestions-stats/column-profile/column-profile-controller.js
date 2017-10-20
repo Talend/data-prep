@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
+
 /**
  * @ngdoc controller
  * @name data-prep.actions-suggestions-stats.controller:ColumnProfileCtrl
@@ -46,7 +48,7 @@ export default function ColumnProfileCtrl($translate, $timeout, state, FilterMan
 			],
 			caseSensitive: true,
 		};
-		return value.length || keyName === FilterManagerService.CTRL_KEY_NAME ?
+		return value.length || keyName === CTRL_KEY_NAME ?
 			FilterManagerService.addFilterAndDigest('exact', column.id, column.name, args, null, keyName) :
 			FilterManagerService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
 	}

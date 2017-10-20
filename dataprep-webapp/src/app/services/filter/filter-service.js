@@ -76,7 +76,7 @@ export default class FilterService {
 	initFilters(dataset, preparation) {
 		const filters = this.StorageService.getFilter(preparation ? preparation.id : dataset.id);
 		filters.forEach((filter) => {
-			this.addFilter(filter.type, filter.colId, filter.colName, filter.args);
+			this.addFilter(filter.type, filter.colId, filter.colName, filter.args, null, '');
 		});
 	}
 
@@ -454,13 +454,11 @@ export default class FilterService {
 			};
 
 			if (this.TQL_ENABLED) {
-				newFilterFn = () => {
-				};
+				newFilterFn = () => {};
 			}
 			else {
 				newFilterFn = this._createExactFilterFn(oldFilter.colId, newComputedValue, oldFilter.args.caseSensitive);
 			}
-
 			editableFilter = true;
 			break;
 		}
@@ -586,14 +584,14 @@ export default class FilterService {
 				newDirection = 1;
 				mergedInterval = oldMinInterval;
 				mergedInterval.value[1] = newMax;
-				mergedInterval.label = `[${oldMinLabel[0]}${this.RANGE_SEPARATOR}${newLabel[1] || newLabel[0]}[`;
+				mergedInterval.label = `[${oldMinLabel[0]}${RANGE_SEPARATOR}${newLabel[1] || newLabel[0]}[`;
 			};
 
 			const updateMaxInterval = () => {
 				newDirection = -1;
 				mergedInterval = oldMaxInterval;
 				mergedInterval.value[0] = newMin;
-				mergedInterval.label = `[${newLabel[0]}${this.RANGE_SEPARATOR}${oldMaxLabel[1] || oldMaxLabel[0]}[`;
+				mergedInterval.label = `[${newLabel[0]}${RANGE_SEPARATOR}${oldMaxLabel[1] || oldMaxLabel[0]}[`;
 			};
 
 			// Compare old and new interval values
@@ -784,7 +782,7 @@ export default class FilterService {
 		const flattenFiltersValues = filterValues
 			.filter(filterValue => !filterValue.isEmpty)
 			.map(filterValue => this.TextFormatService.escapeRegexpExceptStar(filterValue.value))
-			.join(this.VALUES_SEPARATOR);
+			.join(VALUES_SEPARATOR);
 		const regExpPatternToMatch = `^(${flattenFiltersValues})$`;
 		const regExpToMatch = caseSensitive ? new RegExp(regExpPatternToMatch) : new RegExp(regExpPatternToMatch, 'i');
 		return () => (item) => {
@@ -1031,11 +1029,11 @@ export default class FilterService {
 	_getSplittedRangeLabelFor(label) {
 		let splittedLabel = [];
 		label = label.replace(new RegExp(/(\[|])/g), ''); // eslint-disable-line no-control-regex
-		if (label.indexOf(this.RANGE_SEPARATOR) > -1) {
-			splittedLabel = label.split(this.RANGE_SEPARATOR);
+		if (label.indexOf(RANGE_SEPARATOR) > -1) {
+			splittedLabel = label.split(RANGE_SEPARATOR);
 		}
-		else if (label.indexOf(this.INTERVAL_SEPARATOR) > -1) {
-			splittedLabel = label.split(this.INTERVAL_SEPARATOR);
+		else if (label.indexOf(INTERVAL_SEPARATOR) > -1) {
+			splittedLabel = label.split(INTERVAL_SEPARATOR);
 		}
 		else {
 			splittedLabel.push(label);

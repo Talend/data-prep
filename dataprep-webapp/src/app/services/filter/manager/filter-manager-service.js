@@ -26,9 +26,6 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	'ngInject';
 
 	const service = {
-		// constants
-		CTRL_KEY_NAME: FilterService.CTRL_KEY_NAME,
-
 		// utils
 		getRangeLabelFor,
 

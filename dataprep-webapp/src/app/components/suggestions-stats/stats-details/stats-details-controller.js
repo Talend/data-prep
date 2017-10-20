@@ -10,6 +10,7 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
 
 /**
  * @ngdoc controller
@@ -45,7 +46,7 @@ export default function StatsDetailsCtrl(state, FilterManagerService, Statistics
 				},
 			],
 		};
-		return item.pattern || keyName === FilterManagerService.CTRL_KEY_NAME ?
+		return item.pattern || keyName === CTRL_KEY_NAME ?
 			FilterManagerService.addFilterAndDigest('matches', column.id, column.name, args, null, keyName) :
 			FilterManagerService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
 	}

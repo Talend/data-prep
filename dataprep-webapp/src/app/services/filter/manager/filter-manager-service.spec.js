@@ -30,7 +30,7 @@ describe('Filter Manager Service', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject((FilterService, StateService, StatisticsService, StorageService) => {
+	beforeEach(inject((FilterService, PlaygroundService, StateService, StatisticsService, StorageService) => {
 		spyOn(StatisticsService, 'updateFilteredStatistics').and.returnValue();
 		spyOn(FilterService, 'addFilter').and.returnValue();
 		spyOn(FilterService, 'removeAllFilters').and.returnValue();
@@ -39,6 +39,7 @@ describe('Filter Manager Service', () => {
 		spyOn(FilterService, 'updateFilter').and.returnValue();
 		spyOn(StorageService, 'saveFilter').and.returnValue();
 		spyOn(StorageService, 'removeFilter').and.returnValue();
+		spyOn(PlaygroundService, 'updateDatagrid').and.returnValue();
 	}));
 
 	describe('Interval label', () => {

@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import { CTRL_KEY_NAME, SHIFT_KEY_NAME } from './filter-service.js';
 
 describe('Filter service', () => {
 
@@ -71,7 +72,7 @@ describe('Filter service', () => {
 						value: 'Toto',
 					},
 				],
-			});
+			}, null, '');
 		}));
 	});
 
@@ -1375,7 +1376,7 @@ describe('Filter service', () => {
 				{
 					value: 'Tata',
 				},
-			], 'ctrl');
+			], CTRL_KEY_NAME);
 
 			//then
 			const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
@@ -1434,7 +1435,7 @@ describe('Filter service', () => {
 						new Date(2014, 2, 1).getTime(),
 					],
 				},
-			], FilterService.CTRL_KEY_NAME);
+			], CTRL_KEY_NAME);
 
 			//then
 			const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
@@ -1508,7 +1509,7 @@ describe('Filter service', () => {
 						new Date(2014, 4, 1).getTime(),
 					],
 				},
-			], FilterService.SHIFT_KEY_NAME);
+			], SHIFT_KEY_NAME);
 
 			//then
 			const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];

@@ -94,7 +94,7 @@ export default function PlaygroundService(
 		updateStatistics,   // load column statistics and trigger statistics update
 		close,
 		errorGoBack,
-
+		updateDatagrid,
 		updateDatasetDatagrid,
 		updateDatagrid,
 

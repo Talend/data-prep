@@ -29,9 +29,9 @@ const OPERATORS = {
 
 export default function TqlFilterAdapterService() {
 	const CONVERTERS = {
-		CONTAINS: convertContainsFilterToTQL,
-		EXACT: convertExactFilterToTQL,
-	}
+		[CONTAINS]: convertContainsFilterToTQL,
+		[EXACT]: convertExactFilterToTQL,
+	};
 
 
 	return {
@@ -169,7 +169,7 @@ export default function TqlFilterAdapterService() {
 		}
 
 		if (value && value.length) {
-			return `(${fieldId} ${operator} ${wrap`value`})`;
+			return `(${fieldId} ${operator} ${wrap(value)})`;
 		}
 		return `(${fieldId} is empty)`;
 	}

@@ -104,7 +104,7 @@ describe('TQL Filter Adapter Service', () => {
                 const tql = filter.toTQL();
 
                 //then
-                expect(tql).toEqual("(0001contains'Charles')");
+                expect(tql).toEqual("(0001 contains 'Charles')");
             }));
 
             it('should return tql corresponding to EXACT filter', inject((TqlFilterAdapterService) => {
@@ -125,7 +125,7 @@ describe('TQL Filter Adapter Service', () => {
                 const tql = filter.toTQL();
 
                 //then
-                expect(tql).toEqual("(0001='Charles')");
+                expect(tql).toEqual("(0001 = 'Charles')");
             }));
 
             it('should return tree corresponding to EXACT multi-valued filter', inject((TqlFilterAdapterService) => {
@@ -152,7 +152,7 @@ describe('TQL Filter Adapter Service', () => {
                 const tql = filter.toTQL();
 
                 //then
-                expect(tql).toEqual("(((0001='Charles') or (0001='Nico')) or (0001='Fabien'))");
+                expect(tql).toEqual("(((0001 = 'Charles') or (0001 = 'Nico')) or (0001 = 'Fabien'))");
             }));
         });
     });

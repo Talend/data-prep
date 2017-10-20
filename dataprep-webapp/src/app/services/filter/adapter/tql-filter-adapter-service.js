@@ -18,7 +18,7 @@ const EXACT = 'exact';
 const INVALID_RECORDS = 'invalid_records';
 const EMPTY_RECORDS = 'empty_records';
 const VALID_RECORDS = 'valid_records';
-// const INSIDE_RANGE = 'inside_range';
+const INSIDE_RANGE = 'inside_range';
 const MATCHES = 'matches';
 const QUALITY = 'quality';
 
@@ -43,6 +43,14 @@ const OPERATORS = {
 		value: 'complies to',
 		hasOperand: true,
 	},
+	GREATER_THAN: {
+		value: '>=',
+		hasOperand: true,
+	},
+	LESS_THAN: {
+		value: '<=',
+		hasOperand: true,
+	},
 };
 
 export default function TqlFilterAdapterService() {
@@ -52,6 +60,7 @@ export default function TqlFilterAdapterService() {
 		[VALID_RECORDS]: convertValidFilterToTQL,
 		[INVALID_RECORDS]: convertInvalidFilterToTQL,
 		[MATCHES]: convertPatternFilterToTQL,
+		[INSIDE_RANGE]: convertRangeFilterToTQL,
 	};
 
 
@@ -191,6 +200,18 @@ export default function TqlFilterAdapterService() {
 
 	function convertPatternFilterToTQL(fieldId, value) {
 		return buildQuery(fieldId, OPERATORS.COMPLIES_TO, value);
+	}
+
+	function convertRangeFilterToTQL(fieldId, values) {
+		// FIXME [NC]:
+		if (!Array.isArray(values)) {
+			values = Array(2).fill(values);
+		}
+
+		return [
+			buildQuery(fieldId, OPERATORS.GREATER_THAN, values[0]),
+			buildQuery(fieldId, OPERATORS.LESS_THAN, values[1]),
+		].reduce(reduceAndFn);
 	}
 
 	function buildQuery(fieldId, operator, value) {

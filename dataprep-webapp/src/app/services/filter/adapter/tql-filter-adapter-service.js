@@ -22,7 +22,18 @@ const VALID_RECORDS = 'valid_records';
 // const MATCHES = 'matches';
 const QUALITY = 'quality';
 
+const OPERATORS = {
+	EQUAL: '=',
+	CONTAINS: 'contains',
+};
+
 export default function TqlFilterAdapterService() {
+	const CONVERTERS = {
+		CONTAINS: convertContainsFilterToTQL,
+		EXACT: convertExactFilterToTQL,
+	}
+
+
 	return {
 		createFilter,
 		toTQL,
@@ -31,7 +42,15 @@ export default function TqlFilterAdapterService() {
 	//--------------------------------------------------------------------------------------------------------------
 	// -----------------------------------------------------CREATION-------------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
-	function createFilter(type, colId, colName, editable, args, filterFn, removeFilterFn) {
+	function createFilter(
+		type,
+		colId,
+		colName,
+		editable,
+		args,
+		filterFn,
+		removeFilterFn
+	) {
 		const filter = {
 			type,
 			colId,
@@ -122,7 +141,7 @@ export default function TqlFilterAdapterService() {
 	 */
 	function reduceOrFn(oldFilter, newFilter) {
 		if (oldFilter) {
-			newFilter = '(' + oldFilter + ' or ' + newFilter + ')';
+			newFilter = `(${oldFilter} or ${newFilter})`;
 		}
 		return newFilter;
 	}
@@ -135,54 +154,35 @@ export default function TqlFilterAdapterService() {
 	 * @returns {String} The filter TQL
 	 */
 	function getFilterTQL() {
-		// const args = this.args;
-		const colId = this.colId;
-		const value = this.value;
-		switch (this.type) {
-		case CONTAINS:
-			return value
-				.map((filterValue) => {
-					return convertContainsFilterToTQL(colId, filterValue.value);
-				})
-				.reduce(reduceOrFn);
-		case EXACT:
-			return value
-				.map((filterValue) => {
-					return convertExactFilterToTQL(colId, filterValue.value);
-				})
+		const converter = CONVERTERS[this.type];
+
+		if (converter) {
+			return this.value
+				.map(filterValue => converter(this.colId, filterValue.value))
 				.reduce(reduceOrFn);
 		}
 	}
 
+
 	function convertContainsFilterToTQL(fieldId, value) {
-		let dsl = '';
-		if (typeof (value) === 'string') {  // eslint-disable-line angular/typecheck-string
-			dsl = value !== '' ?
-				'(' + fieldId + 'contains' + value + "')" :
-				'(' + fieldId + ' is empty)';
-		}
-		else {
-			dsl = value !== '' ?
-				'(' + fieldId + 'contains' + value + ')' :
-				'(' + fieldId + ' is empty)';
-		}
-		return dsl;
+		return buildQuery(fieldId, value, OPERATORS.CONTAINS);
 	}
 
 	function convertExactFilterToTQL(fieldId, value) {
-		let dsl = '';
-		if (typeof (value) === 'string') {  // eslint-disable-line angular/typecheck-string
-			dsl = value !== '' ?
-				'(' + fieldId + "='" + value + "')" :
-				'(' + fieldId + ' is empty)';
-		}
-		else {
-			dsl = value !== '' ?
-				'(' + fieldId + '=' + value + ')' :
-				'(' + fieldId + ' is empty)';
-		}
-		return dsl;
+		return buildQuery(fieldId, value, OPERATORS.EQUAL);
 	}
+
+	function buildQuery(fieldId, value, operator) {
+		function wrap(value) {
+			return typeof value === 'string' ? `'${value}'` : value;
+		}
+
+		if (value && value.length) {
+			return `(${fieldId} ${operator} ${wrap`value`})`;
+		}
+		return `(${fieldId} is empty)`;
+	}
+
 
 	//--------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------CONVERTION-------------------------------------------------
@@ -199,7 +199,7 @@ export default function TqlFilterAdapterService() {
 		let nextAccuFilter = filterItem.toTQL();
 
 		if (accu && nextAccuFilter) {
-			nextAccuFilter = accu + ' and ' + nextAccuFilter;
+			nextAccuFilter = `${accu} and ${nextAccuFilter}`;
 		}
 
 		return nextAccuFilter;

@@ -17,10 +17,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.context.event.ContextClosedEvent;
 
 public class DistributedLockWatcherTest {
 
@@ -62,11 +60,8 @@ public class DistributedLockWatcherTest {
         final DistributedLock mock2 = mock(DistributedLock.class);
         when(delegate.getLock(eq("1234"))).thenReturn(mock1);
         when(delegate.getLock(eq("5678"))).thenReturn(mock2);
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                throw new RuntimeException(); // on purpose unchecked exception
-            }
+        doAnswer(invocation -> {
+            throw new RuntimeException(); // on purpose unchecked exception
         }).when(mock2).unlock();
 
         final DistributedLockWatcher watcher = new DistributedLockWatcher(delegate);
@@ -74,7 +69,7 @@ public class DistributedLockWatcherTest {
         watcher.getLock("5678");
 
         // when
-        watcher.onApplicationEvent(new ContextStoppedEvent(new AnnotationConfigApplicationContext()));
+        watcher.onApplicationEvent(new ContextClosedEvent(new AnnotationConfigApplicationContext()));
 
         // then
         verify(mock1, times(1)).unlock();

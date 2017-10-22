@@ -18,14 +18,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.context.event.ContextClosedEvent;
 
 /**
  * An implementation of {@link LockFactory} that will forcibly unlock all created locks on application shutdown.
  *
  * @see org.talend.dataprep.processor.Wrapper
  */
-public class DistributedLockWatcher implements LockFactory, ApplicationListener<ContextStoppedEvent> {
+public class DistributedLockWatcher implements LockFactory, ApplicationListener<ContextClosedEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DistributedLockWatcher.class);
 
@@ -46,17 +46,21 @@ public class DistributedLockWatcher implements LockFactory, ApplicationListener<
     }
 
     @Override
-    public void onApplicationEvent(ContextStoppedEvent event) {
-        LOGGER.info("Application is being shut down but {} locks remain, releasing them...", locks.size());
-        for (DistributedLock lock : locks) {
-            LOGGER.info("Releasing lock '{}'", lock.getKey());
-            try {
-                lock.unlock();
-            } catch (Exception e) {
-                LOGGER.warn("Unable to release lock '{}' due to exception.", e);
+    public void onApplicationEvent(ContextClosedEvent event) {
+        if (!locks.isEmpty()) {
+            LOGGER.info("Application is being shut down but {} locks remain, releasing them...", locks.size());
+            for (DistributedLock lock : locks) {
+                LOGGER.info("Releasing lock '{}'", lock.getKey());
+                try {
+                    lock.unlock();
+                } catch (Exception e) {
+                    LOGGER.warn("Unable to release lock '{}' due to exception.", e);
+                }
             }
+            LOGGER.info("Locks released.");
+        } else {
+            LOGGER.info("No lock to release on shutdown.");
         }
-        LOGGER.info("Locks released.");
     }
 
     class WatchedDistributedLock implements DistributedLock {

@@ -29,6 +29,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -186,7 +187,8 @@ public class PreparationService {
             } else {
                 folderPath = PATH_SEPARATOR.toString();
                 name = path;
-                LOGGER.warn("Using path argument without '{}'. {} filter has been transformed into {}{}.", PATH_SEPARATOR, path, PATH_SEPARATOR, name);
+                LOGGER.warn("Using path argument without '{}'. {} filter has been transformed into {}{}.", PATH_SEPARATOR, path,
+                        PATH_SEPARATOR, name);
             }
         }
 
@@ -204,7 +206,7 @@ public class PreparationService {
             if (searchCriterion.getName() != null) {
                 filter = getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
             }
-            if (searchCriterion.getDataSetId() != null){
+            if (searchCriterion.getDataSetId() != null) {
                 Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
                 filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
             }
@@ -215,16 +217,17 @@ public class PreparationService {
         if (searchCriterion.getFolderPath() != null || searchCriterion.getFolderId() != null) {
             Map<String, Folder> preparationsFolder = folderRepository.getPreparationsFolderPaths();
             if (searchCriterion.getFolderPath() != null) {
-                preparationStream = preparationStream.filter(
-                        p -> preparationsFolder.get(p.getId()).getPath().equals(searchCriterion.getFolderPath()));
+                preparationStream = preparationStream
+                        .filter(p -> preparationsFolder.get(p.getId()).getPath().equals(searchCriterion.getFolderPath()));
             }
             if (searchCriterion.getFolderId() != null) {
-                preparationStream = preparationStream.filter(
-                        p -> preparationsFolder.get(p.getId()).getId().equals(searchCriterion.getFolderId()));
+                preparationStream = preparationStream
+                        .filter(p -> preparationsFolder.get(p.getId()).getId().equals(searchCriterion.getFolderId()));
             }
         }
 
-        return preparationStream.map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
+        return preparationStream.map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on
+                                                                                                   // preparation size
                 .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
     }
 
@@ -250,7 +253,8 @@ public class PreparationService {
      * <li>folderId path</li>
      * </ul>
      * </p>
-     *  @param dataSetId to search all preparations based on this dataset id.
+     * 
+     * @param dataSetId to search all preparations based on this dataset id.
      * @param folderId to search all preparations located in this folderId.
      * @param name to search all preparations that match this name.
      * @param exactMatch if true, the name matching must be exact.
@@ -259,7 +263,7 @@ public class PreparationService {
      * @param order Order for sort key (desc or asc).
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-                                                      String path, Sort sort, Order order) {
+            String path, Sort sort, Order order) {
         return listAll( //
                 filterPreparation() //
                         .byDataSetId(dataSetId) //
@@ -316,7 +320,7 @@ public class PreparationService {
         }
         checkIfPreparationNameIsAvailable(destination, newName);
 
-        // copy the Preparation
+        // copy the Preparation : constructor set HeadId and
         Preparation copy = new Preparation(original);
         copy.setId(UUID.randomUUID().toString());
         copy.setName(newName);
@@ -324,6 +328,10 @@ public class PreparationService {
         copy.setCreationDate(now);
         copy.setLastModificationDate(now);
         copy.setAuthor(security.getUserId());
+
+        cloneStepsListBetweenPreparations(original, copy);
+
+        // Save preparation to repository
         preparationRepository.add(copy);
         String newId = copy.getId();
 
@@ -333,6 +341,39 @@ public class PreparationService {
 
         LOGGER.debug("copy {} to folder {} with {} as new name", preparationId, destination, name);
         return newId;
+    }
+
+    /**
+     * Duplicate the list of steps and set it to the new preparation
+     *
+     * @param originalPrep the original preparation.
+     * @param targetPrep the created preparation.
+     */
+    private void cloneStepsListBetweenPreparations(Preparation originalPrep, Preparation targetPrep) {
+
+        // copy the preparation's steps
+        List<Step> copyListSteps = new ArrayList<>();
+        // in order to save the previous step
+        final Deque<Step> previousSteps = new ArrayDeque<>(1);
+        previousSteps.push(Step.ROOT_STEP);
+
+        copyListSteps.add(Step.ROOT_STEP);
+        copyListSteps.addAll(originalPrep.getSteps().stream() //
+                .skip(1) // Skip root step
+                .map(originalStep -> {
+                    final StepDiff diff = new StepDiff();
+                    diff.setCreatedColumns(Collections.emptyList());
+
+                    final Step createdStep = new Step(previousSteps.pop().id(), originalStep.getContent(),
+                            originalStep.getAppVersion(), diff);
+
+                    previousSteps.push(createdStep);
+                    return createdStep;
+                }) //
+                .collect(Collectors.toList()));
+        targetPrep.setSteps(copyListSteps);
+        targetPrep.setHeadId(previousSteps.pop().id());
+
     }
 
     /**
@@ -474,8 +515,7 @@ public class PreparationService {
     }
 
     private void validatePreparation(Preparation updated) {
-        Set<ConstraintViolation<Preparation>> collect = validators.stream()
-                .flatMap(v -> v.validate(updated).stream())
+        Set<ConstraintViolation<Preparation>> collect = validators.stream().flatMap(v -> v.validate(updated).stream())
                 .collect(toSet());
         if (!collect.isEmpty()) {
             throw new TDPException(INVALID_PREPARATION, build().put("message", collect));
@@ -690,7 +730,8 @@ public class PreparationService {
                     .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
             final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
             final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
+                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt()
+                    : MAX_VALUE;
 
             // Build list of actions from modified one to the head
             final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -1026,7 +1067,7 @@ public class PreparationService {
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns

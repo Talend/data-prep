@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.exception.error;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +22,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
-
-import static org.springframework.http.HttpStatus.*;
 
 public enum APIErrorCodes implements ErrorCode {
     UNABLE_TO_DELETE_PREPARATION(BAD_REQUEST),
@@ -39,7 +39,6 @@ public enum APIErrorCodes implements ErrorCode {
     UNABLE_TO_LIST_COMPATIBLE_DATASETS(BAD_REQUEST),
     UNABLE_TO_LIST_COMPATIBLE_PREPARATIONS(BAD_REQUEST),
     UNABLE_TO_LIST_ERRORS(INTERNAL_SERVER_ERROR),
-    UNABLE_TO_ACTIONS_TO_PREPARATION(BAD_REQUEST, "id"),
     UNABLE_TO_CREATE_PREPARATION(INTERNAL_SERVER_ERROR), // can also be HttpStatus.BAD_REQUEST ?
     UNABLE_TO_RETRIEVE_PREPARATION_LIST(BAD_REQUEST),
     UNABLE_TO_RETRIEVE_PREPARATION_CONTENT(BAD_REQUEST),

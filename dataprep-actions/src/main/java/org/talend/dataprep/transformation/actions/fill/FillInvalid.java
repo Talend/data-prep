@@ -13,9 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.fill;
 
+import static org.talend.dataprep.i18n.ActionsLocaleContextHolder.getLocale;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
-import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
@@ -54,26 +54,26 @@ public class FillInvalid extends AbstractFillWith implements ColumnAction {
     @Override
     public String getDescription() {
         if (Type.BOOLEAN.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_BOOLEAN);
+            return ActionsBundle.INSTANCE.actionDescription(this, getLocale(), FILL_INVALID_BOOLEAN);
         } else if (Type.DATE.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_DATE);
+            return ActionsBundle.INSTANCE.actionDescription(this, getLocale(), FILL_INVALID_DATE);
         } else if (Type.NUMERIC.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_NUMERIC);
+            return ActionsBundle.INSTANCE.actionDescription(this, getLocale(), FILL_INVALID_NUMERIC);
         } else {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_ACTION_NAME);
+            return ActionsBundle.INSTANCE.actionDescription(this, getLocale(), FILL_INVALID_ACTION_NAME);
         }
     }
 
     @Override
     public String getLabel() {
         if (Type.BOOLEAN.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_BOOLEAN);
+            return ActionsBundle.INSTANCE.actionLabel(this, getLocale(), FILL_INVALID_BOOLEAN);
         } else if (Type.DATE.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_DATE);
+            return ActionsBundle.INSTANCE.actionLabel(this, getLocale(), FILL_INVALID_DATE);
         } else if (Type.NUMERIC.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_NUMERIC);
+            return ActionsBundle.INSTANCE.actionLabel(this, getLocale(), FILL_INVALID_NUMERIC);
         } else {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_ACTION_NAME);
+            return ActionsBundle.INSTANCE.actionLabel(this, getLocale(), FILL_INVALID_ACTION_NAME);
         }
     }
 

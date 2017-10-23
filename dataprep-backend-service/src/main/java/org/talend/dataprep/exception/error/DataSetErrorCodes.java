@@ -12,13 +12,7 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.MOVED_PERMANENTLY;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -172,10 +166,6 @@ public enum DataSetErrorCodes implements ErrorCode {
      * Error thrown when an error occurs while adding or updating a dataset.
      */
     UNABLE_TO_CREATE_OR_UPDATE_DATASET(INTERNAL_SERVER_ERROR.value()),
-    /**
-     * Error thrown when an error occurs while adding or updating a dataset.
-     */
-    NOT_A_TCOMP_DATASET(BAD_REQUEST.value()),
     /**
      * The dataset has too many column to process in DataPrep. This would cause memory issues.
      */

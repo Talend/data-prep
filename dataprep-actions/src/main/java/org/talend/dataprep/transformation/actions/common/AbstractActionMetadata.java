@@ -13,9 +13,10 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import static org.talend.dataprep.i18n.ActionsLocaleContextHolder.getLocale;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -89,7 +90,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public String getLabel() {
-        return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.actionLabel(this, getLocale(), getName());
     }
 
     /**
@@ -98,12 +99,12 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public String getDescription() {
-        return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.actionDescription(this, getLocale(), getName());
     }
 
     @Override
     public String getDocUrl() {
-        return ActionsBundle.INSTANCE.actionDocUrl(this, Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.actionDocUrl(this, getLocale(), getName());
     }
 
     /**

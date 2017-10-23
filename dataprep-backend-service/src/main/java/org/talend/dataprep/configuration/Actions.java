@@ -8,9 +8,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.filter.SimpleFilterService;
 import org.talend.dataprep.i18n.ActionsBundle;
+import org.talend.dataprep.i18n.ActionsLocaleContextHolder;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
@@ -35,6 +37,7 @@ public class Actions {
         this.context = context;
         if (isNotBlank(docBaseUrl)) ActionsBundle.setGlobalDocumentationUrlBase(docBaseUrl);
         Providers.setProvider(new SpringProvider());
+        ActionsLocaleContextHolder.setLocaleProvider(LocaleContextHolder::getLocale);
     }
 
     @Bean

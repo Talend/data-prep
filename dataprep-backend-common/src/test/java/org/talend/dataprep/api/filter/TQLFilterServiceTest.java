@@ -12,8 +12,7 @@
 
 package org.talend.dataprep.api.filter;
 
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.function.Predicate;
 
@@ -25,53 +24,69 @@ public class TQLFilterServiceTest extends FilterServiceTest {
     private TQLFilterService tqlFilterService = new TQLFilterService();
 
     @Test
-    public void shouldMatchEquals() throws Exception {
-        // Given
+    public void testValueEquals() throws Exception {
         row.set("0001", "test");
 
+        assertThatConditionIsTrue("0001 = 'test'");
+        assertThatConditionIsFalse("0001 = 'my value'");
+    }
+
+    private void assertThatConditionIsTrue(String tqlCondition) {
         // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 = 'test'", rowMetadata);
+        final Predicate<DataSetRow> predicate = tqlFilterService.build(tqlCondition, rowMetadata);
 
         // Then
-        assertTrue(predicate.test(row));
+        assertThat(predicate.test(row)).isTrue();
+    }
+
+    private void assertThatConditionIsFalse(String tqlCondition) {
+        // When
+        final Predicate<DataSetRow> predicate = tqlFilterService.build(tqlCondition, rowMetadata);
+
+        // Then
+        assertThat(predicate.test(row)).isFalse();
     }
 
     @Test
-    public void shouldNotMatchEquals() throws Exception {
-        // Given
+    public void testValueIsNotEqual() throws Exception {
         row.set("0001", "my value");
 
-        // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 = 'test'", rowMetadata);
-
-        // Then
-        assertFalse(predicate.test(row));
+        assertThatConditionIsTrue("0001 != 'test'");
+        assertThatConditionIsFalse("0001 != 'my value'");
     }
 
     @Test
-    public void shouldMatchGreaterThan() throws Exception {
-        // Given
+    public void testValueIsGreaterThan() throws Exception {
         row.set("0001", "0");
 
-        // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 > 1", rowMetadata);
-
-        // Then
-        assertFalse(predicate.test(row));
+        assertThatConditionIsTrue("0001 > -1");
+        assertThatConditionIsFalse("0001 > 0");
     }
 
     @Test
-    public void shouldMatchLessThan() throws Exception {
-        // Given
+    public void testValueIsLessThan() throws Exception {
         row.set("0001", "0");
 
-        // When
-        final Predicate<DataSetRow> predicate = tqlFilterService.build("0001 < 1", rowMetadata);
-
-        // Then
-        assertTrue(predicate.test(row));
+        assertThatConditionIsTrue("0001 < 1");
+        assertThatConditionIsFalse("0001 < 0");
     }
 
+    @Test
+    public void testValueIsGreaterOrEqualThan() throws Exception {
+        row.set("0001", "1234");
 
+        assertThatConditionIsTrue("0001 >= 1111");
+        assertThatConditionIsTrue("0001 >= 1234");
+        assertThatConditionIsFalse("0001 >= 2223");
+    }
+
+    @Test
+    public void testValueIsLessOrEqualThan() throws Exception {
+        row.set("0001", "10");
+
+        assertThatConditionIsTrue("0001 <= 99");
+        assertThatConditionIsTrue("0001 <= 10");
+        assertThatConditionIsFalse("0001 <= 2");
+    }
 
 }

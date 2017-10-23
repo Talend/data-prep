@@ -108,9 +108,9 @@ public class TQLFilterService implements FilterService {
             case NEQ:
                 return row -> !StringUtils.equals(row.get(columnName), value);
             case LET:
-                throw new NotImplementedException();
+                return row -> toBigDecimal(row.get(columnName)).compareTo(toBigDecimal(value)) <= 0;
             case GET:
-                throw new NotImplementedException();
+                return row -> toBigDecimal(row.get(columnName)).compareTo(toBigDecimal(value)) >= 0;
             }
             return null;
         }

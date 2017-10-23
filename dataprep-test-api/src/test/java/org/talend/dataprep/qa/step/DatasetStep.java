@@ -24,5 +24,4 @@ public class DatasetStep extends DataPrepStep {
                 .extract().body().asString();
         context.storeDatasetRef(datasetId, name);
     }
-
 }

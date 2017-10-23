@@ -15,6 +15,7 @@ package org.talend.dataprep.preparation.store;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.preparation.Identifiable;
+import org.talend.tql.model.Expression;
 
 /**
  * Base interface for preparation repositories (mongodb & in memory).
@@ -33,7 +34,7 @@ public interface PreparationRepository {
      * @param filter A TQL filter (i.e. storage-agnostic)
      * @return <code>true</code> if at least one <code>clazz</code> matches <code>filter</code>.
      */
-    <T extends Identifiable> boolean exist(Class<T> clazz, String filter);
+    <T extends Identifiable> boolean exist(Class<T> clazz, Expression filter);
 
     /**
      * @return A {@link java.lang.Iterable iterable} of <code>clazz</code>.
@@ -41,9 +42,11 @@ public interface PreparationRepository {
     <T extends Identifiable> Stream<T> list(Class<T> clazz);
 
     /**
+     * @param clazz The class of the elements to list.
+     * @param filter A TQL filter (i.e. storage-agnostic)
      * @return A {@link java.lang.Iterable iterable} of <code>clazz</code> that match given <code>filter</code>.
      */
-    <T extends Identifiable> Stream<T> list(Class<T> clazz, String filter);
+    <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression filter);
 
     /**
      * Save or update an identifiable object.

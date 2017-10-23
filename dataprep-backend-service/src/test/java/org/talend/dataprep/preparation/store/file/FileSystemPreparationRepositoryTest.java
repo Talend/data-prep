@@ -13,6 +13,8 @@
 package org.talend.dataprep.preparation.store.file;
 
 import static org.junit.Assert.*;
+import static org.talend.tql.api.TqlBuilder.contains;
+import static org.talend.tql.api.TqlBuilder.eq;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -136,7 +138,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         // get some preparation by dataset id
         final Preparation expected1 = preparations.get(0);
         final Preparation expected2 = preparations.get(1);
-        final Collection<Preparation> actual = repository.list(Preparation.class, "name contains '1'").collect(Collectors.toList());
+        final Collection<Preparation> actual = repository.list(Preparation.class, contains("name", "1")).collect(Collectors.toList());
 
         assertEquals(2, actual.size());
         assertTrue(actual.contains(expected1));
@@ -161,7 +163,7 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
 
         // get some preparation by dataset id
         final Preparation expected = preparations.get(0);
-        final Collection<Preparation> actual = repository.list(Preparation.class, "name = 'prep-1'").collect(Collectors.toList());
+        final Collection<Preparation> actual = repository.list(Preparation.class, eq("name", "prep-1")).collect(Collectors.toList());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(expected));

@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
+import static org.talend.tql.api.TqlBuilder.eq;
 
 import java.util.*;
 
@@ -279,8 +280,8 @@ public class PreparationUtilsTest extends ServiceBaseTest {
 
         // Then
         assertEquals(PersistentPreparationRepository.class, repository.getClass());
-        assertTrue(repository.exist(Step.class, "id='step-1234'"));
-        assertTrue(repository.exist(Step.class, "id='step-5678'"));
+        assertTrue(repository.exist(Step.class, eq("id", "step-1234")));
+        assertTrue(repository.exist(Step.class, eq("id", "step-5678")));
     }
 
     @Test

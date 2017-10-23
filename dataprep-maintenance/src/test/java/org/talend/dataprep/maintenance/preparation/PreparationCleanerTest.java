@@ -30,6 +30,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.maintenance.BaseMaintenanceTest;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.tql.api.TqlBuilder;
 
 public class PreparationCleanerTest extends BaseMaintenanceTest {
 
@@ -156,7 +157,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         final Step stepSecondPreparation = new Step(Step.ROOT_STEP.getId(), content.getId(), version);
 
         // add the steps to the repository
-        when(repository.exist(eq(PersistentStep.class), eq("contentId='" + content.id() + "'"))).thenReturn(true);
+        when(repository.exist(eq(PersistentStep.class), eq(TqlBuilder.eq("contentId", content.id())))).thenReturn(true);
 
         when(repository.list(Step.class)).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation));
         when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
@@ -212,7 +213,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         secondPreparation.setSteps(Collections.singletonList(stepSecondPreparation));
 
         // add the preparations to the repository
-        when(repository.exist(eq(PersistentStep.class), eq("contentId='" + content.id() + "'"))).thenReturn(true);
+        when(repository.exist(eq(PersistentStep.class), any())).thenReturn(true);
         when(repository.list(Preparation.class)).thenReturn(Stream.of(secondPreparation)); // Remove first preparation
 
         // when
@@ -254,7 +255,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         secondPreparation.setSteps(Collections.singletonList(stepSecondPreparation));
 
         // when
-        when(repository.exist(eq(PersistentStep.class), eq("contentId='" + content.id() + "'"))).thenReturn(false);
+        when(repository.exist(eq(PersistentStep.class), eq(TqlBuilder.eq("contentId", content.id())))).thenReturn(false);
         when(repository.list(Preparation.class)).thenReturn(Stream.empty()); // Remove first and second preparations
         cleaner.removeOrphanSteps();
 

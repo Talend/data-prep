@@ -22,13 +22,13 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
 import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+import static org.talend.tql.api.TqlBuilder.*;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -66,6 +66,7 @@ import org.talend.dataprep.transformation.api.action.validation.ActionMetadataVa
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.tql.model.Expression;
 
 @Service
 public class PreparationService {
@@ -199,9 +200,14 @@ public class PreparationService {
         if (searchCriterion.getName() == null && searchCriterion.getDataSetId() == null) {
             preparationStream = preparationRepository.list(Preparation.class);
         } else {
-            String nameFilter = searchCriterion.getName() == null ? null : getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
-            String dataSetIdFilter = searchCriterion.getDataSetId() == null ? null : "dataSetId='" + searchCriterion.getDataSetId() + "'";
-            String filter = Stream.of(nameFilter, dataSetIdFilter).filter(Objects::nonNull).collect(Collectors.joining(" && "));
+            Expression filter = null;
+            if (searchCriterion.getName() != null) {
+                filter = getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
+            }
+            if (searchCriterion.getDataSetId() != null){
+                Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
+                filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
+            }
             preparationStream = preparationRepository.list(Preparation.class, filter);
         }
 
@@ -271,16 +277,16 @@ public class PreparationService {
      * @param exactMatch true if the name must match exactly.
      * @return all the preparations that matches the given name.
      */
-    private String getNameFilter(String name, boolean exactMatch) {
+    private Expression getNameFilter(String name, boolean exactMatch) {
         LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
-        final String filter;
-        final String regex = "(?i)" + name;
+        final String regex;
+        final String regexMainPart = "(?i)" + name;
         if (exactMatch) {
-            filter = "name ~ '^" + regex + "$'";
+            regex = "^" + regexMainPart + "$";
         } else {
-            filter = "name ~ '^.*" + regex + ".*$'";
+            regex = "^.*" + regexMainPart + ".*$";
         }
-        return filter;
+        return match("name", regex);
     }
 
     /**
@@ -412,7 +418,7 @@ public class PreparationService {
                     preparationRepository.remove(rowMetadata);
 
                     // Remove preparation action (if it's the only step using these actions)
-                    final Stream<Step> steps = preparationRepository.list(Step.class, "contentId='" + step.getContent() + "'");
+                    final Stream<Step> steps = preparationRepository.list(Step.class, eq("contentId", step.getContent()));
                     if (steps.count() == 1) {
                         // Remove action
                         final PreparationActions preparationActions = new PreparationActions();
@@ -789,7 +795,7 @@ public class PreparationService {
     }
 
     private boolean isDatasetBaseOfPreparation(String datasetId) {
-        return preparationRepository.exist(Preparation.class, "dataSetId = '" + datasetId + "'");
+        return preparationRepository.exist(Preparation.class, eq("dataSetId", datasetId));
     }
 
     /** Check if the preparation uses this dataset in its head version. */
@@ -1020,7 +1026,7 @@ public class PreparationService {
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns

@@ -13,30 +13,37 @@
 
 import _ from 'lodash';
 
-// [NC], utils
+
 const isString = v => typeof v === 'string';
 const wrap = (v) => {
 	return isString(v) ? `'${v}'` : v;
 };
 
-const CONTAINS = 'contains';
-const EXACT = 'exact';
-const INVALID_RECORDS = 'invalid_records';
-const VALID_RECORDS = 'valid_records';
-const EMPTY_RECORDS = 'empty_records';
-const INSIDE_RANGE = 'inside_range';
-const MATCHES = 'matches';
-const QUALITY = 'quality';
-const EMPTY = 'empty';
+export const CONTAINS = 'contains';
+export const EXACT = 'exact';
+export const INVALID_RECORDS = 'invalid_records';
+export const VALID_RECORDS = 'valid_records';
+export const EMPTY_RECORDS = 'empty_records';
+export const INSIDE_RANGE = 'inside_range';
+export const MATCHES = 'matches';
+export const QUALITY = 'quality';
+export const EMPTY = 'empty';
 
 const OPERATORS = {
 	EQUAL: {
 		value: '=',
-		hasOperand: true,
 	},
 	CONTAINS: {
 		value: 'contains',
-		hasOperand: true,
+	},
+	COMPLIES_TO: {
+		value: 'complies to',
+	},
+	GREATER_THAN: {
+		value: '>=',
+	},
+	LESS_THAN: {
+		value: '<=',
 	},
 	IS_VALID: {
 		value: 'is valid',
@@ -46,39 +53,13 @@ const OPERATORS = {
 		value: 'is invalid',
 		hasOperand: false,
 	},
-	COMPLIES_TO: {
-		value: 'complies to',
-		hasOperand: true,
-	},
-	GREATER_THAN: {
-		value: '>=',
-		hasOperand: true,
-	},
-	LESS_THAN: {
-		value: '<=',
-		hasOperand: true,
-	},
 	IS_EMPTY: {
 		value: 'is empty',
 		hasOperand: false,
 	},
 };
 
-// FIXME [NC]:
-export const EMPTY_RECORDS_LABEL = 'rows with empty values';
-export const INVALID_RECORDS_LABEL = 'rows with invalid values';
-export const VALID_RECORDS_LABEL = 'rows with valid values';
-export const INVALID_EMPTY_RECORDS_LABEL = 'rows with invalid or empty values';
-
-const INVALID_RECORDS_VALUES = [{
-	label: INVALID_RECORDS_LABEL,
-}];
-
-const VALID_RECORDS_VALUES = [{
-	label: VALID_RECORDS_LABEL,
-}];
-
-export default function TqlFilterAdapterService() {
+export default function TqlFilterAdapterService($translate) {
 	const CONVERTERS = {
 		[CONTAINS]: (field, value) => buildQuery(field, OPERATORS.CONTAINS, value),
 		[EXACT]: (field, value) => buildQuery(field, OPERATORS.EQUAL, value),
@@ -89,6 +70,23 @@ export default function TqlFilterAdapterService() {
 		[INSIDE_RANGE]: convertRangeFilterToTQL,
 	};
 
+
+	const INVALID_EMPTY_RECORDS_VALUES = [{
+		label: $translate.instant('INVALID_EMPTY_RECORDS_LABEL'),
+	}];
+
+	const INVALID_RECORDS_VALUES = [{
+		label: $translate.instant('INVALID_RECORDS_LABEL'),
+	}];
+
+	const VALID_RECORDS_VALUES = [{
+		label: $translate.instant('VALID_RECORDS_LABEL'),
+	}];
+
+	const EMPTY_RECORDS_VALUES = [{
+		label: $translate.instant('EMPTY_RECORDS_LABEL'),
+		isEmpty: true,
+	}];
 
 	return {
 		createFilter,
@@ -144,6 +142,12 @@ export default function TqlFilterAdapterService() {
 			return INVALID_RECORDS_VALUES;
 		case VALID_RECORDS:
 			return VALID_RECORDS_VALUES;
+		case EMPTY_RECORDS:
+			return EMPTY_RECORDS_VALUES;
+		case QUALITY: // TODO: refacto QUALITY filter
+			if (this.args.invalid && this.args.empty) {
+				return INVALID_EMPTY_RECORDS_VALUES;
+			}
 		}
 	}
 
@@ -222,10 +226,10 @@ export default function TqlFilterAdapterService() {
 	}
 
 	function buildQuery(fieldId, operator, value) {
-		if (operator.hasOperand && value !== '') {
+		if (operator.hasOperand !== false && value !== '') {
 			return `(${fieldId} ${operator.value} ${wrap(value)})`;
 		}
-		else if (!operator.hasOperand) {
+		else if (operator.hasOperand === false) {
 			return `(${fieldId} ${operator.value})`;
 		}
 

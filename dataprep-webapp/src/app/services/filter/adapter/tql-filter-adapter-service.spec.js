@@ -11,31 +11,46 @@
 
   ============================================================================*/
 
+import {
+    CONTAINS,
+    EXACT,
+    INVALID_RECORDS,
+    VALID_RECORDS,
+    EMPTY_RECORDS,
+    INSIDE_RANGE,
+    MATCHES,
+    QUALITY,
+    EMPTY,
+} from './tql-filter-adapter-service';
+
 describe('TQL Filter Adapter Service', () => {
     const COL_ID = '0001';
-    function getPhrase(...args) {
-        return {
-            phrase: args.map(a => ({ value: a })),
-        };
-    }
+    const getArgs = (key, ...args) => ({ [key]: args.map(a => ({ value: a })) });
 
     beforeEach(angular.mock.module('data-prep.services.filter-adapter'));
 
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
+			INVALID_RECORDS_LABEL: 'invalid records label',
+			VALID_RECORDS_LABEL: 'valid records label',
+		});
+		$translateProvider.preferredLanguage('en');
+	}));
+
     describe('create filter', () => {
         it('should create filter', inject((TqlFilterAdapterService) => {
-            //given
-            const type = 'contains';
+            // given
             const colName = 'firstname';
             const editable = true;
             const args = {};
             const filterFn = jasmine.createSpy('filterFn');
             const removeFilterFn = jasmine.createSpy('removeFilterFn');
 
-            //when
-            const filter = TqlFilterAdapterService.createFilter(type, COL_ID, colName, editable, args, filterFn, removeFilterFn);
+            // when
+            const filter = TqlFilterAdapterService.createFilter(CONTAINS, COL_ID, colName, editable, args, filterFn, removeFilterFn);
 
-            //then
-            expect(filter.type).toBe(type);
+            // then
+            expect(filter.type).toBe(CONTAINS);
             expect(filter.colId).toBe(COL_ID);
             expect(filter.colName).toBe(colName);
             expect(filter.editable).toBe(editable);
@@ -46,110 +61,67 @@ describe('TQL Filter Adapter Service', () => {
 
         describe('get value', () => {
             it('should return value on CONTAINS filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'contains';
-                const args = getPhrase('Charles');
+                // given
+                const args = getArgs('phrase', 'Charles');
 
-                //when
-                const filter = TqlFilterAdapterService.createFilter(type, null, null, null, args, null, null);
+                // when
+                const filter = TqlFilterAdapterService.createFilter(CONTAINS, null, null, null, args, null, null);
 
-                //then
-                expect(filter.value).toEqual([
-                    {
-                        value: 'Charles',
-                    },
-                ]);
+                // then
+                expect(filter.value).toEqual([{ value: 'Charles' }]);
             }));
 
             it('should return value on EXACT filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'exact';
-                const args = getPhrase('Charles');
+                // given
+                const args = getArgs('phrase', 'Charles');
 
+                // when
+                const filter = TqlFilterAdapterService.createFilter(EXACT, null, null, null, args, null, null);
+
+                // then
+                expect(filter.value).toEqual([{ value: 'Charles' }]);
+            }));
+
+
+            it('should return value on INVALID_RECORDS filter', inject((FilterAdapterService) => {
                 //when
-                const filter = TqlFilterAdapterService.createFilter(type, null, null, null, args, null, null);
+                const filter = FilterAdapterService.createFilter(INVALID_RECORDS, null, null, null, null, null, null);
+
+                //then
+                expect(filter.value).toEqual([{ label: 'rows with invalid values' }]);
+            }));
+
+            it('should return value on QUALITY filter', inject((FilterAdapterService) => {
+                //when
+                const filter = FilterAdapterService.createFilter(QUALITY, null, null, null, { invalid: true, empty: true }, null, null);
+
+                //then
+                expect(filter.value).toEqual([{ label: 'rows with invalid or empty values' }]);
+            }));
+
+            it('should return value on EMPTY_RECORDS filter', inject((FilterAdapterService) => {
+                //when
+                const filter = FilterAdapterService.createFilter(EMPTY_RECORDS, null, null, null, null, null, null);
 
                 //then
                 expect(filter.value).toEqual([
                     {
-                        value: 'Charles',
+                        label: 'rows with empty values',
+                        isEmpty: true,
                     },
                 ]);
             }));
-        });
 
-        describe('to TQL', () => {
-            it('should return tql corresponding to CONTAINS filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'contains';
-                const args = getPhrase('Charles');
-
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, args, null, null);
-
+            it('should return value on VALID_RECORDS filter', inject((FilterAdapterService) => {
                 //when
-                const tql = filter.toTQL();
+                const filter = FilterAdapterService.createFilter(VALID_RECORDS, null, null, null, null, null, null);
 
                 //then
-                expect(tql).toEqual("(0001 contains 'Charles')");
+                expect(filter.value).toEqual([{ label: 'rows with valid values' }]);
             }));
 
-            it('should return tql corresponding to EXACT filter', inject((TqlFilterAdapterService) => {
+            it('should return value on INSIDE_RANGE filter', inject((FilterAdapterService) => {
                 //given
-                const type = 'exact';
-                const args = getPhrase('Charles');
-
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, args, null, null);
-
-                //when
-                const tql = filter.toTQL();
-
-                //then
-                expect(tql).toEqual("(0001 = 'Charles')");
-            }));
-
-            it('should return tree corresponding to EXACT multi-valued filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'exact';
-                const args = getPhrase('Charles', 'Nico', 'Fabien');
-
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, args, null, null);
-
-                //when
-                const tql = filter.toTQL();
-
-                //then
-                expect(tql).toEqual("(((0001 = 'Charles') or (0001 = 'Nico')) or (0001 = 'Fabien'))");
-            }));
-
-            it('should return tree corresponding to INVALID_RECORDS filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'invalid_records';
-
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, null, null, null);
-
-                //when
-                const tql = filter.toTQL();
-
-                //then
-                expect(tql).toEqual('(0001 is invalid)');
-            }));
-
-            it('should return tree corresponding to VALID_RECORDS filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'valid_records';
-
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, null, null, null);
-
-                //when
-                const tql = filter.toTQL();
-
-                //then
-                expect(tql).toEqual('(0001 is valid)');
-            }));
-
-            it('should return tree corresponding to INSIDE_RANGE filter', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'inside_range';
                 const args = {
                     intervals: [
                         {
@@ -159,18 +131,21 @@ describe('TQL Filter Adapter Service', () => {
                     ],
                     type: 'integer',
                 };
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, args, null, null);
 
                 //when
-                const tql = filter.toTQL();
+                const filter = FilterAdapterService.createFilter(INSIDE_RANGE, null, null, null, args, null, null);
 
                 //then
-                expect(tql).toEqual('(0001 >= 1000) and (0001 <= 2000)');
+                expect(filter.value).toEqual([
+                    {
+                        label: '[1,000 .. 2,000[',
+                        value: [1000, 2000],
+                    },
+                ]);
             }));
 
-            it('should return tree corresponding to MATCHES filter', inject((TqlFilterAdapterService) => {
+            it('should return value on MATCHES filter', inject((FilterAdapterService) => {
                 //given
-                const type = 'matches';
                 const args = {
                     patterns: [
                         {
@@ -178,26 +153,119 @@ describe('TQL Filter Adapter Service', () => {
                         },
                     ],
                 };
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, args, null, null);
 
                 //when
-                const tql = filter.toTQL();
+                const filter = FilterAdapterService.createFilter(MATCHES, null, null, null, args, null, null);
 
                 //then
+                expect(filter.value).toEqual([{ value: 'Aa9' }]);
+            }));
+
+
+
+
+        });
+
+        describe('to TQL', () => {
+            it('should return tql corresponding to CONTAINS filter', inject((TqlFilterAdapterService) => {
+                // given
+                const args = getArgs('phrase', 'Charles');
+                const filter = TqlFilterAdapterService.createFilter(CONTAINS, COL_ID, null, null, args, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
+                expect(tql).toEqual("(0001 contains 'Charles')");
+            }));
+
+            it('should return tql corresponding to EXACT filter', inject((TqlFilterAdapterService) => {
+                // given
+                const args = getArgs('phrase', 'Charles');
+                const filter = TqlFilterAdapterService.createFilter(EXACT, COL_ID, null, null, args, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
+                expect(tql).toEqual("(0001 = 'Charles')");
+            }));
+
+            it('should return tree corresponding to EXACT multi-valued filter', inject((TqlFilterAdapterService) => {
+                // given
+                const args = getArgs('phrase', 'Charles', 'Nico', 'Fabien');
+                const filter = TqlFilterAdapterService.createFilter(EXACT, COL_ID, null, null, args, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
+                expect(tql).toEqual("(((0001 = 'Charles') or (0001 = 'Nico')) or (0001 = 'Fabien'))");
+            }));
+
+            it('should return tree corresponding to INVALID_RECORDS filter', inject((TqlFilterAdapterService) => {
+                // given
+                const filter = TqlFilterAdapterService.createFilter(INVALID_RECORDS, COL_ID, null, null, null, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
+                expect(tql).toEqual('(0001 is invalid)');
+            }));
+
+            it('should return tree corresponding to VALID_RECORDS filter', inject((TqlFilterAdapterService) => {
+                // given
+                const filter = TqlFilterAdapterService.createFilter(VALID_RECORDS, COL_ID, null, null, null, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
+                expect(tql).toEqual('(0001 is valid)');
+            }));
+
+            it('should return tree corresponding to INSIDE_RANGE filter', inject((TqlFilterAdapterService) => {
+                // given
+                const args = {
+                    intervals: [
+                        {
+                            label: '[1,000 .. 2,000[',
+                            value: [1000, 2000],
+                        },
+                    ],
+                    type: 'integer',
+                };
+                const filter = TqlFilterAdapterService.createFilter(INSIDE_RANGE, COL_ID, null, null, args, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
+                expect(tql).toEqual('(0001 >= 1000) and (0001 <= 2000)');
+            }));
+
+            it('should return tree corresponding to MATCHES filter', inject((TqlFilterAdapterService) => {
+                // given
+                const args = getArgs('patterns', 'Aa9');
+                const filter = TqlFilterAdapterService.createFilter(MATCHES, COL_ID, null, null, args, null, null);
+
+                // when
+                const tql = filter.toTQL();
+
+                // then
                 expect(tql).toEqual("(0001 complies to 'Aa9')");
             }));
 
             it('should handle empty value when operator has an operand', inject((TqlFilterAdapterService) => {
-                //given
-                const type = 'exact';
-                const args = getPhrase('');
+                // given
+                const args = getArgs('phrase', '');
+                const filter = TqlFilterAdapterService.createFilter(EXACT, COL_ID, null, null, args, null, null);
 
-                const filter = TqlFilterAdapterService.createFilter(type, COL_ID, null, null, args, null, null);
-
-                //when
+                // when
                 const tql = filter.toTQL();
 
-                //then
+                // then
                 expect(tql).toEqual("(0001 is empty)");
             }));
         });

@@ -13,14 +13,21 @@
 
 import _ from 'lodash';
 
+// [NC], utils
+const isString = v => typeof v === 'string';
+const wrap = (v) => {
+	return isString(v) ? `'${v}'` : v;
+};
+
 const CONTAINS = 'contains';
 const EXACT = 'exact';
 const INVALID_RECORDS = 'invalid_records';
-const EMPTY_RECORDS = 'empty_records';
 const VALID_RECORDS = 'valid_records';
+const EMPTY_RECORDS = 'empty_records';
 const INSIDE_RANGE = 'inside_range';
 const MATCHES = 'matches';
 const QUALITY = 'quality';
+const EMPTY = 'empty';
 
 const OPERATORS = {
 	EQUAL: {
@@ -51,15 +58,34 @@ const OPERATORS = {
 		value: '<=',
 		hasOperand: true,
 	},
+	IS_EMPTY: {
+		value: 'is empty',
+		hasOperand: false,
+	},
 };
+
+// FIXME [NC]:
+export const EMPTY_RECORDS_LABEL = 'rows with empty values';
+export const INVALID_RECORDS_LABEL = 'rows with invalid values';
+export const VALID_RECORDS_LABEL = 'rows with valid values';
+export const INVALID_EMPTY_RECORDS_LABEL = 'rows with invalid or empty values';
+
+const INVALID_RECORDS_VALUES = [{
+	label: INVALID_RECORDS_LABEL,
+}];
+
+const VALID_RECORDS_VALUES = [{
+	label: VALID_RECORDS_LABEL,
+}];
 
 export default function TqlFilterAdapterService() {
 	const CONVERTERS = {
-		[CONTAINS]: convertContainsFilterToTQL,
-		[EXACT]: convertExactFilterToTQL,
-		[VALID_RECORDS]: convertValidFilterToTQL,
-		[INVALID_RECORDS]: convertInvalidFilterToTQL,
-		[MATCHES]: convertPatternFilterToTQL,
+		[CONTAINS]: (field, value) => buildQuery(field, OPERATORS.CONTAINS, value),
+		[EXACT]: (field, value) => buildQuery(field, OPERATORS.EQUAL, value),
+		[INVALID_RECORDS]: field => buildQuery(field, OPERATORS.IS_INVALID),
+		[VALID_RECORDS]: field => buildQuery(field, OPERATORS.IS_VALID),
+		[MATCHES]: (field, value) => buildQuery(field, OPERATORS.COMPLIES_TO, value),
+		[EMPTY]: field => buildQuery(field, OPERATORS.IS_EMPTY),
 		[INSIDE_RANGE]: convertRangeFilterToTQL,
 	};
 
@@ -110,6 +136,14 @@ export default function TqlFilterAdapterService() {
 		case CONTAINS:
 		case EXACT:
 			return this.args.phrase;
+		case INSIDE_RANGE:
+			return this.args.intervals;
+		case MATCHES:
+			return this.args.patterns;
+		case INVALID_RECORDS:
+			return INVALID_RECORDS_VALUES;
+		case VALID_RECORDS:
+			return VALID_RECORDS_VALUES;
 		}
 	}
 
@@ -130,6 +164,7 @@ export default function TqlFilterAdapterService() {
 
 			return Object.keys(classes).filter(n => classes[n]).join(' ');
 		}
+
 		return this.type;
 	}
 
@@ -146,6 +181,11 @@ export default function TqlFilterAdapterService() {
 		case EXACT:
 			this.args.phrase = newValue;
 			break;
+		case INSIDE_RANGE:
+			this.args.intervals = newValue;
+			break;
+		case MATCHES:
+			this.args.patterns = newValue;
 		}
 	}
 
@@ -174,7 +214,6 @@ export default function TqlFilterAdapterService() {
 	 */
 	function getFilterTQL() {
 		const converter = CONVERTERS[this.type];
-
 		if (converter) {
 			return this.value
 				.map(filterValue => converter(this.colId, filterValue.value))
@@ -182,24 +221,15 @@ export default function TqlFilterAdapterService() {
 		}
 	}
 
-	function convertContainsFilterToTQL(fieldId, value) {
-		return buildQuery(fieldId, OPERATORS.CONTAINS, value);
-	}
+	function buildQuery(fieldId, operator, value) {
+		if (operator.hasOperand && value !== '') {
+			return `(${fieldId} ${operator.value} ${wrap(value)})`;
+		}
+		else if (!operator.hasOperand) {
+			return `(${fieldId} ${operator.value})`;
+		}
 
-	function convertExactFilterToTQL(fieldId, value) {
-		return buildQuery(fieldId, OPERATORS.EQUAL, value);
-	}
-
-	function convertValidFilterToTQL(fieldId) {
-		return buildQuery(fieldId, OPERATORS.IS_VALID);
-	}
-
-	function convertInvalidFilterToTQL(fieldId) {
-		return buildQuery(fieldId, OPERATORS.IS_INVALID);
-	}
-
-	function convertPatternFilterToTQL(fieldId, value) {
-		return buildQuery(fieldId, OPERATORS.COMPLIES_TO, value);
+		return `(${fieldId} ${OPERATORS.IS_EMPTY.value})`;
 	}
 
 	function convertRangeFilterToTQL(fieldId, values) {
@@ -208,27 +238,10 @@ export default function TqlFilterAdapterService() {
 			values = Array(2).fill(values);
 		}
 
-		return [
-			buildQuery(fieldId, OPERATORS.GREATER_THAN, values[0]),
-			buildQuery(fieldId, OPERATORS.LESS_THAN, values[1]),
-		].reduce(reduceAndFn);
+		return [OPERATORS.GREATER_THAN, OPERATORS.LESS_THAN]
+			.map((operator, i) => buildQuery(fieldId, operator, values[i]))
+			.reduce(reduceAndFn);
 	}
-
-	function buildQuery(fieldId, operator, value) {
-		function wrap(value) {
-			return typeof value === 'string' ? `'${value}'` : value;
-		}
-
-		if (operator.hasOperand && value && value.length) {
-			return `(${fieldId} ${operator.value} ${wrap(value)})`;
-		}
-		else if (!operator.hasOperand) {
-			return `(${fieldId} ${operator.value})`;
-		}
-
-		return `(${fieldId} is empty)`;
-	}
-
 
 	//--------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------CONVERTION-------------------------------------------------
@@ -241,13 +254,11 @@ export default function TqlFilterAdapterService() {
 		return _.reduce(filters, reduceAndFn, '');
 	}
 
-	function reduceAndFn(accu, filterItem) {
-		let nextAccuFilter = filterItem.toTQL();
-
-		if (accu && nextAccuFilter) {
-			nextAccuFilter = `${accu} and ${nextAccuFilter}`;
+	function reduceAndFn(accu, item) {
+		if (!isString(item)) {
+			item = item.toTQL();
 		}
 
-		return nextAccuFilter;
+		return (accu && item) ? `${accu} and ${item}` : item;
 	}
 }

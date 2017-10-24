@@ -121,7 +121,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../semantic_type_threshold.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
-        String[] expectedNames = { "gender" };
+        String[] expectedNames = { "gender_column" };
         Type[] expectedTypes = { Type.INTEGER };
         String[] expectedDomains = { "" };
         int i = 0;

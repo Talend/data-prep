@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
-import org.talend.dataprep.helper.api.Parameters;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
 import com.jayway.restassured.RestAssured;
@@ -85,23 +84,31 @@ public class DataPrepAPIHelper {
     }
 
     /**
-     * Add an action to a preparation.
+     * Get the preparation details.
      *
      * @param preparationId the preparation Id.
-     * @param actionName the action name to add as a step.
-     * @param columnName the column name on which the action will be executed.
-     * @param columnId the column id on which the action will be executed.
      * @return the response.
      */
-    public Response addStep(String preparationId, String actionName, String columnName, String columnId) {
-        Parameters parameters = new Parameters(columnId, columnName, null, "column");
-        List<Action> actions = Arrays.asList(new Action(actionName, parameters));
-        ActionRequest actionRequest = new ActionRequest(actions);
+    public Response getPreparationDetails(String preparationId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/preparations/" + preparationId + "/details");
+    }
+
+    /**
+     * Add an action to the end of a preparation.
+     *
+     * @param preparationId the preparation Id.
+     * @param action the action to add as a step.
+     * @return the response.
+     */
+    public Response addAction(String preparationId, Action action) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
-                .body(actionRequest) //
+                .body(new ActionRequest(action)) //
                 .post("/api/preparations/" + preparationId + "/actions");
     }
 
@@ -128,11 +135,23 @@ public class DataPrepAPIHelper {
      * @param dataSetId the dataset to delete.
      * @return the response
      */
-    public Response deleteDataSet(String dataSetId) {
+    public Response deleteDataset(String dataSetId) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .when() //
                 .delete("/api/datasets/" + dataSetId);
+    }
+
+    /**
+     * List all dataset with basic meta information.
+     *
+     * @return the response.
+     */
+    public Response listDataset() {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("api/datasets/summary");
     }
 
     /**

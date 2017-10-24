@@ -25,6 +25,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
 
 import cucumber.api.DataTable;
@@ -49,12 +50,18 @@ public class ActionStep extends DataPrepStep {
 
         Action action = new Action();
         action.action = params.get(ACTION_NAME);
-        action.parameters.put(FROM_PATTERN_MODE, params.get(FROM_PATTERN_MODE.getName()));
-        action.parameters.put(NEW_PATTERN, params.get(NEW_PATTERN.getName()));
-        action.parameters.put(SCOPE, null == params.get(SCOPE.getName()) ? "column" : params.get(SCOPE.getName()));
-        action.parameters.put(COLUMN_ID, params.get(COLUMN_ID.getName()));
-        action.parameters.put(COLUMN_NAME, params.get(COLUMN_NAME.getName()));
-        action.parameters.put(ROW_ID, params.get(ROW_ID.getName()));
+        params.forEach((k,v)->{
+            ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
+            if(ape != null){
+                action.parameters.put(ape, v);
+            }
+        });
+//        action.parameters.put(FROM_PATTERN_MODE, params.get(FROM_PATTERN_MODE.getName()));
+//        action.parameters.put(NEW_PATTERN, params.get(NEW_PATTERN.getName()));
+//        action.parameters.put(SCOPE, null == params.get(SCOPE.getName()) ? "column" : params.get(SCOPE.getName()));
+//        action.parameters.put(COLUMN_ID, params.get(COLUMN_ID.getName()));
+//        action.parameters.put(COLUMN_NAME, params.get(COLUMN_NAME.getName()));
+//        action.parameters.put(ROW_ID, params.get(ROW_ID.getName()));
 
         api.addAction(preparationId, action);
     }

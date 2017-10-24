@@ -1,5 +1,9 @@
 package org.talend.dataprep.helper.api;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -20,6 +24,13 @@ public enum ActionParamEnum {
     ActionParamEnum(String pName, String pJsonName) {
         name = pName;
         jsonName = pJsonName;
+    }
+
+    public static ActionParamEnum getActionParamEnum(String pName) {
+        List<ActionParamEnum> ret = Arrays.stream(ActionParamEnum.values()) //
+                .filter(e -> e.name.equals(pName)) //
+                .collect(Collectors.toList());
+        return ret.get(0);
     }
 
     public String getName() {

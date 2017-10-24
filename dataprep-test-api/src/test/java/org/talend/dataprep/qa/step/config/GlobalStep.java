@@ -41,7 +41,7 @@ public class GlobalStep extends DataPrepStep {
 
         // cleaning dataset
         context.getDatasetIds().forEach(datasetId -> {
-            api.deleteDataSet(datasetId).then().statusCode(200);
+            api.deleteDataset(datasetId).then().statusCode(200);
             LOGGER.debug("Suppression of dataset {}.", datasetId);
         });
         context.clearDataset();

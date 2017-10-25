@@ -13,15 +13,9 @@
 
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.helper.api.ActionParamEnum.FROM_PATTERN_MODE;
-import static org.talend.dataprep.helper.api.ActionParamEnum.NEW_PATTERN;
-import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
-
 import java.util.Map;
 
+import cucumber.api.java.en.Then;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
@@ -30,6 +24,8 @@ import org.talend.dataprep.qa.step.config.DataPrepStep;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.When;
+
+import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 
 /**
  * Step dealing with action
@@ -47,23 +43,22 @@ public class ActionStep extends DataPrepStep {
     public void whenIAddAStepToAPreparation(DataTable dataTable) {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String preparationId = context.getPreparationId(params.get(PREPARATION_NAME));
-
         Action action = new Action();
         action.action = params.get(ACTION_NAME);
-        params.forEach((k,v)->{
+        params.forEach((k, v) -> {
             ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
-            if(ape != null){
+            if (ape != null) {
                 action.parameters.put(ape, v);
             }
         });
-//        action.parameters.put(FROM_PATTERN_MODE, params.get(FROM_PATTERN_MODE.getName()));
-//        action.parameters.put(NEW_PATTERN, params.get(NEW_PATTERN.getName()));
-//        action.parameters.put(SCOPE, null == params.get(SCOPE.getName()) ? "column" : params.get(SCOPE.getName()));
-//        action.parameters.put(COLUMN_ID, params.get(COLUMN_ID.getName()));
-//        action.parameters.put(COLUMN_NAME, params.get(COLUMN_NAME.getName()));
-//        action.parameters.put(ROW_ID, params.get(ROW_ID.getName()));
-
+        if(action.parameters.get(SCOPE) == null ){
+            action.parameters.put(SCOPE, "column");
+        }
         api.addAction(preparationId, action);
     }
 
+    @Then("^I update the step \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
+    public void updateStep(String stepName, String prepName, DataTable dataTable){
+        // TODO !!!! 
+    }
 }

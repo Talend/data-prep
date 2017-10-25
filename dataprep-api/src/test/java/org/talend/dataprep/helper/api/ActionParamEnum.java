@@ -15,7 +15,11 @@ public enum ActionParamEnum {
     SCOPE("scope", "scope"),
     COLUMN_NAME("columnName", "column_name"),
     COLUMN_ID("columnId", "column_id"),
-    ROW_ID("rowId", "row_id");
+    ROW_ID("rowId", "row_id"),
+    LIMIT("limit", "limit"),
+    SEPARATOR("separator", "separator"),
+    MANUAL_SEPARATOR_STRING("manualSeparatorString", "manual_separator_string"),
+    MANUAL_SEPARATOR_REGEX("manualSeparatorRegex", "manual_separator_regex");
 
     private String name;
 
@@ -30,7 +34,7 @@ public enum ActionParamEnum {
         List<ActionParamEnum> ret = Arrays.stream(ActionParamEnum.values()) //
                 .filter(e -> e.name.equals(pName)) //
                 .collect(Collectors.toList());
-        return ret.get(0);
+        return ret.size() == 0 ? null : ret.get(0);
     }
 
     public String getName() {

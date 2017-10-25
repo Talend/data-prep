@@ -1,8 +1,8 @@
 package org.talend.dataprep.qa.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Preparation details.
@@ -12,12 +12,14 @@ public class PreparationDetails {
 
     public List<Action> actions;
 
-    public class Action {
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Action {
 
         public String action;
 
         public Parameters parameters;
 
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public class Parameters {
 
             public String column_id;

@@ -99,7 +99,7 @@ public class DataPrepAPIHelper {
     /**
      * Add an action to the end of a preparation.
      *
-     * @param preparationId the preparation Id.
+     * @param preparationId the preparation id.
      * @param action the action to add as a step.
      * @return the response.
      */
@@ -110,6 +110,23 @@ public class DataPrepAPIHelper {
                 .when() //
                 .body(new ActionRequest(action)) //
                 .post("/api/preparations/" + preparationId + "/actions");
+    }
+
+    /**
+     * Update an action within a preparation.
+     * 
+     * @param preparationId the preparation id.
+     * @param stepId the step to modify.
+     * @param action the new parameters.
+     * @return the response.
+     */
+    public Response updateAction(String preparationId, String stepId, Action action) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .when() //
+                .body(new ActionRequest(action)) //
+                .put("/api/preparations/" + preparationId + "/actions/" + stepId);
     }
 
     /**

@@ -1,6 +1,9 @@
 package org.talend.dataprep.qa.dto;
 
+import java.util.EnumMap;
 import java.util.List;
+
+import org.talend.dataprep.helper.api.ActionParamEnum;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,6 +13,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PreparationDetails {
 
+    public List<String> steps;
+
+    // TODO : check if this class isn't a duplication of Action in dataprep-api/helper/api/Action.
     public List<Action> actions;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,14 +23,10 @@ public class PreparationDetails {
 
         public String action;
 
-        public Parameters parameters;
+        // not to be loaded by jackson but to be inferred from steps attribute
+        public String id;
 
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public class Parameters {
-
-            public String column_id;
-
-            public String column_name;
-        }
+        public EnumMap<ActionParamEnum, String> parameters;
     }
+
 }

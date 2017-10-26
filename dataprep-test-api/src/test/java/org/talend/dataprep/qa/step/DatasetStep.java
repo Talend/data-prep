@@ -1,20 +1,15 @@
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.dto.DatasetMeta;
-import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -62,22 +57,5 @@ public class DatasetStep extends DataPrepStep {
                         .filter(d -> params.get(DATASET_NAME).equals(d.name)) //
                         .filter(d -> params.get(NB_ROW).equals(d.records)) //
                         .count());
-    }
-
-    @Given("^A step with the following parameters exists on the preparation \"(.*)\" :$") //
-    public void existDataset(String preparationName, DataTable dataTable) throws IOException {
-        Map<String, String> params = dataTable.asMap(String.class, String.class);
-        String preparationId = context.getPreparationId(preparationName);
-        Response response = api.getPreparationDetails(preparationId);
-        response.then().statusCode(200);
-        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-
-        PreparationDetails preparationDetails = objectMapper.readValue(content, PreparationDetails.class);
-        List<PreparationDetails.Action> actions = preparationDetails.actions.stream() //
-                .filter(action -> action.action.equals(params.get(ACTION_NAME))) //
-                .filter(action -> action.parameters.column_id.equals(params.get(COLUMN_ID.getName()))) //
-                .filter(action -> action.parameters.column_name.equals(params.get(COLUMN_NAME.getName()))) //
-                .collect(Collectors.toList());
-        Assert.assertEquals(1, actions.size());
     }
 }

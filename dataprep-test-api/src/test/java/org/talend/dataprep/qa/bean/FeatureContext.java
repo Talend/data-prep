@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.api.Action;
 
 /**
  * Used to share data within steps.
@@ -40,6 +41,8 @@ public class FeatureContext {
     private Map<String, String> preparationIdByName = new HashMap<>();
 
     private Map<String, File> tempFileByName = new HashMap<>();
+
+    private Map<String, Action> actionByAlias = new HashMap<>();
 
     /**
      * All object store on a feature execution.
@@ -73,6 +76,16 @@ public class FeatureContext {
      */
     public void storeTempFile(@NotNull String filename, @NotNull File file) {
         tempFileByName.put(filename, file);
+    }
+
+    /**
+     * Store an {@link Action}.
+     * 
+     * @param alias the {@link Action} alias.
+     * @param action the {@link Action} to store.
+     */
+    public void storeAction(@NotNull String alias, @NotNull Action action) {
+        actionByAlias.put(alias, action);
     }
 
     /**
@@ -129,6 +142,16 @@ public class FeatureContext {
     }
 
     /**
+     * Get a stored {@link Action}.
+     * 
+     * @param alias the stored {@link Action} alias.
+     * @return the stored {@link Action}.
+     */
+    public Action getAction(@NotNull String alias) {
+        return actionByAlias.get(alias);
+    }
+
+    /**
      * Clear the list of dataset.
      */
     public void clearDataset() {
@@ -147,6 +170,13 @@ public class FeatureContext {
      */
     public void clearTempFile() {
         tempFileByName.clear();
+    }
+
+    /**
+     * Clear the list of {@link Action}}.
+     */
+    public void clearAction() {
+        actionByAlias.clear();
     }
 
     public void storeObject(@NotNull String key, @NotNull Object object) {

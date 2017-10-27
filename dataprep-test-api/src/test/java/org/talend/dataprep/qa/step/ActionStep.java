@@ -75,7 +75,8 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String preparationId = context.getPreparationId(preparationName);
         PreparationDetails preparationDetails = getPreparationDetails(preparationId);
-        List<PreparationDetails.Action> actions = preparationDetails.actions.stream() //
+//        List<PreparationDetails.Action> actions = preparationDetails.actions.stream() //
+        List<Action> actions = preparationDetails.actions.stream() //
                 .filter(action -> action.action.equals(params.get(ACTION_NAME))) //
                 .filter(action -> action.parameters.get(COLUMN_ID).equals(params.get(COLUMN_ID.getName()))) //
                 .filter(action -> action.parameters.get(COLUMN_NAME).equals(params.get(COLUMN_NAME.getName()))) //
@@ -89,9 +90,8 @@ public class ActionStep extends DataPrepStep {
         String preparationId = context.getPreparationId(prepName);
         PreparationDetails prepDet = getPreparationDetails(preparationId);
         // link the actions and the step id
-        IntStream.range(0, prepDet.steps.size() - 1).forEach(i -> prepDet.actions.get(i).id = prepDet.steps.get(i + 1));
-
-        List<PreparationDetails.Action> actions = prepDet.actions.stream() //
+        prepDet.updateActionIds();
+        List<Action> actions = prepDet.actions.stream() //
                 .filter(action -> action.action.equals(stepName)) //
                 .collect(Collectors.toList());
         // TODO if needed one day, we should change this method to be able to select the step byt its name and position in the
@@ -100,7 +100,7 @@ public class ActionStep extends DataPrepStep {
 
         Action action = new Action();
         action.action = stepName;
-        action.parameters = prepDet.actions.get(0).parameters;
+        action.parameters = actions.get(0).parameters;
         params.forEach((k, v) -> {
             ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
             if (ape != null) {
@@ -110,7 +110,7 @@ public class ActionStep extends DataPrepStep {
         if (action.parameters.get(SCOPE) == null) {
             action.parameters.put(SCOPE, "column");
         }
-        Response response = api.updateAction(preparationId, prepDet.actions.get(0).id, action);
+        Response response = api.updateAction(preparationId, actions.get(0).id, action);
         response.then().statusCode(200);
     }
 

@@ -35,9 +35,19 @@ Feature: Smoke Test
       | preparationName | 10L3C_preparation |
     Then A step with the following parameters exists on the preparation "10L3C_preparation" :
       | actionName | split |
+      | limit      | 2     |
+      | separator  | ;     |
       | columnName | date  |
       | columnId   | 0003  |
     And I update the step "split" on the preparation "10L3C_preparation" with the following parameters :
       | limit                 | 2              |
       | separator             | other (string) |
       | manualSeparatorString | /              |
+    Then A step with the following parameters exists on the preparation "10L3C_preparation" :
+      | actionName            | split          |
+      | limit                 | 2              |
+      | separator             | other (string) |
+      | manualSeparatorString | /              |
+      | columnName            | date           |
+      | columnId              | 0003           |
+#    And I move the first "split" step after the first "uppercase" step

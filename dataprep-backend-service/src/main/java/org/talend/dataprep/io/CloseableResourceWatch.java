@@ -37,6 +37,7 @@ import org.talend.daikon.content.DeletableResource;
  * <ul>
  *     <li>{@link InputStream}</li>
  *     <li>{@link OutputStream}</li>
+ *     <li>streams created by {@link DeletableResource}</li>
  * </ul>
  * To activate this watcher, logging framework must enable "org.talend.dataprep.io" in debug level.
  */

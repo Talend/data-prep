@@ -249,16 +249,6 @@ public class CloseableResourceWatch implements Condition {
             return this;
         }
 
-        /**
-         * Ensure that the delegate is closed before being GCed.
-         *
-         * @see FileInputStream#finalize()
-         * @see Object#finalize()
-         */
-        @Override
-        protected void finalize() throws Throwable {
-            delegate.close();
-        }
     }
 
     private class OutputStreamHandler extends OutputStream implements CloseableHandler {
@@ -329,16 +319,6 @@ public class CloseableResourceWatch implements Condition {
             return format();
         }
 
-        /**
-         * Ensure that the delegate is closed before being GCed.
-         *
-         * @see FileInputStream#finalize()
-         * @see Object#finalize()
-         */
-        @Override
-        protected void finalize() throws Throwable {
-            delegate.close();
-        }
     }
 
 }

@@ -46,8 +46,6 @@ public class ActionStep extends DataPrepStep {
 
     public static final String ACTION_NAME = "actionName";
 
-    public static final String PREPARATION_NAME = "preparationName";
-
     /**
      * This class' logger.
      */

@@ -9,7 +9,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -58,5 +61,13 @@ public class PreparationStep extends DataPrepStep {
         // store the body content in a temporary File
         File tempFile = api.storeInputStreamAsTempFile(filename, csv);
         context.storeTempFile(filename, tempFile);
+    }
+
+    @Given("^A preparation with the following parameters exists :$")
+    public void checkPreparation(DataTable dataTable){
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
+        Response response = api.listPreparation("Lw=="); // FIXME : Hard coded folder...
+
     }
 }

@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ContextConfiguration(classes = SpringContextConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public abstract class DataPrepStep {
 
+    public static final String PREPARATION_NAME = "preparationName";
+
     @Autowired
     protected FeatureContext context;
 

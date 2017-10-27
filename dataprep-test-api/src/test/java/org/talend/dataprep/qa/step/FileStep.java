@@ -48,5 +48,4 @@ public class FileStep extends DataPrepStep {
             fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedCSVFilename);
         }
     }
-
 }

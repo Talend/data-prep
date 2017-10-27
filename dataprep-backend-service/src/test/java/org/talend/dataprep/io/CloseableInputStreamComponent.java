@@ -12,13 +12,16 @@
 
 package org.talend.dataprep.io;
 
-import java.io.*;
-import java.net.URI;
-import java.net.URL;
+import static org.mockito.Mockito.when;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.io.output.NullOutputStream;
-import org.springframework.core.io.Resource;
+import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.content.DeletableResource;
 
@@ -47,92 +50,11 @@ public class CloseableInputStreamComponent {
         };
     }
 
-    public DeletableResource getDeletableResource() {
-        return new DeletableResource() {
-
-            private NullOutputStream nullOutputStream = new NullOutputStream();
-
-            private NullInputStream nullInputStream = new NullInputStream(0);
-
-            @Override
-            public void delete() throws IOException {
-
-            }
-
-            @Override
-            public void move(String s) throws IOException {
-
-            }
-
-            @Override
-            public boolean isWritable() {
-                return false;
-            }
-
-            @Override
-            public OutputStream getOutputStream() throws IOException {
-                return nullOutputStream;
-            }
-
-            @Override
-            public boolean exists() {
-                return false;
-            }
-
-            @Override
-            public boolean isReadable() {
-                return false;
-            }
-
-            @Override
-            public boolean isOpen() {
-                return false;
-            }
-
-            @Override
-            public URL getURL() throws IOException {
-                return null;
-            }
-
-            @Override
-            public URI getURI() throws IOException {
-                return null;
-            }
-
-            @Override
-            public File getFile() throws IOException {
-                return null;
-            }
-
-            @Override
-            public long contentLength() throws IOException {
-                return 0;
-            }
-
-            @Override
-            public long lastModified() throws IOException {
-                return 0;
-            }
-
-            @Override
-            public Resource createRelative(String relativePath) throws IOException {
-                return null;
-            }
-
-            @Override
-            public String getFilename() {
-                return null;
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return nullInputStream;
-            }
-        };
+    public DeletableResource getDeletableResource() throws IOException {
+        final DeletableResource deletableResource = Mockito.mock(DeletableResource.class);
+        when(deletableResource.getInputStream()).thenReturn(getInput());
+        when(deletableResource.getOutputStream()).thenReturn(getOutput());
+        return deletableResource;
     }
+
 }

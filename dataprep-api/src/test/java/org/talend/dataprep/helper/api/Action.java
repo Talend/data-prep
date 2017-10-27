@@ -26,4 +26,25 @@ public class Action {
     public String id;
 
     public EnumMap<ActionParamEnum, String> parameters = new EnumMap<>(ActionParamEnum.class);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Action))
+            return false;
+
+        Action action1 = (Action) o;
+
+        if (action != null ? !action.equals(action1.action) : action1.action != null)
+            return false;
+        return parameters != null ? parameters.equals(action1.parameters) : action1.parameters == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = action != null ? action.hashCode() : 0;
+        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        return result;
+    }
 }

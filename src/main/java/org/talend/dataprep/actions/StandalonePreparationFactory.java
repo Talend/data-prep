@@ -32,14 +32,12 @@ import org.talend.dataprep.actions.resources.LookupResource;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.filter.FilterService;
+import org.talend.dataprep.api.filter.PolyglotFilterService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
-import org.talend.dataquality.semantic.broadcast.BroadcastRegexObject;
-import org.talend.dataquality.semantic.broadcast.TdqCategories;
-import org.talend.dataquality.semantic.broadcast.BroadcastIndexObject;
 
 /**
  * A factory creating a {@link SerializableFunction} from provided arguments.
@@ -159,7 +157,7 @@ public class StandalonePreparationFactory {
 
         @Override
         public Predicate<DataSetRow> apply(RowMetadata metadata) {
-            final FilterService filterService = Providers.get(FilterService.class);
+            final FilterService filterService = Providers.get(PolyglotFilterService.class);
             return filterService.build(preparation.getFilterOut(), metadata);
         }
     }

@@ -22,9 +22,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -127,6 +125,22 @@ public class DataPrepAPIHelper {
                 .when() //
                 .body(new ActionRequest(action)) //
                 .put("/api/preparations/" + preparationId + "/actions/" + stepId);
+    }
+
+    /**
+     * Move an action inside the prepration order.
+     * 
+     * @param preparationId the preparation id.
+     * @param stepId the step id.
+     * @param parentStepId the wanted parent steo id.
+     * @return the response.
+     */
+    public Response moveAction(String preparationId, String stepId, String parentStepId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .when() //
+                .post("/api/preparations/" + preparationId + "/steps/" + stepId + "/order?parentStepId=" + parentStepId);
     }
 
     /**

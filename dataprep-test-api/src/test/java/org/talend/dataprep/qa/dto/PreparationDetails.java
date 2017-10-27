@@ -1,9 +1,9 @@
 package org.talend.dataprep.qa.dto;
 
-import java.util.EnumMap;
 import java.util.List;
+import java.util.stream.IntStream;
 
-import org.talend.dataprep.helper.api.ActionParamEnum;
+import org.talend.dataprep.helper.api.Action;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,18 +15,12 @@ public class PreparationDetails {
 
     public List<String> steps;
 
-    // TODO : check if this class isn't a duplication of Action in dataprep-api/helper/api/Action.
     public List<Action> actions;
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Action {
-
-        public String action;
-
-        // not to be loaded by jackson but to be inferred from steps attribute
-        public String id;
-
-        public EnumMap<ActionParamEnum, String> parameters;
+    /**
+     * Update the {@link Action#id} from the steps information.
+     */
+    public void updateActionIds() {
+        IntStream.range(0, steps.size() - 1).forEach(i -> actions.get(i).id = steps.get(i + 1));
     }
-
 }

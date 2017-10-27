@@ -16,19 +16,14 @@ package org.talend.dataprep.helper.api;
 import java.util.EnumMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "action", "parameters" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Action {
 
-    @JsonProperty("action")
     public String action;
 
-    @JsonProperty("parameters")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public EnumMap<ActionParamEnum, String> parameters = new EnumMap<>(ActionParamEnum.class);
+    // not to be loaded by jackson but to be inferred from steps attribute @see PreparationDetails
+    public String id;
 
+    public EnumMap<ActionParamEnum, String> parameters = new EnumMap<>(ActionParamEnum.class);
 }

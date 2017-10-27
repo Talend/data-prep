@@ -9,7 +9,7 @@ Feature: Smoke Test
     And I add a step identified by "stepUp" with parameters :
       | actionName      | uppercase         |
       | columnName      | firstname         |
-      | columnId        | 0002              |
+      | columnId        | 0001              |
       | preparationName | 10L3C_preparation |
     Then I check that a step like "stepUp" exists in the preparation "10L3C_preparation"
     And I add a step identified by "changeDate" with parameters :
@@ -17,7 +17,7 @@ Feature: Smoke Test
       | fromPatternMode | "unknown_separators" |
       | pattern         | M/d/yy               |
       | columnName      | date                 |
-      | columnId        | 0003                 |
+      | columnId        | 0002                 |
       | preparationName | 10L3C_preparation    |
     Then I check that a step like "changeDate" exists in the preparation "10L3C_preparation"
     And I add a step identified by "dateSplit" with parameters :
@@ -25,7 +25,7 @@ Feature: Smoke Test
       | limit           | 2                 |
       | separator       | ;                 |
       | columnName      | date              |
-      | columnId        | 0003              |
+      | columnId        | 0002              |
       | preparationName | 10L3C_preparation |
     Then I check that a step like "dateSplit" exists in the preparation "10L3C_preparation"
     And I update the first step like "dateSplit" on the preparation "10L3C_preparation" with the following parameters :
@@ -37,6 +37,13 @@ Feature: Smoke Test
       | actionName      | delete_column     |
       | scope           | column            |
       | columnName      | date              |
-      | columnId        | 0003              |
+      | columnId        | 0002              |
       | preparationName | 10L3C_preparation |
     Then I fail to move the first step like "deleteDate" after the first step like "stepUp" on the preparation "10L3C_preparation"
+    And I export the preparation "10L3C_preparation" on the dataset "10L3C_dataset" and export the result in "acote.csv" temporary file.
+    Then I check that "acote.csv" temporary file equals "/data/10L3C_processed.csv" file
+    Then A preparation with the following parameters exists :
+      | preparationName | 10L3C_preparation |
+      | datasetName     | 10L3C_dataset     |
+      | steps           | 4                 |
+

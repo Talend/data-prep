@@ -210,6 +210,19 @@ public class DataPrepAPIHelper {
     }
 
     /**
+     * List all preparations in a specified folder.
+     *
+     * @param folder the folder where to search preparations.
+     * @return the response.
+     */
+    public Response listPreparation(String folder) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/folders/" + folder + "/preparations");
+    }
+
+    /**
      * Get a dataset.
      *
      * @param datasetId the dataset id.
@@ -238,6 +251,7 @@ public class DataPrepAPIHelper {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
+                // .header("Content-Type", "application/json; charset=utf8") //
                 .urlEncodingEnabled(false) //
                 .when() //
                 .queryParam("preparationId", preparationId) //

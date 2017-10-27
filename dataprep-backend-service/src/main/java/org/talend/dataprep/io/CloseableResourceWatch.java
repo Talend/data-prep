@@ -13,6 +13,8 @@
 package org.talend.dataprep.io;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +26,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.talend.daikon.content.DeletableResource;
 
 /**
  * This class configures an aspect around methods that <b>return</b> a {@link Closeable closeable} implementation.
@@ -46,7 +50,7 @@ public class CloseableResourceWatch implements Condition {
 
     private final Set<CloseableHandler> entries = Collections.synchronizedSet(new HashSet<>());
 
-    @Around("within(org.talend..*) && execution(public java.io.Closeable+ *(..))")
+    @Around("within(org.talend..*) && (execution(public java.io.Closeable+ *(..)) || execution(public org.talend.daikon.content.DeletableResource+ *(..)))")
     public Object closeableWatch(ProceedingJoinPoint pjp) throws Throwable {
         final Object proceed = pjp.proceed();
         if (proceed == null) {
@@ -62,6 +66,8 @@ public class CloseableResourceWatch implements Condition {
                 final CloseableHandler handler = new OutputStreamHandler((OutputStream) proceed);
                 entries.add(handler);
                 return handler;
+            } else if (proceed instanceof DeletableResource) {
+                return new DeletableResourceProxy((DeletableResource) proceed);
             } else {
                 LOGGER.warn("No watch for '{}'.", proceed);
                 return proceed;
@@ -284,6 +290,97 @@ public class CloseableResourceWatch implements Condition {
         @Override
         public String toString() {
             return format();
+        }
+    }
+
+    private class DeletableResourceProxy implements DeletableResource {
+
+        private final DeletableResource delegate;
+
+        private DeletableResourceProxy(DeletableResource delegate) {this.delegate = delegate;}
+
+        @Override
+        public void delete() throws IOException {
+            delegate.delete();
+        }
+
+        @Override
+        public void move(String s) throws IOException {
+            delegate.move(s);
+        }
+
+        @Override
+        public boolean isWritable() {
+            return delegate.isWritable();
+        }
+
+        @Override
+        public OutputStream getOutputStream() throws IOException {
+            OutputStreamHandler handler = new OutputStreamHandler(delegate.getOutputStream());
+            entries.add(handler);
+            return handler;
+        }
+
+        @Override
+        public boolean exists() {
+            return delegate.exists();
+        }
+
+        @Override
+        public boolean isReadable() {
+            return delegate.isReadable();
+        }
+
+        @Override
+        public boolean isOpen() {
+            return delegate.isOpen();
+        }
+
+        @Override
+        public URL getURL() throws IOException {
+            return delegate.getURL();
+        }
+
+        @Override
+        public URI getURI() throws IOException {
+            return delegate.getURI();
+        }
+
+        @Override
+        public File getFile() throws IOException {
+            return delegate.getFile();
+        }
+
+        @Override
+        public long contentLength() throws IOException {
+            return delegate.contentLength();
+        }
+
+        @Override
+        public long lastModified() throws IOException {
+            return delegate.lastModified();
+        }
+
+        @Override
+        public Resource createRelative(String relativePath) throws IOException {
+            return delegate.createRelative(relativePath);
+        }
+
+        @Override
+        public String getFilename() {
+            return delegate.getFilename();
+        }
+
+        @Override
+        public String getDescription() {
+            return delegate.getDescription();
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            InputStreamHandler handler = new InputStreamHandler(delegate.getInputStream());
+            entries.add(handler);
+            return handler;
         }
     }
 }

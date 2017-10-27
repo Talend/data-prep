@@ -15,6 +15,7 @@ package org.talend.dataprep.io;
 import static org.junit.Assert.*;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.function.Supplier;
 
 import org.junit.Test;
@@ -54,6 +55,28 @@ public class CloseableResourceWatchTest extends ServiceBaseTest {
     @Test
     public void shouldNotWrapUnknown() throws Exception {
         assertCloseable(() -> component.getUnknownCloseable(), false);
+    }
+
+    @Test
+    public void shouldWrapResourceInput() throws Exception {
+        assertCloseable(() -> {
+            try {
+                return component.getDeletableResource().getInputStream();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }, true);
+    }
+
+    @Test
+    public void shouldWrapResourceOutput() throws Exception {
+        assertCloseable(() -> {
+            try {
+                return component.getDeletableResource().getOutputStream();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }, true);
     }
 
     public void assertCloseable(Supplier<Closeable> closeableSupplier, boolean shouldWrap) throws Exception {

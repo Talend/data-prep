@@ -112,7 +112,7 @@ public class DataPrepAPIHelper {
 
     /**
      * Update an action within a preparation.
-     * 
+     *
      * @param preparationId the preparation id.
      * @param stepId the step to modify.
      * @param action the new parameters.
@@ -129,7 +129,7 @@ public class DataPrepAPIHelper {
 
     /**
      * Move an action inside the prepration order.
-     * 
+     *
      * @param preparationId the preparation id.
      * @param stepId the step id.
      * @param parentStepId the wanted parent steo id.
@@ -178,7 +178,7 @@ public class DataPrepAPIHelper {
      *
      * @return the response.
      */
-    public Response listDataset() {
+    public Response listDatasetDetails() {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .when() //
@@ -190,7 +190,7 @@ public class DataPrepAPIHelper {
      *
      * @return the response.
      */
-    public Response getDatasetList() {
+    public Response listDataset() {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .get("/api/datasets");
@@ -207,6 +207,18 @@ public class DataPrepAPIHelper {
                 .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/preparations/" + preparationId + "/details");
+    }
+
+    /**
+     * List all preparations.
+     *
+     * @return the response.
+     */
+    public Response listAllPreparation() {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/folders/preparations");
     }
 
     /**
@@ -269,7 +281,7 @@ public class DataPrepAPIHelper {
      * @return the home folder.
      */
     public String getHomeFolder() {
-        return Base64.getEncoder().encodeToString("/".getBytes());
+        return encode64("/");
     }
 
     /**
@@ -311,5 +323,74 @@ public class DataPrepAPIHelper {
         fos.close();
         tempFile.deleteOnExit();
         return tempFile;
+    }
+
+    /**
+     * Create a new folder.
+     *
+     * @param parentFolder the parent folder.
+     * @param folder the folder to create.
+     * @return the response.
+     */
+    public Response createFolder(String parentFolder, String folder) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .put("/api/folders?parentId=" + parentFolder + "&path=" + folder);
+    }
+
+    /**
+     * Delete a new folder.
+     *
+     * @param folder the folder to delete (without the "/" at the beginning).
+     * @return the response.
+     */
+    public Response deleteFolder(String folder) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .delete("/api/folders/" + encode64(folder));
+    }
+
+    /**
+     * List existing folders.
+     *
+     * @return the response.
+     */
+    public Response listFolders() {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/folders");
+    }
+
+    /**
+     * Move a preparation from a folder to another.
+     *
+     * @param prepId the preparation id.
+     * @param folderSrc the preparation source folder.
+     * @param folderDest the preparation destination folder.
+     * @param prepName the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .urlEncodingEnabled(false) //
+                .when() //
+                .put("/api/preparations/" + prepId //
+                        + "/move?folder=" + encode64(folderSrc) //
+                        + "&destination=" + encode64(folderDest) //
+                        + "&newName=" + prepName);
+    }
+
+    /**
+     * Encode a {@link String} in 64 base.
+     *
+     * @param value the value to encode.
+     * @return the encoded value.
+     */
+    public String encode64(String value) {
+        return Base64.getEncoder().encodeToString(value.getBytes());
     }
 }

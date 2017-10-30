@@ -45,5 +45,10 @@ Feature: Smoke Test
     Then A preparation with the following parameters exists :
       | preparationName | 10L3C_preparation |
       | datasetName     | 10L3C_dataset     |
-      | steps           | 4                 |
+      | nbSteps         | 4                 |
+    Then I create a folder "smoke/test" under the root folder
+    Then I move the preparation "10L3C_preparation" with the following parameters :
+      | origin             | /                 |
+      | destination        | /smoke/test       |
+      | newPreparationName | 10L3C_preparation |
 

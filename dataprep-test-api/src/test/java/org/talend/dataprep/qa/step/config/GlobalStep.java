@@ -49,6 +49,10 @@ public class GlobalStep extends DataPrepStep {
         });
         context.clearDataset();
 
+        context.getFolders().forEach(folder -> {
+            api.deleteFolder("/" + folder).then().statusCode(200);
+            LOGGER.debug("Suppression of folder {}", folder);
+        });
         // cleaning all features context object
         context.clearObject();
     }

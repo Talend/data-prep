@@ -46,7 +46,7 @@ public class DatasetStep extends DataPrepStep {
     @Given("^A dataset with the following parameters exists :$") //
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        Response response = api.listDataset();
+        Response response = api.listDatasetDetails();
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
         List<DatasetMeta> datasetMetas = objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {

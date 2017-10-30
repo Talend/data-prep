@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.qa.dto.PreparationDetails;
@@ -116,22 +117,6 @@ public class ActionStep extends DataPrepStep {
     @Given("^I fail to move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void failToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
         moveStep(stepName, parentStepName, prepName).then().statusCode(409);
-    }
-
-    /**
-     * Retrieve the details of a preparation from its id.
-     *
-     * @param preparationId the preparation id.
-     * @return the preparation details.
-     * @throws IOException
-     */
-    private PreparationDetails getPreparationDetails(String preparationId) throws IOException {
-        PreparationDetails preparationDetails = null;
-        Response response = api.getPreparationDetails(preparationId);
-        response.then().statusCode(200);
-        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        preparationDetails = objectMapper.readValue(content, PreparationDetails.class);
-        return preparationDetails;
     }
 
     /**

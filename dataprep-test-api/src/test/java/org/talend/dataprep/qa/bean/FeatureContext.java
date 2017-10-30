@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -38,11 +41,24 @@ public class FeatureContext {
 
     private Map<String, String> datasetIdByName = new HashMap<>();
 
+    // TODO : Refactoring : various preparation can have the same name but in different folder
+    // TODO : change the data model (Map<String, List<String>> ?)
     private Map<String, String> preparationIdByName = new HashMap<>();
 
     private Map<String, File> tempFileByName = new HashMap<>();
 
     private Map<String, Action> actionByAlias = new HashMap<>();
+
+    private SortedSet<String> folders = new TreeSet<>((o1, o2) -> {
+        // reverse order : the longer string if the first one.
+        if (o1 == null && o2 == null)
+            return 0;
+        if (o1 == null)
+            return 1;
+        if (o2 == null)
+            return -1;
+        return ((Integer) o2.length()).compareTo(o1.length());
+    });
 
     /**
      * All object store on a feature execution.
@@ -80,7 +96,7 @@ public class FeatureContext {
 
     /**
      * Store an {@link Action}.
-     * 
+     *
      * @param alias the {@link Action} alias.
      * @param action the {@link Action} to store.
      */
@@ -143,7 +159,7 @@ public class FeatureContext {
 
     /**
      * Get a stored {@link Action}.
-     * 
+     *
      * @param alias the stored {@link Action} alias.
      * @return the stored {@link Action}.
      */
@@ -194,4 +210,29 @@ public class FeatureContext {
     public void clearObject() {
         featureContext.clear();
     }
+
+    /**
+     * Store a folder.
+     *
+     * @param folder the folder to store.
+     */
+    public void storeFolder(@NotNull String folder) {
+        folders.add(folder);
+    }
+
+    /**
+     * Retreive the list of stored fodlers.
+     */
+    @NotNull
+    public Set<String> getFolders() {
+        return folders;
+    }
+
+    /**
+     * Clear the list of folders.
+     */
+    public void clearFolders() {
+        folders.clear();
+    }
+
 }

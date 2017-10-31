@@ -12,26 +12,6 @@
 
 package org.talend.dataprep.folder.store.file;
 
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderBuilder.folder;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
-import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_EMPTY;
-import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
-import static org.talend.dataprep.folder.store.file.FileSystemUtils.*;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +27,39 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.StringsHelper;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderBuilder.folder;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.ILLEGAL_FOLDER_NAME;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_ADD_FOLDER;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_ADD_FOLDER_ENTRY;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_DELETE_FOLDER;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_LIST_FOLDER_CHILDREN;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_LIST_FOLDER_ENTRIES;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_REMOVE_FOLDER_ENTRY;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_RENAME_FOLDER;
+import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_EMPTY;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.countSubDirectories;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.deleteFile;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.fromId;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.hasEntry;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.matches;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.toId;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.writeEntryToStream;
 
 /**
  * File system folder repository implementation.
@@ -230,7 +243,7 @@ public class FileSystemFolderRepository implements FolderRepository {
         try {
             Path path = pathsConverter.toPath(folderPath);
 
-            try (Stream<Path> paths = Files.list(path)) {
+            try (Stream<Path> paths = Files.walk(path)) {
                 paths.filter(pathFound -> !Files.isDirectory(pathFound)) //
                         .filter(pathFile -> matches(pathFile, contentId, contentType)) //
                         .forEach(deleteFile());

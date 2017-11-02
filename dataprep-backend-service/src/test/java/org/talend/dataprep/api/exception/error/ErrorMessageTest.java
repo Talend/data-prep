@@ -12,13 +12,12 @@
 
 package org.talend.dataprep.api.exception.error;
 
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.talend.dataprep.exception.error.APIErrorCodes.*;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNSUPPORTED_CONTENT;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_CANNOT_BE_DELETED_IN_SINGLE_MODE;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -65,13 +64,10 @@ public class ErrorMessageTest extends ServiceBaseTest {
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "Service unavailable" + "\",\"messageTitle\":An error has occurred,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
-
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Service unavailable", exception.getMessage());
+        assertEquals("An error has occurred", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
     }
 
     @Test
@@ -107,14 +103,10 @@ public class ErrorMessageTest extends ServiceBaseTest {
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\""
-                + "Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation"
-                + "\",\"messageTitle\":An error has occurred,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation", exception.getMessage());
+        assertEquals("An error has occurred", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
 
     }
 
@@ -122,33 +114,30 @@ public class ErrorMessageTest extends ServiceBaseTest {
     public void shouldReturnRightErrorMessageWhenUnsupportedContentThrown() {
         // given
         ErrorCode errorCode = UNSUPPORTED_CONTENT;
-        TDPException unsupportedContent = new TDPException(errorCode, null, null);
+
+        // when
+        TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "Unable to create dataset, content is not supported. Try with a csv or xls file!"
-                + "\",\"messageTitle\":Unsupported content,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        unsupportedContent.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
-
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Unable to create dataset, content is not supported. Try with a csv or xls file!", exception.getMessage());
+        assertEquals("Unsupported content", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
     }
 
     @Test
     public void shouldReturnRightErrorMessageWhenDatasetStillInUseThrown() {
         // given
         ErrorCode errorCode = DATASET_STILL_IN_USE;
+
+        // when
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "Deletion not allowed, dataset still used by preparation(s)"
-                + "\",\"messageTitle\":Deletion forbidden,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Deletion not allowed, dataset still used by preparation(s)", exception.getMessage());
+        assertEquals("Deletion forbidden", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
 
     }
 
@@ -156,48 +145,45 @@ public class ErrorMessageTest extends ServiceBaseTest {
     public void shouldReturnRightErrorMessageWhenPreparationStepCannotBeDeletedInSingleModeThrown() {
         // given
         ErrorCode errorCode = PREPARATION_STEP_CANNOT_BE_DELETED_IN_SINGLE_MODE;
+
+        // when
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "This action cannot be deleted alone because other following actions depends on it"
-                + "\",\"messageTitle\":Delete action not authorized,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
-
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("This action cannot be deleted alone because other following actions depends on it", exception.getMessage());
+        assertEquals("Delete action not authorized", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
     }
 
     @Test
     public void shouldReturnRightErrorMessageWhenUnableToCreateDatasetThrown() {
         // given
         ErrorCode errorCode = UNABLE_TO_CREATE_DATASET;
+
+        // when
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "An error occurred during import" + "\",\"messageTitle\":Import error,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
-
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("An error occurred during import", exception.getMessage());
+        assertEquals("Import error", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
     }
 
     @Test
     public void shouldReturnRightErrorMessageWhenUnableToCreateOrUpdateDatasetThrown() {
         // given
         ErrorCode errorCode = UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+
+        // when
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\"" + "An error occurred during update" + "\",\"messageTitle\":Update error,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("An error occurred during update", exception.getMessage());
+        assertEquals("Update error", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
 
     }
 
@@ -231,17 +217,15 @@ public class ErrorMessageTest extends ServiceBaseTest {
                 return null;
             }
         };
+
+        // when
         TDPException exception = new TDPException(errorCode, null, null);
 
         // then
-        String errorExpected = "{\"code\":\"" + errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode()
-                + "\",\"message\":\""
-                + "Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation"
-                + "\",\"messageTitle\":An error has occurred,\"context\":{}}";
-        StringWriter stringWriter = new StringWriter();
-        exception.writeTo(stringWriter);
-
-        assertThat(stringWriter.toString(), sameJSONAs(errorExpected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation", exception.getMessage());
+        assertEquals("An error has occurred", exception.getMessageTitle());
+        assertFalse(exception.getContext().entries().iterator().hasNext());
     }
 
 }

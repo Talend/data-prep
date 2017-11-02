@@ -38,6 +38,19 @@ public abstract class SpringBundle implements MessagesBundle {
         return getMessage(LocaleContextHolder.getLocale(), code, args);
     }
 
+    /**
+     * Returns the i18n string that corresponds to <code>code</code>. If no i18n string is to be found, returns <code>code</code>.
+     *
+     * @param code A i18n key.
+     * @return The i18n message associated with <code>code</code>. Returns <code>null</code> if <code>code</code> is
+     * <code>null</code>.
+     * @see LocaleContextHolder#getLocale()
+     * @see java.text.MessageFormat
+     */
+    public String getDefaultMessage(String code, Object... args) {
+        return getMessage(Locale.getDefault(), code, args);
+    }
+
     public String getMessage(Locale locale, String code, Object... args) {
         return source.getMessage(code, args, locale);
     }

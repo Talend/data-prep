@@ -20,6 +20,7 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 import static org.talend.tql.api.TqlBuilder.*;
@@ -253,7 +254,7 @@ public class PreparationService {
      * <li>folderId path</li>
      * </ul>
      * </p>
-     * 
+     *
      * @param dataSetId to search all preparations based on this dataset id.
      * @param folderId to search all preparations located in this folderId.
      * @param name to search all preparations that match this name.
@@ -314,7 +315,7 @@ public class PreparationService {
         // use a default name if empty (original name + " Copy" )
         final String newName;
         if (StringUtils.isBlank(name)) {
-            newName = original.getName() + " Copy";
+            newName = message("preparation.copy.newname", original.getName());
         } else {
             newName = name;
         }

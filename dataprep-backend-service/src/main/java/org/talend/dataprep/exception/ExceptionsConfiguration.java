@@ -56,6 +56,8 @@ public class ExceptionsConfiguration {
                             context.put(contextEntry.getKey(), contextEntry.getValue());
                         }
 
+                        dto.setMessage(internal.getLocalizedMessage());
+                        dto.setDefaultMessage(internal.getMessage());
                         dto.setCode(serializedCode);
                         dto.setCause(cause);
                         dto.setContext(context);

@@ -75,22 +75,22 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         final Parameter fromIndexParameters = Parameter.parameter().setName(FROM_INDEX_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("0")
-                .createParameter(this, locale);
+                .build(this, locale);
         final Parameter fromNBeforeEndParameters = Parameter.parameter().setName(FROM_N_BEFORE_END_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("5")
-                .createParameter(this, locale);
+                .build(this, locale);
         final Parameter toIndexParameters = Parameter.parameter().setName(TO_INDEX_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("5")
-                .createParameter(this, locale);
+                .build(this, locale);
         final Parameter toNBeforeEndParameters = Parameter.parameter().setName(TO_N_BEFORE_END_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
-                .createParameter(this, locale);
+                .build(this, locale);
 
         // "to" parameter with all possible values
-        final Parameter toCompleteParameters = SelectParameter.Builder.builder(locale) //
+        final Parameter toCompleteParameters = SelectParameter.selectParameter(locale) //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END, TO_END) //
                 .item(TO_INDEX_PARAMETER, TO_INDEX_PARAMETER, toIndexParameters) //
@@ -100,7 +100,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
         // "to" parameter with possible values for "From N Before End" selection
         // the "to index" option should not be available
-        final Parameter toParametersWithoutIndexSelection = SelectParameter.Builder.builder(locale) //
+        final Parameter toParametersWithoutIndexSelection = SelectParameter.selectParameter(locale) //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END, TO_END) //
                 .item(TO_N_BEFORE_END_PARAMETER, TO_N_BEFORE_END_PARAMETER, toNBeforeEndParameters) //
@@ -108,7 +108,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
                 .build(this);
 
         // "from" parameter
-        final Parameter fromParameters = SelectParameter.Builder.builder(locale) //
+        final Parameter fromParameters = SelectParameter.selectParameter(locale) //
                 .name(FROM_MODE_PARAMETER) //
                 .item(FROM_BEGINNING, FROM_BEGINNING, toCompleteParameters) // has all the "To" choices
                 .item(FROM_INDEX_PARAMETER, FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all the "To" choices

@@ -96,18 +96,18 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         parameters.add(Parameter.parameter().setName(PREFIX_PARAMETER)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(StringUtils.EMPTY)
-                .createParameter(this, locale));
+                .build(this, locale));
 
-        parameters.add(SelectParameter.Builder.builder(locale).name(MODE_PARAMETER)
+        parameters.add(SelectParameter.selectParameter(locale).name(MODE_PARAMETER)
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER)
                                 .setType(ParameterType.COLUMN)
                                 .setDefaultValue(StringUtils.EMPTY)
                                 .setCanBeBlank(false)
-                                .createParameter(this, locale), Parameter.parameter().setName(SEPARATOR_PARAMETER)
+                                .build(this, locale), Parameter.parameter().setName(SEPARATOR_PARAMETER)
                                 .setType(ParameterType.STRING)
                                 .setDefaultValue(StringUtils.EMPTY)
-                                .createParameter(this, locale), //
-                        SelectParameter.Builder.builder(locale) //
+                                .build(this, locale), //
+                        SelectParameter.selectParameter(locale) //
                                 .name(SEPARATOR_CONDITION) //
                                 .item(BOTH_NOT_EMPTY, BOTH_NOT_EMPTY) //
                                 .item(ALWAYS, ALWAYS) //
@@ -120,7 +120,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         parameters.add(Parameter.parameter().setName(SUFFIX_PARAMETER)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(StringUtils.EMPTY)
-                .createParameter(this, locale));
+                .build(this, locale));
         return parameters;
     }
 

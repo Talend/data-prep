@@ -49,7 +49,7 @@ public class LocalStoreLocation implements DataSetLocation {
                 .setDefaultValue("")
                 .setCanBeBlank(false)
                 .setPlaceHolder("*.csv")
-                .createParameter(this, locale));
+                .build(this, locale));
     }
 
     @Override

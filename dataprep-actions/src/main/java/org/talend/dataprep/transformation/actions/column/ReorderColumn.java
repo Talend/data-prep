@@ -69,7 +69,7 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
                 .setType(ParameterType.COLUMN)
                 .setDefaultValue(StringUtils.EMPTY)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
         return parameters;
     }
 

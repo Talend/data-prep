@@ -41,13 +41,13 @@ public class CSVFormat extends ExportFormat {
         //@formatter:off
         super("CSV", "text/csv", ".csv", true, false,
                 Arrays.asList(buildCsvDelimiterParameter(getLocale()),
-                Parameter.parameter().setName("fileName").setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).createParameter(null, getLocale()) //
+                Parameter.parameter().setName("fileName").setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(null, getLocale()) //
         ));
         //@formatter:on
     }
 
     private static Parameter buildCsvDelimiterParameter(Locale locale) {
-        return SelectParameter.Builder.builder(locale).name("csv_fields_delimiter") //
+        return SelectParameter.selectParameter(locale).name("csv_fields_delimiter") //
                 .item(";", "semiColon") //
                 .item("\u0009", "tabulation") //
                 .item(" ", "space") //

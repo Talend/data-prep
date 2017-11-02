@@ -78,7 +78,7 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
         return Collections.singletonList(Parameter.parameter().setName(SKIP_UNTIL)
                 .setType(BOOLEAN)
                 .setDefaultValue(Boolean.TRUE.toString())
-                .createParameter(this, locale));
+                .build(this, locale));
     }
 
     @Override

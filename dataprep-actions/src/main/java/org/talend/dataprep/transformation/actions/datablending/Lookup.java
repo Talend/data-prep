@@ -83,27 +83,27 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
                 .setType(STRING)
                 .setDefaultValue(adaptedNameValue)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(LOOKUP_DS_ID.getKey())
                 .setType(STRING)
                 .setDefaultValue(adaptedDatasetIdValue)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(LOOKUP_JOIN_ON.getKey())
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(LOOKUP_JOIN_ON_NAME.getKey())
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(LOOKUP_SELECTED_COLS.getKey())
                 .setType(LIST)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
         return parameters;
     }
 

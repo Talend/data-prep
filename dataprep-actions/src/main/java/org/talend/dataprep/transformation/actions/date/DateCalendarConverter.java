@@ -36,7 +36,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
-import org.talend.dataprep.parameters.SelectParameter.Builder;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -111,7 +110,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        final Parameter toJulianDayOrISOParameters = SelectParameter.Builder.builder(locale)
+        final Parameter toJulianDayOrISOParameters = SelectParameter.selectParameter(locale)
                 .name(TO_CALENDAR_TYPE_PARAMETER)
                 .item(CalendarUnit.ISO.name(), CalendarUnit.ISO.toString())
                 .item(CalendarUnit.JULIAN_DAY.name(), CalendarUnit.JULIAN_DAY.toString())
@@ -120,7 +119,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                 .item(CalendarUnit.EPOCH_DAY.name(), CalendarUnit.EPOCH_DAY.toString())
                 .defaultValue(CalendarUnit.ISO.name())
                 .build(this);
-        final Parameter toCompleteParameters = SelectParameter.Builder.builder(locale)
+        final Parameter toCompleteParameters = SelectParameter.selectParameter(locale)
                 .name(TO_CALENDAR_TYPE_PARAMETER)
                 .item(CalendarUnit.ISO.name(), CalendarUnit.ISO.toString())
                 .item(CalendarUnit.HIJRI.name(), CalendarUnit.HIJRI.toString())
@@ -134,7 +133,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                 .defaultValue(CalendarUnit.MINGUO.name())
                 .build(this);
         //@formatter:off
-        parameters.add(Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(FROM_CALENDAR_TYPE_PARAMETER)
                 .item(CalendarUnit.ISO.name(), CalendarUnit.ISO.toString(), toCompleteParameters)
                 .item(CalendarUnit.HIJRI.name(), CalendarUnit.HIJRI.toString(), toCompleteParameters)

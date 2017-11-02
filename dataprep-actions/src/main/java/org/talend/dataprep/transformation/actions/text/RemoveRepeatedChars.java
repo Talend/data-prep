@@ -61,13 +61,13 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(REMOVE_TYPE)
                 .item(WHITESPACE, WHITESPACE)
                 .item(CUSTOM, CUSTOM, Parameter.parameter().setName(CUSTOM_REPEAT_CHAR_PARAMETER)
                         .setType(ParameterType.STRING)
                         .setDefaultValue(StringUtils.EMPTY)
-                        .createParameter(this, locale))
+                        .build(this, locale))
                 .canBeBlank(false)
                 .defaultValue(WHITESPACE)
                 .build(this));

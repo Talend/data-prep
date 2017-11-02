@@ -84,14 +84,14 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         // @formatter:off
-		parameters.add(SelectParameter.Builder.builder(locale)
+		parameters.add(SelectParameter.selectParameter(locale)
 				.name(PATTERN_PARAMETER)
 				.item("[a-z]+", "[a-z]+")
 				.item("[A-Z]+", "[A-Z]+")
 				.item("[0-9]+", "[0-9]+")
 				.item("[a-zA-Z]+", "[a-zA-Z]+")
 				.item("[a-zA-Z0-9]+", "[a-zA-Z0-9]+")
-				.item(CUSTOM, CUSTOM, Parameter.parameter().setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).createParameter(this, locale))
+				.item(CUSTOM, CUSTOM, Parameter.parameter().setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this, locale))
 				.defaultValue("[a-zA-Z]+")
 				.build(this ));
 		// @formatter:on

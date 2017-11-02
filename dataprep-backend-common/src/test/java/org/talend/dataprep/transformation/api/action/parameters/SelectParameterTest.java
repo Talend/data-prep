@@ -24,9 +24,10 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
-import org.talend.dataprep.parameters.*;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * Unit test for the SelectParameter bean. Mostly test the json serialization.
@@ -38,7 +39,7 @@ public class SelectParameterTest extends ParameterBaseTest {
     @Test
     public void shouldSerializeToJsonWithItemsInConfiguration() throws IOException {
         // given
-        SelectParameter expected = SelectParameter.Builder.builder(ENGLISH) //
+        SelectParameter expected = SelectParameter.selectParameter(ENGLISH) //
                 .name("column_id") //
                 .defaultValue("") //
                 .implicit(false) //
@@ -49,7 +50,7 @@ public class SelectParameterTest extends ParameterBaseTest {
                         .setType(ParameterType.INTEGER)
                         .setDefaultValue(StringUtils.EMPTY)
                         .setCanBeBlank(false)
-                        .createParameter(this, ENGLISH)) //
+                        .build(this, ENGLISH)) //
                 .build(this);
 
         // when
@@ -61,39 +62,16 @@ public class SelectParameterTest extends ParameterBaseTest {
                 IOUtils.toString(this.getClass().getResourceAsStream("selectParameter.json"), UTF_8)));
     }
 
-    @Test
-    public void shouldCreateLocalizedItem() {
-        // when
-        final SelectParameter params = SelectParameter.Builder.builder(ENGLISH).item("key", "key").build(this);
-
-        // then
-        assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(LocalizedItem.class));
-    }
-
-    @Test
-    public void shouldCreateLocalizedItemWithInlineParameters() {
-        // when
-        final SelectParameter params = SelectParameter
-                .Builder
-                .builder(ENGLISH)
-                .item("key", "key", Parameter.parameter().createParameter(this, ENGLISH))
-                .build(this);
-
-        // then
-        assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(LocalizedItem.class));
-    }
 
     @Test
     public void shouldCreateConstantItem() {
         // when
         final SelectParameter params = SelectParameter
-                .Builder
-                .builder(ENGLISH)
+                .selectParameter(ENGLISH)
                 .constant("key", "a constant key")
                 .build(this);
 
         // then
-        assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(TextItem.class));
         assertThat(params.getItems().get(0).getValue(), is("key"));
         assertThat(params.getItems().get(0).getLabel(), is("a constant key"));
     }

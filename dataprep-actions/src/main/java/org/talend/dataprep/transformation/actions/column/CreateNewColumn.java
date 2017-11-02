@@ -95,14 +95,14 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         Parameter constantParameter = Parameter.parameter().setName(DEFAULT_VALUE_PARAMETER)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(StringUtils.EMPTY)
-                .createParameter(this, locale);
+                .build(this, locale);
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
                         .item(EMPTY_MODE)
                         .item(CONSTANT_MODE, constantParameter)
-                        .item(COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).createParameter(this, locale))
+                        .item(COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale))
                         .defaultValue(COLUMN_MODE)
                         .build(this )
         );

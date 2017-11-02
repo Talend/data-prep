@@ -39,7 +39,7 @@ public class XlsFormat extends ExportFormat {
     public XlsFormat() {
         super(XLSX, "application/vnd.ms-excel", ".xlsx", true, true,
                 Collections.singletonList(
-                        Parameter.parameter().setName("fileName").setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).createParameter(null, getLocale())));
+                        Parameter.parameter().setName("fileName").setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(null, getLocale())));
     }
     //@formatter:on
 

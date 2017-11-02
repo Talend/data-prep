@@ -9,14 +9,7 @@
 
 package org.talend.dataprep.exception;
 
-import static org.apache.commons.lang3.StringUtils.substringAfter;
-import static org.apache.commons.lang3.StringUtils.substringBefore;
-import static org.talend.daikon.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
-
 import java.util.Map;
-
-import org.springframework.http.HttpStatus;
-import org.talend.daikon.exception.ExceptionContext;
 
 /**
  * Representation of an exception for the APIs.
@@ -24,6 +17,11 @@ import org.talend.daikon.exception.ExceptionContext;
 public class TdpExceptionDto {
 
     private String code;
+
+    /**
+     * The message in the context independent locale for logging.
+     */
+    private String defaultMessage;
 
     private String message;
 
@@ -33,35 +31,13 @@ public class TdpExceptionDto {
 
     private TdpExceptionDto cause;
 
-    public TDPException toTdpException(HttpStatus httpStatus) {
-        String completeErrorCode = getCode();
-        ErrorCodeDto errorCodeDto = deserializeErrorCode(httpStatus, completeErrorCode);
-        return new TDPException(errorCodeDto, null, getMessage(), getMessageTitle(), ExceptionContext.build().from(getContext()).put("cause", getCause()));
-    }
-
-    private static ErrorCodeDto deserializeErrorCode(HttpStatus httpStatus, String completeErrorCode) {
-        String productCode = substringBefore(completeErrorCode, "_");
-        String groupCode = substringBefore(substringAfter(completeErrorCode, "_"), "_"); //$NON-NLS-1$ //$NON-NLS-2$
-        String errorCode;
-        if (completeErrorCode == null) {
-            errorCode = UNEXPECTED_EXCEPTION.getCode();
-        } else {
-            errorCode = substringAfter(completeErrorCode, productCode + '_' + groupCode + '_');
-        }
-
-        return new ErrorCodeDto()
-                .setCode(errorCode)
-                .setGroup(groupCode)
-                .setProduct(productCode)
-                .setHttpStatus(httpStatus == null ? null : httpStatus.value());
-    }
-
     public TdpExceptionDto() {
     }
 
-    public TdpExceptionDto(String code, TdpExceptionDto cause, String message, String messageTitle, Map<String, Object> context) {
+    public TdpExceptionDto(String code, TdpExceptionDto cause, String defaultMessage, String message, String messageTitle, Map<String, Object> context) {
         this.code = code;
         this.cause = cause;
+        this.defaultMessage = defaultMessage;
         this.message = message;
         this.messageTitle = messageTitle;
         this.context = context;
@@ -73,6 +49,14 @@ public class TdpExceptionDto {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getDefaultMessage() {
+        return defaultMessage;
+    }
+
+    public void setDefaultMessage(String defaultMessage) {
+        this.defaultMessage = defaultMessage;
     }
 
     public String getMessage() {

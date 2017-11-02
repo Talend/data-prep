@@ -67,7 +67,7 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
                 .setType(ParameterType.COLUMN)
                 .setDefaultValue(StringUtils.EMPTY)
                 .setCanBeBlank(false)
-                .createParameter(this, locale));
+                .build(this, locale));
 
         return parameters;
     }

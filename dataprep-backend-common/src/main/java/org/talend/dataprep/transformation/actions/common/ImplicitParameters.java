@@ -77,6 +77,6 @@ public enum ImplicitParameters {
                 .setImplicit(true)
                 .setLabel(parameterLabel(null, locale, name().toLowerCase()))
                 .setDescription(parameterDescription(null, locale, name().toLowerCase()))
-                .createParameter(this, locale);
+                .build(this, locale);
     }
 }

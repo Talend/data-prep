@@ -39,7 +39,7 @@ public class ParameterTest extends ParameterBaseTest {
                 .setDefaultValue("0001")
                 .setImplicit(true)
                 .setCanBeBlank(false)
-                .createParameter(this, Locale.ENGLISH);
+                .build(this, Locale.ENGLISH);
 
         // when
         StringWriter out = new StringWriter();

@@ -30,7 +30,8 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter.Builder;
+import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.parameters.SelectParameter.SelectParameterBuilder;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
@@ -74,7 +75,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters(locale);
 
         //@formatter:off
-        Builder builder = Builder.builder(locale)
+        SelectParameterBuilder builder = SelectParameter.selectParameter(locale)
                 .item(ChronoUnit.YEARS.name(), ChronoUnit.YEARS.toString())
                 .item(ChronoUnit.MONTHS.name(), ChronoUnit.MONTHS.toString())
                 .item(ChronoUnit.WEEKS.name(), ChronoUnit.WEEKS.toString())
@@ -95,7 +96,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
                 .defaultValue(ChronoUnit.HOURS.name())
                 .build(this ));
 
-         parameters.add(Parameter.parameter().setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").createParameter(this, locale));
+         parameters.add(Parameter.parameter().setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this, locale));
 
         //@formatter:on
         return parameters;

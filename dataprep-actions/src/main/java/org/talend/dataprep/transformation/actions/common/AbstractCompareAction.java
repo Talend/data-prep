@@ -47,10 +47,10 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         parameters.add(getCompareModeSelectParameter(locale));
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale) //
+        parameters.add(SelectParameter.selectParameter(locale) //
                         .name(MODE_PARAMETER) //
                         .item(CONSTANT_MODE, CONSTANT_MODE, getDefaultConstantValue(locale)) //
-                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).createParameter(this, locale)) //
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale)) //
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );
@@ -67,7 +67,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     protected SelectParameter getCompareModeSelectParameter(Locale locale) {
 
         //@formatter:off
-        return SelectParameter.Builder.builder(locale) //
+        return SelectParameter.selectParameter(locale) //
                            .name(CompareAction.COMPARE_MODE) //
                            .item(EQ, EQ) //
                            .item(NE, NE) //
@@ -91,7 +91,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         return Parameter.parameter().setName(CONSTANT_VALUE)
                 .setType(ParameterType.STRING)
                 .setDefaultValue("2")
-                .createParameter(this, locale);
+                .build(this, locale);
     }
 
     @Override

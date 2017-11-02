@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.date;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.DATE;
+import static org.talend.dataprep.i18n.ActionsBundle.choice;
 
 import java.util.*;
 
@@ -57,35 +58,43 @@ public abstract class AbstractDate extends AbstractActionMetadata {
                 .getBundle("org.talend.dataprep.transformation.actions.date.date_patterns", locale);
         Enumeration<String> keys = patterns.getKeys();
 
-        List<Item> items = new ArrayList<>();
-        Item defaultItem = null;
+        SelectParameter.SelectParameterBuilder selectParamBuilder = SelectParameter.selectParameter(locale).name(NEW_PATTERN);
+
+        String defaultItem = null;
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
             String value = patterns.getString(key);
-            Item item = Item.Builder.builder()
-                    .value(value)
-                    .label(key)
-                    .build(locale);
-            items.add(item);
+            selectParamBuilder.constant(value, choice(this, locale, key));
 
             if ("ISO".equals(key)){
-                defaultItem = item;
+                defaultItem = value;
+            }
+            if (defaultItem == null) {
+                defaultItem = value;
             }
         }
-        if (defaultItem == null) {
-            defaultItem = items.get(0);
-        }
 
-        items.sort(Comparator.comparing(Item::getLabel));
+        SelectParameter custom = selectParamBuilder //
+                .item("custom", buildCustomPatternParam(locale)) //
+                .defaultValue(defaultItem) //
+                .build(this);
+        custom.getItems().sort(new Comparator<Item>() {
+
+            private Comparator<Item> labelComparator = Comparator.comparing(Item::getLabel);
+
+            @Override
+            public int compare(Item o1, Item o2) {
+                if (o1.getValue().equals("custom")) {
+                    return Integer.MAX_VALUE;
+                } else if (o2.getValue().equals("custom")) {
+                    return Integer.MIN_VALUE;
+                }
+                return labelComparator.compare(o1, o2);
+            }
+        });
 
         List<Parameter> parameters = new ArrayList<>();
-        parameters.add(SelectParameter.Builder.builder(locale) //
-                .name(NEW_PATTERN) //
-                .items(items) //
-                .item("custom", buildCustomPatternParam(locale)) //
-                .defaultValue(defaultItem.getValue()) //
-                .build(this));
-
+        parameters.add(custom);
         return parameters;
     }
 
@@ -97,7 +106,7 @@ public abstract class AbstractDate extends AbstractActionMetadata {
                 .setType(ParameterType.STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .createParameter(this, locale);
+                .build(this, locale);
     }
 
     /**

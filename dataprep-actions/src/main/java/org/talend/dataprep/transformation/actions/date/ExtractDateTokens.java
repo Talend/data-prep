@@ -107,40 +107,40 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(
-                Parameter.parameter().setName(YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).createParameter(
+                Parameter.parameter().setName(YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(
                         this, locale));
         parameters.add(
-                Parameter.parameter().setName(MONTH).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).createParameter(
+                Parameter.parameter().setName(MONTH).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(
                         this, locale));
-        parameters.add(Parameter.parameter().setName(DAY).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).createParameter(
+        parameters.add(Parameter.parameter().setName(DAY).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(
                 this, locale));
         parameters.add(
-                Parameter.parameter().setName(HOUR_12).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).createParameter(
+                Parameter.parameter().setName(HOUR_12).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
                         this, locale));
         parameters.add(
-                Parameter.parameter().setName(AM_PM).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).createParameter(
+                Parameter.parameter().setName(AM_PM).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
                         this, locale));
         parameters.add(
-                Parameter.parameter().setName(HOUR_24).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).createParameter(
+                Parameter.parameter().setName(HOUR_24).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(
                         this, locale));
         parameters.add(
-                Parameter.parameter().setName(MINUTE).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).createParameter(
+                Parameter.parameter().setName(MINUTE).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(
                         this, locale));
         parameters.add(
-                Parameter.parameter().setName(SECOND).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).createParameter(
+                Parameter.parameter().setName(SECOND).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
                         this, locale));
         parameters.add(Parameter.parameter().setName(DAY_OF_WEEK)
                 .setType(ParameterType.BOOLEAN)
                 .setDefaultValue(FALSE)
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(DAY_OF_YEAR)
                 .setType(ParameterType.BOOLEAN)
                 .setDefaultValue(FALSE)
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(WEEK_OF_YEAR)
                 .setType(ParameterType.BOOLEAN)
                 .setDefaultValue(FALSE)
-                .createParameter(this, locale));
+                .build(this, locale));
         return parameters;
     }
 

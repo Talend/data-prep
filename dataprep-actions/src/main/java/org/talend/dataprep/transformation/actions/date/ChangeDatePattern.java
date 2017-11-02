@@ -74,10 +74,10 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
         List<Parameter> parameters = super.getParameters(locale);
 
         // @formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(FROM_MODE)
                 .item(FROM_MODE_BEST_GUESS, FROM_MODE_BEST_GUESS)
-                .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, Parameter.parameter().setName(FROM_CUSTOM_PATTERN).setType(ParameterType.STRING).setDefaultValue(EMPTY).setCanBeBlank(false).createParameter(this, locale))
+                .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, Parameter.parameter().setName(FROM_CUSTOM_PATTERN).setType(ParameterType.STRING).setDefaultValue(EMPTY).setCanBeBlank(false).build(this, locale))
                 .defaultValue(FROM_MODE_BEST_GUESS)
                 .build(this ));
         // @formatter:on

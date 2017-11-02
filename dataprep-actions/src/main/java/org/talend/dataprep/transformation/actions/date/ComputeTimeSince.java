@@ -93,7 +93,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.Builder.builder(locale) //
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
                 .item(ChronoUnit.YEARS.name(), "years") //
                 .item(ChronoUnit.MONTHS.name(), "months") //
@@ -102,7 +102,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 .defaultValue(ChronoUnit.HOURS.name()) //
                 .build(this));
 
-        parameters.add(SelectParameter.Builder.builder(locale) //
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(SINCE_WHEN_PARAMETER) //
                 .canBeBlank(false) //
                 .item(NOW_SERVER_SIDE_MODE, NOW_SERVER_SIDE_MODE) //
@@ -110,12 +110,12 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                         .setType(ParameterType.DATE)
                         .setDefaultValue(StringUtils.EMPTY)
                         .setCanBeBlank(false)
-                        .createParameter(this, locale)) //
+                        .build(this, locale)) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER)
                         .setType(ParameterType.COLUMN)
                         .setDefaultValue(StringUtils.EMPTY)
                         .setCanBeBlank(false)
-                        .createParameter(this, locale)) //
+                        .build(this, locale)) //
                 .defaultValue(NOW_SERVER_SIDE_MODE) //
                 .build(this));
 

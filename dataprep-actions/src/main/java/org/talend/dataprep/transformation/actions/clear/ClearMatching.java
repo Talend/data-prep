@@ -75,7 +75,7 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         if (this.type == Type.BOOLEAN) {
-            parameters.add(SelectParameter.Builder.builder(locale) //
+            parameters.add(SelectParameter.selectParameter(locale) //
                     .name(VALUE_PARAMETER) //
                     .item(Boolean.TRUE.toString()) //
                     .item(Boolean.FALSE.toString()) //
@@ -85,7 +85,7 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
                     .setType(ParameterType.REGEX)
                     .setDefaultValue(StringUtils.EMPTY)
                     .setCanBeBlank(false)
-                    .createParameter(this, locale));
+                    .build(this, locale));
         }
 
         return parameters;

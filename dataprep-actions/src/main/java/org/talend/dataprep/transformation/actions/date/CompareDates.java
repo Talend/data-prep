@@ -80,14 +80,14 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
         return Parameter.parameter().setName(CONSTANT_VALUE)
                 .setType(ParameterType.DATE)
                 .setDefaultValue(StringUtils.EMPTY)
-                .createParameter(this, locale);
+                .build(this, locale);
     }
 
     @Override
     protected SelectParameter getCompareModeSelectParameter(Locale locale) {
 
         //@formatter:off
-        return SelectParameter.Builder.builder(locale) //
+        return SelectParameter.selectParameter(locale) //
             .name(COMPARE_MODE) //
             .item(EQ, EQ) //
             .item(NE, NE) //

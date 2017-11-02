@@ -71,7 +71,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.Builder.builder(locale) //
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
                 .item(YEARS.name(), YEARS.name()) //
                 .item(MONTHS.name(), MONTHS.name()) //
@@ -80,17 +80,17 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
                 .defaultValue(YEARS.name()) //
                 .build(this));
 
-        parameters.add(SelectParameter.Builder.builder(locale) //
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(MODE_PARAMETER) //
                 .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter().setName(CONSTANT_VALUE)
                         .setType(ParameterType.INTEGER)
                         .setDefaultValue("1")
-                        .createParameter(this, locale)) //
+                        .build(this, locale)) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER)
                         .setType(ParameterType.COLUMN)
                         .setDefaultValue(StringUtils.EMPTY)
                         .setCanBeBlank(false)
-                        .createParameter(this, locale)) //
+                        .build(this, locale)) //
                 .defaultValue(CONSTANT_MODE) //
                 .build(this));
 

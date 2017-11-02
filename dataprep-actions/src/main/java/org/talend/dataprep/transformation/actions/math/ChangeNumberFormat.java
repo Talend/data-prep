@@ -121,7 +121,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         final List<Parameter> parameters = super.getParameters(locale);
 
         // @formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(FROM_SEPARATORS)
                 .item(UNKNOWN_SEPARATORS, UNKNOWN_SEPARATORS)
                 .item(US_SEPARATORS, US_SEPARATORS)
@@ -133,13 +133,13 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         // @formatter:on
 
         // @formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(TARGET_PATTERN)
                 .item(US_PATTERN, US_PATTERN)
                 .item(EU_PATTERN, EU_PATTERN)
                 .item(CH_PATTERN, CH_PATTERN)
                 .item(SCIENTIFIC, SCIENTIFIC)
-                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).createParameter(this, locale),
+                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).build(this, locale),
                         buildDecimalSeparatorParameter(TARGET, locale),
                         buildGroupingSeparatorParameter(TARGET, locale))
                 .defaultValue(US_PATTERN)
@@ -151,21 +151,21 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     private Parameter buildDecimalSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + DECIMAL + SEPARATOR;
-        return  SelectParameter.Builder.builder(locale) //
+        return  SelectParameter.selectParameter(locale) //
                 .name(name) //
                 .item(".") //
                 .item(",") //
                 .item(CUSTOM, CUSTOM, Parameter.parameter().setName(name + "_" + CUSTOM)
                         .setType(STRING)
                         .setDefaultValue(".")
-                        .createParameter(this, locale)) //
+                        .build(this, locale)) //
                 .defaultValue(".") //
                 .build(this);
     }
 
     private Parameter buildGroupingSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + GROUPING + SEPARATOR;
-        return SelectParameter.Builder.builder(locale) //
+        return SelectParameter.selectParameter(locale) //
                 .name(name) //
                 .item(",", "comma") //
                 .item(" ", "space") //
@@ -175,7 +175,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .item(CUSTOM, CUSTOM, Parameter.parameter().setName(name + "_" + CUSTOM)
                         .setType(STRING)
                         .setDefaultValue(",")
-                        .createParameter(this, locale)) //
+                        .build(this, locale)) //
                 .canBeBlank(true) //
                 .defaultValue(",") //
                 .build(this);

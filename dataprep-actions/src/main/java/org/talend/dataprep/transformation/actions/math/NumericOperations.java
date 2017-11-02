@@ -88,7 +88,7 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters(locale);
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(OPERATOR_PARAMETER)
                         .item(PLUS)
                         .item(MULTIPLY)
@@ -100,11 +100,11 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         //@formatter:on
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
-                        .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter().setName(OPERAND_PARAMETER).setType(ParameterType.STRING).setDefaultValue("2").createParameter(this, locale))
+                        .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter().setName(OPERAND_PARAMETER).setType(ParameterType.STRING).setDefaultValue("2").build(this, locale))
                         .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
-                              Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).createParameter(this, locale)) //
+                              Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale)) //
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );

@@ -76,14 +76,14 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         parameters.add(Parameter.parameter().setName(SIZE_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("5")
-                .createParameter(this, locale));
+                .build(this, locale));
         parameters.add(Parameter.parameter().setName(PADDING_CHAR_PARAMETER)
                 .setType(ParameterType.STRING)
                 .setDefaultValue("0")
-                .createParameter(this, locale));
+                .build(this, locale));
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(PADDING_POSITION_PARAMETER)
                         .item(LEFT_POSITION)
                         .item(RIGHT_POSITION)

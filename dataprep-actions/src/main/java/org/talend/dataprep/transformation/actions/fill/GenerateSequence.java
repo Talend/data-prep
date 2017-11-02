@@ -52,12 +52,12 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         Parameter startParameter = Parameter.parameter().setName(START_VALUE)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
-                .createParameter(this, locale);
+                .build(this, locale);
         parameters.add(startParameter);
         Parameter stepParameter = Parameter.parameter().setName(STEP_VALUE)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
-                .createParameter(this, locale);
+                .build(this, locale);
         parameters.add(stepParameter);
         return parameters;
     }

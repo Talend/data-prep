@@ -48,7 +48,7 @@ public class TestAction extends AbstractActionMetadata {
                 .setDefaultValue("")
                 .setCanBeBlank(false)
                 .setPlaceHolder("")
-                .createParameter(this, locale));
+                .build(this, locale));
     }
 
     @Override

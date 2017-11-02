@@ -14,6 +14,7 @@
 package org.talend.dataprep.parameters;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.i18n.ActionsBundle.parameterDescription;
 import static org.talend.dataprep.i18n.ActionsBundle.parameterLabel;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
 import org.talend.dataprep.i18n.ActionsBundle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -201,6 +203,8 @@ public class Parameter implements Serializable {
 
     public static class ParameterBuilder {
 
+        private static final Logger LOGGER = getLogger(ParameterBuilder.class);
+
         private String name;
 
         private ParameterType type;
@@ -260,18 +264,25 @@ public class Parameter implements Serializable {
             return this;
         }
 
-        public Parameter createParameter(Object action, Locale locale) {
-            // TODO this forces to have i18n for theses 2 fields
+        // for now we still are forced to auto detect label and description parameters but if it is possible to do this
+        // without binding parameter builder with the I18n mecanism it would be really great, hence the warnings
+        public Parameter build(Object action, Locale locale) {
             if (label == null) {
+                LOGGER.debug("Warning: implicit label in [{}] parameter creation.", name);
                 try {
                     label = parameterLabel(action, locale, name);
                 } catch (Exception e) {
+                    // If no label can be auto-found, we really do not care
+                    LOGGER.trace("Error while auto-finding label parameter for [{}].", name);
                 }
             }
             if (description == null) {
+                LOGGER.debug("Warning: implicit description in [{}] parameter creation.", name);
                 try {
                     description = parameterDescription(action, locale, name);
                 } catch (Exception e) {
+                    // If no description can be auto-found, we really do not care
+                    LOGGER.trace("Error while auto-finding description parameter for [{}].", name);
                 }
             }
             return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description);

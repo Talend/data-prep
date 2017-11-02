@@ -3,11 +3,13 @@ package org.talend.dataprep.qa.step;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import cucumber.api.DataTable;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -25,15 +27,21 @@ import cucumber.api.java.en.Then;
  */
 public class FolderStep extends DataPrepStep {
 
+    public static final String FOLDER_NAME = "folderName";
+
     /**
      * This class' logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(FolderStep.class);
 
-    @Then("^I create a folder \"(.*)\" under the root folder$")
-    public void createFolder(@NotNull final String folder) throws IOException {
+    @Then("^I create a folder with the following parameters :$")
+    public void createFolder(@NotNull DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        String parentFolder = params.get(ORIGIN);
+        String folder = params.get(FOLDER_NAME);
+
         Set<String> existingFolders = listFolders();
-        Response response = api.createFolder(api.getHomeFolder(), folder);
+        Response response = api.createFolder(parentFolder, folder);
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
         Folder createdFolder = objectMapper.readValue(content, Folder.class);

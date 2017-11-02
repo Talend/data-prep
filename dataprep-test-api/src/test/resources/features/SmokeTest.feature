@@ -46,9 +46,13 @@ Feature: Smoke Test
       | preparationName | 10L3C_preparation |
       | datasetName     | 10L3C_dataset     |
       | nbSteps         | 4                 |
-    Then I create a folder "smoke/test" under the root folder
+    Then I create a folder with the following parameters :
+      | origin     | /          |
+      | folderName | smoke/test |
     Then I move the preparation "10L3C_preparation" with the following parameters :
       | origin             | /                 |
       | destination        | /smoke/test       |
       | newPreparationName | 10L3C_preparation |
-
+    And I check that the preparation "10L3C_preparation" exists under the folder "/smoke/test"
+    And I export the preparation "10L3C_preparation" on the dataset "10L3C_dataset" and export the result in "10L3C_result.csv" temporary file.
+    Then I check that "10L3C_result.csv" temporary file equals "/data/10L3C_processed.csv" file

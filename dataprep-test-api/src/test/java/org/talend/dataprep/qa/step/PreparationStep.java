@@ -5,19 +5,23 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
 
 import com.jayway.restassured.response.Response;
 
 import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -30,8 +34,6 @@ public class PreparationStep extends DataPrepStep {
     public static final String DATASET_NAME = "datasetName";
 
     public static final String NB_STEPS = "nbSteps";
-
-    public static final String ORIGIN = "origin";
 
     public static final String DESTINATION = "destination";
 
@@ -89,5 +91,20 @@ public class PreparationStep extends DataPrepStep {
         Response response = api.movePreparation(prepId, params.get(ORIGIN), params.get(DESTINATION),
                 params.get(NEW_PREPARATION_NAME));
         response.then().statusCode(200);
+    }
+
+    @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
+    public void checkExistPrep(String preparationName, String folder) throws IOException {
+        String prepId = context.getPreparationId(preparationName);
+        Response response = api.listPreparation(folder);
+        response.then().statusCode(200);
+        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
+        FolderContent folderContent = objectMapper.readValue(content, FolderContent.class);
+
+        long nb = folderContent.preparations.stream() //
+                .filter(p -> p.id.equals(prepId)) //
+                .filter(p -> p.name.equals(preparationName)) //
+                .count();
+        Assert.assertEquals(nb, 1);
     }
 }

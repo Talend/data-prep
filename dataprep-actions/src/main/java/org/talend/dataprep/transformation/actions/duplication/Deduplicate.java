@@ -57,7 +57,7 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN);
+        return EnumSet.of(Behavior.FORBID_DISTRIBUTED, Behavior.VALUES_DELETE_ROWS);
     }
 
     @Override
@@ -69,18 +69,23 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
+        String data = evalHashCode(row);
+
         Set<String> hashes = context.get(HASHES_NAME);
-
-        StringBuilder columnContents= new StringBuilder();
-        for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-            columnContents.append(context.getColumnId());
-            columnContents.append(row.get(column.getId()));
-        }
-
-        String data = sha256Hex(columnContents.toString());
-
-        if (!hashes.add(data)) {
+        if (!hashes.contains(data)) {
+            hashes.add(data);
+        } else {
             row.setDeleted(true);
         }
+    }
+
+    protected String evalHashCode(DataSetRow row) {
+        StringBuilder columnContents= new StringBuilder();
+        for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
+            columnContents.append(column.getId()+":");
+            columnContents.append(row.get(column.getId())+"-");
+        }
+
+        return sha256Hex(columnContents.toString());
     }
 }

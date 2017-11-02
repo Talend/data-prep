@@ -64,8 +64,9 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_DELETE_ROWS));
     }
 
     @Test
@@ -107,8 +108,6 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
         assertThat(row2.isDeleted(), is(true));
         assertThat(row3.isDeleted(), is(false));
     }
-
-
 
     @Test
     public void deduplicate_with_empty_string() {

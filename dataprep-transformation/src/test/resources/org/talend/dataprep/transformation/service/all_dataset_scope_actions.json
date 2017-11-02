@@ -250,5 +250,58 @@
     "actionScope":[
 
     ]
-  }
+  },
+  {
+    "name":"deduplication",
+    "parameters":[
+      {
+        "name":"column_id",
+        "type":"string",
+        "implicit":true,
+        "canBeBlank":true,
+        "placeHolder":"",
+        "default":"",
+        "description":"The column to which you want to apply this action",
+        "label":"Column"
+      },
+      {
+        "name":"row_id",
+        "type":"string",
+        "implicit":true,
+        "canBeBlank":true,
+        "placeHolder":"",
+        "default":"",
+        "description":"The row to which you want to apply this action",
+        "label":"Row"
+      },
+      {
+        "name":"scope",
+        "type":"string",
+        "implicit":true,
+        "canBeBlank":true,
+        "placeHolder":"",
+        "default":"",
+        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "label":"Scope"
+      },
+      {
+        "name":"filter",
+        "type":"filter",
+        "implicit":true,
+        "canBeBlank":true,
+        "placeHolder":"",
+        "default":"",
+        "description":"An optional filter to apply action on matching values only.",
+        "label":"Filter"
+      }
+    ],
+    "category":"deduplication",
+    "actionScope":[
+
+    ],
+    "description":"Keep only one occurrence of duplicated rows",
+    "label":"Remove duplicate rows",
+    "dynamic":false,
+    "docUrl":""
+  },
 ]

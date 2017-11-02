@@ -118,7 +118,8 @@ public class TQLFilterService implements FilterService {
         @Override
         public Predicate<DataSetRow> visit(FieldInExpression fieldInExpression) {
             final String fieldName = fieldInExpression.getFieldName();
-            final List<String> collect = Stream.of(fieldInExpression.getValues()).map(LiteralValue::getValue).collect(Collectors.toList());
+            final List<String> collect =
+                    Stream.of(fieldInExpression.getValues()).map(LiteralValue::getValue).collect(Collectors.toList());
 
             return row -> collect.contains(row.get(fieldName));
         }
@@ -176,6 +177,11 @@ public class TQLFilterService implements FilterService {
             final String value = fieldContainsExpression.getValue();
 
             return row -> StringUtils.contains(row.get(fieldName), value);
+        }
+
+        @Override
+        public Object visit(AllFields allFields) {
+            throw new UnsupportedOperationException();
         }
 
     }

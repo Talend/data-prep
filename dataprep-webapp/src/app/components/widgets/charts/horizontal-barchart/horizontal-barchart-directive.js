@@ -55,7 +55,7 @@ import _ from 'lodash';
  * @param {function}    tooltipContent The tooltip content generator. It can take 4 infos : keyLabel (the label), key (the key), primaryValue (the selected primary value), secondaryValue (the selected secondary value)
  * */
 
-export default function HorizontalBarchart($timeout) {
+export default function HorizontalBarchart($timeout, $translate) {
 	'ngInject';
 
 	return {
@@ -259,7 +259,7 @@ export default function HorizontalBarchart($timeout) {
 					.append('xhtml:div')
 					.attr('class', 'label ' + getSecondaryClassName())
 					.html(function (d) {
-						return getKey(d) || '(EMPTY)';
+						return getKey(d) || `(${$translate.instant('EMPTY')})`;
 					});
 			}
 

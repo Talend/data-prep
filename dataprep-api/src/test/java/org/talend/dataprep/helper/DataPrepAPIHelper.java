@@ -230,8 +230,9 @@ public class DataPrepAPIHelper {
     public Response listPreparation(String folder) {
         return given() //
                 .baseUri(apiBaseUrl) //
+                .urlEncodingEnabled(false) //
                 .when() //
-                .get("/api/folders/" + folder + "/preparations");
+                .get("/api/folders/" + encode64(folder) + "/preparations");
     }
 
     /**
@@ -335,8 +336,9 @@ public class DataPrepAPIHelper {
     public Response createFolder(String parentFolder, String folder) {
         return given() //
                 .baseUri(apiBaseUrl) //
+                .urlEncodingEnabled(false) //
                 .when() //
-                .put("/api/folders?parentId=" + parentFolder + "&path=" + folder);
+                .put("/api/folders?parentId=" + encode64(parentFolder) + "&path=" + folder);
     }
 
     /**
@@ -348,6 +350,7 @@ public class DataPrepAPIHelper {
     public Response deleteFolder(String folder) {
         return given() //
                 .baseUri(apiBaseUrl) //
+                .urlEncodingEnabled(false) //
                 .when() //
                 .delete("/api/folders/" + encode64(folder));
     }

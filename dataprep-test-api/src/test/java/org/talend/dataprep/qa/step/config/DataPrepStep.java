@@ -38,6 +38,9 @@ public abstract class DataPrepStep {
     /** {@link cucumber.api.DataTable} key for preparationName value. */
     public static final String PREPARATION_NAME = "preparationName";
 
+    /** {@link cucumber.api.DataTable} key for origin folder. */
+    public static final String ORIGIN = "origin";
+
     @Autowired
     protected FeatureContext context;
 

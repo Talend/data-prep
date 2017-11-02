@@ -178,5 +178,9 @@ public class TQLFilterService implements FilterService {
             return row -> StringUtils.contains(row.get(fieldName), value);
         }
 
+        @Override
+        public Object visit(AllFields allFields) {
+            throw new UnsupportedOperationException("Not implemented.");
+        }
     }
 }

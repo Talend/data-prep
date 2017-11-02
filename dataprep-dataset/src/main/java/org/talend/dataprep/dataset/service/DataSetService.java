@@ -23,6 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
@@ -514,7 +515,7 @@ public class DataSetService extends BaseDataSetService {
         // use a default name if empty (original name + " Copy" )
         final String newName;
         if (StringUtils.isBlank(copyName)) {
-            newName = original.getName() + " Copy";
+            newName = message("dataset.copy.newname", original.getName());
         } else {
             newName = copyName;
         }

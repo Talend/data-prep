@@ -17,6 +17,9 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.DATE;
 import static org.talend.dataprep.i18n.ActionsBundle.choice;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,17 +56,15 @@ public abstract class AbstractDate extends AbstractActionMetadata {
      * @param locale
      */
     protected List<Parameter> getParametersForDatePattern(Locale locale) {
-
-        ResourceBundle patterns = ResourceBundle
-                .getBundle("org.talend.dataprep.transformation.actions.date.date_patterns", locale);
-        Enumeration<String> keys = patterns.getKeys();
+        HashMap<String, String> datePatterns = loadDatePatterns();
 
         SelectParameter.SelectParameterBuilder selectParamBuilder = SelectParameter.selectParameter(locale).name(NEW_PATTERN);
 
         String defaultItem = null;
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            String value = patterns.getString(key);
+        for (Map.Entry<String, String> datePatternEntry : datePatterns.entrySet()) {
+            String key = datePatternEntry.getKey();
+            String value = datePatternEntry.getValue();
+
             selectParamBuilder.constant(value, choice(this, locale, key));
 
             if ("ISO".equals(key)){
@@ -78,7 +79,15 @@ public abstract class AbstractDate extends AbstractActionMetadata {
                 .item("custom", buildCustomPatternParam(locale)) //
                 .defaultValue(defaultItem) //
                 .build(this);
-        custom.getItems().sort(new Comparator<Item>() {
+        custom.getItems().sort(compareOnLabelWithCustomLast());
+
+        List<Parameter> parameters = new ArrayList<>();
+        parameters.add(custom);
+        return parameters;
+    }
+
+    private Comparator<Item> compareOnLabelWithCustomLast() {
+        return new Comparator<Item>() {
 
             private Comparator<Item> labelComparator = Comparator.comparing(Item::getLabel);
 
@@ -91,11 +100,20 @@ public abstract class AbstractDate extends AbstractActionMetadata {
                 }
                 return labelComparator.compare(o1, o2);
             }
-        });
+        };
+    }
 
-        List<Parameter> parameters = new ArrayList<>();
-        parameters.add(custom);
-        return parameters;
+    @SuppressWarnings("unchecked")
+    private HashMap<String, String> loadDatePatterns() {
+        HashMap<String, String> datePatterns;
+        try {
+            Properties properties = new Properties();
+            properties.load(new InputStreamReader(getClass().getResourceAsStream("date_patterns.properties"), StandardCharsets.UTF_8));
+            datePatterns = new HashMap(properties);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return datePatterns;
     }
 
     /**

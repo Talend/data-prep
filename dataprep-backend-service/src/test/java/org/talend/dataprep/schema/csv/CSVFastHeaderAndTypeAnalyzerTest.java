@@ -31,7 +31,7 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
     @Before
     public void setUp() throws Exception {
         previousLocale = Locale.getDefault();
-        Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.US);
     }
 
     @After

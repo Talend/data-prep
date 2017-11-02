@@ -46,7 +46,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
         parameters = ActionMetadataTestUtils
                 .parseParameters(FormatPhoneNumberTest.class.getResourceAsStream("formatphonenumber.json"));
         previousLocale = Locale.getDefault();
-        Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.US);
     }
 
     @After

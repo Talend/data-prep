@@ -13,7 +13,7 @@
 package org.talend.dataprep.schema.xls;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.ENGLISH;
+import static java.util.Locale.US;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.junit.Assert.assertThat;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -75,7 +75,7 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
     public void setUp() {
         super.setUp();
         previousLocale = Locale.getDefault();
-        Locale.setDefault(ENGLISH);
+        Locale.setDefault(US);
     }
 
     @After

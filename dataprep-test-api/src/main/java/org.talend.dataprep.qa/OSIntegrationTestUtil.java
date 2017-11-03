@@ -25,8 +25,7 @@ public class OSIntegrationTestUtil {
         String[] folders = folder.split("/");
         StringBuilder folderBuilder = new StringBuilder();
         Arrays.stream(folders) //
-                .filter(f -> !f.equals("/")) //
-                .filter(f -> !f.isEmpty()) //
+                .filter(f -> !f.isEmpty() && !f.equals("/")) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
                         folderBuilder.append("/");

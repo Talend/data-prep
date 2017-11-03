@@ -79,7 +79,7 @@ public class PreparationStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
         PreparationDetails prepDet = getPreparationDetails(prepId);
-        Assert.assertTrue(prepDet != null);
+        Assert.assertNotNull(prepDet);
         Assert.assertEquals(prepDet.dataset.dataSetName, params.get(DATASET_NAME));
         Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
     }
@@ -102,8 +102,8 @@ public class PreparationStep extends DataPrepStep {
         FolderContent folderContent = objectMapper.readValue(content, FolderContent.class);
 
         long nb = folderContent.preparations.stream() //
-                .filter(p -> p.id.equals(prepId)) //
-                .filter(p -> p.name.equals(preparationName)) //
+                .filter(p -> p.id.equals(prepId) //
+                        && p.name.equals(preparationName)) //
                 .count();
         Assert.assertEquals(nb, 1);
     }

@@ -54,8 +54,8 @@ public class DatasetStep extends DataPrepStep {
 
         Assert.assertEquals(1, //
                 datasetMetas.stream() //
-                        .filter(d -> params.get(DATASET_NAME).equals(d.name)) //
-                        .filter(d -> params.get(NB_ROW).equals(d.records)) //
+                        .filter(d -> params.get(DATASET_NAME).equals(d.name) //
+                                && params.get(NB_ROW).equals(d.records)) //
                         .count());
     }
 }

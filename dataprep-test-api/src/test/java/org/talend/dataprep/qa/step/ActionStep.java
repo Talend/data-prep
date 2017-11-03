@@ -18,16 +18,13 @@ import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
 import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.qa.dto.PreparationDetails;
@@ -36,6 +33,7 @@ import org.talend.dataprep.qa.step.config.DataPrepStep;
 import com.jayway.restassured.response.Response;
 
 import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -109,12 +107,12 @@ public class ActionStep extends DataPrepStep {
         response.then().statusCode(200);
     }
 
-    @Given("^I move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
+    @And("^I move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void successToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
         moveStep(stepName, parentStepName, prepName).then().statusCode(200);
     }
 
-    @Given("^I fail to move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
+    @Then("^I fail to move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void failToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
         moveStep(stepName, parentStepName, prepName).then().statusCode(409);
     }
@@ -144,8 +142,8 @@ public class ActionStep extends DataPrepStep {
         PreparationDetails prepDet = getPreparationDetails(preparationId);
         prepDet.updateActionIds();
         List<Action> actions = prepDet.actions.stream() //
-                .filter(action -> action.action.equals(storedAction.action)) //
-                .filter(action -> action.parameters.equals(storedAction.parameters)) //
+                .filter(action -> action.action.equals(storedAction.action) //
+                        && action.parameters.equals(storedAction.parameters)) //
                 .collect(Collectors.toList());
         return actions;
     }
@@ -165,9 +163,7 @@ public class ActionStep extends DataPrepStep {
                 action.parameters.put(ape, v);
             }
         });
-        if (action.parameters.get(SCOPE) == null) {
-            action.parameters.put(SCOPE, "column");
-        }
+        action.parameters.putIfAbsent(SCOPE, "column");
         return action;
     }
 

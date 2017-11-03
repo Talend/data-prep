@@ -27,6 +27,8 @@ public class Action {
 
     public EnumMap<ActionParamEnum, String> parameters = new EnumMap<>(ActionParamEnum.class);
 
+
+    // Generated equals() on action & parameters attributes
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -41,6 +43,7 @@ public class Action {
         return parameters != null ? parameters.equals(action1.parameters) : action1.parameters == null;
     }
 
+    // Generated hashCode() on action & parameters attributes
     @Override
     public int hashCode() {
         int result = action != null ? action.hashCode() : 0;

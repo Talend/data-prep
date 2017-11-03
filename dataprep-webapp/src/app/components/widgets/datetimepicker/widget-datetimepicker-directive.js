@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import $ from 'jquery';
-
 /**
  * @ngdoc directive
  * @name talend.widget.directive:TalendDatetimePicker

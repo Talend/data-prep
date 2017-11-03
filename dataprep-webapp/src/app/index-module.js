@@ -13,7 +13,6 @@
 
 /* eslint-disable angular/window-service */
 
-import $ from 'jquery';
 import d3 from 'd3';
 import angular from 'angular';
 import moment from 'moment';
@@ -121,7 +120,10 @@ window.fetchConfiguration = function fetchConfiguration() {
 						d3.format = d3LocaleFr.numberFormat;
 						d3.time.format = d3LocaleFr.timeFormat;
 					}
-					$.datetimepicker.setLocale(preferredLanguage);
+
+					if($.datetimepicker) {
+						$.datetimepicker.setLocale(preferredLanguage);
+					}
 				})
 				// Fetch dynamic configuration
 				.run((SettingsService) => {

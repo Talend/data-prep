@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 function freezeOtherColumnsOnDrag(columns, { column, node }) {
 	const currentColumnIndex = columns.indexOf(column);
 

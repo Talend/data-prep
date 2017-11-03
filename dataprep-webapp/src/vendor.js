@@ -17,8 +17,7 @@ import 'animate.css';
 // Intro.js https://github.com/usablica/intro.js
 import 'intro.js';
 
-// Jquery + plugins
-import 'jquery';
+// Jquery plugins
 import 'jquery-ui';
 
 // Angular

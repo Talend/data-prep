@@ -19,6 +19,7 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 import java.io.StringWriter;
 import java.util.Locale;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -26,26 +27,24 @@ public class TDPExceptionTest {
 
     private TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
 
-    private static void setUpLocale() {
+    @Before
+    public void setUpLocale() {
         Locale.setDefault(Locale.US);
         LocaleContextHolder.setLocale(Locale.FRANCE);
     }
 
     @Test
     public void getMessage() throws Exception {
-        setUpLocale();
         assertThat(tdpException.getMessage(), startsWith("Sorry an unexpected error occurred and we could"));
     }
 
     @Test
     public void getLocalizedMessage() throws Exception {
-        setUpLocale();
         assertThat(tdpException.getLocalizedMessage(), startsWith("Une erreur inattendue est survenue"));
     }
 
     @Test
     public void getMessageTitle() throws Exception {
-        setUpLocale();
         assertThat(tdpException.getMessageTitle(), is("Une erreur est survenue"));
     }
 

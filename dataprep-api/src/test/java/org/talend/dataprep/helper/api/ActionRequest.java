@@ -28,10 +28,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class ActionRequest {
 
     @JsonProperty("actions")
-    public List<Action> actions = null;
+    private List<Action> actions = new ArrayList<>();
 
     public ActionRequest(Action action) {
-        this.actions = new ArrayList<>();
         this.actions.add(action);
+    }
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 }

@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-xdescribe('Statistics service', () => {
+describe('Statistics service', () => {
     const barChartNumCol = {
         domain: 'barchartAndNumeric',
         type: 'numeric',
@@ -2131,10 +2131,10 @@ xdescribe('Statistics service', () => {
                             });
                             done();
                         });
-                    setTimeout(() => _$rootScope.$digest(), 2000);
+                    setTimeout(() => _$rootScope.$digest(), 15000);
                 });
 
-                it('should set the range data frequency with no filters', () => {
+                it('should set the range data frequency with no filters', (done) => {
                     //given
                     stateMock.playground.grid.selectedColumns = [barChartDateCol];
                     stateMock.playground.filter.gridFilters = [];
@@ -2226,7 +2226,7 @@ xdescribe('Statistics service', () => {
                             });
                             done();
                         });
-                    setTimeout(() => _$rootScope.$digest(), 500);
+                    setTimeout(() => _$rootScope.$digest(), 15000);
                 });
 
                 it('should adapt date range label to century', () => {
@@ -2839,7 +2839,7 @@ xdescribe('Statistics service', () => {
                     });
                     done();
                 });
-            setTimeout(() => _$rootScope.$apply(), 2000);
+            setTimeout(() => _$rootScope.$apply(), 15000);
         });
 
         it('should update filtered Text column', () => {
@@ -2891,7 +2891,7 @@ xdescribe('Statistics service', () => {
                     },]);
                     done();
                 });
-            setTimeout(() => _$rootScope.$digest(), 2000);
+            setTimeout(() => _$rootScope.$digest(), 15000);
         });
 
         it('should NOT update filtered data when there is an aggregation', () => {

@@ -20,8 +20,11 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARAT
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.talend.ServiceBaseTest;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.exception.TDPException;
@@ -30,6 +33,12 @@ import org.talend.dataprep.exception.TDPException;
  * @TODO Add a support for internationalized messages
  */
 public class ErrorMessageTest extends ServiceBaseTest {
+
+    @BeforeClass
+    public static void setUpLocale() {
+        Locale.setDefault(Locale.US);
+        LocaleContextHolder.setLocale(Locale.US);
+    }
 
     @Test
     public void shouldReturnRightErrorMessageWhenHttpStatusIsZero() {

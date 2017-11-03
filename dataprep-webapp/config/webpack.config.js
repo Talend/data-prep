@@ -86,6 +86,7 @@ function getDefaultConfig(options) {
 			new webpack.ProvidePlugin({
 				$: 'jquery',
 				jQuery: 'jquery',
+				jquery: 'jquery',
 				'window.jQuery': 'jquery',
 			}),
 			// for compatibility, needed for some loaders

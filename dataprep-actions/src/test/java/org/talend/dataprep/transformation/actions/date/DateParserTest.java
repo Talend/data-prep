@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -81,6 +82,16 @@ public class DateParserTest extends BaseDateTest {
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("08-17-15", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", patterns)));
+    }
+
+    /**
+     * TDQ-14421 an invalid date like as 2017-02-30 should not be parsed to 2017-02-28
+     */
+    @Test(expected = DateTimeException.class)
+    public void shouldNotParseDateFromPatternsOnInvalid_date() throws ParseException {
+        final List<DatePattern> patterns = new ArrayList<>();
+        patterns.add(new DatePattern("yyyy-MM-dd", 1));
+        action.parseDateFromPatterns("2017-02-30", patterns).getDayOfMonth();
     }
 
     @Test

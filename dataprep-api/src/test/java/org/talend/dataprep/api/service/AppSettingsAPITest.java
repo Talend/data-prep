@@ -105,7 +105,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalHelp.getIcon(), is("talend-question-circle"));
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
-        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("header"));
+        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("/header?content-lang=en"));
 
         final ActionSettings inventoryCancelEdit = settings.getActions().get("inventory:cancel-edit");
         assertThat(inventoryCancelEdit.getName(), is("Cancel name edition"));

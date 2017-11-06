@@ -24,6 +24,7 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.i18n.ActionsBundle;
+import org.talend.dataprep.i18n.DocumentationLinkGenerator;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -105,7 +106,12 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     @Override
     public String getDocUrl(Locale locale) {
-        return ActionsBundle.actionDocUrl(this, locale, getName());
+        String actionDocUrl = ActionsBundle.actionDocUrl(this, locale, getName());
+        return DocumentationLinkGenerator
+                .builder() //
+                .url(actionDocUrl) //
+                .locale(locale) //
+                .build();
     }
 
     /**
@@ -161,7 +167,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      * {@link ActionContext.ActionStatus#CANCELED}.
      *
      * @param actionContext The action context that contains the parameters and allows compile step to change action
-     *                      status.
+     * status.
      * @see ActionContext#setActionStatus(ActionContext.ActionStatus)
      */
     @Override
@@ -200,7 +206,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * @return The list of parameters required for this Action to be executed.
      *
-     * @param locale*/
+     * @param locale
+     */
     @Override
     public List<Parameter> getParameters(Locale locale) {
         return ImplicitParameters.getParameters(locale);

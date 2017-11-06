@@ -1,17 +1,11 @@
 package org.talend.dataprep.help;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DocumentationLinksManager {
-
-    private static final String LANGUAGE_PARAMETER = "afs:lang";
-
-    @Value("${help.facets.language:}")
-    private String languageFacet;
 
     @Value("${help.facets.version:}")
     private String versionFacet;
@@ -30,9 +24,6 @@ public class DocumentationLinksManager {
     }
 
     public String getLanguageFacet() {
-        if (StringUtils.isNotEmpty(languageFacet)) {
-            return languageFacet;
-        }
         return LocaleContextHolder.getLocale().toString();
     }
 
@@ -45,6 +36,7 @@ public class DocumentationLinksManager {
     }
 
     public String getExactUrl() {
-        return exactUrl + "&" + LANGUAGE_PARAMETER + "=" + getLanguageFacet();
+        return this.exactUrl;
     }
+
 }

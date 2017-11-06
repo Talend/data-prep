@@ -58,7 +58,12 @@ public class HelpProvider implements AppSettingsProvider<HelpSettings> {
                 HelpSettings
                         .builder() //
                         .id("fuzzyUrl") //
-                        .value(documentationLinksManager.getFuzzyUrl()) //
+                        .value(DocumentationLinkGenerator //
+                                .builder() //
+                                .url(documentationLinksManager.getFuzzyUrl()) //
+                                .locale(LocaleContextHolder.getLocale()) //
+                                .addContentLangParameter(true) //
+                                .build()) //
                         .build(), //
 
                 HelpSettings
@@ -68,6 +73,7 @@ public class HelpProvider implements AppSettingsProvider<HelpSettings> {
                                 .builder() //
                                 .url(documentationLinksManager.getExactUrl()) //
                                 .locale(LocaleContextHolder.getLocale()) //
+                                .addAfsLanguageParameter(true) //
                                 .build()) //
                         .build());
     }

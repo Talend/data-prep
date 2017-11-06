@@ -23,14 +23,27 @@ public class DocumentationLinkGeneratorTest {
     private String currentDocUrl = "https://help.talend.com/";
 
     @Test
-    public void generateDocumentationLink() throws Exception {
-        String finalDocUrl = DocumentationLinkGenerator
+    public void generateDocumentationLinkWithAFSParameter() throws Exception {
+        final String finalDocUrl = DocumentationLinkGenerator
                 .builder() //
                 .url(currentDocUrl) //
-                .locale(Locale.FRENCH) //
+                .locale(Locale.FRANCE) //
+                .addAfsLanguageParameter(true)
                 .build();
 
         assertEquals("https://help.talend.com/?afs%3Alang=fr", finalDocUrl);
+    }
+
+    @Test
+    public void generateDocumentationLinkWithContentLangParameter() throws Exception {
+        final String finalDocUrl = DocumentationLinkGenerator
+                .builder() //
+                .url(currentDocUrl) //
+                .locale(Locale.FRANCE) //
+                .addContentLangParameter(true)
+                .build();
+
+        assertEquals("https://help.talend.com/?content-lang=fr", finalDocUrl);
     }
 
 }

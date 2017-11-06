@@ -111,6 +111,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
                 .builder() //
                 .url(actionDocUrl) //
                 .locale(locale) //
+                .addAfsLanguageParameter(true)
                 .build();
     }
 

@@ -13,13 +13,15 @@
 
 package org.talend.dataprep.api.service.settings.actions.provider;
 
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 import org.talend.dataprep.help.CommunityLinksManager;
 import org.talend.dataprep.help.DocumentationLinksManager;
-
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.*;
+import org.talend.dataprep.i18n.DocumentationLinkGenerator;
 
 @Component
 public class ExternalHelpActionsProvider {
@@ -37,7 +39,12 @@ public class ExternalHelpActionsProvider {
                 .icon("talend-question-circle")
                 .type("@@external/OPEN_WINDOW")
                 .payload(PAYLOAD_METHOD_KEY, "open")
-                .payload(PAYLOAD_ARGS_KEY, new String[]{documentationLinksManager.getFuzzyUrl() + "header"})
+                .payload(PAYLOAD_ARGS_KEY, new String[] { DocumentationLinkGenerator //
+                        .builder() //
+                        .url(documentationLinksManager.getFuzzyUrl() + "header") //
+                        .locale(LocaleContextHolder.getLocale()) //
+                        .addContentLangParameter(true) //
+                        .build() })
                 .build();
     }
 
@@ -47,7 +54,7 @@ public class ExternalHelpActionsProvider {
                 .name("external.community")
                 .type("@@external/OPEN_WINDOW")
                 .payload(PAYLOAD_METHOD_KEY, "open")
-                .payload(PAYLOAD_ARGS_KEY, new String[]{communityLinksManager.getCommunityUrl()})
+                .payload(PAYLOAD_ARGS_KEY, new String[] { communityLinksManager.getCommunityUrl() })
                 .build();
     }
 }

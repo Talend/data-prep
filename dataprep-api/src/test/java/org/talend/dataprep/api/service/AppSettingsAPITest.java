@@ -497,9 +497,13 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final String localSettings = settings.getContext().get("locale");
+        final String localeFull = settings.getContext().get("locale");
+        final String country = settings.getContext().get("country");
+        final String language = settings.getContext().get("language");
 
-        assertThat(localSettings, is(Locale.US.toString()));
+        assertThat(localeFull, is(Locale.US.toLanguageTag()));
+        assertThat(country, is(Locale.US.getCountry()));
+        assertThat(language, is(Locale.US.getLanguage()));
     }
 
 }

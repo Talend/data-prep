@@ -29,7 +29,7 @@ import org.springframework.context.i18n.SimpleLocaleContext;
 @RunWith(MockitoJUnitRunner.class)
 public class DataprepLocaleContextResolverTest {
 
-    private static final String TEST_LOCALE = "vi_VN";
+    private static final String TEST_LOCALE = "vi-VN";
 
     @Mock
     private HttpServletRequest request;
@@ -43,7 +43,7 @@ public class DataprepLocaleContextResolverTest {
 
         LocaleContext localeContext = resolver.resolveLocaleContext(request);
         assertNotNull(localeContext);
-        assertEquals(TEST_LOCALE, localeContext.getLocale().toString());
+        assertEquals(TEST_LOCALE, localeContext.getLocale().toLanguageTag());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class DataprepLocaleContextResolverTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void setLocaleContext() throws Exception {
-        new DataprepLocaleContextResolver("en_US").setLocaleContext(request, response, new SimpleLocaleContext(Locale.FRANCE));
+        new DataprepLocaleContextResolver("en-US").setLocaleContext(request, response, new SimpleLocaleContext(Locale.FRANCE));
     }
 
 }

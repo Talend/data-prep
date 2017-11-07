@@ -95,8 +95,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 				})
 				.config(($translateProvider) => {
 					'ngInject';
-					const locale = (appSettings.context && appSettings.context.locale) || fallbackLng;
-					preferredLanguage = locale.split('_')[0];
+					const preferredLanguage = (appSettings.context && appSettings.context.language) || fallbackLng;
 
 					$translateProvider.preferredLanguage(preferredLanguage);
 					i18n.changeLanguage(preferredLanguage);
@@ -121,7 +120,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 						d3.time.format = d3LocaleFr.timeFormat;
 					}
 
-					if($.datetimepicker) {
+					if ($.datetimepicker) {
 						$.datetimepicker.setLocale(preferredLanguage);
 					}
 				})

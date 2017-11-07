@@ -11,9 +11,6 @@ public class FoldersRepositoriesConstants {
      */
     public static final Character PATH_SEPARATOR = '/';
 
-    /** Constant for HOME_FOLDER. */
-    public static final String HOME_FOLDER_KEY = "HOME";
-
     /** Constant for the content type string. */
     public static final String CONTENT_TYPE = "contentType";
 

@@ -23,7 +23,6 @@ import org.talend.ServiceBaseTest;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
-
 public class DataprepLocaleContextResolverIntegrationTest extends ServiceBaseTest {
 
     @Test
@@ -40,7 +39,7 @@ public class DataprepLocaleContextResolverIntegrationTest extends ServiceBaseTes
         @RequestMapping("get_my_test_locale")
         @ResponseBody
         public String getLocale() {
-            return LocaleContextHolder.getLocale().toString();
+            return LocaleContextHolder.getLocale().toLanguageTag();
         }
 
     }

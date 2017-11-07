@@ -42,7 +42,7 @@ import java.util.Locale;
         "live.dataset.location=tac", "dataprep.locale:" + TEST_LOCALE })
 public abstract class ServiceBaseTest {
 
-    public static final String TEST_LOCALE = "en_US";
+    public static final String TEST_LOCALE = "en-US";
 
     @Configuration
     @ComponentScan(basePackages = { "org.talend.daikon.content", "org.talend.dataprep" })

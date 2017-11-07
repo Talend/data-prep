@@ -31,11 +31,22 @@ public class ContextProvider implements AppSettingsProvider<ContextSettings> {
     @Override
     public List<ContextSettings> getSettings() {
 
-        return asList(
-                ContextSettings.builder()
-                        .id("locale")
-                        .value(LocaleContextHolder.getLocale().toString())
-                        .build()
+        return asList( //
+                ContextSettings
+                        .builder() //
+                        .id("locale") //
+                        .value(LocaleContextHolder.getLocale().toLanguageTag()) //
+                        .build(), //
+                ContextSettings
+                        .builder() //
+                        .id("country") //
+                        .value(LocaleContextHolder.getLocale().getCountry()) //
+                        .build(), //
+                ContextSettings
+                        .builder() //
+                        .id("language") //
+                        .value(LocaleContextHolder.getLocale().getLanguage()) //
+                        .build() //
         );
     }
 }

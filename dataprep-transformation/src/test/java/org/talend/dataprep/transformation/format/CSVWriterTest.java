@@ -29,7 +29,7 @@ import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWri
 
 /**
  * Unit test for the CSVWriter.
- * 
+ *
  * @see CSVWriter
  */
 public class CSVWriterTest extends AbstractTransformerWriterTest {
@@ -75,6 +75,69 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // then
 
         final String expectedCsv = "\"song\"\t\"band\"\n" + "\"last nite\"\t\"the Strokes\"\n";
+        assertThat(temp.toString()).isEqualTo(expectedCsv);
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-4390
+     */
+    @Test
+    public void should_write_with_any_escape_character() throws Exception {
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(CSVWriter.ESCAPE_CHARACTER_PARAM_NAME, "#");
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("band").type(Type.STRING).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "last \"nite");
+        values.put("0002", "the Strokes");
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        // when
+        tabWriter.write(row);
+        tabWriter.write(rowMetadata);
+        tabWriter.flush();
+
+        // then
+
+        final String expectedCsv = "\"song\",\"band\"\n" + "\"last #\"nite\",\"the Strokes\"\n";
+        assertThat(temp.toString()).isEqualTo(expectedCsv);
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-4390
+     */
+    @Test
+    public void should_use_backslash_as_default_escape_character() throws Exception {
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("band").type(Type.STRING).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "last \"nite");
+        values.put("0002", "the Strokes");
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        // when
+        tabWriter.write(row);
+        tabWriter.write(rowMetadata);
+        tabWriter.flush();
+
+        // then
+
+        final String expectedCsv = "\"song\",\"band\"\n" + "\"last \\\"nite\",\"the Strokes\"\n";
         assertThat(temp.toString()).isEqualTo(expectedCsv);
     }
 

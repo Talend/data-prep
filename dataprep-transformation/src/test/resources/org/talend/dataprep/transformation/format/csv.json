@@ -46,6 +46,16 @@
       "default": ";"
     },
     {
+      "name": "csv_escape_character",
+      "type": "string",
+      "implicit": false,
+      "canBeBlank": true,
+      "placeHolder": "",
+      "description": "Select character to use as escape character",
+      "label": "Escape character",
+      "default": ""
+    },
+    {
       "name": "fileName",
       "type": "string",
       "implicit": false,

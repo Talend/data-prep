@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.folder.store.file;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class FolderPath {
         if (path.length > 0) {
             folderName = path[path.length - 1];
         } else {
-            folderName = null;
+            folderName = EMPTY;
         }
         return folderName;
     }

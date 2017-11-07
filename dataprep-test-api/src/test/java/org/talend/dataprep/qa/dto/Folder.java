@@ -6,4 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Folder {
 
     public String path;
+
+    public String id;
 }

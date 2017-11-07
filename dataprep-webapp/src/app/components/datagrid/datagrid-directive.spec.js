@@ -78,7 +78,6 @@ describe('Datagrid directive', () => {
         spyOn(DatagridStyleService, 'updateColumnsClass').and.returnValue();
         spyOn(DatagridExternalService, 'updateSuggestionPanel').and.returnValue();
         spyOn(DatagridExternalService, 'updateGridRangeIndex').and.returnValue();
-        spyOn(DatagridExternalService, 'initSuggestionPanelDatasetTab');
         spyOn(StateService, 'setGridSelection').and.returnValue();
     }));
 
@@ -122,11 +121,6 @@ describe('Datagrid directive', () => {
             it('should init tooltip ruler', inject(() => {
                 //then
                 expect(stateMock.playground.grid.tooltipRuler).toBeDefined();
-            }));
-
-            it('should init dataset tab actions', inject((DatagridExternalService) => {
-                //then
-                expect(DatagridExternalService.initSuggestionPanelDatasetTab).toHaveBeenCalled();
             }));
         });
 

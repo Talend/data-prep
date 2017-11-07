@@ -80,6 +80,9 @@ export default class DatagridExternalService {
 			this.StatisticsService.reset();
 		}
 
+		// fetch 'dataset' actions
+		this.TransformationService.initTransformations('dataset');
+
         // update line scope transformations if line has changed
 		if (this.lastSelectedLine && lineHasChanged) {
 			this.TransformationService.initTransformations('line');
@@ -103,10 +106,6 @@ export default class DatagridExternalService {
                 selectedCols
             );
 		}
-	}
-
-	initSuggestionPanelDatasetTab() {
-		this.TransformationService.initTransformations('dataset');
 	}
 
 	updateGridRangeIndex() {

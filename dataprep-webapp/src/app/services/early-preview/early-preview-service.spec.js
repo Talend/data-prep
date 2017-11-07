@@ -126,15 +126,6 @@ describe('Early Preview Service', () => {
                     value: 'James',
                     replace: 'Jimmy',
                     scope: 'dataset',
-                    column_id: firstnameColumn.id,
-                    column_name: firstnameColumn.name,
-                },
-                {
-                    value: 'James',
-                    replace: 'Jimmy',
-                    scope: 'dataset',
-                    column_id: lastnameColumn.id,
-                    column_name: lastnameColumn.name,
                 }
             ];
             expect(PreviewService.getPreviewAddRecords).toHaveBeenCalledWith(

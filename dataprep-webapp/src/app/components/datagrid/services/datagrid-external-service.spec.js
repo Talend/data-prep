@@ -113,8 +113,11 @@ describe('Datagrid external service', () => {
             }));
 
             it('should init dataset tab actions', inject((DatagridExternalService, TransformationService) => {
+                // given
+                stateMock.playground.grid.selectedColumns = [];
+
                 // when
-                DatagridExternalService.initSuggestionPanelDatasetTab();
+                DatagridExternalService.updateSuggestionPanel();
 
                 // then
                 expect(TransformationService.initTransformations).toHaveBeenCalledWith('dataset');
@@ -162,24 +165,11 @@ describe('Datagrid external service', () => {
         });
 
         describe('transformations', () => {
-            it('should do nothing if selected column/line have not changed', inject((DatagridExternalService, TransformationService) => {
-                // given
-                expect(TransformationService.initTransformations).not.toHaveBeenCalled();
-                stateMock.playground.grid.selectedColumns = [];
-
-                // when
-                DatagridExternalService.updateSuggestionPanel();
-
-                // then
-                expect(TransformationService.initTransformations).not.toHaveBeenCalled();
-            }));
-
             describe('line scope', () => {
                 it('should update when there is a selected line', inject((DatagridExternalService, TransformationService) => {
                     // given
                     stateMock.playground.grid.selectedLine = { tdpId: 125 };
                     stateMock.playground.grid.selectedColumns = [];
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
 
                     // when
                     DatagridExternalService.updateSuggestionPanel();
@@ -192,7 +182,6 @@ describe('Datagrid external service', () => {
                     // given
                     stateMock.playground.grid.selectedLine = null;
                     stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
 
                     // when
                     DatagridExternalService.updateSuggestionPanel();
@@ -206,7 +195,6 @@ describe('Datagrid external service', () => {
                     const selectedLine = { tdpId: 125 };
                     stateMock.playground.grid.selectedLine = selectedLine;
                     DatagridExternalService.lastSelectedLine = selectedLine;
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
 
                     stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
 
@@ -222,7 +210,6 @@ describe('Datagrid external service', () => {
                 it('should update when there is a selected column', inject((DatagridExternalService, TransformationService) => {
                     // given
                     stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
 
                     // when
                     DatagridExternalService.updateSuggestionPanel();
@@ -248,13 +235,11 @@ describe('Datagrid external service', () => {
                     // given
                     stateMock.playground.grid.selectedLine = { tdpId: 125 };
                     stateMock.playground.grid.selectedColumns = [];
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
 
                     // when
                     DatagridExternalService.updateSuggestionPanel();
 
                     // then : it should init only line transfo, not column
-                    expect(TransformationService.initTransformations.calls.count()).toBe(1);
                     expect(TransformationService.initTransformations).toHaveBeenCalledWith('line');
                 }));
 
@@ -264,13 +249,12 @@ describe('Datagrid external service', () => {
                     stateMock.playground.grid.selectedColumns = [selectedColumn];
                     DatagridExternalService.lastSelectedColumn = selectedColumn;
                     DatagridExternalService.lastSelectedColumnsNumber = 1;
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
 
                     // when
                     DatagridExternalService.updateSuggestionPanel();
 
                     // then
-                    expect(TransformationService.initTransformations).not.toHaveBeenCalled();
+                    expect(TransformationService.initTransformations).not.toHaveBeenCalledWith('column');
                 }));
             });
         });

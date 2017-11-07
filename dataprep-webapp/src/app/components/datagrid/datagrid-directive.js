@@ -170,9 +170,6 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
                         500,
                         false
                     );
-
-					// fetch 'dataset' actions
-					DatagridExternalService.initSuggestionPanelDatasetTab();
 				}
 			};
 

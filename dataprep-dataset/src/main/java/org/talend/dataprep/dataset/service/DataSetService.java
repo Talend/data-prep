@@ -1045,7 +1045,7 @@ public class DataSetService extends BaseDataSetService {
             parametersToReturn = emptyList();
         } else {
             if (matchingDatasetLocation.isSchemaOriented()) {
-                parametersToReturn = matchingDatasetLocation.getParametersAsSchema();
+                parametersToReturn = matchingDatasetLocation.getParametersAsSchema(getLocale());
             } else {
                 parametersToReturn = matchingDatasetLocation.getParameters(getLocale());
             }
@@ -1068,8 +1068,8 @@ public class DataSetService extends BaseDataSetService {
                 parametersToReturn = emptyList();
             } else {
                 if (matchingDatasetLocation.isSchemaOriented()) {
-                    ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema();
-                    parametersAsSchema.setProperties(dataSetMetadata.getLocation().getParametersAsSchema().getProperties());
+                    ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema(getLocale());
+                    parametersAsSchema.setProperties(dataSetMetadata.getLocation().getParametersAsSchema(getLocale()).getProperties());
                     parametersToReturn = parametersAsSchema;
                 } else {
                     parametersToReturn = matchingDatasetLocation.getParameters(getLocale());

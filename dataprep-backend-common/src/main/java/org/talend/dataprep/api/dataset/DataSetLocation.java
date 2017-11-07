@@ -65,12 +65,12 @@ public interface DataSetLocation extends Serializable {
      * If available, the json schema representation of the parameters.
      */
     @JsonIgnore
-    ComponentProperties getParametersAsSchema();
+    ComponentProperties getParametersAsSchema(Locale locale);
 
     /**
      * Tell user if he should call the Dataprep internal {@link #getParameters(Locale)} or the TComp oriented {@link #getParametersAsSchema()}.
      *
-     * @return true if {@link #getParametersAsSchema()} should be use, false for {@link #getParameters(Locale)}
+     * @return true if {@link #getParametersAsSchema(Locale)} should be use, false for {@link #getParameters(Locale)}
      */
     @JsonIgnore
     boolean isSchemaOriented();

@@ -53,7 +53,7 @@ public class LocalStoreLocation implements DataSetLocation {
     }
 
     @Override
-    public ComponentProperties getParametersAsSchema() { return null; }
+    public ComponentProperties getParametersAsSchema(Locale locale) { return null; }
 
     @Override
     public boolean isSchemaOriented() { return false; }

@@ -42,6 +42,7 @@ public class CSVFormat extends ExportFormat {
             .radio(true) //
             .build();
 
+
     /**
      * Default constructor.
      */
@@ -49,6 +50,7 @@ public class CSVFormat extends ExportFormat {
         //@formatter:off
         super("CSV", "text/csv", ".csv", true, false,
                 Arrays.asList(CSV_DELIMITERS,
+                new Parameter("csv_escape_character", ParameterType.STRING, StringUtils.EMPTY), //
                 new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false) //
         ));
         //@formatter:on

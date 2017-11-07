@@ -44,8 +44,14 @@ public class CSVWriter extends AbstractTransformerWriter {
     /** The default separator. */
     private static final Character DEFAULT_SEPARATOR = ',';
 
+    /** The default escape character. */
+    private static final Character DEFAULT_ESCAPE_CHARACTER = '\\';
+
     /** Separator argument name. */
     public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csv_fields_delimiter";
+
+    /** Escape character argument name. */
+    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + "csv_escape_character";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVWriter.class);
 
@@ -53,9 +59,20 @@ public class CSVWriter extends AbstractTransformerWriter {
 
     private final char separator;
 
+    private final char escapeCharacter;
+
     private final File bufferFile;
 
     private final au.com.bytecode.opencsv.CSVWriter recordsWriter;
+
+    private char getParameterValue(Map<String, String> parameters, String parameterName, char defaultValue) {
+        String parameter = parameters.get(parameterName);
+        if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
+            return String.valueOf(defaultValue).charAt(0);
+        } else {
+            return parameter.charAt(0);
+        }
+    }
 
     /**
      * Simple constructor with default separator value.
@@ -70,19 +87,17 @@ public class CSVWriter extends AbstractTransformerWriter {
      * Constructor.
      *
      * @param output where to write the dataset.
-     * @param parameters parameters to get the separator from.
+     * @param parameters parameters to get the separator and the escape character from.
      */
     public CSVWriter(final OutputStream output, Map<String, String> parameters) {
         try {
             this.output = output;
-            String separatorParameter = parameters.get(SEPARATOR_PARAM_NAME);
-            if (separatorParameter == null || StringUtils.isEmpty(separatorParameter) || separatorParameter.length() > 1) {
-                this.separator = String.valueOf(DEFAULT_SEPARATOR).charAt(0);
-            } else {
-                this.separator = separatorParameter.charAt(0);
-            }
+
+            this.separator = this.getParameterValue(parameters, SEPARATOR_PARAM_NAME, DEFAULT_SEPARATOR);
+            this.escapeCharacter = this.getParameterValue(parameters, ESCAPE_CHARACTER_PARAM_NAME, DEFAULT_ESCAPE_CHARACTER);
+
             bufferFile = File.createTempFile("csvWriter", ".csv");
-            recordsWriter = new au.com.bytecode.opencsv.CSVWriter(new FileWriter(bufferFile), separator);
+            recordsWriter = new au.com.bytecode.opencsv.CSVWriter(new FileWriter(bufferFile), separator, '"', escapeCharacter);
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_USE_EXPORT, e);
         }
@@ -101,7 +116,7 @@ public class CSVWriter extends AbstractTransformerWriter {
         // write the columns names
         String[] columnsName = rowMetadata.getColumns().stream().map(ColumnMetadata::getName).toArray(String[]::new);
         au.com.bytecode.opencsv.CSVWriter csvWriter = //
-        new au.com.bytecode.opencsv.CSVWriter(new OutputStreamWriter(output), separator);
+        new au.com.bytecode.opencsv.CSVWriter(new OutputStreamWriter(output), separator, '"', escapeCharacter);
         csvWriter.writeNext(columnsName);
         csvWriter.flush();
         // Write buffered records
@@ -111,7 +126,6 @@ public class CSVWriter extends AbstractTransformerWriter {
         } finally {
             recordsWriter.close();
         }
-
     }
 
 
@@ -127,5 +141,4 @@ public class CSVWriter extends AbstractTransformerWriter {
             LOGGER.warn("Unable to delete temporary file '{}'", bufferFile, e);
         }
     }
-
 }

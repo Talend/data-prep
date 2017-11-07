@@ -42,7 +42,7 @@ public class FolderStep extends DataPrepStep {
         String folder = params.get(FOLDER_NAME);
 
         List<Folder> folders = listFolders();
-        Folder parentFolder  = getFolder(parentFolderName, folders);
+        Folder parentFolder = extractFolder(parentFolderName, folders);
 
         Response response = api.createFolder(parentFolder.id, folder);
         response.then().statusCode(200);
@@ -76,20 +76,14 @@ public class FolderStep extends DataPrepStep {
     }
 
     /**
-     * Get an existing folder from it's full path.
+     * Search a {@link Folder} full path in a {@link List} of {@link Folder} and return the corresponding {@link Folder}.
      *
      * @param folderPath the folder full path.
-     * @param folders a {@link List} of {@link Folder} if the {@link FolderStep#listFolders()} has already been called.
+     * @param folders the {@link List} of {@link Folder}
      * @return a {@link Folder} or <code>null</code> if the folder doesn't exist.
      */
-    public Folder getFolder(String folderPath, List<Folder>... folders) throws IOException {
-        List<Folder> folderList;
-        if (folders.length == 0) {
-            folderList = listFolders();
-        } else {
-            folderList = folders[0];
-        }
-        Optional<Folder> folderOpt = folderList.stream().filter(f -> f.path.equals(folderPath)).findFirst();
+    public Folder extractFolder(String folderPath, List<Folder> folders) throws IOException {
+        Optional<Folder> folderOpt = folders.stream().filter(f -> f.path.equals(folderPath)).findFirst();
         Assert.assertTrue(folderOpt.isPresent());
         return folderOpt.get();
     }

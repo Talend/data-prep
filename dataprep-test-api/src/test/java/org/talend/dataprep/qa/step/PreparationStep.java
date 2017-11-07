@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -93,11 +92,11 @@ public class PreparationStep extends DataPrepStep {
     @Then("^I move the preparation \"(.*)\" with the following parameters :$")
     public void movePreparation(String preparationName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        Folder originFolder = folderStep.getFolder(params.get(ORIGIN));
-        Folder destFolder = folderStep.getFolder(params.get(DESTINATION));
+        List<Folder> folders = folderStep.listFolders();
+        Folder originFolder = folderStep.extractFolder(params.get(ORIGIN), folders);
+        Folder destFolder = folderStep.extractFolder(params.get(DESTINATION), folders);
         String prepId = context.getPreparationId(preparationName);
-        Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,
-                params.get(NEW_PREPARATION_NAME));
+        Response response = api.movePreparation(prepId, originFolder.id, destFolder.id, params.get(NEW_PREPARATION_NAME));
         response.then().statusCode(200);
     }
 

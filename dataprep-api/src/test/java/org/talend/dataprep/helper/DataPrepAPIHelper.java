@@ -329,16 +329,16 @@ public class DataPrepAPIHelper {
     /**
      * Create a new folder.
      *
-     * @param parentFolder the parent folder.
+     * @param parentFolderId the parent folder id.
      * @param folder the folder to create.
      * @return the response.
      */
-    public Response createFolder(String parentFolder, String folder) {
+    public Response createFolder(String parentFolderId, String folder) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
                 .when() //
-                .put("/api/folders?parentId=" + encode64(parentFolder) + "&path=" + folder);
+                .put("/api/folders?parentId=" + parentFolderId + "&path=" + folder);
     }
 
     /**
@@ -382,9 +382,21 @@ public class DataPrepAPIHelper {
                 .urlEncodingEnabled(false) //
                 .when() //
                 .put("/api/preparations/" + prepId //
-                        + "/move?folder=" + encode64(folderSrc) //
-                        + "&destination=" + encode64(folderDest) //
+                        + "/move?folder=" + folderSrc //
+                        + "&destination=" + folderDest //
                         + "&newName=" + prepName);
+    }
+
+    /**
+     * Get the user information.
+     *
+     * @return the response.
+     */
+    public Response getUserInformation() {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/user");
     }
 
     /**
@@ -396,4 +408,5 @@ public class DataPrepAPIHelper {
     public String encode64(String value) {
         return Base64.getEncoder().encodeToString(value.getBytes());
     }
+
 }

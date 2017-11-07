@@ -13,11 +13,12 @@
 
 package org.talend.dataprep.helper.api;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * Created by vferreira on 01/08/17.
@@ -27,33 +28,17 @@ import com.fasterxml.jackson.annotation.*;
 public class ActionRequest {
 
     @JsonProperty("actions")
-    private List<Action> actions = null;
+    private List<Action> actions = new ArrayList<>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    public ActionRequest(List actions) {
-        this.actions = actions;
+    public ActionRequest(Action action) {
+        this.actions.add(action);
     }
 
-    @JsonProperty("actions")
     public List<Action> getActions() {
         return actions;
     }
 
-    @JsonProperty("actions")
     public void setActions(List<Action> actions) {
         this.actions = actions;
     }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
 }

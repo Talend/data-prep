@@ -30,26 +30,20 @@
     </prerequisites>
     <properties>
         <docker.image.name>kkarczmarczyk/node-yarn</docker.image.name>
-        <docker.path.dataprep>/data-prep</docker.path.dataprep>
         <node.version>v7.7.4</node.version>
-        <yarn.version>v0.27.5</yarn.version>
+        <yarn.version>v1.1.0</yarn.version>
         <git.branch.name></git.branch.name>
         <git.commit.id.abbrev></git.commit.id.abbrev>
     </properties>
     <profiles>
         <profile>
             <id>dev</id>
-            <activation>
-                <property>
-                    <name>!use.docker.tool</name>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>install node and yarn</id>
@@ -87,6 +81,7 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
+                                    <skip>${skipTests}</skip>
                                     <arguments>test</arguments>
                                 </configuration>
                             </execution>
@@ -144,91 +139,51 @@
         </profile>
         <profile>
             <id>ci</id>
-            <activation>
-                <property>
-                    <name>use.docker.tool</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.6</version>
                         <executions>
                             <execution>
-                                <id>docker pull ${docker.image.name}</id>
+                                <id>install node and yarn</id>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>install-node-and-yarn</goal>
                                 </goals>
-                                <phase>pre-clean</phase>
                                 <configuration>
-                                    <executable>docker</executable>
-                                    <arguments>
-                                        <argument>pull</argument>
-                                        <argument>${docker.image.name}</argument>
-                                    </arguments>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <yarnVersion>${yarn.version}</yarnVersion>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>(docker) yarn install</id>
+                                <id>yarn install</id>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>yarn</goal>
                                 </goals>
-                                <phase>initialize</phase>
                                 <configuration>
-                                    <executable>docker</executable>
-                                    <arguments>
-                                        <argument>run</argument>
-                                        <argument>-v</argument>
-                                        <argument>${basedir}:${docker.path.dataprep}</argument>
-                                        <argument>--rm=true</argument>
-                                        <argument>${docker.image.name}</argument>
-                                        <argument>/bin/sh</argument>
-                                        <argument>-c</argument>
-                                        <argument>cd ${docker.path.dataprep} &amp;&amp; yarn install --force</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <!-- generate the dist application (it is not used for the tests) but during the docker packaging it is and it a good test to know the build passes. -->
-                            <execution>
-                                <id>(docker) yarn run build:dist</id>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>compile</phase>
-                                <configuration>
-                                    <executable>docker</executable>
-                                    <arguments>
-                                        <argument>run</argument>
-                                        <argument>-v</argument>
-                                        <argument>${basedir}:${docker.path.dataprep}</argument>
-                                        <argument>--rm=true</argument>
-                                        <argument>${docker.image.name}</argument>
-                                        <argument>/bin/sh</argument>
-                                        <argument>-c</argument>
-                                        <argument>cd ${docker.path.dataprep} &amp;&amp; yarn run build:dist</argument>
-                                    </arguments>
+                                    <arguments>install --force --prefer-offline</arguments>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>(docker) yarn run test:ci</id>
+                                <id>yarn run build:dist</id>
+                                <phase>generate-resources</phase>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>yarn</goal>
                                 </goals>
+                                <configuration>
+                                    <arguments>run build:dist</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>yarn run test:ci</id>
                                 <phase>test</phase>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
                                 <configuration>
-                                    <executable>docker</executable>
-                                    <arguments>
-                                        <argument>run</argument>
-                                        <argument>-v</argument>
-                                        <argument>${basedir}:${docker.path.dataprep}</argument>
-                                        <argument>--rm=true</argument>
-                                        <argument>${docker.image.name}</argument>
-                                        <argument>/bin/sh</argument>
-                                        <argument>-c</argument>
-                                        <argument>cd ${docker.path.dataprep} &amp;&amp; yarn run test:ci</argument>
-                                    </arguments>
+                                    <skip>${skipTests}</skip>
+                                    <arguments>run test:ci</arguments>
                                 </configuration>
                             </execution>
                         </executions>
@@ -292,4 +247,3 @@
         </profile>
     </profiles>
 </project>
-

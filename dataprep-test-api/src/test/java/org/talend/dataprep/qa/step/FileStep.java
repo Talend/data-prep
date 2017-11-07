@@ -42,11 +42,11 @@ public class FileStep extends DataPrepStep {
         LOG.debug("I check that {} temporary file equals {} file", temporaryFilename, expectedCSVFilename);
 
         File tempFile = context.getTempFile(temporaryFilename);
-        InputStream tempFileStream = Files.newInputStream(tempFile.toPath());
-        InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedCSVFilename);
-        if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-            fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedCSVFilename);
+        try (InputStream tempFileStream = Files.newInputStream(tempFile.toPath());
+                InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedCSVFilename)) {
+            if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
+                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedCSVFilename);
+            }
         }
     }
-
 }

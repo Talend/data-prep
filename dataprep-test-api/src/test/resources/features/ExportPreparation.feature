@@ -1,12 +1,12 @@
 Feature: Export Preparation
 
   Scenario: Verify transformation result
-    Given I upload the dataset "/data/simpleCSV.csv" with name "simpleCSV"
-    And I create a preparation with name "myFirstPreparation", based on "simpleCSV" dataset
+    Given I upload the dataset "/data/3L3C.csv" with name "3L3C_dataset"
+    And I create a preparation with name "3L3C_preparation", based on "3L3C_dataset" dataset
     When I add a step with parameters :
-      | actionName      | uppercase          |
-      | columnName      | lastname           |
-      | columnId        | 0001               |
-      | preparationName | myFirstPreparation |
-    And I export the preparation "myFirstPreparation" on the dataset "simpleCSV" and export the result in "myResult.csv" temporary file.
-    Then I check that "myResult.csv" temporary file equals "/data/simpleCSV_processed.csv" file
+      | actionName      | uppercase        |
+      | columnName      | lastname         |
+      | columnId        | 0001             |
+      | preparationName | 3L3C_preparation |
+    And I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result in "3L3C_result.csv" temporary file.
+    Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_processed.csv" file

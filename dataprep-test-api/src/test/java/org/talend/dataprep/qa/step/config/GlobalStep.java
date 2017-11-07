@@ -13,9 +13,10 @@
 
 package org.talend.dataprep.qa.step.config;
 
-import cucumber.api.java.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import cucumber.api.java.After;
 
 /**
  * Storage for Before and After actions.
@@ -32,7 +33,8 @@ public class GlobalStep extends DataPrepStep {
      * This method must be called on the last scenario of each feature in order to keep the tests reentrant.
      * It also can be called on demand to clean the context for the next scenario.
      */
-    @After("@CleanAfter") public void cleanAfter() {
+    @After("@CleanAfter")
+    public void cleanAfter() {
         LOGGER.debug("Cleaning IT context.");
 
         // cleaning stored actions

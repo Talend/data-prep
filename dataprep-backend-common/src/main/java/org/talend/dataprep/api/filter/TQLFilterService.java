@@ -117,7 +117,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(FieldInExpression fieldInExpression) {
-            final String fieldName = fieldInExpression.getFieldName();
+            final String fieldName = ((FieldReference) fieldInExpression.getField()).getPath();
             final List<String> collect =
                     Stream.of(fieldInExpression.getValues()).map(LiteralValue::getValue).collect(Collectors.toList());
 
@@ -126,25 +126,25 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(FieldIsEmptyExpression fieldIsEmptyExpression) {
-            final String fieldName = fieldIsEmptyExpression.getFieldName();
+            final String fieldName = ((FieldReference) fieldIsEmptyExpression.getField()).getPath();
             return row -> StringUtils.isBlank(row.get(fieldName));
         }
 
         @Override
         public Predicate<DataSetRow> visit(FieldIsValidExpression fieldIsValidExpression) {
-            final String fieldName = fieldIsValidExpression.getFieldName();
+            final String fieldName = ((FieldReference) fieldIsValidExpression.getField()).getPath();
             return row -> row.isInvalid(fieldName);
         }
 
         @Override
         public Predicate<DataSetRow> visit(FieldIsInvalidExpression fieldIsInvalidExpression) {
-            final String fieldName = fieldIsInvalidExpression.getFieldName();
+            final String fieldName = ((FieldReference) fieldIsInvalidExpression.getField()).getPath();
             return row -> !row.isInvalid(fieldName);
         }
 
         @Override
         public Predicate<DataSetRow> visit(FieldMatchesRegex fieldMatchesRegex) {
-            final String fieldName = fieldMatchesRegex.getFieldName();
+            final String fieldName = ((FieldReference) fieldMatchesRegex.getField()).getPath();
             final String regex = fieldMatchesRegex.getRegex();
             final Pattern pattern = Pattern.compile(regex);
 
@@ -158,7 +158,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(FieldBetweenExpression fieldBetweenExpression) {
-            final String fieldName = fieldBetweenExpression.getFieldName();
+            final String fieldName = ((FieldReference) fieldBetweenExpression.getField()).getPath();
             final String low = fieldBetweenExpression.getLeft().getValue();
             final String high = fieldBetweenExpression.getRight().getValue();
 
@@ -173,7 +173,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(FieldContainsExpression fieldContainsExpression) {
-            final String fieldName = fieldContainsExpression.getFieldName();
+            final String fieldName = ((FieldReference) fieldContainsExpression.getField()).getPath();
             final String value = fieldContainsExpression.getValue();
 
             return row -> StringUtils.contains(row.get(fieldName), value);

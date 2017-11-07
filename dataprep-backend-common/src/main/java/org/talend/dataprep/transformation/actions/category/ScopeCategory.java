@@ -24,7 +24,6 @@ public enum ScopeCategory {
     CELL(ImplicitParameters.ROW_ID, ImplicitParameters.COLUMN_ID),
     COLUMN(ImplicitParameters.COLUMN_ID),
     LINE(ImplicitParameters.ROW_ID),
-    HIDDEN,
     DATASET;
 
     private final Predicate<Map<String, String>> mandatoryParametersChecker;

@@ -144,10 +144,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
             return this instanceof RowAction;
         case COLUMN:
             return this instanceof ColumnAction;
-        case HIDDEN:
-            return this instanceof HiddenAction;
         case DATASET:
-            return this instanceof DataSetAction || this instanceof HiddenAction;
+            return this instanceof DataSetAction;
         default:
             return false;
         }

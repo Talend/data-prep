@@ -161,7 +161,7 @@
     ],
     "category":"columns",
     "actionScope":[
-
+      "column_metadata"
     ],
     "description":"Change column order",
     "label":"Reorder columns",

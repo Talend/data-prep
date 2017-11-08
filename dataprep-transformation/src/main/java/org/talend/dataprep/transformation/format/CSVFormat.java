@@ -12,9 +12,13 @@
 
 package org.talend.dataprep.transformation.format;
 
-import java.util.Arrays;
+import static java.nio.charset.StandardCharsets.*;
+
+import java.nio.charset.Charset;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -31,7 +35,7 @@ public class CSVFormat extends ExportFormat {
     /** CSV format type name. */
     public static final String CSV = "CSV";
 
-    public static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name("csv_fields_delimiter") //
+    private static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name("csv_fields_delimiter") //
             .item(";", "semiColon") //
             .item("\u0009", "tabulation") //
             .item(" ", "space") //
@@ -48,19 +52,47 @@ public class CSVFormat extends ExportFormat {
             .radio(true) //
             .build();
 
+    private static final Set<Charset> charsets;
+
+    static {
+        // TODO: use EncodingSupport by overriding getParameter() method
+        Set<Charset> charsetsInBuild = new LinkedHashSet<>();
+        charsetsInBuild.add(UTF_8);
+        charsetsInBuild.add(UTF_16);
+        charsetsInBuild.add(UTF_16LE);
+        charsetsInBuild.add(Charset.forName("windows-1252"));
+        charsetsInBuild.add(ISO_8859_1);
+        charsetsInBuild.add(Charset.forName("x-MacRoman"));
+        charsetsInBuild.addAll((Charset.availableCharsets().values()));
+        charsets = Collections.unmodifiableSet(charsetsInBuild);
+    }
+
     /**
      * Default constructor.
      */
     public CSVFormat() {
         //@formatter:off
         super("CSV", "text/csv", ".csv", true, false,
-                Arrays.asList(CSV_DELIMITERS,  //
-                new Parameter(Parameters.ESCAPE_CHAR, ParameterType.STRING, StringUtils.EMPTY), //
-                new Parameter(Parameters.ENCLOSURE_CHAR, ParameterType.STRING, StringUtils.EMPTY), //
-                ENCLOSURE_OPTIONS, //
-                new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false) //
+                Arrays.asList( //
+                        CSV_DELIMITERS, //
+                        new Parameter(Parameters.ESCAPE_CHAR, ParameterType.STRING, StringUtils.EMPTY),
+                        new Parameter(Parameters.ENCLOSURE_CHAR, ParameterType.STRING, StringUtils.EMPTY), //
+                        ENCLOSURE_OPTIONS, //
+                        new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
+                        buildCharsetParameter(LocaleContextHolder.getLocale()) //
         ));
         //@formatter:on
+    }
+
+    private static Parameter buildCharsetParameter(Locale locale) {
+        SelectParameter.Builder builder = SelectParameter.Builder.builder().name("csv.encoding");
+        for (Charset charsetEntry : charsets) {
+            builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
+        }
+        return builder
+                .defaultValue(UTF_8.name())
+                .canBeBlank(false)
+                .build();
     }
 
     @Override

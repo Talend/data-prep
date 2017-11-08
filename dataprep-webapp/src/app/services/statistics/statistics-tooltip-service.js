@@ -79,7 +79,7 @@ export default function StatisticsTooltipService($translate, state) {
 	 * @returns {String} Compiled tooltip
 	 */
 	function getTooltip(keyLabel, key, primaryValue, secondaryValue) {
-		let title = 'Record';
+		let title = $translate.instant('RECORD');
 		let keyString = key;
 		const rangeLimits = state.playground.statistics.rangeLimits;
 		const minLabel = $translate.instant('MIN');
@@ -88,7 +88,7 @@ export default function StatisticsTooltipService($translate, state) {
 		// range
 		if (key instanceof Array) {
 			const uniqueValue = key[0] === key[1];
-			title = uniqueValue ? 'Value' : 'Range';
+			title = $translate.instant(uniqueValue ? 'VALUE' : 'RANGE');
 
 			if (uniqueValue) {
 				keyString = key[0];

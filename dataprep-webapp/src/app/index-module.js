@@ -21,7 +21,6 @@ import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
 
 import { init } from 'i18next';
-import { I18N_DOMAIN_COMPONENTS } from '@talend/react-components';
 
 import APP_MODULE from './components/app/app-module';
 import HOME_MODULE from './components/home/home-module';
@@ -37,6 +36,8 @@ import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
 
 const MODULE_NAME = 'data-prep';
+
+const I18N_DOMAIN_COMPONENTS = 'tui-components';
 
 let ws;
 let wsPing;
@@ -95,7 +96,8 @@ window.fetchConfiguration = function fetchConfiguration() {
 				})
 				.config(($translateProvider) => {
 					'ngInject';
-					const preferredLanguage = (appSettings.context && appSettings.context.language) || fallbackLng;
+
+					preferredLanguage = (appSettings.context && appSettings.context.language) || fallbackLng;
 
 					$translateProvider.preferredLanguage(preferredLanguage);
 					i18n.changeLanguage(preferredLanguage);

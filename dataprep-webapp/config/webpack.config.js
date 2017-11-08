@@ -111,7 +111,7 @@ function getCommonStyleLoaders(enableModules) {
 		{};
 	return [
 		{ loader: 'css-loader', options: cssOptions },
-		{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
+		{ loader: 'postcss-loader', options: { sourceMap: true, plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
 		{ loader: 'resolve-url-loader' },
 	];
 }

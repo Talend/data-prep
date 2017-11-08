@@ -37,8 +37,8 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
      */
     public static final String DEDUPLICATION_ACTION_NAME = "deduplication";
 
-    /** Hashes name. */
-    public static final String HASHES_NAME = "hashes";
+    /** Key to store in context hashes */
+    private static final String HASHES_NAME = "hashes";
 
     @Override
     public String getName() {
@@ -62,9 +62,9 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     @Override
     public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
         final Set<String> hashes = new HashSet<>();
         actionContext.get(HASHES_NAME, p -> hashes);
-        super.compile(actionContext);
     }
 
     @Override

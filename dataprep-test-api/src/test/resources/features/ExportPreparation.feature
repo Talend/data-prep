@@ -10,7 +10,11 @@ Feature: Export Preparation
       | columnId        | 0001             |
       | preparationName | 3L3C_preparation |
 
-  @CleanAfter
   Scenario: Verify transformation result
     And I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result in "3L3C_result.csv" temporary file.
     Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_processed.csv" file
+
+  @CleanAfter
+  Scenario: Verify transformation result with another escape char
+    And I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result with "#" as escape character in "3L3C_result.csv" temporary file.
+    Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_processed_custom_escape_char.csv" file

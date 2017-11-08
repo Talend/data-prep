@@ -260,12 +260,27 @@ public class DataPrepAPIHelper {
      * @return the response.
      */
     public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
-            String delimiter, String filename) {
+                                         String delimiter, String filename) {
+        return executeFullRunExport(exportType, datasetId, preparationId, stepId, delimiter, filename);
+    }
+
+    /**
+     * Execute a preparation full run on a dataset followed by an export.
+     *
+     * @param exportType export format.
+     * @param datasetId the dataset id on which the full run will be applied.
+     * @param preparationId the full run preparation id.
+     * @param stepId the last step id.
+     * @param delimiter the column delimiter.
+     * @param filename the name for the exported generated file.
+     * @param escapeCharacter the escape character for the exported generated file.
+     * @return the response.
+     */
+    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
+                                         String delimiter, String filename, String escapeCharacter) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
-                // .header("Content-Type", "application/json; charset=utf8") //
-                .urlEncodingEnabled(false) //
                 .when() //
                 .queryParam("preparationId", preparationId) //
                 .queryParam("stepId", stepId) //
@@ -273,6 +288,7 @@ public class DataPrepAPIHelper {
                 .queryParam("exportType", exportType) //
                 .queryParam("exportParameters.csv_fields_delimiter", delimiter) //
                 .queryParam("exportParameters.fileName", filename) //
+                .queryParam("exportParameters.csv_escape_character", escapeCharacter) //
                 .get("/api/export");
     }
 

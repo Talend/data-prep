@@ -45,7 +45,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private static final Character DEFAULT_SEPARATOR = ',';
 
     /** The default escape character. */
-    private static final Character DEFAULT_ESCAPE_CHARACTER = '\\';
+    private static final Character DEFAULT_ESCAPE_CHARACTER = '"';
 
     /** Separator argument name. */
     public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csv_fields_delimiter";

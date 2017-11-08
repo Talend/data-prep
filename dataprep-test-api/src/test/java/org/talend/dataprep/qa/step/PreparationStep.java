@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
@@ -41,6 +43,9 @@ public class PreparationStep extends DataPrepStep {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationStep.class);
+
+    @Autowired
+    protected FolderStep folderStep;
 
     @Given("^I create a preparation with name \"(.*)\", based on \"(.*)\" dataset$")
     public void givenICreateAPreparation(String preparationName, String datasetName) {
@@ -87,9 +92,11 @@ public class PreparationStep extends DataPrepStep {
     @Then("^I move the preparation \"(.*)\" with the following parameters :$")
     public void movePreparation(String preparationName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
+        List<Folder> folders = folderStep.listFolders();
+        Folder originFolder = folderStep.extractFolder(params.get(ORIGIN), folders);
+        Folder destFolder = folderStep.extractFolder(params.get(DESTINATION), folders);
         String prepId = context.getPreparationId(preparationName);
-        Response response = api.movePreparation(prepId, params.get(ORIGIN), params.get(DESTINATION),
-                params.get(NEW_PREPARATION_NAME));
+        Response response = api.movePreparation(prepId, originFolder.id, destFolder.id, params.get(NEW_PREPARATION_NAME));
         response.then().statusCode(200);
     }
 

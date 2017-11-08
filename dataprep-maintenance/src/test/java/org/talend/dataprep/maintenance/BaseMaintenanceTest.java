@@ -21,8 +21,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.task.TaskExecutor;
-import org.talend.dataprep.security.ForAll;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.tenancy.ForAll;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class BaseMaintenanceTest {

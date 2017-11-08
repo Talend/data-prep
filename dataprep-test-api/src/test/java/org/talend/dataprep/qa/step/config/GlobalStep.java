@@ -23,12 +23,20 @@ import cucumber.api.java.After;
  */
 public class GlobalStep extends DataPrepStep {
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalStep.class);
 
-    // this After method has "order 1000" because we have first of all to delete all the data we have created
-    @After(order = 1000)
-    public void after() {
+    /**
+     * Clean the created objects in the test environment.
+     * This method must be called on the last scenario of each feature in order to keep the tests reentrant.
+     * It also can be called on demand to clean the context for the next scenario.
+     */
+    @After("@CleanAfter")
+    public void cleanAfter() {
+        LOGGER.debug("Cleaning IT context.");
+
         // cleaning stored actions
         context.clearAction();
 
@@ -56,5 +64,4 @@ public class GlobalStep extends DataPrepStep {
         // cleaning all features context object
         context.clearObject();
     }
-
 }

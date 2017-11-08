@@ -58,11 +58,6 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
         return ActionCategory.COLUMNS.getDisplayName();
     }
 
-    @Override
-    public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
-    }
-
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
      */

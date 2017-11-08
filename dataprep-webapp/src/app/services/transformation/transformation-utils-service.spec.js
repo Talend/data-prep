@@ -425,7 +425,7 @@ function generateTransformations() {
 			"description": "Change type of this column (number, text, date, etc.)",
 			"label": "Change Data Type",
 			"docUrl": "",
-			"actionScope": [],
+			"actionScope": ["column_metadata"],
 			"parameters": [
 				{
 					"name": "column_id",
@@ -702,9 +702,7 @@ function generateSuggestions() {
 			"label":"Lookup",
 			"dynamic":false,
 			"docUrl":"",
-			"actionScope":[
-
-			]
+			"actionScope":[]
 		},
 	];
 }
@@ -875,7 +873,9 @@ describe('Transformation Utils Service', () => {
 
 				// then
 				categories.forEach((item) => {
-					expect(item.category).not.toBe('column_metadata');
+				    item.transformations.forEach((transfo) => {
+				        expect(transfo.actionScope.indexOf("column_metadata")).toBe(-1);
+				    })
 					expect(item.category).not.toBe('data_blending');
 				});
 			})

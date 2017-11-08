@@ -132,6 +132,7 @@ function generateSuggestions() {
                 { name: 'column_name', type: 'string', implicit: true },
                 { name: 'column_id', type: 'string', implicit: true },
             ],
+            actionScope: [],
         },
         {
             name: 'negate',
@@ -141,6 +142,7 @@ function generateSuggestions() {
                 { name: 'column_name', type: 'string', implicit: true },
                 { name: 'column_id', type: 'string', implicit: true },
             ],
+            actionScope: [],
         },
     ];
 }
@@ -157,6 +159,7 @@ function generateTransformations() {
                 { name: 'column_name', type: 'string', implicit: true },
                 { name: 'column_id', type: 'string', implicit: true },
             ],
+            actionScope: [],
         },
         {
             name: 'lowercase',
@@ -168,6 +171,7 @@ function generateTransformations() {
                 { name: 'column_name', type: 'string', implicit: true },
                 { name: 'column_id', type: 'string', implicit: true },
             ],
+            actionScope: [],
         },
         {
             name: 'cut',
@@ -180,6 +184,7 @@ function generateTransformations() {
                 { name: 'column_id', type: 'string', implicit: true },
                 { name: 'value', type: 'string' },
             ],
+            actionScope: [],
         },
         {
             name: 'split',
@@ -187,6 +192,7 @@ function generateTransformations() {
             labelHtml: 'Cut in parts',
             description: 'Cut in parts',
             category: 'split',
+            actionScope: [],
             parameters: [
                 { name: 'column_name', type: 'string', implicit: true },
                 { name: 'column_id', type: 'string', implicit: true },
@@ -558,7 +564,7 @@ describe('Transformation Service', () => {
                 expect(result[1]).toBe(transformationsFromCache);
             })
         );
-        
+
         it('should only fetch transformations for NON column scope',
             inject(($rootScope, TransformationService, TransformationCacheService) => {
                 // given
@@ -696,9 +702,11 @@ describe('Transformation Service', () => {
                                             type: 'string',
                                             implicit: true
                                         }
-                                    ]
+                                    ],
+                                    actionScope: [],
                                 }
-                            ]
+                            ],
+
                         }]
                     );
             })

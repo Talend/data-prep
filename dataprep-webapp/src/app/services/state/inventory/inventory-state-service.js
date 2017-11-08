@@ -23,10 +23,9 @@ const orderList = [
 	{ id: 'desc', name: 'DESC_ORDER' },
 ];
 
-const HOME_FOLDER = {
+export const HOME_FOLDER = {
 	id: 'Lw==',
 	path: '/',
-	name: 'Home',
 };
 
 export const inventoryState = {
@@ -65,7 +64,9 @@ export const inventoryState = {
 	isFetchingPreparations: false,
 };
 
-export function InventoryStateService() {
+export function InventoryStateService($translate) {
+	'ngInject';
+
 	return {
 		enableEdit,
 		disableEdit,
@@ -251,7 +252,13 @@ export function InventoryStateService() {
 	 * @param {array} folders The folders in breadcrumb
 	 */
 	function setBreadcrumb(folders) {
-		inventoryState.breadcrumb = folders;
+		inventoryState.breadcrumb = folders.map((folder) => {
+			const translatedFolder = folder;
+			if (folder.path === HOME_FOLDER.path) {
+				translatedFolder.name = $translate.instant('HOME_FOLDER');
+			}
+			return translatedFolder;
+		});
 		inventoryState.breadcrumbChildren = {};
 	}
 

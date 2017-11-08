@@ -11,12 +11,19 @@
 
  ============================================================================*/
 
+import i18n from '../../../../i18n/en.json';
+
 describe('Inventory state service', () => {
 	let datasets;
 	let preparations;
 	let folders;
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
+
+	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
 	beforeEach(() => {
 		datasets = [

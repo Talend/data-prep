@@ -426,7 +426,7 @@ describe('Datagrid column service', () => {
 				action: 'reorder',
 				parameters: {
 					selected_column: '0002',
-					scope: 'hidden',
+					scope: 'dataset',
 					column_id: '0000',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
@@ -459,7 +459,7 @@ describe('Datagrid column service', () => {
 				action: 'reorder',
 				parameters: {
 					selected_column: '0002',
-					scope: 'hidden',
+					scope: 'dataset',
 					column_id: '0000',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
@@ -492,7 +492,7 @@ describe('Datagrid column service', () => {
 				action: 'reorder',
 				parameters: {
 					selected_column: '0002',
-					scope: 'hidden',
+					scope: 'dataset',
 					column_id: '0001',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
@@ -525,7 +525,7 @@ describe('Datagrid column service', () => {
 				action: 'reorder',
 				parameters: {
 					selected_column: '0003',
-					scope: 'hidden',
+					scope: 'dataset',
 					column_id: '0000',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
@@ -580,7 +580,7 @@ describe('Datagrid column service', () => {
 				action: 'reorder',
 				parameters: {
 					selected_column: '0000',
-					scope: 'hidden',
+					scope: 'dataset',
 					column_id: '0002',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
@@ -615,7 +615,7 @@ describe('Datagrid column service', () => {
 				action: 'reorder',
 				parameters: {
 					selected_column: '0001',
-					scope: 'hidden',
+					scope: 'dataset',
 					column_id: '0003',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',

@@ -261,7 +261,7 @@ public class DataPrepAPIHelper {
      */
     public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
                                          String delimiter, String filename) {
-        return executeFullRunExport(exportType, datasetId, preparationId, stepId, delimiter, filename);
+        return executeFullRunExport(exportType, datasetId, preparationId, stepId, delimiter, filename, null);
     }
 
     /**

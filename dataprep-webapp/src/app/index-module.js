@@ -35,6 +35,8 @@ import SETTINGS_MODULE from './settings/settings-module';
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
 
+import d3LocaleFr from '../lib/d3.locale.fr';
+
 const MODULE_NAME = 'data-prep';
 
 const I18N_DOMAIN_COMPONENTS = 'tui-components';
@@ -100,30 +102,17 @@ window.fetchConfiguration = function fetchConfiguration() {
 					preferredLanguage = (appSettings.context && appSettings.context.language) || fallbackLng;
 
 					$translateProvider.preferredLanguage(preferredLanguage);
-					i18n.changeLanguage(preferredLanguage);
-					moment.locale(preferredLanguage);
-
-					if (preferredLanguage === 'fr') {
-						const d3LocaleFr = d3.locale({
-							decimal: ',',
-							thousands: '.',
-							grouping: [3],
-							currency: ['', ' €'],
-							dateTime: '%A, le %e %B %Y, %X',
-							date: '%d/%m/%Y',
-							time: '%H:%M:%S',
-							periods: ['AM', 'PM'], // unused
-							days: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
-							shortDays: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
-							months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
-							shortMonths: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
-						});
-						d3.format = d3LocaleFr.numberFormat;
-						d3.time.format = d3LocaleFr.timeFormat;
-					}
-
-					if ($.datetimepicker) {
-						$.datetimepicker.setLocale(preferredLanguage);
+					if (preferredLanguage !== fallbackLng) {
+						i18n.changeLanguage(preferredLanguage);
+						moment.locale(preferredLanguage);
+						if (preferredLanguage === 'fr') {
+							const d3locale = d3.locale(d3LocaleFr);
+							d3.format = d3locale.numberFormat;
+							d3.time.format = d3locale.timeFormat;
+						}
+						if ($.datetimepicker) {
+							$.datetimepicker.setLocale(preferredLanguage);
+						}
 					}
 				})
 				// Fetch dynamic configuration

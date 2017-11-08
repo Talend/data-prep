@@ -1,12 +1,11 @@
+import i18n from '../../../i18n/en.json';
+
 describe('Statistics Tooltip service', function () {
     'use strict';
     var stateMock;
 
     beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
-        $translateProvider.translations('en', {
-            TOOLTIP_MATCHING_FILTER: 'matching your filter',
-            TOOLTIP_MATCHING_FULL: 'in entire dataset',
-        });
+        $translateProvider.translations('en', i18n);
         $translateProvider.preferredLanguage('en');
     }));
 

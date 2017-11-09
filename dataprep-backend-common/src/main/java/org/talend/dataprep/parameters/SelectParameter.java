@@ -27,7 +27,7 @@ public class SelectParameter extends Parameter {
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
-    private final boolean isRadio;
+    private final boolean radio;
 
     /** The select items. */
     @JsonIgnore // will be part of the Parameter#configuration
@@ -46,18 +46,18 @@ public class SelectParameter extends Parameter {
      * @param canBeBlank True if the parameter can be blank.
      * @param items List of items for this select parameter.
      * @param multiple True if multiple selection is allowed.
-     * @param isRadio <code>true</code> if the rendering code should prefer radio buttons instead of drop down list.
+     * @param radio <code>true</code> if the rendering code should prefer radio buttons instead of drop down list.
      */
     private SelectParameter(String name, String defaultValue, boolean implicit, boolean canBeBlank, List<Item> items,
-            boolean multiple, boolean isRadio) {
+            boolean multiple, boolean radio) {
         super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank);
-        this.isRadio = isRadio;
+        this.radio = radio;
         setItems(items);
         setMultiple(multiple);
     }
 
     public boolean isRadio() {
-        return isRadio;
+        return radio;
     }
 
     public List<Item> getItems() {
@@ -110,7 +110,7 @@ public class SelectParameter extends Parameter {
         private boolean canBeBlank = false;
 
         /** True if rendering should prefer radio buttons to render parameters choices */
-        private boolean isRadio = false;
+        private boolean radio = false;
 
         /**
          * @return A SelectParameter builder.
@@ -214,7 +214,6 @@ public class SelectParameter extends Parameter {
             return this;
         }
 
-
         /**
          * Add an item to the select parameter builder.
          *
@@ -226,7 +225,6 @@ public class SelectParameter extends Parameter {
             this.items.add(Item.Builder.builder().value(value).label(label).inlineParameters(Arrays.asList(parameter)).build());
             return this;
         }
-
 
         /**
          * Add all items to the select parameter builder.
@@ -240,7 +238,7 @@ public class SelectParameter extends Parameter {
         }
 
         public Builder radio(boolean isRadio) {
-            this.isRadio = isRadio;
+            this.radio = isRadio;
             return this;
         }
 
@@ -250,7 +248,7 @@ public class SelectParameter extends Parameter {
          * @return the built column metadata.
          */
         public SelectParameter build() {
-            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, isRadio);
+            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, radio);
         }
     }
 

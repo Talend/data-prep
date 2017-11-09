@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
@@ -138,6 +138,73 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // then
 
         final String expectedCsv = "\"song\",\"band\"\n" + "\"last \\\"nite\",\"the Strokes\"\n";
+        assertThat(temp.toString()).isEqualTo(expectedCsv);
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-4389
+     */
+    @Test
+    public void should_enclose_all_columns() throws Exception {
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(CSVWriter.ENCLOSURE_CHARACTER_PARAM_NAME, "+");
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("band").type(Type.STRING).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "last \"nite");
+        values.put("0002", "the Strokes");
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        // when
+        tabWriter.write(row);
+        tabWriter.write(rowMetadata);
+        tabWriter.flush();
+
+        // then
+        final String expectedCsv = "+song+,+band+\n" + "+last \"nite+,+the Strokes+\n";
+        assertThat(temp.toString()).isEqualTo(expectedCsv);
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-4389
+     */
+    @Test
+    public void should_enclose_only_text() throws Exception {
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(CSVWriter.ENCLOSURE_CHARACTER_PARAM_NAME, "%");
+        parameters.put(CSVWriter.ENCLOSURE_MODE_PARAM_NAME, "text_only");
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("members").type(Type.INTEGER).build();
+        final ColumnMetadata column3 = ColumnMetadata.Builder.column().id(3).name("band").type(Type.STRING).build();
+        final ColumnMetadata column4 = ColumnMetadata.Builder.column().id(4).name("date").type(Type.DATE).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2, column3, column4);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "last \"nite");
+        values.put("0002", "5");
+        values.put("0003", "the Strokes");
+        values.put("0004", "1998");
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        // when
+        tabWriter.write(row);
+        tabWriter.write(rowMetadata);
+        tabWriter.flush();
+
+        // then
+        final String expectedCsv = "%song%,members,%band%,date\n" + "%last \"nite%,5,%the Strokes%,1998\n";
         assertThat(temp.toString()).isEqualTo(expectedCsv);
     }
 

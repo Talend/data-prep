@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
@@ -23,10 +23,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -41,17 +43,26 @@ import org.talend.dataprep.util.FilesHelper;
 @Component("writer#" + CSV)
 public class CSVWriter extends AbstractTransformerWriter {
 
+    /** Separator argument name. */
+    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csv_fields_delimiter";
+
+    /** Escape character argument name. */
+    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + "csv_escape_character";
+
+    /** Enclosure character argument name. */
+    public static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + "csv_enclosure_character";
+
+    /** Enclosure character argument name. */
+    public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + "csv_enclosure_mode";
+
     /** The default separator. */
     private static final Character DEFAULT_SEPARATOR = ',';
 
     /** The default escape character. */
     private static final Character DEFAULT_ESCAPE_CHARACTER = '"';
 
-    /** Separator argument name. */
-    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csv_fields_delimiter";
-
-    /** Escape character argument name. */
-    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + "csv_escape_character";
+    /** The default enclosure character. */
+    private static final String DEFAULT_ENCLOSURE_MODE = "text_only";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVWriter.class);
 
@@ -59,20 +70,19 @@ public class CSVWriter extends AbstractTransformerWriter {
 
     private final char separator;
 
+    private final char enclosureCharacter;
+
+    private final String enclosureMode;
+
     private final char escapeCharacter;
 
     private final File bufferFile;
 
-    private final au.com.bytecode.opencsv.CSVWriter recordsWriter;
+    private final CSVWriterCustom recordsWriter;
 
-    private char getParameterValue(Map<String, String> parameters, String parameterName, char defaultValue) {
-        String parameter = parameters.get(parameterName);
-        if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
-            return String.valueOf(defaultValue).charAt(0);
-        } else {
-            return parameter.charAt(0);
-        }
-    }
+    /** The default enclosure character. */
+    @Value("${default.text.enclosure=:\"}")
+    private Character defaultTextEnclosure;
 
     /**
      * Simple constructor with default separator value.
@@ -93,19 +103,57 @@ public class CSVWriter extends AbstractTransformerWriter {
         try {
             this.output = output;
 
-            this.separator = this.getParameterValue(parameters, SEPARATOR_PARAM_NAME, DEFAULT_SEPARATOR);
-            this.escapeCharacter = this.getParameterValue(parameters, ESCAPE_CHARACTER_PARAM_NAME, DEFAULT_ESCAPE_CHARACTER);
-
+            this.separator = this.getParameterCharValue(parameters, SEPARATOR_PARAM_NAME, DEFAULT_SEPARATOR);
+            this.escapeCharacter = this.getParameterCharValue(parameters, ESCAPE_CHARACTER_PARAM_NAME, DEFAULT_ESCAPE_CHARACTER);
+            this.enclosureCharacter = this.getParameterCharValue(parameters, ENCLOSURE_CHARACTER_PARAM_NAME,
+                    defaultTextEnclosure);
+            this.enclosureMode = this.getParameterStringValue(parameters, ENCLOSURE_MODE_PARAM_NAME, DEFAULT_ENCLOSURE_MODE);
             bufferFile = File.createTempFile("csvWriter", ".csv");
-            recordsWriter = new au.com.bytecode.opencsv.CSVWriter(new FileWriter(bufferFile), separator, '"', escapeCharacter);
+
+            recordsWriter = new CSVWriterCustom(new FileWriter(bufferFile), separator, enclosureCharacter, escapeCharacter);
+
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_USE_EXPORT, e);
+        }
+    }
+
+    private char getParameterCharValue(Map<String, String> parameters, String parameterName, char defaultValue) {
+        String parameter = parameters.get(parameterName);
+        if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
+            return String.valueOf(defaultValue).charAt(0);
+        } else {
+            return parameter.charAt(0);
+        }
+    }
+
+    private String getParameterStringValue(Map<String, String> parameters, String parameterName, String defaultValue) {
+        String parameter = parameters.get(parameterName);
+        if (parameter == null || StringUtils.isEmpty(parameter)) {
+            return String.valueOf(defaultValue);
+        } else {
+            return parameter;
         }
     }
 
     @Override
     protected au.com.bytecode.opencsv.CSVWriter getRecordsWriter() {
         return recordsWriter;
+    }
+
+    @Override
+    public void write(DataSetRow row) throws IOException {
+        if (!row.values().isEmpty() && row.getRowMetadata().getColumns().isEmpty()) {
+            throw new IllegalStateException(
+                    " If a dataset row has some values it should at least have columns just before writing the result of a non json transformation.");
+        }
+
+        // values need to be written in the same order as the columns
+        if (DEFAULT_ENCLOSURE_MODE.equals(enclosureMode)) {
+            recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID), row.getRowMetadata());
+        } else {
+            recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID));
+        }
+
     }
 
     /**
@@ -115,9 +163,16 @@ public class CSVWriter extends AbstractTransformerWriter {
     public void write(final RowMetadata rowMetadata) throws IOException {
         // write the columns names
         String[] columnsName = rowMetadata.getColumns().stream().map(ColumnMetadata::getName).toArray(String[]::new);
-        au.com.bytecode.opencsv.CSVWriter csvWriter = //
-        new au.com.bytecode.opencsv.CSVWriter(new OutputStreamWriter(output), separator, '"', escapeCharacter);
-        csvWriter.writeNext(columnsName);
+
+        CSVWriterCustom csvWriter = //
+                new CSVWriterCustom(new OutputStreamWriter(output), separator, enclosureCharacter, escapeCharacter);
+        // values need to be written in the same order as the columns
+        if (DEFAULT_ENCLOSURE_MODE.equals(enclosureMode)) {
+            csvWriter.writeNext(columnsName, rowMetadata);
+        } else {
+            csvWriter.writeNext(columnsName);
+        }
+
         csvWriter.flush();
         // Write buffered records
         recordsWriter.flush();
@@ -127,7 +182,6 @@ public class CSVWriter extends AbstractTransformerWriter {
             recordsWriter.close();
         }
     }
-
 
     /**
      * @see TransformerWriter#flush()

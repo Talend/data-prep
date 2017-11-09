@@ -16,6 +16,7 @@ import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
@@ -46,8 +47,8 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.DEDUPLICATION.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.DEDUPLICATION.getDisplayName(locale);
     }
 
     @Override

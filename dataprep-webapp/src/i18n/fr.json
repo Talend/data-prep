@@ -113,6 +113,7 @@
   "RECIPE_ITEM_ON_COL": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> sur la colonne <div class=\"step-scope\" title=\"{{columnName}}\">{{columnName}}</div>",
   "RECIPE_ITEM_ON_CELL": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> sur la cellule",
   "RECIPE_ITEM_ON_LINE": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> <span class=\"step-scope\">#{{rowId}}</span>",
+  "RECIPE_ITEM_ON_DATASET": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> dans la table",
   "LOOKUP_STEP_DESCRIPTION": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> effectué sur le jeu de données <div class=\"step-scope\" title=\"{{lookupDsName}}\">{{lookupDsName}}</div>. La jointure a été effectuée entre <div class=\"step-scope\" title=\"{{mainColName}}\">{{mainColName}}</div> et <div class=\"step-scope\" title=\"{{lookupColName}}\">{{lookupColName}}</div>. ",
   "ONLY_1_ADDED_COL": "La colonne <div class=\"step-scope\" title=\"{{firstCol}}\">{{firstCol}}</div> a été ajoutée.",
   "ONLY_2_ADDED_COLS": "Les colonnes <div class=\"step-scope\" title=\"{{firstCol}}\">{{firstCol}}</div> et <div class=\"step-scope\" title=\"{{secondCol}}\">{{secondCol}}</div> ont été ajoutées.",
@@ -264,6 +265,7 @@
   "MULTI_COLUMNS_SELECTED": "{{nb}} colonnes sélectionnées",
   "ACTIONS_TAB_ROW": "Ligne",
   "ACTIONS_TAB_COLUMN": "Colonne",
+  "ACTIONS_TAB_TABLE": "Table",
 
   "_comment": "Recette",
   "FILTERS_APPLIED": "Filtres appliqués",

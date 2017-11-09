@@ -139,7 +139,7 @@ describe('Step Description controller', () => {
 		});
 
 
-        describe('translate description on scope: hidden,', () => {
+        describe('translate description on scope: dataset,', () => {
             it('should translate description for reordering step', () => {
                 //given
                 const ctrl = createController();
@@ -159,7 +159,7 @@ describe('Step Description controller', () => {
                         parameters: {
                             selected_column: '0003',
                             column_id: '0000',
-                            scope: 'hidden',
+                            scope: 'dataset',
                             column_name: 'name',
                             dataset_action_display_type: 'column',
                         },

@@ -45,19 +45,16 @@ class StepDescriptionCtrl {
 			});
 			break;
 
-		case 'hidden':
-			if (this.step.transformation.name === 'reorder') {
+		case 'dataset':
+			if (this.step.transformation.name === 'lookup') {
+				this.stepDescription = this._getLookupDetails(this.step);
+			}
+			else if (this.step.transformation.name === 'reorder') {
 				this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {
 					index: (this.index + 1),
 					label: this.step.transformation.label,
 					columnName: this.step.column.name,
 				});
-			}
-			break;
-
-		case 'dataset':
-			if (this.step.transformation.name === 'lookup') {
-				this.stepDescription = this._getLookupDetails(this.step);
 			}
 			else {
 				this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_DATASET', {

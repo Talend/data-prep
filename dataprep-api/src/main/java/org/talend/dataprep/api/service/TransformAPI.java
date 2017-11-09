@@ -81,7 +81,7 @@ public class TransformAPI extends APIService {
      * Get all the possible actions available on lines.
      */
     @RequestMapping(value = "/api/transform/actions/line", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get all actions on line", notes = "Returns all actions for the a line.")
+    @ApiOperation(value = "Get all actions on line", notes = "Returns all actions for a line.")
     @Timed
     public Stream<ActionDefinition> lineActions() {
         return toStream(ActionDefinition.class, mapper, getCommand(LineActions.class));

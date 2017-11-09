@@ -13,11 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
-
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;

@@ -158,7 +158,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      * {@link ActionContext.ActionStatus#CANCELED}.
      *
      * @param actionContext The action context that contains the parameters and allows compile step to change action
-     *                      status.
+     * status.
      * @see ActionContext#setActionStatus(ActionContext.ActionStatus)
      */
     @Override

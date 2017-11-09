@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,8 +28,6 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
 /**
  * Change the type of a column <b>This action is not displayed in the UI it's here to ease recording it as a Step It's

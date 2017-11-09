@@ -12,6 +12,12 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.duplication;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -20,14 +26,8 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
-
 /**
- *  Keep only one occurrence of duplicated rows.
+ * Keep only one occurrence of duplicated rows.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Deduplicate.DEDUPLICATION_ACTION_NAME)
 public class Deduplicate extends AbstractActionMetadata implements DataSetAction {
@@ -80,10 +80,13 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
     }
 
     protected String evalHashCode(DataSetRow row) {
-        StringBuilder columnContents= new StringBuilder();
+        StringBuilder columnContents = new StringBuilder();
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-            columnContents.append(column.getId()+":");
-            columnContents.append(row.get(column.getId())+"-");
+            columnContents
+                    .append(column.getId()) //
+                    .append(":") //
+                    .append(row.get(column.getId())) //
+                    .append("-");
         }
 
         return sha256Hex(columnContents.toString());

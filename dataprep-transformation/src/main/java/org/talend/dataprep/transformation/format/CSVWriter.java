@@ -54,7 +54,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private static final Character DEFAULT_ESCAPE_CHARACTER = '"';
 
     /** The default enclosure character. */
-    private static final String DEFAULT_ENCLOSURE_MODE = CSVFormat.Parameters.ENCLOSURE_TEXT_ONLY;
+    private static final String DEFAULT_ENCLOSURE_MODE = CSVFormat.ParametersCSV.ENCLOSURE_TEXT_ONLY;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVWriter.class);
 
@@ -96,13 +96,13 @@ public class CSVWriter extends AbstractTransformerWriter {
             Map<String, String> cleanedParameters = ExportFormat.cleanParameters(parameters);
 
             this.output = output;
-            this.separator = getParameterCharValue(cleanedParameters, CSVFormat.Parameters.FIELDS_DELIMITER, DEFAULT_SEPARATOR);
-            this.escapeCharacter = getParameterCharValue(cleanedParameters, CSVFormat.Parameters.ESCAPE_CHAR, DEFAULT_ESCAPE_CHARACTER);
-            this.enclosureCharacter = getParameterCharValue(cleanedParameters, CSVFormat.Parameters.ENCLOSURE_CHAR,
+            this.separator = getParameterCharValue(cleanedParameters, CSVFormat.ParametersCSV.FIELDS_DELIMITER, DEFAULT_SEPARATOR);
+            this.escapeCharacter = getParameterCharValue(cleanedParameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, DEFAULT_ESCAPE_CHARACTER);
+            this.enclosureCharacter = getParameterCharValue(cleanedParameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
                     defaultTextEnclosure);
-            this.enclosureMode = getParameterStringValue(cleanedParameters, CSVFormat.Parameters.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
+            this.enclosureMode = getParameterStringValue(cleanedParameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
 
-            Charset encoding = extractEncodingWithFallback(cleanedParameters.get(CSVFormat.Parameters.ENCODING));
+            Charset encoding = extractEncodingWithFallback(cleanedParameters.get(CSVFormat.ParametersCSV.ENCODING));
 
             bufferFile = File.createTempFile("csvWriter", ".csv");
 

@@ -14,7 +14,10 @@ package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -22,14 +25,18 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.format.export.ExportFormatMessage;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.format.CSVFormat;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
-import org.talend.dataprep.transformation.format.CSVFormat;
 
 /**
  * Unit test for Export API.
@@ -38,10 +45,44 @@ public class ExportAPITest extends ApiServiceTestBase {
 
     @Test
     public void get_all_export_types() throws Exception {
-        String actual = RestAssured.when().get("/api/export/formats").asString();
-        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("export/export_type.json"),
-                UTF_8);
-        JSONAssert.assertEquals(expectedContent, actual, false);
+        // given
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // when
+        String actualJsonString = RestAssured.when().get("/api/export/formats").asString();
+        List<ExportFormatMessage> exportFormatMessageList = mapper.readValue(actualJsonString,
+                new TypeReference<List<ExportFormatMessage>>() {
+                });
+        ExportFormatMessage exportFormatMessageCSV = exportFormatMessageList.get(0);
+        ExportFormatMessage exportFormatMessageXLSX = exportFormatMessageList.get(1);
+
+        // then
+        assertEquals("text/csv", exportFormatMessageCSV.getMimeType());
+        assertEquals("CSV", exportFormatMessageCSV.getId());
+        assertEquals("Local CSV file", exportFormatMessageCSV.getName());
+        assertEquals(true, exportFormatMessageCSV.isNeedParameters());
+        assertEquals(false, exportFormatMessageCSV.isDefaultExport());
+        assertEquals(true, exportFormatMessageCSV.isEnabled());
+        assertEquals(true, exportFormatMessageCSV.isSupportSampling());
+        assertEquals("", exportFormatMessageCSV.getDisableReason());
+        assertEquals("Export to CSV", exportFormatMessageCSV.getTitle());
+        List<Parameter> parametersCSV = exportFormatMessageCSV.getParameters();
+        assertNotNull(parametersCSV);
+        assertEquals(6, parametersCSV.size());
+
+        // Andthen
+        assertEquals("application/vnd.ms-excel", exportFormatMessageXLSX.getMimeType());
+        assertEquals("XLSX", exportFormatMessageXLSX.getId());
+        assertEquals("Local XLSX file", exportFormatMessageXLSX.getName());
+        assertEquals(true, exportFormatMessageXLSX.isNeedParameters());
+        assertEquals(true, exportFormatMessageXLSX.isDefaultExport());
+        assertEquals(true, exportFormatMessageXLSX.isEnabled());
+        assertEquals(true, exportFormatMessageXLSX.isSupportSampling());
+        assertEquals("", exportFormatMessageXLSX.getDisableReason());
+        assertEquals("Export to XLSX", exportFormatMessageXLSX.getTitle());
+        List<Parameter> parametersXLS = exportFormatMessageXLSX.getParameters();
+        assertNotNull(parametersXLS);
+        assertEquals(1, parametersXLS.size());
     }
 
     @Test
@@ -49,15 +90,14 @@ public class ExportAPITest extends ApiServiceTestBase {
         // given
         final String datasetId = testClient.createDataset("export/export_dataset.csv", "testExport");
 
-        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
+        final String expectedExport = IOUtils
+                .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
-        final String export = given()
-                .formParam("exportType", "CSV")
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
-                .formParam("datasetId", datasetId)
-                .when().get("/api/export")
-                .asString();
+        final String export = given().formParam("exportType", "CSV")
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
+                .formParam("datasetId", datasetId).when().get("/api/export").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -72,16 +112,17 @@ public class ExportAPITest extends ApiServiceTestBase {
         // given
         final String datasetId = testClient.createDataset("export/export_dataset.csv", "testExport");
 
-        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
+        final String expectedExport = IOUtils
+                .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", "") //
                 .formParam("stepId", "") //
-                .formParam("datasetId", datasetId)
-                .when() //
+                .formParam("datasetId", datasetId).when() //
                 .expect().statusCode(200).log().ifError() //
                 .get("/api/export") //
                 .asString();
@@ -128,23 +169,24 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvFromPreparationStep() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "export/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "export/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "export/delete_city.json");
 
-        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"),
-                UTF_8);
+        final String expectedExport = IOUtils.toString(
+                this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"), UTF_8);
 
         final EnrichedPreparation preparationMessage = mapper.readValue(
-                given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
-                EnrichedPreparation.class);
+                given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(), EnrichedPreparation.class);
         final List<String> steps = preparationMessage.getSteps();
 
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", steps.get(1)) //
                 .when() //
@@ -159,17 +201,19 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvFromPreparationStepWithMakeLineAsHeader() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "export/make_header.json");
         testClient.applyActionFromFile(preparationId, "export/upper_case_lastname.json");
 
-        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_preparation_header_uppercase_firstname.csv"),
-                UTF_8);
+        final String expectedExport = IOUtils.toString(
+                this.getClass().getResourceAsStream("export/expected_export_preparation_header_uppercase_firstname.csv"), UTF_8);
 
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "") //
                 .when() //
@@ -187,7 +231,8 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvWithNewColumns() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/split_cars.csv", "testSplitExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/split_cars.csv", "testSplitExport",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "export/split.json");
 
         final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/split_cars_expected.csv"),
@@ -218,7 +263,8 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .formParam("exportType", "CSV") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .when() //
                 .expect().statusCode(200).log().ifError() //
                 .get("/api/export") //
@@ -233,15 +279,18 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvWithSpecifiedSeparator() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
 
-        final String expectedExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
+        final String expectedExport = IOUtils
+                .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -255,16 +304,20 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvWithSeparatorChange() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
 
-        final String expectedSemiColonExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_semicolon_separator.csv"), UTF_8);
-        final String expectedSpaceExport = IOUtils.toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
+        final String expectedSemiColonExport = IOUtils
+                .toString(this.getClass().getResourceAsStream("export/expected_export_semicolon_separator.csv"), UTF_8);
+        final String expectedSpaceExport = IOUtils
+                .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
         final String export1 = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -278,7 +331,8 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String export2 = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -316,7 +370,8 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExport_with_filename() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
 
         String fileName = "beerisgoodforyou";
 
@@ -340,7 +395,8 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExport_default_filename() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
 
         String fileName = "testExport.csv";
 
@@ -376,7 +432,8 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationExports() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("export/export_dataset.csv", "testExport",
+                home.getId());
 
         // when
         final Response exportFormats = given().get("/api/export/formats/preparations/" + preparationId);

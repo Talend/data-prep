@@ -36,16 +36,16 @@ import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWri
 public class CSVWriterTest extends AbstractTransformerWriterTest {
 
     /** Separator argument name. */
-    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.FIELDS_DELIMITER;
+    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
 
     /** Escape character argument name. */
-    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ESCAPE_CHAR;
+    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ESCAPE_CHAR;
 
     /** Enclosure character argument name. */
-    public static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_CHAR;
+    public static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_CHAR;
 
     /** Enclosure character argument name. */
-    public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE;
+    public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE;
 
     /** Where the writer should... write! */
     private OutputStream outputStream;

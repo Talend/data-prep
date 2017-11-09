@@ -12,7 +12,11 @@
 
 package org.talend.dataprep.format.export;
 
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toMap;
+
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -64,6 +68,22 @@ public abstract class ExportFormat extends Parameterizable {
         this.extension = extension;
         this.defaultExport = defaultExport;
         this.enabled = true;
+    }
+
+    /**
+     * Clean input parameters, removing all non export format parameters and removing the prefix.
+     *
+     * @param params export parameters from the frontend
+     * @return cleaned parameters
+     */
+    public static Map<String, String> cleanParameters(Map<String, String> params) {
+        return params.entrySet().stream() //
+                .filter(e -> nonNull(e.getValue())) //
+                .filter(e -> e.getKey().startsWith(PREFIX)) //
+                .collect(toMap( //
+                        k -> k.getKey().substring(PREFIX.length()),
+                        Map.Entry::getValue) //
+                );
     }
 
     /**

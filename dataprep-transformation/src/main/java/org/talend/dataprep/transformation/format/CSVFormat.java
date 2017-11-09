@@ -85,7 +85,7 @@ public class CSVFormat extends ExportFormat {
     }
 
     private static Parameter buildCharsetParameter(Locale locale) {
-        SelectParameter.Builder builder = SelectParameter.Builder.builder().name("csv.encoding");
+        SelectParameter.Builder builder = SelectParameter.Builder.builder().name(Parameters.ENCODING);
         for (Charset charsetEntry : charsets) {
             builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
         }
@@ -121,6 +121,8 @@ public class CSVFormat extends ExportFormat {
         public static final String ENCLOSURE_CHAR = "csv_enclosure_character";
 
         public static final String ENCLOSURE_MODE = "csv_enclosure_mode";
+
+        public static final String ENCODING = "csv.encoding";
 
         private Parameters() {
         }

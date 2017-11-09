@@ -13,9 +13,13 @@
 
 package org.talend.dataprep.transformation.format;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.format.CSVFormat.CSV;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -101,23 +105,41 @@ public class CSVWriter extends AbstractTransformerWriter {
      */
     public CSVWriter(final OutputStream output, Map<String, String> parameters) {
         try {
-            this.output = output;
+            Map<String, String> cleanedParameters = ExportFormat.cleanParameters(parameters);
 
-            this.separator = this.getParameterCharValue(parameters, SEPARATOR_PARAM_NAME, DEFAULT_SEPARATOR);
-            this.escapeCharacter = this.getParameterCharValue(parameters, ESCAPE_CHARACTER_PARAM_NAME, DEFAULT_ESCAPE_CHARACTER);
-            this.enclosureCharacter = this.getParameterCharValue(parameters, ENCLOSURE_CHARACTER_PARAM_NAME,
+            this.output = output;
+            this.separator = getParameterCharValue(cleanedParameters, SEPARATOR_PARAM_NAME, DEFAULT_SEPARATOR);
+            this.escapeCharacter = getParameterCharValue(cleanedParameters, ESCAPE_CHARACTER_PARAM_NAME, DEFAULT_ESCAPE_CHARACTER);
+            this.enclosureCharacter = getParameterCharValue(cleanedParameters, ENCLOSURE_CHARACTER_PARAM_NAME,
                     defaultTextEnclosure);
-            this.enclosureMode = this.getParameterStringValue(parameters, ENCLOSURE_MODE_PARAM_NAME, DEFAULT_ENCLOSURE_MODE);
+            this.enclosureMode = getParameterStringValue(cleanedParameters, ENCLOSURE_MODE_PARAM_NAME, DEFAULT_ENCLOSURE_MODE);
+
+            Charset encoding = extractEncodingWithFallback(cleanedParameters.get(CSVFormat.Parameters.ENCODING));
+
             bufferFile = File.createTempFile("csvWriter", ".csv");
 
-            recordsWriter = new CSVWriterCustom(new FileWriter(bufferFile), separator, enclosureCharacter, escapeCharacter);
+            OutputStreamWriter charOutput = new OutputStreamWriter(new FileOutputStream(bufferFile), encoding);
+
+            recordsWriter = new CSVWriterCustom(charOutput, separator, enclosureCharacter, escapeCharacter);
 
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_USE_EXPORT, e);
         }
     }
 
-    private char getParameterCharValue(Map<String, String> parameters, String parameterName, char defaultValue) {
+    public Charset extractEncodingWithFallback(String encodingParameter) {
+        if (encodingParameter != null) {
+            try {
+                return Charset.forName(encodingParameter);
+            } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+                return UTF_8;
+            }
+        } else {
+            return UTF_8;
+        }
+    }
+
+    private static char getParameterCharValue(Map<String, String> parameters, String parameterName, char defaultValue) {
         String parameter = parameters.get(parameterName);
         if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
             return String.valueOf(defaultValue).charAt(0);
@@ -126,7 +148,7 @@ public class CSVWriter extends AbstractTransformerWriter {
         }
     }
 
-    private String getParameterStringValue(Map<String, String> parameters, String parameterName, String defaultValue) {
+    private static String getParameterStringValue(Map<String, String> parameters, String parameterName, String defaultValue) {
         String parameter = parameters.get(parameterName);
         if (parameter == null || StringUtils.isEmpty(parameter)) {
             return String.valueOf(defaultValue);

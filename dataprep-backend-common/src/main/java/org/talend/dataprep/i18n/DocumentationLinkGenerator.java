@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,9 @@ public class DocumentationLinkGenerator {
         }
 
         public String build() {
+            if (StringUtils.isEmpty(this.url)) {
+                return this.url;
+            }
             try {
                 URIBuilder urlWithLangParameter = new URIBuilder(this.url);
                 if (this.addAfsLanguageParameter && Objects.nonNull(this.locale)) {

@@ -30,6 +30,11 @@ public class ActionForm {
     /** Action parameters to build the form. */
     private List<Parameter> parameters;
 
+    /** List of the scope in which the action deal */
+    private List<String> actionScope;
+
+    private boolean isDynamic;
+
     /** Short description of what the action does. */
     private String description;
 
@@ -106,5 +111,21 @@ public class ActionForm {
 
     public void setDocUrl(String docUrl) {
         this.docUrl = docUrl;
+    }
+
+    public List<String> getActionScope() {
+        return actionScope;
+    }
+
+    public void setActionScope(List<String> actionScope) {
+        this.actionScope = actionScope;
+    }
+
+    public boolean isDynamic() {
+        return isDynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        isDynamic = dynamic;
     }
 }

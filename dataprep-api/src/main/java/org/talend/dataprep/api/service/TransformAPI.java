@@ -93,8 +93,8 @@ public class TransformAPI extends APIService {
     @RequestMapping(value = "/api/transform/actions/dataset", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all actions the whole dataset.", notes = "Returns all actions for the whole dataset..")
     @Timed
-    public Stream<ActionDefinition> datasetActions() {
-        return toStream(ActionDefinition.class, mapper, getCommand(DatasetActions.class));
+    public Stream<ActionForm> datasetActions() {
+        return toStream(ActionForm.class, mapper, getCommand(DatasetActions.class));
     }
 
     /**

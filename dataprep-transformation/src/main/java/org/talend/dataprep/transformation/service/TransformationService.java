@@ -683,11 +683,12 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/actions/dataset", method = GET)
     @ApiOperation(value = "Return all actions on the whole dataset.", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public Stream<ActionDefinition> datasetActions() {
+    public Stream<ActionForm> datasetActions() {
         return actionRegistry
                 .findAll() //
                 .filter(action -> action.acceptScope(DATASET)) //
-                .map(action -> action.adapt(DATASET));
+                .map(action -> action.adapt(DATASET))
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**

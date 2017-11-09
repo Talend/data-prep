@@ -13,10 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import java.util.List;
-
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.transformation.actions.category.ActionScope;
 
 /**
  * Model an action to perform on a dataset.
@@ -26,21 +23,6 @@ import org.talend.dataprep.transformation.actions.category.ActionScope;
  */
 public interface InternalActionDefinition extends ActionDefinition {
 
-    /**
-     * Defines the list of scopes this action belong to.
-     * <p>
-     * Scope scope is a concept that allow us to describe on which scope(s) each action can be applied.
-     *
-     * @return list of scopes of this action
-     * @see ActionScope
-     */
-    List<String> getActionScope();
 
-    /**
-     * @return <code>true</code> if the action is dynamic (i.e the parameters depends on the context (dataset / preparation /
-     * previous_actions).
-     */
-    // Only here for JSON serialization purposes.
-    boolean isDynamic();
 
 }

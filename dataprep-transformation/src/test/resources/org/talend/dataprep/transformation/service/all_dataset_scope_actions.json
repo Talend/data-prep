@@ -242,7 +242,7 @@
         "label":"Lookup selected columns"
       }
     ],
-    "category":"data_blending",
+    "category":"data blending",
     "description":"Blends columns from another dataset into this one",
     "label":"Lookup",
     "dynamic":false,

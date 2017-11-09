@@ -10,7 +10,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const SassLintPlugin = require('sasslint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' });
 
@@ -91,28 +90,7 @@ function getDefaultConfig(options) {
 						path: BUILD_PATH,
 					},
 				}
-			}),
-			new HardSourceWebpackPlugin({
-				cacheDirectory: 'node_modules/.cache/hard-source/[confighash]',
-				recordsPath: 'node_modules/.cache/hard-source/[confighash]/records.json',
-				configHash: function(webpackConfig) {
-					return require('node-object-hash')({sort: false}).hash(webpackConfig);
-				},
-				// This field determines when to throw away the whole cache if for
-				// example npm modules were updated.
-				environmentHash: {
-					root: process.cwd(),
-					directories: ['node_modules'],
-					files: ['package.json'],
-				},
-				// `environmentHash` can also be a function. that can return a function
-				// resolving to a hashed value of the dependency environment.
-				environmentHash: function() {
-					return require('crypto').createHash('md5')
-						.update(require('fs').readFileSync(__dirname + '/../yarn.lock'))
-						.digest('hex');
-				},
-			}),
+			})
 		],
 		cache: true,
 		devtool: options.devtool,

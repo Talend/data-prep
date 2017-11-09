@@ -31,6 +31,7 @@ import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 
 import com.fasterxml.jackson.core.JsonParser;
+import org.talend.dataprep.transformation.format.CSVFormat;
 
 public class TransformerFactoryTest extends TransformationBaseTest {
 
@@ -42,6 +43,7 @@ public class TransformerFactoryTest extends TransformationBaseTest {
         // given
         Map<String, String> arguments = new HashMap<>();
         arguments.put(ExportFormat.PREFIX + "csv_fields_delimiter", ";");
+        arguments.put(ExportFormat.PREFIX + "csv_enclosure_mode", CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS);
         final OutputStream outputStream = new ByteArrayOutputStream();
         final Configuration configuration = Configuration.builder() //
                 .args(arguments) //

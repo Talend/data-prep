@@ -29,6 +29,7 @@ import org.talend.dataprep.format.export.ExportFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
+import org.talend.dataprep.transformation.format.CSVFormat;
 
 /**
  * Unit test for Export API.
@@ -53,6 +54,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export = given()
                 .formParam("exportType", "CSV")
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("datasetId", datasetId)
                 .when().get("/api/export")
                 .asString();
@@ -75,6 +77,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", "") //
                 .formParam("stepId", "") //
                 .formParam("datasetId", datasetId)
@@ -141,6 +144,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", steps.get(1)) //
                 .when() //
@@ -165,6 +169,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "") //
                 .when() //
@@ -213,6 +218,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .formParam("exportType", "CSV") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .when() //
                 .expect().statusCode(200).log().ifError() //
                 .get("/api/export") //
@@ -235,6 +241,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String export = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -257,6 +264,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String export1 = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //
@@ -270,6 +278,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String export2 = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
+                .formParam(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
                 .when() //

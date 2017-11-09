@@ -48,16 +48,16 @@ import org.talend.dataprep.util.FilesHelper;
 public class CSVWriter extends AbstractTransformerWriter {
 
     /** Separator argument name. */
-    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csv_fields_delimiter";
+    protected static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.FIELD_DELIMITER;
 
     /** Escape character argument name. */
-    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + "csv_escape_character";
+    protected static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ESCAPE_CHAR;
 
     /** Enclosure character argument name. */
-    public static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + "csv_enclosure_character";
+    protected static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_CHAR;
 
     /** Enclosure character argument name. */
-    public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + "csv_enclosure_mode";
+    protected static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE;
 
     /** The default separator. */
     private static final Character DEFAULT_SEPARATOR = ',';
@@ -66,7 +66,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private static final Character DEFAULT_ESCAPE_CHARACTER = '"';
 
     /** The default enclosure character. */
-    private static final String DEFAULT_ENCLOSURE_MODE = "text_only";
+    private static final String DEFAULT_ENCLOSURE_MODE = CSVFormat.Parameters.ENCLOSURE_TEXT_ONLY;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVWriter.class);
 

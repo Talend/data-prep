@@ -37,7 +37,7 @@ public class CSVFormat extends ExportFormat {
     /** CSV format type name. */
     public static final String CSV = "CSV";
 
-    private static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name("csv_fields_delimiter") //
+    private static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name(Parameters.FIELD_DELIMITER) //
             .item(";", "semiColon") //
             .item("\u0009", "tabulation") //
             .item(" ", "space") //
@@ -47,7 +47,7 @@ public class CSVFormat extends ExportFormat {
             .canBeBlank(true) //
             .build();
 
-    public static final SelectParameter ENCLOSURE_OPTIONS = SelectParameter.Builder.builder().name(Parameters.ENCLOSURE_MODE) //
+    private static final SelectParameter ENCLOSURE_OPTIONS = SelectParameter.Builder.builder().name(Parameters.ENCLOSURE_MODE) //
             .item(Parameters.ENCLOSURE_TEXT_ONLY, "custom_csv_enclosure_text_only") //
             .item(Parameters.ENCLOSURE_ALL_FIELDS, "custom_csv_enclosure_all_fields") //
             .defaultValue(Parameters.ENCLOSURE_TEXT_ONLY) //
@@ -76,10 +76,7 @@ public class CSVFormat extends ExportFormat {
         for (Charset charsetEntry : EncodingSupport.getSupportedCharsets()) {
             builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
         }
-        return builder
-                .defaultValue(UTF_8.name())
-                .canBeBlank(false)
-                .build();
+        return builder.defaultValue(UTF_8.name()).canBeBlank(false).build();
     }
 
     @Override
@@ -110,6 +107,8 @@ public class CSVFormat extends ExportFormat {
         public static final String ENCLOSURE_MODE = "csv_enclosure_mode";
 
         public static final String ENCODING = "csv_encoding";
+
+        public static final String FIELD_DELIMITER = "csv_fields_delimiter";
 
         private Parameters() {
         }

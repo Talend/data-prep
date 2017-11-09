@@ -12,15 +12,17 @@
 
 package org.talend.dataprep.transformation.format;
 
-import static java.nio.charset.StandardCharsets.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -52,21 +54,6 @@ public class CSVFormat extends ExportFormat {
             .radio(true) //
             .build();
 
-    private static final Set<Charset> charsets;
-
-    static {
-        // TODO: use EncodingSupport by overriding getParameter() method
-        Set<Charset> charsetsInBuild = new LinkedHashSet<>();
-        charsetsInBuild.add(UTF_8);
-        charsetsInBuild.add(UTF_16);
-        charsetsInBuild.add(UTF_16LE);
-        charsetsInBuild.add(Charset.forName("windows-1252"));
-        charsetsInBuild.add(ISO_8859_1);
-        charsetsInBuild.add(Charset.forName("x-MacRoman"));
-        charsetsInBuild.addAll((Charset.availableCharsets().values()));
-        charsets = Collections.unmodifiableSet(charsetsInBuild);
-    }
-
     /**
      * Default constructor.
      */
@@ -86,7 +73,7 @@ public class CSVFormat extends ExportFormat {
 
     private static Parameter buildCharsetParameter(Locale locale) {
         SelectParameter.Builder builder = SelectParameter.Builder.builder().name(Parameters.ENCODING);
-        for (Charset charsetEntry : charsets) {
+        for (Charset charsetEntry : EncodingSupport.getSupportedCharsets()) {
             builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
         }
         return builder
@@ -122,7 +109,7 @@ public class CSVFormat extends ExportFormat {
 
         public static final String ENCLOSURE_MODE = "csv_enclosure_mode";
 
-        public static final String ENCODING = "csv.encoding";
+        public static final String ENCODING = "csv_encoding";
 
         private Parameters() {
         }

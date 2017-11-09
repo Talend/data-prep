@@ -70,7 +70,7 @@ export default class DatagridExternalService {
 		this.lastSelectedColumnsNumber = columnNumber;
 		this.lastSelectedColumn = column;
 		this.lastSelectedLine = line;
-		this.lastSelectedTab = !columnNumber ? 'LINE' : 'COLUMN';
+		this.lastSelectedTab = !columnNumber ? 'line' : 'column';
 
         // change tab
 		this.StateService.selectTransformationsTab(this.lastSelectedTab);
@@ -103,6 +103,10 @@ export default class DatagridExternalService {
                 selectedCols
             );
 		}
+	}
+
+	initSuggestionPanelDatasetTab() {
+		this.TransformationService.initTransformations('dataset');
 	}
 
 	updateGridRangeIndex() {

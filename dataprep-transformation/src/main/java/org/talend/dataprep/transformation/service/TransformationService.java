@@ -26,6 +26,7 @@ import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXP
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.IOException;
@@ -681,6 +682,21 @@ public class TransformationService extends BaseTransformationService {
                 .filter(action -> action.acceptScope(LINE)) //
                 .map(action -> action.adapt(LINE));
     }
+
+    /**
+     * Returns all {@link ActionDefinition actions} data prep may apply to the whole dataset.
+     *
+     * @return A list of {@link ActionDefinition} that can be applied to the whole dataset.
+     */
+    @RequestMapping(value = "/actions/dataset", method = GET)
+    @ApiOperation(value = "Return all actions on the whole dataset.", notes = "This operation returns an array of actions.")
+    @ResponseBody
+    public Stream<ActionDefinition> datasetActions() {
+        return actionRegistry.findAll() //
+                .filter(action -> action.acceptScope(DATASET)) //
+                .map(action -> action.adapt(DATASET));
+    }
+
 
     /**
      * Suggest what {@link ActionDefinition actions} can be applied to <code>dataSetMetadata</code>.

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -15,7 +14,10 @@ package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +29,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.i18n.ActionsBundle;
@@ -35,7 +36,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.DataSetAction;
+import org.talend.dataprep.transformation.actions.common.HiddenAction;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -44,7 +45,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * This action reorder columns. The column will be move to the selected column. All other columns will be moved as well.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReorderColumn.REORDER_ACTION_NAME)
-public class ReorderColumn extends AbstractActionMetadata implements DataSetAction {
+public class ReorderColumn extends AbstractActionMetadata implements HiddenAction {
 
     /**
      * The action name.
@@ -71,10 +72,7 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
         return ActionsBundle.attachToAction(parameters, this);
     }
 
-    @Override
-    public List<String> getActionScope() {
-        return Collections.emptyList();
-    }
+
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
@@ -155,11 +153,6 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
         BeanUtils.copyProperties(targetColumn.getQuality(), originalQuality);
         BeanUtils.copyProperties(originColumn.getQuality(), targetQualityCopty);
 
-    }
-
-    @Override
-    public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        // no op
     }
 
     @Override

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -145,8 +144,10 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
             return this instanceof RowAction;
         case COLUMN:
             return this instanceof ColumnAction;
+        case HIDDEN:
+            return this instanceof HiddenAction;
         case DATASET:
-            return this instanceof DataSetAction;
+            return this instanceof DataSetAction || this instanceof HiddenAction;
         default:
             return false;
         }

@@ -59,8 +59,18 @@
 				     translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
 			</div>
 		</sc-tabs-item>
+		<sc-tabs-item tab-title="{{'ACTIONS_TAB_TABLE' | translate}}">
+			<div>
+				<actions-list class="action-suggestion-tab-items"
+							  actions="actionsSuggestionsCtrl.state.playground.suggestions.dataset.filteredTransformations"
+							  scope="dataset"
+							  should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
+							  should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
+							  scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom">
+				</actions-list>
+			</div>
+		</sc-tabs-item>
 	</sc-tabs>
-
 	<form
 		ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
 		class="filters-actions-form">

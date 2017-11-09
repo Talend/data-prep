@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -25,6 +24,7 @@ public enum ScopeCategory {
     CELL(ImplicitParameters.ROW_ID, ImplicitParameters.COLUMN_ID),
     COLUMN(ImplicitParameters.COLUMN_ID),
     LINE(ImplicitParameters.ROW_ID),
+    HIDDEN,
     DATASET;
 
     private final Predicate<Map<String, String>> mandatoryParametersChecker;

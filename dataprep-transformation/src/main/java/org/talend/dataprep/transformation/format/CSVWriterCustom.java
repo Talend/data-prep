@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.format;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 

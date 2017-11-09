@@ -168,7 +168,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         tabWriter.flush();
 
         // then
-        final String expectedCsv = "+song+,+band+\n" + "+last \"nite+,+the Strokes+\n";
+        final String expectedCsv = "+song+,+band+\n" + "+last \"\"nite+,+the Strokes+\n";
         assertThat(temp.toString()).isEqualTo(expectedCsv);
     }
 
@@ -204,7 +204,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         tabWriter.flush();
 
         // then
-        final String expectedCsv = "%song%,members,%band%,date\n" + "%last \"nite%,5,%the Strokes%,1998\n";
+        final String expectedCsv = "%song%,members,%band%,date\n" + "%last \"\"nite%,5,%the Strokes%,1998\n";
         assertThat(temp.toString()).isEqualTo(expectedCsv);
     }
 

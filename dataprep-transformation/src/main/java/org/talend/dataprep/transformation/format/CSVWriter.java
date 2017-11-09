@@ -81,8 +81,8 @@ public class CSVWriter extends AbstractTransformerWriter {
     private final CSVWriterCustom recordsWriter;
 
     /** The default enclosure character. */
-    @Value("${default.text.enclosure=:\"}")
-    private Character defaultTextEnclosure;
+    @Value("${default.text.enclosure=:}")
+    private Character defaultTextEnclosure = '"';
 
     /**
      * Simple constructor with default separator value.

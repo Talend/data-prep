@@ -41,10 +41,10 @@ public class CSVFormat extends ExportFormat {
             .canBeBlank(true) //
             .build();
 
-    public static final SelectParameter ENCLOSURE_OPTIONS = SelectParameter.Builder.builder().name("csv_enclosure_mode") //
+    public static final SelectParameter ENCLOSURE_OPTIONS = SelectParameter.Builder.builder().name(Parameters.ENCLOSURE_MODE) //
             .item(Parameters.ENCLOSURE_TEXT_ONLY, "custom_csv_enclosure_text_only") //
             .item(Parameters.ENCLOSURE_ALL_FIELDS, "custom_csv_enclosure_all_fields") //
-            .defaultValue("text_only") //
+            .defaultValue(Parameters.ENCLOSURE_TEXT_ONLY) //
             .radio(true) //
             .build();
 
@@ -55,9 +55,9 @@ public class CSVFormat extends ExportFormat {
         //@formatter:off
         super("CSV", "text/csv", ".csv", true, false,
                 Arrays.asList(CSV_DELIMITERS,  //
-                        ENCLOSURE_OPTIONS,
                 new Parameter(Parameters.ESCAPE_CHAR, ParameterType.STRING, StringUtils.EMPTY), //
                 new Parameter(Parameters.ENCLOSURE_CHAR, ParameterType.STRING, StringUtils.EMPTY), //
+                ENCLOSURE_OPTIONS, //
                 new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false) //
         ));
         //@formatter:on
@@ -87,6 +87,8 @@ public class CSVFormat extends ExportFormat {
         public static final String ESCAPE_CHAR = "csv_escape_character";
 
         public static final String ENCLOSURE_CHAR = "csv_enclosure_character";
+
+        public static final String ENCLOSURE_MODE = "csv_enclosure_mode";
 
         private Parameters() {
         }

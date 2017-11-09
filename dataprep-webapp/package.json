@@ -62,8 +62,7 @@
     "react-css-transition": "^0.7.4",
     "react-dom": "^15.4.2",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#2.0.0",
-    "uuid": "^2.0.3",
-    "yarn": "^1.2.1"
+    "uuid": "^2.0.3"
   },
   "devDependencies": {
     "angular-mocks": "1.5.9",

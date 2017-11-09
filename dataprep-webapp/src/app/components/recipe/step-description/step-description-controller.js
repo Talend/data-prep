@@ -45,37 +45,37 @@ class StepDescriptionCtrl {
 			});
 			break;
 
-        case 'hidden':
-            if (this.step.transformation.name === 'reorder') {
-                this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {
-                    index: (this.index + 1),
-                    label: this.step.transformation.label,
-                    columnName: this.step.column.name,
-                });
-            }
-            break;
+		case 'hidden':
+			if (this.step.transformation.name === 'reorder') {
+				this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {
+					index: (this.index + 1),
+					label: this.step.transformation.label,
+					columnName: this.step.column.name,
+				});
+			}
+			break;
 
 		case 'dataset':
 			if (this.step.transformation.name === 'lookup') {
 				this.stepDescription = this._getLookupDetails(this.step);
 			}
-            else {
-                this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_DATASET', {
-                    index: (this.index + 1),
-                    label: this.step.transformation.label,
-                });
-            }
+			else {
+				this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_DATASET', {
+					index: (this.index + 1),
+					label: this.step.transformation.label,
+				});
+			}
 			break;
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name _getLookupDetails
-     * @methodOf data-prep.step-description.controller:StepDescriptionCtrl
-     * @param {object} step The step
-     * @description creates the lookup step description
-     */
+	/**
+	 * @ngdoc method
+	 * @name _getLookupDetails
+	 * @methodOf data-prep.step-description.controller:StepDescriptionCtrl
+	 * @param {object} step The step
+	 * @description creates the lookup step description
+	 */
 	_getLookupDetails(step) {
 		let description = this.$translate.instant('LOOKUP_STEP_DESCRIPTION', {
 			index: (this.index + 1),
@@ -102,14 +102,14 @@ class StepDescriptionCtrl {
 		return description;
 	}
 
-    /**
-     * @ngdoc method
-     * @name _getAddedColumnsInLookup
-     * @methodOf data-prep.step-description.controller:StepDescriptionCtrl
-     * @param {object} step The current step
-     * @description having the Ids of the added columns, it collects the responding names
-     * @returns {Object} The lookup added columns arguments
-     */
+	/**
+	 * @ngdoc method
+	 * @name _getAddedColumnsInLookup
+	 * @methodOf data-prep.step-description.controller:StepDescriptionCtrl
+	 * @param {object} step The current step
+	 * @description having the Ids of the added columns, it collects the responding names
+	 * @returns {Object} The lookup added columns arguments
+	 */
 	_getAddedColumnsInLookup(step) {
 		const allAddedCols = _.map(step.actionParameters.parameters.lookup_selected_cols, 'name');
 		return {

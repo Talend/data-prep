@@ -763,33 +763,32 @@ export default function PlaygroundService(
 		return (params = params || {}) => {
 			let actions = [];
 			const line = state.playground.grid.selectedLine;
-			let lineParameters = { ...params };
-			let datasetParameters = { ...params };
+			let stepParameters = { ...params };
 			switch (scope) {
 			case DATASET:
-				datasetParameters.scope = scope;
+				stepParameters.scope = scope;
 				if (state.playground.filter.applyTransformationOnFilters) {
 					const stepFilters = FilterAdapterService.toTree(
 						state.playground.filter.gridFilters
 					);
-					datasetParameters = { ...datasetParameters, ...stepFilters };
+					stepParameters = { ...stepParameters, ...stepFilters };
 				}
 				actions = [
-					{ action: action.name, parameters: datasetParameters },
+					{ action: action.name, parameters: stepParameters },
 				];
 				break;
 			case LINE:
-				lineParameters.scope = scope;
-				lineParameters.row_id = line && line.tdpId;
+				stepParameters.scope = scope;
+				stepParameters.row_id = line && line.tdpId;
 
 				if (state.playground.filter.applyTransformationOnFilters) {
 					const stepFilters = FilterAdapterService.toTree(
 							state.playground.filter.gridFilters
 						);
-					lineParameters = { ...lineParameters, ...stepFilters };
+					stepParameters = { ...stepParameters, ...stepFilters };
 				}
 				actions = [
-						{ action: action.name, parameters: lineParameters },
+						{ action: action.name, parameters: stepParameters },
 				];
 				break;
 			default:

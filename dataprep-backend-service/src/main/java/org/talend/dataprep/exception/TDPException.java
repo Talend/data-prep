@@ -49,12 +49,24 @@ public class TDPException extends TalendRuntimeException {
      * @param throwable
      */
     public static RuntimeException rethrowOrWrap(Throwable throwable) {
+        return rethrowOrWrap(throwable, UNEXPECTED_EXCEPTION);
+    }
+
+    /**
+     * If the exception is a TDPException, rethrow it, else wrap it and then throw it.
+     *
+     * @param throwable The throwable to rethrow or wrap in a TDPException.
+     * @param errorCode The Error code to use when you wrap the throwable.
+     */
+    public static RuntimeException rethrowOrWrap(Throwable throwable, ErrorCode errorCode) {
         if (throwable instanceof TDPException) {
             throw (TDPException) throwable;
         } else if (throwable instanceof HystrixRuntimeException) {
             throw TDPExceptionUtils.processHystrixException((HystrixRuntimeException) throwable);
+        } else if (throwable.getCause() instanceof TDPException) {
+            throw (TDPException) (throwable.getCause());
         } else {
-            throw new TDPException(UNEXPECTED_EXCEPTION, throwable);
+            throw new TDPException(errorCode, throwable);
         }
     }
 
@@ -69,7 +81,8 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
-     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a component
+     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a
+     * component
      * that does not have access to the exception bundle.
      */
     public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
@@ -168,7 +181,8 @@ public class TDPException extends TalendRuntimeException {
         String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
         String message = internal.getMessage();
         String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
-        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause()) : null;
+        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause())
+                : null;
         Map<String, Object> context = new HashMap<>();
         for (Map.Entry<String, Object> contextEntry : internal.getContext().entries()) {
             context.put(contextEntry.getKey(), contextEntry.getValue());

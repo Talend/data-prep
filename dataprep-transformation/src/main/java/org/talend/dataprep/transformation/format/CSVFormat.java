@@ -37,7 +37,7 @@ public class CSVFormat extends ExportFormat {
     /** CSV format type name. */
     public static final String CSV = "CSV";
 
-    private static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name(Parameters.FIELD_DELIMITER) //
+    private static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name(Parameters.FIELDS_DELIMITER) //
             .item(";", "semiColon") //
             .item("\u0009", "tabulation") //
             .item(" ", "space") //
@@ -96,19 +96,23 @@ public class CSVFormat extends ExportFormat {
 
     public static class Parameters {
 
+        /** Separator argument name. */
+        public static final String FIELDS_DELIMITER = "csv_fields_delimiter";
+
         public static final String ENCLOSURE_TEXT_ONLY = "text_only";
 
         public static final String ENCLOSURE_ALL_FIELDS = "all_fields";
 
+        /** Escape character argument name. */
         public static final String ESCAPE_CHAR = "csv_escape_character";
 
+        /** Enclosure character argument name. */
         public static final String ENCLOSURE_CHAR = "csv_enclosure_character";
 
+        /** Enclosure character argument name. */
         public static final String ENCLOSURE_MODE = "csv_enclosure_mode";
 
         public static final String ENCODING = "csv_encoding";
-
-        public static final String FIELD_DELIMITER = "csv_fields_delimiter";
 
         private Parameters() {
         }

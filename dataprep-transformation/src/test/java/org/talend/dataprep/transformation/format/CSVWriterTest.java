@@ -25,6 +25,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriterTest;
 
 /**
@@ -34,6 +35,18 @@ import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWri
  */
 public class CSVWriterTest extends AbstractTransformerWriterTest {
 
+    /** Separator argument name. */
+    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.FIELDS_DELIMITER;
+
+    /** Escape character argument name. */
+    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ESCAPE_CHAR;
+
+    /** Enclosure character argument name. */
+    public static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_CHAR;
+
+    /** Enclosure character argument name. */
+    public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE;
+
     /** Where the writer should... write! */
     private OutputStream outputStream;
 
@@ -41,7 +54,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
     public void init() {
         outputStream = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put(CSVWriter.SEPARATOR_PARAM_NAME, ";");
+        parameters.put(SEPARATOR_PARAM_NAME, ";");
         writer = (CSVWriter) context.getBean("writer#CSV", outputStream, parameters);
     }
 
@@ -54,7 +67,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // given
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put(CSVWriter.SEPARATOR_PARAM_NAME, "\t");
+        parameters.put(SEPARATOR_PARAM_NAME, "\t");
         final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
 
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
@@ -86,7 +99,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // given
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put(CSVWriter.ESCAPE_CHARACTER_PARAM_NAME, "#");
+        parameters.put(ESCAPE_CHARACTER_PARAM_NAME, "#");
         final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
 
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
@@ -149,7 +162,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // given
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put(CSVWriter.ENCLOSURE_CHARACTER_PARAM_NAME, "+");
+        parameters.put(ENCLOSURE_CHARACTER_PARAM_NAME, "+");
         final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
 
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
@@ -180,8 +193,8 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // given
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put(CSVWriter.ENCLOSURE_CHARACTER_PARAM_NAME, "%");
-        parameters.put(CSVWriter.ENCLOSURE_MODE_PARAM_NAME, "text_only");
+        parameters.put(ENCLOSURE_CHARACTER_PARAM_NAME, "%");
+        parameters.put(ENCLOSURE_MODE_PARAM_NAME, "text_only");
         final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
 
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();

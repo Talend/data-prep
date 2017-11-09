@@ -42,8 +42,8 @@ public class TransformerFactoryTest extends TransformationBaseTest {
     public void getExporter_csv_exporter_should_write_csv_format() throws Exception {
         // given
         Map<String, String> arguments = new HashMap<>();
-        arguments.put(ExportFormat.PREFIX + "csv_fields_delimiter", ";");
-        arguments.put(ExportFormat.PREFIX + "csv_enclosure_mode", CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS);
+        arguments.put(ExportFormat.PREFIX + CSVFormat.Parameters.FIELDS_DELIMITER, ";");
+        arguments.put(ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE, CSVFormat.Parameters.ENCLOSURE_ALL_FIELDS);
         final OutputStream outputStream = new ByteArrayOutputStream();
         final Configuration configuration = Configuration.builder() //
                 .args(arguments) //

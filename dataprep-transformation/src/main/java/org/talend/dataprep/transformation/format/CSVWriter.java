@@ -47,18 +47,6 @@ import org.talend.dataprep.util.FilesHelper;
 @Component("writer#" + CSV)
 public class CSVWriter extends AbstractTransformerWriter {
 
-    /** Separator argument name. */
-    protected static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.FIELD_DELIMITER;
-
-    /** Escape character argument name. */
-    protected static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ESCAPE_CHAR;
-
-    /** Enclosure character argument name. */
-    protected static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_CHAR;
-
-    /** Enclosure character argument name. */
-    protected static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.Parameters.ENCLOSURE_MODE;
-
     /** The default separator. */
     private static final Character DEFAULT_SEPARATOR = ',';
 
@@ -108,11 +96,11 @@ public class CSVWriter extends AbstractTransformerWriter {
             Map<String, String> cleanedParameters = ExportFormat.cleanParameters(parameters);
 
             this.output = output;
-            this.separator = getParameterCharValue(cleanedParameters, SEPARATOR_PARAM_NAME, DEFAULT_SEPARATOR);
-            this.escapeCharacter = getParameterCharValue(cleanedParameters, ESCAPE_CHARACTER_PARAM_NAME, DEFAULT_ESCAPE_CHARACTER);
-            this.enclosureCharacter = getParameterCharValue(cleanedParameters, ENCLOSURE_CHARACTER_PARAM_NAME,
+            this.separator = getParameterCharValue(cleanedParameters, CSVFormat.Parameters.FIELDS_DELIMITER, DEFAULT_SEPARATOR);
+            this.escapeCharacter = getParameterCharValue(cleanedParameters, CSVFormat.Parameters.ESCAPE_CHAR, DEFAULT_ESCAPE_CHARACTER);
+            this.enclosureCharacter = getParameterCharValue(cleanedParameters, CSVFormat.Parameters.ENCLOSURE_CHAR,
                     defaultTextEnclosure);
-            this.enclosureMode = getParameterStringValue(cleanedParameters, ENCLOSURE_MODE_PARAM_NAME, DEFAULT_ENCLOSURE_MODE);
+            this.enclosureMode = getParameterStringValue(cleanedParameters, CSVFormat.Parameters.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
 
             Charset encoding = extractEncodingWithFallback(cleanedParameters.get(CSVFormat.Parameters.ENCODING));
 

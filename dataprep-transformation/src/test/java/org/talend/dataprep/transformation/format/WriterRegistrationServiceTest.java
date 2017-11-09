@@ -27,7 +27,7 @@ import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 
 /**
  * Unit test for WriterRegistrationService.
- * 
+ *
  * @see WriterRegistrationService
  */
 public class WriterRegistrationServiceTest extends BaseFormatTest {
@@ -47,7 +47,7 @@ public class WriterRegistrationServiceTest extends BaseFormatTest {
     @Test
     public void shouldReturnWriterWithParameter() {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(CSVWriter.SEPARATOR_PARAM_NAME, "|");
+        parameters.put(CSVWriterTest.SEPARATOR_PARAM_NAME, "|");
         final TransformerWriter csvWriter = service.getWriter(CSVFormat.CSV, output, parameters);
         Assert.assertTrue(csvWriter instanceof CSVWriter);
     }

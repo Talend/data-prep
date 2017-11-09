@@ -65,10 +65,8 @@ public class SelectParameter extends Parameter {
         return radio;
     }
 
-    public boolean setRadio(boolean radio) {
+    public void setRadio(boolean radio) {
         this.radio = radio;
-        addConfiguration("radio", radio);
-        return radio;
     }
 
     public List<Item> getItems() {

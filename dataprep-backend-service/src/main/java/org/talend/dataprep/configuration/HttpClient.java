@@ -15,11 +15,7 @@ package org.talend.dataprep.configuration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
+import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
@@ -115,7 +111,7 @@ public class HttpClient {
     /**
      * @return the http request configuration to use.
      */
-    private RequestConfig getRequestConfig() {
+    protected RequestConfig getRequestConfig() {
         return RequestConfig.custom() //
                 .setContentCompressionEnabled(true)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
@@ -125,7 +121,7 @@ public class HttpClient {
     /**
      * @return The connection keep alive strategy.
      */
-    private ConnectionKeepAliveStrategy getKeepAliveStrategy() {
+    protected ConnectionKeepAliveStrategy getKeepAliveStrategy() {
 
         return (response, context) -> {
             // Honor 'keep-alive' header

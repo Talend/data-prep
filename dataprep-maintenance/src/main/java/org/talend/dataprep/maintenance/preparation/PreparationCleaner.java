@@ -33,8 +33,8 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.security.ForAll;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.tenancy.ForAll;
 
 /**
  * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.

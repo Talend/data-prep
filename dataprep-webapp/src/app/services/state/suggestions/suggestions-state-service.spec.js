@@ -33,7 +33,7 @@ describe('Suggestions state service', () => {
 			suggestionsState.tab = null;
 
 			// when
-			SuggestionsStateService.selectTab('COLUMN');
+			SuggestionsStateService.selectTab('column');
 
 			// then
 			expect(suggestionsState.tab).toBe(0);
@@ -212,6 +212,30 @@ describe('Suggestions state service', () => {
 
 			// then
 			expect(suggestionsState.line).toEqual({
+				allSuggestions: [],
+				allTransformations: [],
+				filteredTransformations: [],
+				allCategories: null,
+				searchActionString: '',
+			});
+		}));
+
+		it('should reset dataset transformations', inject((suggestionsState, SuggestionsStateService) => {
+			// given
+			suggestionsState.dataset = {
+				allTransformations: [{ name: 'delete' }, { name: 'uppercase' }],
+				filteredTransformations: [{ name: 'delete' }],
+				allCategories: {
+					clean: [{ name: 'delete' }],
+					case: [{ name: 'uppercase' }],
+				},
+			};
+
+			// when
+			SuggestionsStateService.reset();
+
+			// then
+			expect(suggestionsState.dataset).toEqual({
 				allSuggestions: [],
 				allTransformations: [],
 				filteredTransformations: [],

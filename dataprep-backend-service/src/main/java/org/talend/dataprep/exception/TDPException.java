@@ -44,7 +44,7 @@ public class TDPException extends TalendRuntimeException {
      *
      * @param throwable
      */
-    public static void rethrowOrWrap(Throwable throwable) {
+    public static RuntimeException rethrowOrWrap(Throwable throwable) {
         if (throwable instanceof TDPException) {
             throw (TDPException) throwable;
         } else if (throwable instanceof HystrixRuntimeException) {

@@ -17,6 +17,7 @@ node_modules
 ### npm
 # log file
 npm-debug.log
+package-lock.json
 
 ### Project
 .DS_Store

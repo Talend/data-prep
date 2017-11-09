@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
-
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -53,11 +51,6 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.COLUMNS.getDisplayName(locale);
-    }
-
-    @Override
-    public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
     /**

@@ -37,6 +37,14 @@ $ mvn test verify
 
 The cucumber report will be available on /site/cucumber-reports
 
+## Adding new features
+Don't forget to add the following annotation on the last scenario of your new feature : 
+```
+@CleanAfter
+```
+All created datasets, preparations, steps, folders are stored in a temporary context in order to be accessible to all scenarios within the same feature.
+The @CleanAfter annotation just call a cleaning procedure in the test environment to delete all the created stuff in the right order.  
+
 ## License
 
 Copyright (c) 2006-2017 Talend

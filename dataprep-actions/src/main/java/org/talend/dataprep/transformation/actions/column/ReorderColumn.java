@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,6 +13,7 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
 import java.util.*;
 
@@ -75,7 +75,7 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
 
     @Override
     public List<String> getActionScope() {
-        return Collections.emptyList();
+        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
     @Override

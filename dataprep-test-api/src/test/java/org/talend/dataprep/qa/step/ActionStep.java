@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.ActionFilterEnum;
 import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
@@ -161,6 +162,14 @@ public class ActionStep extends DataPrepStep {
             ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
             if (ape != null) {
                 action.parameters.put(ape, v);
+            } else {
+                // maybe it's a filter
+                ActionFilterEnum afe = ActionFilterEnum.getActionFilterEnum(k);
+                if (afe != null) {
+                    if (action.filter.isEmpty())
+                        action.filter.add(new Action.Filter());
+                    action.filter.get(0).range.put(afe, k);
+                }
             }
         });
         action.parameters.putIfAbsent(SCOPE, "column");

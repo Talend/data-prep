@@ -13,7 +13,9 @@
 
 package org.talend.dataprep.helper.api;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -27,6 +29,7 @@ public class Action {
 
     public EnumMap<ActionParamEnum, String> parameters = new EnumMap<>(ActionParamEnum.class);
 
+    public List<Filter> filter = new ArrayList<>();
 
     // Generated equals() on action & parameters attributes
     @Override
@@ -49,5 +52,11 @@ public class Action {
         int result = action != null ? action.hashCode() : 0;
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
         return result;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Filter {
+
+        public EnumMap<ActionFilterEnum, String> range = new EnumMap<>(ActionFilterEnum.class);
     }
 }

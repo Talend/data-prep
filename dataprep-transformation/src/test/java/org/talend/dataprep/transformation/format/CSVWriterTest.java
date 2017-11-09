@@ -114,7 +114,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
      * see https://jira.talendforge.org/browse/TDP-4390
      */
     @Test
-    public void should_use_backslash_as_default_escape_character() throws Exception {
+    public void should_use_quote_as_default_escape_character() throws Exception {
         // given
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();
@@ -137,7 +137,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
         // then
 
-        final String expectedCsv = "\"song\",\"band\"\n" + "\"last \\\"nite\",\"the Strokes\"\n";
+        final String expectedCsv = "\"song\",\"band\"\n" + "\"last \"\"nite\",\"the Strokes\"\n";
         assertThat(temp.toString()).isEqualTo(expectedCsv);
     }
 

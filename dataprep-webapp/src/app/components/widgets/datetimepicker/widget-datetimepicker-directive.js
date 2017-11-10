@@ -30,6 +30,8 @@
 export default function TalendDatetimePicker($timeout) {
 	'ngInject';
 
+	console.log($.fn.jquery);
+
 	return {
 		restrict: 'E',
 		template: `

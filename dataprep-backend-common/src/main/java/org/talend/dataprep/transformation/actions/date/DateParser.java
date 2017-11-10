@@ -147,14 +147,9 @@ public class DateParser {
         }
 
         for (DatePattern pattern : patterns) {
-            // TDQ-14421 use ResolverStyle.STRICT to parse a date. such as "2017-02-29" should be
-            // invalid.STRICT model for pattern without G,should replace 'y' with 'u'.
-            String patternStr = pattern.getPattern();
-            if (!StringUtils.endsWith(patternStr, "G")) {
-                patternStr = patternStr.replace('y', 'u');
-            }
-            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(patternStr)
-                    .toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT);
+            // TDQ-14421 use ResolverStyle.STRICT to parse a date. such as "2017-02-29" should be invalid.
+            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                    .append(pattern.getFormatter()).toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT);
 
             // first try to parse directly as LocalDateTime
             try {

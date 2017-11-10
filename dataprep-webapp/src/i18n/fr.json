@@ -343,7 +343,7 @@
   "_comment": "playground",
   "CHOOSE_PREPARATION_TO_APPLY": "Choisissez une préparation à appliquer à ce jeu de données",
   "NO_COMPATIBLE_PREPARATIONS": "Aucune préparation compatible avec le jeu de données: {{name}}",
-  "READ_ONLY": "Read only",
+  "READ_ONLY": "Lecture seule",
 
   "_comment": "Confirm popup",
   "SAVE_CHANGE": "Sauvegarder les modifications ?",

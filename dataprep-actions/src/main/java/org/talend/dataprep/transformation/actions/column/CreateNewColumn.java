@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
 
@@ -85,7 +86,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     @Override
     public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override

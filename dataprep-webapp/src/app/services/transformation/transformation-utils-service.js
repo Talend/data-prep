@@ -13,8 +13,7 @@
 
 import { chain, forEach, filter, map, find } from 'lodash';
 
-const COLUMN_METADATA = 'column_metadata';
-const DATA_BLENDING = 'data_blending';
+const ACTION_SCOPE = 'hidden_in_action_list';
 const CATEGORY = 'category';
 const SUGGESTIONS_CATEGORY = 'suggestions';
 const FILTERED_CATEGORY = 'filtered';
@@ -169,11 +168,10 @@ export default class TransformationUtilsService {
 	sortAndGroupByCategory(transformations) {
 		const groupedTransformations = chain(transformations)
 		// is not "column" category
-			.filter(transfo => (transfo.actionScope.indexOf(COLUMN_METADATA) === -1) && transfo.category !== DATA_BLENDING)
+			.filter(transfo => (transfo.actionScope.indexOf(ACTION_SCOPE) === -1))
 			.sortBy(transfo => transfo.label.toLowerCase())
 			.groupBy(CATEGORY)
 			.value();
-
 		return chain(Object.getOwnPropertyNames(groupedTransformations))
 			.sortBy(key => key.toLowerCase())
 			.map((key) => {

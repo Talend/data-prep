@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.datablending;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.ParameterType.LIST;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
 import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.*;
 
@@ -72,6 +73,11 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.DATA_BLENDING.getDisplayName(locale);
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override

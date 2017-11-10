@@ -31,7 +31,11 @@ public enum ActionScope {
     /**
      * Actions works on the column metadata (not column's values).
      */
-    COLUMN_METADATA;
+    COLUMN_METADATA,
+    /**
+     * Actions are hidden from actions list
+     */
+    HIDDEN_IN_ACTION_LIST;
 
     /**
      * @return A "user friendly" name for the action scope.

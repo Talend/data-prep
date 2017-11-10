@@ -107,6 +107,7 @@ public class DataPrepAPIHelper {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
+                .log().all() //
                 .when() //
                 .body(new ActionRequest(action)) //
                 .post("/api/preparations/" + preparationId + "/actions");

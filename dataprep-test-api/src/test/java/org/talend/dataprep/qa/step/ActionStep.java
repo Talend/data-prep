@@ -15,6 +15,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
+import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
 import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,14 +163,15 @@ public class ActionStep extends DataPrepStep {
         params.forEach((k, v) -> {
             ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
             if (ape != null) {
-                action.parameters.put(ape, v);
+                action.parameters.put(ape, StringUtils.isEmpty(v) ? null : v);
             } else {
                 // maybe it's a filter
                 ActionFilterEnum afe = ActionFilterEnum.getActionFilterEnum(k);
                 if (afe != null) {
-                    if (action.filter.isEmpty())
-                        action.filter.add(new Action.Filter());
-                    action.filter.get(0).range.put(afe, k);
+                    Action.Filter filter = (Action.Filter) action.parameters.get(FILTER);
+                    filter = filter == null ? new Action.Filter() : filter;
+                    filter.range.put(afe, afe.processValue(v));
+                    action.parameters.put(FILTER, filter);
                 }
             }
         });

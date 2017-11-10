@@ -18,6 +18,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Action {
@@ -25,11 +26,10 @@ public class Action {
     public String action;
 
     // not to be loaded by jackson but to be inferred from steps attribute @see PreparationDetails
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public String id;
 
-    public EnumMap<ActionParamEnum, String> parameters = new EnumMap<>(ActionParamEnum.class);
-
-    public List<Filter> filter = new ArrayList<>();
+    public EnumMap<ActionParamEnum, Object> parameters = new EnumMap<>(ActionParamEnum.class);
 
     // Generated equals() on action & parameters attributes
     @Override
@@ -57,6 +57,6 @@ public class Action {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Filter {
 
-        public EnumMap<ActionFilterEnum, String> range = new EnumMap<>(ActionFilterEnum.class);
+        public EnumMap<ActionFilterEnum, Object> range = new EnumMap<>(ActionFilterEnum.class);
     }
 }

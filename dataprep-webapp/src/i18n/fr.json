@@ -431,7 +431,7 @@
   "PLAYGROUND_STEP_3_CONTENT": "Utilisez cette barre de statistiques pour identifier et filtrer :<ul><li> - les enregistrements valides (en vert),</li><li> - les enregistrements vides (en blanc),</li><li> - les enregistrements invalides (en orange).</li></ul>Cliquez sur l'un des types d'enregistrements pour y appliquer des fonctions.",
   "PLAYGROUND_STEP_4_TITLE": "Fonctions",
   "PLAYGROUND_STEP_4_CONTENT": "Cliquez sur l'une des fonctions disponibles pour l'appliquer sur la colonne sélectionnée.",
-  "PLAYGROUND_STEP_5_TITLE": "Profiling de données",
+  "PLAYGROUND_STEP_5_TITLE": "Profilage de données",
   "PLAYGROUND_STEP_5_CONTENT": "Cliquez sur les données profilées pour créer un filtre.<br/>Ce panneau fournit des analyses concernant vos données, afin de vous donner une meilleure idée de leur contenu.",
   "PLAYGROUND_STEP_6_TITLE": "Lookup de données",
   "PLAYGROUND_STEP_6_CONTENT": "Cliquez ici pour lier un jeu de données à votre préparation. Cela vous permet d'utiliser dynamiquement les données d'un second jeu de données pour compléter votre préparation.</br>Par exemple, vous pouvez l'utiliser pour ajouter toutes les abréviations des États-Unis avec le nom complet de l'État",
@@ -452,7 +452,7 @@
   "PREPARATIONS_STEP_3_TITLE": "Ajouter la préparation",
   "PREPARATIONS_STEP_3_CONTENT": "Cliquez ici pour ajouter une préparation et commencer à nettoyer vos données.",
   "PREPARATIONS_STEP_4_TITLE": "Aide",
-  "PREPARATIONS_STEP_4_CONTENT": "Cliquez ici pour obtenir de l'aide(Documentation en ligne, Présentation, À propos de Data Preparation)",
+  "PREPARATIONS_STEP_4_CONTENT": "Cliquez ici pour obtenir de l'aide (Documentation en ligne, Présentation, À propos de Data Preparation)",
 
   "EMPTY_RECORDS_LABEL": "lignes avec des valeurs vides",
   "INVALID_RECORDS_LABEL": "lignes avec des valeurs invalides",

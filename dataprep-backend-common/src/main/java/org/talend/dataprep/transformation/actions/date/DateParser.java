@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -146,8 +147,9 @@ public class DateParser {
         }
 
         for (DatePattern pattern : patterns) {
+            // TDQ-14421 use ResolverStyle.STRICT to parse a date. such as "2017-02-29" should be invalid.
             final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive()
-                    .append(pattern.getFormatter()).toFormatter(Locale.ENGLISH);
+                    .append(pattern.getFormatter()).toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT);
 
             // first try to parse directly as LocalDateTime
             try {

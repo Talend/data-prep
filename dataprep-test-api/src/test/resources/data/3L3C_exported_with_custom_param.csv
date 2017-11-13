@@ -1,4 +1,6 @@
 +id+-+lastname+-+firstname+
-+1+-+Dupont+-+Jaques #" test+
-+2+-+Lamalice+-+Jean-Denis+
-+3+-+Blanc+-+Sébastien+
++1+-+DUPONT+-+Jaques " test+
++2+-+LAMALICE+-+Jean-Denis+
++3+-+BLANC+-+Sébastien+
++4+-+NOIR##+-+Bernard+
++5+-+JAUNE#++-+Bianca+

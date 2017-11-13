@@ -21,25 +21,21 @@ public class ExportPreparationStep extends DataPrepStep {
     /** {@link cucumber.api.DataTable} key for preparationName value. */
     private static final String PREPARATION_NAME = "preparationName";
 
-    private static final String DATASET_NAME = "datasetName";
+    private static final String DATASET_NAME = "dataSetName";
 
     private static final String FILE_NAME = "fileName";
 
-    private static final String CSV_ESCAPE_CHARACTER_PARAM = "exportType";
+    private static final String CSV_ESCAPE_CHARACTER_PARAM = "csv_escape_character";
 
     private static final String CSV_FIELDS_DELIMITER = "csv_fields_delimiter";
 
-    private static final String CSV_ENCLOSURE_CHARACTER_PARAM = "csv_enclosure_delimiter";
+    private static final String CSV_ENCLOSURE_CHARACTER_PARAM = "csv_enclosure_char";
 
-    private static final String CSV_ENCLOSURE_MODE_PARAM = "csv_enclosure_char";
+    private static final String CSV_ENCLOSURE_MODE_PARAM = "csv_enclosure_mode";
 
     private static final String CSV_CHARSET_PARAM = "csv_charset";
 
     private static final String CSV_EXPORT = "CSV";
-
-    private static final String EXPORT_TYPE = "exportType";
-
-    private static final String FILENAME = "filename";
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportPreparationStep.class);
@@ -85,11 +81,18 @@ public class ExportPreparationStep extends DataPrepStep {
 
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
+        // Preparation
         String preparationName = params.get(PREPARATION_NAME);
         String preparationId = context.getPreparationId(preparationName);
+
+        // Dataset
         String datasetName = params.get(DATASET_NAME);
-        String filename = params.get(FILE_NAME);
         String datasetId = context.getDatasetId(datasetName);
+
+        // File exported
+        String filename = params.get(FILE_NAME);
+
+        // Export parameters
         String escapeCharacter = params.get(CSV_ESCAPE_CHARACTER_PARAM);
         String delimiter = params.get(CSV_FIELDS_DELIMITER);
         String enclosureCharacter = params.get(CSV_ENCLOSURE_CHARACTER_PARAM);

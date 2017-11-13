@@ -259,9 +259,10 @@ public class DataPrepAPIHelper {
      * @param filename the name for the exported generated file.
      * @return the response.
      */
-    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
-                                         String delimiter, String filename) {
-        return executeFullRunExport(exportType, datasetId, preparationId, stepId, delimiter, filename, null);
+    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId,
+                                      String delimiter, String filename) {
+        return this.executeFullExport(exportType, datasetId, preparationId, stepId, delimiter, filename, //
+                null, null, null, null);
     }
 
     /**
@@ -276,8 +277,9 @@ public class DataPrepAPIHelper {
      * @param escapeCharacter the escape character for the exported generated file.
      * @return the response.
      */
-    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
-                                         String delimiter, String filename, String escapeCharacter) {
+    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId,
+                                      String delimiter, String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode,
+                                      String charset) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
@@ -289,6 +291,9 @@ public class DataPrepAPIHelper {
                 .queryParam("exportParameters.csv_fields_delimiter", delimiter) //
                 .queryParam("exportParameters.fileName", filename) //
                 .queryParam("exportParameters.csv_escape_character", escapeCharacter) //
+                .queryParam("exportParameters.csv_enclosure_character", enclosureCharacter) //
+                .queryParam("exportParameters.csv_enclosure_mode", enclosureMode) //
+                .queryParam("exportParameters.csv_encoding", charset) //
                 .get("/api/export");
     }
 

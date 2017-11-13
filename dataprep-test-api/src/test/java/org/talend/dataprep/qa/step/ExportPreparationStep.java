@@ -18,25 +18,6 @@ import cucumber.api.java.en.When;
  */
 public class ExportPreparationStep extends DataPrepStep {
 
-    /** {@link cucumber.api.DataTable} key for preparationName value. */
-    private static final String PREPARATION_NAME = "preparationName";
-
-    private static final String DATASET_NAME = "dataSetName";
-
-    private static final String FILE_NAME = "fileName";
-
-    private static final String CSV_ESCAPE_CHARACTER_PARAM = "csv_escape_character";
-
-    private static final String CSV_FIELDS_DELIMITER = "csv_fields_delimiter";
-
-    private static final String CSV_ENCLOSURE_CHARACTER_PARAM = "csv_enclosure_char";
-
-    private static final String CSV_ENCLOSURE_MODE_PARAM = "csv_enclosure_mode";
-
-    private static final String CSV_CHARSET_PARAM = "csv_charset";
-
-    private static final String CSV_EXPORT = "CSV";
-
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportPreparationStep.class);
 
@@ -49,8 +30,7 @@ public class ExportPreparationStep extends DataPrepStep {
         List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
                 .getJsonObject("steps");
 
-        final InputStream csv = api
-                .executeFullExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename)
+        final InputStream csv = api.executeFullExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename)
                 .asInputStream();
 
         // store the body content in a temporary File
@@ -68,8 +48,8 @@ public class ExportPreparationStep extends DataPrepStep {
         List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
                 .getJsonObject("steps");
 
-        final InputStream csv = api.executeFullExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";",
-                filename, escapeCharacter, null, null, null).asInputStream();
+        final InputStream csv = api.executeFullExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename,
+                escapeCharacter, null, null, null).asInputStream();
 
         // store the body content in a temporary File
         File tempFile = api.storeInputStreamAsTempFile(filename, csv);
@@ -92,13 +72,6 @@ public class ExportPreparationStep extends DataPrepStep {
         // File exported
         String filename = params.get(FILE_NAME);
 
-        // Export parameters
-        String escapeCharacter = params.get(CSV_ESCAPE_CHARACTER_PARAM);
-        String delimiter = params.get(CSV_FIELDS_DELIMITER);
-        String enclosureCharacter = params.get(CSV_ENCLOSURE_CHARACTER_PARAM);
-        String enclosureMode = params.get(CSV_ENCLOSURE_MODE_PARAM);
-        String charset = params.get(CSV_CHARSET_PARAM);
-
         LOGGER.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName,
                 datasetName, filename);
 
@@ -106,7 +79,9 @@ public class ExportPreparationStep extends DataPrepStep {
                 .getJsonObject("steps");
 
         final InputStream csv = api.executeFullExport(CSV_EXPORT, datasetId, preparationId, steps.get(steps.size() - 1),
-                delimiter, filename, escapeCharacter, enclosureCharacter, enclosureMode, charset).asInputStream();
+                params.get(CSV_FIELDS_DELIMITER), filename, params.get(CSV_ESCAPE_CHARACTER_PARAM),
+                params.get(CSV_ENCLOSURE_CHARACTER_PARAM), params.get(CSV_ENCLOSURE_MODE_PARAM), params.get(CSV_CHARSET_PARAM))
+                .asInputStream();
 
         // store the body content in a temporary File
         File tempFile = api.storeInputStreamAsTempFile(filename, csv);

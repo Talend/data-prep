@@ -10,22 +10,22 @@ Feature: Export Preparation
       | preparationName | 3L3C_preparation |
 
   Scenario: Verify transformation result
-    And I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result in "3L3C_result_default.csv" temporary file.
-    Then I check that "3L3C_result_default.csv" temporary file equals "/data/3L3C_processed.csv" file
+    And I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result in "3L3C_result.csv" temporary file.
+    Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_processed.csv" file
 
   Scenario: Verify transformation result with another escape char
-    When I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result with "#" as escape character in "3L3C_result_escape.csv" temporary file.
-    Then I check that "3L3C_result_escape.csv" temporary file equals "/data/3L3C_processed_custom_escape_char.csv" file
+    When I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result with "#" as escape character in "3L3C_result.csv" temporary file.
+    Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_processed_custom_escape_char.csv" file
 
   @CleanAfter
   Scenario: Verify transformation result with custom parameters
     When I export the preparation with custom parameters :
-      | csv_fields_delimiter | -                                    |
-      | csv_escape_character | #                                    |
-      | csv_enclosure_mode   | all_fields                           |
-      | csv_charset          | UTF-8                                |
-      | csv_enclosure_char   | +                                    |
-      | preparationName      | 3L3C_preparation                     |
-      | dataSetName          | 3L3C_dataset                         |
-      | fileName             | 3L3C_result_custom.csv                      |
-    Then I check that "3L3C_result_custom.csv" temporary file equals "/data/3L3C_exported_with_custom_param.csv" file
+      | csv_fields_delimiter | -                |
+      | csv_escape_character | #                |
+      | csv_enclosure_mode   | all_fields       |
+      | csv_charset          | UTF-8            |
+      | csv_enclosure_char   | +                |
+      | preparationName      | 3L3C_preparation |
+      | dataSetName          | 3L3C_dataset     |
+      | fileName             | 3L3C_result.csv  |
+    Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_exported_with_custom_param.csv" file

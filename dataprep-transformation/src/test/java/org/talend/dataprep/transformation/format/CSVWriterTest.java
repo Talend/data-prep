@@ -55,6 +55,9 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
     private static final String NON_ASCII_TEST_CHARS = "ñóǹ äŝçíì 汉语/漢語  华语/華語 Huáyǔ; 中文 Zhōngwén 漢字仮名交じり文 Lech Wałęsa æøå";
 
+    /** Enclosure character argument name. */
+    public static final String DELIMITER_CHAR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
+
     @Before
     public void init() {
         // to avoid breaking stranger abstract test "should_only_write_values_in_columns_order_TDP_3188"
@@ -216,6 +219,42 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // then
         final String expectedCsv = "%song%,members,%band%,date\n" + "%last \"\"nite%,5,%the Strokes%,1998\n";
         assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-4389
+     */
+    @Test
+    public void should_use_custom_params() throws Exception {
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(ENCLOSURE_CHARACTER_PARAM_NAME, "+");
+        parameters.put(ENCLOSURE_MODE_PARAM_NAME, "all_fields");
+        parameters.put(ESCAPE_CHARACTER_PARAM_NAME, "#");
+        parameters.put(DELIMITER_CHAR_PARAM_NAME, "-");
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("id").type(Type.INTEGER).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("lastname").type(Type.STRING).build();
+        final ColumnMetadata column3 = ColumnMetadata.Builder.column().id(3).name("firstname").type(Type.STRING).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2, column3);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "1");
+        values.put("0002", "DUPONT#");
+        values.put("0003", "Jaques + test");
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        // when
+        tabWriter.write(row);
+        tabWriter.write(rowMetadata);
+        tabWriter.flush();
+
+        // then
+        final String expectedCsv = "+id+-+lastname+-+firstname+\n+1+-+DUPONT##+-+Jaques #+ test+\n";
+        assertThat(temp.toString()).isEqualTo(expectedCsv);
     }
 
     @Test

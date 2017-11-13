@@ -305,7 +305,7 @@
   "COLUMN": "Colonne",
   "AGGREGATION": "Agrégation",
   "AGGREGATION_DETAILS": "{{aggreg}} <span class=\"highlight\">{{col}}</span> group by <span class=\"highlight\">{{group}}</span>",
-  "APPLY_TO_ALL_CELLS": "Appliquer à toutes les cellules ayant cette valeur",
+  "APPLY_TO_ALL_CELLS": "Appliquer aux valeurs identiques",
   "STRING": "TEXTE",
   "FLOAT": "DÉCIMAL",
   "SELECT_COLUMN_TO_DISPLAY_STATS": "Sélectionnez une colonne pour afficher ses statistiques",

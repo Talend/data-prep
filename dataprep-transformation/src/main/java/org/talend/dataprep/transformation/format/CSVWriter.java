@@ -23,6 +23,8 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -50,12 +52,6 @@ import org.talend.dataprep.util.FilesHelper;
 @Component("writer#" + CSV)
 public class CSVWriter extends AbstractTransformerWriter {
 
-    /** The default separator. */
-    private static final Character DEFAULT_SEPARATOR = ',';
-
-    /** The default escape character. */
-    private static final Character DEFAULT_ESCAPE_CHARACTER = '"';
-
     /** The default enclosure character. */
     private static final String DEFAULT_ENCLOSURE_MODE = CSVFormat.ParametersCSV.ENCLOSURE_TEXT_ONLY;
 
@@ -63,21 +59,31 @@ public class CSVWriter extends AbstractTransformerWriter {
 
     private final OutputStream output;
 
-    private final char separator;
+    private char separator;
 
-    private final char enclosureCharacter;
+    private char enclosureCharacter;
 
-    private final String enclosureMode;
+    private String enclosureMode;
 
-    private final char escapeCharacter;
+    private char escapeCharacter;
 
-    private final File bufferFile;
+    private File bufferFile;
 
-    private final CSVWriterCustom recordsWriter;
+    private CSVWriterCustom recordsWriter;
+
+    /** The default separator. */
+    @Value("${default.text.separator=:,}")
+    private String defaultSeparator;
 
     /** The default enclosure character. */
-    @Value("${default.text.enclosure=:}")
-    private Character defaultTextEnclosure = '"';
+    @Value("${default.text.enclosure=:\"}")
+    private String defaultTextEnclosure;
+
+    /** The default escape character. */
+    @Value("${default.text.escape:\"}")
+    private String defaultEscapeChar;
+
+    private Map<String, String> parameters;
 
     /**
      * Simple constructor with default separator value.
@@ -95,17 +101,20 @@ public class CSVWriter extends AbstractTransformerWriter {
      * @param parameters parameters to get the separator and the escape character from.
      */
     public CSVWriter(final OutputStream output, Map<String, String> parameters) {
+        this.parameters = ExportFormat.cleanParameters(parameters);
+        this.output = output;
+    }
+
+    @PostConstruct
+    private void initWriter() {
         try {
-            Map<String, String> cleanedParameters = ExportFormat.cleanParameters(parameters);
-
-            this.output = output;
-            this.separator = getParameterCharValue(cleanedParameters, CSVFormat.ParametersCSV.FIELDS_DELIMITER, DEFAULT_SEPARATOR);
-            this.escapeCharacter = getParameterCharValue(cleanedParameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, DEFAULT_ESCAPE_CHARACTER);
-            this.enclosureCharacter = getParameterCharValue(cleanedParameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
+            this.separator = getParameterCharValue(parameters, CSVFormat.ParametersCSV.FIELDS_DELIMITER, defaultSeparator);
+            this.escapeCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
+            this.enclosureCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
                     defaultTextEnclosure);
-            this.enclosureMode = getParameterStringValue(cleanedParameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
+            this.enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
 
-            Charset encoding = extractEncodingWithFallback(cleanedParameters.get(CSVFormat.ParametersCSV.ENCODING));
+            Charset encoding = extractEncodingWithFallback(parameters.get(CSVFormat.ParametersCSV.ENCODING));
 
             bufferFile = File.createTempFile("csvWriter", ".csv");
 
@@ -130,10 +139,10 @@ public class CSVWriter extends AbstractTransformerWriter {
         }
     }
 
-    private static char getParameterCharValue(Map<String, String> parameters, String parameterName, char defaultValue) {
+    private static char getParameterCharValue(Map<String, String> parameters, String parameterName, String defaultValue) {
         String parameter = parameters.get(parameterName);
         if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
-            return String.valueOf(defaultValue).charAt(0);
+            return defaultValue.charAt(0);
         } else {
             return parameter.charAt(0);
         }

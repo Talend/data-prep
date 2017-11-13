@@ -13,12 +13,15 @@
 package org.talend.dataprep.transformation.format;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -54,21 +57,32 @@ public class CSVFormat extends ExportFormat {
             .radio(true) //
             .build();
 
+    /** The default enclosure character. */
+    @Value("${default.text.enclosure:\"}")
+    private String defaultTextEnclosure;
+
+    /** The default escape character. */
+    @Value("${default.text.escape:\"}")
+    private String defaultEscapeChar;
+
     /**
      * Default constructor.
      */
     public CSVFormat() {
         //@formatter:off
-        super(ParametersCSV.CSV_NAME_FORMAT, "text/csv", ".csv", true, false,
-                Arrays.asList(  //
-                        CSV_DELIMITERS, //
-                        new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, StringUtils.EMPTY),
-                        new Parameter(ParametersCSV.ENCLOSURE_CHAR, ParameterType.STRING, StringUtils.EMPTY), //
-                        ENCLOSURE_OPTIONS, //
-                        new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
-                        buildCharsetParameter(LocaleContextHolder.getLocale()) //
-        ));
+        super(ParametersCSV.CSV_NAME_FORMAT, "text/csv", ".csv", true, false, emptyList());
         //@formatter:on
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return Arrays.asList(  //
+                CSV_DELIMITERS, //
+                new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, defaultEscapeChar),
+                new Parameter(ParametersCSV.ENCLOSURE_CHAR, ParameterType.STRING, defaultTextEnclosure), //
+                ENCLOSURE_OPTIONS, //
+                new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
+                buildCharsetParameter(LocaleContextHolder.getLocale()));
     }
 
     private static Parameter buildCharsetParameter(Locale locale) {

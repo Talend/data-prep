@@ -24,7 +24,7 @@ public class DocumentationLinksManager {
     }
 
     public String getLanguageFacet() {
-        return LocaleContextHolder.getLocale().toString();
+        return LocaleContextHolder.getLocale().getLanguage();
     }
 
     public String getSearchUrl() {

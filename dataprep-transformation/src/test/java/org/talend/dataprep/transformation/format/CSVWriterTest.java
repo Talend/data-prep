@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.format;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -21,6 +22,7 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.junit.Before;
@@ -50,6 +52,8 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
     /** Enclosure character argument name. */
     public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE;
+
+    private static final String NON_ASCII_TEST_CHARS = "ñóǹ äŝçíì 汉语/漢語  华语/華語 Huáyǔ; 中文 Zhōngwén 漢字仮名交じり文 Lech Wałęsa æøå";
 
     @Before
     public void init() {
@@ -221,13 +225,10 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         columns.add(column().id(1).name("id").type(Type.STRING).build());
         columns.add(column().id(2).name("firstname").type(Type.STRING).build());
 
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(SEPARATOR_PARAM_NAME, ";");
-
-        ByteArrayOutputStream out = writeCsv(parameters, new RowMetadata(columns), Collections.emptyList());
+        ByteArrayOutputStream out = writeCsv(emptyMap(), new RowMetadata(columns), Collections.emptyList());
 
         // then
-        assertThat(out.toString()).isEqualTo("\"id\";\"firstname\"\n");
+        assertThat(out.toString()).isEqualTo("\"id\",\"firstname\"\n");
     }
 
     @Test
@@ -242,24 +243,87 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
     @Test
     public void write_should_write_row() throws Exception {
         // given
-        final ColumnMetadata column1 = column().id(1).name("id").type(Type.STRING).build();
-        final ColumnMetadata column2 = column().id(2).name("firstname").type(Type.STRING).build();
-        final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
-
-        Map<String, String> values = new HashMap<>();
-        values.put("0001", "64a5456ac148b64524ef165");
-        values.put("0002", "Superman");
-        final DataSetRow row = new DataSetRow(new RowMetadata(columns), values);
+        final DataSetRow row = buildSimpleRow();
 
         final String expectedCsv = "\"id\";\"firstname\"\n" + "\"64a5456ac148b64524ef165\";\"Superman\"\n";
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put(SEPARATOR_PARAM_NAME, ";");
 
-        ByteArrayOutputStream out = writeCsv(parameters, new RowMetadata(columns), singletonList(row));
+        ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
 
         // then
         assertThat(out.toString(UTF_8.name())).isEqualTo(expectedCsv);
+    }
+
+    @Test
+    public void write_shouldWriteIso885_1() throws Exception {
+        // given
+        final DataSetRow row = buildSimpleRow();
+        row.set("0002", NON_ASCII_TEST_CHARS);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING, StandardCharsets.ISO_8859_1.name());
+
+        // when
+        ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
+
+        // then
+        assertThat(out.toByteArray()).isEqualTo(
+                ("\"id\",\"firstname\"\n\"64a5456ac148b64524ef165\",\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(ISO_8859_1));
+        assertThat(out.toByteArray()).isNotEqualTo(
+                ("\"id\",\"firstname\"\n\"64a5456ac148b64524ef165\",\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
+    }
+
+    @Test
+    public void write_shouldDefaultToUtf8() throws Exception {
+        // given
+        final DataSetRow row = buildSimpleRow();
+        row.set("0002", NON_ASCII_TEST_CHARS);
+
+        Map<String, String> parameters = new HashMap<>();
+        String invalidCharsetName = "ISO-8859-560";
+        parameters.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING, invalidCharsetName);
+
+        // when
+        ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
+
+        // then
+        assertThat(out.toByteArray()).isEqualTo(
+                ("\"id\",\"firstname\"\n\"64a5456ac148b64524ef165\",\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
+    }
+
+    @Test
+    public void write_shouldEncloseAllFields() throws Exception {
+        // given
+        final DataSetRow row = buildComplexRow();
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE, CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS);
+
+        // when
+        ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
+
+        // then
+        assertThat(out.toString(UTF_8.name())).isEqualTo("\"id\",\"firstname\",\"age\"\n\"64a5456ac148b64524ef165\",\"Superman\",\"10\"\n");
+    }
+
+    private DataSetRow buildSimpleRow() {
+        final List<ColumnMetadata> columns = new ArrayList<>();
+        columns.add(column().id(1).name("id").type(Type.STRING).build());
+        columns.add(column().id(2).name("firstname").type(Type.STRING).build());
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "64a5456ac148b64524ef165");
+        values.put("0002", "Superman");
+        return new DataSetRow(new RowMetadata(columns), values);
+    }
+
+    private DataSetRow buildComplexRow() {
+        DataSetRow dataSetRow = buildSimpleRow();
+        final ColumnMetadata column3 = column().id(3).name("age").type(Type.INTEGER).build();
+        dataSetRow.getRowMetadata().addColumn(column3);
+        dataSetRow.set("0003", "10");
+        return dataSetRow;
     }
 
     private ByteArrayOutputStream writeCsv(Map<String, String> parameters, RowMetadata rowMetadata, List<DataSetRow> rows)

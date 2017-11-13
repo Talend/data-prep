@@ -4,7 +4,7 @@ Feature: Export Preparation
   Scenario: Create a preparation with one step
     Given I upload the dataset "/data/3L3C.csv" with name "3L3C_dataset"
     And I create a preparation with name "3L3C_preparation", based on "3L3C_dataset" dataset
-    When I add a step with parameters :
+    And I add a step with parameters :
       | actionName      | uppercase        |
       | columnName      | lastname         |
       | columnId        | 0001             |
@@ -16,5 +16,17 @@ Feature: Export Preparation
 
   @CleanAfter
   Scenario: Verify transformation result with another escape char
-    And I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result with "#" as escape character in "3L3C_result.csv" temporary file.
+    When I export the preparation "3L3C_preparation" on the dataset "3L3C_dataset" and export the result with "#" as escape character in "3L3C_result.csv" temporary file.
     Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_processed_custom_escape_char.csv" file
+
+  @CleanAfter
+  Scenario: Verify transformation result with custom parameters
+    When I export the preparation with custom parameters :
+      | csv_fields_delimiter | -                                    |
+      | csv_enclosure_mode   | all_fields                           |
+      | csv_charset          | UTF-8                                |
+      | csv_enclosure_char   | +                                    |
+      | preparationName      | 3L3C_preparation                     |
+      | datsetName           | 3L3C_dataset                         |
+      | filename             | 3L3C_exported_with_custom_param.csv  |
+    Then I check that "3L3C_result.csv" temporary file equals "/data/3L3C_exported_with_custom_param.csv" file

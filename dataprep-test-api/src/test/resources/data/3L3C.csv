@@ -1,4 +1,4 @@
-"id";"lastname";"firstname"
-"1";"Dupont";"Jaques "" test"
-"2";"Lamalice";"Jean-Denis"
-"3";"Blanc";"Sébastien"
+id;"lastname";"firstname"
+1;"Dupont";"Jaques "" test"
+2;"Lamalice";"Jean-Denis"
+3;"Blanc";"Sébastien"

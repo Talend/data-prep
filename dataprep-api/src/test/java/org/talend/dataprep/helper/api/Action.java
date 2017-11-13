@@ -20,6 +20,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * Action In/Out representation.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Action {
 
@@ -52,11 +55,5 @@ public class Action {
         int result = action != null ? action.hashCode() : 0;
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
         return result;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Filter {
-
-        public EnumMap<ActionFilterEnum, Object> range = new EnumMap<>(ActionFilterEnum.class);
     }
 }

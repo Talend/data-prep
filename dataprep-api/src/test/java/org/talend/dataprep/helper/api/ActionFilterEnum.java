@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * {@link Enum} representation of the filter part af an {@link Action}.
+ * {@link Enum} representation of the Filter part af an {@link Action}.
  */
 public enum ActionFilterEnum {
-    FIELD("filter.field", "field", STRING), //
-    START("filter.start", "start", INTEGER), //
-    END("filter.end", "end", INTEGER), //
-    TYPE("filter.type", "type", STRING), //
-    LABEL("filter.label", "label", STRING);
+    FIELD("Filter.field", "field", STRING), //
+    START("Filter.start", "start", INTEGER), //
+    END("Filter.end", "end", INTEGER), //
+    TYPE("Filter.type", "type", STRING), //
+    LABEL("Filter.label", "label", STRING);
 
     private String name;
 
@@ -54,7 +54,7 @@ public enum ActionFilterEnum {
      * @return an Object corresponding to the value.
      */
     public Object processValue(String value) {
-        Object ret = null;
+        Object ret;
         switch (paramType) {
         case INTEGER:
             ret = new Integer(value);

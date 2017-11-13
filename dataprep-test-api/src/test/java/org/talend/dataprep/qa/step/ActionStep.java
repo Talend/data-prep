@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionFilterEnum;
 import org.talend.dataprep.helper.api.ActionParamEnum;
+import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.step.config.DataPrepStep;
 
@@ -58,7 +59,7 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
         Action action = new Action();
-        mapParamsToAction(params, action);
+        util.mapParamsToAction(params, action);
         api.addAction(prepId, action);
     }
 
@@ -104,7 +105,7 @@ public class ActionStep extends DataPrepStep {
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
         Assert.assertTrue(actions.size() > 0);
         // update stored action parameters
-        mapParamsToAction(params, storedAction);
+        util.mapParamsToAction(params, storedAction);
         storedAction.id = actions.get(0).id;
         Response response = api.updateAction(prepId, storedAction.id, storedAction);
         response.then().statusCode(200);
@@ -149,34 +150,6 @@ public class ActionStep extends DataPrepStep {
                         && action.parameters.equals(storedAction.parameters)) //
                 .collect(Collectors.toList());
         return actions;
-    }
-
-    /**
-     * Map parameters from a Cucumber step to an {@link Action}.
-     *
-     * @param params the parameters to map.
-     * @param action the {@link Action} that will receive the parameters.
-     * @return the given {@link Action} updated.
-     */
-    private Action mapParamsToAction(Map<String, String> params, Action action) {
-        action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
-        params.forEach((k, v) -> {
-            ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
-            if (ape != null) {
-                action.parameters.put(ape, StringUtils.isEmpty(v) ? null : v);
-            } else {
-                // maybe it's a filter
-                ActionFilterEnum afe = ActionFilterEnum.getActionFilterEnum(k);
-                if (afe != null) {
-                    Action.Filter filter = (Action.Filter) action.parameters.get(FILTER);
-                    filter = filter == null ? new Action.Filter() : filter;
-                    filter.range.put(afe, afe.processValue(v));
-                    action.parameters.put(FILTER, filter);
-                }
-            }
-        });
-        action.parameters.putIfAbsent(SCOPE, "column");
-        return action;
     }
 
     /**

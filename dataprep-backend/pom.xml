@@ -45,7 +45,7 @@
         <project.organization>Talend</project.organization>
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
         <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
-        <tql.version>0.19.0-SNAPSHOT</tql.version>
+        <tql.version>6.3.1</tql.version>
         <commons-compress.version>1.14</commons-compress.version>
         <!-- avro version must match the one in the studio -->
         <avro.version>1.7.7</avro.version>

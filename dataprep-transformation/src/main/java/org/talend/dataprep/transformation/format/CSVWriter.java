@@ -42,6 +42,9 @@ import org.talend.dataprep.util.FilesHelper;
 
 /**
  * Write datasets in CSV.
+ *
+ * <strong>Warning</strong>: implementation does not support sending records after metadata. Metadata MUST be sent last or will
+ * not be written.
  */
 @Scope("prototype")
 @Component("writer#" + CSV)
@@ -115,7 +118,7 @@ public class CSVWriter extends AbstractTransformerWriter {
         }
     }
 
-    public Charset extractEncodingWithFallback(String encodingParameter) {
+    private Charset extractEncodingWithFallback(String encodingParameter) {
         if (encodingParameter != null) {
             try {
                 return Charset.forName(encodingParameter);

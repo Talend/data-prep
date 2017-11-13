@@ -13,9 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +60,11 @@ public class DomainChange extends AbstractActionMetadata implements ColumnAction
     @Override
     public String getCategory() {
         return ActionCategory.COLUMN_METADATA.getDisplayName();
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
     /**

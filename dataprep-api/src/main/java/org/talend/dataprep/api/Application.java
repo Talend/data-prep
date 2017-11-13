@@ -19,22 +19,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.talend.daikon.documentation.DocumentationController;
+import org.talend.dataprep.configuration.DataPrepComponentScanConfiguration;
 
 import com.netflix.hystrix.Hystrix;
 
 @SpringBootApplication
 @Configuration("org.talend.dataprep.api.Application")
 @Profile("standalone")
-@ComponentScan( //
-        value = { "org.talend.dataprep", "org.talend.daikon" }, //
-        excludeFilters = @ComponentScan.Filter(value = DocumentationController.class, type = FilterType.ASSIGNABLE_TYPE) //
-)
-
+@Import(DataPrepComponentScanConfiguration.class)
 public class Application implements DisposableBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);

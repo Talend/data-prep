@@ -98,8 +98,15 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 
 				let parameters;
 				switch (scope) {
-				case COLUMN :
 				case DATASET :
+					parameters = [
+						{
+							...params,
+							scope,
+						},
+					];
+					break;
+				case COLUMN :
 					parameters = map(columns, col => ({
 						...params,
 						scope,

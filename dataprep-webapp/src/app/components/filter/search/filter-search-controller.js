@@ -16,7 +16,7 @@
  * @name data-prep.filter-search.controller:FilterSearchCtrl
  * @description Filter search controller.
  */
-export default function FilterSearchCtrl(FilterManagerService, DatagridService) {
+export default function FilterSearchCtrl($translate, FilterManagerService, DatagridService) {
 	'ngInject';
 
 	const vm = this;
@@ -32,7 +32,7 @@ export default function FilterSearchCtrl(FilterManagerService, DatagridService) 
 	function createSuggestionItem(term) {
 		return (col) => {
 			return {
-				label: term + ' in <b>' + col.name + '</b>',
+				label: term + ' ' + $translate.instant('IN') + ' <b>' + col.name + '</b>',
 				value: term,
 				columnId: col.id,
 				columnName: col.name,

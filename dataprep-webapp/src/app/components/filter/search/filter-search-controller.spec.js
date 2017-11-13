@@ -114,6 +114,13 @@ describe('filter search controller', () => {
 		$provide.constant('state', stateMock);
 	}));
 
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
+			IN: 'in',
+		});
+		$translateProvider.preferredLanguage('en');
+	}));
+
 	beforeEach(inject(($rootScope, $controller, FilterManagerService) => {
 		scope = $rootScope.$new();
 

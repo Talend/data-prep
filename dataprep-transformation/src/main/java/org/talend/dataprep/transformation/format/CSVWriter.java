@@ -112,7 +112,8 @@ public class CSVWriter extends AbstractTransformerWriter {
             this.escapeCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
             this.enclosureCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
                     defaultTextEnclosure);
-            this.enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
+            this.enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                    DEFAULT_ENCLOSURE_MODE);
 
             Charset encoding = extractEncodingWithFallback(parameters.get(CSVFormat.ParametersCSV.ENCODING));
 

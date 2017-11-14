@@ -259,8 +259,8 @@ public class DataPrepAPIHelper {
      * @param filename the name for the exported generated file.
      * @return the response.
      */
-    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId,
-                                      String delimiter, String filename) {
+    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
+            String filename) {
         return this.executeFullExport(exportType, datasetId, preparationId, stepId, delimiter, filename, //
                 null, null, null, null);
     }
@@ -277,9 +277,8 @@ public class DataPrepAPIHelper {
      * @param escapeCharacter the escape character for the exported generated file.
      * @return the response.
      */
-    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId,
-                                      String delimiter, String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode,
-                                      String charset) {
+    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
+            String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //

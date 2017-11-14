@@ -21,42 +21,7 @@ public class ExportPreparationStep extends DataPrepStep {
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportPreparationStep.class);
 
-    @When("^I export the preparation \"(.*)\" on the dataset \"(.*)\" and export the result in \"(.*)\" temporary file.$")
-    public void whenIExportThePreparationInto(String preparationName, String datasetName, String filename) throws IOException {
-        LOGGER.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName,
-                datasetName, filename);
-        String datasetId = context.getDatasetId(datasetName);
-        String preparationId = context.getPreparationId(preparationName);
-        List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
-                .getJsonObject("steps");
-
-        final InputStream csv = api.executeFullExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename)
-                .asInputStream();
-
-        // store the body content in a temporary File
-        File tempFile = api.storeInputStreamAsTempFile(filename, csv);
-        context.storeTempFile(filename, tempFile);
-    }
-
-    @When("^I export the preparation \"(.*)\" on the dataset \"(.*)\" and export the result with \"(.*)\" as escape character in \"(.*)\" temporary file.$")
-    public void whenIExportThePreparationWithACustomEscapeCharacterInto(String preparationName, String datasetName,
-            String escapeCharacter, String filename) throws IOException {
-        LOGGER.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName,
-                datasetName, filename);
-        String datasetId = context.getDatasetId(datasetName);
-        String preparationId = context.getPreparationId(preparationName);
-        List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
-                .getJsonObject("steps");
-
-        final InputStream csv = api.executeFullExport("CSV", datasetId, preparationId, steps.get(steps.size() - 1), ";", filename,
-                escapeCharacter, null, null, null).asInputStream();
-
-        // store the body content in a temporary File
-        File tempFile = api.storeInputStreamAsTempFile(filename, csv);
-        context.storeTempFile(filename, tempFile);
-    }
-
-    @When("^I export the preparation with custom parameters :$")
+    @When("^I export the preparation with parameters :$")
     public void whenIExportThePreparationWithCustomParametersInto(DataTable dataTable) throws IOException {
 
         Map<String, String> params = dataTable.asMap(String.class, String.class);

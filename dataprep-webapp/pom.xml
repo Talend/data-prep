@@ -154,6 +154,37 @@
                             <execution>
                                 <id>yarn test</id>
                                 <configuration>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <yarnVersion>${yarn.version}</yarnVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>yarn install</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>install --force</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>yarn build</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>run build:dist</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>yarn test</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${skipTests}</skip>
                                     <arguments>run test:ci</arguments>
                                 </configuration>
                             </execution>

@@ -69,8 +69,8 @@ public class CSVFormat extends ExportFormat {
     public List<Parameter> getParameters() {
         return Arrays.asList(  //
                 getCsvDelimiters(), //
-                new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, defaultEscapeChar),
                 new Parameter(ParametersCSV.ENCLOSURE_CHAR, ParameterType.STRING, defaultTextEnclosure), //
+                new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, defaultEscapeChar),
                 getEnclosureOptions(), //
                 new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
                 buildCharsetParameter(LocaleContextHolder.getLocale()));

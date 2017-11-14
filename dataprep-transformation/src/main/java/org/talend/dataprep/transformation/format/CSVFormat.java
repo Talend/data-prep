@@ -41,7 +41,7 @@ public class CSVFormat extends ExportFormat {
     public static final String CSV = ParametersCSV.CSV_NAME_FORMAT;
 
     /** The default separator. */
-    @Value("${default.text.separator=:;}")
+    @Value("${default.text.separator:;}")
     private String defaultSeparator;
 
     /** The default enclosure character. */

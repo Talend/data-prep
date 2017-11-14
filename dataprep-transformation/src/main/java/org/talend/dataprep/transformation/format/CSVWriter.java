@@ -70,7 +70,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private CSVWriterCustom recordsWriter;
 
     /** The default separator. */
-    @Value("${default.text.separator=:;}")
+    @Value("${default.text.separator:;}")
     private String defaultSeparator;
 
     /** The default enclosure character. */

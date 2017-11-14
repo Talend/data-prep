@@ -35,7 +35,7 @@ public class CSVFormatTest extends BaseFormatTest {
     @Before
     public void setUp() {
         super.setUp();
-        format = new CSVFormat();
+        format = (CSVFormat) context.getBean("format#CSV");
     }
 
     @Test

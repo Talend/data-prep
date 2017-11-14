@@ -18,8 +18,6 @@ import static org.talend.dataprep.transformation.format.CSVFormat.CSV;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -83,6 +81,10 @@ public class CSVWriter extends AbstractTransformerWriter {
     @Value("${default.text.escape:\"}")
     private String defaultEscapeChar;
 
+    /** The default encoding. */
+    @Value("${default.text.encoding:UTF-8}")
+    private String defaultEncoding;
+
     private Map<String, String> parameters;
 
     /**
@@ -129,15 +131,13 @@ public class CSVWriter extends AbstractTransformerWriter {
     }
 
     private Charset extractEncodingWithFallback(String encodingParameter) {
-        if (encodingParameter != null) {
-            try {
-                return Charset.forName(encodingParameter);
-            } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-                return UTF_8;
-            }
+        Charset charset;
+        if (encodingParameter != null && Charset.isSupported(encodingParameter)) {
+            charset = Charset.forName(encodingParameter);
         } else {
-            return UTF_8;
+            charset = Charset.isSupported(defaultEncoding) ? Charset.forName(defaultEncoding) : UTF_8;
         }
+        return charset;
     }
 
     private static char getParameterCharValue(Map<String, String> parameters, String parameterName, String defaultValue) {

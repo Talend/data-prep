@@ -52,6 +52,10 @@ public class CSVFormat extends ExportFormat {
     @Value("${default.text.escape:\"}")
     private String defaultEscapeChar;
 
+    /** The default encoding. */
+    @Value("${default.text.encoding:UTF-8}")
+    private String defaultEncoding;
+
     /**
      * Default constructor.
      */
@@ -93,12 +97,13 @@ public class CSVFormat extends ExportFormat {
                 .build();
     }
 
-    private static Parameter buildCharsetParameter(Locale locale) {
+    private Parameter buildCharsetParameter(Locale locale) {
         SelectParameter.Builder builder = SelectParameter.Builder.builder().name(ParametersCSV.ENCODING);
         for (Charset charsetEntry : EncodingSupport.getSupportedCharsets()) {
             builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
         }
-        return builder.defaultValue(UTF_8.name()).canBeBlank(false).build();
+        builder.defaultValue(Charset.isSupported(defaultEncoding) ? defaultEncoding : UTF_8.name()).canBeBlank(false);
+        return builder.build();
     }
 
     @Override

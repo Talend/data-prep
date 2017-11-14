@@ -40,22 +40,9 @@ public class CSVFormat extends ExportFormat {
     /** CSV format type name. */
     public static final String CSV = ParametersCSV.CSV_NAME_FORMAT;
 
-    private static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name(ParametersCSV.FIELDS_DELIMITER) //
-            .item(";", "semiColon") //
-            .item("\u0009", "tabulation") //
-            .item(" ", "space") //
-            .item(",", "comma") //
-            .item("|", "pipe") //
-            .defaultValue(";") //
-            .canBeBlank(true) //
-            .build();
-
-    private static final SelectParameter ENCLOSURE_OPTIONS = SelectParameter.Builder.builder().name(ParametersCSV.ENCLOSURE_MODE) //
-            .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
-            .item(ParametersCSV.ENCLOSURE_ALL_FIELDS, ParametersCSV.ENCLOSURE_TEXT_ALL_FIELDS_LABEL) //
-            .defaultValue(ParametersCSV.ENCLOSURE_TEXT_ONLY) //
-            .radio(true) //
-            .build();
+    /** The default separator. */
+    @Value("${default.text.separator=:;}")
+    private String defaultSeparator;
 
     /** The default enclosure character. */
     @Value("${default.text.enclosure:\"}")
@@ -77,12 +64,33 @@ public class CSVFormat extends ExportFormat {
     @Override
     public List<Parameter> getParameters() {
         return Arrays.asList(  //
-                CSV_DELIMITERS, //
+                getCsvDelimiters(), //
                 new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, defaultEscapeChar),
                 new Parameter(ParametersCSV.ENCLOSURE_CHAR, ParameterType.STRING, defaultTextEnclosure), //
-                ENCLOSURE_OPTIONS, //
+                getEnclosureOptions(), //
                 new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
                 buildCharsetParameter(LocaleContextHolder.getLocale()));
+    }
+
+    private SelectParameter getEnclosureOptions() {
+        return SelectParameter.Builder.builder().name(ParametersCSV.ENCLOSURE_MODE) //
+                .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
+                .item(ParametersCSV.ENCLOSURE_ALL_FIELDS, ParametersCSV.ENCLOSURE_TEXT_ALL_FIELDS_LABEL) //
+                .defaultValue(ParametersCSV.ENCLOSURE_TEXT_ONLY) //
+                .radio(true) //
+                .build();
+    }
+
+    private SelectParameter getCsvDelimiters() {
+        return SelectParameter.Builder.builder().name(ParametersCSV.FIELDS_DELIMITER) //
+                .item(";", "semiColon") //
+                .item("\u0009", "tabulation") //
+                .item(" ", "space") //
+                .item(",", "comma") //
+                .item("|", "pipe") //
+                .defaultValue(defaultSeparator) //
+                .canBeBlank(true) //
+                .build();
     }
 
     private static Parameter buildCharsetParameter(Locale locale) {

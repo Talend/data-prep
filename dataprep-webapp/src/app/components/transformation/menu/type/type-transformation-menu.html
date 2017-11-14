@@ -17,33 +17,32 @@
     <span translate-once="COLUMN_TYPE_IS"></span>
     <span class="info"> {{ $ctrl.currentSimplifiedDomain }}</span>
     <ul class="submenu">
-        <li ng-repeat="semanticDomain in $ctrl.domains track by semanticDomain.id"
-            ng-click="$ctrl.changeDomain(semanticDomain)">
+        <li ng-repeat="semanticDomain in $ctrl.domains track by semanticDomain.id">
             <div class="radio">
-              <label>
-                  <input  type="radio"
-                          value="{{ ::semanticDomain.id }}"
-                          ng-model="$ctrl.currentDomain"
-                          ng-checked="$ctrl.currentDomain === semanticDomain.label"
-                  />
-                  <span>{{ ::semanticDomain.label }} {{ semanticDomain.frequency }} %</span>
-              </label>
+                <label>
+                    <input type="radio"
+                           value="{{ ::semanticDomain.id }}"
+                           ng-model="$ctrl.currentDomain"
+                           ng-checked="$ctrl.currentDomain === semanticDomain.label"
+                           ng-click="$ctrl.changeDomain(semanticDomain)"
+                    />
+                    <span>{{ ::semanticDomain.label }} {{ semanticDomain.frequency }} %</span>
+                </label>
             </div>
         </li>
         <li ng-if="$ctrl.domains.length > 0" class="divider"></li>
-        <li ng-repeat="type in $ctrl.types track by type.id"
-            ng-click="$ctrl.changeType(type)">
-
+        <li ng-repeat="type in $ctrl.types track by type.id">
             <div class="radio">
-              <label>
-                  <input  type="radio"
-                          value="{{ ::type.id}}"
-                          ng-model="$ctrl.currentDomain"
-                          ng-checked="$ctrl.shouldBeChecked(type)"
-                  />
-                  <span class="set-type-label" translate-once="COLUMN_TYPE_SET" />
-                  <span class="type">{{ ::type.labelKey | translate }}</span>
-              </label>
+                <label>
+                    <input type="radio"
+                           value="{{ ::type.id}}"
+                           ng-model="$ctrl.currentDomain"
+                           ng-checked="$ctrl.shouldBeChecked(type)"
+                           ng-click="$ctrl.changeType(type)"
+                    />
+                    <span class="set-type-label" translate-once="COLUMN_TYPE_SET"/>
+                    <span class="type">{{ ::type.labelKey | translate }}</span>
+                </label>
             </div>
 
         </li>

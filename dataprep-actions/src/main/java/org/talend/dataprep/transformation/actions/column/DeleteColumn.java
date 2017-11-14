@@ -58,7 +58,7 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
 
     @Override
     public List<String> getActionScope() {
-        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
+        return Arrays.asList(COLUMN_METADATA.getDisplayName());
     }
 
     /**

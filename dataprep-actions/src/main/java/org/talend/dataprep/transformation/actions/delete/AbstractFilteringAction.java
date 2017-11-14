@@ -13,10 +13,9 @@
 package org.talend.dataprep.transformation.actions.delete;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.FILTERED;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_FILTERED;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -42,5 +41,10 @@ public abstract class AbstractFilteringAction extends AbstractActionMetadata imp
     @Override
     public String getCategory(Locale locale) {
         return FILTERED.getDisplayName(locale);
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(COLUMN_FILTERED.getDisplayName());
     }
 }

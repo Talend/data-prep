@@ -35,7 +35,12 @@ public enum ActionScope {
     /**
      * Actions are hidden from actions list
      */
-    HIDDEN_IN_ACTION_LIST;
+    HIDDEN_IN_ACTION_LIST,
+
+    /**
+     * Actions are showed only when filters are applied
+     */
+    COLUMN_FILTERED;
 
     /**
      * @return A "user friendly" name for the action scope.

@@ -34,8 +34,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriterTest;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
-
 /**
  * Unit test for the CSVWriter.
  *
@@ -63,7 +61,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
     @Before
     public void init() {
         // to avoid breaking stranger abstract test "should_only_write_values_in_columns_order_TDP_3188"        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
-        writer = (CSVWriter) context.getBean("writer#CSV", new ByteOutputStream(), emptyMap());
+        writer = (CSVWriter) context.getBean("writer#CSV", new ByteArrayOutputStream(), emptyMap());
     }
 
     /**

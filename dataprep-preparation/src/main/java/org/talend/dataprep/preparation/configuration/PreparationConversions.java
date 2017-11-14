@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;

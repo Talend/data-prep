@@ -13,11 +13,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * {@link Enum} representation of the Filter part af an {@link Action}.
  */
 public enum ActionFilterEnum {
-    FIELD("Filter.field", "field", STRING), //
-    START("Filter.start", "start", INTEGER), //
-    END("Filter.end", "end", INTEGER), //
-    TYPE("Filter.type", "type", STRING), //
-    LABEL("Filter.label", "label", STRING);
+    FIELD("filter.field", "field", STRING), //
+    START("filter.start", "start", INTEGER), //
+    END("filter.end", "end", INTEGER), //
+    TYPE("filter.type", "type", STRING), //
+    LABEL("filter.label", "label", STRING);
 
     private String name;
 
@@ -49,7 +49,7 @@ public enum ActionFilterEnum {
 
     /**
      * Return a Json compatible object depending on {@link ActionFilterEnum#paramType}
-     * 
+     *
      * @param value the value to process.
      * @return an Object corresponding to the value.
      */

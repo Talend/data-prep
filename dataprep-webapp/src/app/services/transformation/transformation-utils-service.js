@@ -16,7 +16,7 @@ import { chain, forEach, filter, map, find } from 'lodash';
 const ACTION_SCOPE = 'hidden_in_action_list';
 const CATEGORY = 'category';
 const SUGGESTIONS_CATEGORY = 'suggestions';
-const FILTERED_CATEGORY = 'filtered';
+const FILTERED_COLUMN = 'column_filtered';
 const HIGHLIGHT_CLASS = 'highlighted';
 
 /**
@@ -221,12 +221,12 @@ export default class TransformationUtilsService {
 	 * @returns {{filterCategory: *, otherCategories: *}}
 	 */
 	popFilteredCategory(categories) {
-		const filterCategory = find(categories, { category: FILTERED_CATEGORY });
-
-		const otherCategories = filter(categories, (item) => {
-			return item.category !== FILTERED_CATEGORY;
+		const filterCategory = find(categories, (category) => {
+			return category.transformations.filter(transfo => (transfo.actionScope.indexOf(FILTERED_COLUMN) > -1)).length;
 		});
-
+		const otherCategories = filter(categories, (category) => {
+			return category.transformations.filter(transfo => (transfo.actionScope.indexOf(FILTERED_COLUMN) === -1)).length;
+		});
 		return { filterCategory, otherCategories };
 	}
 

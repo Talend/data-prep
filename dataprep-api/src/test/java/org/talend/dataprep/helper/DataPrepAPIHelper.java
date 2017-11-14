@@ -23,6 +23,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,6 +38,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import org.talend.dataprep.helper.object.ExportRequest;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -257,42 +260,32 @@ public class DataPrepAPIHelper {
      * @param stepId the last step id.
      * @param delimiter the column delimiter.
      * @param filename the name for the exported generated file.
-     * @return the response.
-     */
-    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
-            String filename) {
-        return this.executeFullExport(exportType, datasetId, preparationId, stepId, delimiter, filename, //
-                null, null, null, null);
-    }
-
-    /**
-     * Execute a preparation full run on a dataset followed by an export.
-     *
-     * @param exportType export format.
-     * @param datasetId the dataset id on which the full run will be applied.
-     * @param preparationId the full run preparation id.
-     * @param stepId the last step id.
-     * @param delimiter the column delimiter.
-     * @param filename the name for the exported generated file.
      * @param escapeCharacter the escape character for the exported generated file.
      * @return the response.
      */
     public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
             String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
+
+        ExportRequest exportRequest = new ExportRequest( //
+                exportType, //
+                datasetId, //
+                preparationId, //
+                stepId, //
+                delimiter, //
+                filename, //
+                escapeCharacter, //
+                enclosureCharacter, //
+                enclosureMode, //
+                charset
+        );
+
+        Map<String, Object> parameters = exportRequest.getParameters();
+
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
-                .queryParam("preparationId", preparationId) //
-                .queryParam("stepId", stepId) //
-                .queryParam("datasetId", datasetId) //
-                .queryParam("exportType", exportType) //
-                .queryParam("exportParameters.csv_fields_delimiter", delimiter) //
-                .queryParam("exportParameters.fileName", filename) //
-                .queryParam("exportParameters.csv_escape_character", escapeCharacter) //
-                .queryParam("exportParameters.csv_enclosure_character", enclosureCharacter) //
-                .queryParam("exportParameters.csv_enclosure_mode", enclosureMode) //
-                .queryParam("exportParameters.csv_encoding", charset) //
+                .queryParameters(parameters) //
                 .get("/api/export");
     }
 

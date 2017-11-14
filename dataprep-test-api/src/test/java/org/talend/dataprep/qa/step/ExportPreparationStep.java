@@ -37,7 +37,7 @@ public class ExportPreparationStep extends DataPrepStep {
         // File exported
         String filename = params.get(FILE_NAME);
 
-        LOGGER.debug("I full run the preparation {} on the dataset {} and export the result in {} file.", preparationName,
+        LOGGER.debug("I execute a full run on the preparation {} from the dataset {} and export the result in {} file.", preparationName,
                 datasetName, filename);
 
         List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()

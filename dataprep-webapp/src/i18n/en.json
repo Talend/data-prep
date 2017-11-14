@@ -206,7 +206,7 @@
   "STYLESHEET": "Style sheet:",
   "RENAME": "Rename",
   "NO_THANKS": "No, thanks",
-  "INVALIDVALUE": "Invalid Value",
+  "INVALIDVALUE": "Invalid value",
 
   "_comment": "Success",
   "DATASET_CREATE_SUCCESS_TITLE": "New dataset",

@@ -10,16 +10,23 @@ Feature: Export Preparation
       | preparationName | 6L3C_preparation |
 
   Scenario: Verify transformation result
-    And I export the preparation "6L3C_preparation" on the dataset "6L3C_dataset" and export the result in "6L3C_result.csv" temporary file.
-    Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_processed.csv" file
+    When I export the preparation with parameters :
+      | preparationName      | 6L3C_preparation                   |
+      | dataSetName          | 6L3C_dataset                       |
+      | fileName             | 6L3C_result.csv                    |
+    Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_default_export_parameters.csv" file
 
   Scenario: Verify transformation result with another escape char
-    When I export the preparation "6L3C_preparation" on the dataset "6L3C_dataset" and export the result with "#" as escape character in "6L3C_result.csv" temporary file.
+    When I export the preparation with parameters :
+      | preparationName      | 6L3C_preparation                   |
+      | dataSetName          | 6L3C_dataset                       |
+      | csv_escape_character | #                                  |
+      | fileName             | 6L3C_result.csv                    |
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_processed_custom_escape_char.csv" file
 
   @CleanAfter
   Scenario: Verify transformation result with custom parameters
-    When I export the preparation with custom parameters :
+    When I export the preparation with parameters :
       | csv_fields_delimiter | -                                  |
       | csv_escape_character | #                                  |
       | csv_enclosure_mode   | all_fields                         |

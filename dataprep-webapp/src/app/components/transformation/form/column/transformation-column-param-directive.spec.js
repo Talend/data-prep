@@ -70,7 +70,7 @@ describe('Transformation column param directive', () => {
         let element = createElement();
 
         //then
-        expect(element.find('.param-name').text().trim()).toBe('The Column to concatenate:');
+        expect(element.find('.param-name').text().trim()).toBe('The Column to concatenate');
         expect(element.find('.param-input').find('option').length).toBe(stateMock.playground.data.metadata.columns.length);
     });
 
@@ -92,7 +92,7 @@ describe('Transformation column param directive', () => {
         let element = createElement();
 
         //then
-        expect(element.find('.param-name').text().trim()).toBe('The Column to concatenate:');
+        expect(element.find('.param-name').text().trim()).toBe('The Column to concatenate');
         expect(element.find('.param-input-label').text().trim()).toBe('first name');
     });
 });

@@ -42,21 +42,21 @@ import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWri
 public class CSVWriterTest extends AbstractTransformerWriterTest {
 
     /** Separator argument name. */
-    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
+    static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
 
     /** Escape character argument name. */
-    public static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ESCAPE_CHAR;
+    private static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ESCAPE_CHAR;
 
     /** Enclosure character argument name. */
-    public static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_CHAR;
+    private static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_CHAR;
 
     /** Enclosure character argument name. */
-    public static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE;
+    private static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE;
 
     private static final String NON_ASCII_TEST_CHARS = "ñóǹ äŝçíì 汉语/漢語  华语/華語 Huáyǔ; 中文 Zhōngwén 漢字仮名交じり文 Lech Wałęsa æøå";
 
     /** Enclosure character argument name. */
-    public static final String DELIMITER_CHAR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
+    private static final String DELIMITER_CHAR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
 
     @Before
     public void init() {
@@ -119,7 +119,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
         // then
 
-        final String expectedCsv = "\"song\",\"band\"\n" + "\"last #\"nite\",\"the Strokes\"\n";
+        final String expectedCsv = "\"song\";\"band\"\n" + "\"last #\"nite\";\"the Strokes\"\n";
         assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
     }
 
@@ -150,7 +150,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
         // then
 
-        final String expectedCsv = "\"song\",\"band\"\n" + "\"last \"\"nite\",\"the Strokes\"\n";
+        final String expectedCsv = "\"song\";\"band\"\n" + "\"last \"\"nite\";\"the Strokes\"\n";
         assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
     }
 
@@ -181,7 +181,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         tabWriter.flush();
 
         // then
-        final String expectedCsv = "+song+,+band+\n" + "+last \"\"nite+,+the Strokes+\n";
+        final String expectedCsv = "+song+;+band+\n" + "+last \"\"nite+;+the Strokes+\n";
         assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
     }
 
@@ -217,7 +217,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         tabWriter.flush();
 
         // then
-        final String expectedCsv = "%song%,members,%band%,date\n" + "%last \"\"nite%,5,%the Strokes%,1998\n";
+        final String expectedCsv = "%song%;members;%band%;date\n" + "%last \"\"nite%;5;%the Strokes%;1998\n";
         assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
     }
 
@@ -267,7 +267,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         ByteArrayOutputStream out = writeCsv(emptyMap(), new RowMetadata(columns), Collections.emptyList());
 
         // then
-        assertThat(out.toString()).isEqualTo("\"id\",\"firstname\"\n");
+        assertThat(out.toString()).isEqualTo("\"id\";\"firstname\"\n");
     }
 
     @Test
@@ -309,9 +309,9 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
         // then
         assertThat(out.toByteArray()).isEqualTo(
-                ("\"id\",\"firstname\"\n\"64a5456ac148b64524ef165\",\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(ISO_8859_1));
+                ("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(ISO_8859_1));
         assertThat(out.toByteArray()).isNotEqualTo(
-                ("\"id\",\"firstname\"\n\"64a5456ac148b64524ef165\",\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
+                ("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
     }
 
     @Test
@@ -329,7 +329,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
         // then
         assertThat(out.toByteArray()).isEqualTo(
-                ("\"id\",\"firstname\"\n\"64a5456ac148b64524ef165\",\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
+                ("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
     }
 
     @Test
@@ -343,7 +343,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
 
         // then
-        assertThat(out.toString(UTF_8.name())).isEqualTo("\"id\",\"firstname\",\"age\"\n\"64a5456ac148b64524ef165\",\"Superman\",\"10\"\n");
+        assertThat(out.toString(UTF_8.name())).isEqualTo("\"id\";\"firstname\";\"age\"\n\"64a5456ac148b64524ef165\";\"Superman\";\"10\"\n");
     }
 
     private DataSetRow buildSimpleRow() {

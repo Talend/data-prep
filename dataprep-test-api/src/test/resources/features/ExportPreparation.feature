@@ -30,7 +30,7 @@ Feature: Export Preparation
       | csv_fields_delimiter | -                                 |
       | csv_escape_character | #                                 |
       | csv_enclosure_mode   | all_fields                        |
-      | csv_charset          | UTF-8                             |
+      | csv_charset          | ISO-8859-1                        |
       | csv_enclosure_char   | +                                 |
       | preparationName      | 6L3C_preparation                  |
       | dataSetName          | 6L3C_dataset                      |

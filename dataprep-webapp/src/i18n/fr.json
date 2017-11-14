@@ -341,7 +341,7 @@
   "INVALID_VALUE_RANGE_SLIDER_CONTENT": " : Utilisez \".\" au lieu de \",\"",
 
   "_comment": "playground",
-  "CHOOSE_PREPARATION_TO_APPLY": "Choisissez une préparation à appliquer à ce jeu de données",
+  "CHOOSE_PREPARATION_TO_APPLY": "Choisir une préparation à appliquer à ce jeu de données",
   "NO_COMPATIBLE_PREPARATIONS": "Aucune préparation compatible avec le jeu de données : {{name}}",
   "READ_ONLY": "Lecture seule",
 

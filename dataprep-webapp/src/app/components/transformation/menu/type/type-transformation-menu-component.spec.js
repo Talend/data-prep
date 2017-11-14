@@ -119,7 +119,7 @@ describe('Transformation menu component', () => {
 
 	it('should render primitive types', () => {
 		const types = [
-			'STRING',
+			'TEXT',
 			'INTEGER',
 			'DECIMAL',
 			'BOOLEAN',

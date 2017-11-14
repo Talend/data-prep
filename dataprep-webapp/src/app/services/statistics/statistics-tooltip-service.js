@@ -19,29 +19,32 @@
 export default function StatisticsTooltipService($translate, state) {
 	'ngInject';
 
-	const tooltipTemplate = _.template(
-		'<strong><%= label %>: </strong><span style="color:yellow"><%= primaryValue %></span>' +
-		'<br/><br/>' +
-		'<strong><%= title %>: </strong><span style="color:yellow"><%= key %></span>'
-	);
+	let tooltipTemplate = _.template('');
+	$translate(['COLON']).then((messages) => {
+		tooltipTemplate = _.template(
+			'<strong><%= label %>' + messages.COLON + '</strong><span style="color:yellow"><%= primaryValue %></span>' +
+			'<br/><br/>' +
+			'<strong><%= title %>' + messages.COLON + '</strong><span style="color:yellow"><%= key %></span>'
+		);
+	});
 
 	let tooltipFilteredTemplate = _.template('');
-	$translate(['TOOLTIP_MATCHING_FILTER', 'TOOLTIP_MATCHING_FULL']).then((messages) => {
+	$translate(['TOOLTIP_MATCHING_FILTER', 'TOOLTIP_MATCHING_FULL', 'COLON']).then((messages) => {
 		tooltipFilteredTemplate = _.template(
-			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FILTER + ': </strong><span style="color:yellow"><%= secondaryValue %> <%= percentage %></span>' +
+			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FILTER + messages.COLON + '</strong><span style="color:yellow"><%= secondaryValue %> <%= percentage %></span>' +
 			'<br/><br/>' +
-			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FULL + ': </strong><span style="color:yellow"><%= primaryValue %></span>' +
+			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FULL + messages.COLON + '</strong><span style="color:yellow"><%= primaryValue %></span>' +
 			'<br/><br/>' +
-			'<strong><%= title %>: </strong><span style="color:yellow"><%= key %></span>'
+			'<strong><%= title %>' + messages.COLON + '</strong><span style="color:yellow"><%= key %></span>'
 		);
 	});
 
 	let tooltipFilteredAggregTemplate = _.template('');
-	$translate(['TOOLTIP_MATCHING_FILTER']).then((messages) => {
+	$translate(['TOOLTIP_MATCHING_FILTER', 'COLON']).then((messages) => {
 		tooltipFilteredAggregTemplate = _.template(
-			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FILTER + ': </strong><span style="color:yellow"><%= primaryValue %></span>' +
+			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FILTER + messages.COLON + '</strong><span style="color:yellow"><%= primaryValue %></span>' +
 			'<br/><br/>' +
-			'<strong><%= title %>: </strong><span style="color:yellow"><%= key %></span>'
+			'<strong><%= title %>' + messages.COLON + '</strong><span style="color:yellow"><%= key %></span>'
 		);
 	});
 

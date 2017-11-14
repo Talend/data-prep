@@ -1,8 +1,8 @@
-import i18n from '../../../i18n/en.json';
+import i18n from '../../../i18n/en.json'
 
 describe('Statistics Tooltip service', function () {
     'use strict';
-    var stateMock;
+    let stateMock;
 
     beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
         $translateProvider.translations('en', i18n);
@@ -29,15 +29,16 @@ describe('Statistics Tooltip service', function () {
     }));
 
     describe('without filter', function () {
-        it('should create tooltip for simple record', inject(function (StatisticsTooltipService) {
+        it('should create tooltip for simple record', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [];
-            var keyLabel = 'Occurrences';
-            var key = '96ebf96df2';
-            var primaryValue = 5;
+            const keyLabel = 'Occurrences';
+						const key = '96ebf96df2';
+						const primaryValue = 5;
 
             //when
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+					  $rootScope.$digest();
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(
@@ -46,15 +47,16 @@ describe('Statistics Tooltip service', function () {
                 '<strong>Record: </strong><span style="color:yellow">96ebf96df2</span>');
         }));
 
-        it('should create tooltip for range record with min > min data values and  max < max data values', inject(function (StatisticsTooltipService) {
+        it('should create tooltip for range record with min > min data values and  max < max data values', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [];
-            var keyLabel = 'Occurrences';
-            var key = [-9.375, 2];
-            var primaryValue = 10;
+						const keyLabel = 'Occurrences';
+						const key = [-9.375, 2];
+						const primaryValue = 10;
 
             //when
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+					  $rootScope.$digest();
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(
@@ -63,15 +65,16 @@ describe('Statistics Tooltip service', function () {
                 '<strong>Range: </strong><span style="color:yellow">[-9.375,2[</span>');
         }));
 
-        it('should create tooltip for range record with min < min data values and  max < max data values', inject(function (StatisticsTooltipService) {
+        it('should create tooltip for range record with min < min data values and  max < max data values', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [];
-            var keyLabel = 'Occurrences';
-            var key = [-15, 2];
-            var primaryValue = 10;
+						const keyLabel = 'Occurrences';
+						const key = [-15, 2];
+						const primaryValue = 10;
 
             //when
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+					  $rootScope.$digest();
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(
@@ -80,15 +83,16 @@ describe('Statistics Tooltip service', function () {
                 '<strong>Range: </strong><span style="color:yellow">[MIN,2[</span>');
         }));
 
-        it('should create tooltip for range record with min < min data values and  max >= max data values', inject(function (StatisticsTooltipService) {
+        it('should create tooltip for range record with min < min data values and  max >= max data values', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [];
-            var keyLabel = 'Occurrences';
-            var key = [-15, 10];
-            var primaryValue = 10;
+						const keyLabel = 'Occurrences';
+						const key = [-15, 10];
+						const primaryValue = 10;
 
             //when
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+					  $rootScope.$digest();
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(
@@ -97,15 +101,16 @@ describe('Statistics Tooltip service', function () {
                 '<strong>Range: </strong><span style="color:yellow">[MIN,MAX]</span>');
         }));
 
-        it('should create tooltip for range record with min > min data values and  max >= max data values', inject(function (StatisticsTooltipService) {
+        it('should create tooltip for range record with min > min data values and  max >= max data values', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [];
-            var keyLabel = 'Occurrences';
-            var key = [-1, 10];
-            var primaryValue = 10;
+						const keyLabel = 'Occurrences';
+						const key = [-1, 10];
+						const primaryValue = 10;
 
             //when
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+						$rootScope.$digest();
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(
@@ -114,15 +119,16 @@ describe('Statistics Tooltip service', function () {
                 '<strong>Range: </strong><span style="color:yellow">[-1,MAX]</span>');
         }));
 
-        it('should create tooltip for unique-value range record', inject(function (StatisticsTooltipService) {
+        it('should create tooltip for unique-value range record', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [];
-            var keyLabel = 'Occurrences';
-            var key = [2, 2];
-            var primaryValue = 10;
+						const keyLabel = 'Occurrences';
+						const key = [2, 2];
+						const primaryValue = 10;
 
             //when
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+					  $rootScope.$digest();
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(
@@ -136,14 +142,14 @@ describe('Statistics Tooltip service', function () {
         it('should create tooltip for simple record', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [{}];
-            var keyLabel = 'Occurrences';
-            var key = '96ebf96df2';
-            var primaryValue = 5;
-            var secondaryValue = 1;
+						const keyLabel = 'Occurrences';
+						const key = '96ebf96df2';
+						const primaryValue = 5;
+						const secondaryValue = 1;
 
             //when
             $rootScope.$digest();
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
             //then
             expect(tooltip).toBe(
@@ -158,14 +164,14 @@ describe('Statistics Tooltip service', function () {
             //given
             stateMock.playground.filter.gridFilters = [{}];
             stateMock.playground.statistics.histogram.aggregation = {};
-            var keyLabel = 'Average';
-            var key = '96ebf96df2';
-            var primaryValue = 5;
-            var secondaryValue = 1;
+						const keyLabel = 'Average';
+						const key = '96ebf96df2';
+						const primaryValue = 5;
+						const secondaryValue = 1;
 
             //when
             $rootScope.$digest();
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
             //then
             expect(tooltip).toBe(
@@ -177,14 +183,14 @@ describe('Statistics Tooltip service', function () {
         it('should create tooltip for range record', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [{}];
-            var keyLabel = 'Occurrences';
-            var key = [-9.375, 2];
-            var primaryValue = 10;
-            var secondaryValue = 5;
+						const keyLabel = 'Occurrences';
+						const key = [-9.375, 2];
+						const primaryValue = 10;
+						const secondaryValue = 5;
 
             //when
             $rootScope.$digest();
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
             //then
             expect(tooltip).toBe(
@@ -198,14 +204,14 @@ describe('Statistics Tooltip service', function () {
         it('should create tooltip for unique-value range record', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [{}];
-            var keyLabel = 'Occurrences';
-            var key = [2, 2];
-            var primaryValue = 10;
-            var secondaryValue = 5;
+						const keyLabel = 'Occurrences';
+						const key = [2, 2];
+						const primaryValue = 10;
+						const secondaryValue = 5;
 
             //when
             $rootScope.$digest();
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
             //then
             expect(tooltip).toBe(
@@ -219,13 +225,13 @@ describe('Statistics Tooltip service', function () {
         it('should create tooltip without secondary data (not computed yet)', inject(function ($rootScope, StatisticsTooltipService) {
             //given
             stateMock.playground.filter.gridFilters = [{}];
-            var keyLabel = 'Occurrences';
-            var key = [2, 2];
-            var primaryValue = 10;
+						const keyLabel = 'Occurrences';
+						const key = [2, 2];
+						const primaryValue = 10;
 
             //when
             $rootScope.$digest();
-            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
+						const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
             //then
             expect(tooltip).toBe(

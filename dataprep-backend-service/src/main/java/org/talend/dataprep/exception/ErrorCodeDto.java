@@ -13,6 +13,7 @@ import static java.util.Collections.emptyList;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.talend.daikon.exception.error.ErrorCode;
 
 public class ErrorCodeDto implements ErrorCode {
@@ -75,5 +76,11 @@ public class ErrorCodeDto implements ErrorCode {
     public ErrorCodeDto setExpectedContextEntries(Collection<String> expectedContextEntries) {
         this.expectedContextEntries = expectedContextEntries;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("product", product).append("group", group).append("code", code)
+                .append("httpStatus", httpStatus).append("expectedContextEntries", expectedContextEntries).toString();
     }
 }

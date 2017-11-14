@@ -65,7 +65,7 @@ public class ExportRequest {
         this.charset = charset;
     }
 
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> returnParameters() {
 
         Map<String, Object> parametersMap = new HashMap<>();
         parametersMap.put("preparationId", preparationId);

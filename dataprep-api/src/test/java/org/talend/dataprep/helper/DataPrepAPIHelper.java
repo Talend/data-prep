@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
@@ -33,12 +32,12 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.PreparationRequest;
+import org.talend.dataprep.helper.object.ExportRequest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
-import org.talend.dataprep.helper.object.ExportRequest;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -276,10 +275,9 @@ public class DataPrepAPIHelper {
                 escapeCharacter, //
                 enclosureCharacter, //
                 enclosureMode, //
-                charset
-        );
+                charset);
 
-        Map<String, Object> parameters = exportRequest.getParameters();
+        Map<String, Object> parameters = exportRequest.returnParameters();
 
         return given() //
                 .baseUri(apiBaseUrl) //

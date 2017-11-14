@@ -60,7 +60,8 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
     @Before
     public void init() {
-        // to avoid breaking stranger abstract test "should_only_write_values_in_columns_order_TDP_3188"        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        // to avoid breaking stranger abstract test "should_only_write_values_in_columns_order_TDP_3188" final
+        // ByteArrayOutputStream temp = new ByteArrayOutputStream();
         writer = (CSVWriter) context.getBean("writer#CSV", new ByteArrayOutputStream(), emptyMap());
     }
 
@@ -337,13 +338,15 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         // given
         final DataSetRow row = buildComplexRow();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE, CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS);
+        parameters.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS);
 
         // when
         ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
 
         // then
-        assertThat(out.toString(UTF_8.name())).isEqualTo("\"id\";\"firstname\";\"age\"\n\"64a5456ac148b64524ef165\";\"Superman\";\"10\"\n");
+        assertThat(out.toString(UTF_8.name()))
+                .isEqualTo("\"id\";\"firstname\";\"age\"\n\"64a5456ac148b64524ef165\";\"Superman\";\"10\"\n");
     }
 
     private DataSetRow buildSimpleRow() {

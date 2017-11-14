@@ -409,7 +409,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 preparation.getHeadId(), //
                 "JSON", //
                 HEAD, //
-                "" // no Filter
+                "" // no filter
         );
         assertTrue(contentCache.has(transformationCacheKey));
 

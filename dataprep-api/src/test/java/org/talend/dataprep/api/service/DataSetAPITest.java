@@ -751,7 +751,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_filter.json");
 
         // when
-        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false&Filter=0001%3D%27John%27", dataSetId);
+        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false&filter=0001%3D%27John%27", dataSetId);
 
         // then
         response.then().header("Content-Type", "application/json");

@@ -24,6 +24,7 @@ import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.actions.phonenumber.FormatPhoneNumber;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -176,9 +177,60 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_generate_with_deleted_row() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(GenerateSequence.START_VALUE, "1");
+        parameters.put(GenerateSequence.STEP_VALUE, "2");
+
+        //row1
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", "John");
+        DataSetRow row1 = new DataSetRow(values);
+        row1.setTdpId(1L);
+
+        //row2
+        Map<String, String> values2 = new HashMap<>();
+        values2.put("0000", "Lily");
+        DataSetRow row2 = new DataSetRow(values2);
+        row2.setTdpId(2L);
+        row2.setDeleted(true);
+
+        //row3
+        Map<String, String> values3 = new HashMap<>();
+        values3.put("0000", "Lucy");
+        DataSetRow row3 = new DataSetRow(values3);
+        row3.setTdpId(3L);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "1");
+
+        Map<String, Object> expectedValues2 = new LinkedHashMap<>();
+        expectedValues2.put("0000", "Lily");
+
+        Map<String, Object> expectedValues3 = new LinkedHashMap<>();
+        expectedValues3.put("0000", "3");
+
+        ActionTestWorkbench.test(Arrays.asList(row1, row2,row3), actionRegistry, factory.create(action, parameters));
+        assertEquals(expectedValues, row1.values());
+        assertEquals(expectedValues2, row2.values());
+        assertEquals(expectedValues3, row3.values());
+    }
+
+    @Test
     public void should_have_expected_behavior() {
         assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+    }
+
+    @Test
+    public void test_ValueHolder() {
+        BigInteger startValue = new BigInteger("1");
+        BigInteger stepValue = new BigInteger("2");
+        final GenerateSequence.ValueHolder vHolder = new GenerateSequence.ValueHolder(startValue, stepValue);
+
+        assertEquals("1", vHolder.getNextValue());
     }
 }

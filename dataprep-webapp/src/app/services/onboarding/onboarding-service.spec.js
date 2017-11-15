@@ -90,7 +90,7 @@ describe('Onboarding service', () => {
 		// then
 		const options = OnboardingService.currentTour._options;
 		expect(options.steps[0]).toEqual({
-			element: '#side-panel-nav-preparations',
+			element: '#side-panel-nav-menu-preparations',
 			position: 'right',
 			intro: '<div class="introjs-tooltiptitle">Preparations</div><div class="introjs-tooltipcontent">Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.</div>',
 		});

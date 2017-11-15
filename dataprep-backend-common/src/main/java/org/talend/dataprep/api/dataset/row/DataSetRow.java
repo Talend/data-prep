@@ -598,5 +598,6 @@ public class DataSetRow implements Cloneable, Serializable {
         public DataSetRow modifiable() {
             return delegate;
         }
+
     }
 }

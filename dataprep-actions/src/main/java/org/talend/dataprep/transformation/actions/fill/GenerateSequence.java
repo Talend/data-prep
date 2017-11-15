@@ -35,11 +35,15 @@ import java.util.Set;
 public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "generate_a_sequence";
-    /** The starting value of sequence.*/
+
+    /** The starting value of sequence. */
     protected static final String START_VALUE = "start_value";
 
-    /** The step value of sequence.*/
+    /** The step value of sequence. */
     protected static final String STEP_VALUE = "step_value";
+
+    /** previous row's value store. */
+    public static final String PREVIOUS = "previous"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -53,6 +57,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         parameters.add(startParameter);
         Parameter stepParameter = new Parameter(STEP_VALUE, ParameterType.INTEGER, "1");
         parameters.add(stepParameter);
+
         return ActionsBundle.attachToAction(parameters, this);
     }
 
@@ -63,7 +68,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return  true;
+        return true;
     }
 
     @Override
@@ -72,16 +77,47 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+            String start = actionContext.getParameters().get(START_VALUE);
+            String step = actionContext.getParameters().get(STEP_VALUE);
+            try {
+                BigInteger startValue = new BigInteger(start);
+                BigInteger stepValue = new BigInteger(step);
+                actionContext.get(PREVIOUS, values -> new ValueHolder(startValue, stepValue));
+            } catch (NullPointerException e) {
+                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            }
+        }
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        String startValue = context.getParameters().get(START_VALUE);
-        String stepValue = context.getParameters().get(STEP_VALUE);
-        if (startValue.isEmpty() || stepValue.isEmpty()) {
+        if (row.isDeleted()) {
             return;
         }
+        final ValueHolder holder = context.get(PREVIOUS);
         final String columnId = context.getColumnId();
-        BigInteger start = new BigInteger(startValue);
-        BigInteger step = new BigInteger(stepValue);
-        BigInteger currentValue = start.add(step.multiply(BigInteger.valueOf(row.getTdpId() - 1)));
-        row.set(columnId, currentValue.toString());
+        row.set(columnId, holder.getNextValue());
+    }
+
+    /** this class is used to store the previous value. */
+    protected static class ValueHolder {
+
+        BigInteger nextValue;
+
+        BigInteger step;
+
+        public ValueHolder(BigInteger startValue, BigInteger stepValue) {
+            this.nextValue = startValue;
+            this.step = stepValue;
+        }
+
+        public String getNextValue() {
+            String toReturn = nextValue.toString();
+            nextValue = nextValue.add(step);
+            return toReturn;
+        }
     }
 }

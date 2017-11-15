@@ -266,31 +266,31 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('text-anchor', 'start')
 					.transition()
 					.duration(duration)
-					.attr('y', vScale(boxValues.q1) + 10);
+					.attr('y', vScale(boxValues.q1) + 20);
 
 				// lower quantile text
 				gTexts.append('text')
 					.attr('class', 'low-quantile-labels')
-					.attr('x', -5)
+					.attr('x', 10)
 					.attr('y', vScale(boxValues.min) / 2)
 					.text($translate.instant('LOWER_QUANTILE'))
 					.style('opacity', 1)
 					.attr('text-anchor', 'end')
 					.transition()
 					.duration(duration)
-					.attr('y', vScale(boxValues.q1) + 10);
+					.attr('y', vScale(boxValues.q1) + 20);
 
 				// upper quantile value
 				gTexts.append('text')
 					.attr('class', 'up-quantile-labels')
-					.attr('x', -5)
+					.attr('x', 10)
 					.attr('y', vScale(boxValues.min) / 2)
 					.text($translate.instant('UPPER_QUANTILE'))
 					.style('opacity', 1)
 					.attr('text-anchor', 'end')
 					.transition()
 					.duration(duration)
-					.attr('y', vScale(boxValues.q2));
+					.attr('y', vScale(boxValues.q2) - 10);
 
 				// upper quantile text
 				gTexts.append('text')
@@ -302,7 +302,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('text-anchor', 'start')
 					.transition()
 					.duration(duration)
-					.attr('y', vScale(boxValues.q2));
+					.attr('y', vScale(boxValues.q2) - 10);
 
 				// median value
 				gTexts.append('text')

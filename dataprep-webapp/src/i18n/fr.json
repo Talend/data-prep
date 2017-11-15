@@ -348,7 +348,7 @@
 
   "_comment": "Confirm popup",
   "SAVE_CHANGE": "Sauvegarder les modifications ?",
-  "SAVE_CHANGE_DESCRITION_1": "Vous avez transformé votre jeu de données dans une préparation pouvant être sauvegardée pour être réutilisée.",
+  "SAVE_CHANGE_DESCRITION_1": "Vous avez transformé votre jeu de données en une préparation pouvant être sauvegardée pour être réutilisée.",
   "SAVE_CHANGE_DESCRITION_2": "Sauvegarder ?",
   "PREPARATION_NAME": "Nom de la préparation : ",
   "SAVE_IT": "SAUVEGARDER",

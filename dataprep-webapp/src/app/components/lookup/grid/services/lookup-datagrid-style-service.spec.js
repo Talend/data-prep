@@ -11,8 +11,10 @@
 
   ============================================================================*/
 
-import DataViewMock from '../../../../../mocks/DataView.mock';
-import SlickGridMock from '../../../../../mocks/SlickGrid.mock';
+import DataViewMock from '../../../../../mocks/DataView.mock'
+import SlickGridMock from '../../../../../mocks/SlickGrid.mock'
+
+import i18n from '../../../../../i18n/en.json';
 
 describe('Lookup Datagrid style service', () => {
     'use strict';
@@ -31,6 +33,11 @@ describe('Lookup Datagrid style service', () => {
         stateMock = { playground: { lookup: {} } };
         $provide.constant('state', stateMock);
     }));
+
+		beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+			$translateProvider.translations('en', i18n);
+			$translateProvider.preferredLanguage('en');
+		}));
 
     beforeEach(inject(() => {
         gridColumns = [
@@ -349,7 +356,7 @@ describe('Lookup Datagrid style service', () => {
             const result = formatter(null, null, value, columnDef, dataContext);
 
             //then
-            expect(result.indexOf('<div title="Invalid Value" class="red-rect"></div>') > 0).toBe(true);
+            expect(result.indexOf('<div title="Invalid value" class="red-rect"></div>') > 0).toBe(true);
         }));
 
         it('should add red rectangle on invalid value case of non TEXT domains (ieemail address)', inject((LookupDatagridStyleService) => {
@@ -365,7 +372,7 @@ describe('Lookup Datagrid style service', () => {
             const result = formatter(null, null, value, columnDef, dataContext);
 
             //then
-            expect(result).toBe('m&amp;a&gt;al&lt;ej@talend<div title="Invalid Value" class="red-rect"></div>');
+            expect(result).toBe('m&amp;a&gt;al&lt;ej@talend<div title="Invalid value" class="red-rect"></div>');
         }));
     });
 });

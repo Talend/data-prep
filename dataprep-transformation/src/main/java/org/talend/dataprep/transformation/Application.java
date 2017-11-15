@@ -14,19 +14,15 @@ package org.talend.dataprep.transformation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.talend.daikon.documentation.DocumentationController;
+import org.talend.dataprep.configuration.DataPrepComponentScanConfiguration;
 
 @SpringBootApplication
 @Configuration("org.talend.dataprep.transformation.Application")
 @Profile("standalone")
-@ComponentScan( //
-        value = { "org.talend.dataprep", "org.talend.daikon" }, //
-        excludeFilters = @ComponentScan.Filter(value = DocumentationController.class, type = FilterType.ASSIGNABLE_TYPE) //
-)
+@Import(DataPrepComponentScanConfiguration.class)
 public class Application {
 
     public static void main(String[] args) {

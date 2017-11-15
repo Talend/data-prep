@@ -206,7 +206,7 @@
   "STYLESHEET": "Style sheet:",
   "RENAME": "Rename",
   "NO_THANKS": "No, thanks",
-  "INVALIDVALUE": "Invalid Value",
+  "INVALIDVALUE": "Invalid value",
 
   "_comment": "Success",
   "DATASET_CREATE_SUCCESS_TITLE": "New dataset",
@@ -225,6 +225,7 @@
   "DATASET_RENAME_SUCCESS": "The dataset has been renamed.",
   "DATASET_CURRENTLY_RENAMING_TITLE": "Dataset is already being renamed",
   "DATASET_CURRENTLY_RENAMING": "You just tried to rename this dataset, wait a few seconds for the confirmation message to perform this new rename operation.",
+  "PREPARATION_REMOVE_SUCCESS_TITLE" : "Preparation removed",
 
   "_comment": "Errors",
   "INVALID_DATASET_TITLE": "Invalid dataset",

@@ -61,7 +61,7 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>install</arguments>
+                                    <arguments>install --force --prefer-offline</arguments>
                                 </configuration>
                             </execution>
                             <execution>
@@ -162,7 +162,7 @@
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>install</arguments>
+                                    <arguments>install --force</arguments>
                                 </configuration>
                             </execution>
                             <execution>

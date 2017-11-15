@@ -19,7 +19,7 @@
  * @requires data-prep.services.utils.service:TextFormatService
  */
 export default class DatagridStyleService {
-	constructor(ConverterService, TextFormatService) {
+	constructor(ConverterService, TextFormatService, $translate) {
 		'ngInject';
 
 		this.grid = null;
@@ -28,6 +28,8 @@ export default class DatagridStyleService {
 
 		this.ConverterService = ConverterService;
 		this.TextFormatService = TextFormatService;
+
+		this.invalidTitle = $translate.instant('INVALIDVALUE');
 	}
 
 	/**
@@ -163,7 +165,7 @@ export default class DatagridStyleService {
 			const formattedValue = `<div class="${classNames}">${returnStr}</div>`;
 			const isInvalid = dataContext.__tdpInvalid && dataContext.__tdpInvalid.indexOf(columnDef.id) > -1;
 			const indicator = isInvalid ?
-				'<div title="Invalid Value" class="red-rect"></div>' :
+				`<div title="${this.invalidTitle}" class="red-rect"></div>` :
 				'<div class="invisible-rect"></div>';
 
 			return formattedValue + indicator;

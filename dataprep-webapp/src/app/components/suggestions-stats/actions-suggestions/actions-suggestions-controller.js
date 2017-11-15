@@ -14,6 +14,7 @@
 import { find } from 'lodash';
 
 const SUGGESTIONS = 'suggestions';
+const FILTERED_COLUMN = 'column_filtered';
 
 /**
  * @ngdoc controller
@@ -36,8 +37,9 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
      * @returns {*|boolean}
      */
 	function shouldRenderSuggestion(action) {
-		return (state.playground.filter.applyTransformationOnFilters && (action.category === 'filtered')) ||
-			(state.playground.grid.selectedColumns.length === 1 && (action.category !== 'filtered'));
+		const isActionColumnFiltered = action.actionScope.indexOf(FILTERED_COLUMN) > -1;
+		return (state.playground.filter.applyTransformationOnFilters && isActionColumnFiltered) ||
+			(state.playground.grid.selectedColumns.length === 1 && !isActionColumnFiltered);
 	}
 
     /**

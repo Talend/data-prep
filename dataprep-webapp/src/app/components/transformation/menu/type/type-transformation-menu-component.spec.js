@@ -119,7 +119,7 @@ describe('Transformation menu component', () => {
 
 	it('should render primitive types', () => {
 		const types = [
-			'STRING',
+			'TEXT',
 			'INTEGER',
 			'DECIMAL',
 			'BOOLEAN',
@@ -158,7 +158,7 @@ describe('Transformation menu component', () => {
 			// given
 			createElement();
 			spyOn(controller, 'changeDomain').and.returnValue();
-			const items = element.find('ul.submenu >li');
+			const items = element.find('ul.submenu >li input');
 
 			// when
 			items.eq(1).click();
@@ -175,7 +175,7 @@ describe('Transformation menu component', () => {
 			const items = element.find('ul.submenu >li');
 
 			// when
-			items.eq(3).click();
+			items.eq(3).find('input').eq(0).click();
 			scope.$digest();
 
 			// then

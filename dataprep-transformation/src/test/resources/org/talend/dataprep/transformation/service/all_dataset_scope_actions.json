@@ -161,7 +161,8 @@
     ],
     "category":"columns",
     "actionScope":[
-      "column_metadata"
+      "column_metadata",
+      "hidden_in_action_list"
     ],
     "description":"Change column order",
     "label":"Reorder columns",
@@ -248,7 +249,7 @@
     "dynamic":false,
     "docUrl":"",
     "actionScope":[
-
+      "hidden_in_action_list"
     ]
   },
   {
@@ -303,5 +304,5 @@
     "label":"Remove duplicate rows",
     "dynamic":false,
     "docUrl":""
-  },
+  }
 ]

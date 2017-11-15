@@ -27,14 +27,6 @@ export default class PreparationActionsService {
 		this.TalendConfirmService = TalendConfirmService;
 	}
 
-	displaySuccess(messageKey, preparation) {
-		this.MessageService.success(
-			`${messageKey}_TITLE`,
-			messageKey,
-			preparation && { type: 'preparation', name: preparation.name }
-		);
-	}
-
 	dispatch(action) {
 		switch (action.type) {
 		case '@@preparation/CREATE':
@@ -91,7 +83,11 @@ export default class PreparationActionsService {
 				)
 				.then(() => this.PreparationService.delete(preparation))
 				.then(() => this.FolderService.refreshCurrentFolder())
-				.then(() => this.displaySuccess('REMOVE_SUCCESS', preparation));
+				.then(() => this.MessageService.success(
+					'PREPARATION_REMOVE_SUCCESS_TITLE',
+					'REMOVE_SUCCESS',
+					{ type: 'preparation', name: preparation.name }
+				));
 			break;
 		}
 		}

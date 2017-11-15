@@ -13,9 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
-
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,11 +56,6 @@ public class TypeChange extends AbstractActionMetadata implements ColumnAction {
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.COLUMN_METADATA.getDisplayName(locale);
-    }
-
-    @Override
-    public List<String> getActionScope() {
-        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override

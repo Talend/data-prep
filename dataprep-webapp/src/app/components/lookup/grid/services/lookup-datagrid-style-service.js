@@ -18,11 +18,12 @@
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.utils.service:TextFormatService
  */
-export default function LookupDatagridStyleService($timeout, ConverterService, DatagridStyleService, TextFormatService) {
+export default function LookupDatagridStyleService($timeout, ConverterService, DatagridStyleService, TextFormatService, $translate) {
 	'ngInject';
 
 	let grid;
 	let columnClassTimeout;
+	const invalidTitle = $translate.instant('INVALIDVALUE');
 
 	return {
 		init,
@@ -93,7 +94,7 @@ export default function LookupDatagridStyleService($timeout, ConverterService, D
 		return function formatter(row, cell, value) {
             // hidden characters need to be shown
 			const returnStr = TextFormatService.adaptToGridConstraints(value);
-			return returnStr + (isInvalid(value) ? '<div title="Invalid Value" class="red-rect"></div>' : '<div class="invisible-rect"></div>');
+			return returnStr + (isInvalid(value) ? `<div title="${invalidTitle}" class="red-rect"></div>` : '<div class="invisible-rect"></div>');
 		};
 	}
 

@@ -67,13 +67,18 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
-     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a component
+     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a
+     * component
      * that does not have access to the exception bundle.
      */
     public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
         super(code, cause, context);
         this.message = message;
         this.messageTitle = messageTitle;
+
+        // Translation done at the object creation
+        List<Object> values = getValueFromContext(context);
+        this.localizedMessage = ErrorMessage.message(getCode(), values.toArray(new Object[values.size()]));
     }
 
     /**
@@ -86,10 +91,8 @@ public class TDPException extends TalendRuntimeException {
      */
     public TDPException(ErrorCode code, Throwable cause, ExceptionContext context) {
         super(code, cause, context);
-        // Translation done at the object creation
-        List<Object> values;
-        values = context == null ? emptyList() //
-                : stream(context.entries().spliterator(), false).map(Map.Entry::getValue).collect(toList());
+
+        List<Object> values = getValueFromContext(context);
         message = ErrorMessage.defaultMessage(getCode(), values.toArray(new Object[values.size()]));
         localizedMessage = ErrorMessage.message(getCode(), values.toArray(new Object[values.size()]));
         messageTitle = ErrorMessage.messageTitle(getCode(), values.toArray(new Object[values.size()]));
@@ -159,4 +162,16 @@ public class TDPException extends TalendRuntimeException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    /**
+     * Return thie list of object store in the context
+     *
+     * @param context
+     * @return
+     */
+    private List<Object> getValueFromContext(ExceptionContext context) {
+        List<Object> values;
+        values = context == null ? emptyList() //
+                : stream(context.entries().spliterator(), false).map(Map.Entry::getValue).collect(toList());
+        return values;
+    }
 }

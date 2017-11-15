@@ -21,7 +21,7 @@ function generateTransformations() {
 			"description": "Keep only the lines that match the current filters",
 			"label": "Keep these Filtered Lines",
 			"docUrl": "",
-			"actionScope": [],
+			"actionScope": ["column_filtered"],
 			"parameters": [
 				{
 					"name": "column_id",
@@ -72,7 +72,7 @@ function generateTransformations() {
 			"description": "Delete only the lines that match the current filters",
 			"label": "Delete these Filtered Lines",
 			"docUrl": "",
-			"actionScope": [],
+			"actionScope": ["column_filtered"],
 			"parameters": [
 				{
 					"name": "column_id",

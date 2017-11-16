@@ -105,7 +105,6 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         row.set(columnId, holder.getNextValue());
     }
 
-    /** this class is used to store the previous value. */
     /** this class is used to store the values. */
     protected static class ValueHolder {
 

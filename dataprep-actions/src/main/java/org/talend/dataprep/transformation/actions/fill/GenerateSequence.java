@@ -89,6 +89,9 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             } catch (NullPointerException e) {
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
+            BigInteger startValue = new BigInteger(actionContext.getParameters().get(START_VALUE));
+            BigInteger stepValue = new BigInteger(actionContext.getParameters().get(STEP_VALUE));
+            actionContext.get(PREVIOUS, values -> new ValueHolder(startValue, stepValue));
         }
     }
 
@@ -103,6 +106,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     }
 
     /** this class is used to store the previous value. */
+    /** this class is used to store the values. */
     protected static class ValueHolder {
 
         BigInteger nextValue;

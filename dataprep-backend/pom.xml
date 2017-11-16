@@ -643,21 +643,6 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
-                    <configuration>
-                        <!-- start-class is a property set in service modules -->
-                        <mainClass>${start-class}</mainClass>
-                        <!-- Needed to allow use of loader.path in Cloud setup (to bundle additional JARs) -->
-                        <layout>ZIP</layout>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

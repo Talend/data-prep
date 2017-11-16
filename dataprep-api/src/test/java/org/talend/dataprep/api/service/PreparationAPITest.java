@@ -105,7 +105,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         List<UserPreparation> preparations = mapper.readerFor(UserPreparation.class)
-                .<UserPreparation>readValues(response1.asInputStream()).readAll();
+                .<UserPreparation> readValues(response1.asInputStream()).readAll();
         assertEquals(1, preparations.size());
         UserPreparation userPreparation = preparations.iterator().next();
         assertThat(userPreparation.getDataSetId(), is(tagadaId));
@@ -118,7 +118,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         List<PreparationSummary> preparationSummaries = mapper.readerFor(PreparationSummary.class)
-                .<PreparationSummary>readValues(response.asInputStream()).readAll();
+                .<PreparationSummary> readValues(response.asInputStream()).readAll();
         assertEquals(1, preparationSummaries.size());
         PreparationSummary preparationSummary = preparationSummaries.iterator().next();
         assertThat(preparationSummary.getId(), is(preparationId));
@@ -170,14 +170,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
 
         // then
-        List<String> result = mapper.readerFor(String.class).<String>readValues(shouldNotBeEmpty.asInputStream()).readAll();
+        List<String> result = mapper.readerFor(String.class).<String> readValues(shouldNotBeEmpty.asInputStream()).readAll();
         assertThat(result.get(0), is(preparationId));
 
         // when
-        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto")
+                .jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
+        assertThat(shouldBeEmpty.<String> getList(""), is(empty()));
     }
 
     @Test
@@ -188,16 +189,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
         String preparationId = testClient.createPreparationFromDataset(tagadaId, preparationName, home.getId());
 
         // when : short format
-        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/" + preparationName).jsonPath();
+        final JsonPath shouldNotBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/" + preparationName)
+                .jsonPath();
 
         // then
-        assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
+        assertThat(shouldNotBeEmpty.<String> getList("").get(0), is(preparationId));
 
         // when
-        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName).jsonPath();
+        final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName)
+                .jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
+        assertThat(shouldBeEmpty.<String> getList(""), is(empty()));
     }
 
     @Test
@@ -257,7 +260,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         Folder destination = folderRepository.addFolder(home.getId(), "/destination");
         Folder origin = folderRepository.addFolder(home.getId(), "/from");
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "super preparation", origin.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "super preparation",
+                origin.getId());
 
         // when
         String newPreparationName = "NEW super preparation";
@@ -681,7 +685,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         assertThat(response.getStatusCode(), is(200));
         final Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        assertEquals(reference.getHeadId(), preparation.getHeadId());
+        assertNotEquals(reference.getHeadId(), preparation.getHeadId());
+        assertEquals(preparation.getSteps().size(), reference.getSteps().size());
+        assertThat(preparation.getSteps().get(0).getId(), is(Step.ROOT_STEP.id()));
+        assertEquals(preparation.getSteps().get(1).getContent(), reference.getSteps().get(1).getContent());
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -697,7 +704,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertTrue(entries.isEmpty());
 
         // when
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation",
+                home.getId());
 
         // then
         entries = getEntries(home.getId());
@@ -717,7 +725,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(entries.size(), is(0));
 
         // when
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", folder.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation",
+                folder.getId());
 
         // then
         entries = getEntries(folder.getId());
@@ -747,7 +756,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationInitialContent() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
+                home.getId());
 
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json");
 
@@ -781,7 +791,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationContentWithActions() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
+                home.getId());
         EnrichedPreparation preparation = getPreparationDetails(preparationId);
         List<String> steps = preparation.getSteps();
 
@@ -815,7 +826,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldGetPreparationContent() throws IOException {
         // given
-        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet",
+                home.getId());
 
         // when
         String preparationContent = given().get("/api/preparations/{preparation}/content", preparationId).asString();
@@ -828,7 +840,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldGetPreparationContentWhenInvalidSample() throws IOException {
         // given
-        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet",
+                home.getId());
 
         // when
         String preparationContent = given().get("/api/preparations/{preparation}/content?sample=mdljshf", preparationId)
@@ -847,7 +860,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationDiffPreview() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
@@ -876,7 +890,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationUpdatePreview() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
@@ -914,7 +929,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationAddPreviewOnPreparation() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
@@ -969,7 +985,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationMultipleAddPreview() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("preview/preview_dataset.csv", "testPreview",
+                home.getId());
         testClient.applyActionFromFile(preparationId, "preview/upper_case_lastname.json");
         testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "preview/delete_city.json");

@@ -25,7 +25,11 @@
     <modules>
         <module>dataprep-backend</module>
         <module>dataprep-webapp</module>
-  </modules>
+    </modules>
+    <scm>
+        <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
+        <url>https://github.com/Talend/data-prep.git</url>
+    </scm>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>

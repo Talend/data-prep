@@ -96,7 +96,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
                 .defaultValue(ChronoUnit.HOURS.name())
                 .build(this ));
 
-         parameters.add(Parameter.parameter().setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this, locale));
+         parameters.add(Parameter.parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
 
         //@formatter:on
         return parameters;

@@ -50,7 +50,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         parameters.add(SelectParameter.selectParameter(locale) //
                         .name(MODE_PARAMETER) //
                         .item(CONSTANT_MODE, CONSTANT_MODE, getDefaultConstantValue(locale)) //
-                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale)) //
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this)) //
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );
@@ -88,10 +88,10 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
      */
     protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy no idea why this 2 but was here before so just keep backward compat :-)
-        return Parameter.parameter().setName(CONSTANT_VALUE)
+        return Parameter.parameter(locale).setName(CONSTANT_VALUE)
                 .setType(ParameterType.STRING)
                 .setDefaultValue("2")
-                .build(this, locale);
+                .build(this);
     }
 
     @Override

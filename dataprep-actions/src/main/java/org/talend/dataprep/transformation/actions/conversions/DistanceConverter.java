@@ -87,11 +87,11 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
                 .name(TO_UNIT_PARAMETER)
                 .build(this));
 
-        parameters.add(Parameter.parameter().setName(TARGET_PRECISION)
+        parameters.add(Parameter.parameter(locale).setName(TARGET_PRECISION)
                 .setType(INTEGER)
                 .setDefaultValue("2")
                 .setPlaceHolder("precision")
-                .build(this, locale));
+                .build(this));
 
         return parameters;
     }

@@ -78,23 +78,23 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
                 .item(OtherColumnParameters.CONSTANT_MODE, OtherColumnParameters.CONSTANT_MODE,//
-                        Parameter.parameter().setName(VALUE_PARAMETER)
+                        Parameter.parameter(locale).setName(VALUE_PARAMETER)
                                 .setType(ParameterType.STRING)
                                 .setDefaultValue(EMPTY)
-                                .build(this, locale)) //
+                                .build(this)) //
                 .item(OtherColumnParameters.OTHER_COLUMN_MODE, OtherColumnParameters.OTHER_COLUMN_MODE,//
-                        Parameter.parameter().setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
+                        Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
                                 .setType(ParameterType.COLUMN)
                                 .setDefaultValue(StringUtils.EMPTY)
                                 .setCanBeBlank(false)
-                                .build(this, locale)) //
+                                .build(this)) //
                 .defaultValue(OtherColumnParameters.CONSTANT_MODE).build(this));
 
-        parameters.add(Parameter.parameter().setName(SENSITIVITY)
+        parameters.add(Parameter.parameter(locale).setName(SENSITIVITY)
                 .setType(INTEGER)
                 .setDefaultValue("1")
                 .setCanBeBlank(false)
-                .build(this, locale));
+                .build(this));
         return parameters;
     }
 

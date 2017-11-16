@@ -89,14 +89,14 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
         final List<Parameter> parameters = super.getParameters(locale);
 
         parameters.add(
-                Parameter.parameter().setName(PARAMETER_REGEX).setType(STRING).setDefaultValue("(\\w+)").build(
-                        this, locale));
+                Parameter.parameter(locale).setName(PARAMETER_REGEX).setType(STRING).setDefaultValue("(\\w+)").build(
+                        this));
 
         //@formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
-                        .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, Parameter.parameter().setName(LIMIT).setType(INTEGER).setDefaultValue("4").build(this, locale))
-                        .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, Parameter.parameter().setName(PARAMETER_SEPARATOR).setType(STRING).setDefaultValue(",").build(this, locale))
+                        .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, Parameter.parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("4").build(this))
+                        .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, Parameter.parameter(locale).setName(PARAMETER_SEPARATOR).setType(STRING).setDefaultValue(",").build(this))
                         .defaultValue(MULTIPLE_COLUMNS_MODE)
                         .build(this )
         );

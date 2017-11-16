@@ -79,8 +79,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter().setName(LIMIT).setType(INTEGER).setDefaultValue("2").build(
-                this, locale));
+        parameters.add(Parameter.parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("2").build(
+                this));
         //@formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
                         .name(SEPARATOR_PARAMETER)
@@ -93,8 +93,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
                         .item("_")
                         .item(" ", "space")
                         .item("\t", "tab")
-                        .item("other (string)", Parameter.parameter().setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this, locale))
-                        .item("other (regex)", Parameter.parameter().setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this, locale))
+                        .item("other (string)", Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
+                        .item("other (regex)", Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this))
                         .defaultValue(":")
                         .build(this )
         );

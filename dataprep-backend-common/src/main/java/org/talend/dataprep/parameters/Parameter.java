@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.i18n.ActionsBundle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -130,8 +131,19 @@ public class Parameter implements Serializable {
         this.description = description;
     }
 
-    public static ParameterBuilder parameter() {
-        return new ParameterBuilder();
+    public static ParameterBuilder parameter(Locale locale) {
+        return new ParameterBuilder(locale);
+    }
+
+    public static Parameter generateParameter(Locale locale, String name, ParameterType type, String defaultValue, Boolean implicit, Boolean canBeBlank, Action action) {
+        return Parameter
+                .parameter(locale) //
+                .setName(name) //
+                .setType(type) //
+                .setDefaultValue(defaultValue) //
+                .setImplicit(implicit) //
+                .setCanBeBlank(canBeBlank) //
+                .build(action);
     }
 
     void addConfiguration(String name, Object configuration) {
@@ -251,7 +263,10 @@ public class Parameter implements Serializable {
 
         private String description;
 
-        private ParameterBuilder() {
+        private Locale locale;
+
+        private ParameterBuilder(Locale locale) {
+            this.locale = locale;
         }
 
         public ParameterBuilder setName(String name) {
@@ -296,7 +311,7 @@ public class Parameter implements Serializable {
 
         // for now we still are forced to auto detect label and description parameters but if it is possible to do this
         // without binding parameter builder with the I18n mecanism it would be really great, hence the warnings
-        public Parameter build(Object action, Locale locale) {
+        public Parameter build(Object action) {
             if (label == null) {
                 LOGGER.debug("Warning: implicit label in [{}] parameter creation.", name);
                 try {

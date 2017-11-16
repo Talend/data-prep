@@ -72,22 +72,22 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        final Parameter fromIndexParameters = Parameter.parameter().setName(FROM_INDEX_PARAMETER)
+        final Parameter fromIndexParameters = Parameter.parameter(locale).setName(FROM_INDEX_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("0")
-                .build(this, locale);
-        final Parameter fromNBeforeEndParameters = Parameter.parameter().setName(FROM_N_BEFORE_END_PARAMETER)
+                .build(this);
+        final Parameter fromNBeforeEndParameters = Parameter.parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("5")
-                .build(this, locale);
-        final Parameter toIndexParameters = Parameter.parameter().setName(TO_INDEX_PARAMETER)
+                .build(this);
+        final Parameter toIndexParameters = Parameter.parameter(locale).setName(TO_INDEX_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("5")
-                .build(this, locale);
-        final Parameter toNBeforeEndParameters = Parameter.parameter().setName(TO_N_BEFORE_END_PARAMETER)
+                .build(this);
+        final Parameter toNBeforeEndParameters = Parameter.parameter(locale).setName(TO_N_BEFORE_END_PARAMETER)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
-                .build(this, locale);
+                .build(this);
 
         // "to" parameter with all possible values
         final Parameter toCompleteParameters = SelectParameter.selectParameter(locale) //

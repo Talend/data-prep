@@ -90,8 +90,8 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
                 .build(this));
 
         parameters.add(
-                Parameter.parameter().setName(TARGET_PRECISION).setType(INTEGER).setPlaceHolder("precision").build(
-                        this, locale));
+                Parameter.parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setPlaceHolder("precision").build(
+                        this));
         return parameters;
     }
 

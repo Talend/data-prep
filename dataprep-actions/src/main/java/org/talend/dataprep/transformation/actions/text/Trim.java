@@ -78,7 +78,7 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
         parameters.add(SelectParameter.selectParameter(locale)
                 .name(PADDING_CHAR_PARAMETER)
                 .item(WHITESPACE,WHITESPACE)
-                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(CUSTOM_PADDING_CHAR_PARAMETER).setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).build(this, locale))
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(CUSTOM_PADDING_CHAR_PARAMETER).setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).build(this))
                 .canBeBlank(true)
                 .defaultValue(WHITESPACE)
                 .build(this ));

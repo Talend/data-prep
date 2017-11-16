@@ -48,8 +48,8 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter().setName(PRECISION).setType(INTEGER).setDefaultValue("0").build(
-                this, locale));
+        parameters.add(Parameter.parameter(locale).setName(PRECISION).setType(INTEGER).setDefaultValue("0").build(
+                this));
         return parameters;
     }
 

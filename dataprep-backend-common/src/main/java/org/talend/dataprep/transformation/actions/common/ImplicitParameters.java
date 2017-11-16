@@ -71,12 +71,14 @@ public enum ImplicitParameters {
      * @param locale
      */
     public Parameter getParameter(Locale locale) {
-        return Parameter.parameter().setName(name().toLowerCase())
+        return Parameter
+                .parameter(locale)
+                .setName(name().toLowerCase())
                 .setType(type)
                 .setDefaultValue(defaultValue)
                 .setImplicit(true)
                 .setLabel(parameterLabel(null, locale, name().toLowerCase()))
                 .setDescription(parameterDescription(null, locale, name().toLowerCase()))
-                .build(this, locale);
+                .build(this);
     }
 }

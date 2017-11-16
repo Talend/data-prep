@@ -64,10 +64,10 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         parameters.add(SelectParameter.selectParameter(locale)
                 .name(REMOVE_TYPE)
                 .item(WHITESPACE, WHITESPACE)
-                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(CUSTOM_REPEAT_CHAR_PARAMETER)
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(CUSTOM_REPEAT_CHAR_PARAMETER)
                         .setType(ParameterType.STRING)
                         .setDefaultValue(StringUtils.EMPTY)
-                        .build(this, locale))
+                        .build(this))
                 .canBeBlank(false)
                 .defaultValue(WHITESPACE)
                 .build(this));

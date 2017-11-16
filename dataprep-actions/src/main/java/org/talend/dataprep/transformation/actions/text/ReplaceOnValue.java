@@ -65,15 +65,15 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(
-                Parameter.parameter().setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
-                        this, locale));
+                Parameter.parameter(locale).setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
+                        this));
         parameters.add(
-                Parameter.parameter().setName(REPLACE_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(
-                        this, locale));
-        parameters.add(Parameter.parameter().setName(REPLACE_ENTIRE_CELL_PARAMETER)
+                Parameter.parameter(locale).setName(REPLACE_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(
+                        this));
+        parameters.add(Parameter.parameter(locale).setName(REPLACE_ENTIRE_CELL_PARAMETER)
                 .setType(BOOLEAN)
                 .setDefaultValue("false")
-                .build(this, locale));
+                .build(this));
         return parameters;
     }
 

@@ -80,16 +80,16 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(MODE_PARAMETER) //
                 .item(CONSTANT_MODE, CONSTANT_MODE,//
-                        Parameter.parameter().setName(CONSTANT_VALUE)
+                        Parameter.parameter(locale).setName(CONSTANT_VALUE)
                                 .setType(ParameterType.STRING)
                                 .setDefaultValue(EMPTY)
-                                .build(this, locale)) //
+                                .build(this)) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,//
-                        Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER)
+                        Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
                                 .setType(ParameterType.COLUMN)
                                 .setDefaultValue(StringUtils.EMPTY)
                                 .setCanBeBlank(false)
-                                .build(this, locale)) //
+                                .build(this)) //
                 .defaultValue(CONSTANT_MODE).build(this));
 
         return parameters;

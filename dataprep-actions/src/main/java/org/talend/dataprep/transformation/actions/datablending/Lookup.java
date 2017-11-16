@@ -85,31 +85,31 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
         final List<Parameter> parameters = new ArrayList<>();
         parameters.add(ImplicitParameters.COLUMN_ID.getParameter(locale));
         parameters.add(ImplicitParameters.FILTER.getParameter(locale));
-        parameters.add(Parameter.parameter().setName(LOOKUP_DS_NAME.getKey())
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_DS_NAME.getKey())
                 .setType(STRING)
                 .setDefaultValue(adaptedNameValue)
                 .setCanBeBlank(false)
-                .build(this, locale));
-        parameters.add(Parameter.parameter().setName(LOOKUP_DS_ID.getKey())
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_DS_ID.getKey())
                 .setType(STRING)
                 .setDefaultValue(adaptedDatasetIdValue)
                 .setCanBeBlank(false)
-                .build(this, locale));
-        parameters.add(Parameter.parameter().setName(LOOKUP_JOIN_ON.getKey())
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_JOIN_ON.getKey())
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .build(this, locale));
-        parameters.add(Parameter.parameter().setName(LOOKUP_JOIN_ON_NAME.getKey())
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_JOIN_ON_NAME.getKey())
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .build(this, locale));
-        parameters.add(Parameter.parameter().setName(LOOKUP_SELECTED_COLS.getKey())
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_SELECTED_COLS.getKey())
                 .setType(LIST)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .build(this, locale));
+                .build(this));
         return parameters;
     }
 

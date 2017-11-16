@@ -81,11 +81,11 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
                     .item(Boolean.FALSE.toString()) //
                     .build(this));
         } else {
-            parameters.add(Parameter.parameter().setName(VALUE_PARAMETER)
+            parameters.add(Parameter.parameter(locale).setName(VALUE_PARAMETER)
                     .setType(ParameterType.REGEX)
                     .setDefaultValue(StringUtils.EMPTY)
                     .setCanBeBlank(false)
-                    .build(this, locale));
+                    .build(this));
         }
 
         return parameters;

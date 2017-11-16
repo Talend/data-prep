@@ -139,7 +139,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .item(EU_PATTERN, EU_PATTERN)
                 .item(CH_PATTERN, CH_PATTERN)
                 .item(SCIENTIFIC, SCIENTIFIC)
-                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).build(this, locale),
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).build(this),
                         buildDecimalSeparatorParameter(TARGET, locale),
                         buildGroupingSeparatorParameter(TARGET, locale))
                 .defaultValue(US_PATTERN)
@@ -155,10 +155,10 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .name(name) //
                 .item(".") //
                 .item(",") //
-                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(name + "_" + CUSTOM)
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(name + "_" + CUSTOM)
                         .setType(STRING)
                         .setDefaultValue(".")
-                        .build(this, locale)) //
+                        .build(this)) //
                 .defaultValue(".") //
                 .build(this);
     }
@@ -172,10 +172,10 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .item(".", "dot") //
                 .item("'", "quote") //
                 .item("", "none") //
-                .item(CUSTOM, CUSTOM, Parameter.parameter().setName(name + "_" + CUSTOM)
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(name + "_" + CUSTOM)
                         .setType(STRING)
                         .setDefaultValue(",")
-                        .build(this, locale)) //
+                        .build(this)) //
                 .canBeBlank(true) //
                 .defaultValue(",") //
                 .build(this);

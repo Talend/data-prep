@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.parameters;
 
@@ -39,18 +39,22 @@ public class SelectParameterTest extends ParameterBaseTest {
     @Test
     public void shouldSerializeToJsonWithItemsInConfiguration() throws IOException {
         // given
-        SelectParameter expected = SelectParameter.selectParameter(ENGLISH) //
+        SelectParameter expected = SelectParameter
+                .selectParameter(ENGLISH) //
                 .name("column_id") //
                 .defaultValue("") //
                 .implicit(false) //
                 .canBeBlank(false) //
                 .item("first value") //
                 .item("2") //
-                .item("your choice", Parameter.parameter().setName("limit")
-                        .setType(ParameterType.INTEGER)
-                        .setDefaultValue(StringUtils.EMPTY)
-                        .setCanBeBlank(false)
-                        .build(this, ENGLISH)) //
+                .item("your choice",
+                        Parameter
+                                .parameter(ENGLISH)
+                                .setName("limit")
+                                .setType(ParameterType.INTEGER)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .setCanBeBlank(false)
+                                .build(this)) //
                 .build(this);
 
         // when
@@ -58,18 +62,14 @@ public class SelectParameterTest extends ParameterBaseTest {
         mapper.writer().writeValue(out, expected);
 
         // then
-        assertThat(out.toString(), sameJSONAs(
-                IOUtils.toString(this.getClass().getResourceAsStream("selectParameter.json"), UTF_8)));
+        assertThat(out.toString(),
+                sameJSONAs(IOUtils.toString(this.getClass().getResourceAsStream("selectParameter.json"), UTF_8)));
     }
-
 
     @Test
     public void shouldCreateConstantItem() {
         // when
-        final SelectParameter params = SelectParameter
-                .selectParameter(ENGLISH)
-                .constant("key", "a constant key")
-                .build(this);
+        final SelectParameter params = SelectParameter.selectParameter(ENGLISH).constant("key", "a constant key").build(this);
 
         // then
         assertThat(params.getItems().get(0).getValue(), is("key"));

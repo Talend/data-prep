@@ -44,12 +44,12 @@ public class LocalStoreLocation implements DataSetLocation {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return Collections.singletonList(Parameter.parameter().setName("datasetFile")
+        return Collections.singletonList(Parameter.parameter(locale).setName("datasetFile")
                 .setType(ParameterType.FILE)
                 .setDefaultValue("")
                 .setCanBeBlank(false)
                 .setPlaceHolder("*.csv")
-                .build(this, locale));
+                .build(this));
     }
 
     @Override

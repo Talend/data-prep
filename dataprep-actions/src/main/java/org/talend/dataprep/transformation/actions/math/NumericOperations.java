@@ -102,9 +102,9 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         //@formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
-                        .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter().setName(OPERAND_PARAMETER).setType(ParameterType.STRING).setDefaultValue("2").build(this, locale))
+                        .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter(locale).setName(OPERAND_PARAMETER).setType(ParameterType.STRING).setDefaultValue("2").build(this))
                         .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
-                              Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale)) //
+                              Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this)) //
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );

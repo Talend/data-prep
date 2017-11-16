@@ -77,10 +77,10 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
     @Override
     protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy the javascript will tranform to now if empty
-        return Parameter.parameter().setName(CONSTANT_VALUE)
+        return Parameter.parameter(locale).setName(CONSTANT_VALUE)
                 .setType(ParameterType.DATE)
                 .setDefaultValue(StringUtils.EMPTY)
-                .build(this, locale);
+                .build(this);
     }
 
     @Override

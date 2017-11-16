@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.configuration.EncodingSupport;
@@ -68,17 +67,49 @@ public class CSVFormat extends ExportFormat {
 
     @Override
     public List<Parameter> getParameters() {
-        return Arrays.asList(  //
-                getCsvDelimiters(getLocale()), //
-                new Parameter(ParametersCSV.ENCLOSURE_CHAR, ParameterType.STRING, defaultTextEnclosure), //
-                new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, defaultEscapeChar),
-                getEnclosureOptions(getLocale()), //
-                new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
-                buildCharsetParameter(getLocale()));
+        Locale currentLocale = getLocale();
+        return Arrays.asList( //
+                getCsvDelimiters(currentLocale), //
+                getEnclosureChar(currentLocale), //
+                getEscapeChar(currentLocale), //
+                getEnclosureOptions(currentLocale), //
+                getFileName(currentLocale), //
+                buildCharsetParameter(currentLocale));
+    }
+
+    private Parameter getFileName(Locale locale) {
+        return Parameter
+                .parameter(locale) //
+                .setName("fileName") //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(StringUtils.EMPTY) //
+                .setImplicit(false) //
+                .setCanBeBlank(false) //
+                .build(null);
+    }
+
+    private Parameter getEnclosureChar(Locale locale) {
+        return Parameter
+                .parameter(locale) //
+                .setName(ParametersCSV.ENCLOSURE_CHAR) //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(defaultTextEnclosure) //
+                .build(null);
+    }
+
+    private Parameter getEscapeChar(Locale locale) {
+        return Parameter
+                .parameter(locale) //
+                .setName(ParametersCSV.ESCAPE_CHAR) //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(defaultEscapeChar) //
+                .build(null);
     }
 
     private SelectParameter getEnclosureOptions(Locale locale) {
-        return SelectParameter.selectParameter(locale).name(ParametersCSV.ENCLOSURE_MODE) //
+        return SelectParameter
+                .selectParameter(locale)
+                .name(ParametersCSV.ENCLOSURE_MODE) //
                 .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
                 .item(ParametersCSV.ENCLOSURE_ALL_FIELDS, ParametersCSV.ENCLOSURE_TEXT_ALL_FIELDS_LABEL) //
                 .defaultValue(ParametersCSV.ENCLOSURE_TEXT_ONLY) //
@@ -87,7 +118,9 @@ public class CSVFormat extends ExportFormat {
     }
 
     private SelectParameter getCsvDelimiters(Locale locale) {
-        return SelectParameter.selectParameter(locale).name(ParametersCSV.FIELDS_DELIMITER) //
+        return SelectParameter
+                .selectParameter(locale)
+                .name(ParametersCSV.FIELDS_DELIMITER) //
                 .item(";", "semiColon") //
                 .item("\u0009", "tabulation") //
                 .item(" ", "space") //

@@ -58,8 +58,8 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter().setName(PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
-                this, locale));
+        parameters.add(Parameter.parameter(locale).setName(PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
+                this));
         return parameters;
     }
 

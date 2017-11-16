@@ -138,21 +138,21 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
-                        Parameter.parameter().setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
+                        Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
                                 .setType(ParameterType.COLUMN)
                                 .setDefaultValue(StringUtils.EMPTY)
                                 .setCanBeBlank(false)
-                                .build(this, locale)) //
+                                .build(this)) //
                 .item(CONSTANT_MODE, CONSTANT_MODE, //
                         SelectParameter.selectParameter(locale).name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
                                 .item(US_REGION_CODE, US_REGION_CODE) //
                                 .item(FR_REGION_CODE, FR_REGION_CODE) //
                                 .item(UK_REGION_CODE, UK_REGION_CODE) //
                                 .item(DE_REGION_CODE, DE_REGION_CODE) //
-                                .item(OTHER_REGION_TO_BE_SPECIFIED, Parameter.parameter().setName(MANUAL_REGION_PARAMETER_STRING)
+                                .item(OTHER_REGION_TO_BE_SPECIFIED, Parameter.parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
                                         .setType(ParameterType.STRING)
                                         .setDefaultValue(EMPTY)
-                                        .build(this, locale))
+                                        .build(this))
                                 .defaultValue(US_REGION_CODE).build(this)) //
                 .defaultValue(CONSTANT_MODE).build(this));
 

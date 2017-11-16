@@ -43,12 +43,12 @@ public class TestAction extends AbstractActionMetadata {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return Collections.singletonList(Parameter.parameter().setName("customParameter")
+        return Collections.singletonList(Parameter.parameter(locale).setName("customParameter")
                 .setType(ParameterType.STRING)
                 .setDefaultValue("")
                 .setCanBeBlank(false)
                 .setPlaceHolder("")
-                .build(this, locale));
+                .build(this));
     }
 
     @Override

@@ -91,7 +91,7 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
 				.item("[0-9]+", "[0-9]+")
 				.item("[a-zA-Z]+", "[a-zA-Z]+")
 				.item("[a-zA-Z0-9]+", "[a-zA-Z0-9]+")
-				.item(CUSTOM, CUSTOM, Parameter.parameter().setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this, locale))
+				.item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this))
 				.defaultValue("[a-zA-Z]+")
 				.build(this ));
 		// @formatter:on

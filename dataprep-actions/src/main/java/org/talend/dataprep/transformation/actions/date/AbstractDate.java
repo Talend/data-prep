@@ -120,11 +120,11 @@ public abstract class AbstractDate extends AbstractActionMetadata {
      * The parameter object for the custom new pattern.
      */
     private Parameter buildCustomPatternParam(Locale locale) {
-        return Parameter.parameter().setName(CUSTOM_PATTERN)
+        return Parameter.parameter(locale).setName(CUSTOM_PATTERN)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
-                .build(this, locale);
+                .build(this);
     }
 
     /**

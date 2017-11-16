@@ -93,20 +93,20 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(Parameter.parameter().setName(PREFIX_PARAMETER)
+        parameters.add(Parameter.parameter(locale).setName(PREFIX_PARAMETER)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(StringUtils.EMPTY)
-                .build(this, locale));
+                .build(this));
 
         parameters.add(SelectParameter.selectParameter(locale).name(MODE_PARAMETER)
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER)
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
                                 .setType(ParameterType.COLUMN)
                                 .setDefaultValue(StringUtils.EMPTY)
                                 .setCanBeBlank(false)
-                                .build(this, locale), Parameter.parameter().setName(SEPARATOR_PARAMETER)
+                                .build(this), Parameter.parameter(locale).setName(SEPARATOR_PARAMETER)
                                 .setType(ParameterType.STRING)
                                 .setDefaultValue(StringUtils.EMPTY)
-                                .build(this, locale), //
+                                .build(this), //
                         SelectParameter.selectParameter(locale) //
                                 .name(SEPARATOR_CONDITION) //
                                 .item(BOTH_NOT_EMPTY, BOTH_NOT_EMPTY) //
@@ -117,10 +117,10 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
                 .defaultValue(OTHER_COLUMN_MODE) //
                 .build(this));
 
-        parameters.add(Parameter.parameter().setName(SUFFIX_PARAMETER)
+        parameters.add(Parameter.parameter(locale).setName(SUFFIX_PARAMETER)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(StringUtils.EMPTY)
-                .build(this, locale));
+                .build(this));
         return parameters;
     }
 

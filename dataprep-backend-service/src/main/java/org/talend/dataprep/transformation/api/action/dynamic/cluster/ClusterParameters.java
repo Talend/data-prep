@@ -61,10 +61,10 @@ public class ClusterParameters implements DynamicParameters {
                 for (String value : cluster.originalValues) {
                     currentCluster.parameter(new ConstantParameter(value, ParameterType.BOOLEAN));
                 }
-                currentCluster.replace(Parameter.parameter().setName("replaceValue")
+                currentCluster.replace(Parameter.parameter(LocaleContextHolder.getLocale()).setName("replaceValue")
                         .setType(ParameterType.STRING)
                         .setDefaultValue(cluster.survivedValue)
-                        .build(null, LocaleContextHolder.getLocale()));
+                        .build(null));
                 builder.cluster(currentCluster);
             }
         }

@@ -63,11 +63,11 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER)
+        parameters.add(Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
                 .setType(ParameterType.COLUMN)
                 .setDefaultValue(StringUtils.EMPTY)
                 .setCanBeBlank(false)
-                .build(this, locale));
+                .build(this));
 
         return parameters;
     }

@@ -111,16 +111,16 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
         case DOUBLE:
         case FLOAT:
         case STRING:
-            constantParameter = Parameter.parameter().setName(DEFAULT_VALUE_PARAMETER)
+            constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                     .setType(ParameterType.STRING)
                     .setDefaultValue(StringUtils.EMPTY)
-                    .build(this, locale);
+                    .build(this);
             break;
         case INTEGER:
-            constantParameter = Parameter.parameter().setName(DEFAULT_VALUE_PARAMETER)
+            constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                     .setType(ParameterType.INTEGER)
                     .setDefaultValue("0")
-                    .build(this, locale);
+                    .build(this);
             break;
         case BOOLEAN:
             constantParameter = SelectParameter.selectParameter(locale) //
@@ -131,11 +131,11 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
                     .build(this);
             break;
         case DATE:
-            constantParameter = Parameter.parameter().setName(DEFAULT_VALUE_PARAMETER)
+            constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                     .setType(ParameterType.DATE)
                     .setDefaultValue(DEFAULT_DATE_VALUE)
                     .setCanBeBlank(false)
-                    .build(this, locale);
+                    .build(this);
             break;
         case ANY:
         default:
@@ -146,7 +146,7 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
         parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
                         .item(CONSTANT_MODE, CONSTANT_MODE, constantParameter)
-                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale))
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this))
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );

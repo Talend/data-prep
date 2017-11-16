@@ -66,11 +66,11 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
     @Override
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter().setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
+        parameters.add(Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
                 .setType(ParameterType.COLUMN)
                 .setDefaultValue(StringUtils.EMPTY)
                 .setCanBeBlank(false)
-                .build(this, locale));
+                .build(this));
         return parameters;
     }
 

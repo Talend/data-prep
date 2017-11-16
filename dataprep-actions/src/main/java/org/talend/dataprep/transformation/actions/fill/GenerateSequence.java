@@ -49,15 +49,15 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        Parameter startParameter = Parameter.parameter().setName(START_VALUE)
+        Parameter startParameter = Parameter.parameter(locale).setName(START_VALUE)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
-                .build(this, locale);
+                .build(this);
         parameters.add(startParameter);
-        Parameter stepParameter = Parameter.parameter().setName(STEP_VALUE)
+        Parameter stepParameter = Parameter.parameter(locale).setName(STEP_VALUE)
                 .setType(ParameterType.INTEGER)
                 .setDefaultValue("1")
-                .build(this, locale);
+                .build(this);
         parameters.add(stepParameter);
         return parameters;
     }

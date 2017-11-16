@@ -61,11 +61,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     /**
      * Constant to represents mode where we fill with a constant.
      */
-    public static final String EMPTY_MODE = "Nothing, this column will be empty";
+    public static final String EMPTY_MODE = "empty_mode";
 
-    public static final String CONSTANT_MODE = "A constant";
+    public static final String CONSTANT_MODE = "a_constant_mode";
 
-    public static final String COLUMN_MODE = "Another column";
+    public static final String COLUMN_MODE = "other_column_mode";
 
     public static final String NEW_COLUMN = "new_column";
 
@@ -101,11 +101,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         //@formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
-                        .item(EMPTY_MODE)
-                        .item(CONSTANT_MODE, constantParameter)
-                        .item(COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale))
+                        .item(EMPTY_MODE, EMPTY_MODE)
+                        .item(CONSTANT_MODE, CONSTANT_MODE, constantParameter)
+                        .item(COLUMN_MODE, COLUMN_MODE, Parameter.parameter().setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this, locale))
                         .defaultValue(COLUMN_MODE)
-                        .build(this )
+                        .build(this)
         );
         //@formatter:on
 

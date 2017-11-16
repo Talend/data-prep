@@ -132,7 +132,7 @@ public class CSVWriter extends AbstractTransformerWriter {
 
     private Charset extractEncodingWithFallback(String encodingParameter) {
         Charset charset;
-        if (StringUtils.isEmpty(encodingParameter) && Charset.isSupported(encodingParameter)) {
+        if (!StringUtils.isEmpty(encodingParameter) && Charset.isSupported(encodingParameter)) {
             charset = Charset.forName(encodingParameter);
         } else {
             charset = Charset.isSupported(defaultEncoding) ? Charset.forName(defaultEncoding) : UTF_8;

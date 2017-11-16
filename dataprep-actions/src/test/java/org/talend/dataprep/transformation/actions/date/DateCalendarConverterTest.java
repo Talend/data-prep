@@ -115,18 +115,21 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     private static final String HijrahStr3 = "06/16/1417";
 
-    private static final String JapaneseStr1 = "0008/10/29";
-
     private static final String MinguoStr1 = "0085/10/29";
 
     private static final String ThaiBuddhistStr1 = "2539/10/29";
 
     private static final String ThaiBuddhistStr2 = "2539-10-29";
 
-    private static final String JulianDay="2450386";
-    private static final String ModifiedJulianDay ="50385";
-    private static final String RataDie ="728961";
-    private static final String EpochDay ="9798";
+    private static final String JulianDay = "2450386";
+
+    private static final String ModifiedJulianDay = "50385";
+
+    private static final String RataDie = "728961";
+
+    private static final String EpochDay = "9798";
+
+    private static final String patternWithG = "yyyy/MM/dd G";
 
     @Test
     public void testBlank_values() {
@@ -168,8 +171,6 @@ public class DateCalendarConverterTest extends BaseDateTest {
     @Test
     public void testConversion_only_input_custom() {
         testConversion(IsoStr, DateCalendarConverter.CalendarUnit.ISO, pattern, HijrahStr,
-                DateCalendarConverter.CalendarUnit.HIJRI);
-        testConversion(JapaneseStr1, DateCalendarConverter.CalendarUnit.JAPANESE, pattern1, HijrahStr2,
                 DateCalendarConverter.CalendarUnit.HIJRI);
         testConversion(MinguoStr1, DateCalendarConverter.CalendarUnit.MINGUO, pattern1, HijrahStr2,
                 DateCalendarConverter.CalendarUnit.HIJRI);
@@ -313,6 +314,47 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     }
 
+    @Test
+    /**
+     * After using ResolverStyle.STRICT, datepattern of input data on Japanese calendar must with era 'G'.
+     */
+    public void testConversionJapaneseToISO() {
+        // given
+        // row 1
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "0008/10/29 平成");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency(patternWithG, 1));
+
+        // row 2
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "0008/10/29");
+        final DataSetRow row2 = new DataSetRow(rowContent);
+
+        // row 3
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "Lucy");
+        rowContent.put("0001", "0008/02/30");
+        final DataSetRow row3 = new DataSetRow(rowContent);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.JAPANESE.name());
+        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put("column_id", "0001");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("1996/10/29 AD", row1.get("0001"));
+        assertEquals("0008/10/29", row2.get("0001"));// the date pattern without G,not be parsed
+        assertEquals("0008/02/30", row3.get("0001"));// invalid date
+    }
 
     private void testConversion(String from, DateCalendarConverter.CalendarUnit fromUnit, String fromPattern, String expected,
                                 DateCalendarConverter.CalendarUnit toUnit) {

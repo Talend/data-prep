@@ -403,8 +403,8 @@
   "MORE": "plus",
   "LESS": "moins",
   "SERVICE_NAME": "SERVICE",
-  "BUILD_ID": "ID DU BUILD",
-  "VERSION_ID": "ID DE LA VERSION",
+  "BUILD_ID": "BUILD",
+  "VERSION_ID": "VERSION",
   "VERSION": "VERSION",
 
   "_comment": "404",

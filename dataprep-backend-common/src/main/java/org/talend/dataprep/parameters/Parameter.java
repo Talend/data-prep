@@ -80,6 +80,29 @@ public class Parameter implements Serializable {
     }
 
     /**
+     * Constructor with a default value.
+     *
+     * @param name The parameter name.
+     * @param type The parameter type.
+     * @param defaultValue the parameter default value.
+     */
+    public Parameter(String name, ParameterType type, String defaultValue) {
+        this(name, type, defaultValue, false);
+    }
+
+    /**
+     * Constructor with a default value and the implicit flag.
+     *
+     * @param name The parameter name.
+     * @param type The parameter type.
+     * @param defaultValue the parameter default value.
+     * @param implicit true if the parameter is implicit.
+     */
+    public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit) {
+        this(name, type, defaultValue, implicit, true);
+    }
+
+    /**
      * Full constructor.
      *
      * @param name The parameter name.
@@ -294,5 +317,5 @@ public class Parameter implements Serializable {
             }
             return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description);
         }
-
+    }
 }

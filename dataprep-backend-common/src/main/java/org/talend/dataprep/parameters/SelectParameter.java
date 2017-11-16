@@ -58,7 +58,7 @@ public class SelectParameter extends Parameter {
      * @param radio <code>true</code> if the rendering code should prefer radio buttons instead of drop down list.
      */
     private SelectParameter(String name, String defaultValue, boolean implicit, boolean canBeBlank, List<Item> items,
-            boolean multiple, boolean isRadio, String label, String description) {
+            boolean multiple, boolean radio, String label, String description) {
         super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank, EMPTY, label, description);
         setRadio(radio);
         setItems(items);
@@ -71,6 +71,8 @@ public class SelectParameter extends Parameter {
 
     public void setRadio(boolean radio) {
         this.radio = radio;
+    }
+
     /**
      * @return A SelectParameter builder.
      * @param locale
@@ -80,7 +82,7 @@ public class SelectParameter extends Parameter {
     }
 
     public boolean isRadio() {
-        return isRadio;
+        return radio;
     }
 
     public List<Item> getItems() {

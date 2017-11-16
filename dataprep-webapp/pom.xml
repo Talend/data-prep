@@ -69,15 +69,6 @@
                         </fileset>
                     </filesets>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>auto-clean</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
@@ -153,47 +144,13 @@
             <build>
                 <plugins>
                     <plugin>
+                        <!-- Override arguments of "yarn test" execution to add CI tests -->
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.6</version>
                         <executions>
                             <execution>
-                                <id>install node and yarn</id>
-                                <goals>
-                                    <goal>install-node-and-yarn</goal>
-                                </goals>
-                                <configuration>
-                                    <nodeVersion>${node.version}</nodeVersion>
-                                    <yarnVersion>${yarn.version}</yarnVersion>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>yarn install</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>install --force</arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>yarn build</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>run build:dist</arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>yarn test</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
                                 <configuration>
-                                    <skip>${skipTests}</skip>
                                     <arguments>run test:ci</arguments>
                                 </configuration>
                             </execution>
@@ -209,25 +166,6 @@
                                 <phase>test</phase>
                                 <goals>
                                     <goal>test</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.5.3</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>assembly/dist.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>

@@ -2,28 +2,28 @@
 # yarn lockfile v1
 
 
-"@talend/bootstrap-theme@0.123.0":
-  version "0.123.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.123.0.tgz#ea21f7cb776908e218e3d695c17dca7d2c91f16d"
+"@talend/bootstrap-theme@0.125.0":
+  version "0.125.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.125.0.tgz#76d3823ecde3840588875257185d84b87edfc488"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.123.0":
-  version "0.123.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.123.0.tgz#35af7acd8f97e937066cfc7bef41e13bd9a36ef4"
+"@talend/icons@0.125.0":
+  version "0.125.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.125.0.tgz#0d2d0554022b3c815ff7207b1535daffdd011ca6"
 
-"@talend/react-components@0.123.0":
-  version "0.123.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.123.0.tgz#7a585308e2b237e25389e08d3155f63b212cc644"
+"@talend/react-components@0.125.0":
+  version "0.125.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.125.0.tgz#58f0cfa622e8a59b09a539dba3ebf161bed1bde6"
   dependencies:
     lodash "4.17.4"
     react-autowhatever "7.0.0"
     react-debounce-input "2.4.2"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.123.0":
-  version "0.123.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.123.0.tgz#4b947307b9498bc909a363aaba029076a0815bfc"
+"@talend/react-forms@0.125.0":
+  version "0.125.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.125.0.tgz#fb92ac408ba96097515a4ac70eae80f1b0d7869f"
   dependencies:
     classnames "2.2.5"
     keycode "2.1.9"

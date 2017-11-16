@@ -31,7 +31,7 @@
     <properties>
         <docker.image.name>kkarczmarczyk/node-yarn</docker.image.name>
         <node.version>v7.7.4</node.version>
-        <yarn.version>v1.1.0</yarn.version>
+        <yarn.version>v1.3.2</yarn.version>
         <git.branch.name></git.branch.name>
         <git.commit.id.abbrev></git.commit.id.abbrev>
         <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>

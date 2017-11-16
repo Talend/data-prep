@@ -315,51 +315,80 @@ public class DateCalendarConverterTest extends BaseDateTest {
     }
 
     @Test
-    /**
-     * After using ResolverStyle.STRICT, datepattern of input data on Japanese calendar must with era 'G'.
-     */
-    public void testConversionJapaneseToISO() {
+    public void testConversionJapaneseToISO_ValidDateWithEra() {
         // given
-        // row 1
         Map<String, String> rowContent = new HashMap<>();
         rowContent.put("0000", "David");
         rowContent.put("0001", "0008/10/29 平成");
-        final DataSetRow row1 = new DataSetRow(rowContent);
-        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
-                new PatternFrequency(patternWithG, 1));
-
-        // row 2
-        rowContent = new HashMap<>();
-        rowContent.put("0000", "John");
-        rowContent.put("0001", "0008/10/29");
-        final DataSetRow row2 = new DataSetRow(rowContent);
-
-        // row 3
-        rowContent = new HashMap<>();
-        rowContent.put("0000", "Lucy");
-        rowContent.put("0001", "0008/02/30");
-        final DataSetRow row3 = new DataSetRow(rowContent);
+        final DataSetRow row = new DataSetRow(rowContent);
+        row.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency("yyyy/MM/dd G", 1));
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
         parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.JAPANESE.name());
         parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
-        parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("1996/10/29 AD", row1.get("0001"));
-        assertEquals("0008/10/29", row2.get("0001"));// the date pattern without G,not be parsed
-        assertEquals("0008/02/30", row3.get("0001"));// invalid date
+        // While using ResolverStyle.STRICT, date pattern of input data on Japanese calendar must contain era 'G'
+        assertEquals("1996/10/29 AD", row.get("0001"));
+    }
+
+    @Test
+    public void testConversionJapaneseToISO_ValidDateWithoutEra() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "0008/10/29");
+        final DataSetRow row = new DataSetRow(rowContent);
+        row.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency("yyyy/MM/dd", 1));
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.JAPANESE.name());
+        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        // The date pattern does not contain G, the input cannot be parsed
+        assertEquals("0008/10/29", row.get("0001"));
+    }
+
+    @Test
+    public void testConversionJapaneseToISO_InvalidDateWithEra() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "Lucy");
+        rowContent.put("0001", "0008/02/30 平成");
+        final DataSetRow row = new DataSetRow(rowContent);
+        row.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency("yyyy/MM/dd G", 1));
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.JAPANESE.name());
+        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        // February 30 does not exist, can not parse even the Era part exists.
+        assertEquals("0008/02/30 平成", row.get("0001"));// invalid date
     }
 
     private void testConversion(String from, DateCalendarConverter.CalendarUnit fromUnit, String fromPattern, String expected,
                                 DateCalendarConverter.CalendarUnit toUnit) {
         // given
-        // row 1
         Map<String, String> rowContent = new HashMap<>();
         rowContent.put("0000", "David");
         rowContent.put("0001", from);

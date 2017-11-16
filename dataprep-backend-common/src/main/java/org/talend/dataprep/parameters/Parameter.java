@@ -60,6 +60,8 @@ public class Parameter implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> configuration = new HashMap<>();
 
+    private Object parent;
+
     private String label;
 
     private String description;
@@ -185,6 +187,11 @@ public class Parameter implements Serializable {
         this.configuration = configuration;
     }
 
+    public Parameter attach(Object parent) {
+        this.parent = parent;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -288,5 +295,4 @@ public class Parameter implements Serializable {
             return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description);
         }
 
-    }
 }

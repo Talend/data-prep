@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.talend.dataprep.parameters.Parameter;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * Models a type of format for DTO
  */
@@ -38,6 +40,8 @@ public class ExportFormatMessage {
 
     private String title;
 
+    // in order to be able to serialize sub-classes of Parameter
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class")
     private List<Parameter> parameters;
 
     private boolean supportSampling;

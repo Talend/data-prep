@@ -31,7 +31,8 @@ public class SelectParameter extends Parameter {
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
-    private final boolean isRadio;
+    // @JsonProperty
+    private boolean radio;
 
     /** The select items. */
     @JsonIgnore // will be part of the Parameter#configuration
@@ -40,6 +41,10 @@ public class SelectParameter extends Parameter {
     /** True if multiple items can be selected. */
     @JsonIgnore // will be part of the Parameter#configuration
     private boolean multiple;
+
+    // Introducing the dummy constructor for serialization purpose
+    public SelectParameter() {
+    }
 
     /**
      * Private constructor to ensure the use of builder.
@@ -50,16 +55,22 @@ public class SelectParameter extends Parameter {
      * @param canBeBlank True if the parameter can be blank.
      * @param items List of items for this select parameter.
      * @param multiple True if multiple selection is allowed.
-     * @param isRadio <code>true</code> if the rendering code should prefer radio buttons instead of drop down list.
+     * @param radio <code>true</code> if the rendering code should prefer radio buttons instead of drop down list.
      */
     private SelectParameter(String name, String defaultValue, boolean implicit, boolean canBeBlank, List<Item> items,
             boolean multiple, boolean isRadio, String label, String description) {
         super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank, EMPTY, label, description);
-        this.isRadio = isRadio;
+        setRadio(radio);
         setItems(items);
         setMultiple(multiple);
     }
 
+    public boolean getRadio() {
+        return radio;
+    }
+
+    public void setRadio(boolean radio) {
+        this.radio = radio;
     /**
      * @return A SelectParameter builder.
      * @param locale
@@ -108,13 +119,13 @@ public class SelectParameter extends Parameter {
         private String defaultValue = "";
 
         /** True if the parameter is not displayed to the user. */
-        private boolean implicit = false;
+        private boolean implicit;
 
         /** True if the parameter can be blank. */
-        private boolean canBeBlank = false;
+        private boolean canBeBlank;
 
         /** True if rendering should prefer radio buttons to render parameters choices */
-        private boolean isRadio = false;
+        private boolean radio;
 
         private String label;
 
@@ -241,8 +252,8 @@ public class SelectParameter extends Parameter {
             return this;
         }
 
-        public SelectParameterBuilder radio(boolean isRadio) {
-            this.isRadio = isRadio;
+        public SelectParameterBuilder radio(boolean radio) {
+            this.radio = radio;
             return this;
         }
 
@@ -269,7 +280,7 @@ public class SelectParameter extends Parameter {
             if (description == null) {
                 description = parameterDescription(action, locale, name);
             }
-            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, isRadio, label, description);
+            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, radio, label, description);
         }
     }
 

@@ -52,7 +52,10 @@ Feature: Perform an OS Smoke Test
     Given I fail to move the first step like "deleteDate" after the first step like "stepUp" on the preparation "10L3C_preparation"
 
   Scenario: Export and check the exported file
-    Given I export the preparation "10L3C_preparation" on the dataset "10L3C_dataset" and export the result in "acote.csv" temporary file.
+    When I export the preparation with parameters :
+      | preparationName | 10L3C_preparation |
+      | dataSetName     | 10L3C_dataset     |
+      | fileName        | acote.csv         |
     Then I check that "acote.csv" temporary file equals "/data/10L3C_processed.csv" file
 
   Scenario: Move a preparation in a new folder
@@ -71,5 +74,8 @@ Feature: Perform an OS Smoke Test
 
   @CleanAfter
   Scenario: Export and check the exported file
-    Given I export the preparation "10L3C_preparation" on the dataset "10L3C_dataset" and export the result in "10L3C_result.csv" temporary file.
+    When I export the preparation with parameters :
+      | preparationName | 10L3C_preparation |
+      | dataSetName     | 10L3C_dataset     |
+      | fileName        | 10L3C_result.csv  |
     Then I check that "10L3C_result.csv" temporary file equals "/data/10L3C_processed.csv" file

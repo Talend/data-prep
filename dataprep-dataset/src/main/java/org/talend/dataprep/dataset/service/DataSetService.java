@@ -24,6 +24,7 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
@@ -141,12 +142,6 @@ public class DataSetService extends BaseDataSetService {
      */
     @Autowired
     private Security security;
-
-    /**
-     * Encoding support service.
-     */
-    @Autowired
-    private EncodingSupport encodings;
 
     /**
      * All possible data set locations.
@@ -1029,7 +1024,7 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @PublicAPI
     public Stream<String> listSupportedEncodings() {
-        return encodings.getSupportedCharsets().stream().map(Charset::displayName);
+        return EncodingSupport.getSupportedCharsets().stream().map(Charset::displayName);
     }
 
     @RequestMapping(value = "/datasets/imports/{import}/parameters", method = GET, produces = APPLICATION_JSON_VALUE)

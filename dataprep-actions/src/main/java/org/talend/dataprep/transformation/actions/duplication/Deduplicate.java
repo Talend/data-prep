@@ -70,13 +70,15 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        String data = evalHashCode(row);
+        if (!row.isDeleted()) {
+            String data = evalHashCode(row);
 
-        Set<String> hashes = context.get(HASHES_NAME);
-        if (!hashes.contains(data)) {
-            hashes.add(data);
-        } else {
-            row.setDeleted(true);
+            Set<String> hashes = context.get(HASHES_NAME);
+            if (!hashes.contains(data)) {
+                hashes.add(data);
+            } else {
+                row.setDeleted(true);
+            }
         }
     }
 

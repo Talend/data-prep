@@ -38,6 +38,24 @@ public abstract class DataPrepStep {
     /** {@link cucumber.api.DataTable} key for preparationName value. */
     public static final String PREPARATION_NAME = "preparationName";
 
+    public static final String DATASET_NAME = "dataSetName";
+
+    public static final String FILE_NAME = "fileName";
+
+    public static final String EXPORT_TYPE = "exportType";
+
+    public static final String CSV_ESCAPE_CHARACTER_PARAM = "csv_escape_character";
+
+    public static final String CSV_FIELDS_DELIMITER = "csv_fields_delimiter";
+
+    public static final String CSV_ENCLOSURE_CHARACTER_PARAM = "csv_enclosure_char";
+
+    public static final String CSV_ENCLOSURE_MODE_PARAM = "csv_enclosure_mode";
+
+    public static final String CSV_CHARSET_PARAM = "csv_charset";
+
+    public static final String CSV_EXPORT = "CSV";
+
     /** {@link cucumber.api.DataTable} key for origin folder. */
     public static final String ORIGIN = "origin";
 

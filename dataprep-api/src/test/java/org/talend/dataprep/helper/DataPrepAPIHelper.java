@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.PreparationRequest;
+import org.talend.dataprep.helper.object.ExportRequest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
@@ -257,22 +259,31 @@ public class DataPrepAPIHelper {
      * @param stepId the last step id.
      * @param delimiter the column delimiter.
      * @param filename the name for the exported generated file.
+     * @param escapeCharacter the escape character for the exported generated file.
      * @return the response.
      */
-    public Response executeFullRunExport(String exportType, String datasetId, String preparationId, String stepId,
-            String delimiter, String filename) {
+    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
+            String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
+
+        ExportRequest exportRequest = new ExportRequest( //
+                exportType, //
+                datasetId, //
+                preparationId, //
+                stepId, //
+                delimiter, //
+                filename, //
+                escapeCharacter, //
+                enclosureCharacter, //
+                enclosureMode, //
+                charset);
+
+        Map<String, Object> parameters = exportRequest.returnParameters();
+
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
-                // .header("Content-Type", "application/json; charset=utf8") //
-                .urlEncodingEnabled(false) //
                 .when() //
-                .queryParam("preparationId", preparationId) //
-                .queryParam("stepId", stepId) //
-                .queryParam("datasetId", datasetId) //
-                .queryParam("exportType", exportType) //
-                .queryParam("exportParameters.csv_fields_delimiter", delimiter) //
-                .queryParam("exportParameters.fileName", filename) //
+                .queryParameters(parameters) //
                 .get("/api/export");
     }
 

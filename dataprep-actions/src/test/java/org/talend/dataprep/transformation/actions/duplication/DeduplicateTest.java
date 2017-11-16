@@ -255,4 +255,27 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
         assertThat(row5.isDeleted(), is(false));
     }
 
+    @Test
+    public void deduplicate_with_deleted_row() {
+        // row 1
+        final DataSetRow row1 = getDataSetRow("David", "Bowie");
+        row1.setDeleted(true);
+
+        // row 2
+        final DataSetRow row2 = getDataSetRow("Toto", "Cafe");
+
+        // row 3
+        final DataSetRow row3 = getDataSetRow("David", "Bowie");
+
+        initParameters();
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertThat(row1.isDeleted(), is(true));
+        assertThat(row2.isDeleted(), is(false));
+        assertThat(row3.isDeleted(), is(false));
+    }
+
 }

@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -84,10 +83,6 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
     @Autowired
     private CompositeFormatDetector detector;
 
-    /** Bean that list supported encodings. */
-    @Autowired
-    private EncodingSupport encodings;
-
     /**
      * @see SynchronousDataSetAnalyzer#analyze(String)
      */
@@ -142,7 +137,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
     private void verifyFormat(Format detectedFormat) {
 
         TDPException hypotheticalException = null;
-        Set<Charset> supportedEncodings = encodings != null ? encodings.getSupportedCharsets() : Collections.emptySet();
+        Set<Charset> supportedEncodings = EncodingSupport.getSupportedCharsets();
         if (detectedFormat == null
                 || UnsupportedFormatFamily.class.isAssignableFrom(detectedFormat.getFormatFamily().getClass())) {
             hypotheticalException = new TDPException(DataSetErrorCodes.UNSUPPORTED_CONTENT);

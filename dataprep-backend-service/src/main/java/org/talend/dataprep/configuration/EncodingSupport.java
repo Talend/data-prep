@@ -13,54 +13,44 @@
 
 package org.talend.dataprep.configuration;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.nio.charset.Charset;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.collections.ListUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Bean that list certified and supported charsets.
  */
-@Component
-@SuppressWarnings("InsufficientBranchCoverage")
 public class EncodingSupport {
 
-    /**
-     * The list of supported encodings in data prep (could be {@link Charset#availableCharsets()}, but requires
-     * extensive tests, so a sub set is returned to ease testing).
-     * 
-     * @see #getSupportedCharsets()
-     */
-    @Value("#{'UTF-8,UTF-16,UTF-16LE,windows-1252,ISO-8859-1,x-MacRoman'.split(',')}")
-    private String[] certifiedEncoding;
-
     /** All supported charsets. */
-    private Set<Charset> supportedCharsets;
+    private static Set<Charset> SUPPORTED_CHARSETS;
 
-    /**
-     * Init the charset lists.
-     */
-    @PostConstruct
-    @SuppressWarnings("unchecked")
-    private void initCharsets() {
-        final List<Charset> certifiedCharsets = Arrays.stream(certifiedEncoding).map(Charset::forName)
-                .collect(Collectors.toList());
-        this.supportedCharsets = new LinkedHashSet<>(
-                ListUtils.union(certifiedCharsets, new ArrayList<>(Charset.availableCharsets().values())));
+    static {
+        Set<Charset> charsetsInBuild = new LinkedHashSet<>();
+        // preferred charsets we always want at the top of UI lists:
+        charsetsInBuild.add(UTF_8);
+        charsetsInBuild.add(UTF_16);
+        charsetsInBuild.add(UTF_16LE);
+        charsetsInBuild.add(Charset.forName("windows-1252"));
+        charsetsInBuild.add(ISO_8859_1);
+        charsetsInBuild.add(Charset.forName("x-MacRoman"));
+
+        // and the other (and many) charsets nobody ever uses
+        charsetsInBuild.addAll((Charset.availableCharsets().values()));
+        SUPPORTED_CHARSETS = Collections.unmodifiableSet(charsetsInBuild);
     }
 
     /**
+     * The list of supported charsets with promoted charsets first.
+     *
      * @return The list of encodings in data prep may use but are without scope of extensive tests (supported, but not
      * certified).
-     * @see #certifiedEncoding
      */
-    public Set<Charset> getSupportedCharsets() {
-        return supportedCharsets;
+    public static Set<Charset> getSupportedCharsets() {
+        return SUPPORTED_CHARSETS;
     }
 
 }

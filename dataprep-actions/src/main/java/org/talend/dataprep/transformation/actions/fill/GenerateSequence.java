@@ -81,8 +81,8 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
-                BigInteger startValue = new BigInteger(actionContext.getParameters().get(START_VALUE););
-                BigInteger stepValue = new BigInteger(actionContext.getParameters().get(STEP_VALUE););
+                BigInteger startValue = new BigInteger(actionContext.getParameters().get(START_VALUE));
+                BigInteger stepValue = new BigInteger(actionContext.getParameters().get(STEP_VALUE));
                 actionContext.get(PREVIOUS, values -> new ValueHolder(startValue, stepValue));
             } catch (NullPointerException e) {
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);

@@ -26,6 +26,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import java.math.BigInteger;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -80,13 +81,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            try {
-                BigInteger startValue = new BigInteger(actionContext.getParameters().get(START_VALUE));
-                BigInteger stepValue = new BigInteger(actionContext.getParameters().get(STEP_VALUE));
-                actionContext.get(PREVIOUS, values -> new ValueHolder(startValue, stepValue));
-            } catch (NullPointerException e) {
-                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
-            }
+                actionContext.get(PREVIOUS, values -> new CalcSequence(actionContext.getParameters()));
         }
     }
 
@@ -95,21 +90,24 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         if (row.isDeleted()) {
             return;
         }
-        final ValueHolder holder = context.get(PREVIOUS);
+        final CalcSequence sequence = context.get(PREVIOUS);
         final String columnId = context.getColumnId();
-        row.set(columnId, holder.getNextValue());
+        row.set(columnId, sequence.getNextValue());
     }
 
-    /** this class is used to store the values. */
-    protected static class ValueHolder {
+    /** this class is used to calculate the sequence next step */
+    protected static class CalcSequence {
 
         BigInteger nextValue;
 
         BigInteger step;
 
-        public ValueHolder(BigInteger startValue, BigInteger stepValue) {
-            this.nextValue = startValue;
-            this.step = stepValue;
+        public CalcSequence(Map<String,String> parameters) throws IllegalArgumentException {
+            if (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE)) {
+                throw new IllegalArgumentException("miss value : START_VALUE and STEP_VALUE are required");
+            }
+            this.nextValue = new BigInteger(parameters.get(START_VALUE));
+            this.step = new BigInteger(parameters.get(STEP_VALUE));
         }
 
         public String getNextValue() {

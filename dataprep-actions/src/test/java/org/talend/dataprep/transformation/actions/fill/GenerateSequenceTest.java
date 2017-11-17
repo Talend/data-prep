@@ -16,15 +16,11 @@ import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.actions.phonenumber.FormatPhoneNumber;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-import java.math.BigInteger;
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -225,12 +221,37 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
     }
 
-    @Test
-    public void test_ValueHolder() {
-        BigInteger startValue = new BigInteger("1");
-        BigInteger stepValue = new BigInteger("2");
-        final GenerateSequence.ValueHolder vHolder = new GenerateSequence.ValueHolder(startValue, stepValue);
+    @Test(expected = IllegalArgumentException.class)
+    public void test_CalcSequence_with_empty_start() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(GenerateSequence.START_VALUE, "");
+        parameters.put(GenerateSequence.STEP_VALUE, "2");
 
-        assertEquals("1", vHolder.getNextValue());
+        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_CalcSequence_without_start_param() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(GenerateSequence.STEP_VALUE, "2");
+
+        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
+    }
+
+    @Test
+    public void test_CalcSequence() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(GenerateSequence.START_VALUE, "1");
+        parameters.put(GenerateSequence.STEP_VALUE, "2");
+
+        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
+
+        assertEquals("1", sequence.getNextValue());
     }
 }

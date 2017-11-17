@@ -629,7 +629,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         assertThat(response.getStatusCode(), is(200));
         final Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        assertEquals(reference.getHeadId(), preparation.getHeadId());
+        assertNotEquals(preparation.getHeadId(), reference.getHeadId());
+        assertEquals(preparation.getSteps().size(), reference.getSteps().size());
+        assertThat(preparation.getSteps().get(0).getId(), is(Step.ROOT_STEP.id()));
+        assertEquals(preparation.getSteps().get(1).getContent(), reference.getSteps().get(1).getContent());
     }
 
     // ------------------------------------------------------------------------------------------------------------------

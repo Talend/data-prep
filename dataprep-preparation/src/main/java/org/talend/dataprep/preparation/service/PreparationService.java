@@ -32,6 +32,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -383,6 +384,10 @@ public class PreparationService {
         copy.setCreationDate(now);
         copy.setLastModificationDate(now);
         copy.setAuthor(security.getUserId());
+
+        cloneStepsListBetweenPreparations(original, copy);
+
+        // Save preparation to repository
         preparationRepository.add(copy);
         String newId = copy.getId();
 
@@ -392,6 +397,39 @@ public class PreparationService {
 
         LOGGER.debug("copy {} to folder {} with {} as new name", preparationId, destination, name);
         return newId;
+    }
+
+    /**
+     * Duplicate the list of steps and set it to the new preparation
+     *
+     * @param originalPrep the original preparation.
+     * @param targetPrep the created preparation.
+     */
+    private void cloneStepsListBetweenPreparations(Preparation originalPrep, Preparation targetPrep) {
+
+        // copy the preparation's steps
+        List<Step> copyListSteps = new ArrayList<>();
+        // in order to save the previous step
+        final Deque<Step> previousSteps = new ArrayDeque<>(1);
+        previousSteps.push(Step.ROOT_STEP);
+
+        copyListSteps.add(Step.ROOT_STEP);
+        copyListSteps.addAll(originalPrep.getSteps().stream() //
+                .skip(1) // Skip root step
+                .map(originalStep -> {
+                    final StepDiff diff = new StepDiff();
+                    diff.setCreatedColumns(Collections.emptyList());
+
+                    final Step createdStep = new Step(previousSteps.pop().id(), originalStep.getContent(),
+                            originalStep.getAppVersion(), diff);
+
+                    previousSteps.push(createdStep);
+                    return createdStep;
+                }) //
+                .collect(Collectors.toList()));
+        targetPrep.setSteps(copyListSteps);
+        targetPrep.setHeadId(previousSteps.pop().id());
+
     }
 
     /**
@@ -537,29 +575,31 @@ public class PreparationService {
 
         LOGGER.debug("copy steps from {} to {}", from, id);
 
-        final Preparation preparation = preparationRepository.get(id, Preparation.class);
-        if (preparation == null) {
+        final Preparation preparationToUpdate = preparationRepository.get(id, Preparation.class);
+        if (preparationToUpdate == null) {
             LOGGER.error("cannot update {} steps --> preparation not found in repository", id);
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
 
         // if the preparation is not empty (head != root step) --> 409
-        if (!StringUtils.equals(preparation.getHeadId(), rootStep.id())) {
+        if (!StringUtils.equals(preparationToUpdate.getHeadId(), rootStep.id())) {
             LOGGER.error("cannot update {} steps --> preparation has already steps.");
             throw new TDPException(PREPARATION_NOT_EMPTY, build().put("id", id));
         }
 
-        final Preparation reference = preparationRepository.get(from, Preparation.class);
-        if (reference == null) {
+        final Preparation referencePreparation = preparationRepository.get(from, Preparation.class);
+        if (referencePreparation == null) {
             LOGGER.warn("cannot copy steps from {} to {} because the original preparation is not found", from, id);
             return;
         }
 
-        preparation.setHeadId(reference.getHeadId());
-        preparation.setLastModificationDate(new Date().getTime());
-        preparationRepository.add(preparation);
+        cloneStepsListBetweenPreparations(referencePreparation, preparationToUpdate);
 
-        LOGGER.info("copy steps from {} to {} done --> {}", from, id, preparation);
+        preparationToUpdate.setLastModificationDate(new Date().getTime());
+        preparationToUpdate.setLastModificationDate(new Date().getTime());
+        preparationRepository.add(preparationToUpdate);
+
+        LOGGER.info("copy steps from {} to {} done --> {}", from, id, preparationToUpdate);
     }
 
     /**

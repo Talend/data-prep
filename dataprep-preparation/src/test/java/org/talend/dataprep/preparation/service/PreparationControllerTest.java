@@ -631,7 +631,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         assertThat(response.getStatusCode(), is(200));
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        assertEquals(preparation.getHeadId(), reference.getHeadId());
+        assertNotEquals(reference.getHeadId(), preparation.getHeadId());
+        assertEquals(preparation.getSteps().size(), reference.getSteps().size());
+        assertThat(preparation.getSteps().get(0).getId(), is(Step.ROOT_STEP.id()));
+        assertEquals(preparation.getSteps().get(1).getContent(), reference.getSteps().get(1).getContent());
     }
 
     @Test

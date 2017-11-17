@@ -1,5 +1,7 @@
 package org.talend.dataprep.transformation.actions.math;
 
+import org.apache.commons.lang.StringUtils;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
@@ -24,6 +26,11 @@ public class Modulo extends AbstractMathOneParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, String parameter) {
-        return null;
+        String mod = Double.toString(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
+
+        if (StringUtils.isNotBlank(parameter)) {
+            mod = Double.toString();
+        }
+        return mod;
     }
 }

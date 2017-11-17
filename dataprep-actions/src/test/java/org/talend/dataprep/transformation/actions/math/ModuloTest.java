@@ -19,9 +19,9 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 /**
  * Unit test for the Pow action.
  *
- * @see Modulo
+ * @see ModuloTest
  */
-public class Modulo extends AbstractMetadataBaseTest {
+public class ModuloTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     private Modulo action = new Modulo();
@@ -36,7 +36,7 @@ public class Modulo extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void pow_with_constant() {
+    public void mod_with_constant() {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
 
@@ -44,7 +44,7 @@ public class Modulo extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "2");
 
         // when
-        //ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertColumnWithResultCreated(row);

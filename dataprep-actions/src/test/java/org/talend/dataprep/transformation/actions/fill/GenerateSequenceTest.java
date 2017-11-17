@@ -253,5 +253,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
 
         assertEquals("1", sequence.getNextValue());
+        assertEquals("3", sequence.getNextValue());
+        assertEquals("5", sequence.getNextValue());
     }
 }

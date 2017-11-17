@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import moment from 'moment';
-
 /**
  * @ngdoc service
  * @name data-prep.services.folder.service:FolderService

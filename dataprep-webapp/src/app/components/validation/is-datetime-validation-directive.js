@@ -11,8 +11,6 @@
 
   ============================================================================*/
 
-import moment from 'moment';
-
 /**
  * @ngdoc directive
  * @name data-prep.validation.directive:IsDateTimeValidation

@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import moment from 'moment';
-
 const preparation = {
 	id: '1',
 	dataset: {

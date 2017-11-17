@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import 'moment';
 import moment from 'moment-jdateformatparser';
 
 /**

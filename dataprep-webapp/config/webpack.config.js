@@ -88,6 +88,7 @@ function getDefaultConfig(options) {
 				jQuery: 'jquery',
 				jquery: 'jquery',
 				'window.jQuery': 'jquery',
+				moment: 'moment',
 			}),
 			// for compatibility, needed for some loaders
 			new webpack.LoaderOptionsPlugin({

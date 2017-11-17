@@ -11,8 +11,6 @@
 
   ============================================================================*/
 
-import moment from 'moment'
-
 describe('Moment filter', function () {
 	'use strict';
 

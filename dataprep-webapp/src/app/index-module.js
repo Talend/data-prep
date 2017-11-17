@@ -15,7 +15,6 @@
 
 import d3 from 'd3';
 import angular from 'angular';
-import moment from 'moment';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';

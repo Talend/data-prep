@@ -17,8 +17,6 @@ import toaster from 'angularjs-toaster';
 
 import copyright from './config/utils-copyrights-service';
 import version from './config/utils-version-service';
-import analyticsEnabled from './config/utils-analytics-enabled-service';
-import analyticsAccount from './config/utils-analytics-account-service';
 import TDPMoment from './moment/moment-filter';
 import RestURLs from './config/utils-rest-urls-service';
 import ConverterService from './converter/converter-service';
@@ -39,15 +37,10 @@ const MODULE_NAME = 'data-prep.services.utils';
  * @name data-prep.services.utils
  * @description This module contains all the utiles services
  */
-angular.module(MODULE_NAME,
-	[
-		ngTranslate,
-		toaster,
-	])
+angular
+	.module(MODULE_NAME, [ngTranslate, toaster])
 	.value('copyRights', copyright)
 	.value('version', version)
-	.value('analyticsEnabled', analyticsEnabled)
-	.value('analyticsAccount', analyticsAccount)
 	.filter('TDPMoment', TDPMoment)
 	.service('RestURLs', RestURLs)
 	.service('ConverterService', ConverterService)

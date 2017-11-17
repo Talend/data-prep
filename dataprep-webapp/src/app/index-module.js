@@ -68,7 +68,7 @@ const app = angular.module(MODULE_NAME,
 		SERVICES_UTILS_MODULE, // configuration: register constants (version, ...)
 		SETTINGS_MODULE, // configuration: get app settings
 	])
-// Performance config
+	// Performance config
 	.config(($httpProvider) => {
 		'ngInject';
 		$httpProvider.useApplyAsync(true);
@@ -82,15 +82,13 @@ const app = angular.module(MODULE_NAME,
 		});
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
-
 	// Router config
 	.config(routeConfig)
 	.run(routeInterceptor);
 
 window.fetchConfiguration = function fetchConfiguration() {
-	return getAppConfiguration()
-		.then(({ config, appSettings }) => {
-			app
+	return getAppConfiguration().then(({ config, appSettings }) => {
+		app
 			// Debug config
 				.config(($compileProvider) => {
 					'ngInject';
@@ -125,10 +123,10 @@ window.fetchConfiguration = function fetchConfiguration() {
 				.run((DatasetService, HelpService, RestURLs) => {
 					'ngInject';
 
-					const { help } = appSettings;
-					if (help) {
-						HelpService.register(help);
-					}
+                    const { help } = appSettings;
+                    if (help) {
+                        HelpService.register(help);
+                    }
 
 					RestURLs.register(config, appSettings.uris);
 
@@ -142,10 +140,10 @@ window.fetchConfiguration = function fetchConfiguration() {
 					function setupWebSocket() {
 						clearInterval(wsPing);
 
-						ws = new WebSocket(config.serverKeepAliveUrl);
-						ws.onclose = () => {
-							setTimeout(setupWebSocket, 1000);
-						};
+                        ws = new WebSocket(config.serverKeepAliveUrl);
+                        ws.onclose = () => {
+                            setTimeout(setupWebSocket, 1000);
+                        };
 
 						wsPing = setInterval(() => {
 							ws.send('ping');

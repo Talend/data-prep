@@ -20,6 +20,7 @@ import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.preparation.service.EntityBuilder.*;
@@ -364,7 +365,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
-        final String originalId = clientTest.createPreparation(createTestPreparation("test_name", "1234"), fromFolder.getId()).getId();
+        final String originalId = clientTest.createPreparation(createTestPreparation("test_name", "1234"), fromFolder.getId())
+                .getId();
         // Change the author, to make it different from system user.
         repository.get(originalId, Preparation.class).setAuthor("tagada");
 
@@ -457,8 +459,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
-        final String originalId = clientTest.createPreparation(createTestPreparation("test_move", "7535"),
-                fromFolder.getId()).getId();
+        final String originalId = clientTest.createPreparation(createTestPreparation("test_move", "7535"), fromFolder.getId())
+                .getId();
 
         // when
         final Response response = given() //
@@ -482,8 +484,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
         final String name = "super preparation";
-        final String preparationId = clientTest.createPreparation(createTestPreparation("another preparation", "7535"),
-                fromFolder.getId()).getId();
+        final String preparationId = clientTest
+                .createPreparation(createTestPreparation("another preparation", "7535"), fromFolder.getId()).getId();
         clientTest.createPreparation(createTestPreparation(name, "7384"), toFolder.getId());
 
         // when
@@ -504,7 +506,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
-        final String originalId = clientTest.createPreparation(createTestPreparation("yap" , "7535"), fromFolder.getId()).getId();
+        final String originalId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
 
         // when
         final Response response = given() //
@@ -632,7 +634,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         assertThat(response.getStatusCode(), is(200));
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        assertEquals(preparation.getHeadId(), reference.getHeadId());
+        assertNotEquals(preparation.getHeadId(), reference.getHeadId());
+        assertEquals(preparation.getSteps().size(), reference.getSteps().size());
+        assertThat(preparation.getSteps().get(0).getId(), is(Step.ROOT_STEP.id()));
+        assertEquals(preparation.getSteps().get(1).getContent(), reference.getSteps().get(1).getContent());
     }
 
     @Test
@@ -752,7 +757,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
-        final String originalId = clientTest.createPreparation(createTestPreparation("yap","7535"), fromFolder.getId()).getId();
+        final String originalId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
         Preparation expected = repository.get(originalId, Preparation.class);
 
         // when
@@ -771,14 +776,15 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldGetPreparation() throws Exception {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
-        final String preparationId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
+        final String preparationId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId())
+                .getId();
         final Preparation preparation = repository.get(preparationId, Preparation.class);
 
         final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
-                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"rowMetadata\":{\"nextId\":0,\"columns\":[]}," + "\"author\":\""
-                + preparation.getAuthor() + "\"," + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate()
-                + "," + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
-                + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
+                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\","
+                + "\"rowMetadata\":{\"nextId\":0,\"columns\":[]}," + "\"author\":\"" + preparation.getAuthor() + "\","
+                + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate() + "," + "\"lastModificationDate\":"
+                + preparation.getCreationDate() + "," + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
 
         // when
         final Response response = given() //
@@ -826,7 +832,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         }
 
         // when
-        final String preparationId = clientTest.createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).id();
+        final String preparationId = clientTest
+                .createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).id();
 
         // then
         final FolderEntry entry = assertThatPreparationIsFirstInsideFolder(preparationId, folder.getId());
@@ -929,8 +936,7 @@ public class PreparationControllerTest extends BasePreparationTest {
     @Test
     public void update() throws Exception {
         assertThat(repository.list(Preparation.class).count(), is(0L));
-        final String preparationId = clientTest.createPreparation(createTestPreparation(
-                "test_name", "1234")).getId();
+        final String preparationId = clientTest.createPreparation(createTestPreparation("test_name", "1234")).getId();
 
         final Preparation createdPreparation = repository.list(Preparation.class).iterator().next();
         assertThat(createdPreparation.getId(), is(preparationId));
@@ -938,7 +944,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // Test preparation details update
         final String updatedId = given().contentType(ContentType.JSON) //
-                .body(createTestPreparation("test_name_updated", "1234" )) //
+                .body(createTestPreparation("test_name_updated", "1234")) //
                 .when() //
                 .put("/preparations/{id}", preparationId) //
                 .asString();
@@ -965,8 +971,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final String updatedId = given().contentType(ContentType.JSON.withCharset(UTF_8))
-                .body(createTestPreparation("éàçè", "1234" )).when()
-                .put("/preparations/{id}", preparationId).asString();
+                .body(createTestPreparation("éàçè", "1234")).when().put("/preparations/{id}", preparationId).asString();
 
         // then
         // Preparation id should not change (new name)

@@ -25,26 +25,20 @@ import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
  */
 public class AppSettings {
 
-    /**
-     * The views settings dictionary
-     */
+    /** The views settings dictionary. */
     private final Map<String, ViewSettings> views = new HashMap<>();
 
-    /**
-     * The actions settings dictionary
-     */
+    /** The actions settings dictionary. */
     private final Map<String, ActionSettings> actions = new HashMap<>();
 
-    /**
-     * The actions settings dictionary
-     */
+    /** The actions settings dictionary. */
     private final Map<String, String> uris = new HashMap<>();
 
-    /**
-     * The help settings dictionary
-     */
+    /** The help settings dictionary. */
     private final Map<String, String> help = new HashMap<>();
 
+    /** The analytics settings dictionary. */
+    private final Map<String, String> analytics = new HashMap<>();
     /**
      * The context settings dictionary
      */
@@ -67,6 +61,10 @@ public class AppSettings {
 
     public Map<String, String> getHelp() {
         return help;
+    }
+
+    public Map<String, String> getAnalytics() {
+        return analytics;
     }
 
     public Map<String, String> getContext() {

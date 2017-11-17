@@ -28,6 +28,12 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
+import java.math.BigInteger;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Generate a sequence on a column based on start value and step value.
  */
@@ -35,11 +41,15 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "generate_a_sequence";
-    /** The starting value of sequence.*/
+
+    /** The starting value of sequence. */
     protected static final String START_VALUE = "start_value";
 
-    /** The step value of sequence.*/
+    /** The step value of sequence. */
     protected static final String STEP_VALUE = "step_value";
+
+    /** The next value of sequence to calculate */
+    public static final String SEQUENCE = "sequence"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -69,7 +79,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return  true;
+        return true;
     }
 
     @Override
@@ -78,16 +88,42 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+            actionContext.get(SEQUENCE, values -> new CalcSequence(actionContext.getParameters()));
+        }
+    }
+
+    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        String startValue = context.getParameters().get(START_VALUE);
-        String stepValue = context.getParameters().get(STEP_VALUE);
-        if (startValue.isEmpty() || stepValue.isEmpty()) {
+        if (row.isDeleted()) {
             return;
         }
+        final CalcSequence sequence = context.get(SEQUENCE);
         final String columnId = context.getColumnId();
-        BigInteger start = new BigInteger(startValue);
-        BigInteger step = new BigInteger(stepValue);
-        BigInteger currentValue = start.add(step.multiply(BigInteger.valueOf(row.getTdpId() - 1)));
-        row.set(columnId, currentValue.toString());
+        row.set(columnId, sequence.getNextValue());
+    }
+
+    /** this class is used to calculate the sequence next step */
+    protected static class CalcSequence {
+
+        BigInteger nextValue;
+
+        BigInteger step;
+
+        public CalcSequence(Map<String, String> parameters) throws IllegalArgumentException {
+            if (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE)) {
+                throw new IllegalArgumentException("Missing parameter: " + START_VALUE + " and " + STEP_VALUE + " are required");
+            }
+            this.nextValue = new BigInteger(parameters.get(START_VALUE));
+            this.step = new BigInteger(parameters.get(STEP_VALUE));
+        }
+
+        public String getNextValue() {
+            String toReturn = nextValue.toString();
+            nextValue = nextValue.add(step);
+            return toReturn;
+        }
     }
 }

@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-const EASTER_EGGS_VALUE = 'star wars';
+const EASTER_EGGS_VALUES = ['star wars', 'bozo the clown'];
 
 /**
  * @ngdoc service
@@ -36,8 +36,9 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 	}
 
 	function searchAll(searchInput) {
-		if (searchInput && searchInput.toLowerCase() === EASTER_EGGS_VALUE) {
+		if (searchInput && EASTER_EGGS_VALUES.includes(searchInput.toLowerCase())) {
 			EasterEggsService.enableEasterEgg(searchInput);
+			return;
 		}
 
 		const inventoryPromise = searchInventory(searchInput);

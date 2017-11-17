@@ -19,6 +19,7 @@ import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 import EasterEggsCtrl from './easter-eggs-controller';
 import EasterEggs from './easter-eggs-directive';
 import StarWars from './star-wars/star-wars-directive';
+import BozoTheClown from './bozo-the-clown/bozo-the-clown-directive';
 
 const MODULE_NAME = 'data-prep.easter-eggs';
 
@@ -38,6 +39,7 @@ angular.module(MODULE_NAME,
 	])
     .controller('EasterEggsCtrl', EasterEggsCtrl)
     .directive('starWars', StarWars)
+    .directive('bozoTheClown', BozoTheClown)
     .directive('easterEggs', EasterEggs);
 
 export default MODULE_NAME;

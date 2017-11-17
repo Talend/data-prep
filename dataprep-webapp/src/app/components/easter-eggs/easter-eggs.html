@@ -3,7 +3,9 @@
               close-button="true"
               disable-enter="true"
               on-close="easterEggsCtrl.disableEasterEgg()"
-              state="easterEggsCtrl.state.easterEggsState.displayEasterEgg">
-
-    <star-wars ng-if="easterEggsCtrl.state.easterEggsState.currentEasterEgg ==='star wars'"></star-wars>
+              state="easterEggsCtrl.state.easterEggsState.displayEasterEgg"
+              ng-switch="easterEggsCtrl.state.easterEggsState.currentEasterEgg"
+>
+    <star-wars ng-switch-when="star wars"></star-wars>
+    <bozo-the-clown ng-switch-when="bozo the clown"></bozo-the-clown>
 </talend-modal>

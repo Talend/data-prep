@@ -85,7 +85,7 @@ public class AnalyzerService {
 
     private final String indexesLocation;
 
-    private final CategoryRecognizerBuilder builder;
+    private CategoryRecognizerBuilder builder;
 
     public AnalyzerService() {
         this(CategoryRecognizerBuilder.newBuilder().lucene());
@@ -115,6 +115,14 @@ public class AnalyzerService {
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
         this.builder = builder;
         this.dateParser = new DateParser(this);
+    }
+
+    /**
+     * Setter for categoryRecognizerBuilder
+     * @param categoryRecognizerBuilder the categoryRecognizerBuilder instance
+     */
+    public void setCategoryRecognizerBuilder(CategoryRecognizerBuilder categoryRecognizerBuilder) {
+        this.builder = categoryRecognizerBuilder;
     }
 
     /**

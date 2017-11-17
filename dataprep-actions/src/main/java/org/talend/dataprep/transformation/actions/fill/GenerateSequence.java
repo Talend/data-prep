@@ -81,7 +81,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-                actionContext.get(SEQUENCE, values -> new CalcSequence(actionContext.getParameters()));
+            actionContext.get(SEQUENCE, values -> new CalcSequence(actionContext.getParameters()));
         }
     }
 
@@ -102,9 +102,9 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
         BigInteger step;
 
-        public CalcSequence(Map<String,String> parameters) throws IllegalArgumentException {
+        public CalcSequence(Map<String, String> parameters) throws IllegalArgumentException {
             if (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE)) {
-                throw new IllegalArgumentException("miss value : START_VALUE and STEP_VALUE are required");
+                throw new IllegalArgumentException("Missing parameter: " + START_VALUE + " and " + STEP_VALUE + " are required");
             }
             this.nextValue = new BigInteger(parameters.get(START_VALUE));
             this.step = new BigInteger(parameters.get(STEP_VALUE));

@@ -253,7 +253,7 @@ public class PreparationService {
      * <li>folderId path</li>
      * </ul>
      * </p>
-     * 
+     *
      * @param dataSetId to search all preparations based on this dataset id.
      * @param folderId to search all preparations located in this folderId.
      * @param name to search all preparations that match this name.
@@ -536,29 +536,29 @@ public class PreparationService {
 
         LOGGER.debug("copy steps from {} to {}", from, id);
 
-        final Preparation preparation = preparationRepository.get(id, Preparation.class);
-        if (preparation == null) {
+        final Preparation preparationToUpdate = preparationRepository.get(id, Preparation.class);
+        if (preparationToUpdate == null) {
             LOGGER.error("cannot update {} steps --> preparation not found in repository", id);
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
 
         // if the preparation is not empty (head != root step) --> 409
-        if (!StringUtils.equals(preparation.getHeadId(), Step.ROOT_STEP.id())) {
+        if (!StringUtils.equals(preparationToUpdate.getHeadId(), Step.ROOT_STEP.id())) {
             LOGGER.error("cannot update {} steps --> preparation has already steps.");
             throw new TDPException(PREPARATION_NOT_EMPTY, build().put("id", id));
         }
 
-        final Preparation reference = preparationRepository.get(from, Preparation.class);
-        if (reference == null) {
+        final Preparation referencePreparation = preparationRepository.get(from, Preparation.class);
+        if (referencePreparation == null) {
             LOGGER.warn("cannot copy steps from {} to {} because the original preparation is not found", from, id);
             return;
         }
+        cloneStepsListBetweenPreparations(referencePreparation, preparationToUpdate);
 
-        preparation.setHeadId(reference.getHeadId());
-        preparation.setLastModificationDate(new Date().getTime());
-        preparationRepository.add(preparation);
+        preparationToUpdate.setLastModificationDate(new Date().getTime());
+        preparationRepository.add(preparationToUpdate);
 
-        LOGGER.info("copy steps from {} to {} done --> {}", from, id, preparation);
+        LOGGER.info("clone steps from {} to {} done --> {}", from, id, preparationToUpdate);
     }
 
     /**

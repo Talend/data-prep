@@ -35,8 +35,8 @@ const MODULE_NAME = 'data-prep';
 
 let ws;
 let wsPing;
-const app = angular.module(MODULE_NAME,
-	[
+const app = angular
+	.module(MODULE_NAME, [
 		ngSanitize,
 		ngTranslate,
 		uiRouter,
@@ -50,7 +50,7 @@ const app = angular.module(MODULE_NAME,
 		SERVICES_UTILS_MODULE, // configuration: register constants (version, ...)
 		SETTINGS_MODULE, // configuration: get app settings
 	])
-// Performance config
+	// Performance config
 	.config(($httpProvider) => {
 		'ngInject';
 		$httpProvider.useApplyAsync(true);
@@ -66,11 +66,9 @@ const app = angular.module(MODULE_NAME,
 		$translateProvider.preferredLanguage('en');
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
-
 	// Router config
 	.config(routeConfig)
 	.run(routeInterceptor)
-
 	// Language to use at startup (for now only english)
 	.run(($window, $translate) => {
 		'ngInject';
@@ -78,64 +76,63 @@ const app = angular.module(MODULE_NAME,
 	});
 
 window.fetchConfiguration = function fetchConfiguration() {
-	return getAppConfiguration()
-		.then(({ config, appSettings }) => {
-			app
+	return getAppConfiguration().then(({ config, appSettings }) => {
+		app
 			// Debug config
-				.config(($compileProvider) => {
-					'ngInject';
-					$compileProvider.debugInfoEnabled(config.enableDebug);
-				})
-				// Fetch dynamic configuration
-				.run((SettingsService) => {
-					'ngInject';
-					// base settings
-					SettingsService.setSettings(appSettings);
-				})
-				// Configure server api urls and refresh supported encoding
-				.run((DatasetService, HelpService, RestURLs) => {
-					'ngInject';
+			.config(($compileProvider) => {
+				'ngInject';
+				$compileProvider.debugInfoEnabled(config.enableDebug);
+			})
+			// Fetch dynamic configuration
+			.run((SettingsService) => {
+				'ngInject';
+				// base settings
+				SettingsService.setSettings(appSettings);
+			})
+			// Configure server api urls and refresh supported encoding
+			.run((DatasetService, HelpService, RestURLs) => {
+				'ngInject';
 
-					const { help } = appSettings;
-					if (help) {
-						HelpService.register(help);
-					}
+				const { help } = appSettings;
+				if (help) {
+					HelpService.register(help);
+				}
 
-					RestURLs.register(config, appSettings.uris);
+				RestURLs.register(config, appSettings.uris);
 
-					// dataset encodings
-					DatasetService.refreshSupportedEncodings();
-				})
-				// Open a keepalive websocket if requested
-				.run(() => {
-					if (!config.serverKeepAliveUrl) return;
-					function setupWebSocket() {
-						clearInterval(wsPing);
+				// dataset encodings
+				DatasetService.refreshSupportedEncodings();
+			})
+			// Open a keepalive websocket if requested
+			.run(() => {
+				if (!config.serverKeepAliveUrl) return;
+				function setupWebSocket() {
+					clearInterval(wsPing);
 
-						ws = new WebSocket(config.serverKeepAliveUrl);
-						ws.onclose = () => {
-							setTimeout(setupWebSocket, 1000);
-						};
+					ws = new WebSocket(config.serverKeepAliveUrl);
+					ws.onclose = () => {
+						setTimeout(setupWebSocket, 1000);
+					};
 
-						wsPing = setInterval(() => {
-							ws.send('ping');
-						}, 3 * 60 * 1000);
-					}
+					wsPing = setInterval(() => {
+						ws.send('ping');
+					}, 3 * 60 * 1000);
+				}
 
-					setupWebSocket();
-				});
+				setupWebSocket();
+			});
 
-			angular.module(SERVICES_UTILS_MODULE)
-				.value('version', config.version)
-				.value('copyRights', config.copyRights)
-				.value('analyticsEnabled', config.analyticsEnabled)
-				.value('analyticsAccount', config.analyticsAccount);
-		});
+		angular
+			.module(SERVICES_UTILS_MODULE)
+			.value('version', config.version)
+			.value('copyRights', config.copyRights);
+	});
 };
 
-window.bootstrapDataPrepApplication = function bootstrapDataPrepApplication(modules) {
-	angular.element(document)
-		.ready(() => angular.bootstrap(document, modules));
+window.bootstrapDataPrepApplication = function bootstrapDataPrepApplication(
+	modules
+) {
+	angular.element(document).ready(() => angular.bootstrap(document, modules));
 };
 /* eslint-enable angular/window-service */
 

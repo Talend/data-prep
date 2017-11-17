@@ -33,7 +33,14 @@ describe('Transformation menu component', () => {
 	const TRANSLATIONS = {
 		COLUMN_TYPE_IS: 'This column is a ',
 		COLUMN_TYPE_SET: 'Set as',
-		FLOAT: 'DECIMAL',
+		INTEGER: 'integer',
+		DECIMAL: 'decimal',
+		BOOLEAN: 'boolean',
+		TEXT: 'text',
+		DATE: 'date',
+		UNKNOWN: 'unknown',
+		STRING: "text",
+		FLOAT: "decimal",
 	};
 
 	beforeEach(angular.mock.module('data-prep.type-transformation-menu'));
@@ -119,11 +126,11 @@ describe('Transformation menu component', () => {
 
 	it('should render primitive types', () => {
 		const types = [
-			'TEXT',
-			'INTEGER',
-			'DECIMAL',
-			'BOOLEAN',
-			'DATE',
+			'text',
+			'integer',
+			'decimal',
+			'boolean',
+			'date',
 		];
 
 		//when

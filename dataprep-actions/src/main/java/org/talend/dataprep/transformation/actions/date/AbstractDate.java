@@ -76,7 +76,7 @@ public abstract class AbstractDate extends AbstractActionMetadata {
         }
 
         SelectParameter custom = selectParamBuilder //
-                .item("custom", buildCustomPatternParam(locale)) //
+                .item("custom", "custom", buildCustomPatternParam(locale)) //
                 .defaultValue(defaultItem) //
                 .build(this);
         custom.getItems().sort(compareOnLabelWithCustomLast());

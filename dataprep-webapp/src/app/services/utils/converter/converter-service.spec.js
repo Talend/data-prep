@@ -16,6 +16,18 @@ describe('Converter service', function () {
 
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+        $translateProvider.translations('en', {
+            "INTEGER": "integer",
+            "DECIMAL": "decimal",
+            "BOOLEAN": "boolean",
+            "TEXT": "text",
+            "DATE": "date",
+            "UNKNOWN": "unknown"
+        });
+        $translateProvider.preferredLanguage('en');
+    }));
+
     it('should return number when input type is numeric, integer, double or float', inject(function (ConverterService) {
         checkToInputType(ConverterService, ['numeric', 'integer', 'double', 'float'], 'number');
     }));

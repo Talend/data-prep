@@ -16,7 +16,7 @@
  * @name data-prep.services.utils.service:ConverterService
  * @description Converter service. This service help to convert data
  */
-export default function ConverterService() {
+export default function ConverterService($translate) {
 	return {
 		isNumber,
 
@@ -77,20 +77,20 @@ export default function ConverterService() {
 		switch (type.toLowerCase()) {
 		case 'numeric':
 		case 'integer':
-			return 'integer';
+			return $translate.instant('INTEGER');
 		case 'double':
 		case 'float':
 		case 'decimal':
-			return 'decimal';
+			return $translate.instant('DECIMAL');
 		case 'boolean':
-			return 'boolean';
+			return $translate.instant('BOOLEAN');
 		case 'string':
 		case 'char':
-			return 'text';
+			return $translate.instant('TEXT');
 		case 'date':
-			return 'date';
+			return $translate.instant('DATE');
 		default:
-			return 'unknown';
+			return $translate.instant('UNKNOWN');
 		}
 	}
 

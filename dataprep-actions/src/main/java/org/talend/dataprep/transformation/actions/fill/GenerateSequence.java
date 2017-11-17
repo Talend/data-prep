@@ -43,8 +43,8 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     /** The step value of sequence. */
     protected static final String STEP_VALUE = "step_value";
 
-    /** previous row's value store. */
-    public static final String PREVIOUS = "previous"; //$NON-NLS-1$
+    /** The next value of sequence to calculate */
+    public static final String SEQUENCE = "sequence"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -81,7 +81,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-                actionContext.get(PREVIOUS, values -> new CalcSequence(actionContext.getParameters()));
+                actionContext.get(SEQUENCE, values -> new CalcSequence(actionContext.getParameters()));
         }
     }
 
@@ -90,7 +90,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         if (row.isDeleted()) {
             return;
         }
-        final CalcSequence sequence = context.get(PREVIOUS);
+        final CalcSequence sequence = context.get(SEQUENCE);
         final String columnId = context.getColumnId();
         row.set(columnId, sequence.getNextValue());
     }

@@ -13,13 +13,13 @@
 
 const preparationTour = [
 	{
-		element: '#side-panel-nav-preparations',
+		element: '#side-panel-nav-menu-preparations',
 		title: 'PREPARATIONS_STEP_1_TITLE',
 		content: 'PREPARATIONS_STEP_1_CONTENT',
 		position: 'right',
 	},
 	{
-		element: '#side-panel-nav-datasets',
+		element: '#side-panel-nav-menu-datasets',
 		title: 'PREPARATIONS_STEP_2_TITLE',
 		content: 'PREPARATIONS_STEP_2_CONTENT',
 		position: 'right',

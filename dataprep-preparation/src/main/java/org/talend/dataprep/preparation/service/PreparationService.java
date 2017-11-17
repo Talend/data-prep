@@ -252,7 +252,8 @@ public class PreparationService {
      * <li>folderId path</li>
      * </ul>
      * </p>
-     *  @param dataSetId to search all preparations based on this dataset id.
+     * 
+     * @param dataSetId to search all preparations based on this dataset id.
      * @param folderId to search all preparations located in this folderId.
      * @param name to search all preparations that match this name.
      * @param exactMatch if true, the name matching must be exact.
@@ -261,7 +262,7 @@ public class PreparationService {
      * @param order Order for sort key (desc or asc).
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-                                                      String path, Sort sort, Order order) {
+            String path, Sort sort, Order order) {
         final Stream<Preparation> result;
 
         if (dataSetId != null) {
@@ -316,16 +317,17 @@ public class PreparationService {
         int size = foldersToSearch.size();
         Stream<Preparation> preparationStream;
         switch (size) {
-            case 1:
-                Folder folder = foldersToSearch.iterator().next();
-                final Iterable<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
-                preparationStream = StreamSupport.stream(entries.spliterator(), false) //
-                        .map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
-                break;
-            case 0:
-                throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
-            default:
-                throw new TDPException(UNEXPECTED_EXCEPTION, ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
+        case 1:
+            Folder folder = foldersToSearch.iterator().next();
+            final Iterable<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION);
+            preparationStream = StreamSupport.stream(entries.spliterator(), false) //
+                    .map(e -> preparationRepository.get(e.getContentId(), Preparation.class)).filter(Objects::nonNull);
+            break;
+        case 0:
+            throw new TDPException(FOLDER_NOT_FOUND, ExceptionContext.build().put("path", path));
+        default:
+            throw new TDPException(UNEXPECTED_EXCEPTION,
+                    ExceptionContext.build().put("message", "Two folders found for the same path: " + path));
         }
         return preparationStream;
     }
@@ -596,7 +598,6 @@ public class PreparationService {
         cloneStepsListBetweenPreparations(referencePreparation, preparationToUpdate);
 
         preparationToUpdate.setLastModificationDate(new Date().getTime());
-        preparationToUpdate.setLastModificationDate(new Date().getTime());
         preparationRepository.add(preparationToUpdate);
 
         LOGGER.info("copy steps from {} to {} done --> {}", from, id, preparationToUpdate);
@@ -782,7 +783,8 @@ public class PreparationService {
                 .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
         final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
         final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
+                ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt()
+                : MAX_VALUE;
 
         // Build list of actions from modified one to the head
         final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -1166,7 +1168,7 @@ public class PreparationService {
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns

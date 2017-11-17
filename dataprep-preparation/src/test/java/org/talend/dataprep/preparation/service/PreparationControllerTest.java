@@ -781,9 +781,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String preparationId = createPreparationWithAPI("{\"name\": \"yap\", \"dataSetId\": \"7535\"}", fromFolder.getId());
         final Preparation preparation = repository.get(preparationId, Preparation.class);
         final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
-                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"author\":\""
-                + preparation.getAuthor() + "\"," + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate()
-                + "," + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
+                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\"," + "\"author\":\"" + preparation.getAuthor()
+                + "\"," + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate() + ","
+                + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
                 + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
 
         // when

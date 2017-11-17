@@ -1,10 +1,12 @@
-package org.talend.dataprep.qa;
+package org.talend.dataprep.qa.util;
 
 import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
 import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -18,6 +20,7 @@ import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionFilterEnum;
 import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.helper.api.Filter;
+import org.talend.dataprep.qa.dto.Folder;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -31,22 +34,27 @@ public class OSIntegrationTestUtil {
      * Split a folder in a {@link Set} folder and subfolders.
      *
      * @param folder the folder to split.
+     * @param folders existing folders.
      * @return a {@link Set} of folders and subfolders.
      */
-    public Set<String> splitFolder(String folder) {
-        Set<String> ret = new HashSet<>();
-        if (folder == null || folder.isEmpty() || folder.equals("/"))
+    public Set<Folder> splitFolder(Folder folder, List<Folder> folders) {
+        Set<Folder> ret = new HashSet<>();
+        if (folder == null || folder.getPath().equals("/"))
             return ret;
-        String[] folders = folder.split("/");
+
+        final Map<String, Folder> folderByPath = new HashMap<>(folders.size());
+        folders.forEach(f -> folderByPath.put(f.getPath(), f));
+
+        String[] folderPaths = folder.getPath().split("/");
         StringBuilder folderBuilder = new StringBuilder();
-        Arrays.stream(folders) //
+        Arrays.stream(folderPaths) //
                 .filter(f -> !f.isEmpty() && !f.equals("/")) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
                         folderBuilder.append("/");
                     }
                     folderBuilder.append(f);
-                    ret.add(folderBuilder.toString());
+                    ret.add(folderByPath.get(folderBuilder.toString()));
                 });
         return ret;
     }

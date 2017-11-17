@@ -43,7 +43,7 @@ import com.jayway.restassured.specification.RequestSpecification;
  * Utility class to allow dataprep-api integration tests.
  */
 @Component
-public class DataPrepAPIHelper {
+public class OSDataPrepAPIHelper {
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -157,7 +157,7 @@ public class DataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }

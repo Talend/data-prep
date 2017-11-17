@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.step.config.DataPrepStep;
+import org.talend.dataprep.qa.config.DataPrepStep;
 
 import cucumber.api.java.en.Then;
 

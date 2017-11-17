@@ -15,24 +15,18 @@ package org.talend.dataprep.qa.step;
 
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionFilterEnum;
-import org.talend.dataprep.helper.api.ActionParamEnum;
-import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.PreparationDetails;
-import org.talend.dataprep.qa.step.config.DataPrepStep;
+import org.talend.dataprep.qa.config.DataPrepStep;
 
 import com.jayway.restassured.response.Response;
 

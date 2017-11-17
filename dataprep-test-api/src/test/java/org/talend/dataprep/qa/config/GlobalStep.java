@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.qa.step.config;
+package org.talend.dataprep.qa.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

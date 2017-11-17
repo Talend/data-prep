@@ -43,7 +43,7 @@ public class OSIntegrationTestUtil {
             return ret;
 
         final Map<String, Folder> folderByPath = new HashMap<>(folders.size());
-        folders.forEach(f -> folderByPath.put(f.getPath(), f));
+        folders.forEach(f -> folderByPath.put(f.getPath().substring(1), f));
 
         String[] folderPaths = folder.getPath().split("/");
         StringBuilder folderBuilder = new StringBuilder();
@@ -54,7 +54,10 @@ public class OSIntegrationTestUtil {
                         folderBuilder.append("/");
                     }
                     folderBuilder.append(f);
-                    ret.add(folderByPath.get(folderBuilder.toString()));
+                    Folder tmpF = folderByPath.get(folderBuilder.toString());
+                    if (tmpF != null) {
+                        ret.add(tmpF);
+                    }
                 });
         return ret;
     }

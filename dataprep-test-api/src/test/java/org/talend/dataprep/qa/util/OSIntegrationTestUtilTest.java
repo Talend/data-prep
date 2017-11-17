@@ -44,8 +44,6 @@ public class OSIntegrationTestUtilTest {
 
     Folder abPathF = new Folder().setPath("/a/ab");
 
-    Folder abaPathF = new Folder().setPath("/a/ab/aba");
-
     Folder rootPathF = new Folder().setPath("/");
 
     List<Folder> emptyFList = new ArrayList<>();
@@ -56,7 +54,6 @@ public class OSIntegrationTestUtilTest {
         allFList.add(aaPathF);
         allFList.add(aaaPathF);
         allFList.add(abPathF);
-        allFList.add(abaPathF);
     }
 
     @Test
@@ -73,24 +70,42 @@ public class OSIntegrationTestUtilTest {
 
     @Test
     public void splitFolderTest_Root_EmptyFL() {
+        Set<Folder> result = util.splitFolder(rootPathF, emptyFList);
+        Assert.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void splitFolderTest_Root_AllFL() {
         Set<Folder> result = util.splitFolder(rootPathF, allFList);
         Assert.assertTrue(result.isEmpty());
     }
 
-    // @Test
-    // public void splitFolderTest_OneFolder() {
-    // Set<String> result = util.splitFolder("/folder");
-    // Assert.assertEquals(1, result.size());
-    // Assert.assertTrue(result.contains("folder"));
-    // }
-    //
-    // @Test
-    // public void splitFolderTest_OneSubFolder() {
-    // Set<String> result = util.splitFolder("/folder/subFolder");
-    // Assert.assertEquals(2, result.size());
-    // Assert.assertTrue(result.contains("folder"));
-    // Assert.assertTrue(result.contains("folder/subFolder"));
-    // }
+    @Test
+    public void splitFolderTest_AFolder_EmptyFL() {
+        Set<Folder> result = util.splitFolder(aPathF, emptyFList);
+        Assert.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void splitFolderTest_AFolder_AllFL() {
+        Set<Folder> result = util.splitFolder(aPathF, allFList);
+        Assert.assertEquals(1, result.size());
+        Assert.assertTrue(result.contains(aPathF));
+    }
+
+    @Test
+    public void splitFolderTest_AaFolder_EmptyFL() {
+        Set<Folder> result = util.splitFolder(aaPathF, emptyFList);
+        Assert.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void splitFolderTest_AaFolder_AllFL() {
+        Set<Folder> result = util.splitFolder(aaPathF, allFList);
+        Assert.assertEquals(2, result.size());
+        Assert.assertTrue(result.contains(aPathF));
+        Assert.assertTrue(result.contains(aaPathF));
+    }
 
     @Test
     public void mapParamsToFilter_Empty() {

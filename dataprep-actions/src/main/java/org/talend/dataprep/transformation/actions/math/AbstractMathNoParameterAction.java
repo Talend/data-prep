@@ -12,10 +12,10 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Abstract Action for basic math action without parameter
@@ -31,7 +31,7 @@ public abstract class AbstractMathNoParameterAction extends AbstractMathAction i
 
         String result = ERROR_RESULT;
 
-        if (NumberUtils.isNumber(colValue)) {
+        if (NumericHelper.isBigDecimal(colValue)) {
             result = calculateResult(colValue, context);
         }
 

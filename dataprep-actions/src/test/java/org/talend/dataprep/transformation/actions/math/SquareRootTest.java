@@ -64,6 +64,19 @@ public class SquareRootTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void square_with_positive_percentage() {
+        // given
+        DataSetRow row = getRow("2500%", "3", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("5.0", row.get("0003"));
+    }
+
+    @Test
     public void square_with_negative() {
         // given
         DataSetRow row = getRow("-5", "3", "Done !");

@@ -135,6 +135,16 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void testAbsoluteFloatWithNegativePercentage() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put(FLOAT_COLUMN, "-5%"); //$NON-NLS-1$
+        final DataSetRow row = new DataSetRow(values);
+
+        assertFloat(row, "0.05");
+    }
+
+    @Test
     public void testAbsoluteFloatWithNegativeFloat() {
         // given
         final Map<String, String> values = new HashMap<>();

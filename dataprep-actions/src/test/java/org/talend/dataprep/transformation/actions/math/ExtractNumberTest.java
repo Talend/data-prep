@@ -104,6 +104,11 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void extract_percentage() throws Exception {
+        inner_test("50%", "0.50", Type.DOUBLE);
+    }
+
+    @Test
     public void extract_simple_with_digit() throws Exception {
         inner_test("5000.231", "5000.231", Type.DOUBLE);
     }

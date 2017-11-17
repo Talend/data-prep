@@ -89,6 +89,13 @@ public class RemoveFractionalPartTest extends AbstractRoundTest {
     }
 
     @Test
+    public void test_percentage_number() {
+        testCommon("5%", "0");
+        testCommon("50%", "0");
+        testCommon("500%", "5");
+    }
+
+    @Test
     public void test_huge_number_negative() {
         testCommon("-1234567890.1", "-1234567890");
         testCommon("-891234567897.9", "-891234567897");

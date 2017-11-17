@@ -81,6 +81,13 @@ public class RoundCeilTest extends AbstractRoundTest {
     }
 
     @Test
+    public void test_percentage_number() {
+        testCommon("5%", "0.05", 2);
+        testCommon("50%", "0.50", 2);
+        testCommon("500%", "5.00", 2);
+    }
+
+    @Test
     public void testAltFormat() {
         testCommon("-5 000.2", "-5000");
         testCommon("5,4", "6");

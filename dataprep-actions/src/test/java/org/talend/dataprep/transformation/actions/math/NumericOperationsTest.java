@@ -92,6 +92,12 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         assertEquals("1", action.compute("3", "-", "2"));
         assertEquals("2", action.compute("4", "/", "2"));
 
+        // percentage
+        assertEquals("2.03", action.compute("3%", "+", "2"));
+        assertEquals("0.06", action.compute("3%", "x", "2"));
+        assertEquals("-1.97", action.compute("3%", "-", "2"));
+        assertEquals("0.02", action.compute("4%", "/", "2"));
+
         // silently fail when divide by 0
         assertEquals("", action.compute("3", "/", "0"));
 

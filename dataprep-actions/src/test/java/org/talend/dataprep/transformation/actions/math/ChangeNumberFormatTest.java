@@ -95,6 +95,19 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_process_row_percentage() throws Exception {
+        // given
+        final DataSetRow row = getRow("toto", "12.50%", "tata");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "0.12", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
     public void should_process_row_EU() throws Exception {
         // given
         final DataSetRow row = getRow("toto", "0012,50", "tata");
@@ -268,6 +281,27 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
 
             // then
             final DataSetRow expectedRow = getRow("toto", "12.000", "tata");
+            assertEquals(expectedRow.values(), row.values());
+        } finally {
+            Locale.setDefault(previous);
+        }
+    }
+
+    @Test
+    public void should_process_row_alt_pattern_percentage() throws Exception {
+        final Locale previous = Locale.getDefault();
+        try {
+            // given
+            Locale.setDefault(Locale.US);
+            final DataSetRow row = getRow("toto", "0.12", "tata");
+            parameters.put(TARGET_PATTERN, CUSTOM);
+            parameters.put(TARGET_PATTERN + "_" + CUSTOM, "#%");
+
+            // when
+            ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+            // then
+            final DataSetRow expectedRow = getRow("toto", "12%", "tata");
             assertEquals(expectedRow.values(), row.values());
         } finally {
             Locale.setDefault(previous);

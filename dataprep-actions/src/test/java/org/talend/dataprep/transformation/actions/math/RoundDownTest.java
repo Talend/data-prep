@@ -105,6 +105,13 @@ public class RoundDownTest extends AbstractRoundTest {
     }
 
     @Test
+    public void test_percentage_number() {
+        testCommon("5%", "0.05", 2);
+        testCommon("50%", "0.50", 2);
+        testCommon("500%", "5.00", 2);
+    }
+
+    @Test
     public void test_huge_numbers_positive() {
         testCommon("131234567890.1", "131234567890", 0);
         testCommon("89891234567897.9", "89891234567897", 0);

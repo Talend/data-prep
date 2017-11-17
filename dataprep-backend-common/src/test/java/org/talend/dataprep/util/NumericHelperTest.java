@@ -31,6 +31,7 @@ public class NumericHelperTest {
         assertTrue(NumericHelper.isBigDecimal(".6"));
         assertTrue(NumericHelper.isBigDecimal(",6"));
         assertTrue(NumericHelper.isBigDecimal("(6)"));
+        assertTrue(NumericHelper.isBigDecimal("6%"));
     }
 
     @Test

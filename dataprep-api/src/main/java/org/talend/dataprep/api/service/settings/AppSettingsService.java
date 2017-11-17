@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.analytics.api.AnalyticsSettings;
 import org.talend.dataprep.api.service.settings.help.api.HelpSettings;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
@@ -56,6 +57,12 @@ public class AppSettingsService {
     @Autowired(required = false)
     private AppSettingsConfigurer<HelpSettings>[] helpConfigurers;
 
+    @Autowired
+    private AppSettingsProvider<AnalyticsSettings>[] analyticsProviders;
+
+    @Autowired(required = false)
+    private AppSettingsConfigurer<AnalyticsSettings>[] analyticsConfigurers;
+
     public AppSettingsConfigurer<ActionSettings>[] getActionsConfigurers() {
         return actionsConfigurers;
     }
@@ -86,6 +93,10 @@ public class AppSettingsService {
         // populate appSettings documentation (key: documentationProperty, value: documentationValue)
         getSettingsStream(helpProviders, helpConfigurers) //
                 .forEach(help -> appSettings.getHelp().put(help.getId(), help.getValue()));
+
+        // populate appSettings analytics
+        getSettingsStream(analyticsProviders, analyticsConfigurers) //
+                .forEach(analytics -> appSettings.getAnalytics().put(analytics.getId(), analytics.getValue()));
 
         return appSettings;
     }

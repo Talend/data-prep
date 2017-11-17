@@ -12,7 +12,9 @@
 
 package org.talend.dataprep.command;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.talend.dataprep.command.Defaults.asString;
 
@@ -286,9 +288,6 @@ public class GenericCommandTest extends ServiceBaseTest {
             return "#1234";
         }
 
-        /**
-         * @return the user groups.
-         */
         @Override
         public Set<UserGroup> getGroups() {
             return Collections.emptySet();
@@ -302,6 +301,11 @@ public class GenericCommandTest extends ServiceBaseTest {
         @Override
         public boolean isTDPUser() {
             return true;
+        }
+
+        @Override
+        public String getTenantName() {
+            return "tenant name";
         }
     }
 }

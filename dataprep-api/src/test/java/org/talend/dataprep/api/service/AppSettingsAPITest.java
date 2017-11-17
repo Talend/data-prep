@@ -13,6 +13,19 @@
 
 package org.talend.dataprep.api.service;
 
+import static com.jayway.restassured.RestAssured.when;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
+
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 import org.talend.dataprep.api.service.settings.AppSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
@@ -22,17 +35,6 @@ import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeader
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.jayway.restassured.RestAssured.when;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 
 public class AppSettingsAPITest extends ApiServiceTestBase {
 
@@ -392,6 +394,17 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(list.getList().getTitleProps().getOnEditSubmit(), is("dataset:submit-edit"));
 
         assertThat(list.getToolbar().getActionBar().getActions().get("left"), contains("dataset:create"));
+    }
+
+    @Test
+    public void shouldHaveAnalyticsSettings() throws Exception {
+        // when
+        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
+
+        // then
+        assertNotNull(settings.getAnalytics());
+        final Map<String, String> analyticsSettings = settings.getAnalytics();
+        assertEquals("false", analyticsSettings.get("analyticsEnabled"));
     }
 
     @Test

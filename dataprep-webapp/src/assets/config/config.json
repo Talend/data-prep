@@ -4,7 +4,5 @@
   "serverKeepAliveUrl": "",
   "enableDebug": false,
   "version": "2.2.0-SNAPSHOT",
-  "copyRights": "© 2017 Talend. All Rights Reserved",
-  "analyticsEnabled": false,
-  "analyticsAccount": ""
+  "copyRights": "© 2017 Talend. All Rights Reserved"
 }

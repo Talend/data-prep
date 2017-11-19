@@ -43,6 +43,8 @@ import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
 import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
+import org.talend.dataquality.semantic.recognizer.DictionaryConstituents;
+import org.talend.dataquality.semantic.recognizer.DictionaryConstituentsProviders;
 import org.talend.dataquality.semantic.statistics.SemanticAnalyzer;
 import org.talend.dataquality.semantic.statistics.SemanticQualityAnalyzer;
 import org.talend.dataquality.semantic.statistics.SemanticType;
@@ -87,6 +89,8 @@ public class AnalyzerService {
 
     private CategoryRecognizerBuilder builder;
 
+    private DictionaryConstituentsProviders.DicoProviderInterface dicoProvider;
+
     public AnalyzerService() {
         this(CategoryRecognizerBuilder.newBuilder().lucene());
     }
@@ -115,6 +119,21 @@ public class AnalyzerService {
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
         this.builder = builder;
         this.dateParser = new DateParser(this);
+        this.dicoProvider = new DictionaryConstituentsProviders.SingletonProvider();
+    }
+
+    public AnalyzerService(String indexesLocation, String indexStrategy, DictionaryConstituentsProviders.DicoProviderInterface dicoProvider) {
+        this.indexesLocation = indexesLocation;
+        LOGGER.info("DataQuality indexes location : '{}'", this.indexesLocation);
+        CategoryRegistryManager.setLocalRegistryPath(this.indexesLocation);
+
+        // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
+        this.dicoProvider = dicoProvider;
+        this.dateParser = new DateParser(this);
+    }
+
+    public void setDictionaryConstituentsProvider(DictionaryConstituentsProviders.DicoProviderInterface provider){
+        this.dicoProvider = dicoProvider;
     }
 
     /**
@@ -232,12 +251,14 @@ public class AnalyzerService {
                 .collect(Collectors.toList());
         final String[] domains = domainList.toArray(new String[domainList.size()]);
 
+        DictionaryConstituents constituents = dicoProvider.get();
+
         // Build all analyzers
         List<Analyzer> analyzers = new ArrayList<>();
         for (Analysis setting : settings) {
             switch (setting) {
                 case SEMANTIC:
-                    final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(builder);
+                    final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(constituents);
                     semanticAnalyzer.setLimit(Integer.MAX_VALUE);
                     semanticAnalyzer.setMetadata(Metadata.HEADER_NAME, extractColumnNames(columns));
                     analyzers.add(semanticAnalyzer);
@@ -251,7 +272,7 @@ public class AnalyzerService {
                     columns.forEach(
                             c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
                     analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
-                            new SemanticQualityAnalyzer(builder, domains, false), true)); // NOSONAR
+                            new SemanticQualityAnalyzer(constituents, domains, false), true)); // NOSONAR
                     break;
                 case CARDINALITY:
                     analyzers.add(new CardinalityAnalyzer());

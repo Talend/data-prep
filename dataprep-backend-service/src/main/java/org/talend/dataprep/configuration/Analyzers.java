@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
+import org.talend.dataquality.semantic.recognizer.DictionaryConstituentsProviders;
 
 @Configuration
 public class Analyzers implements DisposableBean {
@@ -49,7 +49,7 @@ public class Analyzers implements DisposableBean {
         LOGGER.info("Data Quality strategy is {} and located in {}", luceneIndexStrategy, dataqualityIndexesLocation);
         return new AnalyzerService(dataqualityIndexesLocation, //
                 luceneIndexStrategy, //
-                CategoryRecognizerBuilder.newBuilder().lucene());
+                new DictionaryConstituentsProviders.SingletonProvider());
     }
 
     @Override

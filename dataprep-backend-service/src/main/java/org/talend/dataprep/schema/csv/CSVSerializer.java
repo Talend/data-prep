@@ -13,7 +13,13 @@
 
 package org.talend.dataprep.schema.csv;
 
-import java.io.*;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.TEXT_ENCLOSURE_CHAR;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -38,10 +44,18 @@ import au.com.bytecode.opencsv.CSVReader;
 @Service("serializer#csv")
 public class CSVSerializer implements Serializer {
 
+    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
 
+    /** Default text enclosure char. */
+    private final static char DEFAULT_TEXT_ENCLOSURE_CHAR = '"';
+
+    /** Default text enclosure char. */
+    private final static char DEFAULT_ESCAPE_CHAR = '\0';
+
+    /** Task executor used to serialize CSV dataset into JSON. */
     @Resource(name = "serializer#csv#executor")
-    TaskExecutor executor;
+    private TaskExecutor executor;
 
     @Override
     public InputStream serialize(InputStream rawContent, DataSetMetadata metadata, long limit) {
@@ -52,8 +66,12 @@ public class CSVSerializer implements Serializer {
             Runnable r = () -> {
                 final Map<String, String> parameters = metadata.getContent().getParameters();
                 final String separator = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER);
-                try (CSVReader reader = new CSVReader(new InputStreamReader(rawContent, metadata.getEncoding()),
-                        separator.charAt(0),  '\"', '\0')) {
+                final char actualSeparator = separator.charAt(0);
+                final char textEnclosureChar = getFromParameters(parameters, TEXT_ENCLOSURE_CHAR, DEFAULT_TEXT_ENCLOSURE_CHAR);
+                final char escapeChar = getFromParameters(parameters, CSVFormatFamily.ESCAPE_CHAR, DEFAULT_ESCAPE_CHAR);
+
+                try (InputStreamReader input = new InputStreamReader(rawContent, metadata.getEncoding());
+                        CSVReader reader = new CSVReader(input, actualSeparator, textEnclosureChar, escapeChar)) {
                     JsonGenerator generator = new JsonFactory().createGenerator(jsonOutput);
                     int i = 0;
                     while (i++ < metadata.getContent().getNbLinesInHeader()) {
@@ -84,6 +102,22 @@ public class CSVSerializer implements Serializer {
     }
 
     /**
+     * Extract the parameter value from the dataset parameters or return the given default value if not found.
+     *
+     * @param parameters where to look for the wanted parameter value.
+     * @param key the parameter key.
+     * @param defaultValue the default value to use if the parameter is not found.
+     * @return the parameter value from the dataset parameters or return the given default value if not found.
+     */
+    private char getFromParameters(Map<String, String> parameters, String key, char defaultValue) {
+        final String fromParameters = parameters.get(key);
+        if (fromParameters != null) {
+            return fromParameters.charAt(0);
+        }
+        return defaultValue;
+    }
+
+    /**
      * Write the line content.
      *
      * @param reader the csv reader to use as data source.
@@ -93,8 +127,8 @@ public class CSVSerializer implements Serializer {
      * @param limit The maximum number of lines in the exported content.
      * @throws IOException if an error occurs.
      */
-    private void writeLineContent(CSVReader reader, DataSetMetadata metadata, JsonGenerator generator, String separator, long limit)
-            throws IOException {
+    private void writeLineContent(CSVReader reader, DataSetMetadata metadata, JsonGenerator generator, String separator,
+            long limit) throws IOException {
         String[] line;
         int current = 0;
 
@@ -136,7 +170,7 @@ public class CSVSerializer implements Serializer {
     }
 
     private String cleanCharacters(final String value) {
-        return StringUtils.remove(value, '\u0000');
+        return StringUtils.remove(value, '\u0000'); // unicode null character
     }
 
     /**

@@ -1,8 +1,11 @@
 package org.talend.dataprep.qa.util;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import javax.validation.constraints.NotNull;
 
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
@@ -31,5 +34,12 @@ public interface FolderUtil {
      * @param folders the {@link List} of {@link Folder}
      * @return a {@link Folder} or <code>null</code> if the folder doesn't exist.
      */
-    Folder extractFolder(String folderPath, List<Folder> folders) throws IOException;
+    Folder extractFolder(String folderPath, Collection<Folder> folders) throws IOException;
+
+    /**
+     * Delete a folder.
+     * 
+     * @param folder the folder to delete
+     */
+    void deleteFolder(@NotNull Folder folder);
 }

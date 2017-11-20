@@ -2,11 +2,11 @@ package org.talend.dataprep.qa.util;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
@@ -27,6 +27,7 @@ public class OSFolderUtil implements FolderUtil {
 
     @Override
     public FolderContent listPreparation(String folderName) throws IOException {
+
         Response response = api.listPreparation(folderName);
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
@@ -44,9 +45,14 @@ public class OSFolderUtil implements FolderUtil {
     }
 
     @Override
-    public Folder extractFolder(String folderPath, List<Folder> folders) throws IOException {
+    public Folder extractFolder(String folderPath, Collection<Folder> folders) throws IOException {
         Optional<Folder> folderOpt = folders.stream().filter(f -> f.path.equals(folderPath)).findFirst();
-        Assert.assertTrue(folderOpt.isPresent());
-        return folderOpt.get();
+        return folderOpt.orElse(null);
     }
+
+    @Override
+    public void deleteFolder(Folder folder) {
+        api.deleteFolder(folder.path).then().statusCode(200);
+    }
+
 }

@@ -3,11 +3,9 @@ package org.talend.dataprep.qa.step;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -78,15 +76,12 @@ public class PreparationStep extends DataPrepStep {
     @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
     public void checkExistPrep(String preparationName, String folder) throws IOException {
         String prepId = context.getPreparationId(preparationName);
-        Response response = api.listPreparation(folder);
-        response.then().statusCode(200);
-        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        FolderContent folderContent = objectMapper.readValue(content, FolderContent.class);
+        FolderContent folderContent = folderUtil.listPreparation(folder);
 
         long nb = folderContent.preparations.stream() //
                 .filter(p -> p.id.equals(prepId) //
                         && p.name.equals(preparationName)) //
                 .count();
-        Assert.assertEquals(nb, 1);
+        Assert.assertEquals(1, nb);
     }
 }

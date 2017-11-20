@@ -265,17 +265,17 @@ public class OSDataPrepAPIHelper {
     public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
             String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
 
-        ExportRequest exportRequest = new ExportRequest( //
-                exportType, //
-                datasetId, //
-                preparationId, //
-                stepId, //
-                delimiter, //
-                filename, //
-                escapeCharacter, //
-                enclosureCharacter, //
-                enclosureMode, //
-                charset);
+        ExportRequest exportRequest = new ExportRequest() //
+                .setExportType(exportType) //
+                .setDatasetId(datasetId) //
+                .setPreparationId(preparationId) //
+                .setStepId(stepId) //
+                .setCsv_fields_delimiter(delimiter) //
+                .setFileName(filename) //
+                .setEscapeCharacter(escapeCharacter) //
+                .setEnclosureCharacter(enclosureCharacter) //
+                .setEnclosureMode(enclosureMode) //
+                .setCharset(charset);
 
         Map<String, Object> parameters = exportRequest.returnParameters();
 
@@ -353,17 +353,17 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Delete a new folder.
+     * Delete a folder.
      *
-     * @param folder the folder to delete (without the "/" at the beginning).
+     * @param folderPath the folder path to delete.
      * @return the response.
      */
-    public Response deleteFolder(String folder) {
+    public Response deleteFolder(String folderPath) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
                 .when() //
-                .delete("/api/folders/" + encode64(folder));
+                .delete("/api/folders/" + encode64(folderPath));
     }
 
     /**

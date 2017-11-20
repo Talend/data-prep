@@ -68,6 +68,22 @@ public class PowTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void pow_with_constant_percentage() {
+        // given
+        DataSetRow row = getRow("500%", "3", "Done !");
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "7");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("78125.0", row.get("0003"));
+    }
+
+    @Test
     public void pow_with_undefined_constant() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");

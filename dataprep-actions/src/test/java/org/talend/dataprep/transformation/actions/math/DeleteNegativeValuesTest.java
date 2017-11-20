@@ -87,6 +87,40 @@ public class DeleteNegativeValuesTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_delete_percentage() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "David Bowie");
+        values.put("0001", "-12%");
+        final DataSetRow row = new DataSetRow(values);
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertTrue(row.isDeleted());
+        assertEquals("David Bowie", row.get("0000"));
+        assertEquals("-12%", row.get("0001"));
+    }
+
+    @Test
+    public void should_not_delete_percentage() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "David Bowie");
+        values.put("0001", "12%");
+        final DataSetRow row = new DataSetRow(values);
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertFalse(row.isDeleted());
+        assertEquals("David Bowie", row.get("0000"));
+        assertEquals("12%", row.get("0001"));
+    }
+
+    @Test
     public void should_delete_alt_format_1() {
         // given
         final Map<String, String> values = new HashMap<>();

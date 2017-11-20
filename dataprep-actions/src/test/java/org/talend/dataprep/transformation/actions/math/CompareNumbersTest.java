@@ -106,6 +106,14 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void testComputePercentage() {
+        assertTrue(Boolean.parseBoolean( action.toStringCompareResult(new AbstractCompareAction.ComparisonRequest().setValue1("12%").setValue2("0.12").setMode("eq"))));
+        assertTrue(Boolean.parseBoolean( action.toStringCompareResult(new AbstractCompareAction.ComparisonRequest().setValue1("0.12").setValue2("12%").setMode("eq"))));
+        assertTrue(Boolean.parseBoolean( action.toStringCompareResult(new AbstractCompareAction.ComparisonRequest().setValue1("12%").setValue2("12%").setMode("eq"))));
+        assertTrue(Boolean.parseBoolean( action.toStringCompareResult(new AbstractCompareAction.ComparisonRequest().setValue1("13%").setValue2("0.12").setMode("ne"))));
+    }
+
+    @Test
     public void should_apply_on_column_not_equals() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");

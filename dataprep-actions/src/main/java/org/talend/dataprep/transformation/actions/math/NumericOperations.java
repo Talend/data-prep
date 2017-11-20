@@ -19,6 +19,8 @@ import java.math.RoundingMode;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.number.BigDecimalParser;
@@ -72,6 +74,9 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
     private static final String MULTIPLY = "x";
 
     private static final String DIVIDE = "/";
+
+    /** Class logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumericOperations.class);
 
     @Override
     public String getName() {
@@ -209,7 +214,13 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
             // Format result:
             return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
-        } catch (ArithmeticException | NullPointerException e) {
+        } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
+            LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to exception {}.", stringOperandOne,
+                    stringOperandTwo, operator, e);
+            return StringUtils.EMPTY;
+        } catch (Exception e) {
+            LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to an unknown exception {}.",
+                    stringOperandOne, stringOperandTwo, operator, e);
             return StringUtils.EMPTY;
         }
     }

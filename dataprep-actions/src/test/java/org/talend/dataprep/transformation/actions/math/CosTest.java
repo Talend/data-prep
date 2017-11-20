@@ -64,6 +64,20 @@ public class CosTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void cos_with_positive_percentage() {
+        // given
+        DataSetRow row = getRow("100%", "3", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("0.5403023058681398", row.get("0003"));
+    }
+
+
+    @Test
     public void cos_with_negative() {
         // given
         DataSetRow row = getRow("-10", "3", "Done !");

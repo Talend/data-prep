@@ -70,6 +70,9 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
         // the first time applyOnColumn is called, save the current value in PreviousValueHolder
         // and the Optional.ofNullable(...) allows you to NOT modify the first row (add an empty value)
         // then second call of applyOnColumn, PreviousContextHolder has... previous value
+        if (row.isDeleted()) {
+            return;
+        }
         final PreviousValueHolder holder = context.get(PREVIOUS);
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
@@ -86,10 +89,13 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
 
     /** this class is used to store the previous value. */
     private static class PreviousValueHolder {
+
         String value;
+
         public String getValue() {
             return value;
         }
+
         public void setValue(String value) {
             this.value = value;
         }

@@ -12,15 +12,20 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Abstract Action for basic math action without parameter
  */
 public abstract class AbstractMathNoParameterAction extends AbstractMathAction implements ColumnAction {
+
+    /** Class logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumericOperations.class);
 
     protected abstract String calculateResult(String columnValue, ActionContext context);
 
@@ -31,8 +36,14 @@ public abstract class AbstractMathNoParameterAction extends AbstractMathAction i
 
         String result = ERROR_RESULT;
 
-        if (NumberUtils.isNumber(colValue)) {
-            result = calculateResult(colValue, context);
+        if (NumericHelper.isBigDecimal(colValue)) {
+            try {
+                result = calculateResult(colValue, context);
+            } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
+                LOGGER.debug("Unable to calculate action on {} due to the following exception {}.", colValue, e);
+            } catch (Exception e) {
+                LOGGER.debug("Unable to calculate action on {} due to an unknown exception {}.", colValue, e);
+            }
         }
 
         String newColumnId = context.column("result");

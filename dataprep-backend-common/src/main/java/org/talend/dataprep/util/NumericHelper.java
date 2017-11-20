@@ -32,7 +32,7 @@ public class NumericHelper {
 
     private static final Locale[] LOCALES = { Locale.FRENCH, Locale.ENGLISH };
 
-    private static final char[] ALLOWED_NUMERIC_CHARACTERS = new char[]{',', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', 'E', 'e', ' ', '\''};
+    private static final char[] ALLOWED_NUMERIC_CHARACTERS = new char[]{',', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', 'E', 'e', ' ', '\'', '%'};
 
     private NumericHelper() {
     }

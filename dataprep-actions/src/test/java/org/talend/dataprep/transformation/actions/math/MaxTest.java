@@ -163,6 +163,38 @@ public class MaxTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void max_percentage_values_with_constant() {
+        // given
+        DataSetRow row = getRow("61%", "3", "Done !");
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "2");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("2.0", row.get("0003"));
+    }
+
+    @Test
+    public void max_percentage_values_with_constant_2() {
+        // given
+        DataSetRow row = getRow("261%", "3", "Done !");
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "2");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("2.61", row.get("0003"));
+    }
+
+    @Test
     public void max_currency_value_with_other_column() {
         // given
         DataSetRow row = getRow("5", "8$", "Done !");

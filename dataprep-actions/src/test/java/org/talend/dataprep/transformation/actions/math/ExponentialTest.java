@@ -64,6 +64,19 @@ public class ExponentialTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void exponential_with_positive_percentage() {
+        // given
+        DataSetRow row = getRow("300%", "3", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("20.085536923187668", row.get("0003"));
+    }
+
+    @Test
     public void exponential_with_negative() {
         // given
         DataSetRow row = getRow("-3", "3", "Done !");

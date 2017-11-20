@@ -60,7 +60,7 @@ public class NegateTest extends AbstractMetadataBaseTest {
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals("-5.0", row.get("0003"));
+        assertEquals("-5", row.get("0003"));
     }
 
     @Test
@@ -73,7 +73,20 @@ public class NegateTest extends AbstractMetadataBaseTest {
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals("5.0", row.get("0003"));
+        assertEquals("5", row.get("0003"));
+    }
+
+    @Test
+    public void negate_with_negative_percentage() {
+        // given
+        DataSetRow row = getRow("-5%", "3", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("0.05", row.get("0003"));
     }
 
     @Test

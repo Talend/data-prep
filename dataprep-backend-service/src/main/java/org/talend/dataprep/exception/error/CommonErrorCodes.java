@@ -72,6 +72,11 @@ public enum CommonErrorCodes implements ErrorCode {
      */
     INSUFFICIENT_RIGHTS_TAC_CREDENTIAL(BAD_GATEWAY.value()),
     /**
+     * TAC rights are not sufficient to get the tasks list∕.
+     */
+    INSUFFICIENT_RIGHTS_TAC_LIST_TASKS(BAD_GATEWAY.value()),
+    INSUFFICIENT_RIGHTS_TIC_LIST_FLOWS(BAD_GATEWAY.value()),
+    /**
      * Error thrown when data prep fails to run remote job.
      */
     UNABLE_TO_RUN_REMOTE_JOB(BAD_GATEWAY.value()),

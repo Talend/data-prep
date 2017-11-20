@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -21,6 +23,9 @@ import org.talend.dataprep.util.NumericHelper;
  * Abstract Action for basic math action without parameter
  */
 public abstract class AbstractMathNoParameterAction extends AbstractMathAction implements ColumnAction {
+
+    /** Class logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumericOperations.class);
 
     protected abstract String calculateResult(String columnValue, ActionContext context);
 
@@ -32,7 +37,13 @@ public abstract class AbstractMathNoParameterAction extends AbstractMathAction i
         String result = ERROR_RESULT;
 
         if (NumericHelper.isBigDecimal(colValue)) {
-            result = calculateResult(colValue, context);
+            try {
+                result = calculateResult(colValue, context);
+            } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
+                LOGGER.warn("Unable to calculate action on {}.", colValue, e);
+            } catch (Exception e) {
+                LOGGER.error("Unable to calculate action on {}.", colValue, e);
+            }
         }
 
         String newColumnId = context.column("result");

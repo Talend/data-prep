@@ -105,9 +105,10 @@ public class RoundFloorTest extends AbstractRoundTest {
 
     @Test
     public void test_percentage_number() {
-        testCommon("5%", "0.05", 2);
-        testCommon("50%", "0.50", 2);
-        testCommon("500%", "5.00", 2);
+        testCommon("5.1%", "0.05", 2);
+        testCommon("50.1%", "0.50", 2);
+        testCommon("500.1%", "5.00", 2);
+        testCommon("500.1%", "5.0", 1);
     }
 
     @Test

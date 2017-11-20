@@ -88,10 +88,13 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
 
     /** this class is used to store the previous value. */
     private static class PreviousValueHolder {
+
         String value;
+
         public String getValue() {
             return value;
         }
+
         public void setValue(String value) {
             this.value = value;
         }

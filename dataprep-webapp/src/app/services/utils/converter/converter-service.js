@@ -23,6 +23,7 @@ export default function ConverterService($translate) {
         // types
 		toInputType,
 		simplifyType,
+		simplifyTypeLabel,
 		adaptValue,
 	};
 
@@ -74,6 +75,35 @@ export default function ConverterService($translate) {
      * @returns {string} The simplified type
      */
 	function simplifyType(type) {
+		switch (type.toLowerCase()) {
+		case 'numeric':
+		case 'integer':
+			return 'integer';
+		case 'double':
+		case 'float':
+		case 'decimal':
+			return 'decimal';
+		case 'boolean':
+			return 'boolean';
+		case 'string':
+		case 'char':
+			return 'text';
+		case 'date':
+			return 'date';
+		default:
+			return 'unknown';
+		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name simplifyTypeLabel
+	 * @methodOf data-prep.services.utils.service:ConverterService
+	 * @param {string} type The type to convert
+	 * @description Convert backend type to a simplified, more user friendly with translation
+	 * @returns {string} The simplified type
+	 */
+	function simplifyTypeLabel(type) {
 		switch (type.toLowerCase()) {
 		case 'numeric':
 		case 'integer':

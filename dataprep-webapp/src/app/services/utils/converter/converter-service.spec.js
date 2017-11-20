@@ -18,12 +18,12 @@ describe('Converter service', function () {
 
     beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
         $translateProvider.translations('en', {
-            "INTEGER": "integer",
-            "DECIMAL": "decimal",
-            "BOOLEAN": "boolean",
-            "TEXT": "text",
-            "DATE": "date",
-            "UNKNOWN": "unknown"
+            "INTEGER": "entier",
+            "DECIMAL": "décimal",
+            "BOOLEAN": "booléen",
+            "TEXT": "texte",
+            "DATE": "dateTime",
+            "UNKNOWN": "inconnu"
         });
         $translateProvider.preferredLanguage('en');
     }));
@@ -68,27 +68,27 @@ describe('Converter service', function () {
         }
     };
 
-    it('should return integer when column type is numeric, integer', inject(function (ConverterService) {
+    it('should return integer label when column type is numeric, integer', inject(function (ConverterService) {
         checkSimplifiedTypes(ConverterService, ['numeric', 'integer'], 'integer');
     }));
 
-    it('should return decimal when column type is double or float', inject(function (ConverterService) {
+    it('should return decimal label when column type is double or float', inject(function (ConverterService) {
         checkSimplifiedTypes(ConverterService, ['double', 'float'], 'decimal');
     }));
 
-    it('should return text when column type is string or char', inject(function (ConverterService) {
+    it('should return text label when column type is string or char', inject(function (ConverterService) {
         checkSimplifiedTypes(ConverterService, ['string', 'char'], 'text');
     }));
 
-    it('should return boolean when column type is boolean', inject(function (ConverterService) {
+    it('should return boolean label when column type is boolean', inject(function (ConverterService) {
         checkSimplifiedTypes(ConverterService, ['boolean'], 'boolean');
     }));
 
-    it('should return date when column type is date', inject(function (ConverterService) {
+    it('should return date label when column type is date', inject(function (ConverterService) {
         checkSimplifiedTypes(ConverterService, ['date'], 'date');
     }));
 
-    it('should return unknown when column type is unknown', inject(function (ConverterService) {
+    it('should return unknown label when column type is unknown', inject(function (ConverterService) {
         checkSimplifiedTypes(ConverterService, ['toto', 'titi', 'tata', ''], 'unknown');
     }));
 
@@ -109,6 +109,43 @@ describe('Converter service', function () {
 
             // then
             expect(type).toBe(expectedType);
+        }
+    };
+
+
+    it('should return integer when column type is numeric, integer', inject(function (ConverterService) {
+        checkSimplifiedTypesLabels(ConverterService, ['numeric', 'integer'], 'entier');
+    }));
+
+    it('should return decimal when column type is double or float', inject(function (ConverterService) {
+        checkSimplifiedTypesLabels(ConverterService, ['double', 'float'], 'décimal');
+    }));
+
+    it('should return text when column type is string or char', inject(function (ConverterService) {
+        checkSimplifiedTypesLabels(ConverterService, ['string', 'char'], 'texte');
+    }));
+
+    it('should return boolean when column type is boolean', inject(function (ConverterService) {
+        checkSimplifiedTypesLabels(ConverterService, ['boolean'], 'booléen');
+    }));
+
+    it('should return date when column type is date', inject(function (ConverterService) {
+        checkSimplifiedTypesLabels(ConverterService, ['date'], 'dateTime');
+    }));
+
+    it('should return unknown when column type is unknown', inject(function (ConverterService) {
+        checkSimplifiedTypesLabels(ConverterService, ['toto', 'titi', 'tata', ''], 'inconnu');
+    }));
+
+
+    var checkSimplifiedTypesLabels = function (service, types, expectedTypeLabel) {
+        for (var i = 0; i < types.length; i++) {
+
+            //when
+            var type = service.simplifyTypeLabel(types[i]);
+
+            // then
+            expect(type).toBe(expectedTypeLabel);
         }
     };
 

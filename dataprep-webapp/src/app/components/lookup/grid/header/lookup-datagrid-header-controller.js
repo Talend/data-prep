@@ -54,6 +54,6 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
      * @description returns the type label
      */
 	vm.getTypeLabel = function () {
-		return vm.column.domainLabel || vm.converterService.simplifyType(vm.column.type);
+		return vm.column.domainLabel || vm.converterService.simplifyTypeLabel(vm.column.type);
 	};
 }

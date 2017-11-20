@@ -103,7 +103,7 @@ export default class TypeTransformMenuCtrl {
 		}
 		else {
 			this.currentDomain = this.column.type;
-			this.currentSimplifiedDomain = this.ConverterService.simplifyType(this.column.type);
+			this.currentSimplifiedDomain = this.ConverterService.simplifyTypeLabel(this.column.type);
 		}
 	}
 

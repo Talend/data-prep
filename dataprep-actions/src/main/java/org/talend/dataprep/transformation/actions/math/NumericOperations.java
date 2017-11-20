@@ -220,12 +220,12 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             // Format result:
             return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
         } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
-            LOGGER.warn("Unable to compute with oprerands {}, {} and operator {} due to exception.", stringOperandOne,
+            LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to exception {}.", stringOperandOne,
                     stringOperandTwo, operator, e);
             return StringUtils.EMPTY;
         } catch (Exception e) {
-            LOGGER.error("Unable to compute with oprerands {}, {} and operator {} due to exception.", stringOperandOne,
-                    stringOperandTwo, operator, e);
+            LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to an unknown exception {}.",
+                    stringOperandOne, stringOperandTwo, operator, e);
             return StringUtils.EMPTY;
         }
     }

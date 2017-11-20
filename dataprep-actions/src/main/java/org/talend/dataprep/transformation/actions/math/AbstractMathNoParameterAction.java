@@ -40,9 +40,9 @@ public abstract class AbstractMathNoParameterAction extends AbstractMathAction i
             try {
                 result = calculateResult(colValue, context);
             } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
-                LOGGER.warn("Unable to calculate action on {}.", colValue, e);
+                LOGGER.debug("Unable to calculate action on {} due to the following exception {}.", colValue, e);
             } catch (Exception e) {
-                LOGGER.error("Unable to calculate action on {}.", colValue, e);
+                LOGGER.debug("Unable to calculate action on {} due to an unknown exception {}.", colValue, e);
             }
         }
 

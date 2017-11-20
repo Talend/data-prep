@@ -20,7 +20,6 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +31,7 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.statistics.datetime.SystemDateTimePatternManager;
 import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 
 /**
@@ -146,8 +146,12 @@ public class DateParser {
         }
 
         for (DatePattern pattern : patterns) {
-            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive()
-                    .append(pattern.getFormatter()).toFormatter(Locale.ENGLISH);
+            // TDQ-14421 use ResolverStyle.STRICT to parse a date. such as "2017-02-29" should be invalid.
+            final DateTimeFormatter formatter =
+                    SystemDateTimePatternManager.getDateTimeFormatterByPattern(pattern.getPattern(), Locale.ENGLISH);
+            if (formatter == null) {
+                continue;
+            }
 
             // first try to parse directly as LocalDateTime
             try {

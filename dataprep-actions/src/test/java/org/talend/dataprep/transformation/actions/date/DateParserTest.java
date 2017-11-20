@@ -83,6 +83,23 @@ public class DateParserTest extends BaseDateTest {
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", patterns)));
     }
 
+    /**
+     * TDQ-14421 an invalid date like as 2017-02-30 should not be parsed to 2017-02-28
+     */
+    @Test(expected = DateTimeException.class)
+    public void shouldNotParseDateFromPatternsOnInvalidDate() throws ParseException {
+        final List<DatePattern> patterns = new ArrayList<>();
+        patterns.add(new DatePattern("yyyy-MM-dd", 1));
+        action.parseDateFromPatterns("2017-02-30", patterns);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void shouldNotParseDateFromPatternsEmptyPattern() throws ParseException {
+        final List<DatePattern> patterns = new ArrayList<>();
+        patterns.add(new DatePattern("", 1));
+        action.parseDateFromPatterns("2017-02-28", patterns);
+    }
+
     @Test
     public void parseDateFromPatterns_should_parse_independently_of_empty_patterns() throws ParseException {
         //given

@@ -168,7 +168,7 @@ export default class TransformationUtilsService {
 	sortAndGroupByCategory(transformations) {
 		const groupedTransformations = chain(transformations)
 		// is not "column" category
-			.filter(transfo => (transfo.actionScope.indexOf(ACTION_SCOPE) === -1))
+			.filter(transfo => (!transfo.actionScope.includes(ACTION_SCOPE)))
 			.sortBy(transfo => transfo.label.toLowerCase())
 			.groupBy(CATEGORY)
 			.value();
@@ -221,12 +221,8 @@ export default class TransformationUtilsService {
 	 * @returns {{filterCategory: *, otherCategories: *}}
 	 */
 	popFilteredCategory(categories) {
-		const filterCategory = find(categories, (category) => {
-			return category.transformations.filter(transfo => (transfo.actionScope.indexOf(FILTERED_COLUMN) > -1)).length;
-		});
-		const otherCategories = filter(categories, (category) => {
-			return category.transformations.filter(transfo => (transfo.actionScope.indexOf(FILTERED_COLUMN) === -1)).length;
-		});
+		const filterCategory = find(categories, category => category.transformations.filter(transfo => (transfo.actionScope.includes(FILTERED_COLUMN))).length);
+		const otherCategories = filter(categories, category => category.transformations.filter(transfo => (!transfo.actionScope.includes(FILTERED_COLUMN))).length);
 		return { filterCategory, otherCategories };
 	}
 
@@ -241,10 +237,10 @@ export default class TransformationUtilsService {
 	 */
 	transfosMatchSearch(search) {
 		return (transfo) => {
-			return transfo.labelHtml.toLowerCase().indexOf(search) !== -1 ||
-				transfo.description.toLowerCase().indexOf(search) !== -1 ||
-				(transfo.alternateLabel !== undefined && transfo.alternateLabel.toLowerCase().indexOf(search) !== -1) ||
-				(transfo.alternateDescription !== undefined && transfo.alternateDescription.toLowerCase().indexOf(search) !== -1);
+			return transfo.labelHtml.toLowerCase().includes(search) ||
+				transfo.description.toLowerCase().includes(search) ||
+				(transfo.alternateLabel !== undefined && transfo.alternateLabel.toLowerCase().incldues(search)) ||
+				(transfo.alternateDescription !== undefined && transfo.alternateDescription.toLowerCase().includes(search));
 		};
 	}
 
@@ -259,7 +255,7 @@ export default class TransformationUtilsService {
 
 			// category matches : display all this category transformations
 			// category does NOT match : filter to only have matching displayed label or description
-			const filteredTransformations = category.toLowerCase().indexOf(search) !== -1 ?
+			const filteredTransformations = category.toLowerCase().includes(search) ?
 				transformations :
 				filter(transformations, this.transfosMatchSearch(search));
 

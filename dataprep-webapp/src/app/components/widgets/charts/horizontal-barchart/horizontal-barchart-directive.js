@@ -216,28 +216,18 @@ export default function HorizontalBarchart($timeout, $translate) {
 				bars.enter()
 					.append('rect')
 					.attr('class', barClassName)
-					.attr('transform', function (d) {
-						return 'translate(0,' + yScale(getKey(d)) + ')';
-					})
+					.attr('transform', d => `translate(0,${yScale(getKey(d))})`)
 					.attr('height', yScale.rangeBand())
 					.attr('width', xScale(0))
 					.transition()
 					.delay((d, i) => i * 30)
-					.attr('width', function (d) {
-						const realWidth = xScale(getValue(d));
-						return adaptToMinHeight(realWidth);
-					});
+					.attr('width', d => adaptToMinHeight(xScale(getValue(d))));
 
 				// update
 				bars.transition()
 					.ease('exp')
-					.delay(function (d, i) {
-						return i * 30;
-					})
-					.attr('width', function (d) {
-						const realWidth = xScale(getValue(d));
-						return adaptToMinHeight(realWidth);
-					});
+					.delay((d, i) => i * 30)
+					.attr('width', d => adaptToMinHeight(xScale(getValue(d))));
 			}
 
 			function drawKeysLabels(statData, width) {
@@ -269,9 +259,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 					.enter()
 					.append('g')
 					.attr('class', 'hover')
-					.attr('transform', function (d) {
-						return 'translate(0, ' + (yScale(getKey(d)) - 2) + ')';
-					})
+					.attr('transform', d => `translate(0, ${yScale(getKey(d)) - 2})`)
 					.append('rect')
 					.attr('width', width)
 					.attr('height', yScale.rangeBand() + 4)
@@ -303,7 +291,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 								max = index;
 								for (let i = (index + 1); i <= previousMax; i++) {
 									const currentItem = _.extend({}, statData[i]);
-									_.remove(selectedValues, currentItem);
+									delete selectedValues.currentItem;
 									scope.onCtrlClick({ item: currentItem });
 								}
 							}

@@ -20,33 +20,33 @@ export default function StatisticsTooltipService($translate, state) {
 	'ngInject';
 
 	let tooltipTemplate = _.template('');
-	$translate(['COLON']).then((messages) => {
+	$translate(['COLON']).then((i18n) => {
 		tooltipTemplate = _.template(
-			'<strong><%= label %>' + messages.COLON + '</strong><span style="color:yellow"><%= primaryValue %></span>' +
-			'<br/><br/>' +
-			'<strong><%= title %>' + messages.COLON + '</strong><span style="color:yellow"><%= key %></span>'
+			`<strong><%= label %>${i18n.COLON}</strong><span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong><span style="color:yellow"><%= key %></span>`
 		);
 	});
 
 	let tooltipFilteredTemplate = _.template('');
-	$translate(['TOOLTIP_MATCHING_FILTER', 'TOOLTIP_MATCHING_FULL', 'COLON']).then((messages) => {
+	$translate(['TOOLTIP_MATCHING_FILTER', 'TOOLTIP_MATCHING_FULL', 'COLON']).then((i18n) => {
 		tooltipFilteredTemplate = _.template(
-			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FILTER + messages.COLON + '</strong><span style="color:yellow"><%= secondaryValue %> <%= percentage %></span>' +
-			'<br/><br/>' +
-			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FULL + messages.COLON + '</strong><span style="color:yellow"><%= primaryValue %></span>' +
-			'<br/><br/>' +
-			'<strong><%= title %>' + messages.COLON + '</strong><span style="color:yellow"><%= key %></span>'
+			`<strong><%= label %> ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong><span style="color:yellow"><%= secondaryValue %> <%= percentage %></span><br/><br/><strong><%= label %> ${i18n.TOOLTIP_MATCHING_FULL}${i18n.COLON}</strong><span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong><span style="color:yellow"><%= key %></span>`
 		);
 	});
 
 	let tooltipFilteredAggregTemplate = _.template('');
-	$translate(['TOOLTIP_MATCHING_FILTER', 'COLON']).then((messages) => {
+	$translate(['TOOLTIP_MATCHING_FILTER', 'COLON']).then((i18n) => {
 		tooltipFilteredAggregTemplate = _.template(
-			'<strong><%= label %> ' + messages.TOOLTIP_MATCHING_FILTER + messages.COLON + '</strong><span style="color:yellow"><%= primaryValue %></span>' +
-			'<br/><br/>' +
-			'<strong><%= title %>' + messages.COLON + '</strong><span style="color:yellow"><%= key %></span>'
+			`<strong><%= label %> ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong><span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong><span style="color:yellow"><%= key %></span>`
 		);
 	});
+
+	const i18n = {
+		MAX: $translate.instant('MAX'),
+		MIN: $translate.instant('MIN'),
+		RANGE: $translate.instant('RANGE'),
+		RECORD: $translate.instant('RECORD'),
+		VALUE: $translate.instant('VALUE'),
+	};
 
 	return {
 		getTooltip,
@@ -63,7 +63,7 @@ export default function StatisticsTooltipService($translate, state) {
 		if (numer && denum) {
 			const quotient = (numer / denum) * 100;
 			// toFixed(1) and not toFixed(0) because (19354/19430 * 100).toFixed(0) === '100'
-			return '(' + quotient.toFixed(1) + '%)';
+			return `(${quotient.toFixed(1)}%)`;
 		}
 		else {
 			return '(0%)';
@@ -82,33 +82,31 @@ export default function StatisticsTooltipService($translate, state) {
 	 * @returns {String} Compiled tooltip
 	 */
 	function getTooltip(keyLabel, key, primaryValue, secondaryValue) {
-		let title = $translate.instant('RECORD');
+		let title = i18n.RECORD;
 		let keyString = key;
 		const rangeLimits = state.playground.statistics.rangeLimits;
-		const minLabel = $translate.instant('MIN');
-		const maxLabel = $translate.instant('MAX');
 
 		// range
 		if (key instanceof Array) {
 			const uniqueValue = key[0] === key[1];
-			title = $translate.instant(uniqueValue ? 'VALUE' : 'RANGE');
+			title = uniqueValue ? i18n.VALUE : i18n.RANGE;
 
 			if (uniqueValue) {
 				keyString = key[0];
 			}
 			else if (key[0] <= rangeLimits.min) {
 				if (key[1] >= rangeLimits.max) {
-					keyString = '[' + minLabel + ',' + maxLabel + ']';
+					keyString = `[${i18n.MIN},${i18n.MAX}]`;
 				}
 				else {
-					keyString = '[' + minLabel + ',' + key[1] + '[';
+					keyString = `[${i18n.MIN},${key[1]}[`;
 				}
 			}
 			else if (key[1] >= rangeLimits.max) {
-				keyString = '[' + key[0] + ',' + maxLabel + ']';
+				keyString = `[${key[0]},${i18n.MAX}]`;
 			}
 			else {
-				keyString = '[' + key[0] + ',' + key[1] + '[';
+				keyString = `[${key[0]},${key[1]}[`;
 			}
 		}
 

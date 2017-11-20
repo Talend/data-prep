@@ -70,13 +70,9 @@ export default function BoxplotChart($timeout, $translate) {
 				center.append('line')
 					.attr('class', 'center')
 					.attr('x1', width / 2)
-					.attr('y1', function () {
-						return vScale(boxValues.min);
-					})
+					.attr('y1', () => vScale(boxValues.min))
 					.attr('x2', width / 2)
-					.attr('y2', function () {
-						return vScale(boxValues.max);
-					})
+					.attr('y2', () => vScale(boxValues.max))
 					.style('opacity', 1e-6)
 					.transition()
 					.duration(duration)
@@ -91,19 +87,13 @@ export default function BoxplotChart($timeout, $translate) {
 
 				boxTop.enter().append('rect')
 					.attr('x', 0)
-					.attr('y', function (d) {
-						return vScale(d[2]);
-					})
+					.attr('y', d => vScale(d[2]))
 					.attr('width', width)
-					.attr('height', function () {
-						return vScale(boxValues.q2);
-					});
+					.attr('height', () => vScale(boxValues.q2));
 
 				boxTop.transition()
 					.duration(duration)
-					.attr('height', function (d) {
-						return vScale(d[1]) - vScale(d[2]);
-					});
+					.attr('height', d => vScale(d[1]) - vScale(d[2]));
 
 				// bottom box.
 				const boxBottom = boxPlot.append('g').selectAll('rect')
@@ -111,23 +101,15 @@ export default function BoxplotChart($timeout, $translate) {
 
 				boxBottom.enter().append('rect')
 					.attr('x', 0)
-					.attr('y', function () {
-						return vScale(boxValues.q2);
-					})
+					.attr('y', () => vScale(boxValues.q2))
 					.attr('width', width)
-					.attr('height', function (d) {
-						return vScale(d[0]) - vScale(d[2]);
-					});
+					.attr('height', d => vScale(d[0]) - vScale(d[2]));
 
 				boxBottom.transition()
 					.duration(duration * 1.5)
 					.ease('bounce')
-					.attr('y', function (d) {
-						return vScale(d[1]);
-					})
-					.attr('height', function (d) {
-						return vScale(d[0]) - vScale(d[1]);
-					});
+					.attr('y', d => vScale(d[1]))
+					.attr('height', d => vScale(d[0]) - vScale(d[1]));
 
 				// whiskers
 				const topWhiskerPolyg = function (max) {
@@ -187,9 +169,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('class', 'mean')
 					.attr('r', 17)
 					.attr('cx', width / 2)
-					.attr('cy', function () {
-						return vScale(boxValues.mean);
-					})
+					.attr('cy', () => vScale(boxValues.mean))
 					.style('opacity', 1)
 					.transition()
 					.duration(duration * 2)
@@ -200,9 +180,7 @@ export default function BoxplotChart($timeout, $translate) {
 				gMean.append('circle')
 					.attr('r', 1.5)
 					.attr('cx', width / 2)
-					.attr('cy', function () {
-						return vScale(boxValues.mean);
-					})
+					.attr('cy', () => vScale(boxValues.mean))
 					.style('opacity', 1e-6)
 					.style('shape-rendering', 'geometricPrecision')
 					.transition()
@@ -310,7 +288,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.text(d3.format(',')(boxValues.median))
 					.style('opacity', 1e-6)
 					.attr('text-anchor', 'end')
-					.attr('y', function () {
+					.attr('y', () => {
 						return boxValues.median >= boxValues.mean ? vScale(boxValues.median) + 15 : vScale(boxValues.median) - 5;
 					})
 					.transition()
@@ -323,7 +301,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.text($translate.instant('MEDIAN'))
 					.style('opacity', 1e-6)
 					.attr('text-anchor', 'start')
-					.attr('y', function () {
+					.attr('y', () => {
 						return boxValues.median >= boxValues.mean ? vScale(boxValues.median) + 15 : vScale(boxValues.median) - 5;
 					})
 					.transition()
@@ -341,7 +319,7 @@ export default function BoxplotChart($timeout, $translate) {
 				}
 			);
 
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				$timeout.cancel(renderTimeout);
 			});
 		},

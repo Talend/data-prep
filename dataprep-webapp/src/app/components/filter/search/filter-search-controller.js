@@ -32,7 +32,7 @@ export default function FilterSearchCtrl($translate, FilterManagerService, Datag
 	function createSuggestionItem(term) {
 		return (col) => {
 			return {
-				label: term + ' ' + $translate.instant('IN') + ' <b>' + col.name + '</b>',
+				label: `${term} ${$translate.instant('IN')} <b>${col.name}</b>`,
 				value: term,
 				columnId: col.id,
 				columnName: col.name,

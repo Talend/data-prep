@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.qa.step.config;
+package org.talend.dataprep.qa.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +58,11 @@ public class GlobalStep extends DataPrepStep {
         context.clearDataset();
 
         context.getFolders().forEach(folder -> {
-            api.deleteFolder("/" + folder).then().statusCode(200);
+            folderUtil.deleteFolder(folder);
             LOGGER.debug("Suppression of folder {}", folder);
         });
+        context.clearFolders();
+
         // cleaning all features context object
         context.clearObject();
     }

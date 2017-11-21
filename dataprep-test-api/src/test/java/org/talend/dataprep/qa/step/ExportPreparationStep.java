@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.step.config.DataPrepStep;
+import org.talend.dataprep.qa.config.DataPrepStep;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.When;
@@ -23,7 +23,6 @@ public class ExportPreparationStep extends DataPrepStep {
 
     @When("^I export the preparation with parameters :$")
     public void whenIExportThePreparationWithCustomParametersInto(DataTable dataTable) throws IOException {
-
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
         // Preparation
@@ -37,8 +36,8 @@ public class ExportPreparationStep extends DataPrepStep {
         // File exported
         String filename = params.get(FILE_NAME);
 
-        LOGGER.debug("I execute a full run on the preparation {} from the dataset {} and export the result in {} file.", preparationName,
-                datasetName, filename);
+        LOGGER.debug("I execute a full run on the preparation {} from the dataset {} and export the result in {} file.",
+                preparationName, datasetName, filename);
 
         List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
                 .getJsonObject("steps");

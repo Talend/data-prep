@@ -16,11 +16,13 @@ package org.talend.dataprep.helper.object;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represent the parameters of a full run export request.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExportRequest {
 
     public static final String EXPORT_PARAM_PREFIX = "exportParameters.";
@@ -51,20 +53,6 @@ public class ExportRequest {
     @JsonProperty("arguments.csv_encoding")
     private String charset; // arguments.csv_fields_delimiter
 
-    public ExportRequest(String exportType, String datasetId, String preparationId, String stepId, String csv_fields_delimiter,
-            String fileName, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
-        this.exportType = exportType;
-        this.datasetId = datasetId;
-        this.preparationId = preparationId;
-        this.stepId = stepId;
-        this.csv_fields_delimiter = csv_fields_delimiter;
-        this.fileName = fileName;
-        this.escapeCharacter = escapeCharacter;
-        this.enclosureCharacter = enclosureCharacter;
-        this.enclosureMode = enclosureMode;
-        this.charset = charset;
-    }
-
     public Map<String, Object> returnParameters() {
 
         Map<String, Object> parametersMap = new HashMap<>();
@@ -86,79 +74,89 @@ public class ExportRequest {
         return exportType;
     }
 
-    public void setExportType(String exportType) {
+    public ExportRequest setExportType(String exportType) {
         this.exportType = exportType;
+        return this;
     }
 
     public String getDatasetId() {
         return datasetId;
     }
 
-    public void setDatasetId(String datasetId) {
+    public ExportRequest setDatasetId(String datasetId) {
         this.datasetId = datasetId;
+        return this;
     }
 
     public String getPreparationId() {
         return preparationId;
     }
 
-    public void setPreparationId(String preparationId) {
+    public ExportRequest setPreparationId(String preparationId) {
         this.preparationId = preparationId;
+        return this;
     }
 
     public String getStepId() {
         return stepId;
     }
 
-    public void setStepId(String stepId) {
+    public ExportRequest setStepId(String stepId) {
         this.stepId = stepId;
+        return this;
     }
 
     public String getCsv_fields_delimiter() {
         return csv_fields_delimiter;
     }
 
-    public void setCsv_fields_delimiter(String csv_fields_delimiter) {
+    public ExportRequest setCsv_fields_delimiter(String csv_fields_delimiter) {
         this.csv_fields_delimiter = csv_fields_delimiter;
+        return this;
     }
 
     public String getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    public ExportRequest setFileName(String fileName) {
         this.fileName = fileName;
+        return this;
     }
 
     public String getEscapeCharacter() {
         return escapeCharacter;
     }
 
-    public void setEscapeCharacter(String escapeCharacter) {
+    public ExportRequest setEscapeCharacter(String escapeCharacter) {
         this.escapeCharacter = escapeCharacter;
+        return this;
     }
 
     public String getEnclosureCharacter() {
         return enclosureCharacter;
     }
 
-    public void setEnclosureCharacter(String enclosureCharacter) {
+    public ExportRequest setEnclosureCharacter(String enclosureCharacter) {
         this.enclosureCharacter = enclosureCharacter;
+        return this;
     }
 
     public String getEnclosureMode() {
         return enclosureMode;
     }
 
-    public void setEnclosureMode(String enclosureMode) {
+    public ExportRequest setEnclosureMode(String enclosureMode) {
         this.enclosureMode = enclosureMode;
+        return this;
     }
 
     public String getCharset() {
         return charset;
     }
 
-    public void setCharset(String charset) {
+    public ExportRequest setCharset(String charset) {
         this.charset = charset;
+        return this;
     }
 }

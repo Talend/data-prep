@@ -15,7 +15,6 @@ package org.talend.dataprep.qa.step;
 
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,9 +25,8 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.qa.dto.PreparationDetails;
-import org.talend.dataprep.qa.step.config.DataPrepStep;
+import org.talend.dataprep.qa.config.DataPrepStep;
 
 import com.jayway.restassured.response.Response;
 
@@ -55,7 +53,7 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
         Action action = new Action();
-        mapParamsToAction(params, action);
+        util.mapParamsToAction(params, action);
         api.addAction(prepId, action);
     }
 
@@ -101,7 +99,7 @@ public class ActionStep extends DataPrepStep {
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
         Assert.assertTrue(actions.size() > 0);
         // update stored action parameters
-        mapParamsToAction(params, storedAction);
+        util.mapParamsToAction(params, storedAction);
         storedAction.id = actions.get(0).id;
         Response response = api.updateAction(prepId, storedAction.id, storedAction);
         response.then().statusCode(200);
@@ -146,25 +144,6 @@ public class ActionStep extends DataPrepStep {
                         && action.parameters.equals(storedAction.parameters)) //
                 .collect(Collectors.toList());
         return actions;
-    }
-
-    /**
-     * Map parameters from a Cucumber step to an {@link Action}.
-     *
-     * @param params the parameters to map.
-     * @param action the {@link Action} that will receive the parameters.
-     * @return the given {@link Action} updated.
-     */
-    private Action mapParamsToAction(Map<String, String> params, Action action) {
-        action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
-        params.forEach((k, v) -> {
-            ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
-            if (ape != null) {
-                action.parameters.put(ape, v);
-            }
-        });
-        action.parameters.putIfAbsent(SCOPE, "column");
-        return action;
     }
 
     /**

@@ -105,18 +105,52 @@ public class QualityAnalysisTest extends DataSetBaseTest {
      */
     @Test
     public void TDP_1150_full() throws Exception {
+        // given
+        String[] expectedNames = { //
+                "string_boolean", //
+                "double_integer", //
+                "string_integer", //
+                "string_double", //
+                "string_date", //
+                "type_mix", //
+                "boolean", //
+                "integer", //
+                "double", //
+                "date", //
+                "string", //
+                "empty" //
+        };
+        Type[] expectedTypes = { //
+                Type.BOOLEAN, //
+                Type.DOUBLE, //
+                Type.INTEGER, //
+                Type.DOUBLE, //
+                Type.DATE, //
+                Type.STRING, //
+                Type.BOOLEAN, //
+                Type.INTEGER, //
+                Type.DOUBLE, //
+                Type.DATE, //
+                Type.STRING, //
+                Type.STRING //
+        };
+
+        // when
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../invalids_and_type_detection.csv"));
+
+        // then
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
-        String[] expectedNames = { "string_boolean", "double_integer", "string_integer", "string_double", "string_date",
-                "type_mix", "boolean", "integer", "double", "date", "string", "empty" };
-        Type[] expectedTypes = { Type.BOOLEAN, Type.INTEGER, Type.INTEGER, Type.DOUBLE, Type.DATE, Type.STRING, Type.BOOLEAN,
-                Type.INTEGER, Type.DOUBLE, Type.DATE, Type.STRING, Type.STRING };
-        int i = 0;
-        int j = 0;
-        for (ColumnMetadata column : actual.getRowMetadata().getColumns()) {
-            assertThat(column.getName(), is(expectedNames[i++]));
-            assertThat(column.getType(), is(expectedTypes[j++].getName()));
+
+        for (int i = 0; i < expectedTypes.length; i++) {
+            ColumnMetadata column = actual.getRowMetadata().getColumns().get(i);
+            assertThat(column.getName(), is(expectedNames[i]));
+            assertThat( //
+                    "column '" + column.getName() + "' is expected to be detected as '" + expectedTypes[i]
+                            + "' but was found as '" + column.getType() + "'", //
+                    column.getType(), //
+                    is(expectedTypes[i].getName()) //
+            );
         }
     }
 

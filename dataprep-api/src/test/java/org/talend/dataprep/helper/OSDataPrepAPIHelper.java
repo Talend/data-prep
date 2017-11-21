@@ -43,7 +43,7 @@ import com.jayway.restassured.specification.RequestSpecification;
  * Utility class to allow dataprep-api integration tests.
  */
 @Component
-public class DataPrepAPIHelper {
+public class OSDataPrepAPIHelper {
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -157,7 +157,7 @@ public class DataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(DataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -229,7 +229,7 @@ public class DataPrepAPIHelper {
      * @param folder the folder where to search preparations.
      * @return the response.
      */
-    public Response listPreparation(String folder) {
+    public Response listPreparations(String folder) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
@@ -265,17 +265,17 @@ public class DataPrepAPIHelper {
     public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
             String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
 
-        ExportRequest exportRequest = new ExportRequest( //
-                exportType, //
-                datasetId, //
-                preparationId, //
-                stepId, //
-                delimiter, //
-                filename, //
-                escapeCharacter, //
-                enclosureCharacter, //
-                enclosureMode, //
-                charset);
+        ExportRequest exportRequest = new ExportRequest() //
+                .setExportType(exportType) //
+                .setDatasetId(datasetId) //
+                .setPreparationId(preparationId) //
+                .setStepId(stepId) //
+                .setCsv_fields_delimiter(delimiter) //
+                .setFileName(filename) //
+                .setEscapeCharacter(escapeCharacter) //
+                .setEnclosureCharacter(enclosureCharacter) //
+                .setEnclosureMode(enclosureMode) //
+                .setCharset(charset);
 
         Map<String, Object> parameters = exportRequest.returnParameters();
 
@@ -355,15 +355,15 @@ public class DataPrepAPIHelper {
     /**
      * Delete a new folder.
      *
-     * @param folder the folder to delete (without the "/" at the beginning).
+     * @param folderId the folder id to delete.
      * @return the response.
      */
-    public Response deleteFolder(String folder) {
+    public Response deleteFolder(String folderId) {
         return given() //
-                .baseUri(apiBaseUrl) //
-                .urlEncodingEnabled(false) //
+                .baseUri(getApiBaseUrl()) //
+                .urlEncodingEnabled(false) // in case of OS call
                 .when() //
-                .delete("/api/folders/" + encode64(folder));
+                .delete("/api/folders/" + folderId);
     }
 
     /**

@@ -73,7 +73,4 @@ public class ObjectBuffer<T> implements AutoCloseable {
         FilesHelper.deleteQuietly(tempFile.toFile());
     }
 
-    Path getTempFile() {
-        return tempFile;
-    }
 }

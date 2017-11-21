@@ -19,7 +19,7 @@
            ng-class="{'inactive': !historyCtrl.service.canUndo()}"
            ng-click="historyCtrl.service.undo()"
            translate-once-title="UNDO_ICON_TOOLTIP"
-           alt="{{ 'UNDO_ICON_TOOLTIP' | translate }}({{historyCtrl.service.canUndo()}})">
+           alt="{{'UNDO_ICON_TOOLTIP' | translate}} ({{historyCtrl.service.canUndo()}})">
             <icon name="'talend-arrow-left'"></icon>
         </a>
     </li>

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import uk.co.datumedge.hamcrest.json.SameJSONAs;
 
 /**
  * Integration tests on column actions.

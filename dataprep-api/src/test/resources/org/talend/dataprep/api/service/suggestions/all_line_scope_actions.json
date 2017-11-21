@@ -1,61 +1,72 @@
 [
   {
-    "description":"Delete this row",
-    "category":"data cleansing",
-    "label":"Delete row",
-    "name":"delete",
-    "parameters":[
+    "actionScope": [],
+    "alternateDescription": "Delete this row",
+    "alternateLabel": "Delete row",
+    "category": "data cleansing",
+    "description": "Delete this row",
+    "docUrl": "",
+    "dynamic": false,
+    "label": "Delete row",
+    "name": "delete",
+    "parameters": [
       {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "description":"The column to which you want to apply this action",
-        "label":"Column",
-        "default":""
+        "canBeBlank": true,
+        "description": "The column to which you want to apply this action",
+        "implicit": true,
+        "label": "Column",
+        "name": "column_id",
+        "placeHolder": "",
+        "type": "string"
       },
       {
-        "name":"row_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "description":"The row to which you want to apply this action",
-        "label":"Row",
-        "default":""
+        "canBeBlank": true,
+        "description": "The row to which you want to apply this action",
+        "implicit": true,
+        "label": "Row",
+        "name": "row_id",
+        "placeHolder": "",
+        "type": "string"
       },
       {
-        "name":"scope",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label":"Scope",
-        "default":""
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "implicit": true,
+        "label": "Scope",
+        "name": "scope",
+        "placeHolder": "",
+        "type": "string"
       },
       {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "description":"An optional filter to apply action on matching values only.",
-        "label":"Filter",
-        "default":""
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "implicit": true,
+        "label": "Filter",
+        "name": "filter",
+        "placeHolder": "",
+        "type": "filter"
       }
     ]
   },
   {
-    "category":"data cleansing",
-    "label":"Make as header",
-    "name":"make_line_header",
-    "parameters":[
+    "actionScope": [],
+    "alternateDescription": "Cells of this row will become columns names, the row will be deleted",
+    "alternateLabel": "Make as header",
+    "category": "data cleansing",
+    "description": "Cells of this row will become columns names, the row will be deleted",
+    "docUrl": "",
+    "dynamic": false,
+    "label": "Make as header",
+    "name": "make_line_header",
+    "parameters": [
       {
-        "name": "make_line_header_skip_until",
-        "type": "boolean",
-        "implicit": false,
         "canBeBlank": true,
-        "default": "true",
+        "description": "Previous rows will be deleted",
+        "implicit": false,
         "label": "Skip previous rows",
-        "description": "Previous rows will be deleted"
+        "name": "make_line_header_skip_until",
+        "placeHolder": "",
+        "type": "boolean"
       }
     ]
   }

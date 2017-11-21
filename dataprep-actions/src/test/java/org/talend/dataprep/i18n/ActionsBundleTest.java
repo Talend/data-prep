@@ -22,7 +22,7 @@ public class ActionsBundleTest {
 
     @Test
     public void actionLabel_french() throws Exception {
-        assertEquals("Calculer l'opposé", ActionsBundle.INSTANCE.actionLabel(this, Locale.FRENCH, "negate"));
+        assertEquals("Calculer l'opposé", ActionsBundle.actionLabel(this, Locale.FRENCH, "negate"));
     }
 
     @Test

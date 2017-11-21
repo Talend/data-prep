@@ -154,77 +154,36 @@ public class Parameter implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getLabel() {
         return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getDefault() {
         return defaultValue;
     }
 
-    public void setDefault(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
     public boolean isImplicit() {
         return implicit;
-    }
-
-    public void setImplicit(boolean implicit) {
-        this.implicit = implicit;
     }
 
     public boolean isCanBeBlank() {
         return canBeBlank;
     }
 
-    public void setCanBeBlank(boolean canBeBlank) {
-        this.canBeBlank = canBeBlank;
-    }
-
     public String getPlaceHolder() {
         return placeHolder;
     }
 
-    public void setPlaceHolder(String placeHolder) {
-        this.placeHolder = placeHolder;
-    }
-
     public Map<String, Object> getConfiguration() {
         return configuration;
-    }
-
-    public void setConfiguration(Map<String, Object> configuration) {
-        this.configuration = configuration;
-    }
-
-    public Parameter attach(Object parent) {
-        this.parent = parent;
-        return this;
     }
 
     @Override

@@ -68,8 +68,7 @@ public class TDPException extends TalendRuntimeException {
 
     /**
      * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a
-     * component
-     * that does not have access to the exception bundle.
+     * component that does not have access to the exception bundle.
      */
     public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
         super(code, cause, context);
@@ -77,8 +76,8 @@ public class TDPException extends TalendRuntimeException {
         this.messageTitle = messageTitle;
 
         // Translation done at the object creation
-        List<Object> values = getValueFromContext(context);
-        this.localizedMessage = ErrorMessage.message(getCode(), values.toArray(new Object[values.size()]));
+        List<Object> values = getValuesFromContext(context);
+        this.localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
     }
 
     /**
@@ -92,10 +91,10 @@ public class TDPException extends TalendRuntimeException {
     public TDPException(ErrorCode code, Throwable cause, ExceptionContext context) {
         super(code, cause, context);
 
-        List<Object> values = getValueFromContext(context);
-        message = ErrorMessage.defaultMessage(getCode(), values.toArray(new Object[values.size()]));
-        localizedMessage = ErrorMessage.message(getCode(), values.toArray(new Object[values.size()]));
-        messageTitle = ErrorMessage.messageTitle(getCode(), values.toArray(new Object[values.size()]));
+        List<Object> values = getValuesFromContext(context);
+        message = ErrorMessage.getDefaultMessage(getCode(), values.toArray(new Object[values.size()]));
+        localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
+        messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[values.size()]));
     }
 
     /**
@@ -165,13 +164,15 @@ public class TDPException extends TalendRuntimeException {
     /**
      * Return thie list of object store in the context
      *
-     * @param context
-     * @return
+     * @param context the error context
+     *
+     * @return the list of object in the context of the error
      */
-    private List<Object> getValueFromContext(ExceptionContext context) {
-        List<Object> values;
-        values = context == null ? emptyList() //
-                : stream(context.entries().spliterator(), false).map(Map.Entry::getValue).collect(toList());
+    private List<Object> getValuesFromContext(ExceptionContext context) {
+        List<Object> values = emptyList();
+        if (context != null) {
+            values = stream(context.entries().spliterator(), false).map(Map.Entry::getValue).collect(toList());
+        }
         return values;
     }
 }

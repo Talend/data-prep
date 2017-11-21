@@ -27,7 +27,7 @@ import org.talend.dataprep.BaseErrorCodes;
  */
 public class ActionsBundle implements MessagesBundle {
 
-    public static final ActionsBundle INSTANCE = new ActionsBundle();
+    private static final ActionsBundle INSTANCE = new ActionsBundle();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionsBundle.class);
 

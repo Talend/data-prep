@@ -46,7 +46,7 @@ public class ErrorMessage {
      * @param values used to specify the message title
      * @return the desired message to send to the frontend according to the specified error code
      */
-    public static String message(ErrorCode errorCode, Object... values) {
+    public static String getMessage(ErrorCode errorCode, Object... values) {
         String title = getMessagePrefix(errorCode) + MESSAGE_SUFFIX;
         return DataprepBundle.message(title, values);
     }
@@ -58,7 +58,7 @@ public class ErrorMessage {
      * @param values used to specify the message title
      * @return the desired message to send to the frontend according to the specified error code
      */
-    public static String defaultMessage(ErrorCode errorCode, Object... values) {
+    public static String getDefaultMessage(ErrorCode errorCode, Object... values) {
         String title = getMessagePrefix(errorCode) + MESSAGE_SUFFIX;
         return DataprepBundle.defaultMessage(title, values);
     }
@@ -70,7 +70,7 @@ public class ErrorMessage {
      * @param values used to specify the message title
      * @return the desired message title to send to the frontend according to the specified error code
      */
-    public static String messageTitle(ErrorCode errorCode, Object... values) {
+    public static String getMessageTitle(ErrorCode errorCode, Object... values) {
         String title = getMessagePrefix(errorCode) + TITLE_SUFFIX;
         return DataprepBundle.message(title, values);
     }

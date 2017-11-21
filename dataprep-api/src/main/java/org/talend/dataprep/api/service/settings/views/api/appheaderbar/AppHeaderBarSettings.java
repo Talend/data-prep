@@ -15,8 +15,6 @@ package org.talend.dataprep.api.service.settings.views.api.appheaderbar;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import java.util.Objects;
-
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -205,13 +203,13 @@ public class AppHeaderBarSettings implements ViewSettings {
         }
 
         public Builder translate() {
-            if (Objects.nonNull(this.logo)) {
+            if (this.logo != null) {
                 this.logo = LinkSettings.from(this.logo).translate().build();
             }
-            if (Objects.nonNull(this.brand)) {
+            if (this.brand != null) {
                 this.brand = LinkSettings.from(this.brand).translate().build();
             }
-            if (Objects.nonNull(this.search)) {
+            if (this.search != null) {
                 this.search = SearchSettings.from(this.search).translate().build();
             }
             return this;

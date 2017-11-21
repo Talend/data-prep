@@ -64,8 +64,6 @@ public class CSVFastHeaderAndTypeAnalyzer {
      */
     private static final int EMPTY = 0;
 
-    private static final String DEFAULT_HEADER_PREFIX = "COL";
-
     /**
      * The sample of csv lines used to perform the analysis.
      */

@@ -42,7 +42,6 @@ public class CSVFormatTest extends BaseFormatTest {
     @Before
     public void setUp() {
         super.setUp();
-        Locale.setDefault(Locale.US);
         format = (CSVFormat) context.getBean("format#CSV");
     }
 

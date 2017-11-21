@@ -15,8 +15,6 @@ package org.talend.dataprep.transformation.format;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import org.talend.dataprep.api.type.Type;
-
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class CSVWriterCustom extends CSVWriter {
@@ -40,8 +38,8 @@ public class CSVWriterCustom extends CSVWriter {
         this.lineEnd = DEFAULT_LINE_END;
     }
 
-    public void writeNext(String[] nextLine, String[] valuesTypes) {
-        if (nextLine != null && valuesTypes != null && nextLine.length <= valuesTypes.length) {
+    public void writeNext(String[] nextLine, Boolean[] isEnclosed) {
+        if (nextLine != null && isEnclosed != null && nextLine.length == isEnclosed.length) {
             StringBuilder sb = new StringBuilder(128);
 
             for (int i = 0; i < nextLine.length; ++i) {
@@ -50,16 +48,16 @@ public class CSVWriterCustom extends CSVWriter {
                 }
 
                 String nextElement = nextLine[i];
-
-                String nextElementType = valuesTypes[i];
-                Boolean applyEnclosure = nextElementType.equals(Type.STRING.getName());
+                Boolean elementIsEnclosed = isEnclosed[i];
                 if (nextElement != null) {
-                    if (this.quotechar != 0 && applyEnclosure) {
+                    // starting enclosure
+                    if (this.quotechar != 0 && elementIsEnclosed) {
                         sb.append(this.quotechar);
                     }
-
+                    // escaping values
                     sb.append(this.stringContainsSpecialCharacters(nextElement) ? this.processLine(nextElement) : nextElement);
-                    if (this.quotechar != 0 && applyEnclosure) {
+                    // ending enclosure
+                    if (this.quotechar != 0 && elementIsEnclosed) {
                         sb.append(this.quotechar);
                     }
                 }

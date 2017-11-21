@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriter;
 
@@ -110,10 +112,8 @@ public class CSVWriter extends AbstractTransformerWriter {
     private void initWriter() {
         separator = getParameterCharValue(parameters, CSVFormat.ParametersCSV.FIELDS_DELIMITER, defaultSeparator);
         escapeCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
-        enclosureCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
-                defaultTextEnclosure);
-        enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                DEFAULT_ENCLOSURE_MODE);
+        enclosureCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR, defaultTextEnclosure);
+        enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
 
         encoding = extractEncodingWithFallback(parameters.get(CSVFormat.ParametersCSV.ENCODING));
     }
@@ -130,8 +130,10 @@ public class CSVWriter extends AbstractTransformerWriter {
 
     private static char getParameterCharValue(Map<String, String> parameters, String parameterName, String defaultValue) {
         String parameter = parameters.get(parameterName);
-        if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
+        if (parameter == null || parameter.length() > 1) {
             return defaultValue.charAt(0);
+        } else if (StringUtils.isEmpty(parameter)) {
+            return Character.MIN_VALUE;
         } else {
             return parameter.charAt(0);
         }
@@ -151,6 +153,11 @@ public class CSVWriter extends AbstractTransformerWriter {
         return csvWriter;
     }
 
+    /**
+     * Write the content of the current row
+     *
+     * @param row the column metadata
+     */
     @Override
     public void write(DataSetRow row) throws IOException {
         if (!row.values().isEmpty() && row.getRowMetadata().getColumns().isEmpty()) {
@@ -168,21 +175,17 @@ public class CSVWriter extends AbstractTransformerWriter {
         }
     }
 
-    private void internalWrite(BufferedDatasetRow row) {
-        // values need to be written in the same order as the columns
-        if (DEFAULT_ENCLOSURE_MODE.equals(enclosureMode)) {
-            csvWriter.writeNext(row.nextLine, row.valuesTypes);
-        } else {
-            csvWriter.writeNext(row.nextLine);
-        }
-    }
-
+    /**
+     * Write the rowMetadata
+     *
+     * @param rowMetadata
+     */
     @Override
     public void write(final RowMetadata rowMetadata) throws IOException {
         csvWriter = new CSVWriterCustom(new OutputStreamWriter(output, encoding), separator, enclosureCharacter, escapeCharacter);
 
-        // write the columns names
-        internalWrite(new BufferedDatasetRow(rowMetadata));
+        // write the columns names, i.e. the header of the file
+        csvWriter.writeNext(new BufferedDatasetRow(rowMetadata).nextLine);
 
         // Write buffered records
         if (objectBuffer != null) {
@@ -198,6 +201,20 @@ public class CSVWriter extends AbstractTransformerWriter {
         csvWriter.flush();
     }
 
+    /**
+     * Choose the type of writer
+     *
+     * @param row the current row to write
+     */
+    private void internalWrite(BufferedDatasetRow row) {
+        // values need to be written in the same order as the columns
+        if (DEFAULT_ENCLOSURE_MODE.equals(enclosureMode)) {
+            csvWriter.writeNext(row.nextLine, row.computeIsEnclosedField());
+        } else {
+            csvWriter.writeNext(row.nextLine);
+        }
+    }
+
     @Override
     public void flush() throws IOException {
         if (csvWriter != null) {
@@ -206,7 +223,9 @@ public class CSVWriter extends AbstractTransformerWriter {
     }
 
     private static final class BufferedDatasetRow {
+
         public String[] nextLine;
+
         public String[] valuesTypes;
 
         // for jackson serialization
@@ -221,6 +240,10 @@ public class CSVWriter extends AbstractTransformerWriter {
         public BufferedDatasetRow(DataSetRow row) {
             nextLine = row.order().toArray(DataSetRow.SKIP_TDP_ID);
             valuesTypes = row.getRowMetadata().getColumns().stream().map(ColumnMetadata::getType).toArray(String[]::new);
+        }
+
+        public Boolean[] computeIsEnclosedField() {
+            return Arrays.stream(valuesTypes).map(v -> v.equals(Type.STRING.getName())).toArray(Boolean[]::new);
         }
     }
 }

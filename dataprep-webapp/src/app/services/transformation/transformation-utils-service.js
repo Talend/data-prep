@@ -239,7 +239,7 @@ export default class TransformationUtilsService {
 		return (transfo) => {
 			return transfo.labelHtml.toLowerCase().includes(search) ||
 				transfo.description.toLowerCase().includes(search) ||
-				(transfo.alternateLabel !== undefined && transfo.alternateLabel.toLowerCase().incldues(search)) ||
+				(transfo.alternateLabel !== undefined && transfo.alternateLabel.toLowerCase().includes(search)) ||
 				(transfo.alternateDescription !== undefined && transfo.alternateDescription.toLowerCase().includes(search));
 		};
 	}

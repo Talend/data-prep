@@ -71,7 +71,10 @@ public class ObjectBufferTest {
 
     private static class ObjectToBuffer {
 
-        private final String[] values;
+        private String[] values;
+
+        public ObjectToBuffer() {
+        }
 
         public ObjectToBuffer(DataSetRow dataSetRow) {
             values = dataSetRow.toArray();

@@ -28,7 +28,7 @@ public class OSFolderUtil implements FolderUtil {
     @Override
     public FolderContent listPreparation(String folderName) throws IOException {
 
-        Response response = api.listPreparation(folderName);
+        Response response = api.listPreparations(folderName);
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
         return objectMapper.readValue(content, FolderContent.class);
@@ -52,7 +52,8 @@ public class OSFolderUtil implements FolderUtil {
 
     @Override
     public void deleteFolder(Folder folder) {
-        api.deleteFolder(folder.path).then().statusCode(200);
+        String folderPath = api.encode64(folder.path);
+        api.deleteFolder(folderPath).then().statusCode(200);
     }
 
 }

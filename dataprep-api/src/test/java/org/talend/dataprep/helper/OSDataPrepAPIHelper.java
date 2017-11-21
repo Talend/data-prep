@@ -229,7 +229,7 @@ public class OSDataPrepAPIHelper {
      * @param folder the folder where to search preparations.
      * @return the response.
      */
-    public Response listPreparation(String folder) {
+    public Response listPreparations(String folder) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
@@ -353,17 +353,17 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Delete a folder.
+     * Delete a new folder.
      *
-     * @param folderPath the folder path to delete.
+     * @param folderId the folder id to delete.
      * @return the response.
      */
-    public Response deleteFolder(String folderPath) {
+    public Response deleteFolder(String folderId) {
         return given() //
-                .baseUri(apiBaseUrl) //
-                .urlEncodingEnabled(false) //
+                .baseUri(getApiBaseUrl()) //
+                .urlEncodingEnabled(false) // in case of OS call
                 .when() //
-                .delete("/api/folders/" + encode64(folderPath));
+                .delete("/api/folders/" + folderId);
     }
 
     /**

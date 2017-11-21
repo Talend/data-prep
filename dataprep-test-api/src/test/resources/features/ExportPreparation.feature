@@ -10,10 +10,13 @@ Feature: Export Preparation
       | preparationName | 6L3C_preparation |
 
   Scenario: Verify transformation result
+    # escape and enclosure characters shoud be given because they can be empty
     When I export the preparation with parameters :
-      | preparationName | 6L3C_preparation |
-      | dataSetName     | 6L3C_dataset     |
-      | fileName        | 6L3C_result.csv  |
+      | preparationName      | 6L3C_preparation |
+      | csv_escape_character | "                |
+      | csv_enclosure_char   | "                |
+      | dataSetName          | 6L3C_dataset     |
+      | fileName             | 6L3C_result.csv  |
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_default_export_parameters.csv" file
 
   Scenario: Verify transformation result with another escape char
@@ -21,6 +24,7 @@ Feature: Export Preparation
       | preparationName      | 6L3C_preparation |
       | dataSetName          | 6L3C_dataset     |
       | csv_escape_character | #                |
+      | csv_enclosure_char   | "                |
       | fileName             | 6L3C_result.csv  |
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_processed_custom_escape_char.csv" file
 

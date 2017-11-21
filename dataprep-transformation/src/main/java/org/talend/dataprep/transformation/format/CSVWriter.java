@@ -110,8 +110,9 @@ public class CSVWriter extends AbstractTransformerWriter {
     @PostConstruct
     private void initWriter() {
         separator = getParameterCharValue(parameters, CSVFormat.ParametersCSV.FIELDS_DELIMITER, defaultSeparator);
-        escapeCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
-        enclosureCharacter = getParameterCharValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR, defaultTextEnclosure);
+        escapeCharacter = getParameterCharValueWithEmpty(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
+        enclosureCharacter = getParameterCharValueWithEmpty(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
+                defaultTextEnclosure);
         enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
 
         encoding = extractEncodingWithFallback(parameters.get(CSVFormat.ParametersCSV.ENCODING));
@@ -127,7 +128,23 @@ public class CSVWriter extends AbstractTransformerWriter {
         return charset;
     }
 
+    /**
+     * separator value can't be empty
+     */
     private static char getParameterCharValue(Map<String, String> parameters, String parameterName, String defaultValue) {
+        String parameter = parameters.get(parameterName);
+        if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
+            return defaultValue.charAt(0);
+        } else {
+            return parameter.charAt(0);
+        }
+    }
+
+    /**
+     * escape and enclosure character can be empty
+     */
+    private static char getParameterCharValueWithEmpty(Map<String, String> parameters, String parameterName,
+            String defaultValue) {
         String parameter = parameters.get(parameterName);
         if (parameter == null || parameter.length() > 1) {
             return defaultValue.charAt(0);

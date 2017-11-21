@@ -22,25 +22,25 @@ export default function StatisticsTooltipService($translate, state) {
 	let tooltipTemplate = _.template('');
 	$translate(['COLON']).then((i18n) => {
 		tooltipTemplate = _.template(
-			`<strong><%= label %>${i18n.COLON}</strong><span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong><span style="color:yellow"><%= key %></span>`
+			`<strong><%= label %>${i18n.COLON}</strong> <span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong> <span style="color:yellow"><%= key %></span>`
 		);
 	});
 
 	let tooltipFilteredTemplate = _.template('');
 	$translate(['TOOLTIP_MATCHING_FILTER', 'TOOLTIP_MATCHING_FULL', 'COLON']).then((i18n) => {
 		tooltipFilteredTemplate = _.template(
-			`<strong><%= label %> ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong><span style="color:yellow"><%= secondaryValue %> <%= percentage %></span><br/><br/><strong><%= label %> ${i18n.TOOLTIP_MATCHING_FULL}${i18n.COLON}</strong><span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong><span style="color:yellow"><%= key %></span>`
+			`<strong><%= label %> ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow"><%= secondaryValue %> <%= percentage %></span><br/><br/><strong><%= label %> ${i18n.TOOLTIP_MATCHING_FULL}${i18n.COLON}</strong> <span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong> <span style="color:yellow"><%= key %></span>`
 		);
 	});
 
 	let tooltipFilteredAggregTemplate = _.template('');
 	$translate(['TOOLTIP_MATCHING_FILTER', 'COLON']).then((i18n) => {
 		tooltipFilteredAggregTemplate = _.template(
-			`<strong><%= label %> ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong><span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong><span style="color:yellow"><%= key %></span>`
+			`<strong><%= label %> ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow"><%= primaryValue %></span><br/><br/><strong><%= title %>${i18n.COLON}</strong> <span style="color:yellow"><%= key %></span>`
 		);
 	});
 
-	const i18n = {
+	const t = {
 		MAX: $translate.instant('MAX'),
 		MIN: $translate.instant('MIN'),
 		RANGE: $translate.instant('RANGE'),
@@ -82,28 +82,28 @@ export default function StatisticsTooltipService($translate, state) {
 	 * @returns {String} Compiled tooltip
 	 */
 	function getTooltip(keyLabel, key, primaryValue, secondaryValue) {
-		let title = i18n.RECORD;
+		let title = t.RECORD;
 		let keyString = key;
 		const rangeLimits = state.playground.statistics.rangeLimits;
 
 		// range
 		if (key instanceof Array) {
 			const uniqueValue = key[0] === key[1];
-			title = uniqueValue ? i18n.VALUE : i18n.RANGE;
+			title = uniqueValue ? t.VALUE : t.RANGE;
 
 			if (uniqueValue) {
 				keyString = key[0];
 			}
 			else if (key[0] <= rangeLimits.min) {
 				if (key[1] >= rangeLimits.max) {
-					keyString = `[${i18n.MIN},${i18n.MAX}]`;
+					keyString = `[${t.MIN},${t.MAX}]`;
 				}
 				else {
-					keyString = `[${i18n.MIN},${key[1]}[`;
+					keyString = `[${t.MIN},${key[1]}[`;
 				}
 			}
 			else if (key[1] >= rangeLimits.max) {
-				keyString = `[${key[0]},${i18n.MAX}]`;
+				keyString = `[${key[0]},${t.MAX}]`;
 			}
 			else {
 				keyString = `[${key[0]},${key[1]}[`;

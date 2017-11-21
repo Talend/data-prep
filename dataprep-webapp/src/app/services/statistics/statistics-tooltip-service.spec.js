@@ -41,10 +41,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences: </strong><span style="color:yellow">5</span>' +
-				'<br/><br/>' +
-				'<strong>Record: </strong><span style="color:yellow">96ebf96df2</span>');
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">5</span><br/><br/><strong>${i18n.RECORD}${i18n.COLON}</strong> <span style="color:yellow">96ebf96df2</span>`);
 		}));
 
 		it('should create tooltip for range record with min > min data values and  max < max data values', inject(function ($rootScope, StatisticsTooltipService) {
@@ -59,10 +56,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Range: </strong><span style="color:yellow">[-9.375,2[</span>');
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.RANGE}${i18n.COLON}</strong> <span style="color:yellow">[-9.375,2[</span>`);
 		}));
 
 		it('should create tooltip for range record with min < min data values and  max < max data values', inject(function ($rootScope, StatisticsTooltipService) {
@@ -77,10 +71,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Range: </strong><span style="color:yellow">[MIN,2[</span>');
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.RANGE}${i18n.COLON}</strong> <span style="color:yellow">[MIN,2[</span>`);
 		}));
 
 		it('should create tooltip for range record with min < min data values and  max >= max data values', inject(function ($rootScope, StatisticsTooltipService) {
@@ -95,10 +86,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Range: </strong><span style="color:yellow">[MIN,MAX]</span>');
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.RANGE}${i18n.COLON}</strong> <span style="color:yellow">[MIN,MAX]</span>`);
 		}));
 
 		it('should create tooltip for range record with min > min data values and  max >= max data values', inject(function ($rootScope, StatisticsTooltipService) {
@@ -113,10 +101,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Range: </strong><span style="color:yellow">[-1,MAX]</span>');
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.RANGE}${i18n.COLON}</strong> <span style="color:yellow">[-1,MAX]</span>`);
 		}));
 
 		it('should create tooltip for unique-value range record', inject(function ($rootScope, StatisticsTooltipService) {
@@ -131,10 +116,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Value: </strong><span style="color:yellow">2</span>');
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.VALUE}${i18n.COLON}</strong> <span style="color:yellow">2</span>`);
 		}));
 	});
 
@@ -152,12 +134,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences matching your filter: </strong><span style="color:yellow">1 (20.0%)</span>' +
-				'<br/><br/>' +
-				'<strong>Occurrences in entire dataset: </strong><span style="color:yellow">5</span>' +
-				'<br/><br/>' +
-				'<strong>Record: </strong><span style="color:yellow">96ebf96df2</span>');
+			expect(tooltip).toBe(`<strong>Occurrences ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow">1 (20.0%)</span><br/><br/><strong>Occurrences ${i18n.TOOLTIP_MATCHING_FULL}${i18n.COLON}</strong> <span style="color:yellow">5</span><br/><br/><strong>${i18n.RECORD}${i18n.COLON}</strong> <span style="color:yellow">96ebf96df2</span>`);
 		}));
 
 		it('should create tooltip for aggregation chart', inject(function ($rootScope, StatisticsTooltipService) {
@@ -174,10 +151,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Average matching your filter: </strong><span style="color:yellow">5</span>' +
-				'<br/><br/>' +
-				'<strong>Record: </strong><span style="color:yellow">96ebf96df2</span>');
+			expect(tooltip).toBe(`<strong>Average ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow">5</span><br/><br/><strong>${i18n.RECORD}${i18n.COLON}</strong> <span style="color:yellow">96ebf96df2</span>`);
 		}));
 
 		it('should create tooltip for range record', inject(function ($rootScope, StatisticsTooltipService) {
@@ -193,12 +167,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences matching your filter: </strong><span style="color:yellow">5 (50.0%)</span>' +
-				'<br/><br/>' +
-				'<strong>Occurrences in entire dataset: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Range: </strong><span style="color:yellow">[-9.375,2[</span>');
+			expect(tooltip).toBe(`<strong>Occurrences ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow">5 (50.0%)</span><br/><br/><strong>Occurrences ${i18n.TOOLTIP_MATCHING_FULL}${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.RANGE}${i18n.COLON}</strong> <span style="color:yellow">[-9.375,2[</span>`);
 		}));
 
 		it('should create tooltip for unique-value range record', inject(function ($rootScope, StatisticsTooltipService) {
@@ -214,12 +183,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences matching your filter: </strong><span style="color:yellow">5 (50.0%)</span>' +
-				'<br/><br/>' +
-				'<strong>Occurrences in entire dataset: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Value: </strong><span style="color:yellow">2</span>');
+			expect(tooltip).toBe(`<strong>Occurrences ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow">5 (50.0%)</span><br/><br/><strong>Occurrences ${i18n.TOOLTIP_MATCHING_FULL}${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.VALUE}${i18n.COLON}</strong> <span style="color:yellow">2</span>`);
 		}));
 
 		it('should create tooltip without secondary data (not computed yet)', inject(function ($rootScope, StatisticsTooltipService) {
@@ -234,12 +198,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(
-				'<strong>Occurrences matching your filter: </strong><span style="color:yellow"> (0%)</span>' +
-				'<br/><br/>' +
-				'<strong>Occurrences in entire dataset: </strong><span style="color:yellow">10</span>' +
-				'<br/><br/>' +
-				'<strong>Value: </strong><span style="color:yellow">2</span>');
+			expect(tooltip).toBe(`<strong>Occurrences ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow"> (0%)</span><br/><br/><strong>Occurrences ${i18n.TOOLTIP_MATCHING_FULL}:</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.VALUE}${i18n.COLON}</strong> <span style="color:yellow">2</span>`);
 		}));
 	});
 });

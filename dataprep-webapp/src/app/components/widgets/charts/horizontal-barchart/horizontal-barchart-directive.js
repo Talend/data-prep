@@ -241,16 +241,12 @@ export default function HorizontalBarchart($timeout, $translate) {
 					.append('foreignObject')
 					.attr('width', width)
 					.attr('height', yScale.rangeBand())
-					.attr('transform', function (d) {
-						return 'translate(0,' + yScale(getKey(d)) + ')';
-					})
+					.attr('transform', d => `translate(0,${yScale(getKey(d))})`)
 
 					// label
 					.append('xhtml:div')
-					.attr('class', 'label ' + getSecondaryClassName())
-					.html(function (d) {
-						return getKey(d) || `(${$translate.instant('EMPTY')})`;
-					});
+					.attr('class', `label ${getSecondaryClassName()}`)
+					.html(d => getKey(d) || `(${$translate.instant('EMPTY')})`);
 			}
 
 			function drawHoverBars(statData, width) {

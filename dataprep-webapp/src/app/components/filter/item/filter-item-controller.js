@@ -30,13 +30,13 @@ export default class FilterItemCtrl {
 			this.filterValues = this.filter.value;
 			switch (this.filter.type) {
 			case 'contains':
-				this.sign = ' ≅ ';
+				this.sign = '≅';
 				break;
 			case 'exact':
-				this.sign = ' = ';
+				this.sign = '=';
 				break;
 			case 'inside_range':
-				this.sign = ` ${this.$translate.instant('IN')} `;
+				this.sign = this.$translate.instant('IN');
 				break;
 			default:
 				this.sign = this.$translate.instant('COLON');

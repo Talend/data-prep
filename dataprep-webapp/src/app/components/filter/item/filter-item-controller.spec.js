@@ -70,7 +70,7 @@ describe('Filter item controller', () => {
         const ctrl = createController();
 
         //then
-        expect(ctrl.sign).toEqual(` ${i18n.IN} `);
+        expect(ctrl.sign).toEqual(i18n.IN);
     });
 
     it('should set the sign character to : ":"', () => {
@@ -81,7 +81,7 @@ describe('Filter item controller', () => {
         const ctrl = createController();
 
         //then
-        expect(ctrl.sign).toEqual(': ');
+        expect(ctrl.sign).toEqual(i18n.COLON);
     });
 
     it('should set the sign character to : "≅"', () => {
@@ -92,7 +92,7 @@ describe('Filter item controller', () => {
         const ctrl = createController();
 
         //then
-        expect(ctrl.sign).toEqual(' ≅ ');
+        expect(ctrl.sign).toEqual('≅');
     });
 
     it('should set the sign character to : "=" ', () => {
@@ -103,7 +103,7 @@ describe('Filter item controller', () => {
         const ctrl = createController();
 
         //then
-        expect(ctrl.sign).toEqual(' = ');
+        expect(ctrl.sign).toEqual('=');
     });
 
     it('should execute edit callback when submit is called', () => {

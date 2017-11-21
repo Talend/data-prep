@@ -202,9 +202,7 @@ export default function VerticalBarchart($timeout) {
 			function drawBars(containerClassName, statData, getValue, barClassName) {
 				const bars = svg.select('.' + containerClassName)
 					.selectAll('.' + barClassName)
-					.data(statData, function (d) {
-						return '' + getInterval(d);
-					});
+					.data(statData, d => `${getInterval(d)}`);
 
 				// enter
 				bars.enter()

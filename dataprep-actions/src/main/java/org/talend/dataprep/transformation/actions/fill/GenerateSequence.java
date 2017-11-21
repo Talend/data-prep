@@ -12,9 +12,19 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.fill;
 
+import java.math.BigInteger;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -22,12 +32,6 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.math.BigInteger;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Generate a sequence on a column based on start value and step value.
@@ -37,14 +41,14 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
     public static final String ACTION_NAME = "generate_a_sequence";
 
+    /** The next value of sequence to calculate */
+    public static final String SEQUENCE = "sequence"; //$NON-NLS-1$
+
     /** The starting value of sequence. */
     protected static final String START_VALUE = "start_value";
 
     /** The step value of sequence. */
     protected static final String STEP_VALUE = "step_value";
-
-    /** The next value of sequence to calculate */
-    public static final String SEQUENCE = "sequence"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -102,9 +106,13 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
         BigInteger step;
 
-        public CalcSequence(Map<String, String> parameters) throws IllegalArgumentException {
-            if (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE)) {
-                throw new IllegalArgumentException("Missing parameter: " + START_VALUE + " and " + STEP_VALUE + " are required");
+        public CalcSequence(Map<String, String> parameters) {
+            if (StringUtils.isEmpty(parameters.get(START_VALUE))) {
+                throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
+                        ExceptionContext.build().put("paramName", START_VALUE));
+            } else if (StringUtils.isEmpty(parameters.get(STEP_VALUE))) {
+                throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
+                        ExceptionContext.build().put("paramName", STEP_VALUE));
             }
             this.nextValue = new BigInteger(parameters.get(START_VALUE));
             this.step = new BigInteger(parameters.get(STEP_VALUE));

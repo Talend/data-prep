@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -209,7 +208,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private void internalWrite(BufferedDatasetRow row) {
         // values need to be written in the same order as the columns
         if (DEFAULT_ENCLOSURE_MODE.equals(enclosureMode)) {
-            csvWriter.writeNext(row.nextLine, row.computeIsEnclosedField());
+            csvWriter.writeNext(row.nextLine, row.isEnclosedTypeValues);
         } else {
             csvWriter.writeNext(row.nextLine);
         }
@@ -226,7 +225,7 @@ public class CSVWriter extends AbstractTransformerWriter {
 
         public String[] nextLine;
 
-        public String[] valuesTypes;
+        public Boolean[] isEnclosedTypeValues;
 
         // for jackson serialization
         public BufferedDatasetRow() {
@@ -234,16 +233,14 @@ public class CSVWriter extends AbstractTransformerWriter {
 
         public BufferedDatasetRow(RowMetadata rowMetadata) {
             nextLine = rowMetadata.getColumns().stream().map(ColumnMetadata::getName).toArray(String[]::new);
-            valuesTypes = rowMetadata.getColumns().stream().map(ColumnMetadata::getType).toArray(String[]::new);
+            isEnclosedTypeValues = rowMetadata.getColumns().stream().map(ColumnMetadata::getType)
+                    .map(v -> v.equals(Type.STRING.getName())).toArray(Boolean[]::new);
         }
 
         public BufferedDatasetRow(DataSetRow row) {
             nextLine = row.order().toArray(DataSetRow.SKIP_TDP_ID);
-            valuesTypes = row.getRowMetadata().getColumns().stream().map(ColumnMetadata::getType).toArray(String[]::new);
-        }
-
-        public Boolean[] computeIsEnclosedField() {
-            return Arrays.stream(valuesTypes).map(v -> v.equals(Type.STRING.getName())).toArray(Boolean[]::new);
+            isEnclosedTypeValues = row.getRowMetadata().getColumns().stream().map(ColumnMetadata::getType)
+                    .map(v -> v.equals(Type.STRING.getName())).toArray(Boolean[]::new);
         }
     }
 }

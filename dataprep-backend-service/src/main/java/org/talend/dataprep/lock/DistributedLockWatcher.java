@@ -12,8 +12,7 @@
 
 package org.talend.dataprep.lock;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ public class DistributedLockWatcher implements LockFactory, ApplicationListener<
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DistributedLockWatcher.class);
 
-    private final Set<DistributedLock> locks = new HashSet<>();
+    private final Map<String, DistributedLock> locks = new HashMap<>();
 
     private final LockFactory delegate;
 
@@ -41,7 +40,7 @@ public class DistributedLockWatcher implements LockFactory, ApplicationListener<
     public DistributedLock getLock(String id) {
         final DistributedLock lock = delegate.getLock(id);
         final WatchedDistributedLock watchedDistributedLock = new WatchedDistributedLock(lock);
-        locks.add(watchedDistributedLock);
+        locks.put(watchedDistributedLock.getKey(), watchedDistributedLock);
         return watchedDistributedLock;
     }
 
@@ -49,7 +48,8 @@ public class DistributedLockWatcher implements LockFactory, ApplicationListener<
     public void onApplicationEvent(ContextClosedEvent event) {
         if (!locks.isEmpty()) {
             LOGGER.info("Application is being shut down but {} locks remain, releasing them...", locks.size());
-            for (DistributedLock lock : locks) {
+            final Collection<DistributedLock> locksToRelease = new ArrayList<>(locks.values());
+            for (DistributedLock lock : locksToRelease) {
                 LOGGER.info("Releasing lock '{}'", lock.getKey());
                 try {
                     lock.unlock();
@@ -61,6 +61,13 @@ public class DistributedLockWatcher implements LockFactory, ApplicationListener<
         } else {
             LOGGER.info("No lock to release on shutdown.");
         }
+    }
+
+    /**
+     * @return Returns an unmodifiable set of {@link DistributedLock} currently watched by this instance.
+     */
+    public Collection<DistributedLock> getLocks() {
+        return Collections.unmodifiableCollection(locks.values());
     }
 
     class WatchedDistributedLock implements DistributedLock {
@@ -82,8 +89,9 @@ public class DistributedLockWatcher implements LockFactory, ApplicationListener<
                 lock.unlock();
             } catch (Exception e) {
                 LOGGER.debug("Unable to successfully unlock lock '{}'", lock.getKey(), e);
-                locks.remove(lock);
                 throw new IllegalStateException("Unable to remove lock", e);
+            } finally {
+                locks.remove(lock.getKey());
             }
         }
 

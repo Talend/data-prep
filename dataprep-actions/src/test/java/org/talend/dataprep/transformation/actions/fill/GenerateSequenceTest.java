@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
 import java.util.*;
 
 import org.junit.Test;
-import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
@@ -42,6 +41,11 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(), is(ActionCategory.NUMBERS.getDisplayName()));
+    }
+
+    @Test
+    public void should_accept_every_column() {
+        assertTrue(action.acceptField(null));
     }
 
     @Test
@@ -218,48 +222,6 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
-    }
-
-    @Test(expected = TalendRuntimeException.class)
-    public void test_CalcSequence_with_empty_start() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(GenerateSequence.START_VALUE, "");
-        parameters.put(GenerateSequence.STEP_VALUE, "2");
-
-        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
-    }
-
-    @Test(expected = TalendRuntimeException.class)
-    public void test_CalcSequence_with_empty_step() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(GenerateSequence.START_VALUE, "2");
-        parameters.put(GenerateSequence.STEP_VALUE, "");
-
-        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
-    }
-
-    @Test(expected = TalendRuntimeException.class)
-    public void test_CalcSequence_without_start_param() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(GenerateSequence.STEP_VALUE, "2");
-
-        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
-    }
-
-    @Test(expected = TalendRuntimeException.class)
-    public void test_CalcSequence_without_step_param() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(GenerateSequence.START_VALUE, "2");
-
-        final GenerateSequence.CalcSequence sequence = new GenerateSequence.CalcSequence(parameters);
     }
 
     @Test

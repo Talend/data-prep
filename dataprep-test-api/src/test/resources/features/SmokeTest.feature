@@ -22,6 +22,7 @@ Feature: Perform an OS Smoke Test
       | columnId        | 0002                |
       | preparationName | 10L3C_preparation   |
     Then I check that a step like "changeDate" exists in the preparation "10L3C_preparation"
+    # this split should not create new column (as the separator
     Given I add a step identified by "dateSplit" with parameters :
       | actionName      | split             |
       | limit           | 2                 |

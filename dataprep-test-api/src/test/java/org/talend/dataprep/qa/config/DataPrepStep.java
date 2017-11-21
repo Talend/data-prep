@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.qa.step.config;
+package org.talend.dataprep.qa.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,11 +20,11 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.talend.dataprep.helper.DataPrepAPIHelper;
-import org.talend.dataprep.qa.OSIntegrationTestUtil;
+import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.SpringContextConfiguration;
-import org.talend.dataprep.qa.bean.FeatureContext;
 import org.talend.dataprep.qa.dto.PreparationDetails;
+import org.talend.dataprep.qa.util.FolderUtil;
+import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.response.Response;
@@ -63,10 +63,13 @@ public abstract class DataPrepStep {
     protected FeatureContext context;
 
     @Autowired
-    protected DataPrepAPIHelper api;
+    protected OSDataPrepAPIHelper api;
 
     @Autowired
     protected OSIntegrationTestUtil util;
+
+    @Autowired
+    protected FolderUtil folderUtil;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 

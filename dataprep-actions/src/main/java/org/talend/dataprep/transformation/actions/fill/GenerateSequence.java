@@ -17,7 +17,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -28,12 +32,6 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.math.BigInteger;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Generate a sequence on a column based on start value and step value.
  */
@@ -42,14 +40,17 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
     public static final String ACTION_NAME = "generate_a_sequence";
 
-    /** The starting value of sequence. */
+    /** The next value of sequence to calculate */
+    protected static final String SEQUENCE = "sequence"; //$NON-NLS-1$
+
+    /** The starting value of sequence */
     protected static final String START_VALUE = "start_value";
 
-    /** The step value of sequence. */
+    /** The step value of sequence */
     protected static final String STEP_VALUE = "step_value";
 
-    /** The next value of sequence to calculate */
-    public static final String SEQUENCE = "sequence"; //$NON-NLS-1$
+    /** Class logger */
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateSequence.class);
 
     @Override
     public String getName() {
@@ -90,8 +91,14 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
+        Map<String, String> parameters = actionContext.getParameters();
+        if (StringUtils.isEmpty(parameters.get(START_VALUE)) || StringUtils.isEmpty(parameters.get(STEP_VALUE))) {
+            LOGGER.warn("At least one of the parameters is invalid {}/{} {}/{} ", START_VALUE, parameters.get(START_VALUE),
+                    STEP_VALUE, parameters.get(STEP_VALUE));
+            actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+        }
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            actionContext.get(SEQUENCE, values -> new CalcSequence(actionContext.getParameters()));
+            actionContext.get(SEQUENCE, values -> new CalcSequence(parameters));
         }
     }
 
@@ -112,10 +119,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
 
         BigInteger step;
 
-        public CalcSequence(Map<String, String> parameters) throws IllegalArgumentException {
-            if (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE)) {
-                throw new IllegalArgumentException("Missing parameter: " + START_VALUE + " and " + STEP_VALUE + " are required");
-            }
+        public CalcSequence(Map<String, String> parameters) {
             this.nextValue = new BigInteger(parameters.get(START_VALUE));
             this.step = new BigInteger(parameters.get(STEP_VALUE));
         }

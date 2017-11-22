@@ -189,7 +189,7 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * A user tries to run a live dataset without any TIC access.
      */
-    UNAUTHORIZED_ACCESS_TO_TIC(UNAUTHORIZED.value()),
+    UNAUTHORIZED_ACCESS_TO_TIC(BAD_GATEWAY.value()),
     /**
      * A lookup dataSet used by a preparation with a given name have not the expected format.
      */

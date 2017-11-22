@@ -55,6 +55,8 @@ public enum CommonErrorCodes implements ErrorCode {
      * Unable to connect TAC: address specified in configuration is most likely incorrect and leads to a connection timeout.
      */
     UNABLE_TO_CONNECT_TO_TAC(BAD_GATEWAY.value()),
+    TAC_SERVER_UNREACHABLE(BAD_GATEWAY.value()),
+    TIC_SERVER_UNREACHABLE(BAD_GATEWAY.value()),
     /**
      * Unable to connect TIC: address specified in configuration is most likely incorrect and leads to a connection timeout.
      */
@@ -71,6 +73,11 @@ public enum CommonErrorCodes implements ErrorCode {
      * TAC rights are not sufficient to complete operation∕.
      */
     INSUFFICIENT_RIGHTS_TAC_CREDENTIAL(BAD_GATEWAY.value()),
+    /**
+     * TAC rights are not sufficient to get the tasks list∕.
+     */
+    INSUFFICIENT_RIGHTS_TAC_LIST_TASKS(BAD_GATEWAY.value()),
+    INSUFFICIENT_RIGHTS_TIC_LIST_FLOWS(BAD_GATEWAY.value()),
     /**
      * Error thrown when data prep fails to run remote job.
      */

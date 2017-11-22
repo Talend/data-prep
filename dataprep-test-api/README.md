@@ -1,7 +1,7 @@
-# Talend Data Preparation - Cucumber test
+# Talend Data Preparation OS - Cucumber test
 ![alt text](https://www.talend.com/wp-content/uploads/2016/07/talend-logo.png "Talend")
 
-This folder contains the the Data Preparation API cucumber tests. 
+This folder contains the Data Preparation API cucumber tests. 
 
 ## Prerequisites
 
@@ -9,41 +9,41 @@ You need Java *8* (or higher), Maven 3.x. and dataprep-api jar in your maven rep
 
 ## Launch integration tests
 There are different ways to run Cucumber integration tests :
-* Launch maven test goal on dataprep-test-api project 
-* Launch OSRunnerConfigurationTest class as a JUnit test in you preferred IDE
+* Launch maven test goal on `dataprep-test-api` project 
+* Launch `OSRunnerConfigurationTest` class as a JUnit test in you preferred IDE
 * Use a dependent IDE Cucumber plugin to lunch a specific feature file.  
 
 _Note : 
-Data-prep backend service is configured in dataprep-test-api/application.properties file.
+Data-prep backend service is configured in `dataprep-test-api/application.properties` file.
 Be sure adapt it to your own configuration before launching the integration tests._
 
 ### Maven launch
-To launch all cucumber test, you have to call the test maven phase. 
+To launch all cucumber test, you have to call the maven test phase with `run-tests` profile. 
 ```
-$ mvn test
+$ mvn test -Prun-tests
 ```
 It's possible to launch a specific test by specifying it in the command line:
 ```
-$ mvn test -Dcucumber.options="classpath:features/os/ExportPreparation.feature"
+$ mvn test -Prun-tests -Dcucumber.options="classpath:features/os/ExportPreparation.feature"
 ```
 By default cucumber test will call the backend api on http://dev.data-prep.talend.lan:8888.
 You can set another url value with the maven parameter:
 ```
-$ mvn clean test -DmyKey=http://backend.api.server.url
+$ mvn test -Prun-tests -Dbackend.api.url=http://localhost:8888
 ```
 Available key are:
 * ``backend.api.url`` : to specify the global api base url
 * ``restassured.debug`` : to switch on RestAssured library debug logs (default value : false) 
 
 ## Report
-The default cucumber report will be available on the ``target/cucumber directory``.
+The default cucumber report will be available in the `dataprep-test-api/target/cucumber` directory.
 If you want a more readable cucumber report just launch the command line:
 
 ```
-$ mvn test verify
+$ mvn test -Prun-tests verify
 ```
 
-The cucumber report will be available on /site/cucumber-reports
+The full cucumber report will be available in `dataprep-test-api/target/site/cucumber-reports`
 
 ## Adding new features
 

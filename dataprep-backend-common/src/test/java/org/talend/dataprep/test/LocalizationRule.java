@@ -6,6 +6,12 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+/**
+ * A {@link TestRule} to set a given {@link Locale locale} before each test execution and rollback to the previous locale
+ * once test is over.
+ *
+ * @see Locale#setDefault(Locale) 
+ */
 public class LocalizationRule implements TestRule {
 
     private final Locale locale;

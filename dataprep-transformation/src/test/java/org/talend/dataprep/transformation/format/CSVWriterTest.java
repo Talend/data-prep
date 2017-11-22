@@ -216,7 +216,7 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
      * see https://jira.talendforge.org/browse/TDP-4389
      */
     @Test
-    public void should_not_enclose_with_empty_char() throws Exception {
+    public void should_neither_enclose_nor_escape_with_empty_char() throws Exception {
         // given
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         Map<String, Object> parameters = new HashMap<>();

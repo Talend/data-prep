@@ -57,6 +57,9 @@ public class NumericHelper {
         }
         // Check for (nnnn) values (negative values in accounting).
         String strForValidation = StringUtils.remove(str, ' ');
+        if (StringUtils.isEmpty(strForValidation)) {
+            return false;
+        }
         if (strForValidation.lastIndexOf('(') == 0 && strForValidation.lastIndexOf(')') == strForValidation.length() - 1) {
             strForValidation = strForValidation.substring(1, strForValidation.length() - 1); // Keep only nnnn
         }

@@ -26,10 +26,8 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
-import org.talend.dataquality.semantic.index.LuceneIndex;
 import org.talend.dataquality.semantic.model.CategoryType;
 import org.talend.dataquality.semantic.model.DQCategory;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
 
 import java.util.*;
 
@@ -61,8 +59,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
      */
     private static final String COLUMN_IS_SEMANTIC_KEY = "is_semantic_category";
 
-    private static final String LUCENE_INDEX_KEY = "lucene_index";
-
     private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
 
     @Override
@@ -92,7 +88,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
             String matchThresholdPara = actionContext.getParameters().get(MATCH_THRESHOLD_PARAMETER);
             Double thresholdValue = MatchThresholdEnum.valueOf(matchThresholdPara).getThreshold();
             actionContext.get(MATCH_THRESHOLD_KEY, p -> thresholdValue);
-            actionContext.get(LUCENE_INDEX_KEY, p -> CategoryRecognizerBuilder.newBuilder().getSharedDataDictIndex());
             // this action only apply for column uses Semantic category.
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final String columnId = actionContext.getColumnId();
@@ -118,38 +113,43 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        // Return original value when the column not use semantic
-        boolean isColumnUseSemantic = context.get(COLUMN_IS_SEMANTIC_KEY);
-        if (!isColumnUseSemantic) {
-            return;
+        if (isApplicable(row, context)) {
+            final String columnId = context.getColumnId();
+            final String value = row.get(columnId);
+            final RowMetadata rowMetadata = context.getRowMetadata();
+            final ColumnMetadata column = rowMetadata.getById(columnId);
+            final Double threshold = context.get(MATCH_THRESHOLD_KEY);
+            String closestValue =
+                    CategoryRegistryManager.getInstance().findMostSimilarValue(value, column.getDomain(), threshold);
+            // If not found the similar value, display original value.
+            if (!StringUtils.isEmpty(closestValue)) {
+                row.set(columnId, closestValue);
+            }
         }
-        final String columnId = context.getColumnId();
-        final String value = row.get(columnId);
-        // Apply on none-empty and invalid value.
-        if (StringUtils.isEmpty(value) || !row.isInvalid(columnId)) {
-            return;
-        }
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
+    }
 
-        final LuceneIndex luceneIndex = context.get(LUCENE_INDEX_KEY);
-        final Double threshold = context.get(MATCH_THRESHOLD_KEY);
-        Map<String, Double> similarMap = luceneIndex.findSimilarFieldsInCategory(value, column.getDomain(), threshold);
-        String closestValue = luceneIndex.findMostSimilarFieldInCategory(value, column.getDomain(), threshold);
-        // If not found the similar value, display original value.
-        if (!StringUtils.isEmpty(closestValue)) {
-            row.set(columnId, closestValue);
+    /**
+     * Applicable row only when the column uses semantic and the row value is invalid.
+     *
+     * @param row
+     * @param context
+     * @return
+     */
+    private boolean isApplicable(DataSetRow row, ActionContext context) {
+        boolean isColumnUseSemantic = context.get(COLUMN_IS_SEMANTIC_KEY);
+        if (isColumnUseSemantic) {
+            final String columnId = context.getColumnId();
+            final String value = row.get(columnId);
+            return !StringUtils.isEmpty(value) && row.isInvalid(columnId);
         }
+        return false;
     }
 
     private boolean isDictionaryType(ColumnMetadata column) {
         String domain = column.getDomain();
-        if (StringUtils.isEmpty(domain)) {
-            return false;
-        }
-        DQCategory category = CategoryRegistryManager.getInstance().getCategoryMetadataByName(domain);
-        if (category != null && CategoryType.DICT.equals(category.getType())) {
-            return true;
+        if (!StringUtils.isEmpty(domain)) {
+            DQCategory category = CategoryRegistryManager.getInstance().getCategoryMetadataByName(domain);
+            return category != null && CategoryType.DICT.equals(category.getType());
         }
         return false;
     }

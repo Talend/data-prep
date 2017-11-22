@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.dataquality;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -45,6 +46,12 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     private final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
 
+    private final String fixedName = "David Bowie";
+
+    private final String columnId0 = "0000";
+
+    private final String columnId1 = "0001";
+
     /**
      * The action to test.
      */
@@ -57,7 +64,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         standardizeInvalid = new StandardizeInvalid();
         parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0001");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId1);
         parameters.put(MATCH_THRESHOLD_PARAMETER, "DEFAULT");
 
     }
@@ -84,22 +91,15 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
     public void should_standardize() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Russian Federatio");
+        values.put(columnId0, fixedName);
+        values.put(columnId1, "Russian Federatio");
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setInvalid("0001");
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0001").setDomain("COUNTRY");
-        rowMetadata.getById("0001").setType(Type.STRING.getName());
-        List<SemanticDomain> semanticDomains = new ArrayList<>();
-        semanticDomains.add(new SemanticDomain("COUNTRY", "Country", 0.85f));
-        rowMetadata.getById("0001").setSemanticDomains(semanticDomains);
+        final DataSetRow row = createRow(values, columnId1, "COUNTRY");
 
         final Map<String, Object> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "David Bowie");
-        expectedValues.put("0001", "Russian Federation");
-        expectedValues.put("__tdpInvalid", "0001");
+        expectedValues.put(columnId0, fixedName);
+        expectedValues.put(columnId1, "Russian Federation");
+        expectedValues.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
@@ -112,18 +112,13 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
     public void should_not_standardize_no_domain() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Russian Federatio");
+        values.put(columnId0, fixedName);
+        values.put(columnId1, "Russian Federatio");
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setInvalid("0001");
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0001").setType(Type.STRING.getName());
+        final DataSetRow row = createRow(values, columnId1, "");
 
-        final Map<String, Object> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "David Bowie");
-        expectedValues.put("0001", "Russian Federatio");
-        expectedValues.put("__tdpInvalid", "0001");
+        final Map<String, String> expectedValues = values;
+        expectedValues.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
@@ -136,20 +131,13 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
     public void should_not_standardize_value_is_valid() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Russie");
+        values.put(columnId0, fixedName);
+        values.put(columnId1, "Russie");
 
         // set semantic domain
-        final DataSetRow row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        List<SemanticDomain> semanticDomains = new ArrayList<>();
-        semanticDomains.add(new SemanticDomain("COUNTRY", "Country", 0.85f));
-        rowMetadata.getById("0001").setSemanticDomains(semanticDomains);
-        rowMetadata.getById("0001").setType(Type.STRING.getName());
+        final DataSetRow row = createRow(values, null, "COUNTRY");
 
-        final Map<String, Object> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "David Bowie");
-        expectedValues.put("0001", "Russie");
+        final Map<String, String> expectedValues = values;
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
@@ -164,23 +152,13 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         // given
         parameters.put(MATCH_THRESHOLD_PARAMETER, "HIGH");
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Ferrand");
+        values.put(columnId0, fixedName);
+        values.put(columnId1, "Ferrand");
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setInvalid("0001");
-        // set semantic domain
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0001").setDomain("FR_COMMUNE");
-        List<SemanticDomain> semanticDomains = new ArrayList<>();
-        semanticDomains.add(new SemanticDomain("FR_COMMUNE", "Fr_Commune", 0.85f));
-        rowMetadata.getById("0001").setSemanticDomains(semanticDomains);
-        rowMetadata.getById("0001").setType(Type.STRING.getName());
+        final DataSetRow row = createRow(values, columnId1, "FR_COMMUNE");
 
-        final Map<String, Object> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "David Bowie");
-        expectedValues.put("0001", "Ferrand");
-        expectedValues.put("__tdpInvalid", "0001");
+        final Map<String, String> expectedValues = values;
+        expectedValues.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
@@ -193,23 +171,14 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
     public void should_not_standardize_empty() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "");
+        values.put(columnId0, "David Bowie");
+        values.put(columnId1, "");
 
         // set semantic domain
-        final DataSetRow row = new DataSetRow(values);
-        row.setInvalid("0001");
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0001").setDomain("COUNTRY");
-        rowMetadata.getById("0001").setType(Type.STRING.getName());
-        List<SemanticDomain> semanticDomains = new ArrayList<>();
-        semanticDomains.add(new SemanticDomain("COUNTRY", "Country", 0.85f));
-        rowMetadata.getById("0001").setSemanticDomains(semanticDomains);
+        final DataSetRow row = createRow(values, columnId1, "COUNTRY");
 
-        final Map<String, Object> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "David Bowie");
-        expectedValues.put("0001", "");
-        expectedValues.put("__tdpInvalid", "0001");
+        final Map<String, String> expectedValues = values;
+        expectedValues.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
@@ -222,6 +191,18 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
     public void should_action_Scope() {
         assertTrue(standardizeInvalid.getActionScope().size() == 1);
         assertTrue(standardizeInvalid.getActionScope().equals(ACTION_SCOPE));
+    }
+
+    private DataSetRow createRow(Map<String, String> inputValues, String invalidColumnId, String domain) {
+        DataSetRow row = new DataSetRow(inputValues);
+        if (!StringUtils.isEmpty(invalidColumnId)) {
+            row.setInvalid(invalidColumnId);
+        }
+        final RowMetadata rowMetadata = row.getRowMetadata();
+        ColumnMetadata columnMetadata = rowMetadata.getById(columnId1);
+        columnMetadata.setDomain(domain);
+        columnMetadata.setType(Type.STRING.getName());
+        return row;
     }
 
     @Test

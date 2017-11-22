@@ -36,6 +36,7 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.preparation.BasePreparationTest;
+import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataprep.test.MockTDPException;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.util.SortAndOrderHelper;
@@ -63,6 +65,9 @@ public class PreparationControllerTest extends BasePreparationTest {
 
     @Autowired
     private PreparationUtils preparationUtils;
+
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
 
     @Test
     public void CORSHeaders() throws Exception {
@@ -446,7 +451,7 @@ public class PreparationControllerTest extends BasePreparationTest {
                 final FolderEntry entry = iterator.next();
                 if (entry.getContentId().equals(copyId)) {
                     found = true;
-                    assertEquals("prep_1 copy", repository.get(entry.getContentId(), Preparation.class).getName());
+                    assertEquals("preparation.copy.newname", repository.get(entry.getContentId(), Preparation.class).getName());
                 }
             }
             assertTrue(found);

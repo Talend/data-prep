@@ -43,5 +43,6 @@ public class Localization {
             LOGGER.warn("Illegal locale supplied in configuration: {}. Defaulting to english.", defaultLocale);
         }
         Locale.setDefault(locale);
+        LOGGER.info("Locale used: '{}'", locale);
     }
 }

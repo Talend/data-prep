@@ -16,12 +16,10 @@ package org.talend.dataprep.transformation.actions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Rule;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -29,6 +27,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -49,6 +48,9 @@ public abstract class AbstractMetadataBaseTest {
     protected final ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
 
     protected final AnalyzerService analyzerService = new AnalyzerService();
+
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
 
     protected String generateJson(String token, String operator) {
         ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);

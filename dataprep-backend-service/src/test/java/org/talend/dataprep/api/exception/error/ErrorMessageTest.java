@@ -23,20 +23,24 @@ import java.util.Collections;
 import java.util.Locale;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.talend.ServiceBaseTest;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.test.LocalizationRule;
 
 /**
  * @TODO Add a support for internationalized messages
  */
 public class ErrorMessageTest extends ServiceBaseTest {
 
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+
     @Before
     public void setUpLocale() {
-        Locale.setDefault(Locale.US);
         LocaleContextHolder.setLocale(Locale.US);
     }
 

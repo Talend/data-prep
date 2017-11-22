@@ -24,7 +24,6 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
@@ -57,7 +56,6 @@ public class ConcatTest extends AbstractMetadataBaseTest {
 
     @Before
     public void setUp() throws Exception {
-        Locale.setDefault(Locale.US);
         final InputStream parametersSource = ConcatTest.class.getResourceAsStream("concatAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }

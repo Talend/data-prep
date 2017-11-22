@@ -17,12 +17,17 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Locale;
 
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.format.export.ExportFormatMessage;
+import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 
 /**
@@ -36,6 +41,14 @@ public abstract class BaseFormatTest extends TransformationBaseTest {
 
     @Autowired
     protected BeanConversionService beanConversionService;
+
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+
+    @BeforeClass
+    public static void initLocale() {
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+    }
 
     protected void testFormat(ExportFormat format, String expectedJson) throws IOException {
         StringWriter writer = new StringWriter();

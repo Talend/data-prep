@@ -17,15 +17,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormatMessage;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.test.LocalizationRule;
 
 /**
  * Test the CSV format.
@@ -34,10 +35,8 @@ public class CSVFormatTest extends BaseFormatTest {
 
     private CSVFormat format;
 
-    @BeforeClass
-    public static void setupClass() {
-        Locale.setDefault(Locale.US);
-    }
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
 
     @Before
     public void setUp() {

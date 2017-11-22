@@ -21,16 +21,20 @@ import java.io.StringWriter;
 import java.util.Locale;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.talend.dataprep.test.LocalizationRule;
 
 public class TDPExceptionTest {
 
     private TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
 
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+
     @Before
     public void setUpLocale() {
-        Locale.setDefault(Locale.US);
         LocaleContextHolder.setLocale(Locale.FRANCE);
     }
 

@@ -5,15 +5,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Locale;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.i18n.custom.actions.TestAction;
+import org.talend.dataprep.test.LocalizationRule;
 
 public class ActionsBundleTest {
 
-    public ActionsBundleTest() {
-        Locale.setDefault(Locale.US);
-    }
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
 
     @Test
     public void actionLabel() throws Exception {

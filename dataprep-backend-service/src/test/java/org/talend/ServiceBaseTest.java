@@ -15,8 +15,10 @@ package org.talend;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.talend.ServiceBaseTest.TEST_LOCALE;
 
+import java.util.Locale;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +32,10 @@ import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.daikon.content.local.LocalContentServiceConfiguration;
+import org.talend.dataprep.test.LocalizationRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
-
-import java.util.Locale;
 
 @RunWith(SpringRunner.class)
 @Import(LocalContentServiceConfiguration.class)
@@ -61,16 +62,13 @@ public abstract class ServiceBaseTest {
     @Autowired
     protected ObjectMapper mapper;
 
-    private boolean environmentSet = false;
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
 
-    @BeforeClass
-    public static void setUpClass(){
-        Locale.setDefault(Locale.US);
-    }
+    private boolean environmentSet = false;
 
     @Before
     public void setUp() {
-        Locale.setDefault(Locale.US);
         if (!environmentSet) {
             RestAssured.port = port;
 

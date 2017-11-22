@@ -22,7 +22,10 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -269,44 +272,33 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_process_row_alt_pattern() throws Exception {
-        final Locale previous = Locale.getDefault();
-        try {
-            // given
-            Locale.setDefault(Locale.US);
-            final DataSetRow row = getRow("toto", "0012", "tata");
-            parameters.put(TARGET_PATTERN, CUSTOM);
-            parameters.put(TARGET_PATTERN + "_" + CUSTOM, "#.000");
+        // given
+        final DataSetRow row = getRow("toto", "0012", "tata");
+        parameters.put(TARGET_PATTERN, CUSTOM);
+        parameters.put(TARGET_PATTERN + "_" + CUSTOM, "#.000");
 
-            // when
-            ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
-            // then
-            final DataSetRow expectedRow = getRow("toto", "12.000", "tata");
-            assertEquals(expectedRow.values(), row.values());
-        } finally {
-            Locale.setDefault(previous);
-        }
+        // then
+        final DataSetRow expectedRow = getRow("toto", "12.000", "tata");
+        assertEquals(expectedRow.values(), row.values());
+
     }
 
     @Test
     public void should_process_row_alt_pattern_percentage() throws Exception {
-        final Locale previous = Locale.getDefault();
-        try {
-            // given
-            Locale.setDefault(Locale.US);
-            final DataSetRow row = getRow("toto", "0.12", "tata");
-            parameters.put(TARGET_PATTERN, CUSTOM);
-            parameters.put(TARGET_PATTERN + "_" + CUSTOM, "#%");
+        // given
+        final DataSetRow row = getRow("toto", "0.12", "tata");
+        parameters.put(TARGET_PATTERN, CUSTOM);
+        parameters.put(TARGET_PATTERN + "_" + CUSTOM, "#%");
 
-            // when
-            ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
-            // then
-            final DataSetRow expectedRow = getRow("toto", "12%", "tata");
-            assertEquals(expectedRow.values(), row.values());
-        } finally {
-            Locale.setDefault(previous);
-        }
+        // then
+        final DataSetRow expectedRow = getRow("toto", "12%", "tata");
+        assertEquals(expectedRow.values(), row.values());
     }
 
     @Test
@@ -395,23 +387,17 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
 
     @Test
     public void test_TDP_1108_empty_pattern() throws Exception {
-        final Locale previous = Locale.getDefault();
-        try {
-            // given
-            Locale.setDefault(Locale.US);
-            final DataSetRow row = getRow("toto", "012.50", "tata");
-            parameters.put(TARGET_PATTERN, "custom");
-            parameters.put(TARGET_PATTERN + "_" + CUSTOM, "");
+        // given
+        final DataSetRow row = getRow("toto", "012.50", "tata");
+        parameters.put(TARGET_PATTERN, "custom");
+        parameters.put(TARGET_PATTERN + "_" + CUSTOM, "");
 
-            // when
-            ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
-            // then
-            final DataSetRow expectedRow = getRow("toto", "12.5", "tata");
-            assertEquals(expectedRow.values(), row.values());
-        } finally {
-            Locale.setDefault(previous);
-        }
+        // then
+        final DataSetRow expectedRow = getRow("toto", "12.5", "tata");
+        assertEquals(expectedRow.values(), row.values());
     }
 
     @Test

@@ -19,7 +19,6 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.*;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -39,19 +38,10 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     private Map<String, String> parameters;
 
-    private Locale previousLocale;
-
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils
                 .parseParameters(FormatPhoneNumberTest.class.getResourceAsStream("formatphonenumber.json"));
-        previousLocale = Locale.getDefault();
-        Locale.setDefault(Locale.US);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Locale.setDefault(previousLocale);
     }
 
     @Test

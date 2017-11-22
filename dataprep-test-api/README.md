@@ -1,7 +1,7 @@
 # Talend Data Preparation - Cucumber test
 ![alt text](https://www.talend.com/wp-content/uploads/2016/07/talend-logo.png "Talend")
 
-This folder contains the cucumber test of the Data Preparation API
+This folder contains the the Data Preparation API cucumber tests. 
 
 ## Prerequisites
 

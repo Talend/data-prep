@@ -94,7 +94,10 @@ export default function LookupDatagridStyleService($timeout, ConverterService, D
 		return function formatter(row, cell, value) {
             // hidden characters need to be shown
 			const returnStr = TextFormatService.adaptToGridConstraints(value);
-			return returnStr + (isInvalid(value) ? `<div title="${invalidTitle}" class="red-rect"></div>` : '<div class="invisible-rect"></div>');
+			if (isInvalid(value)) {
+				return `${returnStr}<div title="${invalidTitle}" class="red-rect"></div>`;
+			}
+			return `${returnStr}<div class="invisible-rect"></div>`;
 		};
 	}
 

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.math;
 
@@ -27,7 +27,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -52,6 +54,8 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     /** The action parameters. */
     private Map<String, String> parameters;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -109,6 +113,14 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         assertEquals("", action.compute(null, "/", "2"));
         assertEquals("", action.compute("3", null, "2"));
         assertEquals("", action.compute("3", "/", null));
+
+        // percentage
+        assertEquals("2.03", action.compute("3%", "+", "2"));
+        assertEquals("0.06", action.compute("3%", "x", "2"));
+        assertEquals("-1.97", action.compute("3%", "-", "2"));
+        assertEquals("0.02", action.compute("4%", "/", "2"));
+        // should be a wrong value, so it returns an empty string
+        assertEquals("", action.compute("5%56", "*", "2"));
     }
 
     @Test
@@ -157,6 +169,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         assertEquals("2400", action.compute("1.2E3", "x", "2"));
         assertEquals("2400", action.compute("2", "x", "1.2E3"));
         assertEquals("2640", action.compute("2.2", "x", "1.2E3"));
+
     }
 
     @Test
@@ -187,7 +200,6 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         DataSetRow expected = getRow("5", "3", "8", "11");
         assertEquals(expected, row);
     }
-
 
     @Test
     public void should_apply_on_column_constant() {

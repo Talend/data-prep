@@ -1,10 +1,8 @@
 {
-  "serverUrl": "http://10.42.10.99:8888",
-  "serverSignUrl": "http://10.42.10.99:8888",
-  "serverKeepAliveUrl": "",
-  "enableDebug": false,
-  "version": "2.3.0-SNAPSHOT",
-  "copyRights": "© 2017 Talend. All Rights Reserved",
-  "analyticsEnabled": false,
-  "analyticsAccount": ""
+	"serverUrl": "http://10.42.10.99:8888",
+	"serverSignUrl": "http://10.42.10.99:8888",
+	"serverKeepAliveUrl": "",
+	"enableDebug": false,
+	"version": "2.3.0-SNAPSHOT",
+	"copyRights": "© 2017 Talend. All Rights Reserved"
 }

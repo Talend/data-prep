@@ -17,7 +17,8 @@ public enum ActionParamEnum {
     LIMIT("limit", "limit"),
     SEPARATOR("separator", "separator"),
     MANUAL_SEPARATOR_STRING("manualSeparatorString", "manual_separator_string"),
-    MANUAL_SEPARATOR_REGEX("manualSeparatorRegex", "manual_separator_regex");
+    MANUAL_SEPARATOR_REGEX("manualSeparatorRegex", "manual_separator_regex"),
+    FILTER("filter", "filter");
 
     private String name;
 

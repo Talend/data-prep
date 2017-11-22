@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.qa.bean;
+package org.talend.dataprep.qa.config;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.dto.Folder;
 
 /**
  * Used to share data within steps.
@@ -49,15 +50,15 @@ public class FeatureContext {
 
     private Map<String, Action> actionByAlias = new HashMap<>();
 
-    private SortedSet<String> folders = new TreeSet<>((o1, o2) -> {
-        // reverse order : the longer string if the first one.
+    private SortedSet<Folder> folders = new TreeSet<>((o1, o2) -> {
+        // reverse order : the longer string is the first one.
         if (o1 == null && o2 == null)
             return 0;
         if (o1 == null)
             return 1;
         if (o2 == null)
             return -1;
-        return ((Integer) o2.length()).compareTo(o1.length());
+        return ((Integer) o2.path.length()).compareTo(o1.path.length());
     });
 
     /**
@@ -216,15 +217,15 @@ public class FeatureContext {
      *
      * @param folder the folder to store.
      */
-    public void storeFolder(@NotNull String folder) {
+    public void storeFolder(@NotNull Folder folder) {
         folders.add(folder);
     }
 
     /**
-     * Retreive the list of stored fodlers.
+     * Retreive the list of stored folders.
      */
     @NotNull
-    public Set<String> getFolders() {
+    public Set<Folder> getFolders() {
         return folders;
     }
 

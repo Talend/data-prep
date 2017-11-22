@@ -45,28 +45,32 @@ describe('Settings service', () => {
 				.expectGET(RestURLs.settingsUrl)
 				.respond(200, settings);
 
-			expect(appSettings).toEqual({ views: [], actions: [], uris: [], help: [] });
+			expect(appSettings).toEqual({ views: {}, actions: {}, uris: {}, help: {}, analytics: {} });
 
 			// when
 			SettingsService.refreshSettings();
 			$httpBackend.flush();
 
 			// then
-			expect(appSettings).toEqual(settings);
+			expect(appSettings).toEqual({
+				...settings,
+				analytics: {},
+			});
 		}));
 	});
 
 	describe('setSettings', () => {
 		it('should merge settings', inject((appSettings, SettingsService) => {
-			expect(appSettings).toEqual({ views: [], actions: [], uris: [], help: [] });
+			expect(appSettings).toEqual({ views: {}, actions: {}, uris: {}, help: {}, analytics: {} });
 
 			const newSettings = {
 				views: {
 					myCustomView: {}
 				},
-				actions: [],
-				uris: [],
-				help: []
+				actions: {},
+				uris: {},
+				help: {},
+				analytics: {},
 			};
 
 			// when
@@ -80,19 +84,17 @@ describe('Settings service', () => {
 	describe('clearSettings', () => {
 		it('should reset settings', inject((appSettings, SettingsService) => {
 			// given
-			appSettings.views.push({});
-			appSettings.actions.push({});
-			appSettings.uris.push({});
-			appSettings.help.push({});
+			SettingsService.setSettings(settings);
 
 			// when
 			SettingsService.clearSettings();
 
 			// then
-			expect(appSettings.views).toEqual([]);
-			expect(appSettings.actions).toEqual([]);
-			expect(appSettings.uris).toEqual([]);
-			expect(appSettings.help).toEqual([]);
+			expect(appSettings.views).toEqual({});
+			expect(appSettings.actions).toEqual({});
+			expect(appSettings.uris).toEqual({});
+			expect(appSettings.help).toEqual({});
+			expect(appSettings.analytics).toEqual({});
 		}));
 	});
 });

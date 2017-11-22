@@ -64,6 +64,19 @@ public class NaturalLogarithmTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void natural_logarithm_with_positive_percentage() {
+        // given
+        DataSetRow row = getRow("300%", "3", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("1.0986122886681098", row.get("0003"));
+    }
+
+    @Test
     public void natural_logarithm_with_negative() {
         // given
         DataSetRow row = getRow("-3", "3", "Done !");

@@ -8,10 +8,11 @@
  ============================================================================*/
 
 export const appSettings = {
-	actions: [],
-	views: [],
-	uris: [],
-	help: [],
+	actions: {},
+	views: {},
+	uris: {},
+	help: {},
+	analytics: {},
 };
 
 export function SettingsService($http, RestURLs) {
@@ -24,7 +25,8 @@ export function SettingsService($http, RestURLs) {
 	};
 
 	function refreshSettings() {
-		return $http.get(RestURLs.settingsUrl)
+		return $http
+			.get(RestURLs.settingsUrl)
 			.then(response => response.data)
 			.then(settings => this.setSettings(settings));
 	}
@@ -35,9 +37,10 @@ export function SettingsService($http, RestURLs) {
 	}
 
 	function clearSettings() {
-		appSettings.views = [];
-		appSettings.actions = [];
-		appSettings.uris = [];
-		appSettings.help = [];
+		appSettings.views = {};
+		appSettings.actions = {};
+		appSettings.uris = {};
+		appSettings.help = {};
+		appSettings.analytics = {};
 	}
 }

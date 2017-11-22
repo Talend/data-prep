@@ -20,18 +20,20 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.test.SpringLocalizationRule;
 
 public class DataprepBundleTest {
 
     private static Properties messagesProperties;
 
+    @Rule
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.FRANCE);
+
     @BeforeClass
     public static void setUpClass() throws IOException {
-        LocaleContextHolder.setLocale(Locale.FRANCE);
-
         messagesProperties = new Properties();
         messagesProperties
                 .load(DataprepBundleTest.class.getResourceAsStream("/org/talend/dataprep/error_messages_fr.properties"));

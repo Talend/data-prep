@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -40,7 +39,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.test.LocalizationRule;
+import org.talend.dataprep.test.SpringLocalizationRule;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
@@ -77,12 +76,11 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
     private TransformationServiceUrlRuntimeUpdater urlUpdater;
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.ENGLISH);
 
     @Before
     public void setUp() {
         super.setUp();
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
         urlUpdater.setUp();
         home = folderRepository.getHome();
     }

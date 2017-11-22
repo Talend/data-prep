@@ -10,11 +10,11 @@ import org.junit.runners.model.Statement;
  * A {@link TestRule} to set a given {@link Locale locale} before each test execution and rollback to the previous locale
  * once test is over.
  *
- * @see Locale#setDefault(Locale) 
+ * @see Locale#setDefault(Locale)
  */
 public class LocalizationRule implements TestRule {
 
-    private final Locale locale;
+    protected final Locale locale;
 
     public LocalizationRule(Locale locale) {
         this.locale = locale;
@@ -26,7 +26,7 @@ public class LocalizationRule implements TestRule {
 
             @Override
             public void evaluate() throws Throwable {
-                Locale previousLocale = Locale.getDefault();
+                final Locale previousLocale = Locale.getDefault();
                 try {
                     Locale.setDefault(locale);
                     base.evaluate();

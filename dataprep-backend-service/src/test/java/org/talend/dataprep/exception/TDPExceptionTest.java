@@ -20,41 +20,48 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 import java.io.StringWriter;
 import java.util.Locale;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.talend.dataprep.test.LocalizationRule;
+import org.talend.dataprep.test.SpringLocalizationRule;
 
 public class TDPExceptionTest {
 
-    private TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
-
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
-
-    @Before
-    public void setUpLocale() {
-        LocaleContextHolder.setLocale(Locale.FRANCE);
-    }
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.FRENCH);
 
     @Test
     public void getMessage() throws Exception {
+        // Given
+        Locale.setDefault(Locale.US);
+
+        // When
+        final TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
+
+        // Then
         assertThat(tdpException.getMessage(), startsWith("Sorry an unexpected error occurred and we could"));
     }
 
     @Test
     public void getLocalizedMessage() throws Exception {
+        // When
+        final TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
+
+        // Then
         assertThat(tdpException.getLocalizedMessage(), startsWith("Une erreur inattendue est survenue"));
     }
 
     @Test
     public void getMessageTitle() throws Exception {
+        // When
+        final TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
+
+        // Then
         assertThat(tdpException.getMessageTitle(), is("Une erreur est survenue"));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void writeTo() throws Exception {
+        final TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
         tdpException.writeTo(new StringWriter());
     }
 

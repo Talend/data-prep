@@ -22,14 +22,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.talend.ServiceBaseTest;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.test.LocalizationRule;
+import org.talend.dataprep.test.SpringLocalizationRule;
 
 /**
  * @TODO Add a support for internationalized messages
@@ -37,12 +35,7 @@ import org.talend.dataprep.test.LocalizationRule;
 public class ErrorMessageTest extends ServiceBaseTest {
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
-
-    @Before
-    public void setUpLocale() {
-        LocaleContextHolder.setLocale(Locale.US);
-    }
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.ENGLISH);
 
     @Test
     public void shouldReturnRightErrorMessageWhenHttpStatusIsZero() {

@@ -193,18 +193,19 @@ public class FolderServiceTest extends BasePreparationTest {
 
     @Test
     public void shouldReturnEntireFolderTree() throws Exception {
+        // @formatter:off
         // given
-        // HOME
-        // ___________|____________
-        // | |
-        // first second
-        // ____|____ |
-        // | | |
-        // first child 1 first child 2 second child
-        // |
-        // |
-        // second child child
-
+        //                        HOME
+        //              ___________|____________
+        //              |                       |
+        //             first                  second
+        //          ____|____                   |
+        //          |        |                  |
+        //first child 1   first child 2     second child
+        //                                      |
+        //                                      |
+        //                                  second child child
+        // @formatter:on
         createFolder(home.getId(), "first");
         createFolder(home.getId(), "second");
 
@@ -239,18 +240,19 @@ public class FolderServiceTest extends BasePreparationTest {
 
     @Test
     public void shouldFolderMetadataWithHierarchy() throws Exception {
+        // @formatter:off
         // given
-        // HOME
-        // ___________|____________
-        // | |
-        // first second
-        // ____|____ |
-        // | | |
-        // first child 1 first child 2 second child
-        // |
-        // |
-        // second child child
-
+        //                        HOME
+        //              ___________|____________
+        //              |                       |
+        //             first                  second
+        //          ____|____                   |
+        //          |        |                  |
+        //first child 1   first child 2     second child
+        //                                      |
+        //                                      |
+        //                                  second child child
+        // @formatter:on
         createFolder(home.getId(), "first");
         createFolder(home.getId(), "second");
 

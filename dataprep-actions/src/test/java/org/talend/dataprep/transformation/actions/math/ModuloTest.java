@@ -2,18 +2,28 @@ package org.talend.dataprep.transformation.actions.math;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 /**
@@ -36,10 +46,34 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void testActionName() throws Exception {
+        assertEquals("modulo", action.getName());
+    }
+
+    @Test
+    public void testCategory() throws Exception {
+        assertThat(action.getCategory(), is(ActionCategory.MATH.getDisplayName()));
+    }
+
+    @Test
+    public void testAdapt() throws Exception {
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
+        ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
+        assertThat(action.adapt(column), is(action));
+    }
+
+    @Test
+    public void testActionParameters() throws Exception {
+        final List<Parameter> parameters = action.getParameters();
+        assertEquals(6, parameters.size());
+    }
+
+    @Test
     public void should_calc_mod() {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
 
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
         parameters.put(Modulo.DIVISOR, "5");
         parameters.put(Modulo.PRECISION, "1");
 
@@ -47,24 +81,31 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertColumnWithResultCreated(row);
-        assertEquals("1.0", row.get("0000"));
+        assertEquals("1.0", row.get("0003"));
     }
 
     @Test
     public void should_calc_mod_with_decimal() {
         // given
-        DataSetRow row = getRow("6.5", "3", "Done !");
+        final DataSetRow row = builder() //
+                .with(value("6.5").type(Type.STRING).name("0000")) //
+                .with(value("5").type(Type.STRING).name("0001")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
 
-        parameters.put(Modulo.DIVISOR, "5");
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.OTHER_COLUMN_MODE);
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(Modulo.PRECISION, "0");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertColumnWithResultCreated(row);
-        assertEquals("2", row.get("0000"));
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000 % 0001").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+        assertEquals("2", row.get("0003"));
     }
 
     @Test
@@ -72,6 +113,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
 
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
         parameters.put(Modulo.DIVISOR, "5");
         parameters.put(Modulo.PRECISION, "");
 
@@ -79,8 +121,10 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertColumnWithResultCreated(row);
-        assertEquals("1", row.get("0000"));
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000 % 5").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+        assertEquals("1", row.get("0003"));
     }
 
     @Test
@@ -88,6 +132,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
 
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
         parameters.put(Modulo.DIVISOR, "");
         parameters.put(Modulo.PRECISION, "0");
 
@@ -95,8 +140,10 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertColumnWithResultCreated(row);
-        assertEquals("6", row.get("0000"));
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000 % ").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+        assertEquals(null, row.get("0003"));
     }
 
     @Test
@@ -111,9 +158,94 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         assertEquals(0, action.getPrecision(parameters));
     }
 
-    private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_modulo").type(Type.STRING).build();
+    @Test
+    public void should_not_calc_mod_with_char() {
+        // given
+        DataSetRow row = getRow("6", "3", "Done !");
+
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
+        parameters.put(Modulo.DIVISOR, "a");
+        parameters.put(Modulo.PRECISION, "1");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(null, row.get("0003"));
+    }
+
+    @Test
+    public void should_not_calc_mod_with_alpha_other_column() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("6.5").type(Type.STRING).name("0000")) //
+                .with(value("a").type(Type.STRING).name("0001")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
+
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.OTHER_COLUMN_MODE);
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(Modulo.PRECISION, "0");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000 % 0001").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
+        assertEquals(null, row.get("0003"));
+    }
+
+    @Test
+    public void should_not_calc_without_divisor() {
+        // given
+        DataSetRow row = getRow("6", "3", "Done !");
+
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
+        parameters.put(Modulo.PRECISION, "1");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(null, row.get("0003"));
+    }
+
+    @Test
+    public void should_not_calc_without_column_parameter() {
+        // given
+        DataSetRow row = getRow("6", "3", "Done !");
+
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.OTHER_COLUMN_MODE);
+        parameters.put(Modulo.PRECISION, "1");
+        parameters.remove(Modulo.SELECTED_COLUMN_PARAMETER);
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(null, row.get("0003"));
+    }
+
+    @Test
+    public void should_accept_column() {
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+    }
+
+    @Test
+    public void should_not_accept_column() {
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+    }
+
+    @Test
+    public void should_have_expected_behavior() {
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
 }

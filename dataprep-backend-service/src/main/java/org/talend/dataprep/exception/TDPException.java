@@ -180,15 +180,16 @@ public class TDPException extends TalendRuntimeException {
     private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
         ErrorCode errorCode = internal.getCode();
         String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
-        String message = internal.getMessage();
+        String defaultMessage = internal.getMessage();
+        String message = internal.getLocalizedMessage();
         String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
-        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause())
-                : null;
+        TdpExceptionDto cause =
+                internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause()) : null;
         Map<String, Object> context = new HashMap<>();
         for (Map.Entry<String, Object> contextEntry : internal.getContext().entries()) {
             context.put(contextEntry.getKey(), contextEntry.getValue());
         }
-        return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
+        return new TdpExceptionDto(serializedCode, cause, defaultMessage, message, messageTitle, context);
     }
 
     /**

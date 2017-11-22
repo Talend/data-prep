@@ -585,6 +585,9 @@ public class DataSetService extends BaseDataSetService {
         }
 
         DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
+        if (currentDataSetMetadata == null && name == null) {
+            throw new TDPException(INVALID_DATASET_NAME, ExceptionContext.build().put("name", name));
+        }
 
         // just like the creation, let's make sure invalid size forbids dataset creation
         if (size < 0) {

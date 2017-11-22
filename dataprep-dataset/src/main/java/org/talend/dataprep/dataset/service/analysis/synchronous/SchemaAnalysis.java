@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_ANALYZE_COLUMN_TYPES;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,7 +30,6 @@ import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.common.inference.Analyzer;
@@ -91,7 +92,7 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
                 }
             } catch (Exception e) {
                 LOGGER.error("Unable to analyse schema for dataset " + dataSetId + ".", e);
-                throw new TDPException(DataSetErrorCodes.UNABLE_TO_ANALYZE_COLUMN_TYPES, e);
+                TDPException.rethrowOrWrap(e, UNABLE_TO_ANALYZE_COLUMN_TYPES);
             }
         } finally {
             datasetLock.unlock();

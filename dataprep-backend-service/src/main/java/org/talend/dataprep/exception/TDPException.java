@@ -18,6 +18,7 @@ import static java.util.stream.StreamSupport.stream;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,12 +46,24 @@ public class TDPException extends TalendRuntimeException {
      * @param throwable
      */
     public static RuntimeException rethrowOrWrap(Throwable throwable) {
+        return rethrowOrWrap(throwable, UNEXPECTED_EXCEPTION);
+    }
+
+    /**
+     * If the exception is a TDPException, rethrow it, else wrap it and then throw it.
+     *
+     * @param throwable The throwable to rethrow or wrap in a TDPException.
+     * @param errorCode The Error code to use when you wrap the throwable.
+     */
+    public static RuntimeException rethrowOrWrap(Throwable throwable, ErrorCode errorCode) {
         if (throwable instanceof TDPException) {
             throw (TDPException) throwable;
         } else if (throwable instanceof HystrixRuntimeException) {
             throw TDPExceptionUtils.processHystrixException((HystrixRuntimeException) throwable);
+        } else if (throwable.getCause() instanceof TDPException) {
+            throw (TDPException) (throwable.getCause());
         } else {
-            throw new TDPException(UNEXPECTED_EXCEPTION, throwable);
+            throw new TDPException(errorCode, throwable);
         }
     }
 
@@ -68,7 +81,8 @@ public class TDPException extends TalendRuntimeException {
 
     /**
      * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a
-     * component that does not have access to the exception bundle.
+     * component
+     * that does not have access to the exception bundle.
      */
     public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
         super(code, cause, context);
@@ -161,6 +175,22 @@ public class TDPException extends TalendRuntimeException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    // Needed to keep the compatibility with the deprecated writeTo(Writer) method.
+    // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
+    private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
+        ErrorCode errorCode = internal.getCode();
+        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
+        String message = internal.getMessage();
+        String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
+        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause())
+                : null;
+        Map<String, Object> context = new HashMap<>();
+        for (Map.Entry<String, Object> contextEntry : internal.getContext().entries()) {
+            context.put(contextEntry.getKey(), contextEntry.getValue());
+        }
+        return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
+    }
+
     /**
      * Return thie list of object store in the context
      *
@@ -175,4 +205,5 @@ public class TDPException extends TalendRuntimeException {
         }
         return values;
     }
+
 }

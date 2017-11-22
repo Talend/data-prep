@@ -42,6 +42,7 @@ public class NumericHelperTest {
     public void shouldReturnFalseOnNonNumeric() throws Exception {
         assertFalse(NumericHelper.isBigDecimal("a"));
         assertFalse(NumericHelper.isBigDecimal(""));
+        assertFalse(NumericHelper.isBigDecimal(" "));
         assertFalse(NumericHelper.isBigDecimal(null));
         assertFalse(NumericHelper.isBigDecimal("6aaa"));
         assertFalse(NumericHelper.isBigDecimal("6 aaa"));

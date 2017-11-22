@@ -36,19 +36,79 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void mod_with_constant() {
+    public void should_calc_mod() {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
 
-        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
-        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "2");
+        parameters.put(Modulo.DIVISOR, "5");
+        parameters.put(Modulo.PRECISION, "1");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals("3.0", row.get("0003"));
+        assertEquals("1.0", row.get("0000"));
+    }
+
+    @Test
+    public void should_calc_mod_with_decimal() {
+        // given
+        DataSetRow row = getRow("6.5", "3", "Done !");
+
+        parameters.put(Modulo.DIVISOR, "5");
+        parameters.put(Modulo.PRECISION, "0");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("2", row.get("0000"));
+    }
+
+    @Test
+    public void should_calc_mod_with_empty_precision() {
+        // given
+        DataSetRow row = getRow("6", "3", "Done !");
+
+        parameters.put(Modulo.DIVISOR, "5");
+        parameters.put(Modulo.PRECISION, "");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("1", row.get("0000"));
+    }
+
+    @Test
+    public void should_not_calc_mod_with_empty_divisor() {
+        // given
+        DataSetRow row = getRow("6", "3", "Done !");
+
+        parameters.put(Modulo.DIVISOR, "");
+        parameters.put(Modulo.PRECISION, "0");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("6", row.get("0000"));
+    }
+
+    @Test
+    public void test_getPrecision() {
+        parameters.put(Modulo.PRECISION, "");
+        assertEquals(0, action.getPrecision(parameters));
+
+        parameters.put(Modulo.PRECISION, "3");
+        assertEquals(3, action.getPrecision(parameters));
+
+        parameters.put(Modulo.PRECISION, "-1");
+        assertEquals(0, action.getPrecision(parameters));
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {

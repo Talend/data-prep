@@ -81,7 +81,7 @@ export default function VerticalBarchart($timeout) {
 			let renderPrimaryTimeout;
 			let renderSecondaryTimeout;
 			let updateLimitsTimeout;
-			const containerId = '#' + attrs.id;
+			const containerId = `#${attrs.id}`;
 
 			// Define chart sizes and margin
 			let margin;
@@ -97,7 +97,7 @@ export default function VerticalBarchart($timeout) {
 				.attr('class', 'vertical-barchart-cls d3-tip')
 				.offset([0, -11])
 				.direction('w')
-				.html(function (primaryDatum, index) {
+				.html((primaryDatum, index) => {
 					const secondaryDatum = scope.secondaryData ? scope.secondaryData[index] : undefined;
 					return scope.tooltipContent({
 						keyLabel: scope.keyLabel,
@@ -177,7 +177,7 @@ export default function VerticalBarchart($timeout) {
 					.attr('width', containerWidth)
 					.attr('height', containerHeight)
 					.append('g')
-					.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+					.attr('transform', `translate(${margin.left},${margin.top})`);
 				svg.call(tooltip);
 			}
 
@@ -200,43 +200,37 @@ export default function VerticalBarchart($timeout) {
 			}
 
 			function drawBars(containerClassName, statData, getValue, barClassName) {
-				const bars = svg.select('.' + containerClassName)
-					.selectAll('.' + barClassName)
+				const bars = svg.select(`.${containerClassName}`)
+					.selectAll(`.${barClassName}`)
 					.data(statData, d => `${getInterval(d)}`);
 
 				// enter
 				bars.enter()
 					.append('rect')
 					.attr('class', barClassName)
-					.attr('x', function (d) {
-						return xScale(getXAxisDomain(d));
-					})
+					.attr('x', d => xScale(getXAxisDomain(d)))
 					.attr('width', xScale.rangeBand())
-					.attr('y', function () {
-						return yScale(0);
-					})
+					.attr('y', () => yScale(0))
 					.attr('height', 0)
 					.transition()
 					.ease('cubic')
 					.delay((d, i) => i * 10)
-					.attr('height', function (d) {
+					.attr('height', (d) => {
 						const realHeight = height - yScale(getValue(d));
 						return adaptToMinHeight(realHeight);
 					})
-					.attr('y', function (d) {
+					.attr('y', (d) => {
 						const realYPosition = yScale(getValue(d));
 						return adaptToMinHeightYPosition(realYPosition);
 					});
 
 				// update
-				bars.transition().ease('exp').delay(function (d, i) {
-					return i * 30;
-				})
-					.attr('height', function (d) {
+				bars.transition().ease('exp').delay((d, i) => i * 30)
+					.attr('height', (d) => {
 						const realHeight = height - yScale(getValue(d));
 						return adaptToMinHeight(realHeight);
 					})
-					.attr('y', function (d) {
+					.attr('y', (d) => {
 						const realYPosition = yScale(getValue(d));
 						return adaptToMinHeightYPosition(realYPosition);
 					});
@@ -245,7 +239,7 @@ export default function VerticalBarchart($timeout) {
 			function drawXAxis() {
 				svg.append('g')
 					.attr('class', 'x axis')
-					.attr('transform', 'translate(0,' + height + ')')
+					.attr('transform', `translate(0,${height})`)
 					.call(d3.svg.axis()
 						.scale(xScale)
 						.orient('bottom')
@@ -298,9 +292,7 @@ export default function VerticalBarchart($timeout) {
 					.enter()
 					.append('g')
 					.attr('class', 'hover')
-					.attr('transform', function (d) {
-						return 'translate(' + (xScale(getXAxisDomain(d)) - 2) + ', 0)';
-					})
+					.attr('transform', d => `translate(${xScale(getXAxisDomain(d)) - 2}, 0)`)
 					.append('rect')
 					.attr('width', xScale.rangeBand() + 4)
 					.attr('height', height)
@@ -314,7 +306,7 @@ export default function VerticalBarchart($timeout) {
 						d3.select(this).style('opacity', 0);
 						tooltip.hide(d);
 					})
-					.on('click', function (d) {
+					.on('click', (d) => {
 						// create a new reference as the data object could be modified outside the component
 						const interval = _.extend({}, getRangeInfos(d));
 						if (d3.event.ctrlKey || d3.event.metaKey) {
@@ -361,10 +353,8 @@ export default function VerticalBarchart($timeout) {
 			function updateBarsLookFeel() {
 				if (activeLimits) {
 					scope.buckets.transition()
-						.delay(function (d, i) {
-							return i * 10;
-						})
-						.style('opacity', function (d) {
+						.delay((d, i) => i * 10)
+						.style('opacity', (d) => {
 							const range = getRangeInfos(d);
 							const rangeMin = range.min;
 							const rangeMax = range.max;
@@ -402,10 +392,10 @@ export default function VerticalBarchart($timeout) {
 			);
 
 			scope.$watch('activeLimits',
-				function (newLimits) {
+				(newLimits) => {
 					if (newLimits) {
 						$timeout.cancel(updateLimitsTimeout);
-						updateLimitsTimeout = $timeout(function () {
+						updateLimitsTimeout = $timeout(() => {
 							activeLimits = newLimits;
 							updateBarsLookFeel();
 						}, 500, false);
@@ -413,7 +403,7 @@ export default function VerticalBarchart($timeout) {
 				}
 			);
 
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				d3.selectAll('.vertical-barchart-cls.d3-tip').remove();
 				$timeout.cancel(renderPrimaryTimeout);
 				$timeout.cancel(renderSecondaryTimeout);

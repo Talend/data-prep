@@ -37,10 +37,7 @@ describe('Moment filter', function () {
 		const date = new Date();
 		date.setDate(date.getDate() - 7);
 
-		const dateAsString = date.getFullYear() + '/' +
-			(date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1) + '/' +
-			(date.getDate() < 10 ? '0' : '') + date.getDate() +
-			' ' + date.getHours() + ':' + date.getMinutes();
+		const dateAsString = `${date.getFullYear()}/${date.getMonth() < 9 ? '0' : ''}${date.getMonth() + 1}/${date.getDate() < 10 ? '0' : ''}${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
 		// when
 		const result = $filter('TDPMoment')(dateAsString, 'YYYY/MM/DD HH:mm');

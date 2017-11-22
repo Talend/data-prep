@@ -87,7 +87,7 @@ export default function RangeSlider($timeout) {
 					.attr('height', HEIGHT + MARGIN.top + MARGIN.bottom)
 					.attr('class', 'range-slider-cls')
 					.append('g')
-					.attr('transform', 'translate(' + MARGIN.left + ',' + MARGIN.top + ')');
+					.attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 			}
 
 			/**
@@ -117,7 +117,7 @@ export default function RangeSlider($timeout) {
 
 				svg.append('g')
 					.attr('class', 'x axis')
-					.attr('transform', 'translate(0,' + (MARGIN.top + 20) + ')')
+					.attr('transform', `translate(0,${MARGIN.top + 20})`)
 					.call(d3.svg.axis()
 						.scale(scale)
 						.orient('top')
@@ -171,16 +171,14 @@ export default function RangeSlider($timeout) {
 
 				// brush
 				brushg = svg.append('g')
-					.attr('transform', 'translate(0,' + (MARGIN.top + 10) + ')')
+					.attr('transform', `translate(0,${MARGIN.top + 10})`)
 					.attr('class', 'brush')
 					.call(brush);
 
 				// brush rect that reflect the values
 				brushg.selectAll('.resize')
 					.append('rect')
-					.attr('transform', function (d, i) {
-						return i ? 'translate(-10, 0)' : 'translate(0,0)';
-					})
+					.attr('transform', (d, i) => i ? 'translate(-10, 0)' : 'translate(0,0)')
 					.attr('width', 10)
 					.attr('height', 20);
 
@@ -214,12 +212,12 @@ export default function RangeSlider($timeout) {
 				let originalBrushValues;
 
 				brush
-					.on('brushstart', function brushstart() {
+					.on('brushstart', () => {
 						// save original brush values
 						originalBrushValues = getCurrentBrushValues();
 					})
 
-					.on('brush', function brushmove() {
+					.on('brush', () => {
 						// get current values and update input values
 						const brushValues = getCurrentBrushValues();
 
@@ -233,7 +231,7 @@ export default function RangeSlider($timeout) {
 					})
 
 					// propagate changed values
-					.on('brushend', function brushend() {
+					.on('brushend', () => {
 						const brushValues = getCurrentBrushValues();
 
 						// the values have not changed
@@ -362,7 +360,7 @@ export default function RangeSlider($timeout) {
 				}
 			);
 
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				$timeout.cancel(renderTimeout);
 			});
 		},

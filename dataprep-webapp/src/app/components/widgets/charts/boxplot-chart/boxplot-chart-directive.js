@@ -51,12 +51,12 @@ export default function BoxplotChart($timeout, $translate) {
 
 				const duration = 1000;
 
-				const svg = d3.select('#' + container).append('svg')
+				const svg = d3.select(`#${container}`).append('svg')
 					.attr('width', width + margin.left + margin.right)
 					.attr('height', height + margin.top + margin.bottom)
 					.attr('class', 'box')
 					.append('g')
-					.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+					.attr('transform', `translate(${margin.left},${margin.top})`);
 
 				const quartileData = [boxValues.q1, boxValues.median, boxValues.q2];
 
@@ -112,19 +112,9 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('height', d => vScale(d[0]) - vScale(d[1]));
 
 				// whiskers
-				const topWhiskerPolyg = function (max) {
-					return 0 + ',' + vScale(max) + ' ' +
-						width + ',' + vScale(max) + ' ' +
-						(width - 20) + ',' + (vScale(max) - 20) + ' ' +
-						(vScale(max) + 20) + ',' + (vScale(max) - 20);
-				};
+				const topWhiskerPolyg = max => `0,${vScale(max)} ${width},${vScale(max)} ${width - 20},${vScale(max) - 20} ${vScale(max) + 20},${vScale(max) - 20}`;
 
-				const bottomWhiskerPolyg = function (min) {
-					return 0 + ',' + vScale(min) + ' ' +
-						width + ',' + vScale(min) + ' ' +
-						(width - 20) + ',' + (vScale(min) + 20) + ' ' +
-						20 + ',' + (vScale(min) + 20);
-				};
+				const bottomWhiskerPolyg = min => `0,${vScale(min)} ${width},${vScale(min)} ${width - 20},${vScale(min) + 20} 20,${vScale(min) + 20}`;
 
 				const gWhisker = svg.append('g');
 
@@ -216,7 +206,7 @@ export default function BoxplotChart($timeout, $translate) {
 				gTexts.append('text')
 					.attr('class', 'mean-labels')
 					.attr('x', width / 2)
-					.attr('y', function () {
+					.attr('y', () => {
 						if (height - vScale(boxValues.mean - boxValues.min) < 15) {
 							return vScale(boxValues.mean) - 10;
 						}
@@ -310,7 +300,7 @@ export default function BoxplotChart($timeout, $translate) {
 			}
 
 			scope.$watch('boxplotData',
-				function (boxData) {
+				(boxData) => {
 					element.empty();
 					if (boxData) {
 						$timeout.cancel(renderTimeout);

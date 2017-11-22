@@ -39,6 +39,7 @@ import d3LocaleFr from '../lib/d3.locale.fr';
 const MODULE_NAME = 'data-prep';
 
 const I18N_DOMAIN_COMPONENTS = 'tui-components';
+const I18N_DOMAIN_FORMS = 'tui-forms';
 
 let ws;
 let wsPing;
@@ -47,7 +48,12 @@ let preferredLanguage;
 const fallbackLng = 'en';
 export const i18n = init({
 	fallbackLng, // Fallback language
-
+	ns: [
+		I18N_DOMAIN_COMPONENTS,
+		I18N_DOMAIN_FORMS,
+	],
+	defaultNS: I18N_DOMAIN_COMPONENTS,
+	fallbackNS: I18N_DOMAIN_COMPONENTS,
 	debug: false,
 	wait: true, // globally set to wait for loaded translations in translate hoc
 });

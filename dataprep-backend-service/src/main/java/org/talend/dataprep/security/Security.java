@@ -48,11 +48,6 @@ public interface Security {
     String getTenantId();
 
     /**
-     * @return the tenant name.
-     */
-    String getTenantName();
-
-    /**
      * @return true if the current user is a valid and registered TDP user.
      */
     boolean isTDPUser();

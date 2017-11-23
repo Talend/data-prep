@@ -75,13 +75,12 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
         parameters.put(Modulo.DIVISOR, "5");
-        parameters.put(Modulo.PRECISION, "1");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("1.0", row.get("0003"));
+        assertEquals("1", row.get("0003"));
     }
 
     @Test
@@ -95,7 +94,6 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.OTHER_COLUMN_MODE);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(Modulo.PRECISION, "0");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -105,26 +103,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
                 ColumnMetadata.Builder.column().id(3).name("0000 % 0001").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
-        assertEquals("2", row.get("0003"));
-    }
-
-    @Test
-    public void should_calc_mod_with_empty_precision() {
-        // given
-        DataSetRow row = getRow("6", "3", "Done !");
-
-        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
-        parameters.put(Modulo.DIVISOR, "5");
-        parameters.put(Modulo.PRECISION, "");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000 % 5").type(Type.DOUBLE).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-        assertEquals("1", row.get("0003"));
+        assertEquals("1.5", row.get("0003"));
     }
 
     @Test
@@ -134,7 +113,6 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
         parameters.put(Modulo.DIVISOR, "");
-        parameters.put(Modulo.PRECISION, "0");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -147,25 +125,12 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void test_getPrecision() {
-        parameters.put(Modulo.PRECISION, "");
-        assertEquals(0, action.getPrecision(parameters));
-
-        parameters.put(Modulo.PRECISION, "3");
-        assertEquals(3, action.getPrecision(parameters));
-
-        parameters.put(Modulo.PRECISION, "-1");
-        assertEquals(0, action.getPrecision(parameters));
-    }
-
-    @Test
     public void should_not_calc_mod_with_char() {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
         parameters.put(Modulo.DIVISOR, "a");
-        parameters.put(Modulo.PRECISION, "1");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -185,7 +150,6 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.OTHER_COLUMN_MODE);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(Modulo.PRECISION, "0");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -204,7 +168,6 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         DataSetRow row = getRow("6", "3", "Done !");
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
-        parameters.put(Modulo.PRECISION, "1");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -219,7 +182,6 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         DataSetRow row = getRow("6", "3", "Done !");
 
         parameters.put(Modulo.MODE_PARAMETER, Modulo.OTHER_COLUMN_MODE);
-        parameters.put(Modulo.PRECISION, "1");
         parameters.remove(Modulo.SELECTED_COLUMN_PARAMETER);
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

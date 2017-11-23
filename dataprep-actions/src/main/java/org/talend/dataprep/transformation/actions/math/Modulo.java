@@ -41,19 +41,11 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
      */
     public static final String MODE_PARAMETER = "mode";
 
-    /** Number of digit after the decimal symbol. */
-    protected static final String PRECISION = "precision";
-
     /** Number of the divisor. */
     protected static final String DIVISOR = "divisor";
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(Modulo.class);
-
-    /** The default precision. */
-    private static final int DEFAULT_PRECISION = 0;
-
-    protected static final RoundingMode ROUND = RoundingMode.HALF_EVEN;
 
     @Override
     public String getName() {
@@ -75,8 +67,6 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
 
-        parameters.add(new Parameter(PRECISION, INTEGER, "0"));
-
         parameters.add(SelectParameter.Builder
                 .builder()
                 .name(MODE_PARAMETER)
@@ -90,34 +80,11 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
         return ActionsBundle.attachToAction(parameters, this);
     }
 
-    /**
-     *
-     * @param parameters for get the precision parameter.
-     * @return the precision
-     */
-    protected int getPrecision(Map<String, String> parameters) {
-
-        int precision = DEFAULT_PRECISION;
-
-        try {
-            precision = Integer.parseInt(parameters.get(PRECISION));
-        } catch (NumberFormatException e) {
-            LOGGER.trace("miss parameter: " + PRECISION + " is empty. Default value: " + DEFAULT_PRECISION + ".");
-        }
-
-        if (precision < DEFAULT_PRECISION) {
-            precision = DEFAULT_PRECISION;
-        }
-
-        return precision;
-    }
-
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             checkParameters(actionContext.getParameters(), actionContext.getRowMetadata());
-            actionContext.get(PRECISION, p -> getPrecision(actionContext.getParameters()));
 
             // Create column
             final Map<String, String> parameters = actionContext.getParameters();
@@ -155,7 +122,6 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
         final RowMetadata rowMetadata = context.getRowMetadata();
         final String value = row.get(columnId);
         String divisor;
-        final int precision = context.get(PRECISION);
         final String newColumnId = context.column("result");
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
@@ -170,7 +136,6 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
                     BigDecimalParser
                             .toBigDecimal(value)
                             .remainder(BigDecimalParser.toBigDecimal(divisor))
-                            .setScale(precision, ROUND)
                             .abs()
                             .toString());
         } else {

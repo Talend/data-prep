@@ -71,7 +71,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testGetParameters() throws Exception {
-        final List<Parameter> parameters = standardizeInvalid.getParameters();
+        final List<Parameter> parameters = standardizeInvalid.getParameters(Locale.US);
         assertEquals(5, parameters.size());
     }
 
@@ -84,7 +84,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(standardizeInvalid.getCategory(), is(ActionCategory.DATA_CLEANSING.getDisplayName()));
+        assertThat(standardizeInvalid.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
     }
 
     @Test

@@ -72,18 +72,17 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        Parameter startParameter = SelectParameter.Builder
-                .builder()
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        Parameter startParameter = SelectParameter.selectParameter(locale)
                 .name(MATCH_THRESHOLD_PARAMETER)
                 .item(MatchThresholdEnum.HIGH.name(), MatchThresholdEnum.HIGH.getLabel())
                 .item(MatchThresholdEnum.DEFAULT.name(), MatchThresholdEnum.DEFAULT.getLabel())
                 .item(MatchThresholdEnum.NONE.name(), MatchThresholdEnum.NONE.getLabel())
                 .defaultValue(MatchThresholdEnum.DEFAULT.name())
-                .build();
+                .build(this);
         parameters.add(startParameter);
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override
@@ -122,8 +121,8 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

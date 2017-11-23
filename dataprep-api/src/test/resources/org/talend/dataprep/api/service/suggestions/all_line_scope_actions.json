@@ -1,8 +1,6 @@
 [
   {
     "actionScope": [],
-    "alternateDescription": "Delete this row",
-    "alternateLabel": "Delete row",
     "category": "data cleansing",
     "description": "Delete this row",
     "docUrl": "",
@@ -50,8 +48,6 @@
   },
   {
     "actionScope": [],
-    "alternateDescription": "Cells of this row will become columns names, the row will be deleted",
-    "alternateLabel": "Make as header",
     "category": "data cleansing",
     "description": "Cells of this row will become columns names, the row will be deleted",
     "docUrl": "",

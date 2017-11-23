@@ -856,7 +856,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 			}
 		}
 		else {
-			const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+			const aggregatedColumn = columnAggregation && _.find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
 			if (aggregatedColumn) {
 				const aggregationProcess = processAggregation(aggregatedColumn, aggregationName);
 				asyncProcess.push(aggregationProcess);
@@ -889,7 +889,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		initPatternsFrequency();
 
 		const columnAggregation = getSavedColumnAggregation();
-		const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+		const aggregatedColumn = columnAggregation && _.find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
 		const aggregation = columnAggregation && columnAggregation.aggregation;
 		if (aggregatedColumn && aggregation) {
 			processAggregation(aggregatedColumn, aggregation);

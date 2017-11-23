@@ -49,9 +49,7 @@
       }
     ],
     "description": "Clear cells that contain a value recognized as invalid",
-    "alternateDescription": "Clear cells that contain a value recognized as invalid",
     "label": "Clear the cells with invalid values",
-    "alternateLabel": "Clear the cells with invalid values",
     "docUrl": ""
   },
   {
@@ -104,18 +102,14 @@
       }
     ],
     "description": "Delete rows which contain an invalid cell",
-    "alternateDescription": "Delete rows which contain an invalid cell",
     "label": "Delete the rows with invalid cell",
-    "alternateLabel": "Delete the rows with invalid cell",
     "docUrl": ""
   },
   {
     "name": "fillinvalidwithdefault",
     "description": "Fill invalid cells from this column with a given value",
-    "alternateDescription": "Fill invalid cells from this column with a given value",
     "category": "data cleansing",
     "label": "Fill invalid cells with value",
-    "alternateLabel": "Fill invalid cells with value",
     "parameters": [
       {
         "name": "column_id",
@@ -260,18 +254,14 @@
       }
     ],
     "description": "Delete rows that have empty cells",
-    "alternateDescription": "Delete rows that have empty cells",
     "label": "Delete the rows with empty cell",
-    "alternateLabel": "Delete the rows with empty cell",
     "docUrl": ""
   },
   {
     "name": "fillemptywithdefault",
     "description": "Fill empty cells from this column with a given value",
-    "alternateDescription": "Fill empty cells from this column with a given value",
     "category": "data cleansing",
     "label": "Fill empty cells with value",
-    "alternateLabel": "Fill empty cells with value",
     "parameters": [
       {
         "name": "column_id",
@@ -529,9 +519,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Change the date format to use in a date column",
-    "alternateDescription": "Change the date format to use in a date column",
     "label": "Change date format",
-    "alternateLabel": "Change date format",
     "actionScope": [],
     "docUrl": "https://help.talend.com/access/sources/TDP_21/topic?EnrichPlatform=Talend+Data+Preparation&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func&pageid=date_formats&afs%3Alang=en"
   },
@@ -666,9 +654,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Calculate elapsed time until a date, in the desired unit (year, month, day, hour)",
-    "alternateDescription": "Calculate elapsed time until a date, in the desired unit (year, month, day, hour)",
     "label": "Calculate time until",
-    "alternateLabel": "Calculate time until",
     "actionScope": [],
     "docUrl": ""
   },
@@ -829,9 +815,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Create columns with year, month, day, hour, minute, second, etc.",
-    "alternateDescription": "Create columns with year, month, day, hour, minute, second, etc.",
     "label": "Extract date parts",
-    "alternateLabel": "Extract date parts",
     "actionScope": [],
     "docUrl": ""
   }

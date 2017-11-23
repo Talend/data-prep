@@ -198,27 +198,44 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         parameters.put(ENCLOSURE_MODE_PARAM_NAME, "text_only");
         final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
 
-        final ColumnMetadata column1 = column().id(1).name("song").type(Type.STRING).build();
-        final ColumnMetadata column2 = column().id(2).name("members").type(Type.INTEGER).build();
-        final ColumnMetadata column3 = column().id(3).name("band").type(Type.STRING).build();
-        final ColumnMetadata column4 = column().id(4).name("date").type(Type.DATE).build();
-        final List<ColumnMetadata> columns = Arrays.asList(column1, column2, column3, column4);
-        final RowMetadata rowMetadata = new RowMetadata(columns);
-
-        Map<String, String> values = new HashMap<>();
-        values.put("0001", "last \"nite");
-        values.put("0002", "5");
-        values.put("0003", "the Strokes");
-        values.put("0004", "1998");
-        final DataSetRow row = new DataSetRow(rowMetadata, values);
+        final DataSetRow row = getDataSetRow();
 
         // when
         tabWriter.write(row);
-        tabWriter.write(rowMetadata);
+        tabWriter.write(row.getRowMetadata());
         tabWriter.flush();
 
         // then
-        final String expectedCsv = "%song%;members;%band%;date\n" + "%last \"\"nite%;5;%the Strokes%;1998\n";
+        final String header = "%song%;%members%;%band%;%date%;%alive%;%old%;%any%\n";
+        final String rowValues = "%last \"\"nite%;5;%the Strokes%;1998;true;2.5;2.5\"%\n";
+        final String expectedCsv = header + rowValues;
+        assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-4389
+     */
+    @Test
+    public void should_neither_enclose_nor_escape_with_empty_char() throws Exception {
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(ENCLOSURE_CHARACTER_PARAM_NAME, "");
+        parameters.put(ESCAPE_CHARACTER_PARAM_NAME, "");
+        parameters.put(ENCLOSURE_MODE_PARAM_NAME, "all_fields");
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final DataSetRow row = getDataSetRow();
+
+        // when
+        tabWriter.write(row);
+        tabWriter.write(row.getRowMetadata());
+        tabWriter.flush();
+
+        // then
+        final String header = "song;members;band;date;alive;old;any\n";
+        final String rowValues = "last \"nite;5;the Strokes;1998;true;2.5;2.5%\n";
+        final String expectedCsv = header + rowValues;
         assertThat(temp.toString(UTF_8.name())).isEqualTo(expectedCsv);
     }
 
@@ -384,4 +401,29 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         return temp;
     }
 
+    /**
+     * @return a default dataset row.
+     */
+    private DataSetRow getDataSetRow() {
+        final ColumnMetadata column1 = column().id(1).name("song").type(Type.STRING).build();
+        final ColumnMetadata column2 = column().id(2).name("members").type(Type.INTEGER).build();
+        final ColumnMetadata column3 = column().id(3).name("band").type(Type.STRING).build();
+        final ColumnMetadata column4 = column().id(4).name("date").type(Type.DATE).build();
+        final ColumnMetadata column5 = column().id(5).name("alive").type(Type.BOOLEAN).build();
+        final ColumnMetadata column6 = column().id(6).name("old").type(Type.NUMERIC).build();
+        final ColumnMetadata column7 = column().id(7).name("any").type(Type.ANY).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2, column3, column4, column5, column6, column7);
+        final RowMetadata rowMetadata = new RowMetadata(columns);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("0001", "last \"nite");
+        values.put("0002", "5");
+        values.put("0003", "the Strokes");
+        values.put("0004", "1998");
+        values.put("0005", "true");
+        values.put("0006", "2.5");
+        values.put("0007", "2.5%");
+
+        return new DataSetRow(rowMetadata, values);
+    }
 }

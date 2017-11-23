@@ -15,9 +15,6 @@ package org.talend.dataprep.transformation.format;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.type.Type;
-
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class CSVWriterCustom extends CSVWriter {
@@ -38,12 +35,11 @@ public class CSVWriterCustom extends CSVWriter {
         this.separator = separator;
         this.quotechar = quotechar;
         this.escapechar = escapechar;
-        this.lineEnd = super.DEFAULT_LINE_END;
+        this.lineEnd = DEFAULT_LINE_END;
     }
 
-    public void writeNext(String[] nextLine, RowMetadata rowMetadata) {
-
-        if (nextLine != null) {
+    public void writeNext(String[] nextLine, Boolean[] isEnclosed) {
+        if (nextLine != null && isEnclosed != null && nextLine.length == isEnclosed.length) {
             StringBuilder sb = new StringBuilder(128);
 
             for (int i = 0; i < nextLine.length; ++i) {
@@ -52,15 +48,16 @@ public class CSVWriterCustom extends CSVWriter {
                 }
 
                 String nextElement = nextLine[i];
-                Boolean applyEnclosure = rowMetadata.getColumns().get(i).getType().equals(Type.STRING.getName());
+                Boolean elementIsEnclosed = isEnclosed[i];
                 if (nextElement != null) {
-                    if (this.quotechar != 0 && applyEnclosure) {
+                    // starting enclosure
+                    if (this.quotechar != 0 && elementIsEnclosed) {
                         sb.append(this.quotechar);
                     }
-
-                    sb.append((CharSequence) (this.stringContainsSpecialCharacters(nextElement) ? this.processLine(nextElement)
-                            : nextElement));
-                    if (this.quotechar != 0 && applyEnclosure) {
+                    // escaping values
+                    sb.append(this.stringContainsSpecialCharacters(nextElement) ? this.processLine(nextElement) : nextElement);
+                    // ending enclosure
+                    if (this.quotechar != 0 && elementIsEnclosed) {
                         sb.append(this.quotechar);
                     }
                 }

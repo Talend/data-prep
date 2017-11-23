@@ -13,6 +13,11 @@
 
 package org.talend.dataprep.transformation.actions.dataquality;
 
+import static java.util.Optional.empty;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
+
+import java.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +35,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.model.CategoryType;
 import org.talend.dataquality.semantic.model.DQCategory;
-
-import java.util.*;
-
-import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
 
 /**
  * Find a closest valid value from a dictionary.
@@ -89,20 +90,35 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            try {
-                String matchThresholdPara = actionContext.getParameters().get(MATCH_THRESHOLD_PARAMETER);
-                Double thresholdValue = MatchThresholdEnum.valueOf(matchThresholdPara).getThreshold();
-                actionContext.get(MATCH_THRESHOLD_KEY, p -> thresholdValue);
+            Map<String, String> parameters = actionContext.getParameters();
+            Optional<Double> thresholdValue = getThresholdFromParameters(parameters);
+            if (thresholdValue.isPresent()) {
+                actionContext.get(MATCH_THRESHOLD_KEY, p -> thresholdValue.get());
                 // this action only apply for column uses Semantic category.
                 final RowMetadata rowMetadata = actionContext.getRowMetadata();
                 final String columnId = actionContext.getColumnId();
                 final ColumnMetadata column = rowMetadata.getById(columnId);
                 actionContext.get(COLUMN_IS_SEMANTIC_KEY, p -> isDictionaryType(column));
-            } catch (IllegalArgumentException e) {
-                LOGGER.warn("Unsupported parameter", e);
+            } else {
+                LOGGER.warn("No valid threshold value received: got {}.", parameters.get(MATCH_THRESHOLD_PARAMETER));
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
         }
+    }
+
+    private Optional<Double> getThresholdFromParameters(Map<String, String> parameters) {
+        Optional<Double> thresholdValue;
+        String matchThresholdPara = parameters.get(MATCH_THRESHOLD_PARAMETER);
+        if (StringUtils.isNotBlank(matchThresholdPara)) {
+            try {
+                thresholdValue = Optional.of(MatchThresholdEnum.valueOf(matchThresholdPara).getThreshold());
+            } catch (IllegalArgumentException e) {
+                thresholdValue = empty();
+            }
+        } else {
+            thresholdValue = empty();
+        }
+        return thresholdValue;
     }
 
     @Override

@@ -14,6 +14,8 @@
 package org.talend.dataprep.transformation.actions.dataquality;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -61,6 +63,8 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
 
     private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandardizeInvalid.class);
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -85,14 +89,19 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            String matchThresholdPara = actionContext.getParameters().get(MATCH_THRESHOLD_PARAMETER);
-            Double thresholdValue = MatchThresholdEnum.valueOf(matchThresholdPara).getThreshold();
-            actionContext.get(MATCH_THRESHOLD_KEY, p -> thresholdValue);
-            // this action only apply for column uses Semantic category.
-            final RowMetadata rowMetadata = actionContext.getRowMetadata();
-            final String columnId = actionContext.getColumnId();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            actionContext.get(COLUMN_IS_SEMANTIC_KEY, p -> isDictionaryType(column));
+            try {
+                String matchThresholdPara = actionContext.getParameters().get(MATCH_THRESHOLD_PARAMETER);
+                Double thresholdValue = MatchThresholdEnum.valueOf(matchThresholdPara).getThreshold();
+                actionContext.get(MATCH_THRESHOLD_KEY, p -> thresholdValue);
+                // this action only apply for column uses Semantic category.
+                final RowMetadata rowMetadata = actionContext.getRowMetadata();
+                final String columnId = actionContext.getColumnId();
+                final ColumnMetadata column = rowMetadata.getById(columnId);
+                actionContext.get(COLUMN_IS_SEMANTIC_KEY, p -> isDictionaryType(column));
+            } catch (IllegalArgumentException e) {
+                LOGGER.warn("Unsupported parameter", e);
+                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            }
         }
     }
 

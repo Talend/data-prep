@@ -1171,18 +1171,20 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when
-        given().body(IOUtils
-                .toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"), UTF_8))//
-                .contentType(ContentType.JSON)//
-                .when()//
-                .put("/preparations/{id}/actions/{action}", preparationId, firstStepId);
+        try (InputStream inputStream = PreparationControllerTest.class
+                .getResourceAsStream("actions/append_update_upper_case.json")) {
+            given().body(IOUtils.toString(inputStream, UTF_8))//
+                    .contentType(ContentType.JSON)//
+                    .when()//
+                    .put("/preparations/{id}/actions/{action}", preparationId, firstStepId);
 
-        // then
-        preparation = repository.get(preparationId, Preparation.class);
-        assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
+            // then
+            preparation = repository.get(preparationId, Preparation.class);
+            assertThat(preparation.getLastModificationDate(), is(greaterThan(oldModificationDate)));
 
-        final Step head = repository.get(preparation.getHeadId(), Step.class);
-        assertThat(head.getParent(), is(Step.ROOT_STEP.getId()));
+            final Step head = repository.get(preparation.getHeadId(), Step.class);
+            assertThat(head.getParent(), is(Step.ROOT_STEP.getId()));
+        }
     }
 
     @Test
@@ -1800,15 +1802,17 @@ public class PreparationControllerTest extends BasePreparationTest {
      * @return The created step id
      */
     private String applyTransformation(final String preparationId, final String transformationFilePath) throws IOException {
-        given().body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream(transformationFilePath), UTF_8)) //
-                .contentType(ContentType.JSON) //
-                .when() //
-                .post("/preparations/{id}/actions", preparationId) //
-                .then() //
-                .statusCode(200);
+        try (InputStream inputStream = PreparationControllerTest.class.getResourceAsStream(transformationFilePath)) {
+            given().body(IOUtils.toString(inputStream, UTF_8)) //
+                    .contentType(ContentType.JSON) //
+                    .when() //
+                    .post("/preparations/{id}/actions", preparationId) //
+                    .then() //
+                    .statusCode(200);
 
-        final Preparation preparation = repository.get(preparationId, Preparation.class);
-        return preparation.getHeadId();
+            final Preparation preparation = repository.get(preparationId, Preparation.class);
+            return preparation.getHeadId();
+        }
     }
 
     /**

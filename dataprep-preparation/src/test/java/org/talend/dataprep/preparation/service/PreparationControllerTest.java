@@ -451,7 +451,7 @@ public class PreparationControllerTest extends BasePreparationTest {
                 final FolderEntry entry = iterator.next();
                 if (entry.getContentId().equals(copyId)) {
                     found = true;
-                    assertEquals("preparation.copy.newname", repository.get(entry.getContentId(), Preparation.class).getName());
+                    assertEquals("prep_1 copy", repository.get(entry.getContentId(), Preparation.class).getName());
                 }
             }
             assertTrue(found);

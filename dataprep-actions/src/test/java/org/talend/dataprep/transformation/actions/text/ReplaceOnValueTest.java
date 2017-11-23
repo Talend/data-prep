@@ -12,7 +12,6 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.actions.text;
 
-import static java.util.Locale.ENGLISH;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -26,6 +25,7 @@ import static org.talend.dataprep.transformation.actions.text.ReplaceOnValue.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
@@ -66,13 +66,13 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
 
     @Test
     public void test_category() throws Exception {
-        assertEquals("strings", action.getCategory(ENGLISH));
+        assertEquals("strings", action.getCategory(Locale.US));
     }
 
     @Test
     public void should_return_common_and_specific_parameters() {
         // when
-        final List<Parameter> actionParams = action.getParameters(ENGLISH);
+        final List<Parameter> actionParams = action.getParameters(Locale.US);
 
         // then
         assertThat(actionParams, hasSize(7));

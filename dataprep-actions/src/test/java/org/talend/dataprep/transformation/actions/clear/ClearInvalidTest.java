@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.clear;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -22,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(clearInvalid.getCategory(ENGLISH), is(ActionCategory.DATA_CLEANSING.getDisplayName(ENGLISH)));
+        assertThat(clearInvalid.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
     }
 
     @Test

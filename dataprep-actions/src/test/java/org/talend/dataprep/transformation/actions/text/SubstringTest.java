@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -21,10 +20,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.text.Substring.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,13 +61,13 @@ public class SubstringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.STRINGS.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testParameters() throws Exception {
         // when
-        final List<Parameter> actionParameters = action.getParameters(ENGLISH);
+        final List<Parameter> actionParameters = action.getParameters(Locale.US);
 
         // then
         assertEquals(5, actionParameters.size());

@@ -11,7 +11,6 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -66,7 +65,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.DATE.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -85,7 +84,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
 
         // when
-        final List<Parameter> parameters = action.getParameters(ENGLISH);
+        final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         assertNotNull(parameters);

@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -22,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
@@ -66,7 +66,7 @@ public class SwapTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.COLUMNS.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.COLUMNS.getDisplayName(Locale.US)));
     }
 
     @Test

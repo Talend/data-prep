@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -24,6 +23,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +71,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testActionParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters(ENGLISH);
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "operator")).findFirst().isPresent());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
@@ -86,7 +86,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.MATH.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.MATH.getDisplayName(Locale.US)));
     }
 
     @Test

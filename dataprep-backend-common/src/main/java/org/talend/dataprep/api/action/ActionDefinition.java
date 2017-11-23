@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.api.action;
 
-import static java.util.Locale.ENGLISH;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
@@ -251,11 +249,11 @@ public interface ActionDefinition extends Serializable {
     /**
      * Create a representation of this action for user interfaces using supplied locale.
      *
-     * @param locale The form main locale for representation, {@link Locale#ENGLISH ENGLISH} will be used as alternate locale.
+     * @param locale The form main locale for representation, {@link Locale#US US} will be used as alternate locale.
      * @return the action representation for the UI
      */
     default ActionForm getActionForm(Locale locale) {
-        return getActionForm(locale, ENGLISH);
+        return getActionForm(locale, Locale.US);
     }
 
     /**

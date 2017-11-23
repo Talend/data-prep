@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.configuration;
 
-import static java.util.Locale.ENGLISH;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.Locale;
@@ -39,7 +38,7 @@ public class Localization {
         try {
             locale = LocaleUtils.toLocale(defaultLocale);
         } catch (Exception e) {
-            locale = ENGLISH;
+            locale = Locale.US;
             LOGGER.warn("Illegal locale supplied in configuration: {}. Defaulting to english.", defaultLocale);
         }
         Locale.setDefault(locale);

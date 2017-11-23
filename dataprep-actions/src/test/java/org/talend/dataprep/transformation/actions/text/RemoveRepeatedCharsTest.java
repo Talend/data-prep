@@ -13,13 +13,13 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -74,12 +74,12 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.STRINGS.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testGetParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters(ENGLISH);
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(5, parameters.size());
 
         final SelectParameter parameter4 = (SelectParameter) parameters.get(4);

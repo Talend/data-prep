@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
@@ -22,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -92,7 +92,7 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(absolute.getCategory(ENGLISH), is(ActionCategory.MATH.getDisplayName(ENGLISH)));
+        assertThat(absolute.getCategory(Locale.US), is(ActionCategory.MATH.getDisplayName(Locale.US)));
     }
 
     @Test

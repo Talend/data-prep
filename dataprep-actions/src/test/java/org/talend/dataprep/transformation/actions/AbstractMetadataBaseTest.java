@@ -50,7 +50,7 @@ public abstract class AbstractMetadataBaseTest {
     protected final AnalyzerService analyzerService = new AnalyzerService();
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     protected String generateJson(String token, String operator) {
         ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);

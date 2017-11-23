@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -140,7 +139,7 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
     public void testCategory() throws Exception {
         // We test the real value of the category here (not based on the enum), because the frontent use this label for
         // display purpose:
-        assertThat(deleteColumn.getCategory(ENGLISH), is("columns"));
+        assertThat(deleteColumn.getCategory(Locale.US), is("columns"));
     }
 
     @Test

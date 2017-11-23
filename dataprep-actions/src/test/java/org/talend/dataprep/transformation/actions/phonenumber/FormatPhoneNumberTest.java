@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.phonenumber;
 
-import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
@@ -46,7 +45,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertEquals(action.getCategory(ENGLISH), ActionCategory.PHONE_NUMBER.getDisplayName(ENGLISH));
+        assertEquals(action.getCategory(Locale.US), ActionCategory.PHONE_NUMBER.getDisplayName(Locale.US));
     }
 
     @Test
@@ -65,7 +64,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters(ENGLISH);
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
 
         // Test on items label for TDP-2914:

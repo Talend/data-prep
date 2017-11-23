@@ -35,7 +35,7 @@ public class ParameterTest extends ParameterBaseTest {
     public void shouldSerializeToJsonWithoutEmptyConfiguration() throws IOException {
         // given
         Parameter expected = Parameter
-                .parameter(Locale.ENGLISH)
+                .parameter(Locale.US)
                 .setName("column_id")
                 .setType(ParameterType.STRING)
                 .setDefaultValue("0001")

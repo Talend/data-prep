@@ -35,7 +35,7 @@ import org.talend.dataprep.test.SpringLocalizationRule;
 public class ErrorMessageTest extends ServiceBaseTest {
 
     @Rule
-    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.ENGLISH);
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.US);
 
     @Test
     public void shouldReturnRightErrorMessageWhenHttpStatusIsZero() {

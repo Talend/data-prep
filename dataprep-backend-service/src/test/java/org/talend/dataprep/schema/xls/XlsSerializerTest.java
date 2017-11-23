@@ -69,7 +69,7 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
     private ObjectMapper mapper;
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     private List<Map<String, String>> getValuesFromFile(String fileName, DataSetMetadata dataSetMetadata) throws Exception {
 

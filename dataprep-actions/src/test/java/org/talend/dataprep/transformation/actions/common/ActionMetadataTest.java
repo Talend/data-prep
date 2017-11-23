@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -120,10 +119,10 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
     @Test
     public void default_parameters_should_contains_implicit_parameters() throws Exception {
         // when
-        final List<Parameter> defaultParams = columnTransformation.getParameters(ENGLISH);
+        final List<Parameter> defaultParams = columnTransformation.getParameters(Locale.US);
 
         // then
-        assertThat(defaultParams, containsInAnyOrder(ImplicitParameters.getParameters(ENGLISH).toArray(new Parameter[3])));
+        assertThat(defaultParams, containsInAnyOrder(ImplicitParameters.getParameters(Locale.US).toArray(new Parameter[3])));
     }
 
     @Test

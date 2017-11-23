@@ -63,7 +63,7 @@ public abstract class ServiceBaseTest {
     protected ObjectMapper mapper;
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     private boolean environmentSet = false;
 

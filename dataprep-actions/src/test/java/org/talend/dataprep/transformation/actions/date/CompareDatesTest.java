@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -20,10 +19,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
@@ -67,13 +63,13 @@ public class CompareDatesTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.DATE.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testParameters() throws Exception {
         // given
-        final List<Parameter> actionParameters = action.getParameters(ENGLISH);
+        final List<Parameter> actionParameters = action.getParameters(Locale.US);
 
         // then
         assertEquals(6, actionParameters.size());

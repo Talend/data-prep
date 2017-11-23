@@ -41,7 +41,7 @@ public abstract class BaseFormatTest extends TransformationBaseTest {
     protected BeanConversionService beanConversionService;
 
     @Rule
-    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.ENGLISH);
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.US);
 
     protected void testFormat(ExportFormat format, String expectedJson) throws IOException {
         StringWriter writer = new StringWriter();

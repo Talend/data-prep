@@ -27,7 +27,7 @@ import org.talend.dataprep.test.LocalizationRule;
 public class CSVFastHeaderAndTypeAnalyzerTest {
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @Test(expected = IllegalArgumentException.class)
     public void should_not_construct_object_with_null_sample(){

@@ -13,13 +13,13 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -62,7 +62,7 @@ public abstract class AbstractRoundTest extends AbstractMetadataBaseTest {
         List<String> expectedParameters = getExpectedParametersName();
 
         // when
-        final List<Parameter> parameters = getAction().getParameters(ENGLISH);
+        final List<Parameter> parameters = getAction().getParameters(Locale.US);
 
         // then
         assertThat(parameters.size(), is(expectedParameters.size()));

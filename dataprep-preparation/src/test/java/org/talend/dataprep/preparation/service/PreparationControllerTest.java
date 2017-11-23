@@ -67,7 +67,7 @@ public class PreparationControllerTest extends BasePreparationTest {
     private PreparationUtils preparationUtils;
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @Test
     public void CORSHeaders() throws Exception {

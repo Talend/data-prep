@@ -36,7 +36,7 @@ public class CSVFormatTest extends BaseFormatTest {
     private CSVFormat format;
 
     @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.ENGLISH);
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @Before
     public void setUp() {

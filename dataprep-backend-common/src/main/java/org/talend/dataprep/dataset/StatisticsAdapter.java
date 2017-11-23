@@ -15,10 +15,7 @@ package org.talend.dataprep.dataset;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,7 +46,6 @@ import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
 
-import static java.util.Locale.ENGLISH;
 import static org.talend.dataprep.api.type.Type.*;
 
 /**
@@ -297,7 +293,7 @@ public class StatisticsAdapter {
             final Statistics statistics = column.getStatistics();
             final Map<org.talend.dataquality.statistics.numeric.histogram.Range, Long> histogramStatistics = result
                     .get(StreamNumberHistogramStatistics.class).getHistogram();
-            final NumberFormat format = DecimalFormat.getInstance(ENGLISH);
+            final NumberFormat format = DecimalFormat.getInstance(Locale.US);
 
             // Set histogram ranges
             final Histogram histogram = new NumberHistogram();

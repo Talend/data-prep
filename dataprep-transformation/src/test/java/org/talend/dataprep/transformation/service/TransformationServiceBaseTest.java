@@ -76,7 +76,7 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
     private TransformationServiceUrlRuntimeUpdater urlUpdater;
 
     @Rule
-    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.ENGLISH);
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.US);
 
     @Before
     public void setUp() {

@@ -49,7 +49,7 @@ public class DataprepBundleTest {
 
     @Test
     public void messageDefault() throws Exception {
-        Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.US);
         assertEquals("Export to CSV", DataprepBundle.defaultMessage("export.CSV.title"));
     }
 

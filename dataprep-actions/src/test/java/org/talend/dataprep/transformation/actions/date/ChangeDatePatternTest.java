@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -64,10 +63,10 @@ public class ChangeDatePatternTest extends BaseDateTest {
     @Test
     public void testParameters() throws Exception {
         // 4 predefined patterns + custom = 6
-        assertThat(action.getParameters(ENGLISH).size(), is(6));
+        assertThat(action.getParameters(Locale.US).size(), is(6));
 
         // Test on items label for TDP-2944:
-        final SelectParameter newFormatParam = (SelectParameter) action.getParameters(ENGLISH).get(5);
+        final SelectParameter newFormatParam = (SelectParameter) action.getParameters(Locale.US).get(5);
         assertEquals("American standard", newFormatParam.getItems().get(0).getLabel());
     }
 
@@ -80,7 +79,7 @@ public class ChangeDatePatternTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.DATE.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test(expected = TalendRuntimeException.class)

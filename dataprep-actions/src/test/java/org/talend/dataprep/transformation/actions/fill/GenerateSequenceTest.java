@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.fill;
 
-import static java.util.Locale.ENGLISH;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -42,7 +40,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(ENGLISH), is(ActionCategory.NUMBERS.getDisplayName(ENGLISH)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.NUMBERS.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -52,7 +50,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testGetParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters(ENGLISH);
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
     }
 

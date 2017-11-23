@@ -14,13 +14,13 @@
 package org.talend.dataprep.transformation.api.action.parameters;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +40,7 @@ public class SelectParameterTest extends ParameterBaseTest {
     public void shouldSerializeToJsonWithItemsInConfiguration() throws IOException {
         // given
         SelectParameter expected = SelectParameter
-                .selectParameter(ENGLISH) //
+                .selectParameter(Locale.US) //
                 .name("column_id") //
                 .defaultValue("") //
                 .implicit(false) //
@@ -49,7 +49,7 @@ public class SelectParameterTest extends ParameterBaseTest {
                 .item("2") //
                 .item("your choice",
                         Parameter
-                                .parameter(ENGLISH)
+                                .parameter(Locale.US)
                                 .setName("limit")
                                 .setType(ParameterType.INTEGER)
                                 .setDefaultValue(StringUtils.EMPTY)
@@ -69,7 +69,7 @@ public class SelectParameterTest extends ParameterBaseTest {
     @Test
     public void shouldCreateConstantItem() {
         // when
-        final SelectParameter params = SelectParameter.selectParameter(ENGLISH).constant("key", "a constant key").build(this);
+        final SelectParameter params = SelectParameter.selectParameter(Locale.US).constant("key", "a constant key").build(this);
 
         // then
         assertThat(params.getItems().get(0).getValue(), is("key"));

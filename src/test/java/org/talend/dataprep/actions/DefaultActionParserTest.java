@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,11 +32,13 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 public class DefaultActionParserTest {
@@ -63,6 +66,9 @@ public class DefaultActionParserTest {
     private static String apiUrl;
 
     private static byte[] sampleDictionary;
+
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @BeforeClass
     public static void init() throws Exception {

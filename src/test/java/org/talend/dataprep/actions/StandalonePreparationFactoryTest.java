@@ -100,7 +100,7 @@ public class StandalonePreparationFactoryTest {
         assertEquals("string string", record.get(0));
 
         // When
-        final IndexedRecord result = function.apply(record);
+       final IndexedRecord result = function.apply(record);
 
         // Then
         assertSerializable(function);

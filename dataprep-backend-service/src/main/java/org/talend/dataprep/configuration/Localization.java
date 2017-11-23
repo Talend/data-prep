@@ -25,12 +25,17 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * This class is used to set default JVM locale at the initialization.
+ * It's not a duplication of DataprepLocaleContextResolver because it only deals with JVM default Locale and not with
+ * EE Spring context Locale
+ */
 @Configuration
 public class Localization {
 
     private static final Logger LOGGER = getLogger(Localization.class);
 
-    @Value("${dataprep.default.locale:en}")
+    @Value("${dataprep.default.locale:en-US}")
     private String defaultLocale;
 
     @PostConstruct
@@ -40,11 +45,12 @@ public class Localization {
             LOGGER.debug("Detected empty locale, default to english.");
             locale = Locale.US;
         } else {
-            try {
-                locale = LocaleUtils.toLocale(defaultLocale);
-            } catch (Exception e) {
+            locale = new Locale.Builder().setLanguageTag(defaultLocale).build();
+            if (LocaleUtils.isAvailableLocale(locale)) {
+                LOGGER.info("Setting default JVM locale to {}", locale);
+            } else {
+                LOGGER.info("Locale {} is not available. Defaulting to {}", locale, Locale.US);
                 locale = Locale.US;
-                LOGGER.warn("Illegal locale supplied in configuration: {}. Defaulting to english.", defaultLocale);
             }
         }
         Locale.setDefault(locale);

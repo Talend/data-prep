@@ -14,26 +14,25 @@
 'use strict';
 
 describe('Datetimepicker directive', function () {
-	var scope;
-	var element;
-	var html;
-	var createElement;
-	var controller;
+	let scope;
+	let element;
+	let createElement;
+	let controller;
 
 	beforeEach(angular.mock.module('talend.widget'));
 	beforeEach(angular.mock.module('data-prep.services.utils'));
 
-	beforeEach(function () {
+	beforeEach(() => {
 		jasmine.clock().install();
 	});
 
-	beforeEach(inject(function ($rootScope, $compile) {
+	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new();
 		scope.minModel = 1465895872052;
 		scope.onMouseBlur = () => {
 		};
 
-		createElement = function () {
+		createElement = () => {
 			element = angular.element(`<html><body><div>
                             <talend-datetime-picker ng-model="minModel"
                                                     on-mouse-blur="onMouseBlur()">
@@ -46,13 +45,13 @@ describe('Datetimepicker directive', function () {
 		};
 	}));
 
-	afterEach(function () {
+	afterEach(() => {
 		jasmine.clock().uninstall();
 		scope.$destroy();
 		element.remove();
 	});
 
-	it('should render input element', function () {
+	it('should render input element', () => {
 		//when
 		createElement();
 
@@ -60,7 +59,7 @@ describe('Datetimepicker directive', function () {
 		expect(element.find('.datetimepicker').length).toBe(1);
 	});
 
-	it('should trigger onBlur callback', function () {
+	it('should trigger onBlur callback', () => {
 		//given
 		createElement();
 		spyOn(controller, 'onBlur').and.returnValue();

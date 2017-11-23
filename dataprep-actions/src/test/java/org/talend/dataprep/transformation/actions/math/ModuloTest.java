@@ -15,6 +15,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -33,10 +34,14 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
  */
 public class ModuloTest extends AbstractMetadataBaseTest {
 
-    /** The action to test. */
+    /**
+     * The action to test.
+     */
     private Modulo action = new Modulo();
 
-    /** The action parameters. */
+    /**
+     * The action parameters.
+     */
     private Map<String, String> parameters;
 
     @Before
@@ -52,8 +57,9 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.MATH.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.MATH.getDisplayName(Locale.US)));
     }
+
 
     @Test
     public void testAdapt() throws Exception {
@@ -64,8 +70,8 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testActionParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
-        assertEquals(6, parameters.size());
+        final List<Parameter> parameters = action.getParameters(Locale.US);
+        assertEquals(5, parameters.size());
     }
 
     @Test

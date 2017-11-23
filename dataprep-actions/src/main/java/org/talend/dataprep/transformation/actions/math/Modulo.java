@@ -12,7 +12,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -23,13 +22,7 @@ import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
 
-import java.math.RoundingMode;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import java.util.*;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
 public class Modulo extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
@@ -53,8 +46,8 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.MATH.getDisplayName(locale);
     }
 
     @Override
@@ -64,20 +57,31 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.Builder
-                .builder()
+        parameters.add(SelectParameter
+                .selectParameter(locale)
                 .name(MODE_PARAMETER)
-                .item(CONSTANT_MODE, CONSTANT_MODE, new Parameter(DIVISOR, ParameterType.STRING, "2"))
+                .item(CONSTANT_MODE, CONSTANT_MODE,
+                        Parameter
+                                .parameter(locale)
+                                .setName(DIVISOR)
+                                .setType(ParameterType.STRING)
+                                .setDefaultValue("2")
+                                .build(this))
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
-                        new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
-                                StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //
+                        Parameter
+                                .parameter(locale)
+                                .setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(ParameterType.COLUMN)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .setCanBeBlank(false)
+                                .build(this)) //
                 .defaultValue(CONSTANT_MODE)
-                .build());
+                .build(this));
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

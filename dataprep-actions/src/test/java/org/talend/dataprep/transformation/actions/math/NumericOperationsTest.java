@@ -127,7 +127,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     @Test
     public void testComputeScaleAndRoundMultiply() {
         assertEquals("6.66", action.compute("3.33", "x", "2"));
-        assertEquals("36.22", action.compute("18.1111", "x", "2"));
+        assertEquals("36.2222", action.compute("18.1111", "x", "2"));
     }
 
     @Test
@@ -142,13 +142,13 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     @Test
     public void testComputeScaleAndRoundAdd() {
         assertEquals("5.33", action.compute("3.33", "+", "2"));
-        assertEquals("20.11", action.compute("18.1111", "+", "2"));
+        assertEquals("20.1111", action.compute("18.1111", "+", "2"));
     }
 
     @Test
     public void testComputeScaleAndRoundSubstract() {
         assertEquals("1.33", action.compute("3.33", "-", "2"));
-        assertEquals("16.11", action.compute("18.1111", "-", "2"));
+        assertEquals("16.1111", action.compute("18.1111", "-", "2"));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     @Test
     public void testComputeAltFormat() {
         assertEquals("5.15", action.compute("3,05", "+", "2.1"));
-        assertEquals("6300", action.compute("3 000", "x", "2.1"));
+        assertEquals("6300.0", action.compute("3 000", "x", "2.1"));
     }
 
     @Test

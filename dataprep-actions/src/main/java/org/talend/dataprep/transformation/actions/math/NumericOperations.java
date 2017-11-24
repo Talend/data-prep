@@ -192,9 +192,6 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
             BigDecimal toReturn;
 
-            final int scale = 2;
-            final RoundingMode rm = HALF_UP;
-
             switch (operator) {
             case PLUS:
                 toReturn = operandOne.add(operandTwo);
@@ -206,14 +203,14 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
                 toReturn = operandOne.subtract(operandTwo);
                 break;
             case DIVIDE:
-                toReturn = operandOne.divide(operandTwo, scale, rm);
+                toReturn = operandOne.divide(operandTwo);
                 break;
             default:
                 return "";
             }
 
             // Format result:
-            return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
+            return toReturn.toPlainString();
         } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
             LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to exception {}.", stringOperandOne,
                     stringOperandTwo, operator, e);

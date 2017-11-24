@@ -49,15 +49,13 @@ export default function TalendDatetimePicker($timeout) {
 		},
 		controllerAs: 'ctrl',
 		link(scope, iElement, iAttrs, ctrl) {
-			// datetimepicker uses unix-like date format
-			// @see http://www.xaprb.com/media/2005/12/date-formatting-demo
+            // datetimepicker uses unix-like date format
+            // @see http://www.xaprb.com/media/2005/12/date-formatting-demo
 			const timepicker = _.has(iAttrs, 'isDateTime');
 			const formatTime = iAttrs.unixFormatTime || 'H:i';
 			const formatDate = iAttrs.unixFormatDate || 'Y-m-d';
 			const format = iAttrs.unixFormat || timepicker ? `${formatDate} ${formatTime}` : formatDate;
-			const style = ctrl.datetimepickerStyle;
-
-			const $input = iElement.find('.datetimepicker');
+			const style = ctrl.datetimepickerStyle || '';
 
 			function onSelectDate() {
 				$timeout(() => {
@@ -65,40 +63,26 @@ export default function TalendDatetimePicker($timeout) {
 				});
 			}
 
-			$input.datetimepicker({
+			const input = $('.datetimepicker');
+			input.datetimepicker({
 				format,
 				formatDate,
 				formatTime,
 				timepicker,
 				style,
-				lazyInit: true,
 				onSelectDate,
-				onShow() {
-					const $this = $(this);
-					const $thisHeight = $this.outerHeight();
-					const $inputHeight = $input.outerHeight();
-					const $inputOffset = $input.offset();
-					const $thisNewTop = $inputHeight + $thisHeight;
-					// datetimepicker could be on top of input
-					if ($inputOffset && $inputOffset.top >= $thisNewTop) {
-						$this.css('margin-top', `-${$thisNewTop}px`);
-					}
-					else {
-						$this.css('margin-top', 0);
-					}
-				},
 			});
 
-			$input.bind('keydown', (event) => {
-				// hide calendar on 'ESC' keydown
+			input.bind('keydown', (event) => {
+                // hide calendar on 'ESC' keydown
 				if (event.keyCode === 27) {
-					$input.datetimepicker('hide');
+					input.datetimepicker('hide');
 					event.stopPropagation();
 				}
 			});
 
 			scope.$on('$destroy', () => {
-				$input.datetimepicker('destroy');
+				input.datetimepicker('destroy');
 			});
 		},
 	};

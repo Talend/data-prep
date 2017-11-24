@@ -36,7 +36,8 @@
                                 ng-switch-when="date"
                                 on-blur="rangeSliderCtrl.onInputChange()"
                                 on-select="rangeSliderCtrl.onInputChange()"
-                                format="{{::rangeSliderCtrl.dateFormat}}">
+                                format="{{::rangeSliderCtrl.dateFormat}}"
+                                datetimepicker-style="margin-top: -200px">
         </talend-datetime-picker>
     </span>
     <span class="range-label-input">
@@ -53,7 +54,8 @@
                                 ng-switch-when="date"
                                 on-blur="rangeSliderCtrl.onInputChange()"
                                 on-select="rangeSliderCtrl.onInputChange()"
-                                format="{{::rangeSliderCtrl.dateFormat}}">
+                                format="{{::rangeSliderCtrl.dateFormat}}"
+                                datetimepicker-style="margin-top: -200px">
         </talend-datetime-picker>
     </span>
 
@@ -65,7 +67,7 @@
               ng-if="rangeSliderCtrl.invalidNumber"
               translate-once="INVALID_VALUE_RANGE_SLIDER"></span>
 
-    <span class="error"
-          ng-if="rangeSliderCtrl.invalidNumberWithComma"
-          translate-once="INVALID_VALUE_RANGE_SLIDER_CONTENT"></span>
+        <span class="error"
+              ng-if="rangeSliderCtrl.invalidNumberWithComma"
+              translate-once="INVALID_VALUE_RANGE_SLIDER_CONTENT"></span>
 </div>

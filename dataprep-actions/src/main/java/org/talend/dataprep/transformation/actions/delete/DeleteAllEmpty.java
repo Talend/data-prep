@@ -14,7 +14,7 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
 import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
 
 /**
- * Delete row when value is empty.
+ * Delete all rows when they are empty.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteAllEmpty.DELETE_ALL_EMPTY_ACTION_NAME)
 public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAction {
@@ -58,6 +58,12 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
         }
     }
 
+    /**
+     * Check if the row is empty or not. Return true if the row is empty, else false.
+     *
+     * @param row to test.
+     * @return boolean
+     */
     protected boolean checkEmptyRow(DataSetRow row) {
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
             String value = row.get(column.getId());

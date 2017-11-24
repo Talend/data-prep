@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "max_numbers",
+      "action": "modulo",
       "parameters": {
         "column_id": "0000",
         "scope": "column",

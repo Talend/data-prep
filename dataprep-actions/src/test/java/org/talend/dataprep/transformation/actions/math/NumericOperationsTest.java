@@ -134,9 +134,9 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
     public void testComputeScaleAndRoundDivide() {
         assertEquals("1.5", action.compute("3", "/", "2"));
         assertEquals("2", action.compute("18", "/", "9"));
-        assertEquals("2.11", action.compute("19", "/", "9"));
-        assertEquals("211.11", action.compute("1900", "/", "9"));
-        assertEquals("21111.11", action.compute("190000", "/", "9"));
+        assertEquals("2.111111111111111", action.compute("19", "/", "9"));
+        assertEquals("211.111111111111111", action.compute("1900", "/", "9"));
+        assertEquals("21111.111111111111111", action.compute("190000", "/", "9"));
     }
 
     @Test
@@ -156,13 +156,13 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         assertEquals("5.1", action.compute("3", "+", "2.1"));
         assertEquals("6.3", action.compute("3", "x", "2.1"));
         assertEquals("0.9", action.compute("3", "-", "2.1"));
-        assertEquals("1.9", action.compute("4", "/", "2.1"));
+        assertEquals("1.904761904761905", action.compute("4", "/", "2.1"));
     }
 
     @Test
     public void testComputeAltFormat() {
         assertEquals("5.15", action.compute("3,05", "+", "2.1"));
-        assertEquals("6300.0", action.compute("3 000", "x", "2.1"));
+        assertEquals("6300", action.compute("3 000", "x", "2.1"));
     }
 
     @Test

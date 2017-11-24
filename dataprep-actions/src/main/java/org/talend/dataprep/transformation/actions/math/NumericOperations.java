@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.math.RoundingMode.HALF_UP;
+import static java.math.RoundingMode.HALF_EVEN;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -192,6 +192,9 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
             BigDecimal toReturn;
 
+            final int scale = 15;
+            final RoundingMode rm = HALF_EVEN;
+
             switch (operator) {
             case PLUS:
                 toReturn = operandOne.add(operandTwo);
@@ -203,14 +206,14 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
                 toReturn = operandOne.subtract(operandTwo);
                 break;
             case DIVIDE:
-                toReturn = operandOne.divide(operandTwo);
+                toReturn = operandOne.divide(operandTwo, scale, rm);
                 break;
             default:
                 return "";
             }
 
             // Format result:
-            return toReturn.toPlainString();
+            return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
         } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
             LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to exception {}.", stringOperandOne,
                     stringOperandTwo, operator, e);

@@ -16,8 +16,11 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.test.PreparationClientTest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
@@ -124,4 +128,25 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
         return preparation.id();
     }
 
+    protected void createFolder(final String parentId, final String path) {
+        given().queryParam("parentId", parentId) //
+                .queryParam("path", path) //
+                .expect().statusCode(200).log().ifError()//
+                .when() //
+                .put("/folders").then().assertThat().statusCode(200);
+    }
+
+    protected Folder getFolder(final String parentId, final String name) throws IOException {
+        return getFolderChildren(parentId).stream().filter((folder) -> folder.getName().equals(name)).findFirst().orElse(null);
+    }
+
+    protected List<Folder> getFolderChildren(final String id) throws IOException {
+        final Response response = given() //
+                .when() //
+                .get("/folders?parentId={parentId}", id);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
+        return mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
+        });
+    }
 }

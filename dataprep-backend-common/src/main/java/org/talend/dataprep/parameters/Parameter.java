@@ -269,7 +269,7 @@ public class Parameter implements Serializable {
         }
 
         // for now we still are forced to auto detect label and description parameters but if it is possible to do this
-        // without binding parameter builder with the I18n mecanism it would be really great, hence the warnings
+        // without binding parameter builder with the I18n mechanism it would be really great, hence the warnings
         public Parameter build(Object action) {
             if (label == null) {
                 LOGGER.debug("Warning: implicit label in [{}] parameter creation.", name);

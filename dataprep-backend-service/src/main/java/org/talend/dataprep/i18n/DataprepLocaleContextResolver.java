@@ -39,7 +39,7 @@ public class DataprepLocaleContextResolver extends AbstractLocaleContextResolver
 
     private final Locale applicationLocale;
 
-    public DataprepLocaleContextResolver(@Value("${dataprep.locale:}") String configuredLocale) {
+    public DataprepLocaleContextResolver(@Value("${dataprep.locale:en-US}") String configuredLocale) {
         setDefaultLocale(US);
         this.applicationLocale = resolveApplicationLocale(configuredLocale);
     }
@@ -57,14 +57,13 @@ public class DataprepLocaleContextResolver extends AbstractLocaleContextResolver
     private Locale resolveApplicationLocale(String configuredLocale) {
         Locale locale;
         if (StringUtils.isNotBlank(configuredLocale)) {
-
             try {
                 locale = new Locale.Builder().setLanguageTag(configuredLocale).build();
                 if (LocaleUtils.isAvailableLocale(locale)) {
-                    LOGGER.info("Setting application locale to configured {}", locale);
+                    LOGGER.debug("Setting application locale to configured {}", locale);
                 } else {
                     locale = getDefaultLocale();
-                    LOGGER.info("Locale {} is not available. Defaulting to {}", configuredLocale, getDefaultLocale());
+                    LOGGER.debug("Locale {} is not available. Defaulting to {}", configuredLocale, getDefaultLocale());
                 }
             } catch (IllformedLocaleException e) {
                 locale = getDefaultLocale();
@@ -74,8 +73,9 @@ public class DataprepLocaleContextResolver extends AbstractLocaleContextResolver
             }
         } else {
             locale = getDefaultLocale();
-            LOGGER.info("Setting application locale to default value {}", getDefaultLocale());
+            LOGGER.debug("Setting application locale to default value {}", getDefaultLocale());
         }
+        LOGGER.info("Application locale set to: '{}'", locale);
         return locale;
     }
 }

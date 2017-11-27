@@ -392,7 +392,7 @@
   "_comment": "Dataset parameters",
   "DATASET_PARAMETERS": "Paramètres du jeu de données",
   "DATASET_PARAMETERS_ENCODING": "Encodage",
-  "DATASET_PARAMETERS_SEPARATOR": "Séparateur",
+  "DATASET_PARAMETERS_SEPARATOR": "Séparateur de champs",
   "ACTION_HELP": "En savoir plus…",
   "SIZE": "Taille",
 

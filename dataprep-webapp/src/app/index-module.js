@@ -107,9 +107,12 @@ window.fetchConfiguration = function fetchConfiguration() {
 					fallbackLng;
 
 				$translateProvider.preferredLanguage(preferredLanguage);
+
+				moment.locale(preferredLanguage);
+
 				if (preferredLanguage !== fallbackLng) {
 					i18n.changeLanguage(preferredLanguage);
-					moment.locale(preferredLanguage);
+
 					if (preferredLanguage === 'fr') {
 						const d3locale = d3.locale(d3LocaleFr);
 						d3.format = d3locale.numberFormat;

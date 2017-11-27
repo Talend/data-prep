@@ -48,7 +48,7 @@
     "intro.js": "^1.1.1",
     "jquery": "2.1.4",
     "jquery-datetimepicker": "2.5.4",
-    "jquery-ui": "1.10.x",
+    "jquery-ui": "1.12.1",
     "lodash": "4.17.4",
     "modernizr": "^3.3.1",
     "moment": "^2.13.0",

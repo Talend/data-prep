@@ -77,6 +77,8 @@ $search-actions-height: 25px;
 	}
 
 	.filters-actions-form {
+		display: flex;
+		align-items: center;
 		flex-basis: 30px;
 		flex-grow: 0;
 		flex-shrink: 0;
@@ -108,17 +110,17 @@ $search-actions-height: 25px;
 			}
 		}
 
+		> span,
 		label {
 			display: inline-flex;
 			align-items: center;
-			cursor: pointer;
-			vertical-align: middle;
 			font-weight: 600;
 			font-size: 0.8em;
-			position: relative;
-			span {
-				padding: 0 5px;
-			}
+			text-transform: none;
+		}
+
+		label span {
+			padding: 0 5px;
 		}
 
 		input {

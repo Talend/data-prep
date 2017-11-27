@@ -145,9 +145,9 @@
 <talend-modal
             class="preparation-modal preparation-picker-modal"
             fullscreen="false"
-            state="playgroundCtrl.displayPreparationPicker"
+            state="playgroundCtrl.state.playground.isPreprationPickerVisible"
             close-button="true"
-            ng-if="playgroundCtrl.displayPreparationPicker">
+            ng-if="playgroundCtrl.state.playground.isPreprationPickerVisible">
     <div class="modal-title" translate-once="CHOOSE_PREPARATION_TO_APPLY"></div>
 
     <preparation-picker

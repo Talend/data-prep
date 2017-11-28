@@ -68,7 +68,7 @@ public class CSVFormat extends ExportFormat {
     @Override
     public List<Parameter> getParameters() {
         Locale currentLocale = getLocale();
-        return Arrays.asList( //
+        return Arrays.asList(//
                 getFileName(currentLocale), //
                 getCsvDelimiters(currentLocale), //
                 getEnclosureChar(currentLocale), //
@@ -104,7 +104,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private SelectParameter getEnclosureOptions(Locale locale) {
-        return SelectParameter.selectParameter(locale).name(ParametersCSV.ENCLOSURE_MODE) //
+        return SelectParameter.selectParameter(locale) //
+                .name(ParametersCSV.ENCLOSURE_MODE) //
                 .item(ParametersCSV.ENCLOSURE_ALL_FIELDS, ParametersCSV.ENCLOSURE_TEXT_ALL_FIELDS_LABEL) //
                 .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
                 .defaultValue(ParametersCSV.ENCLOSURE_TEXT_ONLY) //
@@ -113,7 +114,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private SelectParameter getCsvDelimiters(Locale locale) {
-        return SelectParameter.selectParameter(locale).name(ParametersCSV.FIELDS_DELIMITER) //
+        return SelectParameter.selectParameter(locale) //
+                .name(ParametersCSV.FIELDS_DELIMITER) //
                 .item(";", "semiColon") //
                 .item("\u0009", "tabulation") //
                 .item(" ", "space") //

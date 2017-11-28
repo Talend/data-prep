@@ -396,7 +396,7 @@
   "_comment": "Dataset parameters",
   "DATASET_PARAMETERS": "Dataset parameters",
   "DATASET_PARAMETERS_ENCODING": "Encoding",
-  "DATASET_PARAMETERS_SEPARATOR": "Separator",
+  "DATASET_PARAMETERS_SEPARATOR": "Field delimiter",
   "ACTION_HELP": "Learn more…",
   "NAME": "Name",
   "SIZE": "Size",

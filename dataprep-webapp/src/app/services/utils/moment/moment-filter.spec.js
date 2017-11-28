@@ -12,36 +12,37 @@
   ============================================================================*/
 
 describe('Moment filter', function () {
-    'use strict';
+	'use strict';
 
-    beforeEach(angular.mock.module('data-prep.services.utils'));
+	beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    it('should transform timestamp to human readable moment', inject(function ($filter) {
-        // given
-        var date = new Date();
-        date.setDate(date.getDate() - 7);
+	beforeEach(() => {
+		moment.locale('en');
+	});
 
-        // when
-        var result = $filter('TDPMoment')(date.getTime());
+	it('should transform timestamp to human readable moment', inject(function ($filter) {
+		// given
+		const date = new Date();
+		date.setDate(date.getDate() - 7);
 
-        // then
-        expect(result).toEqual('7 days ago');
-    }));
+		// when
+		const result = $filter('TDPMoment')(date.getTime());
 
-    it('should transform date to human readable moment', inject(function ($filter) {
-        // given
-        var date = new Date();
-        date.setDate(date.getDate() - 7);
+		// then
+		expect(result).toEqual('7 days ago');
+	}));
 
-        var dateAsString = date.getFullYear() + '/' +
-        (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1) + '/' +
-        (date.getDate() < 10 ? '0' : '') + date.getDate() +
-        ' ' + date.getHours() + ':' + date.getMinutes();
+	it('should transform date to human readable moment', inject(function ($filter) {
+		// given
+		const date = new Date();
+		date.setDate(date.getDate() - 7);
 
-        // when
-        var result = $filter('TDPMoment')(dateAsString, 'YYYY/MM/DD HH:mm');
+		const dateAsString = `${date.getFullYear()}/${date.getMonth() < 9 ? '0' : ''}${date.getMonth() + 1}/${date.getDate() < 10 ? '0' : ''}${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
-        // then
-        expect(result).toEqual('7 days ago');
-    }));
+		// when
+		const result = $filter('TDPMoment')(dateAsString, 'YYYY/MM/DD HH:mm');
+
+		// then
+		expect(result).toEqual('7 days ago');
+	}));
 });

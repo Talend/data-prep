@@ -19,6 +19,7 @@ import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -27,7 +28,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
@@ -56,10 +56,11 @@ public class DeleteOnValue extends AbstractDelete {
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(VALUE_PARAMETER, REGEX, EMPTY));
-        return ActionsBundle.attachToAction(parameters, this);
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(Parameter.parameter(locale).setName(VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
+                this));
+        return parameters;
     }
 
     @Override

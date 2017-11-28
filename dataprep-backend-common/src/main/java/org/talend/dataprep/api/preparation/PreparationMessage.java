@@ -14,10 +14,7 @@ package org.talend.dataprep.api.preparation;
 
 import java.util.List;
 
-import org.talend.dataprep.api.action.ActionDefinition;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.talend.dataprep.api.action.ActionForm;
 
 /**
  * Bean that wraps Preparation used for json serialization towards frontend.
@@ -31,7 +28,7 @@ public class PreparationMessage extends Preparation {
     private boolean allowFullRun;
 
     /** List of action metadata (description) */
-    private List<ActionDefinition> metadata;
+    private List<ActionForm> metadata;
 
     /** List of actions with parameters */
     private List<Action> actions;
@@ -106,9 +103,7 @@ public class PreparationMessage extends Preparation {
     /**
      * @return The list of action metadata in the preparation.
      */
-    @JsonDeserialize(using = ActionDefinitionDeserializer.class)
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class")
-    public List<ActionDefinition> getMetadata() {
+    public List<ActionForm> getMetadata() {
         return metadata;
     }
 
@@ -117,7 +112,7 @@ public class PreparationMessage extends Preparation {
      *
      * @param metadata The new action descriptions for this preparation.
      */
-    public void setMetadata(List<ActionDefinition> metadata) {
+    public void setMetadata(List<ActionForm> metadata) {
         this.metadata = metadata;
     }
 }

@@ -18,26 +18,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.test.LocalizationRule;
 
 public class CSVFastHeaderAndTypeAnalyzerTest {
 
-    private Locale previousLocale;
-
-    @Before
-    public void setUp() throws Exception {
-        previousLocale = Locale.getDefault();
-        Locale.setDefault(Locale.ENGLISH);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Locale.setDefault(previousLocale);
-    }
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @Test(expected = IllegalArgumentException.class)
     public void should_not_construct_object_with_null_sample(){

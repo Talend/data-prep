@@ -24,7 +24,7 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 public interface SearchActions {
     ActionSettings SEARCH_TOGGLE = builder()
             .id("search:toggle")
-            .name("Toggle search input")
+            .name("search.toggle")
             .icon("talend-search")
             .type("@@search/TOGGLE")
             .build();

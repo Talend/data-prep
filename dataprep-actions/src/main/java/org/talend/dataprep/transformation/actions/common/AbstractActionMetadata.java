@@ -23,6 +23,7 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.i18n.ActionsBundle;
+import org.talend.dataprep.i18n.DocumentationLinkGenerator;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -71,7 +72,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      * @see ActionCategory
      */
     @Override
-    public abstract String getCategory();
+    public abstract String getCategory(Locale locale);
 
     /**
      * Return true if the action can be applied to the given column metadata.
@@ -85,24 +86,32 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * @return The label of the action, translated in the user locale.
      * @see MessagesBundle
+     * @param locale
      */
     @Override
-    public String getLabel() {
-        return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, getName());
+    public String getLabel(Locale locale) {
+        return ActionsBundle.actionLabel(this, locale, getName());
     }
 
     /**
      * @return The description of the action, translated in the user locale.
      * @see MessagesBundle
+     * @param locale
      */
     @Override
-    public String getDescription() {
-        return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, getName());
+    public String getDescription(Locale locale) {
+        return ActionsBundle.actionDescription(this, locale, getName());
     }
 
     @Override
-    public String getDocUrl() {
-        return ActionsBundle.INSTANCE.actionDocUrl(this, Locale.ENGLISH, getName());
+    public String getDocUrl(Locale locale) {
+        String actionDocUrl = ActionsBundle.actionDocUrl(this, locale, getName());
+        return DocumentationLinkGenerator
+                .builder() //
+                .url(actionDocUrl) //
+                .locale(locale) //
+                .addAfsLanguageParameter(true)
+                .build();
     }
 
     /**
@@ -196,10 +205,12 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     /**
      * @return The list of parameters required for this Action to be executed.
-     **/
+     *
+     * @param locale
+     */
     @Override
-    public List<Parameter> getParameters() {
-        return ActionsBundle.attachToAction(ImplicitParameters.getParameters(), this);
+    public List<Parameter> getParameters(Locale locale) {
+        return ImplicitParameters.getParameters(locale);
     }
 
     @JsonIgnore

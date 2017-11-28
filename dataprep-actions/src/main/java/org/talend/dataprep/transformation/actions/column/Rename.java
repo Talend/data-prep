@@ -15,21 +15,17 @@ package org.talend.dataprep.transformation.actions.column;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -51,8 +47,7 @@ public class Rename extends AbstractActionMetadata implements ColumnAction {
     /** Name of the new column parameter. */
     public static final String NEW_COLUMN_NAME_PARAMETER_NAME = "new_column_name"; //$NON-NLS-1$
 
-    /** Parameters (column name, new column name...) */
-    private final List<Parameter> parameters;
+    public final String defaultName;
 
     /**
      * Default empty constructor that with no new column name.
@@ -67,9 +62,7 @@ public class Rename extends AbstractActionMetadata implements ColumnAction {
      * @param defaultName the default new column name.
      */
     public Rename(final String defaultName) {
-        this.parameters = super.getParameters();
-        this.parameters.add(new Parameter(NEW_COLUMN_NAME_PARAMETER_NAME, ParameterType.STRING, defaultName, //
-                false, false, StringUtils.EMPTY));
+        this.defaultName = defaultName;
     }
 
     @Override
@@ -78,19 +71,25 @@ public class Rename extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMN_METADATA.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMN_METADATA.getDisplayName(locale);
     }
 
     @Override
     public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        return ActionsBundle.attachToAction(parameters, this);
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(Parameter.parameter(locale).setName(NEW_COLUMN_NAME_PARAMETER_NAME)
+                .setType(ParameterType.STRING)
+                .setDefaultValue(defaultName)
+                .setCanBeBlank(false)
+                .build(this));
+        return parameters;
     }
 
     @Override

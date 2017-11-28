@@ -61,7 +61,7 @@ public class TextClusteringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(textClustering.getCategory(), is(ActionCategory.STRINGS_ADVANCED.getDisplayName()));
+        assertThat(textClustering.getCategory(Locale.US), is(ActionCategory.STRINGS_ADVANCED.getDisplayName(Locale.US)));
     }
 
     @Test

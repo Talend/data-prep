@@ -12,6 +12,15 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
@@ -19,7 +28,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -27,14 +35,6 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.DistanceEnum;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 /**
  * Convert distance from one unit to another.
@@ -55,12 +55,13 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     /**
      * @return The list of parameters required for this Action to be executed.
-     **/
+     *
+     * @param locale*/
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
-        SelectParameter.Builder builder = SelectParameter.Builder.builder()
+        SelectParameter.SelectParameterBuilder builder = SelectParameter.selectParameter(locale)
                 .item(DistanceEnum.MILLIMETER.name(), DistanceEnum.MILLIMETER.getShortName())
                 .item(DistanceEnum.CENTIMETER.name(), DistanceEnum.CENTIMETER.getShortName())
                 .item(DistanceEnum.DECIMETER.name(), DistanceEnum.DECIMETER.getShortName())
@@ -79,16 +80,20 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
         parameters.add(builder
                 .defaultValue(DistanceEnum.MILE.name())
                 .name(FROM_UNIT_PARAMETER)
-                .build());
+                .build(this));
 
         parameters.add(builder
                 .defaultValue(DistanceEnum.KILOMETER.name())
                 .name(TO_UNIT_PARAMETER)
-                .build());
+                .build(this));
 
-        parameters.add(new Parameter(TARGET_PRECISION, INTEGER, "2", false, true, "precision"));
+        parameters.add(Parameter.parameter(locale).setName(TARGET_PRECISION)
+                .setType(INTEGER)
+                .setDefaultValue("2")
+                .setPlaceHolder("precision")
+                .build(this));
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override
@@ -97,8 +102,8 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.CONVERSIONS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.CONVERSIONS.getDisplayName(locale);
     }
 
     @Override

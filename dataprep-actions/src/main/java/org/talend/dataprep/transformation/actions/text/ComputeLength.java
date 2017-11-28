@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
@@ -50,8 +51,8 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS.getDisplayName(locale);
     }
 
     @Override

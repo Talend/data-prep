@@ -22,6 +22,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class RenameTest extends AbstractMetadataBaseTest {
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
         assertThat(action.adapt(column), not(is(action)));
         boolean hasMetExpectedParameter = false;
-        for (Parameter parameter : action.adapt(column).getParameters()) {
+        for (Parameter parameter : action.adapt(column).getParameters(Locale.US)) {
             if (Rename.NEW_COLUMN_NAME_PARAMETER_NAME.equals(parameter.getName())) {
                 assertThat(parameter.getDefault(), is(column.getName()));
                 hasMetExpectedParameter = true;
@@ -71,7 +72,7 @@ public class RenameTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.COLUMN_METADATA.getDisplayName(Locale.US)));
     }
 
     @Test

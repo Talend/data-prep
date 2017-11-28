@@ -13,6 +13,10 @@
 
 package org.talend.dataprep.transformation.actions.category;
 
+import java.util.Locale;
+
+import org.talend.dataprep.i18n.ActionsBundle;
+
 /**
  * List all actions category.
  */
@@ -25,14 +29,14 @@ public enum ActionCategory {
     MATH("math"), // for math operations (sum, abs, ...))
     NUMBERS("numbers"), // for numbers manipulation, but not operations (compare, format, ...)
     STRINGS("strings"), //
-    STRINGS_ADVANCED("strings advanced"), //
+    STRINGS_ADVANCED("strings_advanced"), //
     SPLIT("split"), //
     DATE("dates"), //
     BOOLEAN("boolean"), //
-    DATA_CLEANSING("data cleansing"), //
+    DATA_CLEANSING("data_cleansing"), //
     FILTERED("filtered"), //
     DATA_BLENDING("data_blending"), //
-    DATA_MASKING("data masking"), //
+    DATA_MASKING("data_masking"), //
     PHONE_NUMBER("phones"), //
     CONVERSIONS("conversions"), //
     DEDUPLICATION("deduplication");
@@ -52,7 +56,7 @@ public enum ActionCategory {
     /**
      * @return the action display name.
      */
-    public String getDisplayName() {
-        return displayName;
+    public String getDisplayName(Locale locale) {
+        return ActionsBundle.categoryName(null, locale, this.displayName);
     }
 }

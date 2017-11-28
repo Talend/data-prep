@@ -13,7 +13,7 @@
   ~ ============================================================================
   -->
 
-<talend-badge class="filter-item {{$ctrl.filter.badgeClass}}"
+<talend-badge clas s="filter-item {{$ctrl.filter.badgeClass}}"
               removable="$ctrl.removable"
               on-remove="$ctrl.onRemove()">
     <span ng-if="!$ctrl.filter.value"
@@ -22,7 +22,8 @@
     </span>
     <span ng-if="$ctrl.filter.value">
         <span ng-if="$ctrl.filter.colName" class="filter-item-label">
-            {{$ctrl.filter.colName}}{{$ctrl.sign}}
+            {{$ctrl.filter.colName}}
+            <span class="filter-item-sign">{{$ctrl.sign}}</span>
         </span>
         <form ng-submit="$ctrl.submit()">
 

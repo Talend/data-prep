@@ -21,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class LowerCaseTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
     @Test

@@ -27,6 +27,7 @@ import static org.talend.dataprep.transformation.actions.date.ModifyDate.TIME_UN
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class ModifyDateTest extends BaseDateTest {
     @Test
     public void testParameters() throws Exception {
         // 4 predefined patterns + custom = 5
-        assertThat(action.getParameters().size(), is(6));
+        assertThat(action.getParameters(Locale.US).size(), is(6));
     }
 
     @Test
@@ -72,7 +73,7 @@ public class ModifyDateTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test(expected = TalendRuntimeException.class)

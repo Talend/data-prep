@@ -29,10 +29,11 @@ import {
  */
 export default class OnboardingService {
 
-	constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour, HelpService, StorageService) {
+	constructor($timeout, $translate, $state, $window, state, recipeTour, playgroundTour, preparationTour, HelpService, StorageService) {
 		'ngInject';
 
 		this.$timeout = $timeout;
+		this.$translate = $translate;
 		this.$state = $state;
 		this.$window = $window;
 
@@ -58,7 +59,7 @@ export default class OnboardingService {
 			const step = {
 				element: config.element,
 				position: config.position,
-				intro: `<div class="introjs-tooltiptitle">${config.title}</div><div class="introjs-tooltipcontent">${config.content}</div>`,
+				intro: `<div class="introjs-tooltiptitle">${this.$translate.instant(config.title)}</div><div class="introjs-tooltipcontent">${this.$translate.instant(config.content)}</div>`,
 			};
 			const { intro } = step;
 			if (this.HelpService.hasPlaceholders(intro)) {
@@ -140,10 +141,10 @@ export default class OnboardingService {
 		this.$timeout(() => {
 			this.currentTour = introJs()
 				.setOptions({
-					nextLabel: 'NEXT',
-					prevLabel: 'BACK',
-					skipLabel: 'SKIP',
-					doneLabel: 'LET ME TRY',
+					nextLabel: this.$translate.instant('NEXT'),
+					prevLabel: this.$translate.instant('BACK'),
+					skipLabel: this.$translate.instant('SKIP'),
+					doneLabel: this.$translate.instant('LET_ME_TRY'),
 					steps: this.createIntroSteps(this.getTour(tour)),
 				})
 				.oncomplete(onTourDone)

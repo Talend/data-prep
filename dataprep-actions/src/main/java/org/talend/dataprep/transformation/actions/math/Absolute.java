@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.actions.math;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.daikon.number.BigDecimalParser;
@@ -51,8 +52,8 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.MATH.getDisplayName(locale);
     }
 
     @Override

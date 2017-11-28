@@ -19,8 +19,8 @@ describe('Button Switch directive', function () {
     var createElement;
 
     var values = [
-        { id: 'name', name: 'NAME_SORT' },
-        { id: 'date', name: 'DATE_SORT' },
+        { id: 'name', name: 'Name' },
+        { id: 'date', name: 'Date' },
         { id: 'owner', name: 'OWNER_SORT' },
     ];
 

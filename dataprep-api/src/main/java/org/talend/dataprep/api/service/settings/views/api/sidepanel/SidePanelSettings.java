@@ -17,15 +17,19 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+import org.talend.dataprep.i18n.DataprepBundle;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Side panel settings
- * see https://talend.github.io/react-talend-components/?selectedKind=Side%20Panel&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * see
+ * https://talend.github.io/react-talend-components/?selectedKind=Side%20Panel&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class SidePanelSettings implements ViewSettings {
@@ -51,6 +55,14 @@ public class SidePanelSettings implements ViewSettings {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ViewSettings translate() {
+        return SidePanelSettings
+                .from(this) //
+                .translate() //
+                .build();
     }
 
     public void setId(String id) {
@@ -120,5 +132,14 @@ public class SidePanelSettings implements ViewSettings {
             return settings;
         }
 
+        public Builder translate() {
+            if (Objects.nonNull(this.actions)) {
+                this.actions = this.actions
+                        .stream() //
+                        .map(entry -> DataprepBundle.message(entry)) //
+                        .collect(Collectors.toList());
+            }
+            return this;
+        }
     }
 }

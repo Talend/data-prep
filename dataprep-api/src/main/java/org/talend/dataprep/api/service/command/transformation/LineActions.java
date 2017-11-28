@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
@@ -29,7 +30,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
  * Return all actions that can be performed on lines.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class LineActions extends GenericCommand<InputStream> {
 
     /**

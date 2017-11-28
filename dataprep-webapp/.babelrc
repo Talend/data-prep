@@ -7,6 +7,7 @@
     "**/**/*.css"
   ],
   "presets": [
+    "es2015",
     ["env", {
       "targets": {
         "ie": 11,

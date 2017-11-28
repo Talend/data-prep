@@ -20,6 +20,7 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -40,10 +41,10 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
     @Test
     public void should_be_in_data_cleansing_category() {
         // when
-        final String name = action.getCategory();
+        final String name = action.getCategory(Locale.US);
 
         // then
-        assertThat(name, is(DATA_CLEANSING.getDisplayName()));
+        assertThat(name, is(DATA_CLEANSING.getDisplayName(Locale.US)));
     }
 
     @Test

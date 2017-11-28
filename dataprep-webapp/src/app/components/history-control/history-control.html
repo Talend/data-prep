@@ -19,7 +19,7 @@
            ng-class="{'inactive': !historyCtrl.service.canUndo()}"
            ng-click="historyCtrl.service.undo()"
            translate-once-title="UNDO_ICON_TOOLTIP"
-           alt="UNDO ({{historyCtrl.service.canUndo()}})">
+           alt="{{'UNDO_ICON_TOOLTIP' | translate}} ({{historyCtrl.service.canUndo()}})">
             <icon name="'talend-arrow-left'"></icon>
         </a>
     </li>
@@ -28,7 +28,7 @@
            ng-click="historyCtrl.service.redo()"
            ng-class="{'inactive': !historyCtrl.service.canRedo()}"
            translate-once-title="REDO_ICON_TOOLTIP"
-           alt="REDO ({{historyCtrl.service.canRedo()}})">
+           alt="{{'REDO_ICON_TOOLTIP' | translate}} ({{historyCtrl.service.canRedo()}})">
             <icon name="'talend-arrow-right'"></icon>
         </a>
     </li>

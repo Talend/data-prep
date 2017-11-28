@@ -20,6 +20,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -62,7 +63,7 @@ public class DeleteLinesTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.FILTERED.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.FILTERED.getDisplayName(Locale.US)));
     }
 
     @Test

@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
-
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +26,8 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 /**
  * Change the type of a column <b>This action is not displayed in the UI it's here to ease recording it as a Step It's
@@ -56,13 +56,13 @@ public class TypeChange extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMN_METADATA.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMN_METADATA.getDisplayName(locale);
     }
 
     @Override
     public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+        return Arrays.asList(HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override

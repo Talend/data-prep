@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -61,7 +62,7 @@ public abstract class AbstractRoundTest extends AbstractMetadataBaseTest {
         List<String> expectedParameters = getExpectedParametersName();
 
         // when
-        final List<Parameter> parameters = getAction().getParameters();
+        final List<Parameter> parameters = getAction().getParameters(Locale.US);
 
         // then
         assertThat(parameters.size(), is(expectedParameters.size()));

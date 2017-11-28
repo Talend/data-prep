@@ -13,9 +13,17 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
@@ -24,16 +32,6 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 /**
  * Test class for RemoveRepeatedChars action. Creates one consumer, and test it.
@@ -76,12 +74,12 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testGetParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(5, parameters.size());
 
         final SelectParameter parameter4 = (SelectParameter) parameters.get(4);

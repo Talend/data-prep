@@ -21,10 +21,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.folder.store.FolderRepository;
+import org.talend.dataprep.test.SpringLocalizationRule;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
@@ -71,6 +74,9 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
 
     @Autowired
     private TransformationServiceUrlRuntimeUpdater urlUpdater;
+
+    @Rule
+    public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.US);
 
     @Before
     public void setUp() {

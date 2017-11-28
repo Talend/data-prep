@@ -119,10 +119,10 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
     @Test
     public void default_parameters_should_contains_implicit_parameters() throws Exception {
         // when
-        final List<Parameter> defaultParams = columnTransformation.getParameters();
+        final List<Parameter> defaultParams = columnTransformation.getParameters(Locale.US);
 
         // then
-        assertThat(defaultParams, containsInAnyOrder(ImplicitParameters.getParameters().toArray(new Parameter[3])));
+        assertThat(defaultParams, containsInAnyOrder(ImplicitParameters.getParameters(Locale.US).toArray(new Parameter[3])));
     }
 
     @Test
@@ -278,7 +278,7 @@ class CellTransformation extends AbstractActionMetadata implements CellAction {
     }
 
     @Override
-    public String getCategory() {
+    public String getCategory(Locale locale) {
         return null;
     }
 
@@ -308,7 +308,7 @@ class LineTransformation extends AbstractActionMetadata implements RowAction {
     }
 
     @Override
-    public String getCategory() {
+    public String getCategory(Locale locale) {
         return null;
     }
 
@@ -338,7 +338,7 @@ class ColumnTransformation extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public String getCategory() {
+    public String getCategory(Locale locale) {
         return null;
     }
 
@@ -368,7 +368,7 @@ class TableTransformation extends AbstractActionMetadata implements DataSetActio
     }
 
     @Override
-    public String getCategory() {
+    public String getCategory(Locale locale) {
         return null;
     }
 

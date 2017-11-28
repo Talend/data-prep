@@ -505,7 +505,7 @@
                   "label": "Your format"
                 }
               ],
-              "label": "custom"
+              "label": "other"
             }
           ],
           "multiple": false
@@ -521,7 +521,7 @@
     "description": "Change the date format to use in a date column",
     "label": "Change date format",
     "actionScope": [],
-    "docUrl": ""
+    "docUrl": "https://help.talend.com/access/sources/TDP_21/topic?EnrichPlatform=Talend+Data+Preparation&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func&pageid=date_formats&afs%3Alang=en"
   },
   {
     "name": "compute_time_since",
@@ -708,7 +708,7 @@
         "canBeBlank": true,
         "placeHolder": "",
         "default": "true",
-        "description": "Extract year from date (24/08/2015 -> 2015)",
+        "description": "Extract year from date (08/24/2015 -> 2015)",
         "label": "Year"
       },
       {
@@ -718,7 +718,7 @@
         "canBeBlank": true,
         "placeHolder": "",
         "default": "true",
-        "description": "Extract month of year from date (24/08/2015 -> 8)",
+        "description": "Extract month of year from date (08/24/2015 -> 8)",
         "label": "Month of year"
       },
       {
@@ -728,7 +728,7 @@
         "canBeBlank": true,
         "placeHolder": "",
         "default": "true",
-        "description": "Extract day of month from date (24/08/2015 -> 24)",
+        "description": "Extract day of month from date (08/24/2015 -> 24)",
         "label": "Day of month"
       },
       {
@@ -898,6 +898,6 @@
     "description": "Replace cells or parts of cells which contain a specific value",
     "label": "Search and replace",
     "actionScope": [],
-    "docUrl": ""
+    "docUrl":"https://help.talend.com/access/sources/TDP_21/topic?EnrichPlatform=Talend+Data+Preparation&EnrichVersion=2.1&utm_medium=dpdesktop&utm_source=func&pageid=regular_expressions&afs%3Alang=en"
   }
 ]

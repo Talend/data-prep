@@ -25,7 +25,7 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 public interface InventoryActions {
     ActionSettings INVENTORY_EDIT = builder()
             .id("inventory:edit")
-            .name("Edit name")
+            .name("inventory.edit")
             .icon("talend-pencil")
             .type("@@inventory/EDIT")
             .payload(PAYLOAD_METHOD_KEY, "enableInventoryEdit")
@@ -33,7 +33,7 @@ public interface InventoryActions {
 
     ActionSettings INVENTORY_CANCEL_EDIT = builder()
             .id("inventory:cancel-edit")
-            .name("Cancel name edition")
+            .name("inventory.canceledit")
             .type("@@inventory/CANCEL_EDIT")
             .payload(PAYLOAD_METHOD_KEY, "disableInventoryEdit")
             .build();

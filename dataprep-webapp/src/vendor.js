@@ -17,8 +17,7 @@ import 'animate.css';
 // Intro.js https://github.com/usablica/intro.js
 import 'intro.js';
 
-// Jquery + plugins
-import 'jquery';
+// Jquery plugins
 import 'jquery-ui';
 
 // Angular
@@ -56,6 +55,7 @@ import 'lodash';
 
 // Moment https://github.com/moment/moment/
 import 'moment';
+import 'moment/locale/fr';
 import 'moment-jdateformatparser';
 
 // https://github.com/danialfarid/ng-file-upload

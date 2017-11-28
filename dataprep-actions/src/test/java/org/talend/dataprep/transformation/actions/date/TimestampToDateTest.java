@@ -19,10 +19,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +59,7 @@ public class TimestampToDateTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test

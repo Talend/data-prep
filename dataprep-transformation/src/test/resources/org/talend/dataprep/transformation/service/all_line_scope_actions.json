@@ -4,10 +4,6 @@
     "category":"data cleansing",
     "label":"Delete row",
     "name":"delete",
-    "dynamic":false,
-    "actionScope":[
-
-    ],
     "parameters":[
       {
         "name":"column_id",
@@ -51,10 +47,6 @@
     "category":"data cleansing",
     "label":"Make as header",
     "name":"make_line_header",
-    "dynamic":false,
-    "actionScope":[
-
-    ],
     "parameters":[
       {
         "name": "make_line_header_skip_until",

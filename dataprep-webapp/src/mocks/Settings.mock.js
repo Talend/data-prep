@@ -19,7 +19,7 @@ const settingsMock = {
 				onClick: 'menu:home',
 			},
 			brand: {
-				name: 'Data Preparation',
+				label: 'Data Preparation',
 				onClick: 'menu:home',
 			},
 			search: {

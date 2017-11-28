@@ -13,8 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,9 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 /**
  * Deletes a column from a dataset. This action is available from column headers</b>
@@ -50,8 +52,13 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMNS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMNS.getDisplayName(locale);
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        return Arrays.asList(COLUMN_METADATA.getDisplayName());
     }
 
     /**

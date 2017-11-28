@@ -185,8 +185,8 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.SPLIT.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.SPLIT.getDisplayName(locale);
     }
 
     @Override

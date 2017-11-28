@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -60,8 +59,8 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override
@@ -75,8 +74,11 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        return ActionsBundle.attachToAction(Collections.singletonList(new Parameter(SKIP_UNTIL, BOOLEAN, Boolean.TRUE.toString())), this);
+    public List<Parameter> getParameters(Locale locale) {
+        return Collections.singletonList(Parameter.parameter(locale).setName(SKIP_UNTIL)
+                .setType(BOOLEAN)
+                .setDefaultValue(Boolean.TRUE.toString())
+                .build(this));
     }
 
     @Override

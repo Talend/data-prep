@@ -35,13 +35,13 @@
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1">
                 <table class="stat-table">
                     <tr ng-repeat="(key, val) in statsDetailsCtrl.state.playground.statistics.details.common track by $index">
-                        <td class="stat-key">{{key | translate}}: </td>
+                        <td class="stat-key">{{key | translate}}{{'COLON' | translate}}</td>
                         <td class="stat-value">{{val}}</td>
                     </tr>
                 </table>
                 <table class="stat-table">
                     <tr ng-repeat="(key, val) in statsDetailsCtrl.state.playground.statistics.details.specific track by $index">
-                        <td class="stat-key">{{key | translate}}: </td>
+                        <td class="stat-key">{{key | translate}}{{'COLON' | translate}}</td>
                         <td class="stat-value">{{val}}</td>
                     </tr>
                 </table>

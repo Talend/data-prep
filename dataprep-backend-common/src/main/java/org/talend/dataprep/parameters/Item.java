@@ -13,70 +13,47 @@
 
 package org.talend.dataprep.parameters;
 
-import static java.util.Collections.emptyList;
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Models a select item.
  */
-public interface Item {
+public class Item {
 
-    String getValue();
+    /** the item value. */
+    private final String value;
 
-    String getLabel();
+    /** The optional inline parameter. */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private final List<Parameter> parameters;
 
-    List<Parameter> getParameters();
+    /** the item label. */
+    private final String label;
 
-    Item attach(Object parent);
+    /**
+     * Create a select Item. The item's label will be by default looked up with key ("choice." + value).
+     *
+     * @param value the item value.
+     * @param parameters the item optional parameters.
+     */
+    public Item(String value, String label, List<Parameter> parameters) {
+        this.value = value;
+        this.label = label;
+        this.parameters = parameters;
+    }
 
-    class Builder {
+    public String getValue() {
+        return value;
+    }
 
-        private String label;
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
 
-        private String value;
-
-        private List<Parameter> inlineParameters;
-
-        private String text;
-
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        public Builder value(String value) {
-            this.value = value;
-            return this;
-        }
-
-        public Builder label(String label) {
-            this.label = label;
-            return this;
-        }
-
-        public Builder text(String text) {
-            this.text = text;
-            return this;
-        }
-
-        public Builder inlineParameters(List<Parameter> inlineParameters) {
-            this.inlineParameters = inlineParameters;
-            return this;
-        }
-
-        public Item build() {
-            final List<Parameter> parameters = inlineParameters == null ? emptyList() : inlineParameters;
-            if (label == null) {
-                if (text == null) {
-                    return new TextItem(value, parameters);
-                } else {
-                    return new TextItem(value, text, parameters);
-                }
-            } else {
-                return new LocalizedItem(value, label, parameters);
-            }
-        }
-
+    public String getLabel() {
+        return label;
     }
 
 }

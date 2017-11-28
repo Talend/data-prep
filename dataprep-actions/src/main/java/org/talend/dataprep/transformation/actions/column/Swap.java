@@ -13,10 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,7 +22,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -59,17 +55,21 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMNS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMNS.getDisplayName(locale);
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false));
+        parameters.add(Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                .setType(ParameterType.COLUMN)
+                .setDefaultValue(StringUtils.EMPTY)
+                .setCanBeBlank(false)
+                .build(this));
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

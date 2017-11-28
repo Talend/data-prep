@@ -16,11 +16,14 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.StreamSupport.stream;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
@@ -507,7 +510,7 @@ public class DataSetService extends BaseDataSetService {
         // use a default name if empty (original name + " Copy" )
         final String newName;
         if (StringUtils.isBlank(copyName)) {
-            newName = original.getName() + " Copy";
+            newName = message("dataset.copy.newname", original.getName());
         } else {
             newName = copyName;
         }
@@ -582,6 +585,9 @@ public class DataSetService extends BaseDataSetService {
         }
 
         DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
+        if (currentDataSetMetadata == null && name == null) {
+            throw new TDPException(INVALID_DATASET_NAME, ExceptionContext.build().put("name", name));
+        }
 
         // just like the creation, let's make sure invalid size forbids dataset creation
         if (size < 0) {
@@ -1037,9 +1043,9 @@ public class DataSetService extends BaseDataSetService {
             parametersToReturn = emptyList();
         } else {
             if (matchingDatasetLocation.isSchemaOriented()) {
-                parametersToReturn = matchingDatasetLocation.getParametersAsSchema();
+                parametersToReturn = matchingDatasetLocation.getParametersAsSchema(getLocale());
             } else {
-                parametersToReturn = matchingDatasetLocation.getParameters();
+                parametersToReturn = matchingDatasetLocation.getParameters(getLocale());
             }
         }
         return parametersToReturn;
@@ -1060,11 +1066,11 @@ public class DataSetService extends BaseDataSetService {
                 parametersToReturn = emptyList();
             } else {
                 if (matchingDatasetLocation.isSchemaOriented()) {
-                    ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema();
-                    parametersAsSchema.setProperties(dataSetMetadata.getLocation().getParametersAsSchema().getProperties());
+                    ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema(getLocale());
+                    parametersAsSchema.setProperties(dataSetMetadata.getLocation().getParametersAsSchema(getLocale()).getProperties());
                     parametersToReturn = parametersAsSchema;
                 } else {
-                    parametersToReturn = matchingDatasetLocation.getParameters();
+                    parametersToReturn = matchingDatasetLocation.getParameters(getLocale());
                 }
             }
         }
@@ -1090,7 +1096,7 @@ public class DataSetService extends BaseDataSetService {
                     if (l.isDynamic()) {
                         builder = builder.dynamic(true);
                     } else {
-                        builder = builder.dynamic(false).parameters(l.getParameters());
+                        builder = builder.dynamic(false).parameters(l.getParameters(getLocale()));
                     }
                     return builder.build();
                 }) //

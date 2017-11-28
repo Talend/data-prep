@@ -18,10 +18,7 @@ import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -64,7 +61,7 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
         List<String> parameterNames = Arrays.asList("column_id", "row_id", "scope", "filter");
 
         // when
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         assertNotNull(parameters);

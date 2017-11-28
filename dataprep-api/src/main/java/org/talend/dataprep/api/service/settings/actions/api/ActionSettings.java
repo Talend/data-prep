@@ -19,6 +19,10 @@ import static org.talend.dataprep.api.service.settings.actions.api.ActionSetting
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.i18n.DataprepBundle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -184,9 +188,27 @@ public class ActionSettings {
         return this.enabled;
     }
 
+    public ActionSettings translate() {
+        return ActionSettings
+                .from(this) //
+                .translate() //
+                .build();
+    }
+
     public static Builder from(final ActionSettings actionSettings) {
-        return builder().id(actionSettings.getId()).name(actionSettings.getName()).icon(actionSettings.getIcon())
-                .type(actionSettings.getType()).bsStyle(actionSettings.getBsStyle()).payload(actionSettings.getPayload());
+        return builder() //
+                .id(actionSettings.getId()) //
+                .toolTip(actionSettings.getToolTip()) //
+                .name(actionSettings.getName()) //
+                .icon(actionSettings.getIcon()) //
+                .type(actionSettings.getType()) //
+                .link(actionSettings.getLink()) //
+                .hideLabel(actionSettings.getHideLabel()) //
+                .bsStyle(actionSettings.getBsStyle()) //
+                .bsSize(actionSettings.getBsSize()) //
+                .payload(actionSettings.getPayload()) //
+                .enabled(actionSettings.isEnabled());
+
     }
 
     public static Builder builder() {
@@ -242,8 +264,18 @@ public class ActionSettings {
             return this;
         }
 
+        public Builder link(final Boolean link) {
+            this.link = link;
+            return this;
+        }
+
         public Builder isLink() {
             this.link = true;
+            return this;
+        }
+
+        public Builder hideLabel(final Boolean hideLabel) {
+            this.hideLabel = hideLabel;
             return this;
         }
 
@@ -268,12 +300,24 @@ public class ActionSettings {
         }
 
         public Builder payload(final Map<String, Object> payload) {
-            payload.entrySet().stream().forEach(entry -> this.payload.put(entry.getKey(), entry.getValue()));
+            if (Objects.nonNull(payload)) {
+                payload.entrySet().stream().forEach(entry -> this.payload.put(entry.getKey(), entry.getValue()));
+            }
             return this;
         }
 
         public Builder enabled(final boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        public Builder translate() {
+            if (StringUtils.isNotEmpty(this.name)) {
+                this.name = DataprepBundle.message(this.name);
+            }
+            if (StringUtils.isNotEmpty(this.toolTip)) {
+                this.toolTip = DataprepBundle.message(this.toolTip);
+            }
             return this;
         }
 
@@ -292,5 +336,6 @@ public class ActionSettings {
             action.setEnabled(this.enabled);
             return action;
         }
+
     }
 }

@@ -22,35 +22,37 @@ export const INSIDE_RANGE = 'inside_range';
 export const MATCHES = 'matches';
 export const QUALITY = 'quality';
 
-export const EMPTY_RECORDS_LABEL = 'rows with empty values';
-export const INVALID_RECORDS_LABEL = 'rows with invalid values';
-export const VALID_RECORDS_LABEL = 'rows with valid values';
-export const INVALID_EMPTY_RECORDS_LABEL = 'rows with invalid or empty values';
-
-const INVALID_RECORDS_VALUES = [{
-	label: INVALID_RECORDS_LABEL,
-}];
-
-const INVALID_EMPTY_RECORDS_VALUES = [{
-	label: INVALID_EMPTY_RECORDS_LABEL,
-}];
-
-const EMPTY_RECORDS_VALUES = [{
-	label: EMPTY_RECORDS_LABEL,
-	isEmpty: true,
-}];
-
-const VALID_RECORDS_VALUES = [{
-	label: VALID_RECORDS_LABEL,
-}];
-
 /**
  * @ngdoc service
  * @name data-prep.services.filter.service:FilterAdapterService
  * @description Filter adapter service. This service provides filter constructor and adapters
  * @requires data-prep.services.state.constant:state
  */
-export default function FilterAdapterService() {
+export default function FilterAdapterService($translate) {
+	'ngInject';
+
+	const EMPTY_RECORDS_LABEL = $translate.instant('EMPTY_RECORDS_LABEL');
+	const INVALID_RECORDS_LABEL = $translate.instant('INVALID_RECORDS_LABEL');
+	const VALID_RECORDS_LABEL = $translate.instant('VALID_RECORDS_LABEL');
+	const INVALID_EMPTY_RECORDS_LABEL = $translate.instant('INVALID_EMPTY_RECORDS_LABEL');
+
+	const INVALID_RECORDS_VALUES = [{
+		label: INVALID_RECORDS_LABEL,
+	}];
+
+	const INVALID_EMPTY_RECORDS_VALUES = [{
+		label: INVALID_EMPTY_RECORDS_LABEL,
+	}];
+
+	const EMPTY_RECORDS_VALUES = [{
+		label: EMPTY_RECORDS_LABEL,
+		isEmpty: true,
+	}];
+
+	const VALID_RECORDS_VALUES = [{
+		label: VALID_RECORDS_LABEL,
+	}];
+
 	return {
 		EMPTY_RECORDS_LABEL,
 		INVALID_RECORDS_LABEL,
@@ -266,10 +268,9 @@ export default function FilterAdapterService() {
 					field: colId,
 				},
 			};
-		case INSIDE_RANGE:
-			{
-				const argsType = args.type;
-				return value
+		case INSIDE_RANGE: {
+			const argsType = args.type;
+			return value
 				.map((filterValue) => {
 					const min = filterValue.value[0];
 					const max = filterValue.value[1];
@@ -291,7 +292,7 @@ export default function FilterAdapterService() {
 					};
 				})
 				.reduce(reduceOrFn);
-			}
+		}
 
 		case MATCHES:
 			return value

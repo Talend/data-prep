@@ -25,7 +25,7 @@ import static org.talend.dataprep.api.service.settings.actions.api.ActionSplitDr
 public interface WindowActions {
     ActionSettings ONBOARDING_PREPARATION = builder()
             .id("onboarding:preparation")
-            .name("Guided tour")
+            .name("onboarding.preparation")
             .icon("talend-board")
             .type("@@onboarding/START_TOUR")
             .payload(PAYLOAD_METHOD_KEY, "startTour")
@@ -34,7 +34,7 @@ public interface WindowActions {
 
     ActionSettings ONBOARDING_PLAYGROUND = builder()
             .id("onboarding:playground")
-            .name("Guided tour")
+            .name("onboarding.playground")
             .icon("talend-board")
             .type("@@onboarding/START_TOUR")
             .payload(PAYLOAD_METHOD_KEY, "startTour")
@@ -43,7 +43,7 @@ public interface WindowActions {
 
     ActionSettings MODAL_ABOUT = builder()
             .id("modal:about")
-            .name("About Data Preparation")
+            .name("modal.about")
             .icon("talend-info-circle")
             .type("@@modal/SHOW")
             .payload(PAYLOAD_METHOD_KEY, "toggleAbout")
@@ -51,7 +51,7 @@ public interface WindowActions {
 
     ActionSettings MODAL_FEEDBACK = builder()
             .id("modal:feedback")
-            .name("Feedback")
+            .name("modal.feedback")
             .icon("talend-bubbles")
             .type("@@modal/SHOW")
             .payload(PAYLOAD_METHOD_KEY, "showFeedback")
@@ -59,7 +59,7 @@ public interface WindowActions {
 
     ActionSettings HEADERBAR_HELP = splitDropdownBuilder()
             .id("headerbar:help")
-            .name("Help")
+            .name("headerbar.help")
             .icon("talend-question-circle")
             .type("@@headerbar/HELP")
             .action("external:help")
@@ -67,7 +67,7 @@ public interface WindowActions {
 
     ActionSettings PLAYGROUND_HEADERBAR_HELP = splitDropdownBuilder()
             .id("playground:headerbar:help")
-            .name("Help")
+            .name("headerbar.help")
             .icon("talend-question-circle")
             .type("@@headerbar/HELP")
             .action("external:help")
@@ -75,7 +75,7 @@ public interface WindowActions {
 
     ActionSettings EXTERNAL_DOCUMENTATION = builder()
             .id("external:documentation")
-            .name("Documentation")
+            .name("external.documentation")
             .icon("talend-question-circle")
             .type("@@external/OPEN_WINDOW")
             .payload(PAYLOAD_METHOD_KEY, "open")

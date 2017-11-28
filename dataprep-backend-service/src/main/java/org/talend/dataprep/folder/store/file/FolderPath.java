@@ -12,15 +12,16 @@
 
 package org.talend.dataprep.folder.store.file;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+
 import java.util.Arrays;
 
-import com.google.common.base.MoreObjects;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.talend.dataprep.folder.store.FoldersRepositoriesConstants;
 
-import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.HOME_FOLDER_KEY;
-import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import com.google.common.base.MoreObjects;
 
 /**
  * Represents a {@link org.talend.dataprep.api.folder.Folder} business oriented path.
@@ -56,7 +57,7 @@ public class FolderPath {
         if (path.length > 0) {
             folderName = path[path.length - 1];
         } else {
-            folderName = HOME_FOLDER_KEY;
+            folderName = EMPTY;
         }
         return folderName;
     }

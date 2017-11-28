@@ -12,10 +12,24 @@
 
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.ACTION_NAME;
+import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.measure.quantity.Temperature;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -23,19 +37,6 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.math.AbstractMathNoParameterAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.units.TemperatureImpl;
-
-import javax.measure.quantity.Temperature;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Map;
-
-import static org.talend.dataprep.parameters.ParameterType.INTEGER;
-import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.ACTION_NAME;
-import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.*;
 
 /**
  * Abstract class for conversions from Fahrenheit to Celsius and vice versa.
@@ -68,28 +69,30 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(SelectParameter.Builder.builder()
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(SelectParameter.selectParameter(locale)
                 .item(FAHRENHEIT.name(), FAHRENHEIT.toString())
                 .item(CELSIUS.name(), CELSIUS.toString())
                 .item(KELVIN.name(), KELVIN.toString())
                 .canBeBlank(false)
                 .defaultValue(FAHRENHEIT.name())
                 .name(FROM_UNIT_PARAMETER)
-                .build());
+                .build(this));
 
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                 .item(FAHRENHEIT.name(), FAHRENHEIT.toString())
                 .item(CELSIUS.name(), CELSIUS.toString())
                 .item(KELVIN.name(), KELVIN.toString())
                 .canBeBlank(false)
                 .defaultValue(CELSIUS.name())
                 .name(TO_UNIT_PARAMETER)
-                .build());
+                .build(this));
 
-        parameters.add(new Parameter(TARGET_PRECISION, INTEGER, null, false, true, "precision"));
-        return ActionsBundle.attachToAction(parameters, this);
+        parameters.add(
+                Parameter.parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setPlaceHolder("precision").build(
+                        this));
+        return parameters;
     }
 
     @Override
@@ -98,8 +101,8 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.CONVERSIONS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.CONVERSIONS.getDisplayName(locale);
     }
 
     @Override

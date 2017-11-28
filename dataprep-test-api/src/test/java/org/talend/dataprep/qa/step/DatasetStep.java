@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.dto.DatasetMeta;
-import org.talend.dataprep.qa.step.config.DataPrepStep;
+import org.talend.dataprep.qa.config.DataPrepStep;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.response.Response;

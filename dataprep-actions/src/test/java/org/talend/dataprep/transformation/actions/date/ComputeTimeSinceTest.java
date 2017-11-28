@@ -77,12 +77,12 @@ public class ComputeTimeSinceTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        Assert.assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        Assert.assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         Assert.assertThat(parameters.size(), is(6));
 
         // Test on items label for TDP-2943:

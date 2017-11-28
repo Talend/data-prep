@@ -12,9 +12,17 @@
  ============================================================================*/
 import { CTRL_KEY_NAME, SHIFT_KEY_NAME } from './filter-service.js';
 
+import i18n from './../../../i18n/en.json';
+
 describe('Filter service', () => {
 
 	let stateMock;
+
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
+
 	beforeEach(angular.mock.module('data-prep.services.filter-service', ($provide) => {
 		const columns = [
 			{ id: '0000', name: 'id' },

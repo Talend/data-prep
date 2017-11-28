@@ -23,7 +23,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -60,16 +59,19 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(SelectParameter.Builder.builder()
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(REMOVE_TYPE)
                 .item(WHITESPACE, WHITESPACE)
-                .item(CUSTOM, CUSTOM, new Parameter(CUSTOM_REPEAT_CHAR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY))
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(CUSTOM_REPEAT_CHAR_PARAMETER)
+                        .setType(ParameterType.STRING)
+                        .setDefaultValue(StringUtils.EMPTY)
+                        .build(this))
                 .canBeBlank(false)
                 .defaultValue(WHITESPACE)
-                .build());
-        return ActionsBundle.attachToAction(parameters, this);
+                .build(this));
+        return parameters;
     }
 
     @Override
@@ -104,8 +106,8 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS.getDisplayName(locale);
     }
 
     @Override

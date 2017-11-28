@@ -18,7 +18,6 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.*;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -38,24 +37,15 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     private Map<String, String> parameters;
 
-    private Locale previousLocale;
-
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils
                 .parseParameters(FormatPhoneNumberTest.class.getResourceAsStream("formatphonenumber.json"));
-        previousLocale = Locale.getDefault();
-        Locale.setDefault(Locale.ENGLISH);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Locale.setDefault(previousLocale);
     }
 
     @Test
     public void testCategory() throws Exception {
-        assertEquals(action.getCategory(), ActionCategory.PHONE_NUMBER.getDisplayName());
+        assertEquals(action.getCategory(Locale.US), ActionCategory.PHONE_NUMBER.getDisplayName(Locale.US));
     }
 
     @Test
@@ -74,7 +64,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
 
         // Test on items label for TDP-2914:

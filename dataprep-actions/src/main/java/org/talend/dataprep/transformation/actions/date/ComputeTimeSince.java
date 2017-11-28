@@ -23,10 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -36,7 +33,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -94,36 +90,36 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.Builder.builder() //
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
                 .item(ChronoUnit.YEARS.name(), "years") //
                 .item(ChronoUnit.MONTHS.name(), "months") //
                 .item(ChronoUnit.DAYS.name(), "days") //
                 .item(ChronoUnit.HOURS.name(), "hours") //
                 .defaultValue(ChronoUnit.HOURS.name()) //
-                .build());
+                .build(this));
 
-        parameters.add(SelectParameter.Builder.builder() //
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(SINCE_WHEN_PARAMETER) //
                 .canBeBlank(false) //
                 .item(NOW_SERVER_SIDE_MODE, NOW_SERVER_SIDE_MODE) //
-                .item(SPECIFIC_DATE_MODE, SPECIFIC_DATE_MODE, new Parameter(SPECIFIC_DATE_PARAMETER, //
-                        ParameterType.DATE, //
-                        StringUtils.EMPTY, //
-                        false, //
-                        false)) //
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, //
-                        ParameterType.COLUMN, //
-                        StringUtils.EMPTY, //
-                        false, //
-                        false)) //
+                .item(SPECIFIC_DATE_MODE, SPECIFIC_DATE_MODE, Parameter.parameter(locale).setName(SPECIFIC_DATE_PARAMETER)
+                        .setType(ParameterType.DATE)
+                        .setDefaultValue(StringUtils.EMPTY)
+                        .setCanBeBlank(false)
+                        .build(this)) //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                        .setType(ParameterType.COLUMN)
+                        .setDefaultValue(StringUtils.EMPTY)
+                        .setCanBeBlank(false)
+                        .build(this)) //
                 .defaultValue(NOW_SERVER_SIDE_MODE) //
-                .build());
+                .build(this));
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

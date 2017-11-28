@@ -23,7 +23,8 @@
                 display-key="name"
                 change-action="$ctrl.onSortChange({ sort: selected })">
         </talend-button-switch>
-        <span translate-once="SORT_IN"></span>
+        <span>-&nbsp;</span>
+        <div translate-once="SORT_ORDER"></div>
         <talend-button-switch
                 class="button-switch"
                 values="$ctrl.orderList"
@@ -31,6 +32,5 @@
                 display-key="name"
                 change-action="$ctrl.onOrderChange({ order: selected })">
         </talend-button-switch>
-        <div translate-once="SORT_ORDER"></div>
     </div>
 </div>

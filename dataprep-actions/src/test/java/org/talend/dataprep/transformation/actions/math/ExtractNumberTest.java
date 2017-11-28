@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,19 +52,10 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
     /** The action parameters. */
     private Map<String, String> parameters;
 
-    private Locale previousLocale;
-
     @Before
     public void setUp() throws Exception {
         final InputStream parametersSource = ExtractNumberTest.class.getResourceAsStream("extractNumberAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
-        previousLocale = Locale.getDefault();
-        Locale.setDefault(Locale.US);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Locale.setDefault(previousLocale);
     }
 
     @Test
@@ -82,7 +72,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testActionParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         Assertions.assertThat(parameters).isNotNull().isNotEmpty().hasSize(4);
     }
 
@@ -95,7 +85,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.SPLIT.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
     }
 
     @Test

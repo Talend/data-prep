@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
@@ -25,7 +25,6 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.share.Owner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Simple bean used to display a preparation and a summary of its related dataset and its location.
@@ -52,8 +51,7 @@ public class EnrichedPreparation {
     private List<String> steps;
 
     /** List of action metadata (description) */
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class")
-    private List<ActionDefinition> metadata;
+    private List<ActionForm> metadata;
 
     private List<Action> actions;
 
@@ -191,11 +189,11 @@ public class EnrichedPreparation {
         this.rowMetadata = rowMetadata;
     }
 
-    public List<ActionDefinition> getMetadata() {
+    public List<ActionForm> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(List<ActionDefinition> metadata) {
+    public void setMetadata(List<ActionForm> metadata) {
         this.metadata = metadata;
     }
 

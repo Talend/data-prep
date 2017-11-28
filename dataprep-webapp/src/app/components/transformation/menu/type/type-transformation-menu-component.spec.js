@@ -33,7 +33,14 @@ describe('Transformation menu component', () => {
 	const TRANSLATIONS = {
 		COLUMN_TYPE_IS: 'This column is a ',
 		COLUMN_TYPE_SET: 'Set as',
-		FLOAT: 'DECIMAL',
+		INTEGER: 'integer',
+		DECIMAL: 'decimal',
+		BOOLEAN: 'boolean',
+		TEXT: 'text',
+		DATE: 'date',
+		UNKNOWN: 'unknown',
+		STRING: "text",
+		FLOAT: "decimal",
 	};
 
 	beforeEach(angular.mock.module('data-prep.type-transformation-menu'));
@@ -119,11 +126,11 @@ describe('Transformation menu component', () => {
 
 	it('should render primitive types', () => {
 		const types = [
-			'STRING',
-			'INTEGER',
-			'DECIMAL',
-			'BOOLEAN',
-			'DATE',
+			'text',
+			'integer',
+			'decimal',
+			'boolean',
+			'date',
 		];
 
 		//when
@@ -158,7 +165,7 @@ describe('Transformation menu component', () => {
 			// given
 			createElement();
 			spyOn(controller, 'changeDomain').and.returnValue();
-			const items = element.find('ul.submenu >li');
+			const items = element.find('ul.submenu >li input');
 
 			// when
 			items.eq(1).click();
@@ -175,7 +182,7 @@ describe('Transformation menu component', () => {
 			const items = element.find('ul.submenu >li');
 
 			// when
-			items.eq(3).click();
+			items.eq(3).find('input').eq(0).click();
 			scope.$digest();
 
 			// then

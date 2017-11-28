@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,8 +58,8 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.DATE.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.DATE.getDisplayName(locale);
     }
 
     @Override
@@ -74,16 +75,19 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
     }
 
     @Override
-    protected Parameter getDefaultConstantValue() {
+    protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy the javascript will tranform to now if empty
-        return new Parameter(CONSTANT_VALUE, ParameterType.DATE, StringUtils.EMPTY);
+        return Parameter.parameter(locale).setName(CONSTANT_VALUE)
+                .setType(ParameterType.DATE)
+                .setDefaultValue(StringUtils.EMPTY)
+                .build(this);
     }
 
     @Override
-    protected SelectParameter getCompareModeSelectParameter() {
+    protected SelectParameter getCompareModeSelectParameter(Locale locale) {
 
         //@formatter:off
-        return SelectParameter.Builder.builder() //
+        return SelectParameter.selectParameter(locale) //
             .name(COMPARE_MODE) //
             .item(EQ, EQ) //
             .item(NE, NE) //
@@ -92,7 +96,7 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
             .item(LT, LT) //
             .item(LE, LE) //
             .defaultValue(EQ) //
-            .build();
+            .build(this );
         //@formatter:on
 
     }

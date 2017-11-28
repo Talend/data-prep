@@ -19,10 +19,7 @@ import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +28,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -79,27 +75,27 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS.getDisplayName(locale);
     }
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
         // @formatter:off
-		parameters.add(SelectParameter.Builder.builder()
+		parameters.add(SelectParameter.selectParameter(locale)
 				.name(PATTERN_PARAMETER)
 				.item("[a-z]+", "[a-z]+")
 				.item("[A-Z]+", "[A-Z]+")
 				.item("[0-9]+", "[0-9]+")
 				.item("[a-zA-Z]+", "[a-zA-Z]+")
 				.item("[a-zA-Z0-9]+", "[a-zA-Z0-9]+")
-				.item(CUSTOM, CUSTOM, new Parameter(MANUAL_PATTERN_PARAMETER, REGEX, EMPTY))
+				.item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this))
 				.defaultValue("[a-zA-Z]+")
-				.build());
+				.build(this ));
 		// @formatter:on
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     /**

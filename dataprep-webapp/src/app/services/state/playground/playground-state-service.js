@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_FOLDER } from '../inventory/inventory-state-service';
+
 export const playgroundState = {
 	candidatePreparations: [],
 	isLoading: false,
@@ -22,7 +24,8 @@ export const playgroundState = {
 	stepInEditionMode: null,
 };
 
-export function PlaygroundStateService(RecipeStateService, recipeState,
+export function PlaygroundStateService($translate,
+                                       RecipeStateService, recipeState,
                                        GridStateService, gridState,
                                        FilterStateService, filterState,
                                        SuggestionsStateService, suggestionsState,
@@ -40,7 +43,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 	playgroundState.parameters = parametersState;
 
 	return {
-        // playground
+		// playground
 		reset,
 		setDataset,
 		setIsFetchingStats,
@@ -60,13 +63,13 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading,
 
-        // parameters
+		// parameters
 		toggleDatasetParameters,
 		hideDatasetParameters: ParametersStateService.hide,
 		setIsSendingDatasetParameters: ParametersStateService.setIsSending,
 		setDatasetEncodings: ParametersStateService.setEncodings,
 
-        // recipe
+		// recipe
 		showRecipe: RecipeStateService.show,
 		hideRecipe: RecipeStateService.hide,
 		setHoveredStep: RecipeStateService.setHoveredStep,
@@ -76,7 +79,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		disableRecipeStepsAfter: RecipeStateService.disableStepsAfter,
 		setRecipeAllowDistributedRun: RecipeStateService.setAllowDistributedRun,
 
-        // datagrid
+		// datagrid
 		setColumnFocus: GridStateService.setColumnFocus,
 		setGridSelection: GridStateService.setGridSelection,
 		toggleColumnSelection: GridStateService.toggleColumnSelection,
@@ -84,7 +87,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setSemanticDomains: GridStateService.setSemanticDomains,
 		setPrimitiveTypes: GridStateService.setPrimitiveTypes,
 
-        // lookup
+		// lookup
 		setLookupActions: LookupStateService.setActions,
 		setLookupAddedActions: LookupStateService.setAddedActions,
 		setLookupDatasets: LookupStateService.setDatasets,
@@ -98,7 +101,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setLookupDatasetsSort: LookupStateService.setSort,
 		setLookupDatasetsOrder: LookupStateService.setOrder,
 
-        // filters
+		// filters
 		addGridFilter,
 		updateGridFilter,
 		removeGridFilter,
@@ -106,13 +109,13 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		enableFilters,
 		disableFilters,
 
-        // actions
+		// actions
 		selectTransformationsTab: SuggestionsStateService.selectTab,
 		setTransformations: SuggestionsStateService.setTransformations,
 		setTransformationsLoading: SuggestionsStateService.setLoading,
 		updateFilteredTransformations: SuggestionsStateService.updateFilteredTransformations,
 
-        // statistics
+		// statistics
 		setStatisticsBoxPlot: StatisticsStateService.setBoxPlot,
 		setStatisticsDetails: StatisticsStateService.setDetails,
 		setStatisticsRangeLimits: StatisticsStateService.setRangeLimits,
@@ -123,9 +126,9 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setStatisticsFilteredPatterns: StatisticsStateService.setFilteredPatterns,
 	};
 
-    //--------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------------PLAYGROUND--------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------PLAYGROUND--------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
 	function setReadOnlyMode(bool) {
 		playgroundState.isReadOnly = bool;
 	}
@@ -205,16 +208,20 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		playgroundState.isPreprationPickerVisible = bool;
 	}
 
-	function setSavingPreparationFolders(folders) {
-		playgroundState.savingPreparationFolders = folders;
+	function setSavingPreparationFolders(tree) {
+		if (tree.folder && tree.folder.path === HOME_FOLDER.path) {
+			tree.folder.name = $translate.instant('HOME_FOLDER');
+		}
+		playgroundState.savingPreparationFolders = tree;
 	}
 
 	function setIsSavingPreparationFoldersLoading(bool) {
 		playgroundState.isSavingPreparationFoldersLoading = bool;
 	}
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------PARAMETERS---------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------PARAMETERS---------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
 	function toggleDatasetParameters() {
 		if (parametersState.visible) {
 			ParametersStateService.hide();
@@ -229,9 +236,9 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		ParametersStateService.show();
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------FILTERS----------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------------FILTERS----------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
 	function addGridFilter(filter) {
 		FilterStateService.addGridFilter(filter);
 		GridStateService.setFilter(filterState.gridFilters, playgroundState.data);

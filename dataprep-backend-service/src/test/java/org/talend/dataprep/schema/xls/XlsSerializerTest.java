@@ -13,7 +13,6 @@
 package org.talend.dataprep.schema.xls;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.ENGLISH;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.junit.Assert.assertThat;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -30,9 +29,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +43,7 @@ import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.CompositeFormatDetector;
 import org.talend.dataprep.schema.Format;
 import org.talend.dataprep.schema.Schema;
+import org.talend.dataprep.test.LocalizationRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -69,19 +68,8 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
     @Autowired
     private ObjectMapper mapper;
 
-    private Locale previousLocale;
-
-    @Before
-    public void setUp() {
-        super.setUp();
-        previousLocale = Locale.getDefault();
-        Locale.setDefault(ENGLISH);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Locale.setDefault(previousLocale);
-    }
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     private List<Map<String, String>> getValuesFromFile(String fileName, DataSetMetadata dataSetMetadata) throws Exception {
 

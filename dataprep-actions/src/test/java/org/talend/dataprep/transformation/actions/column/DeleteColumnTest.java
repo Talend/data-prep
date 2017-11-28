@@ -139,7 +139,7 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
     public void testCategory() throws Exception {
         // We test the real value of the category here (not based on the enum), because the frontent use this label for
         // display purpose:
-        assertThat(deleteColumn.getCategory(), is("columns"));
+        assertThat(deleteColumn.getCategory(Locale.US), is("columns"));
     }
 
     @Test

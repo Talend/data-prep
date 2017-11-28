@@ -13,9 +13,11 @@
 
 package org.talend.dataprep.transformation.api.action.metadata;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -23,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.parameters.Item;
-import org.talend.dataprep.parameters.LocalizedItem;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.TransformationBaseTest;
@@ -45,14 +46,15 @@ public class TestI18nKeysForActionsTest extends TransformationBaseTest {
             assertNotNull(name);
             assertNotEquals("", name);
 
-            actionMetadata.getLabel();
-            actionMetadata.getDescription();
+            actionMetadata.getLabel(Locale.US);
+            actionMetadata.getDescription(Locale.US);
 
-            String toString = actionMetadata.getName() + "," + actionMetadata.getCategory() + "," + actionMetadata.getLabel()
-                    + "," + actionMetadata.getDescription();
+            String toString = actionMetadata.getName() + "," + actionMetadata.getCategory(Locale.US) + "," + actionMetadata.getLabel(
+                    Locale.US)
+                    + "," + actionMetadata.getDescription(Locale.US);
             LOGGER.info(toString);
 
-            for (Parameter param : actionMetadata.getParameters()) {
+            for (Parameter param : actionMetadata.getParameters(Locale.US)) {
                 assertParameter(param);
             }
         }
@@ -83,19 +85,14 @@ public class TestI18nKeysForActionsTest extends TransformationBaseTest {
     private void assertItem(Item value) {
         LOGGER.trace("    - " + value);
 
-        if (value instanceof LocalizedItem) {
-            try {
-                LOGGER.trace("    - " + value.getLabel());
-            } catch (Exception e) {
-                fail("missing key <" + value.getValue() + ">");
+        List<Parameter> parameters = value.getParameters();
+        if (parameters != null) {
+            for (Parameter inlineParam : parameters) {
+                String name = inlineParam.getName();
+                String label = inlineParam.getLabel();
+                String desc = inlineParam.getDescription();
+                LOGGER.trace("      - " + name + " | " + label + " | " + desc);
             }
-        }
-
-        for (Parameter inlineParam : value.getParameters()) {
-            String name = inlineParam.getName();
-            String label = inlineParam.getLabel();
-            String desc = inlineParam.getDescription();
-            LOGGER.trace("      - " + name + " | " + label + " | " + desc);
         }
     }
 

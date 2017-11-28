@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.actions.math;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,8 +39,8 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.MATH.getDisplayName(locale);
     }
 
     protected abstract String getColumnNameSuffix(Map<String, String> parameters);

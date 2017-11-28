@@ -14,10 +14,13 @@
 package org.talend.dataprep.transformation.actions.common;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.i18n.ActionsBundle.parameterDescription;
+import static org.talend.dataprep.i18n.ActionsBundle.parameterLabel;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.talend.dataprep.parameters.Parameter;
@@ -33,7 +36,9 @@ public enum ImplicitParameters {
     SCOPE(STRING, EMPTY),
     FILTER(ParameterType.FILTER, EMPTY);
 
-    private final Parameter parameter;
+    private final ParameterType type;
+
+    private final String defaultValue;
 
     /**
      * Constructor.
@@ -42,27 +47,38 @@ public enum ImplicitParameters {
      * @param defaultValue the parameter default value.
      */
     ImplicitParameters(final ParameterType type, final String defaultValue) {
-        this.parameter = new Parameter(name().toLowerCase(), type, defaultValue, true);
+        this.type = type;
+        this.defaultValue = defaultValue;
     }
 
     /**
      * @return the full list of implicit parameters.
+     * @param locale
      */
-    public static List<Parameter> getParameters() {
-        return Arrays.stream(values()).map(ImplicitParameters::getParameter).collect(Collectors.toList());
+    public static List<Parameter> getParameters(Locale locale) {
+        return Arrays.stream(values()).map(ip -> ip.getParameter(locale)).collect(Collectors.toList());
     }
 
     /**
      * @return the parameter key.
      */
     public String getKey() {
-        return parameter.getName().toLowerCase();
+        return name().toLowerCase();
     }
 
     /**
      * @return the actual parameter.
+     * @param locale
      */
-    public Parameter getParameter() {
-        return parameter;
+    public Parameter getParameter(Locale locale) {
+        return Parameter
+                .parameter(locale)
+                .setName(name().toLowerCase())
+                .setType(type)
+                .setDefaultValue(defaultValue)
+                .setImplicit(true)
+                .setLabel(parameterLabel(null, locale, name().toLowerCase()))
+                .setDescription(parameterDescription(null, locale, name().toLowerCase()))
+                .build(this);
     }
 }

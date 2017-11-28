@@ -13,6 +13,15 @@
 
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.CELSIUS;
+import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -22,18 +31,6 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.CELSIUS;
-import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
 
 /**
  * Unit test for the CelsiusToFahrenheit action.
@@ -46,10 +43,10 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() {
         // when
-        final String name = action.getCategory();
+        final String name = action.getCategory(Locale.US);
 
         // then
-        assertThat(name, is(ActionCategory.CONVERSIONS.getDisplayName()));
+        assertThat(name, is(ActionCategory.CONVERSIONS.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -88,7 +85,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
                 "scope", "filter");
 
         // when
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         assertNotNull(parameters);

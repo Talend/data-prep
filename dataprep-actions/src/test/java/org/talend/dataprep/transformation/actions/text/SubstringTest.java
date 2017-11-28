@@ -13,6 +13,15 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.text.Substring.*;
+
+import java.io.IOException;
+import java.util.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -26,18 +35,6 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.text.Substring.*;
 
 /**
  * Test class for Split action. Creates one consumer, and test it.
@@ -64,13 +61,13 @@ public class SubstringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testParameters() throws Exception {
         // when
-        final List<Parameter> actionParameters = action.getParameters();
+        final List<Parameter> actionParameters = action.getParameters(Locale.US);
 
         // then
         assertEquals(5, actionParameters.size());

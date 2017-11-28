@@ -90,5 +90,10 @@ public class UriSettings {
             action.setUri(this.uri);
             return action;
         }
+
+        public Builder translate() {
+            // we have nothing to translate for UriSettings
+            return this;
+        }
     }
 }

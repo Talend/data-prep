@@ -11,78 +11,85 @@
 
   ============================================================================*/
 
+const i18n = {};
+
 describe('History control directive', function () {
-    'use strict';
+	'use strict';
 
-    var createElement;
-    var element;
-    var scope;
-    var body;
+	let createElement;
+	let element;
+	let scope;
+	let body;
 
-    beforeEach(angular.mock.module('data-prep.history-control'));
+	beforeEach(angular.mock.module('data-prep.history-control'));
 
-    beforeEach(inject(function ($rootScope, $compile, HistoryService) {
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
-        body = angular.element('body');
-        scope = $rootScope.$new();
+	beforeEach(inject(function ($rootScope, $compile, HistoryService) {
 
-        createElement = function () {
-            element = angular.element('<history-control></history-control>');
-            body.append(element);
-            $compile(element)(scope);
-            scope.$digest();
-        };
+		body = angular.element('body');
+		scope = $rootScope.$new();
 
-        spyOn(HistoryService, 'undo').and.returnValue();
-        spyOn(HistoryService, 'redo').and.returnValue();
-    }));
+		createElement = function () {
+			element = angular.element('<history-control></history-control>');
+			body.append(element);
+			$compile(element)(scope);
+			scope.$digest();
+		};
 
-    afterEach(function () {
-        scope.$destroy();
-        element.remove();
-    });
+		spyOn(HistoryService, 'undo').and.returnValue();
+		spyOn(HistoryService, 'redo').and.returnValue();
+	}));
 
-    it('should attach undo to Ctrl+Z shortcut', inject(function ($document, HistoryService) {
-        //given
-        createElement();
+	afterEach(function () {
+		scope.$destroy();
+		element.remove();
+	});
 
-        var event = angular.element.Event('keydown');
-        event.keyCode = 90;
-        event.ctrlKey = true;
+	it('should attach undo to Ctrl+Z shortcut', inject(function ($document, HistoryService) {
+		//given
+		createElement();
 
-        //when
-        $document.trigger(event);
+		const event = angular.element.Event('keydown');
+		event.keyCode = 90;
+		event.ctrlKey = true;
 
-        //then
-        expect(HistoryService.undo).toHaveBeenCalled();
-    }));
+		//when
+		$document.trigger(event);
 
-    it('should attach redo to Ctrl+Y shortcut', inject(function ($document, HistoryService) {
-        //given
-        createElement();
+		//then
+		expect(HistoryService.undo).toHaveBeenCalled();
+	}));
 
-        var event = angular.element.Event('keydown');
-        event.keyCode = 89;
-        event.ctrlKey = true;
+	it('should attach redo to Ctrl+Y shortcut', inject(function ($document, HistoryService) {
+		//given
+		createElement();
 
-        //when
-        $document.trigger(event);
+		const event = angular.element.Event('keydown');
+		event.keyCode = 89;
+		event.ctrlKey = true;
 
-        //then
-        expect(HistoryService.redo).toHaveBeenCalled();
-    }));
+		//when
+		$document.trigger(event);
 
-    it('should unregister listener on destroy', inject(function ($document) {
-        //given
-        expect($._data(angular.element($document)[0], 'events').keydown).not.toBeDefined();
-        createElement();
+		//then
+		expect(HistoryService.redo).toHaveBeenCalled();
+	}));
 
-        expect($._data(angular.element($document)[0], 'events').keydown).toBeDefined();
+	it('should unregister listener on destroy', inject(function ($document) {
+		//given
+		expect($._data(angular.element($document)[0], 'events').keydown).not.toBeDefined();
+		createElement();
 
-        //when
-        scope.$destroy();
+		expect($._data(angular.element($document)[0], 'events').keydown).toBeDefined();
 
-        //then
-        expect($._data(angular.element($document)[0], 'events').keydown).not.toBeDefined();
-    }));
+		//when
+		scope.$destroy();
+
+		//then
+		expect($._data(angular.element($document)[0], 'events').keydown).not.toBeDefined();
+	}));
 });

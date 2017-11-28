@@ -15,6 +15,7 @@ package org.talend.dataprep.api.dataset.location;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.talend.dataprep.api.dataset.DataSetLocation;
@@ -42,12 +43,17 @@ public class LocalStoreLocation implements DataSetLocation {
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        return Collections.singletonList(new Parameter("datasetFile", ParameterType.FILE, "", false, false, "*.csv"));
+    public List<Parameter> getParameters(Locale locale) {
+        return Collections.singletonList(Parameter.parameter(locale).setName("datasetFile")
+                .setType(ParameterType.FILE)
+                .setDefaultValue("")
+                .setCanBeBlank(false)
+                .setPlaceHolder("*.csv")
+                .build(this));
     }
 
     @Override
-    public ComponentProperties getParametersAsSchema() { return null; }
+    public ComponentProperties getParametersAsSchema(Locale locale) { return null; }
 
     @Override
     public boolean isSchemaOriented() { return false; }

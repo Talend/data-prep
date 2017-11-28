@@ -369,7 +369,7 @@ describe('Preparation actions service', () => {
 		it('should display success message', inject((MessageService) => {
 			// then
 			expect(MessageService.success).toHaveBeenCalledWith(
-				'REMOVE_SUCCESS_TITLE',
+				'PREPARATION_REMOVE_SUCCESS_TITLE',
 				'REMOVE_SUCCESS',
 				{ type: 'preparation', name: preparation.name }
 			);

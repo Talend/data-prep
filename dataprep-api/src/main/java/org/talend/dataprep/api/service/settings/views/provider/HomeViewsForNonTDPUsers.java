@@ -29,12 +29,12 @@ public interface HomeViewsForNonTDPUsers {
         .id("appheaderbar")
         .logo(
                 LinkSettings.builder()
-                .name("Talend")
+                .name("appheaderbar.logo")
                 .build()
         )
         .brand(
                 LinkSettings.builder()
-                        .name("Data Preparation")
+                        .label("appheaderbar.brand")
                         .build()
         )
         .build();

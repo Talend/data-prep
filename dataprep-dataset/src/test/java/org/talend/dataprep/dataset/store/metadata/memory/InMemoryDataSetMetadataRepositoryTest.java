@@ -61,7 +61,7 @@ public class InMemoryDataSetMetadataRepositoryTest {
         assertTrue(Defaults.defaultValue(float.class).equals(obj.zeFloat));
         assertTrue(Defaults.defaultValue(double.class).equals(obj.zeDouble));
         assertTrue(obj.zeObject == Defaults.defaultValue(Object.class));// cause it is null
-        assertTrue(Defaults.defaultValue(boolean.class).equals(obj.zeStaticBoolean));
+        assertTrue(Defaults.defaultValue(boolean.class).equals(TransientTestObject.zeStaticBoolean));
     }
 
     @Test

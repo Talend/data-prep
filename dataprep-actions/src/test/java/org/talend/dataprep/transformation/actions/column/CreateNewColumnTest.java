@@ -22,6 +22,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +59,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testActionParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(5, parameters.size());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode_new_column")).findFirst().isPresent());
     }
@@ -72,7 +73,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.COLUMN_METADATA.getDisplayName(Locale.US)));
     }
 
     @Test

@@ -215,6 +215,8 @@ export default class AppHeaderBarCtrl {
 
 		return {
 			...searchSettings,
+			searchingText: this.$translate.instant('HEADERBAR_SEARCH_SEARCHING'),
+			noResultText: this.$translate.instant('HEADERBAR_SEARCH_NO_RESULT'),
 			icon: onToggleAction && {
 				name: onToggleAction.icon,
 				title: onToggleAction.name,

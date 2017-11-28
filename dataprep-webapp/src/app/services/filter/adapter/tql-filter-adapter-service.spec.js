@@ -23,6 +23,8 @@ import {
     EMPTY,
 } from './tql-filter-adapter-service';
 
+import i18n from './../../../../i18n/en.json';
+
 describe('TQL Filter Adapter Service', () => {
     const COL_ID = '0001';
     const getArgs = (key, ...args) => ({ [key]: args.map(a => ({ value: a })) });
@@ -30,10 +32,7 @@ describe('TQL Filter Adapter Service', () => {
     beforeEach(angular.mock.module('data-prep.services.filter-adapter'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			INVALID_RECORDS_LABEL: 'invalid records label',
-			VALID_RECORDS_LABEL: 'valid records label',
-		});
+		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
 

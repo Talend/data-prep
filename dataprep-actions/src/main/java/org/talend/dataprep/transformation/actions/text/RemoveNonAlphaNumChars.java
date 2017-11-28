@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,8 +41,8 @@ public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements Co
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS_ADVANCED.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS_ADVANCED.getDisplayName(locale);
     }
 
     @Override

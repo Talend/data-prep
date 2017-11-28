@@ -14,6 +14,7 @@ package org.talend.dataprep.transformation.format;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.configuration.EncodingSupport;
@@ -67,26 +67,55 @@ public class CSVFormat extends ExportFormat {
 
     @Override
     public List<Parameter> getParameters() {
-        return Arrays.asList(  //
-                getCsvDelimiters(), //
-                new Parameter(ParametersCSV.ENCLOSURE_CHAR, ParameterType.STRING, defaultTextEnclosure), //
-                new Parameter(ParametersCSV.ESCAPE_CHAR, ParameterType.STRING, defaultEscapeChar),
-                getEnclosureOptions(), //
-                new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false), //
-                buildCharsetParameter(LocaleContextHolder.getLocale()));
+        Locale currentLocale = getLocale();
+        return Arrays.asList(//
+                getFileName(currentLocale), //
+                getCsvDelimiters(currentLocale), //
+                getEnclosureChar(currentLocale), //
+                getEscapeChar(currentLocale), //
+                getEnclosureOptions(currentLocale), //
+                buildCharsetParameter(currentLocale));
     }
 
-    private SelectParameter getEnclosureOptions() {
-        return SelectParameter.Builder.builder().name(ParametersCSV.ENCLOSURE_MODE) //
-                .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
+    private Parameter getFileName(Locale locale) {
+        return Parameter.parameter(locale) //
+                .setName("fileName") //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(StringUtils.EMPTY) //
+                .setImplicit(false) //
+                .setCanBeBlank(false) //
+                .build(null);
+    }
+
+    private Parameter getEnclosureChar(Locale locale) {
+        return Parameter.parameter(locale) //
+                .setName(ParametersCSV.ENCLOSURE_CHAR) //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(defaultTextEnclosure) //
+                .build(null);
+    }
+
+    private Parameter getEscapeChar(Locale locale) {
+        return Parameter.parameter(locale) //
+                .setName(ParametersCSV.ESCAPE_CHAR) //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(defaultEscapeChar) //
+                .build(null);
+    }
+
+    private SelectParameter getEnclosureOptions(Locale locale) {
+        return SelectParameter.selectParameter(locale) //
+                .name(ParametersCSV.ENCLOSURE_MODE) //
                 .item(ParametersCSV.ENCLOSURE_ALL_FIELDS, ParametersCSV.ENCLOSURE_TEXT_ALL_FIELDS_LABEL) //
+                .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
                 .defaultValue(ParametersCSV.ENCLOSURE_TEXT_ONLY) //
                 .radio(true) //
-                .build();
+                .build(null);
     }
 
-    private SelectParameter getCsvDelimiters() {
-        return SelectParameter.Builder.builder().name(ParametersCSV.FIELDS_DELIMITER) //
+    private SelectParameter getCsvDelimiters(Locale locale) {
+        return SelectParameter.selectParameter(locale) //
+                .name(ParametersCSV.FIELDS_DELIMITER) //
                 .item(";", "semiColon") //
                 .item("\u0009", "tabulation") //
                 .item(" ", "space") //
@@ -94,16 +123,16 @@ public class CSVFormat extends ExportFormat {
                 .item("|", "pipe") //
                 .defaultValue(defaultSeparator) //
                 .canBeBlank(true) //
-                .build();
+                .build(null);
     }
 
     private Parameter buildCharsetParameter(Locale locale) {
-        SelectParameter.Builder builder = SelectParameter.Builder.builder().name(ParametersCSV.ENCODING);
+        SelectParameter.SelectParameterBuilder builder = SelectParameter.selectParameter(locale).name(ParametersCSV.ENCODING);
         for (Charset charsetEntry : EncodingSupport.getSupportedCharsets()) {
             builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
         }
         builder.defaultValue(Charset.isSupported(defaultEncoding) ? defaultEncoding : UTF_8.name()).canBeBlank(false);
-        return builder.build();
+        return builder.build(null);
     }
 
     @Override

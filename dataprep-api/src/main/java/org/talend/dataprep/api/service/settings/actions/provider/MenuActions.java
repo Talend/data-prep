@@ -26,7 +26,7 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 public interface MenuActions {
     ActionSettings SIDE_PANEL_TOGGLE = builder()
             .id("sidepanel:toggle")
-            .name("Click here to toggle the side panel")
+            .name("sidepanel.toggle")
             .icon("talend-arrow-left")
             .type("@@sidepanel/TOGGLE")
             .payload(PAYLOAD_METHOD_KEY, "toggleHomeSidepanel")
@@ -34,7 +34,7 @@ public interface MenuActions {
 
     ActionSettings MENU_PREPARATIONS = builder()
             .id("menu:preparations")
-            .name("Preparations")
+            .name("menu.preparations")
             .icon("talend-dataprep")
             .type("@@router/GO_CURRENT_FOLDER")
             .payload(PAYLOAD_METHOD_KEY, "go")
@@ -43,7 +43,7 @@ public interface MenuActions {
 
     ActionSettings MENU_FOLDERS = builder()
             .id("menu:folders")
-            .name("Folders")
+            .name("menu.folders")
             .icon("talend-folder")
             .type("@@router/GO_FOLDER")
             .payload(PAYLOAD_METHOD_KEY, "go")
@@ -52,7 +52,7 @@ public interface MenuActions {
 
     ActionSettings MENU_DATASETS = builder()
             .id("menu:datasets")
-            .name("Datasets")
+            .name("menu.datasets")
             .icon("talend-datastore")
             .type("@@router/GO")
             .payload(PAYLOAD_METHOD_KEY, "go")
@@ -61,7 +61,7 @@ public interface MenuActions {
 
     ActionSettings MENU_PLAYGROUND_PREPARATION = builder()
             .id("menu:playground:preparation")
-            .name("Open Preparation")
+            .name("menu.playground.preparation")
             .icon("talend-dataprep")
             .type("@@router/GO_PREPARATION")
             .payload(PAYLOAD_METHOD_KEY, "go")

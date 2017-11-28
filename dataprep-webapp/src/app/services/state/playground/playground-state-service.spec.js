@@ -11,6 +11,8 @@
 
   ============================================================================*/
 
+import i18n from '../../../../i18n/en.json';
+
 describe('Playground state service', () => {
     'use strict';
 
@@ -29,6 +31,11 @@ describe('Playground state service', () => {
         $provide.constant('filterState', filterStateMock);
         $provide.constant('parametersState', parametersStateMock);
     }));
+
+	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
     beforeEach(inject((GridStateService, RecipeStateService, FilterStateService, LookupStateService, SuggestionsStateService, ParametersStateService) => {
         spyOn(GridStateService, 'setData').and.returnValue();

@@ -14,16 +14,19 @@ package org.talend.dataprep.api.action;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Model a Data Prep action.
@@ -38,28 +41,66 @@ public interface ActionDefinition extends Serializable {
 
     /**
      * @return A 'category' for the action used to group similar actions (eg. 'math', 'repair'...).
+     * @param locale
      */
-    String getCategory();
+    String getCategory(Locale locale);
+
+    /**
+     * Defines the list of scopes this action belong to.
+     * <p>
+     * Scope scope is a concept that allow us to describe on which scope(s) each action can be applied.
+     *
+     * @return list of scopes of this action
+     */
+    List<String> getActionScope();
+
+    /**
+     * @return <code>true</code> if the action is dynamic (i.e the parameters depends on the context (dataset / preparation /
+     * previous_actions).
+     */
+    // Only here for JSON serialization purposes.
+    boolean isDynamic();
 
     /**
      * @return The label of the action, translated in the user locale.
+     * @param locale
+     * @deprecated Locale dependent methods that build the action UI representation ({@link #getLabel(Locale)}
+     * {@link #getDescription(Locale)} {@link #getDocUrl(Locale)} and {@link #getParameters(Locale)}) are replaced by
+     * {@link #getActionForm(Locale)} that build the whole representation.
      */
-    String getLabel();
+    @Deprecated
+    String getLabel(Locale locale);
 
     /**
      * @return The description of the action, translated in the user locale.
+     * @param locale
+     * @deprecated Locale dependent methods that build the action UI representation ({@link #getLabel(Locale)}
+     * {@link #getDescription(Locale)} {@link #getDocUrl(Locale)} and {@link #getParameters(Locale)}) are replaced by
+     * {@link #getActionForm(Locale)} that build the whole representation.
      */
-    String getDescription();
+    @Deprecated
+    String getDescription(Locale locale);
 
     /**
      * @return The action documentation url.
+     * @param locale
+     * @deprecated Locale dependent methods that build the action UI representation ({@link #getLabel(Locale)}
+     * {@link #getDescription(Locale)} {@link #getDocUrl(Locale)} and {@link #getParameters(Locale)}) are replaced by
+     * {@link #getActionForm(Locale)} that build the whole representation.
      */
-    String getDocUrl();
+    @Deprecated
+    String getDocUrl(Locale locale);
 
     /**
      * @return The list of parameters required for this Action to be executed.
-     **/
-    List<Parameter> getParameters();
+     *
+     * @param locale
+     * @deprecated Locale dependent methods that build the action UI representation ({@link #getLabel(Locale)}
+     * {@link #getDescription(Locale)} {@link #getDocUrl(Locale)} and {@link #getParameters(Locale)}) are replaced by
+     * {@link #getActionForm(Locale)} that build the whole representation.
+     */
+    @Deprecated
+    List<Parameter> getParameters(Locale locale);
 
     /**
      * @return A set of {@link Behavior} that describes the expected behavior of the action. It helps Data Prep runtime to
@@ -71,7 +112,7 @@ public interface ActionDefinition extends Serializable {
      * Builds up a {@link Function} that takes an input {@link GenericRecord record} and returns the <i>eventually modified</i>
      * record. The action can take as input the <code>parameters</code>.
      *
-     * @param parameters The action parameters for construction, should be the expected ones from {@link #getParameters()}.
+     * @param parameters The action parameters for construction, should be the expected ones from {@link #getParameters(Locale)}.
      * @return A {@link Function} that performs operations on a record.
      */
     Function<GenericRecord, GenericRecord> action(List<Parameter> parameters);
@@ -203,6 +244,41 @@ public interface ActionDefinition extends Serializable {
          * make line as header...
          */
         FORBID_DISTRIBUTED
+    }
+
+    /**
+     * Create a representation of this action for user interfaces using supplied locale.
+     *
+     * @param locale The form main locale for representation, {@link Locale#US US} will be used as alternate locale.
+     * @return the action representation for the UI
+     */
+    default ActionForm getActionForm(Locale locale) {
+        return getActionForm(locale, Locale.US);
+    }
+
+    /**
+     * Create a representation of this action for user interfaces.
+     *
+     * @param locale The form main locale for representation
+     * @param alternateLocale the secondary locale for search purposes
+     * @return the action representation for the UI
+     */
+    default ActionForm getActionForm(Locale locale, Locale alternateLocale) {
+        ActionForm form = new ActionForm();
+        form.setName(getName());
+        form.setCategory(getCategory(locale));
+        form.setActionScope(getActionScope());
+        form.setDynamic(isDynamic());
+
+        form.setDescription(getDescription(locale));
+        form.setLabel(getLabel(locale));
+        form.setDocUrl(getDocUrl(locale));
+        form.setParameters(getParameters(locale));
+        if (!Objects.equals(locale, alternateLocale)) {
+            form.setAlternateDescription(getDescription(alternateLocale));
+            form.setAlternateLabel(getLabel(alternateLocale));
+        }
+        return form;
     }
 
 }

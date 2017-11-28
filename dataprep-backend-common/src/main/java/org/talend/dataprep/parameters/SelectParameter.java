@@ -13,9 +13,13 @@
 
 package org.talend.dataprep.parameters;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.talend.dataprep.i18n.ActionsBundle.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -54,8 +58,8 @@ public class SelectParameter extends Parameter {
      * @param radio <code>true</code> if the rendering code should prefer radio buttons instead of drop down list.
      */
     private SelectParameter(String name, String defaultValue, boolean implicit, boolean canBeBlank, List<Item> items,
-            boolean multiple, boolean radio) {
-        super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank);
+            boolean multiple, boolean radio, String label, String description) {
+        super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank, EMPTY, label, description);
         setRadio(radio);
         setItems(items);
         setMultiple(multiple);
@@ -67,6 +71,18 @@ public class SelectParameter extends Parameter {
 
     public void setRadio(boolean radio) {
         this.radio = radio;
+    }
+
+    /**
+     * @return A SelectParameter builder.
+     * @param locale
+     */
+    public static SelectParameterBuilder selectParameter(Locale locale) {
+        return new SelectParameterBuilder(locale);
+    }
+
+    public boolean isRadio() {
+        return radio;
     }
 
     public List<Item> getItems() {
@@ -87,18 +103,10 @@ public class SelectParameter extends Parameter {
         this.multiple = multiple;
     }
 
-    @Override
-    public Parameter attach(Object parent) {
-        for (Item item : items) {
-            item.attach(parent);
-        }
-        return super.attach(parent);
-    }
-
     /**
      * Builder used to simplify the syntax of creation.
      */
-    public static class Builder {
+    public static class SelectParameterBuilder {
 
         /** List of items. */
         private final List<Item> items = new ArrayList<>();
@@ -121,11 +129,14 @@ public class SelectParameter extends Parameter {
         /** True if rendering should prefer radio buttons to render parameters choices */
         private boolean radio;
 
-        /**
-         * @return A SelectParameter builder.
-         */
-        public static Builder builder() {
-            return new Builder();
+        private String label;
+
+        private String description;
+
+        private Locale locale;
+
+        public SelectParameterBuilder(Locale locale) {
+            this.locale = locale;
         }
 
         /**
@@ -134,7 +145,7 @@ public class SelectParameter extends Parameter {
          * @param name the name of the select parameter.
          * @return the builder to carry on building the column.
          */
-        public Builder name(String name) {
+        public SelectParameterBuilder name(String name) {
             this.name = name;
             return this;
         }
@@ -145,7 +156,7 @@ public class SelectParameter extends Parameter {
          * @param defaultValue the default value of the select parameter.
          * @return the builder to carry on building the column.
          */
-        public Builder defaultValue(String defaultValue) {
+        public SelectParameterBuilder defaultValue(String defaultValue) {
             this.defaultValue = defaultValue;
             return this;
         }
@@ -156,7 +167,7 @@ public class SelectParameter extends Parameter {
          * @param implicit true if the parameter is implicit.
          * @return the builder to carry on building the column.
          */
-        public Builder implicit(boolean implicit) {
+        public SelectParameterBuilder implicit(boolean implicit) {
             this.implicit = implicit;
             return this;
         }
@@ -167,7 +178,7 @@ public class SelectParameter extends Parameter {
          * @param canBeBlank true if the parameter is implicit.
          * @return the builder to carry on building the column.
          */
-        public Builder canBeBlank(boolean canBeBlank) {
+        public SelectParameterBuilder canBeBlank(boolean canBeBlank) {
             this.canBeBlank = canBeBlank;
             return this;
         }
@@ -179,8 +190,8 @@ public class SelectParameter extends Parameter {
          * @param parameter the item optional parameter.
          * @return the builder to carry on building the column.
          */
-        public Builder item(String value, Parameter... parameter) {
-            this.items.add(Item.Builder.builder().value(value).inlineParameters(Arrays.asList(parameter)).build());
+        public SelectParameterBuilder item(String value, Parameter... parameter) {
+            this.items.add(new Item(value, value, Arrays.asList(parameter)));
             return this;
         }
 
@@ -189,9 +200,8 @@ public class SelectParameter extends Parameter {
          *
          * @param value the item value.
          */
-        public Builder item(String value) {
-            final Item item = Item.Builder.builder().value(value).build();
-            this.items.add(item);
+        public SelectParameterBuilder item(String value) {
+            this.items.add(new Item(value, value, null));
             return this;
         }
 
@@ -199,12 +209,11 @@ public class SelectParameter extends Parameter {
          * Add an item to the select parameter builder.
          *
          * @param value the item value.
-         * @param label the item label
+         * @param labelKey the item label
          * @return the builder to carry on building the column.
          */
-        public Builder item(String value, String label) {
-            final Item item = Item.Builder.builder().value(value).label(label).build();
-            this.items.add(item);
+        public SelectParameterBuilder item(String value, String labelKey) {
+            this.items.add(new Item(value, choice(null, locale, labelKey),  null));
             return this;
         }
 
@@ -217,9 +226,8 @@ public class SelectParameter extends Parameter {
          * @param text the item (constant) label
          * @return the builder to carry on building the column.
          */
-        public Builder constant(String value, String text) {
-            final Item item = Item.Builder.builder().value(value).text(text).build();
-            this.items.add(item);
+        public SelectParameterBuilder constant(String value, String text) {
+            this.items.add(new Item(value, text, null));
             return this;
         }
 
@@ -230,8 +238,8 @@ public class SelectParameter extends Parameter {
          * @param parameter the item optional parameter.
          * @return the builder to carry on building the column.
          */
-        public Builder item(String value, String label, Parameter... parameter) {
-            this.items.add(Item.Builder.builder().value(value).label(label).inlineParameters(Arrays.asList(parameter)).build());
+        public SelectParameterBuilder item(String value, String labelKey, Parameter... parameter) {
+            this.items.add(new Item(value, choice(null, locale, labelKey), Arrays.asList(parameter)));
             return this;
         }
 
@@ -241,13 +249,23 @@ public class SelectParameter extends Parameter {
          * @param items the item name.
          * @return the builder to carry on building the column.
          */
-        public Builder items(List<Item> items) {
+        public SelectParameterBuilder items(List<Item> items) {
             this.items.addAll(items);
             return this;
         }
 
-        public Builder radio(boolean radio) {
+        public SelectParameterBuilder radio(boolean radio) {
             this.radio = radio;
+            return this;
+        }
+
+        public SelectParameterBuilder setLabel(String label) {
+            this.label = label;
+            return this;
+        }
+
+        public SelectParameterBuilder setDescription(String description) {
+            this.description = description;
             return this;
         }
 
@@ -255,9 +273,16 @@ public class SelectParameter extends Parameter {
          * Build the column with the previously entered values.
          *
          * @return the built column metadata.
+         * @param action
          */
-        public SelectParameter build() {
-            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, radio);
+        public SelectParameter build(Object action) {
+            if (label == null) {
+                label = parameterLabel(action, locale, name);
+            }
+            if (description == null) {
+                description = parameterDescription(action, locale, name);
+            }
+            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, radio, label, description);
         }
     }
 

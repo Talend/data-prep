@@ -18,6 +18,7 @@ import static org.junit.Assert.fail;
 import static org.talend.dataprep.BaseErrorCodes.*;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -118,7 +119,7 @@ public class ActionMetadataValidationTest extends ServiceBaseTest {
         }
 
         @Override
-        public String getCategory() {
+        public String getCategory(Locale locale) {
             return null;
         }
 

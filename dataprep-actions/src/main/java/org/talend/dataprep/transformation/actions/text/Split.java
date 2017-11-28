@@ -30,7 +30,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -72,17 +71,18 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return SPLIT.getDisplayName();
+    public String getCategory(Locale locale) {
+        return SPLIT.getDisplayName(locale);
     }
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(LIMIT, INTEGER, "2"));
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(Parameter.parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("2").build(
+                this));
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(SEPARATOR_PARAMETER)
                         .canBeBlank(true)
                         .item(":")
@@ -93,13 +93,13 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
                         .item("_")
                         .item(" ", "space")
                         .item("\t", "tab")
-                        .item("other (string)", new Parameter(MANUAL_SEPARATOR_PARAMETER_STRING, STRING, EMPTY))
-                        .item("other (regex)", new Parameter(MANUAL_SEPARATOR_PARAMETER_REGEX, STRING, EMPTY))
+                        .item("other (string)", Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
+                        .item("other (regex)", Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this))
                         .defaultValue(":")
-                        .build()
+                        .build(this )
         );
         //@formatter:on
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
 
@@ -26,7 +27,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -61,11 +61,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     /**
      * Constant to represents mode where we fill with a constant.
      */
-    public static final String EMPTY_MODE = "Nothing, this column will be empty";
+    public static final String EMPTY_MODE = "empty_mode";
 
-    public static final String CONSTANT_MODE = "A constant";
+    public static final String CONSTANT_MODE = "a_constant_mode";
 
-    public static final String COLUMN_MODE = "Another column";
+    public static final String COLUMN_MODE = "other_column_mode";
 
     public static final String NEW_COLUMN = "new_column";
 
@@ -75,8 +75,8 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMN_METADATA.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMN_METADATA.getDisplayName(locale);
     }
 
     @Override
@@ -86,30 +86,30 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     @Override
     public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
-        Parameter constantParameter = new Parameter(DEFAULT_VALUE_PARAMETER, //
-                ParameterType.STRING, //
-                StringUtils.EMPTY);
+        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
+                .setType(ParameterType.STRING)
+                .setDefaultValue(StringUtils.EMPTY)
+                .build(this);
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
-                        .item(EMPTY_MODE)
-                        .item(CONSTANT_MODE, constantParameter)
-                        .item(COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
-                                                         StringUtils.EMPTY, false, false, StringUtils.EMPTY))
+                        .item(EMPTY_MODE, EMPTY_MODE)
+                        .item(CONSTANT_MODE, CONSTANT_MODE, constantParameter)
+                        .item(COLUMN_MODE, COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this))
                         .defaultValue(COLUMN_MODE)
-                        .build()
+                        .build(this)
         );
         //@formatter:on
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

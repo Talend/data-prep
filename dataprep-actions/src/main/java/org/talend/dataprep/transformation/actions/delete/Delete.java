@@ -58,32 +58,32 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(Locale locale) {
         switch (scope) {
         case LINE:
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, DELETE_SINGLE_LINE);
+            return ActionsBundle.actionDescription(this, locale, DELETE_SINGLE_LINE);
         case COLUMN:
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, DELETE_COLUMN);
+            return ActionsBundle.actionDescription(this, locale, DELETE_COLUMN);
         default:
             return null;
         }
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Locale locale) {
         switch (scope) {
         case LINE:
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, DELETE_SINGLE_LINE);
+            return ActionsBundle.actionLabel(this, locale, DELETE_SINGLE_LINE);
         case COLUMN:
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, DELETE_COLUMN);
+            return ActionsBundle.actionLabel(this, locale, DELETE_COLUMN);
         default:
             return null;
         }
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.datamasking;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,8 +58,8 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.DATA_MASKING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.DATA_MASKING.getDisplayName(locale);
     }
 
     @Override

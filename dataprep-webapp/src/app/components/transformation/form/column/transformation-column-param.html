@@ -19,7 +19,7 @@
         <label class="param-name"
              data-prep-tooltip="{{::columnParamCtrl.parameter.description}}"
              ng-if="::(columnParamCtrl.label !== 'false')">
-            {{::columnParamCtrl.parameter.label}}:
+            {{::columnParamCtrl.parameter.label}}<span translate-once="COLON"></span>
         </label>
         <div class="param-input" ng-switch="!!columnParamCtrl.isReadonly">
             <div ng-switch-when="true">

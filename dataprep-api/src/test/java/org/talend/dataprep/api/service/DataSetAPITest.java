@@ -86,13 +86,17 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when it's updated
-        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().put("/api/datasets/" + dataSetId + "?name=testDataset").asString();
+        given()
+                .body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
+                .queryParam("Content-Type", "text/csv")
+                .when()
+                .put("/api/datasets/" + dataSetId + "?name=testDataset")
+                .asString();
 
         // then, the content is updated
         String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
-        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"),
-                UTF_8);
+        final String expectedContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"), UTF_8);
         assertThat(dataSetContent, sameJSONAs(expectedContent).allowingExtraUnexpectedFields());
     }
 
@@ -103,13 +107,17 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", datasetOriginalName);
 
         // when it's updated
-        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().put("/api/datasets/" + dataSetId).asString();
+        given()
+                .body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
+                .queryParam("Content-Type", "text/csv")
+                .when()
+                .put("/api/datasets/" + dataSetId)
+                .asString();
 
         // then, the content is updated
         String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
-        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"),
-                UTF_8);
+        final String expectedContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"), UTF_8);
         assertThat(dataSetContent, sameJSONAs(expectedContent).allowingExtraUnexpectedFields());
 
         final String jsonUpdatedMetadata = when().get("/api/datasets/{id}/metadata", dataSetId).asString();
@@ -127,10 +135,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
         String defaultDataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
         assertThat(defaultDataSetContent.contains("__tdp"), is(false));
 
-        String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=false").asString();
+        String dataSetContent =
+                when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=false").asString();
         assertThat(dataSetContent.contains("__tdp"), is(false));
 
-        String dataSetContentWithTechnicalContent = when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=true").asString();
+        String dataSetContentWithTechnicalContent =
+                when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=true").asString();
         assertThat(dataSetContentWithTechnicalContent.contains("__tdp"), is(true));
     }
 
@@ -283,7 +293,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "bbbb");
 
         // when (sort by date, order is desc)
-        String list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), DESC.camelName()).asString();
+        String list =
+                when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), DESC.camelName()).asString();
 
         // then
         Iterator<JsonNode> elements = mapper.readTree(list).elements();
@@ -394,8 +405,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreate_nameWithRegexParts() throws Exception {
         // given
-        InputStream expected = PreparationAPITest.class
-                .getResourceAsStream("dataset/expected_dataset_with_metadata_regex_test.json");
+        InputStream expected =
+                PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_metadata_regex_test.json");
 
         // when
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "Cr(())eate Email Address{rrr}bb[zzzz]");
@@ -424,9 +435,13 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String originalId = testClient.createDataset("dataset/dataset.csv", "original");
 
         // when
-        final Response response = given().param("name", "copy") //
+        final Response response = given()
+                .param("name", "copy") //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/api/datasets/{id}/copy", originalId);
 
         // then
@@ -441,9 +456,13 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String originalId = testClient.createDataset("dataset/dataset.csv", "taken");
 
         // when
-        final Response response = given().param("name", "taken") //
+        final Response response = given()
+                .param("name", "taken") //
                 .when() //
-                .expect().statusCode(409).log().ifError() //
+                .expect()
+                .statusCode(409)
+                .log()
+                .ifError() //
                 .post("/api/datasets/{id}/copy", originalId);
 
         // then
@@ -479,22 +498,23 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetColumnSuggestions() throws Exception {
         // given
-        final String columnDescription = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"),
-                UTF_8);
+        final String columnDescription = IOUtils
+                .toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"), UTF_8);
 
         // when
         final String content = given().body(columnDescription).when().post("/api/transform/suggest/column").asString();
 
         // then
-        final InputStream expected = PreparationAPITest.class.getResourceAsStream("suggestions/expected_all_line_scope_actions.json");
+        final InputStream expected =
+                PreparationAPITest.class.getResourceAsStream("suggestions/expected_all_line_scope_actions.json");
         assertThat(content, sameJSONAsFile(expected));
     }
 
     @Test
     public void testDataSetColumnActions() throws Exception {
         // given
-        final String columnDescription = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"),
-                UTF_8);
+        final String columnDescription = IOUtils
+                .toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"), UTF_8);
 
         // when
         final String content = given().body(columnDescription).when().post("/api/transform/actions/column").asString();
@@ -564,8 +584,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreateUnsupportedFormat() throws Exception {
         // given
-        final String datasetContent = IOUtils.toString(DataSetAPITest.class.getResourceAsStream("dataset/dataset.pdf"),
-                UTF_8);
+        final String datasetContent = IOUtils.toString(DataSetAPITest.class.getResourceAsStream("dataset/dataset.pdf"), UTF_8);
         final int metadataCount = dataSetMetadataRepository.size();
         // then
         final Response response = given().body(datasetContent).when().post("/api/datasets");
@@ -582,7 +601,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
         Response response = given() //
                 .body(IOUtils
                         .toByteArray(DataSetAPITest.class.getResourceAsStream("dataset/Talend_Desk-Tableau_de_Bord-011214.xls"))) //
-                .when().post("/api/datasets");
+                .when()
+                .post("/api/datasets");
 
         assertThat(response.getStatusCode(), is(200));
         String datasetId = response.asString();
@@ -597,8 +617,13 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // then
         String json = given() //
-                .expect().statusCode(200).log().ifError() //
-                .when().get("/api/datasets/encodings").asString();
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
+                .when()
+                .get("/api/datasets/encodings")
+                .asString();
 
         List<String> encodings = mapper.readValue(json, new TypeReference<List<String>>() {
         });
@@ -721,7 +746,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
                 .get("/api/datasets/imports/{import}/parameters", importType)
                 .then()
                 .statusCode(200)
-                .content(equalTo(mapper.writeValueAsString(new TCOMPLocationTest().getParametersAsSchema())));
+                .content(equalTo(mapper.writeValueAsString(new TCOMPLocationTest().getParametersAsSchema(Locale.US))));
     }
 
     @Test
@@ -729,7 +754,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // given
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
-
 
         // when
         final Response response = when().get("/api/datasets/{preparationId}/columns/{columnId}/types", dataSetId, "0000");
@@ -759,7 +783,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
         assertThat(contentAsString, sameJSONAsFile(expected));
     }
 
-
     @Component
     public static class TCOMPLocationTest implements DataSetLocation {
 
@@ -774,17 +797,19 @@ public class DataSetAPITest extends ApiServiceTestBase {
         }
 
         @Override
-        public List<Parameter> getParameters() {
+        public List<Parameter> getParameters(Locale locale) {
             return null;
         }
 
         @Override
-        public ComponentProperties getParametersAsSchema() {
+        public ComponentProperties getParametersAsSchema(Locale locale) {
             return new ComponentProperties();
         }
 
         @Override
-        public boolean isSchemaOriented() { return true; }
+        public boolean isSchemaOriented() {
+            return true;
+        }
 
         @Override
         public String getAcceptedContentType() {

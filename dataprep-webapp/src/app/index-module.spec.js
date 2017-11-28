@@ -18,23 +18,6 @@ describe('Dataprep app', () => {
     beforeEach(angular.mock.module('data-prep.services.state'));
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    describe('run', () => {
-        it('should set language from navigator', inject(($rootScope, $injector, $window, $translate) => {
-            //given
-            const myModule = angular.module('data-prep');
-            const runBlock = myModule._runBlocks[1];
-
-            spyOn($translate, 'use').and.returnValue();
-
-            //when
-            $injector.invoke(runBlock);
-            $rootScope.$digest();
-
-            //then
-            expect($translate.use).toHaveBeenCalledWith('en');
-        }));
-    });
-
     describe('config', () => {
         it('should set $httpProvider useApplyAsync config to true', () => {
             //given

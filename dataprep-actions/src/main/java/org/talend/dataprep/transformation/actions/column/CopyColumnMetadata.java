@@ -15,11 +15,9 @@ package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
@@ -55,8 +53,8 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMN_METADATA.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMN_METADATA.getDisplayName(locale);
     }
 
     @Override
@@ -66,7 +64,7 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
 
     @Override
     public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override

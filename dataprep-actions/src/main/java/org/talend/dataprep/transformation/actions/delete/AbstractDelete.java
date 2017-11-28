@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.delete;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -29,8 +30,8 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 public abstract class AbstractDelete extends AbstractActionMetadata implements ColumnAction {
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     /**

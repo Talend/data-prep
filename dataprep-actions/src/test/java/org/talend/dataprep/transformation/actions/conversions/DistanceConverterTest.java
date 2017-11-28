@@ -12,6 +12,14 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -23,17 +31,6 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.converters.DistanceEnum;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 /**
  * Test class for Trim action. Creates one consumer, and test it.
@@ -51,10 +48,10 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() {
         // when
-        final String name = action.getCategory();
+        final String name = action.getCategory(Locale.US);
 
         // then
-        assertThat(name, Is.is(ActionCategory.CONVERSIONS.getDisplayName()));
+        assertThat(name, Is.is(ActionCategory.CONVERSIONS.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -94,7 +91,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
                 "scope", "filter");
 
         // when
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         assertNotNull(parameters);

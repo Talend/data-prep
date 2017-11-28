@@ -21,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -59,7 +60,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(maskDataByDomain.getCategory(), is(ActionCategory.DATA_MASKING.getDisplayName()));
+        assertThat(maskDataByDomain.getCategory(Locale.US), is(ActionCategory.DATA_MASKING.getDisplayName(Locale.US)));
     }
 
     @Test

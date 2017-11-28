@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.service;
 
 import static java.util.Collections.singletonList;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -40,12 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -621,11 +624,11 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Return all actions for a column (regardless of column metadata)",
             notes = "This operation returns an array of actions.")
     @ResponseBody
-    public Stream<ActionDefinition> columnActions(@RequestBody(required = false) ColumnMetadata column) {
-        return actionRegistry
-                .findAll() //
-                .filter(action -> !"TEST".equals(action.getCategory()) && action.acceptScope(COLUMN)) //
-                .map(am -> column != null ? am.adapt(column) : am);
+    public Stream<ActionForm> columnActions(@RequestBody(required = false) ColumnMetadata column) {
+        return actionRegistry.findAll() //
+                .filter(action -> !"TEST".equals(action.getCategory(LocaleContextHolder.getLocale())) && action.acceptScope(COLUMN)) //
+                .map(am -> column != null ? am.adapt(column) : am)
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -640,9 +643,8 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Suggest actions for a given column metadata",
             notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public Stream<ActionDefinition> suggest(@RequestBody(required = false) ColumnMetadata column, //
-            @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit",
-                    defaultValue = "5", required = false) int limit) {
+    public Stream<ActionForm> suggest(@RequestBody(required = false) ColumnMetadata column, //
+                                      @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5", required = false) int limit) {
         if (column == null) {
             return Stream.empty();
         }
@@ -654,7 +656,8 @@ public class TransformationService extends BaseTransformationService {
                 .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
-                .map(am -> am.adapt(column)); // Adapt default values (e.g. column name)
+                .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -665,11 +668,11 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/actions/line", method = GET)
     @ApiOperation(value = "Return all actions on lines", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public Stream<ActionDefinition> lineActions() {
-        return actionRegistry
-                .findAll() //
+    public Stream<ActionForm> lineActions() {
+        return actionRegistry.findAll() //
                 .filter(action -> action.acceptScope(LINE)) //
-                .map(action -> action.adapt(LINE));
+                .map(action -> action.adapt(LINE))
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -680,11 +683,12 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/actions/dataset", method = GET)
     @ApiOperation(value = "Return all actions on the whole dataset.", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public Stream<ActionDefinition> datasetActions() {
+    public Stream<ActionForm> datasetActions() {
         return actionRegistry
                 .findAll() //
                 .filter(action -> action.acceptScope(DATASET)) //
-                .map(action -> action.adapt(DATASET));
+                .map(action -> action.adapt(DATASET))
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -698,7 +702,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Suggest actions for a given data set metadata",
             notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public List<ActionDefinition> suggest(DataSet dataSet) {
+    public List<ActionForm> suggest(DataSet dataSet) {
         return Collections.emptyList();
     }
 

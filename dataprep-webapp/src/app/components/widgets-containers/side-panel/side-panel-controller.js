@@ -37,20 +37,20 @@ export default class SidePanelCtrl {
 	}
 
 	adaptActions() {
-		this.actions = this.appSettings
-			.views
-			.sidepanel
-			.actions
+		this.actions = this.appSettings.views.sidepanel.actions
 			.map(actionName => this.appSettings.actions[actionName])
 			.map(action => ({
 				...action,
 				label: action.name,
+				id: action.id.replace(/:/g, '-'),
 				onClick: this.SettingsActionsService.createDispatcher(action),
 			}));
 	}
 
 	adaptToggle() {
-		const action = this.appSettings.actions[this.appSettings.views.sidepanel.onToggleDock];
+		const action = this.appSettings.actions[
+			this.appSettings.views.sidepanel.onToggleDock
+		];
 		this.toggle = this.SettingsActionsService.createDispatcher(action);
 	}
 }

@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.transformation.api.action.dynamic.cluster;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.i18n.DataprepBundle;
@@ -58,7 +61,10 @@ public class ClusterParameters implements DynamicParameters {
                 for (String value : cluster.originalValues) {
                     currentCluster.parameter(new ConstantParameter(value, ParameterType.BOOLEAN));
                 }
-                currentCluster.replace(new Parameter("replaceValue", ParameterType.STRING, cluster.survivedValue));
+                currentCluster.replace(Parameter.parameter(LocaleContextHolder.getLocale()).setName("replaceValue")
+                        .setType(ParameterType.STRING)
+                        .setDefaultValue(cluster.survivedValue)
+                        .build(null));
                 builder.cluster(currentCluster);
             }
         }
@@ -68,7 +74,7 @@ public class ClusterParameters implements DynamicParameters {
     private static class ConstantParameter extends Parameter {
 
         private ConstantParameter(String value, ParameterType type) {
-            super(value, type);
+            super(value, type, null, false, true, EMPTY, EMPTY, EMPTY);
         }
 
         @Override

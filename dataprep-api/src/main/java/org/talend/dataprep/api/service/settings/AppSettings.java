@@ -39,6 +39,10 @@ public class AppSettings {
 
     /** The analytics settings dictionary. */
     private final Map<String, String> analytics = new HashMap<>();
+    /**
+     * The context settings dictionary
+     */
+    private final Map<String, String> context = new HashMap<>();
 
     /**
      * Getters
@@ -61,5 +65,9 @@ public class AppSettings {
 
     public Map<String, String> getAnalytics() {
         return analytics;
+    }
+
+    public Map<String, String> getContext() {
+        return context;
     }
 }

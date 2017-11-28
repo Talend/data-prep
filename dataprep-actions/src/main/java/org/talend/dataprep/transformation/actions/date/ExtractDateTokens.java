@@ -28,7 +28,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.Providers;
@@ -105,20 +104,33 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(YEAR, ParameterType.BOOLEAN, TRUE));
-        parameters.add(new Parameter(MONTH, ParameterType.BOOLEAN, TRUE));
-        parameters.add(new Parameter(DAY, ParameterType.BOOLEAN, TRUE));
-        parameters.add(new Parameter(HOUR_12, ParameterType.BOOLEAN, FALSE));
-        parameters.add(new Parameter(AM_PM, ParameterType.BOOLEAN, FALSE));
-        parameters.add(new Parameter(HOUR_24, ParameterType.BOOLEAN, TRUE));
-        parameters.add(new Parameter(MINUTE, ParameterType.BOOLEAN, TRUE));
-        parameters.add(new Parameter(SECOND, ParameterType.BOOLEAN, FALSE));
-        parameters.add(new Parameter(DAY_OF_WEEK, ParameterType.BOOLEAN, FALSE));
-        parameters.add(new Parameter(DAY_OF_YEAR, ParameterType.BOOLEAN, FALSE));
-        parameters.add(new Parameter(WEEK_OF_YEAR, ParameterType.BOOLEAN, FALSE));
-        return ActionsBundle.attachToAction(parameters, this);
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters
+                .add(Parameter.parameter(locale).setName(YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters
+                .add(Parameter.parameter(locale).setName(MONTH).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(Parameter.parameter(locale).setName(DAY).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(
+                Parameter.parameter(locale).setName(HOUR_12).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(
+                Parameter.parameter(locale).setName(AM_PM).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(
+                Parameter.parameter(locale).setName(HOUR_24).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(
+                Parameter.parameter(locale).setName(MINUTE).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(
+                Parameter.parameter(locale).setName(SECOND).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters
+                .add(Parameter.parameter(locale).setName(DAY_OF_WEEK).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
+                        this));
+        parameters
+                .add(Parameter.parameter(locale).setName(DAY_OF_YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
+                        this));
+        parameters.add(
+                Parameter.parameter(locale).setName(WEEK_OF_YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
+                        this));
+        return parameters;
     }
 
     @Override

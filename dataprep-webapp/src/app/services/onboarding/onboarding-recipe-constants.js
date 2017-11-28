@@ -14,26 +14,26 @@
 const recipeTour = [
 	{
 		element: '#help-recipe > .recipe',
-		title: '<center>Recipe</center>',
-		content: 'Here is your recipe. A recipe is literally defined as "a set of directions with a list of ingredients for making or preparing something".</br>In Talend Data Preparation, the ingredients are the raw data, called datasets, and the directions are the set of functions applied to the dataset.</br>Here you can preview, edit, delete, activate or deactivate every function included in the recipe you created.',
+		title: 'RECIPE_STEP_1_TITLE',
+		content: 'RECIPE_STEP_1_CONTENT',
 		position: 'right',
 	},
 	{
 		element: '#help-history',
-		title: '<center>Undo / Redo</center>',
-		content: 'Don\'t worry, you can undo or redo your last changes at any time.',
+		title: 'RECIPE_STEP_2_TITLE',
+		content: 'RECIPE_STEP_2_CONTENT',
 		position: 'left',
 	},
 	{
 		element: '.no-js',
-		title: '<center>Save</center>',
-		content: 'Don\'t look for a save button: every change you make is automatically saved.',
+		title: 'RECIPE_STEP_3_TITLE',
+		content: 'RECIPE_STEP_3_CONTENT',
 		position: 'right',
 	},
 	{
 		element: '#export-data',
-		title: '<center>Export</center>',
-		content: 'Click here to export the result of your preparation.',
+		title: 'RECIPE_STEP_4_TITLE',
+		content: 'RECIPE_STEP_4_CONTENT',
 		position: 'left',
 	},
 ];

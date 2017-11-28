@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.dataquality;
 
 import java.text.Normalizer;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
@@ -43,8 +44,8 @@ public class Normalize extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS_ADVANCED.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS_ADVANCED.getDisplayName(locale);
     }
 
     @Override

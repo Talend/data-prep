@@ -52,6 +52,18 @@ public class ErrorMessage {
     }
 
     /**
+     * Returns the desired error message in default locale according to the specified error code. This is useful for log messages.
+     *
+     * @param errorCode the specified error code
+     * @param values used to specify the message title
+     * @return the desired message to send to the frontend according to the specified error code
+     */
+    public static String getDefaultMessage(ErrorCode errorCode, Object... values) {
+        String title = getMessagePrefix(errorCode) + MESSAGE_SUFFIX;
+        return DataprepBundle.defaultMessage(title, values);
+    }
+
+    /**
      * Returns the desired message title to send to the frontend according to the specified error code.
      *
      * @param errorCode the specified error code

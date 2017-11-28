@@ -13,10 +13,13 @@
 
 /* eslint-disable angular/window-service */
 
+import d3 from 'd3';
 import angular from 'angular';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
+
+import { init } from 'i18next';
 
 import APP_MODULE from './components/app/app-module';
 import HOME_MODULE from './components/home/home-module';
@@ -31,10 +34,30 @@ import SETTINGS_MODULE from './settings/settings-module';
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
 
+import d3LocaleFr from '../lib/d3.locale.fr';
+
 const MODULE_NAME = 'data-prep';
+
+const I18N_DOMAIN_COMPONENTS = 'tui-components';
+const I18N_DOMAIN_FORMS = 'tui-forms';
 
 let ws;
 let wsPing;
+
+let preferredLanguage;
+const fallbackLng = 'en';
+export const i18n = init({
+	fallbackLng, // Fallback language
+	ns: [
+		I18N_DOMAIN_COMPONENTS,
+		I18N_DOMAIN_FORMS,
+	],
+	defaultNS: I18N_DOMAIN_COMPONENTS,
+	fallbackNS: I18N_DOMAIN_COMPONENTS,
+	debug: false,
+	wait: true, // globally set to wait for loaded translations in translate hoc
+});
+
 const app = angular
 	.module(MODULE_NAME, [
 		ngSanitize,
@@ -62,18 +85,11 @@ const app = angular
 			prefix: 'i18n/',
 			suffix: '.json',
 		});
-
-		$translateProvider.preferredLanguage('en');
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
 	// Router config
 	.config(routeConfig)
-	.run(routeInterceptor)
-	// Language to use at startup (for now only english)
-	.run(($window, $translate) => {
-		'ngInject';
-		$translate.use('en');
-	});
+	.run(routeInterceptor);
 
 window.fetchConfiguration = function fetchConfiguration() {
 	return getAppConfiguration().then(({ config, appSettings }) => {
@@ -82,6 +98,30 @@ window.fetchConfiguration = function fetchConfiguration() {
 			.config(($compileProvider) => {
 				'ngInject';
 				$compileProvider.debugInfoEnabled(config.enableDebug);
+			})
+			.config(($translateProvider) => {
+				'ngInject';
+
+				preferredLanguage =
+					(appSettings.context && appSettings.context.language) ||
+					fallbackLng;
+
+				$translateProvider.preferredLanguage(preferredLanguage);
+
+				moment.locale(preferredLanguage);
+
+				if (preferredLanguage !== fallbackLng) {
+					i18n.changeLanguage(preferredLanguage);
+
+					if (preferredLanguage === 'fr') {
+						const d3locale = d3.locale(d3LocaleFr);
+						d3.format = d3locale.numberFormat;
+						d3.time.format = d3locale.timeFormat;
+					}
+					if ($.datetimepicker) {
+						$.datetimepicker.setLocale(preferredLanguage);
+					}
+				}
 			})
 			// Fetch dynamic configuration
 			.run((SettingsService) => {
@@ -106,6 +146,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 			// Open a keepalive websocket if requested
 			.run(() => {
 				if (!config.serverKeepAliveUrl) return;
+
 				function setupWebSocket() {
 					clearInterval(wsPing);
 
@@ -120,6 +161,19 @@ window.fetchConfiguration = function fetchConfiguration() {
 				}
 
 				setupWebSocket();
+			})
+			.run(($translate) => {
+				'ngInject';
+
+				$translate.onReady(() => {
+					i18n.addResourceBundle(
+						preferredLanguage,
+						I18N_DOMAIN_COMPONENTS,
+						$translate.getTranslationTable(),
+						false,
+						false
+					);
+				});
 			});
 
 		angular

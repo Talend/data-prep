@@ -25,21 +25,21 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 public interface PreparationActions {
     ActionSettings PREPARATION_DISPLAY_MODE = builder()
             .id("preparation:display-mode")
-            .name("Change preparation display mode")
+            .name("preparation.displaymode")
             .type("@@inventory/DISPLAY_MODE")
             .payload(PAYLOAD_METHOD_KEY, "setPreparationsDisplayMode")
             .build();
 
     ActionSettings PREPARATION_SORT = builder()
             .id("preparation:sort")
-            .name("Change preparation sort")
+            .name("preparation.sort")
             .type("@@preparation/SORT")
             .payload(PAYLOAD_METHOD_KEY, "changeSort")
             .build();
 
     ActionSettings PREPARATION_CREATE = builder()
             .id("preparation:create")
-            .name("Add preparation")
+            .name("preparation.create")
             .icon("talend-plus-circle")
             .type("@@preparation/CREATE")
             .bsStyle("primary")
@@ -48,27 +48,27 @@ public interface PreparationActions {
 
     ActionSettings PREPARATION_COPY_MOVE = builder()
             .id("preparation:copy-move")
-            .name("Copy/Move preparation")
+            .name("preparation.copymove")
             .icon("talend-files-o")
             .type("@@preparation/COPY_MOVE")
             .build();
 
     ActionSettings PREPARATION_SUBMIT_EDIT = builder()
             .id("preparation:submit-edit")
-            .name("Submit name edition")
+            .name("preparation.submitedit")
             .type("@@preparation/SUBMIT_EDIT")
             .build();
 
     ActionSettings PREPARATION_REMOVE = builder()
             .id("preparation:remove")
-            .name("Remove preparation")
+            .name("preparation.remove")
             .icon("talend-trash")
             .type("@@preparation/REMOVE")
             .build();
 
     ActionSettings PREPARATION_FOLDER_CREATE = builder()
             .id("preparation:folder:create")
-            .name("Add folder")
+            .name("preparation.folder.create")
             .icon("talend-folder")
             .type("@@preparation/CREATE")
             .payload(PAYLOAD_METHOD_KEY, "toggleFolderCreator")
@@ -76,14 +76,14 @@ public interface PreparationActions {
 
     ActionSettings PREPARATION_FOLDER_FETCH = builder()
             .id("preparations:folder:fetch")
-            .name("Fetch preparations from current folder")
+            .name("preparations.folder.fetch")
             .icon("talend-dataprep")
             .type("@@preparation/FOLDER_FETCH")
             .build();
 
     ActionSettings PREPARATION_FOLDER_REMOVE = builder()
             .id("preparation:folder:remove")
-            .name("Remove folder")
+            .name("preparation.folder.remove")
             .icon("talend-trash")
             .type("@@preparation/FOLDER_REMOVE")
             .payload(PAYLOAD_METHOD_KEY, "remove")

@@ -38,14 +38,14 @@ public class ErrorCodeMessagesTest extends ServiceBaseTest {
      */
     private void assertErrorCodeMessageExists(final String code) {
         String suffixedCode = code + ErrorMessage.MESSAGE_SUFFIX;
-        String message = messagesBundle.getString(Locale.ENGLISH, suffixedCode);
+        String message = messagesBundle.getString(Locale.US, suffixedCode);
         Assert.assertFalse("The following error code: " + code + " is not associated with a body message",
                 StringUtils.isEmpty(message) || suffixedCode.equals(message));
     }
 
     private void assertErrorCodeMessageTitleExists(final String code) {
         String suffixedCode = code + ErrorMessage.TITLE_SUFFIX;
-        String title = messagesBundle.getString(Locale.ENGLISH, suffixedCode);
+        String title = messagesBundle.getString(Locale.US, suffixedCode);
         Assert.assertFalse("The following error code: " + code + " is not associated with a title message",
                 StringUtils.isEmpty(title) || suffixedCode.equals(title));
     }

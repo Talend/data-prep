@@ -45,7 +45,8 @@ public class ImportTypesConfigurer extends AppSettingsConfigurer<ActionSettings>
 
     @Override
     public ActionSettings configure(final ActionSettings actionSettings) {
-        return ActionSplitDropdownSettings.from((ActionSplitDropdownSettings) actionSettings) //
+        return ActionSplitDropdownSettings
+                .from((ActionSplitDropdownSettings) actionSettings) //
                 .items(getImportTypes().collect(Collectors.toList())) //
                 .build();
     }

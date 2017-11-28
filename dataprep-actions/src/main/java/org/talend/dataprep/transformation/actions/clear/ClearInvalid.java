@@ -16,10 +16,7 @@ package org.talend.dataprep.transformation.actions.clear;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -45,8 +42,8 @@ public class ClearInvalid extends AbstractClear implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

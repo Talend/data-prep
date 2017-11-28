@@ -13,11 +13,10 @@
 
 import { chain, forEach, filter, map, find } from 'lodash';
 
-const COLUMN_METADATA = 'column_metadata';
-const DATA_BLENDING = 'data_blending';
+const ACTION_SCOPE = 'hidden_in_action_list';
 const CATEGORY = 'category';
 const SUGGESTIONS_CATEGORY = 'suggestions';
-const FILTERED_CATEGORY = 'filtered';
+const FILTERED_COLUMN = 'column_filtered';
 const HIGHLIGHT_CLASS = 'highlighted';
 
 /**
@@ -169,11 +168,10 @@ export default class TransformationUtilsService {
 	sortAndGroupByCategory(transformations) {
 		const groupedTransformations = chain(transformations)
 		// is not "column" category
-			.filter(transfo => (transfo.actionScope.indexOf(COLUMN_METADATA) === -1) && transfo.category !== DATA_BLENDING)
+			.filter(transfo => (!transfo.actionScope.includes(ACTION_SCOPE)))
 			.sortBy(transfo => transfo.label.toLowerCase())
 			.groupBy(CATEGORY)
 			.value();
-
 		return chain(Object.getOwnPropertyNames(groupedTransformations))
 			.sortBy(key => key.toLowerCase())
 			.map((key) => {
@@ -223,12 +221,8 @@ export default class TransformationUtilsService {
 	 * @returns {{filterCategory: *, otherCategories: *}}
 	 */
 	popFilteredCategory(categories) {
-		const filterCategory = find(categories, { category: FILTERED_CATEGORY });
-
-		const otherCategories = filter(categories, (item) => {
-			return item.category !== FILTERED_CATEGORY;
-		});
-
+		const filterCategory = find(categories, category => category.transformations.filter(transfo => (transfo.actionScope.includes(FILTERED_COLUMN))).length);
+		const otherCategories = filter(categories, category => category.transformations.filter(transfo => (!transfo.actionScope.includes(FILTERED_COLUMN))).length);
 		return { filterCategory, otherCategories };
 	}
 
@@ -243,8 +237,10 @@ export default class TransformationUtilsService {
 	 */
 	transfosMatchSearch(search) {
 		return (transfo) => {
-			return transfo.labelHtml.toLowerCase().indexOf(search) !== -1 ||
-				transfo.description.toLowerCase().indexOf(search) !== -1;
+			return transfo.labelHtml.toLowerCase().includes(search) ||
+				transfo.description.toLowerCase().includes(search) ||
+				(transfo.alternateLabel !== undefined && transfo.alternateLabel.toLowerCase().includes(search)) ||
+				(transfo.alternateDescription !== undefined && transfo.alternateDescription.toLowerCase().includes(search));
 		};
 	}
 
@@ -259,7 +255,7 @@ export default class TransformationUtilsService {
 
 			// category matches : display all this category transformations
 			// category does NOT match : filter to only have matching displayed label or description
-			const filteredTransformations = category.toLowerCase().indexOf(search) !== -1 ?
+			const filteredTransformations = category.toLowerCase().includes(search) ?
 				transformations :
 				filter(transformations, this.transfosMatchSearch(search));
 

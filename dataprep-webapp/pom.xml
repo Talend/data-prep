@@ -25,25 +25,18 @@
 
     <name>dataprep-webapp</name>
 
-    <prerequisites>
-        <maven>3.1.0</maven>
-    </prerequisites>
     <properties>
         <docker.image.name>kkarczmarczyk/node-yarn</docker.image.name>
         <node.version>v7.7.4</node.version>
         <yarn.version>v1.3.2</yarn.version>
         <git.branch.name></git.branch.name>
         <git.commit.id.abbrev></git.commit.id.abbrev>
-        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
-        <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-        <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
     </properties>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>${maven-clean-plugin.version}</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -76,7 +69,6 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>install node and yarn</id>
@@ -123,7 +115,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <descriptors>
                         <descriptor>assembly/dist.xml</descriptor>
@@ -186,17 +177,6 @@
                 </docker.image.name>
                 <stack.param.name>DataPrepWebappFQIN</stack.param.name>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <configuration>
-                            <skip>false</skip>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

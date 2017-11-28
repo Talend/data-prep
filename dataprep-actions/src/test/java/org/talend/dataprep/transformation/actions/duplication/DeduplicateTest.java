@@ -20,6 +20,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -83,7 +84,7 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DEDUPLICATION.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DEDUPLICATION.getDisplayName(Locale.US)));
     }
 
     @Test

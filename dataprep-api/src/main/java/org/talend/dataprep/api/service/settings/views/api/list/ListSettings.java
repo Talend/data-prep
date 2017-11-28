@@ -14,9 +14,11 @@
 package org.talend.dataprep.api.service.settings.views.api.list;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static org.talend.dataprep.api.service.settings.actions.provider.PreparationActions.PREPARATION_FOLDER_FETCH;
+
+import java.util.Objects;
 
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+import org.talend.dataprep.i18n.DataprepBundle;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * List settings.
  * It contains the list details configuration and its toolbar configuration.
- * see https://talend.github.io/react-talend-components/?selectedKind=List&selectedStory=table%20%28default%29&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * see
+ * https://talend.github.io/react-talend-components/?selectedKind=List&selectedStory=table%20%28default%29&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class ListSettings implements ViewSettings {
@@ -55,6 +58,14 @@ public class ListSettings implements ViewSettings {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ViewSettings translate() {
+        return ListSettings
+                .from(this) //
+                .translate() //
+                .build();
     }
 
     public void setId(String id) {
@@ -92,7 +103,7 @@ public class ListSettings implements ViewSettings {
     public static Builder from(final ListSettings viewSettings) {
         return builder() //
                 .id(viewSettings.getId()) //
-                .didMountActionCreator(PREPARATION_FOLDER_FETCH.getId())
+                .didMountActionCreator(viewSettings.getDidMountActionCreator()) //
                 .list(viewSettings.getList()) //
                 .toolbar(viewSettings.getToolbar());
     }
@@ -134,6 +145,16 @@ public class ListSettings implements ViewSettings {
             settings.setList(this.list);
             settings.setToolbar(this.toolbar);
             return settings;
+        }
+
+        public Builder translate() {
+            if (Objects.nonNull(this.list)) {
+                this.list
+                        .getColumns() //
+                        .forEach(mapEntry -> mapEntry.put("label", DataprepBundle.message((String) mapEntry.get("label"))));
+            }
+
+            return this;
         }
     }
 }

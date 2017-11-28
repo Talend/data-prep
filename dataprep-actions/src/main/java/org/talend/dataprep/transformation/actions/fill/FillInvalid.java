@@ -52,34 +52,34 @@ public class FillInvalid extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(Locale locale) {
         if (Type.BOOLEAN.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_BOOLEAN);
+            return ActionsBundle.actionDescription(this, locale, FILL_INVALID_BOOLEAN);
         } else if (Type.DATE.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_DATE);
+            return ActionsBundle.actionDescription(this, locale, FILL_INVALID_DATE);
         } else if (Type.NUMERIC.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_NUMERIC);
+            return ActionsBundle.actionDescription(this, locale, FILL_INVALID_NUMERIC);
         } else {
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_INVALID_ACTION_NAME);
+            return ActionsBundle.actionDescription(this, locale, FILL_INVALID_ACTION_NAME);
         }
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Locale locale) {
         if (Type.BOOLEAN.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_BOOLEAN);
+            return ActionsBundle.actionLabel(this, locale, FILL_INVALID_BOOLEAN);
         } else if (Type.DATE.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_DATE);
+            return ActionsBundle.actionLabel(this, locale, FILL_INVALID_DATE);
         } else if (Type.NUMERIC.isAssignableFrom(type)) {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_NUMERIC);
+            return ActionsBundle.actionLabel(this, locale, FILL_INVALID_NUMERIC);
         } else {
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_INVALID_ACTION_NAME);
+            return ActionsBundle.actionLabel(this, locale, FILL_INVALID_ACTION_NAME);
         }
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

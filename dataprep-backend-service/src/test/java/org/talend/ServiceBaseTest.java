@@ -13,8 +13,12 @@
 package org.talend;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.talend.ServiceBaseTest.TEST_LOCALE;
+
+import java.util.Locale;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +32,21 @@ import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.daikon.content.local.LocalContentServiceConfiguration;
+import org.talend.dataprep.test.LocalizationRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
 @Import(LocalContentServiceConfiguration.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false",
-        "content-service.store=local", "live.dataset.location=tac"})
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false", "content-service.store=local",
+        "live.dataset.location=tac", "dataprep.locale:" + TEST_LOCALE })
 public abstract class ServiceBaseTest {
 
+    public static final String TEST_LOCALE = "en-US";
+
     @Configuration
-    @ComponentScan(basePackages = {"org.talend.daikon.content", "org.talend.dataprep"})
+    @ComponentScan(basePackages = { "org.talend.daikon.content", "org.talend.dataprep" })
     public static class TestComponentScan {
     }
 
@@ -54,6 +61,9 @@ public abstract class ServiceBaseTest {
 
     @Autowired
     protected ObjectMapper mapper;
+
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     private boolean environmentSet = false;
 

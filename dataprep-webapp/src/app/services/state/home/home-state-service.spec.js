@@ -11,9 +11,16 @@
 
  ============================================================================*/
 
+import i18n from '../../../../i18n/en.json';
+
 describe('home state', () => {
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
+
+	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
 	describe('toggleSidepanel', () => {
 		it('should toggle sidepanel', inject((homeState, HomeStateService) => {

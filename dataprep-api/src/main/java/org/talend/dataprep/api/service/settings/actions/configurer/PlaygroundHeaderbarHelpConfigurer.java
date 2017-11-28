@@ -13,16 +13,16 @@
 
 package org.talend.dataprep.api.service.settings.actions.configurer;
 
+import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
+
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsConfigurer;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
 import org.talend.dataprep.api.service.settings.actions.provider.ExternalHelpActionsProvider;
-
-import java.util.Arrays;
-
-import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
 
 /**
  * Settings configurer that insert the actions as the PLAYGROUND_HEADERBAR_HELP split dropdown items.
@@ -40,13 +40,15 @@ public class PlaygroundHeaderbarHelpConfigurer extends AppSettingsConfigurer<Act
 
     @Override
     public ActionSettings configure(final ActionSettings actionSettings) {
-        return ActionSplitDropdownSettings.from((ActionSplitDropdownSettings) actionSettings) //
+        return ActionSplitDropdownSettings
+                .from((ActionSplitDropdownSettings) actionSettings) //
                 .items(Arrays.asList( //
                         externalHelpActionsProvider.getExternalHelpAction().getId(), //
                         externalHelpActionsProvider.getExternalCommunityAction().getId(), //
-                        ONBOARDING_PLAYGROUND.getId(),  //
+                        ONBOARDING_PLAYGROUND.getId(), //
                         MODAL_ABOUT.getId(), //
                         MODAL_FEEDBACK.getId())) //
                 .build();
     }
+
 }

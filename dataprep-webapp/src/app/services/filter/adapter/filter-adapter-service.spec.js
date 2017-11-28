@@ -11,6 +11,8 @@
 
   ============================================================================*/
 
+import i18n from './../../../../i18n/en.json';
+
 describe('Filter Adapter Service', () => {
 
     const columns = [
@@ -22,6 +24,11 @@ describe('Filter Adapter Service', () => {
     ];
 
     beforeEach(angular.mock.module('data-prep.services.filter-adapter'));
+
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
     describe('create filter', () => {
         it('should create filter', inject((FilterAdapterService) => {

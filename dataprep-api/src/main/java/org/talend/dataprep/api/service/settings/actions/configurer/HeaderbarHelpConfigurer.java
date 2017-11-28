@@ -12,16 +12,16 @@
 
 package org.talend.dataprep.api.service.settings.actions.configurer;
 
+import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
+
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsConfigurer;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
 import org.talend.dataprep.api.service.settings.actions.provider.ExternalHelpActionsProvider;
-
-import java.util.Arrays;
-
-import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
 
 /**
  * Settings configurer that insert the actions as the HEADERBAR_HELP split dropdown items.
@@ -39,7 +39,8 @@ public class HeaderbarHelpConfigurer extends AppSettingsConfigurer<ActionSetting
 
     @Override
     public ActionSettings configure(final ActionSettings actionSettings) {
-        return ActionSplitDropdownSettings.from((ActionSplitDropdownSettings) actionSettings) //
+        return ActionSplitDropdownSettings
+                .from((ActionSplitDropdownSettings) actionSettings) //
                 .items(Arrays.asList( //
                         externalHelpActionsProvider.getExternalHelpAction().getId(), //
                         externalHelpActionsProvider.getExternalCommunityAction().getId(), //
@@ -48,4 +49,5 @@ public class HeaderbarHelpConfigurer extends AppSettingsConfigurer<ActionSetting
                         MODAL_FEEDBACK.getId())) //
                 .build();
     }
+
 }

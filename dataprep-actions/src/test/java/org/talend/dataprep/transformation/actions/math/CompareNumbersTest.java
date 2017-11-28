@@ -23,6 +23,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +67,7 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testActionParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.COMPARE_MODE)).findFirst().isPresent());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.MODE_PARAMETER)).findFirst().isPresent());
@@ -81,7 +82,7 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.NUMBERS.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.NUMBERS.getDisplayName(Locale.US)));
     }
 
     @Test

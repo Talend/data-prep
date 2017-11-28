@@ -15,9 +15,6 @@ package org.talend.dataprep.api.service.settings.views.api.appheaderbar;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,7 +22,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * An app header bar is a static bar placed on the top of the window
- * see https://talend.github.io/react-talend-components/?selectedKind=App%20Header%20Bar&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * see
+ * https://talend.github.io/react-talend-components/?selectedKind=App%20Header%20Bar&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class AppHeaderBarSettings implements ViewSettings {
@@ -71,6 +69,14 @@ public class AppHeaderBarSettings implements ViewSettings {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ViewSettings translate() {
+        return AppHeaderBarSettings //
+                .from(this) //
+                .translate() //
+                .build();
     }
 
     public void setId(String id) {
@@ -193,6 +199,19 @@ public class AppHeaderBarSettings implements ViewSettings {
 
         public Builder products(final String products) {
             this.products = products;
+            return this;
+        }
+
+        public Builder translate() {
+            if (this.logo != null) {
+                this.logo = LinkSettings.from(this.logo).translate().build();
+            }
+            if (this.brand != null) {
+                this.brand = LinkSettings.from(this.brand).translate().build();
+            }
+            if (this.search != null) {
+                this.search = SearchSettings.from(this.search).translate().build();
+            }
             return this;
         }
 

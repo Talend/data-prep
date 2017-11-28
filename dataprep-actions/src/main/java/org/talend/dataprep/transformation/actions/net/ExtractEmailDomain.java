@@ -17,6 +17,7 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.type.Type.STRING;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,8 +58,8 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.SPLIT.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.SPLIT.getDisplayName(locale);
     }
 
     @Override

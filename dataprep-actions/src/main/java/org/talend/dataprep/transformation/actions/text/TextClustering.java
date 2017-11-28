@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
@@ -39,8 +40,8 @@ public class TextClustering extends AbstractActionMetadata implements ColumnActi
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS_ADVANCED.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS_ADVANCED.getDisplayName(locale);
     }
 
     @Override

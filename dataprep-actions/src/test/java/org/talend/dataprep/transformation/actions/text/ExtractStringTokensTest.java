@@ -67,7 +67,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testParameters() throws Exception {
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertThat(parameters.size(), is(6));
         assertThat(parameters.stream().filter(p -> StringUtils.equals(p.getName(), MODE_PARAMETER)).count(), is(1L));
 
@@ -84,7 +84,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.SPLIT.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
     }
 
     @Test

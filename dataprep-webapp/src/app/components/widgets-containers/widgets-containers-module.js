@@ -24,6 +24,9 @@ import SidePanel from '@talend/react-components/lib/SidePanel';
 import List from '@talend/react-components/lib/List';
 import Progress from '@talend/react-components/lib/Progress';
 import Form from '@talend/react-forms';
+import getTranslated from '@talend/react-components/lib/TranslateWrapper';
+
+import { i18n } from './../../index-module';
 
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
@@ -48,17 +51,23 @@ angular.module(MODULE_NAME,
 		DATASET_UPLOAD_STATUS_MODULE,
 		STEP_PROGRESS_MODULE,
 	])
-	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
+	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(
+		getTranslated(AppHeaderBar, { i18n })
+	)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureCircularProgress', ['reactDirective', reactDirective => reactDirective(CircularProgress)])
 	.directive('pureCollapsiblePanel', ['reactDirective', reactDirective => reactDirective(CollapsiblePanel)])
-	.directive('pureList', ['reactDirective', reactDirective => reactDirective(List)])
-	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
+	.directive('pureList', ['reactDirective', reactDirective => reactDirective(
+		getTranslated(List, { i18n })
+	)])
+	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(
+		getTranslated(SidePanel, { i18n })
+	)])
 	.directive('pureProgress', ['reactDirective', reactDirective => reactDirective(Progress)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('icon', ['reactDirective', reactDirective => reactDirective(Icon)])
 	.directive('httpError', ['reactDirective', reactDirective => reactDirective(HttpError)])
-	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form, [
+	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(getTranslated(Form, { i18n }), [
 		// We need to declare each used props in order to pass them to React component in prod mode
 		// @see https://github.com/ngReact/ngReact/issues/193
 		'autocomplete',

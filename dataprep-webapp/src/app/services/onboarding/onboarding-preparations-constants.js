@@ -13,27 +13,27 @@
 
 const preparationTour = [
 	{
-		element: '#side-panel-nav-preparations',
-		title: '<center>Preparations</center>',
-		content: 'Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.',
+		element: '#side-panel-nav-menu-preparations',
+		title: 'PREPARATIONS_STEP_1_TITLE',
+		content: 'PREPARATIONS_STEP_1_CONTENT',
 		position: 'right',
 	},
 	{
-		element: '#side-panel-nav-datasets',
-		title: '<center>Datasets</center>',
-		content: 'Here you can browse through and manage the datasets you added.</br>A dataset holds the raw data that can be used as raw material without affecting your original data.',
+		element: '#side-panel-nav-menu-datasets',
+		title: 'PREPARATIONS_STEP_2_TITLE',
+		content: 'PREPARATIONS_STEP_2_CONTENT',
 		position: 'right',
 	},
 	{
 		element: '#preparations-list-actions-preparation\\:create',
-		title: '<center>Add preparation</center>',
-		content: 'Click here to add a preparation and start cleansing your data.',
+		title: 'PREPARATIONS_STEP_3_TITLE',
+		content: 'PREPARATIONS_STEP_3_CONTENT',
 		position: 'bottom',
 	},
 	{
 		element: '#headerbar\\:help',
-		title: '<center>Help</center>',
-		content: 'Click here to get some help (Online Documentation, Guided tour, About Data Preparation)',
+		title: 'PREPARATIONS_STEP_4_TITLE',
+		content: 'PREPARATIONS_STEP_4_CONTENT',
 		position: 'left',
 	},
 ];

@@ -13,6 +13,7 @@
 package org.talend.dataprep.schema.xls;
 
 import static org.talend.dataprep.api.type.Type.*;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -291,7 +292,7 @@ public class XlsSchemaParser implements SchemaParser {
 
             Type type = guessColumnType(colId, typePerRowMap, averageHeaderSize);
 
-            String headerText = "col" + colId;
+            String headerText = null;
             if (averageHeaderSize == 1 && sheet.getRow(0) != null) {
                 // so header value is the first row of the column
                 Cell headerCell = sheet.getRow(0).getCell(colId);
@@ -300,7 +301,8 @@ public class XlsSchemaParser implements SchemaParser {
 
             // header text cannot be null so use a default one
             if (StringUtils.isEmpty(headerText)) {
-                headerText = "col_" + (colId + 1); // +1 because it starts from 0
+                // +1 because it starts from 0
+                headerText = message("import.local.generated_column_name", colId + 1);
             }
 
             // FIXME what do we do if header size is > 1 concat all lines?

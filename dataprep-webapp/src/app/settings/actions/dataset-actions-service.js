@@ -94,7 +94,7 @@ export default class DatasetActionsService {
 				)
 				.then(() => this.DatasetService.delete(dataset))
 				.then(() => this.MessageService.success(
-					'REMOVE_SUCCESS_TITLE',
+					'DATASET_REMOVE_SUCCESS_TITLE',
 					'REMOVE_SUCCESS',
 					{ type: 'dataset', name: dataset.name }
 				));

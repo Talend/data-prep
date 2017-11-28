@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.schema.csv;
 
+import static org.talend.dataprep.i18n.DataprepBundle.message;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -29,7 +31,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * This class performs header and type analysis on a sample of records (lines).
- * 
+ *
  * It detects whether the sample contains a header or not. If a header could not be detected one is generated. It also
  * performs baseline (very simple) type detection based upon the sample of records.
  */
@@ -61,8 +63,6 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * Used to mark a field as being empty in a record (line).
      */
     private static final int EMPTY = 0;
-
-    private static final String DEFAULT_HEADER_PREFIX = "COL";
 
     /**
      * The sample of csv lines used to perform the analysis.
@@ -106,7 +106,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Constructor
-     * 
+     *
      * @param sampleLines the lines used to perform the analysis
      * @param separator the specified character or string used as a separator
      */
@@ -125,7 +125,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Performs type analysis for fields of each record.
-     * 
+     *
      * @return an array of list of types (a list of types for each record)
      */
     private List<Integer>[] setFieldTypes() {
@@ -148,7 +148,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Performs type analysis for fields of the record at the specified index.
-     * 
+     *
      * @param i the index of the record to be analyzed.
      * @return the list of types of the record
      */
@@ -217,7 +217,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * more than half of considered number of records (<tt>end</tt> - <tt>start</tt> + 1) of the same type being numeric
      * or boolean then its type is set to numeric or boolean respectively. It starts at the specified index
      * <tt>start</tt> inclusive and stops at the specified index <tt>end</tt> also inclusive.
-     * 
+     *
      * @param start the specified inclusive start index
      * @param end the specified exclusive end index
      * @return the list of types (type for each column)
@@ -269,7 +269,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Performs typing for the first record.
-     * 
+     *
      * @return the list of types based on a first record analysis
      */
     private List<Type> firstRecordTyping() {
@@ -278,7 +278,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Performs Column typing based on all records but the first one.
-     * 
+     *
      * @return the list of types based on all records but the first one
      */
     private List<Type> columnTypingWithoutFirstRecord() {
@@ -287,7 +287,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Performs Column typing based on all records.
-     * 
+     *
      * @return the list of types based on all records
      */
     private List<Type> allRecordsColumnTyping() {
@@ -296,7 +296,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /**
      * Returns true if the list of specified types are all String (text) and false otherwise.
-     * 
+     *
      * @param types the list of specified types
      * @return true if the list of specified types are all String (text) and false otherwise
      */
@@ -364,7 +364,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
                 List<Type> columnTypes = allRecordsColumnTyping();
                 int i = 1;
                 for (Type type : columnTypes) {
-                    headers.add(new Pair<>(DEFAULT_HEADER_PREFIX + (i++), type));
+                    headers.add(new Pair<>(message("import.local.generated_column_name", i++), type));
                 }
             }
 

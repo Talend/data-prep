@@ -41,7 +41,7 @@ describe('Actions suggestions controller', () => {
             //given
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}];
-            const transformation = { category: 'strings' };
+            const transformation = { category: 'strings', actionScope: [] };
             const category = { category: 'strings' };
             const ctrl = createController();
 
@@ -56,7 +56,7 @@ describe('Actions suggestions controller', () => {
             //given
             stateMock.playground.filter.applyTransformationOnFilters = true;
             stateMock.playground.grid.selectedColumns = [{}];
-            const transformation = { category: 'filtered' };
+            const transformation = { category: 'filtered', actionScope: ['column_filtered'] };
             const category = { category: 'suggestions' };
             const ctrl = createController();
 
@@ -71,7 +71,7 @@ describe('Actions suggestions controller', () => {
             //given
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}];
-            const transformation = { category: 'filtered' };
+            const transformation = { category: 'filtered', actionScope: ['column_filtered'] };
             const category = { category: 'suggestions' };
             const ctrl = createController();
 
@@ -86,7 +86,7 @@ describe('Actions suggestions controller', () => {
             //given
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}];
-            const transformation = { category: 'strings' };
+            const transformation = { category: 'strings', actionScope: [] };
             const category = { category: 'suggestions' };
             const ctrl = createController();
 
@@ -96,13 +96,13 @@ describe('Actions suggestions controller', () => {
             //then
             expect(result).toBe(true);
         });
-        
+
         it('should NOT render suggestion transformations on multi column selection', () => {
             //given
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}, {}];
-            const transformation = { category: 'strings' };
-            const category = { category: 'suggestions' };
+            const transformation = { category: 'strings', actionScope: [] };
+            const category = { category: 'suggestions'};
             const ctrl = createController();
 
             //when
@@ -119,7 +119,7 @@ describe('Actions suggestions controller', () => {
             stateMock.playground.filter.applyTransformationOnFilters = false;
             const categoryTransformations = {
                 category: 'quickfix',
-                transformations: [{ category: 'filtered' }],
+                transformations: [{ category: 'filtered', actionScope: ['column_filtered'] }],
             };
             const ctrl = createController();
 
@@ -135,7 +135,7 @@ describe('Actions suggestions controller', () => {
             stateMock.playground.filter.applyTransformationOnFilters = true;
             const categoryTransformations = {
                 category: 'suggestions',
-                transformations: [{ category: 'filtered' }],
+                transformations: [{ category: 'filtered', actionScope: ['column_filtered'] }],
             };
             const ctrl = createController();
 
@@ -153,7 +153,7 @@ describe('Actions suggestions controller', () => {
                 stateMock.playground.grid.selectedColumns = [{}];
                 const categoryTransformations = {
                     category: 'suggestions',
-                    transformations: [{ category: 'suggestions' }],
+                    transformations: [{ category: 'suggestions', actionScope: [] }],
                 };
                 const ctrl = createController();
 
@@ -173,8 +173,8 @@ describe('Actions suggestions controller', () => {
                 const categoryTransformations = {
                     category: 'suggestions',
                     transformations: [
-                        { category: 'filtered' },
-                        { category: 'suggestions' }
+                        { category: 'filtered', actionScope: ['column_filtered'] },
+                        { category: 'suggestions', actionScope: [] }
                     ],
                 };
                 const ctrl = createController();

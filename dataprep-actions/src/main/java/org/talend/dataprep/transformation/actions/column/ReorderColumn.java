@@ -14,6 +14,7 @@ package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
 
@@ -30,7 +31,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -59,21 +59,24 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMNS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMNS.getDisplayName(locale);
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY,
-                false, false));
-        return ActionsBundle.attachToAction(parameters, this);
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
+                .setType(ParameterType.COLUMN)
+                .setDefaultValue(StringUtils.EMPTY)
+                .setCanBeBlank(false)
+                .build(this));
+        return parameters;
     }
 
     @Override
     public List<String> getActionScope() {
-        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+        return Arrays.asList(COLUMN_METADATA.getDisplayName(), HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     @Override

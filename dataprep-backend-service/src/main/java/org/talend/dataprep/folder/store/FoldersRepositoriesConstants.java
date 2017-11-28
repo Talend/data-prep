@@ -11,21 +11,18 @@ public class FoldersRepositoriesConstants {
      */
     public static final Character PATH_SEPARATOR = '/';
 
-    /** Constant for HOME_FOLDER. */
-    public static final String HOME_FOLDER_KEY = "HOME";
-
-    /** Constant for the content type string. */
+    /** Content type property name in {@link org.talend.dataprep.api.folder.FolderEntry}. */
     public static final String CONTENT_TYPE = "contentType";
 
-    /** Constant for the content id string. */
+    /** Content ID property name in {@link org.talend.dataprep.api.folder.FolderEntry}. */
     public static final String CONTENT_ID = "contentId";
 
-    /** Constant to prevent string literal duplication. */
+    /** Folder ID property name in {@link org.talend.dataprep.api.folder.FolderEntry}. */
     public static final String FOLDER_ID = "folderId";
 
-    /** Constant to prevent string literal duplication. */
+    /** Owner ID property name in {@link org.talend.dataprep.api.folder.Folder}. */
     public static final String OWNER_ID = "ownerId";
 
-    /** Constant to prevent string literal duplication. */
+    /** Path property name in {@link org.talend.dataprep.api.folder.Folder}. */
     public static final String PATH = "path";
 }

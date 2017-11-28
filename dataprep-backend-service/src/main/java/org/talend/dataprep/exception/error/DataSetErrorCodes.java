@@ -12,13 +12,7 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.MOVED_PERMANENTLY;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -173,10 +167,6 @@ public enum DataSetErrorCodes implements ErrorCode {
      */
     UNABLE_TO_CREATE_OR_UPDATE_DATASET(INTERNAL_SERVER_ERROR.value()),
     /**
-     * Error thrown when an error occurs while adding or updating a dataset.
-     */
-    NOT_A_TCOMP_DATASET(BAD_REQUEST.value()),
-    /**
      * The dataset has too many column to process in DataPrep. This would cause memory issues.
      */
     DATASET_HAS_TOO_MANY_COLUMNS(BAD_REQUEST.value(), "number-of-columns", "max-allowed"),
@@ -199,7 +189,7 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * A user tries to run a live dataset without any TIC access.
      */
-    UNAUTHORIZED_ACCESS_TO_TIC(UNAUTHORIZED.value()),
+    UNAUTHORIZED_ACCESS_TO_TIC(BAD_GATEWAY.value()),
     /**
      * A lookup dataSet used by a preparation with a given name have not the expected format.
      */

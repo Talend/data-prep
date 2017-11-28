@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
@@ -39,7 +40,7 @@ public class TransformationFailureAction extends AbstractActionMetadata implemen
     }
 
     @Override
-    public String getCategory() {
+    public String getCategory(Locale locale) {
         return "TEST";
     }
 

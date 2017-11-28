@@ -13,6 +13,8 @@
 
 import SlickGridMock from '../../../../mocks/SlickGrid.mock';
 
+import i18n from '../../../../i18n/en.json';
+
 describe('Datagrid style service', () => {
 	let gridMock;
 	let gridColumns;
@@ -27,6 +29,11 @@ describe('Datagrid style service', () => {
 	beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
 		stateMock = { playground: { grid: {} } };
 		$provide.constant('state', stateMock);
+	}));
+
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
 	}));
 
 	beforeEach(() => {
@@ -287,7 +294,7 @@ describe('Datagrid style service', () => {
 				const result = formatter(null, null, value, columnDef, dataContext);
 
 				//then
-				expect(result.indexOf('<div title="Invalid Value" class="red-rect"></div>') > 0).toBe(true);
+				expect(result.indexOf('<div title="Invalid value" class="red-rect"></div>') > 0).toBe(true);
 			}));
 		});
 

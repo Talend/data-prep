@@ -6,10 +6,7 @@ import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTes
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
@@ -51,7 +48,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATA_CLEANSING.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
     }
 
     @Test

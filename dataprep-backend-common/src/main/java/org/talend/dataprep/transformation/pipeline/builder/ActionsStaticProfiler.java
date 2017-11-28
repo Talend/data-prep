@@ -72,7 +72,7 @@ class ActionsStaticProfiler {
                     // Add the action's source column
                     valueModifiedColumns.add(action.getParameters().get(COLUMN_ID.getKey()));
                     // ... then add all column parameter (COLUMN_ID is string, not column)
-                    final List<Parameter> parameters = actionMetadata.getParameters();
+                    final List<Parameter> parameters = actionMetadata.getParameters(Locale.US);
                     valueModifiedColumns.addAll(parameters.stream() //
                             .filter(parameter -> ParameterType.valueOf(parameter.getType().toUpperCase()) == ParameterType.COLUMN) //
                             .map(parameter -> action.getParameters().get(parameter.getName())) //

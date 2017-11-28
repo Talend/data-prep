@@ -21,7 +21,7 @@ function generateTransformations() {
 			"description": "Keep only the lines that match the current filters",
 			"label": "Keep these Filtered Lines",
 			"docUrl": "",
-			"actionScope": [],
+			"actionScope": ["column_filtered"],
 			"parameters": [
 				{
 					"name": "column_id",
@@ -72,7 +72,7 @@ function generateTransformations() {
 			"description": "Delete only the lines that match the current filters",
 			"label": "Delete these Filtered Lines",
 			"docUrl": "",
-			"actionScope": [],
+			"actionScope": ["column_filtered"],
 			"parameters": [
 				{
 					"name": "column_id",
@@ -425,7 +425,7 @@ function generateTransformations() {
 			"description": "Change type of this column (number, text, date, etc.)",
 			"label": "Change Data Type",
 			"docUrl": "",
-			"actionScope": ["column_metadata"],
+			"actionScope": ["hidden_in_action_list"],
 			"parameters": [
 				{
 					"name": "column_id",
@@ -862,7 +862,7 @@ describe('Transformation Utils Service', () => {
 	});
 
 	describe('sortAndGroupByCategory', () => {
-		it('should filter "column_metadata" category',
+		it('should filter "hidden_in_action_list" scope',
 			inject((TransformationUtilsService) => {
 				// given
 				const transformations = generateTransformations();
@@ -874,8 +874,8 @@ describe('Transformation Utils Service', () => {
 				// then
 				categories.forEach((item) => {
 				    item.transformations.forEach((transfo) => {
-				        expect(transfo.actionScope.indexOf("column_metadata")).toBe(-1);
-				    })
+				        expect(transfo.actionScope.indexOf("hidden_in_action_list")).toBe(-1);
+				    });
 					expect(item.category).not.toBe('data_blending');
 				});
 			})

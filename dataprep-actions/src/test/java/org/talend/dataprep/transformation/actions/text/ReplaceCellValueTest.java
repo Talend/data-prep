@@ -26,11 +26,8 @@ import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.N
 import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.ORIGINAL_VALUE_PARAMETER;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Test;
@@ -62,26 +59,25 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
 
     @Test
     public void test_category() throws Exception {
-        assertEquals("strings", action.getCategory());
+        assertEquals("strings", action.getCategory(Locale.US));
     }
 
     @Test
     public void test_parameters() {
         // when
-        final List<Parameter> actionParams = action.getParameters();
+        final List<Parameter> actionParams = action.getParameters(Locale.US);
 
         // then
         assertThat(actionParams, hasSize(6));
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
-        assertThat(paramNames,
-                IsIterableContainingInAnyOrder.containsInAnyOrder( //
-                        COLUMN_ID.getKey(), //
-                        SCOPE.getKey(), //
-                        ROW_ID.getKey(), //
-                        ORIGINAL_VALUE_PARAMETER, //
-                        FILTER.getKey(), //
-                        NEW_VALUE_PARAMETER) //
+        assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder( //
+                COLUMN_ID.getKey(), //
+                SCOPE.getKey(), //
+                ROW_ID.getKey(), //
+                ORIGINAL_VALUE_PARAMETER, //
+                FILTER.getKey(), //
+                NEW_VALUE_PARAMETER) //
         );
     }
 

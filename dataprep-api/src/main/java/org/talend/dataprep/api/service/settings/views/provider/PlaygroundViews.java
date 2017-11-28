@@ -31,14 +31,14 @@ public interface PlaygroundViews {
             .id("appheaderbar:playground")
             .brand(
                     LinkSettings.builder()
-                            .name("Data Preparation")
+                            .label("appheaderbar.brand")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build()
             )
             .logo(
                     LinkSettings.builder()
-                            .name("Talend")
-                            .label("Go to home page")
+                            .name("appheaderbar.logo")
+                            .label("appheaderbar.logo.tooltip")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build())
             .search(
@@ -49,7 +49,7 @@ public interface PlaygroundViews {
                             .onKeyDown(SEARCH_FOCUS.getId())
                             .onToggle(SEARCH_TOGGLE.getId())
                             .onSelect("documentation", EXTERNAL_DOCUMENTATION.getId())
-                            .placeholder("Search Documentation")
+                            .placeholder("appheaderbar.search.playground.placeholder")
                             .build()
             )
             .help(PLAYGROUND_HEADERBAR_HELP.getId())

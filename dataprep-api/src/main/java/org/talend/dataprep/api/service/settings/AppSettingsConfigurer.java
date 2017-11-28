@@ -77,4 +77,5 @@ public abstract class AppSettingsConfigurer<T> {
                     ExceptionContext.build().put("class", clazz).put("args", args));
         }
     }
+
 }

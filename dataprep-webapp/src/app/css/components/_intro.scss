@@ -200,6 +200,7 @@ tr.introjs-showElement > th {
 	font-size: 1.7 * $font-size-base;
 	padding-bottom: 5px;
 	border-bottom: 1px solid $light-gray;
+	text-align: center;
 }
 
 .introjs-tooltipcontent {
@@ -236,6 +237,7 @@ tr.introjs-showElement > th {
 	background-color: $light-gray;
 	margin-top: 10px;
 	border: 1px solid transparent;
+	text-transform: uppercase;
 }
 
 .introjs-button:hover {

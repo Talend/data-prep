@@ -65,7 +65,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class DateCalendarConverterTest extends BaseDateTest {
                 COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
 
         // when
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         assertNotNull(parameters);

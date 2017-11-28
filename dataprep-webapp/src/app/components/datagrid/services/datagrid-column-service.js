@@ -85,7 +85,7 @@ export default function DatagridColumnService($rootScope, $compile, $translate,
 			_.template(gridHeaderPreviewTemplate)({
 				name: col.name,
 				diffClass: DatagridStyleService.getColumnPreviewStyle(col),
-				simpleType: col.domainLabel || ConverterService.simplifyType(col.type),
+				simpleType: col.domainLabel || ConverterService.simplifyTypeLabel(col.type),
 			}) :
 			'';
 		const translatedMsg = $translate.instant('APPLY_TO_ALL_CELLS');

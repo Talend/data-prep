@@ -13,10 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.exception.ExceptionContext;
@@ -27,7 +24,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -89,33 +85,43 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.COLUMNS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.COLUMNS.getDisplayName(locale);
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(new Parameter(PREFIX_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
+        parameters.add(Parameter.parameter(locale).setName(PREFIX_PARAMETER)
+                .setType(ParameterType.STRING)
+                .setDefaultValue(StringUtils.EMPTY)
+                .build(this));
 
-        parameters.add(SelectParameter.Builder.builder().name(MODE_PARAMETER)
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
-                        new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, //
-                                false, false, StringUtils.EMPTY),
-                        new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY), //
-                        SelectParameter.Builder.builder() //
+        parameters.add(SelectParameter.selectParameter(locale).name(MODE_PARAMETER)
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(ParameterType.COLUMN)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .setCanBeBlank(false)
+                                .build(this), Parameter.parameter(locale).setName(SEPARATOR_PARAMETER)
+                                .setType(ParameterType.STRING)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .build(this), //
+                        SelectParameter.selectParameter(locale) //
                                 .name(SEPARATOR_CONDITION) //
                                 .item(BOTH_NOT_EMPTY, BOTH_NOT_EMPTY) //
                                 .item(ALWAYS, ALWAYS) //
                                 .defaultValue(BOTH_NOT_EMPTY) //
-                                .build())//
+                                .build(this))//
                 .item(CONSTANT_MODE, CONSTANT_MODE) //
                 .defaultValue(OTHER_COLUMN_MODE) //
-                .build());
+                .build(this));
 
-        parameters.add(new Parameter(SUFFIX_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
-        return ActionsBundle.attachToAction(parameters, this);
+        parameters.add(Parameter.parameter(locale).setName(SUFFIX_PARAMETER)
+                .setType(ParameterType.STRING)
+                .setDefaultValue(StringUtils.EMPTY)
+                .build(this));
+        return parameters;
     }
 
     @Override

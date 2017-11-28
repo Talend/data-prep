@@ -18,10 +18,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,7 +29,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -74,20 +70,20 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
 
         // @formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(FROM_MODE)
                 .item(FROM_MODE_BEST_GUESS, FROM_MODE_BEST_GUESS)
-                .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, new Parameter(FROM_CUSTOM_PATTERN, ParameterType.STRING, EMPTY, false, false))
+                .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, Parameter.parameter(locale).setName(FROM_CUSTOM_PATTERN).setType(ParameterType.STRING).setDefaultValue(EMPTY).setCanBeBlank(false).build(this))
                 .defaultValue(FROM_MODE_BEST_GUESS)
-                .build());
+                .build(this ));
         // @formatter:on
 
-        parameters.addAll(getParametersForDatePattern());
-        return ActionsBundle.attachToAction(parameters, this);
+        parameters.addAll(getParametersForDatePattern(locale));
+        return parameters;
     }
 
     @Override

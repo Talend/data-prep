@@ -13,15 +13,17 @@
 
 package org.talend.dataprep.api.service.settings.help.provider;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.help.api.HelpSettings;
 import org.talend.dataprep.help.DocumentationLinksManager;
-
-import java.util.List;
-
-import static java.util.Arrays.asList;
+import org.talend.dataprep.i18n.DocumentationLinkGenerator;
 
 /**
  * Default documentation settings provider
@@ -35,31 +37,44 @@ public class HelpProvider implements AppSettingsProvider<HelpSettings> {
     @Override
     public List<HelpSettings> getSettings() {
 
-        return asList(
-                HelpSettings.builder()
-                        .id("versionFacet")
-                        .value(documentationLinksManager.getVersionFacet())
+        return asList(HelpSettings //
+                .builder() //
+                .id("versionFacet") //
+                .value(documentationLinksManager.getVersionFacet()) //
+                .build(),
+
+                HelpSettings
+                        .builder() //
+                        .id("languageFacet") //
+                        .value(documentationLinksManager.getLanguageFacet()) //
+                        .build(), //
+
+                HelpSettings
+                        .builder() //
+                        .id("searchUrl") //
+                        .value(documentationLinksManager.getSearchUrl()) //
                         .build(),
 
-                HelpSettings.builder()
-                        .id("languageFacet")
-                        .value(documentationLinksManager.getLanguageFacet())
-                        .build(),
+                HelpSettings
+                        .builder() //
+                        .id("fuzzyUrl") //
+                        .value(DocumentationLinkGenerator //
+                                .builder() //
+                                .url(documentationLinksManager.getFuzzyUrl()) //
+                                .locale(LocaleContextHolder.getLocale()) //
+                                .addContentLangParameter(true) //
+                                .build()) //
+                        .build(), //
 
-                HelpSettings.builder()
-                        .id("searchUrl")
-                        .value(documentationLinksManager.getSearchUrl())
-                        .build(),
-
-                HelpSettings.builder()
-                        .id("fuzzyUrl")
-                        .value(documentationLinksManager.getFuzzyUrl())
-                        .build(),
-
-                HelpSettings.builder()
-                        .id("exactUrl")
-                        .value(documentationLinksManager.getExactUrl())
-                        .build()
-        );
+                HelpSettings
+                        .builder() //
+                        .id("exactUrl") //
+                        .value(DocumentationLinkGenerator //
+                                .builder() //
+                                .url(documentationLinksManager.getExactUrl()) //
+                                .locale(LocaleContextHolder.getLocale()) //
+                                .addAfsLanguageParameter(true) //
+                                .build()) //
+                        .build());
     }
 }

@@ -12,9 +12,14 @@
 
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,18 +29,13 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter.Builder;
+import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.parameters.SelectParameter.SelectParameterBuilder;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
-import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DurationConverter.ACTION_NAME)
 public class DurationConverter extends AbstractActionMetadata implements ColumnAction {
@@ -66,16 +66,16 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.CONVERSIONS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.CONVERSIONS.getDisplayName(locale);
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
         //@formatter:off
-        Builder builder = Builder.builder()
+        SelectParameterBuilder builder = SelectParameter.selectParameter(locale)
                 .item(ChronoUnit.YEARS.name(), ChronoUnit.YEARS.toString())
                 .item(ChronoUnit.MONTHS.name(), ChronoUnit.MONTHS.toString())
                 .item(ChronoUnit.WEEKS.name(), ChronoUnit.WEEKS.toString())
@@ -88,18 +88,18 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
 
         parameters.add(builder
                 .name(FROM_UNIT_PARAMETER)
-                .defaultValue(ChronoUnit.DAYS.name()) 
-                .build());
-        
+                .defaultValue(ChronoUnit.DAYS.name())
+                .build(this ));
+
         parameters.add(builder
                 .name(TO_UNIT_PARAMETER)
-                .defaultValue(ChronoUnit.HOURS.name()) 
-                .build());
+                .defaultValue(ChronoUnit.HOURS.name())
+                .build(this ));
 
-         parameters.add(new Parameter(TARGET_PRECISION, INTEGER, "1", false, true, "precision"));
+         parameters.add(Parameter.parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
 
         //@formatter:on
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override
@@ -148,7 +148,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.dataprep.transformation.actions.common.AbstractActionMetadata#acceptField(org.talend.dataprep.api.dataset.
      * ColumnMetadata)
      */

@@ -18,6 +18,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.i18n.DataprepBundle;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -61,6 +64,14 @@ public class ActionSplitDropdownSettings extends ActionSettings {
 
     public void setItems(final List<Object> items) {
         this.items = items;
+    }
+
+    @Override
+    public ActionSettings translate() {
+        return ActionSplitDropdownSettings //
+                .from(this) //
+                .translate() //
+                .build();
     }
 
     public static Builder from(final ActionSplitDropdownSettings actionSettings) {
@@ -137,6 +148,13 @@ public class ActionSplitDropdownSettings extends ActionSettings {
             return this;
         }
 
+        public Builder translate() {
+            if (StringUtils.isNotEmpty(this.name)) {
+                this.name = DataprepBundle.message(this.name);
+            }
+            return this;
+        }
+
         public ActionSplitDropdownSettings build() {
             final ActionSplitDropdownSettings action = new ActionSplitDropdownSettings();
             action.setId(this.id);
@@ -149,5 +167,6 @@ public class ActionSplitDropdownSettings extends ActionSettings {
             action.setEnabled(this.enabled);
             return action;
         }
+
     }
 }

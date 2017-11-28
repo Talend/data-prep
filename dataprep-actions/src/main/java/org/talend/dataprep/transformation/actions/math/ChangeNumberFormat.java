@@ -30,7 +30,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -107,8 +106,8 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.NUMBERS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.NUMBERS.getDisplayName(locale);
     }
 
     @Override
@@ -118,62 +117,68 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
         // @formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(FROM_SEPARATORS)
                 .item(UNKNOWN_SEPARATORS, UNKNOWN_SEPARATORS)
                 .item(US_SEPARATORS, US_SEPARATORS)
                 .item(EU_SEPARATORS, EU_SEPARATORS)
                 .item(CH_SEPARATORS, CH_SEPARATORS)
-                .item(CUSTOM, buildDecimalSeparatorParameter(FROM), buildGroupingSeparatorParameter(FROM))
+                .item(CUSTOM, buildDecimalSeparatorParameter(FROM, locale), buildGroupingSeparatorParameter(FROM, locale))
                 .defaultValue(UNKNOWN_SEPARATORS)
-                .build());
+                .build(this ));
         // @formatter:on
 
         // @formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(TARGET_PATTERN)
                 .item(US_PATTERN, US_PATTERN)
                 .item(EU_PATTERN, EU_PATTERN)
                 .item(CH_PATTERN, CH_PATTERN)
                 .item(SCIENTIFIC, SCIENTIFIC)
-                .item(CUSTOM, CUSTOM, new Parameter(TARGET_PATTERN + "_" + CUSTOM, STRING, US_DECIMAL_PATTERN.toPattern()),
-                        buildDecimalSeparatorParameter(TARGET),
-                        buildGroupingSeparatorParameter(TARGET))
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).build(this),
+                        buildDecimalSeparatorParameter(TARGET, locale),
+                        buildGroupingSeparatorParameter(TARGET, locale))
                 .defaultValue(US_PATTERN)
-                .build());
+                .build(this ));
         // @formatter:on
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
-    private Parameter buildDecimalSeparatorParameter(String prefix) {
+    private Parameter buildDecimalSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + DECIMAL + SEPARATOR;
-        return  SelectParameter.Builder.builder() //
+        return  SelectParameter.selectParameter(locale) //
                 .name(name) //
                 .item(".") //
                 .item(",") //
-                .item(CUSTOM, CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ".")) //
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(name + "_" + CUSTOM)
+                        .setType(STRING)
+                        .setDefaultValue(".")
+                        .build(this)) //
                 .defaultValue(".") //
-                .build();
+                .build(this);
     }
 
-    private Parameter buildGroupingSeparatorParameter(String prefix) {
+    private Parameter buildGroupingSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + GROUPING + SEPARATOR;
-        return SelectParameter.Builder.builder() //
+        return SelectParameter.selectParameter(locale) //
                 .name(name) //
                 .item(",", "comma") //
                 .item(" ", "space") //
                 .item(".", "dot") //
                 .item("'", "quote") //
                 .item("", "none") //
-                .item(CUSTOM, CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ",")) //
+                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(name + "_" + CUSTOM)
+                        .setType(STRING)
+                        .setDefaultValue(",")
+                        .build(this)) //
                 .canBeBlank(true) //
                 .defaultValue(",") //
-                .build();
+                .build(this);
     }
 
     private String getCustomizableParam(String pName, Map<String, String> parameters) {

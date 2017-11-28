@@ -16,13 +16,13 @@ package org.talend.dataprep.transformation.actions.datablending;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.ParameterType.LIST;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
 import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.*;
 
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -30,7 +30,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -72,21 +71,46 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
      * @return A 'category' for the action used to group similar actions (eg. 'math', 'repair'...).
      */
     @Override
-    public String getCategory() {
-        return ActionCategory.DATA_BLENDING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.DATA_BLENDING.getDisplayName(locale);
     }
 
     @Override
-    public List<Parameter> getParameters() {
+    public List<String> getActionScope() {
+        return Collections.singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
+    }
+
+    @Override
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = new ArrayList<>();
-        parameters.add(ImplicitParameters.COLUMN_ID.getParameter());
-        parameters.add(ImplicitParameters.FILTER.getParameter());
-        parameters.add(new Parameter(LOOKUP_DS_NAME.getKey(), STRING, adaptedNameValue, false, false, StringUtils.EMPTY));
-        parameters.add(new Parameter(LOOKUP_DS_ID.getKey(), STRING, adaptedDatasetIdValue, false, false, StringUtils.EMPTY));
-        parameters.add(new Parameter(LOOKUP_JOIN_ON.getKey(), STRING, EMPTY, false, false, StringUtils.EMPTY));
-        parameters.add(new Parameter(LOOKUP_JOIN_ON_NAME.getKey(), STRING, EMPTY, false, false, StringUtils.EMPTY));
-        parameters.add(new Parameter(LOOKUP_SELECTED_COLS.getKey(), LIST, EMPTY, false, false, StringUtils.EMPTY));
-        return ActionsBundle.attachToAction(parameters, this);
+        parameters.add(ImplicitParameters.COLUMN_ID.getParameter(locale));
+        parameters.add(ImplicitParameters.FILTER.getParameter(locale));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_DS_NAME.getKey())
+                .setType(STRING)
+                .setDefaultValue(adaptedNameValue)
+                .setCanBeBlank(false)
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_DS_ID.getKey())
+                .setType(STRING)
+                .setDefaultValue(adaptedDatasetIdValue)
+                .setCanBeBlank(false)
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_JOIN_ON.getKey())
+                .setType(STRING)
+                .setDefaultValue(EMPTY)
+                .setCanBeBlank(false)
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_JOIN_ON_NAME.getKey())
+                .setType(STRING)
+                .setDefaultValue(EMPTY)
+                .setCanBeBlank(false)
+                .build(this));
+        parameters.add(Parameter.parameter(locale).setName(LOOKUP_SELECTED_COLS.getKey())
+                .setType(LIST)
+                .setDefaultValue(EMPTY)
+                .setCanBeBlank(false)
+                .build(this));
+        return parameters;
     }
 
     @Override

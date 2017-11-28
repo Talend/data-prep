@@ -17,6 +17,18 @@ import static com.jayway.restassured.RestAssured.when;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static com.jayway.restassured.RestAssured.when;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -106,8 +118,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalHelp.getIcon(), is("talend-question-circle"));
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
-        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
-                is("header"));
+        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("/header?content-lang=en"));
 
         final ActionSettings inventoryCancelEdit = settings.getActions().get("inventory:cancel-edit");
         assertThat(inventoryCancelEdit.getName(), is("Cancel name edition"));
@@ -161,8 +172,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(modalFeedback.getType(), is("@@modal/SHOW"));
         assertThat(modalFeedback.getPayload().get(PAYLOAD_METHOD_KEY), is("showFeedback"));
 
-        final ActionDropdownSettings listDatasetPreparations = (ActionDropdownSettings) settings.getActions()
-                .get("list:dataset:preparations");
+        final ActionDropdownSettings listDatasetPreparations =
+                (ActionDropdownSettings) settings.getActions().get("list:dataset:preparations");
         assertThat(listDatasetPreparations.getName(), is("Open preparation"));
         assertThat(listDatasetPreparations.getIcon(), is("talend-dataprep"));
         assertThat(listDatasetPreparations.getItems(), is("preparations"));
@@ -256,14 +267,17 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(headerHelp.getIcon(), is("talend-question-circle"));
         assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
         assertThat(headerHelp.getAction(), is("external:help"));
-        assertThat(headerHelp.getItems(), contains("external:help", "external:community", "onboarding:preparation", "modal:about", "modal:feedback"));
+        assertThat(headerHelp.getItems(),
+                contains("external:help", "external:community", "onboarding:preparation", "modal:about", "modal:feedback"));
 
-        final ActionSplitDropdownSettings playgroundHeaderHelp = (ActionSplitDropdownSettings) settings.getActions().get("playground:headerbar:help");
+        final ActionSplitDropdownSettings playgroundHeaderHelp =
+                (ActionSplitDropdownSettings) settings.getActions().get("playground:headerbar:help");
         assertThat(playgroundHeaderHelp.getName(), is("Help"));
         assertThat(playgroundHeaderHelp.getIcon(), is("talend-question-circle"));
         assertThat(playgroundHeaderHelp.getType(), is("@@headerbar/HELP"));
         assertThat(playgroundHeaderHelp.getAction(), is("external:help"));
-        assertThat(playgroundHeaderHelp.getItems(), contains("external:help", "external:community", "onboarding:playground", "modal:about", "modal:feedback"));
+        assertThat(playgroundHeaderHelp.getItems(),
+                contains("external:help", "external:community", "onboarding:playground", "modal:about", "modal:feedback"));
     }
 
     @Test
@@ -276,7 +290,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getLogo().getName(), is("Talend"));
         assertThat(ahb.getLogo().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getLogo().getLabel(), is("Go to home page"));
-        assertThat(ahb.getBrand().getName(), is("Data Preparation"));
+        assertThat(ahb.getBrand().getLabel(), is("Data Preparation"));
         assertThat(ahb.getBrand().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getSearch().getDebounceTimeout(), is(300));
         assertThat(ahb.getSearch().getPlaceholder(), is("Search Talend Data Preparation and Documentation"));
@@ -301,7 +315,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getLogo().getName(), is("Talend"));
         assertThat(ahb.getLogo().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getLogo().getLabel(), is("Go to home page"));
-        assertThat(ahb.getBrand().getName(), is("Data Preparation"));
+        assertThat(ahb.getBrand().getLabel(), is("Data Preparation"));
         assertThat(ahb.getBrand().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getSearch().getDebounceTimeout(), is(300));
         assertThat(ahb.getSearch().getPlaceholder(), is("Search Documentation"));
@@ -413,8 +427,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ActionSplitDropdownSettings datasetCreate = (ActionSplitDropdownSettings) settings.getActions()
-                .get("dataset:create");
+        final ActionSplitDropdownSettings datasetCreate =
+                (ActionSplitDropdownSettings) settings.getActions().get("dataset:create");
         final List<Object> importTypes = datasetCreate.getItems();
 
         final Map<String, Object> localImport = (Map<String, Object>) importTypes.get(0);
@@ -500,4 +514,20 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
     private List map(final List<Map> list, final String property) {
         return list.stream().map(col -> col.get(property)).collect(toList());
     }
+
+    @Test
+    public void shouldSetDefaultLocaleContextSettings() throws Exception {
+        // when
+        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
+
+        // then
+        final String localeFull = settings.getContext().get("locale");
+        final String country = settings.getContext().get("country");
+        final String language = settings.getContext().get("language");
+
+        assertThat(localeFull, is(Locale.US.toLanguageTag()));
+        assertThat(country, is(Locale.US.getCountry()));
+        assertThat(language, is(Locale.US.getLanguage()));
+    }
+
 }

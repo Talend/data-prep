@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.fill;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,8 +45,8 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

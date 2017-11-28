@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_FOLDER } from '../inventory/inventory-state-service';
+
 export const homeState = {
 	sidePanelDocked: false,
 	folders: {
@@ -36,7 +38,9 @@ export const homeState = {
 	},
 };
 
-export function HomeStateService() {
+export function HomeStateService($translate) {
+	'ngInject';
+
 	return {
 		setBuilds,
 		setCopyMoveTree,
@@ -64,6 +68,9 @@ export function HomeStateService() {
 	}
 
 	function setCopyMoveTree(tree) {
+		if (tree.folder && tree.folder.path === HOME_FOLDER.path) {
+			tree.folder.name = $translate.instant('HOME_FOLDER');
+		}
 		homeState.preparations.copyMove.tree = tree;
 	}
 

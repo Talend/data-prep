@@ -27,7 +27,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -134,32 +133,36 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
-        parameters.add(SelectParameter.Builder.builder() //
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(SelectParameter.selectParameter(locale) //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
-                        new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
-                                ParameterType.COLUMN, //
-                                StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //
+                        Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
+                                .setType(ParameterType.COLUMN)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .setCanBeBlank(false)
+                                .build(this)) //
                 .item(CONSTANT_MODE, CONSTANT_MODE, //
-                        SelectParameter.Builder.builder().name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
+                        SelectParameter.selectParameter(locale).name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
                                 .item(US_REGION_CODE, US_REGION_CODE) //
                                 .item(FR_REGION_CODE, FR_REGION_CODE) //
                                 .item(UK_REGION_CODE, UK_REGION_CODE) //
                                 .item(DE_REGION_CODE, DE_REGION_CODE) //
-                                .item(OTHER_REGION_TO_BE_SPECIFIED,
-                                        new Parameter(MANUAL_REGION_PARAMETER_STRING, ParameterType.STRING, EMPTY))
-                                .defaultValue(US_REGION_CODE).build()) //
-                .defaultValue(CONSTANT_MODE).build());
+                                .item(OTHER_REGION_TO_BE_SPECIFIED, Parameter.parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
+                                        .setType(ParameterType.STRING)
+                                        .setDefaultValue(EMPTY)
+                                        .build(this))
+                                .defaultValue(US_REGION_CODE).build(this)) //
+                .defaultValue(CONSTANT_MODE).build(this));
 
-        parameters.add(SelectParameter.Builder.builder().name(FORMAT_TYPE_PARAMETER) //
+        parameters.add(SelectParameter.selectParameter(locale).name(FORMAT_TYPE_PARAMETER) //
                 .item(TYPE_INTERNATIONAL) //
                 .item(TYPE_NATIONAL) //
                 .item(TYPE_E164) //
                 .item(TYPE_RFC3966) //
-                .defaultValue(TYPE_INTERNATIONAL).build());
-        return ActionsBundle.attachToAction(parameters, this);
+                .defaultValue(TYPE_INTERNATIONAL).build(this));
+        return parameters;
     }
 
     private String getRegionCode(ActionContext context, DataSetRow row) {
@@ -191,8 +194,8 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.PHONE_NUMBER.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.PHONE_NUMBER.getDisplayName(locale);
     }
 
     @Override

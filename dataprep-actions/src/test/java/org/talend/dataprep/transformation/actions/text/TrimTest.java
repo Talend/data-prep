@@ -20,6 +20,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class TrimTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -147,7 +148,7 @@ public class TrimTest extends AbstractMetadataBaseTest {
     public void should_remove_custom_value() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", "the beatles"); //$NON-NLS-1$ //$NON-NLS-2$ 
+        values.put("0000", "the beatles"); //$NON-NLS-1$ //$NON-NLS-2$
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();

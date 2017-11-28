@@ -250,7 +250,7 @@ describe('Playground controller', () => {
 	});
 
 	describe('apply other preparation steps', () => {
-		it('should display modal', inject((StateService) => {
+		it('should update the display modal state', inject((StateService) => {
 			// given
 			const ctrl = createController();
 			expect(StateService.setIsPreprationPickerVisible).not.toHaveBeenCalled();

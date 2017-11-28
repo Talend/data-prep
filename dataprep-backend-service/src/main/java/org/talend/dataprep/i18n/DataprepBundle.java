@@ -1,6 +1,5 @@
 package org.talend.dataprep.i18n;
 
-import static org.talend.dataprep.i18n.ErrorMessagesDelegate.getErrorKey;
 import static org.talend.dataprep.i18n.ErrorMessagesDelegate.getErrorTitleKey;
 
 import java.util.Locale;
@@ -34,15 +33,16 @@ public class DataprepBundle extends SpringBundle {
     }
 
     /**
-     * Returns the desired message to send to the frontend according to the specified error code. It fetches the message at:
-     * {@code <error_code>.MESSAGE}.
+     * Get an internationalized message from the dataprep message bundle in the {@link Locale#getDefault()} locale.
      *
-     * @param errorCode the specified error code
-     * @param values    used to specify the message title
-     * @return the desired message to send to the frontend according to the specified error code
+     * @param key    the message key.
+     * @param params the message parameters.
+     *
+     * @return the internationalized message or the supplied key if no message is found.
+     * @see org.springframework.context.MessageSource#getMessage(String, Object[], Locale)
      */
-    public static String errorMessage(ErrorCode errorCode, Object... values) {
-        return INSTANCE.getMessage(getErrorKey(errorCode), values);
+    public static String defaultMessage(String key, Object... params) {
+        return INSTANCE.getDefaultMessage(key, params);
     }
 
     /**

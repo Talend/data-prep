@@ -34,7 +34,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -80,28 +79,30 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
     }
 
     @Override
-    public String getCategory() {
-        return SPLIT.getDisplayName();
+    public String getCategory(Locale locale) {
+        return SPLIT.getDisplayName(locale);
     }
 
     @Override
     @Nonnull
-    public List<Parameter> getParameters() {
-        final List<Parameter> parameters = super.getParameters();
+    public List<Parameter> getParameters(Locale locale) {
+        final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(new Parameter(PARAMETER_REGEX, STRING, "(\\w+)"));
+        parameters.add(
+                Parameter.parameter(locale).setName(PARAMETER_REGEX).setType(STRING).setDefaultValue("(\\w+)").build(
+                        this));
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder()
+        parameters.add(SelectParameter.selectParameter(locale)
                         .name(MODE_PARAMETER)
-                        .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, new Parameter(LIMIT, INTEGER, "4"))
-                        .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, new Parameter(PARAMETER_SEPARATOR, STRING, ","))
+                        .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, Parameter.parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("4").build(this))
+                        .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, Parameter.parameter(locale).setName(PARAMETER_SEPARATOR).setType(STRING).setDefaultValue(",").build(this))
                         .defaultValue(MULTIPLE_COLUMNS_MODE)
-                        .build()
+                        .build(this )
         );
         //@formatter:on
 
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

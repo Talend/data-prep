@@ -21,6 +21,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(clearInvalid.getCategory(), is(ActionCategory.DATA_CLEANSING.getDisplayName()));
+        assertThat(clearInvalid.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
     }
 
     @Test

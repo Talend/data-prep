@@ -16,17 +16,13 @@ package org.talend.dataprep.transformation.actions.text;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.STRINGS;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -70,37 +66,49 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return STRINGS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return STRINGS.getDisplayName(locale);
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        final Parameter fromIndexParameters = new Parameter(FROM_INDEX_PARAMETER, ParameterType.INTEGER, "0");
-        final Parameter fromNBeforeEndParameters = new Parameter(FROM_N_BEFORE_END_PARAMETER, ParameterType.INTEGER, "5");
-        final Parameter toIndexParameters = new Parameter(TO_INDEX_PARAMETER, ParameterType.INTEGER, "5");
-        final Parameter toNBeforeEndParameters = new Parameter(TO_N_BEFORE_END_PARAMETER, ParameterType.INTEGER, "1");
+    public List<Parameter> getParameters(Locale locale) {
+        final Parameter fromIndexParameters = Parameter.parameter(locale).setName(FROM_INDEX_PARAMETER)
+                .setType(ParameterType.INTEGER)
+                .setDefaultValue("0")
+                .build(this);
+        final Parameter fromNBeforeEndParameters = Parameter.parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER)
+                .setType(ParameterType.INTEGER)
+                .setDefaultValue("5")
+                .build(this);
+        final Parameter toIndexParameters = Parameter.parameter(locale).setName(TO_INDEX_PARAMETER)
+                .setType(ParameterType.INTEGER)
+                .setDefaultValue("5")
+                .build(this);
+        final Parameter toNBeforeEndParameters = Parameter.parameter(locale).setName(TO_N_BEFORE_END_PARAMETER)
+                .setType(ParameterType.INTEGER)
+                .setDefaultValue("1")
+                .build(this);
 
         // "to" parameter with all possible values
-        final Parameter toCompleteParameters = SelectParameter.Builder.builder() //
+        final Parameter toCompleteParameters = SelectParameter.selectParameter(locale) //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END, TO_END) //
                 .item(TO_INDEX_PARAMETER, TO_INDEX_PARAMETER, toIndexParameters) //
                 .item(TO_N_BEFORE_END_PARAMETER, TO_N_BEFORE_END_PARAMETER, toNBeforeEndParameters) //
                 .defaultValue(TO_INDEX_PARAMETER) //
-                .build();
+                .build(this);
 
         // "to" parameter with possible values for "From N Before End" selection
         // the "to index" option should not be available
-        final Parameter toParametersWithoutIndexSelection = SelectParameter.Builder.builder() //
+        final Parameter toParametersWithoutIndexSelection = SelectParameter.selectParameter(locale) //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END, TO_END) //
                 .item(TO_N_BEFORE_END_PARAMETER, TO_N_BEFORE_END_PARAMETER, toNBeforeEndParameters) //
                 .defaultValue(TO_END) //
-                .build();
+                .build(this);
 
         // "from" parameter
-        final Parameter fromParameters = SelectParameter.Builder.builder() //
+        final Parameter fromParameters = SelectParameter.selectParameter(locale) //
                 .name(FROM_MODE_PARAMETER) //
                 .item(FROM_BEGINNING, FROM_BEGINNING, toCompleteParameters) // has all the "To" choices
                 .item(FROM_INDEX_PARAMETER, FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all the "To" choices
@@ -109,11 +117,11 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
                                                                                                                 // "To
                                                                                                                 // index"
                 .defaultValue(FROM_BEGINNING) //
-                .build();
+                .build(this);
 
-        final List<Parameter> parameters = ImplicitParameters.getParameters();
+        final List<Parameter> parameters = ImplicitParameters.getParameters(locale);
         parameters.add(fromParameters);
-        return ActionsBundle.attachToAction(parameters, this);
+        return parameters;
     }
 
     @Override

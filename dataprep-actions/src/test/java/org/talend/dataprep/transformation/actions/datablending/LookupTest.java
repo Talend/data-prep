@@ -19,10 +19,7 @@ import static org.talend.dataprep.transformation.actions.datablending.Lookup.Par
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -64,7 +61,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() {
-        assertEquals("data_blending", action.getCategory());
+        assertEquals("data blending", action.getCategory(Locale.US));
     }
 
     @Test
@@ -80,7 +77,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
                 "lookup_selected_cols");
 
         // when
-        final List<Parameter> parameters = action.getParameters();
+        final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
         Assertions.assertThat(parameters) //
@@ -99,7 +96,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
         final Lookup actual = action.adapt(ds);
 
         // when
-        final List<Parameter> parameters = actual.getParameters();
+        final List<Parameter> parameters = actual.getParameters(Locale.US);
         assertEquals("great dataset", getParamValue(parameters, "lookup_ds_name"));
         assertEquals("ds#123", getParamValue(parameters, "lookup_ds_id"));
     }

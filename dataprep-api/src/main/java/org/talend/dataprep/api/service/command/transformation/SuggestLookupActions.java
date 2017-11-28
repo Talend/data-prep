@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -34,6 +38,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.io.ReleasableInputStream;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,6 +53,9 @@ import com.netflix.hystrix.HystrixCommand;
 @Component
 @Scope("request")
 public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
+
+    @Autowired
+    private ActionRegistry actionRegistry;
 
     /**
      * Constructor.
@@ -97,15 +105,16 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
                     if (StringUtils.equals(dataSetId, dataset.getId())) {
                         continue;
                     }
-                    final Lookup lookup = new Lookup();
+
+                    Lookup lookup = (Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME);
                     lookup.adapt(dataset);
-                    final JsonNode jsonNode = objectMapper.valueToTree(lookup);
+                    final JsonNode jsonNode = objectMapper.valueToTree(lookup.getActionForm(getLocale()));
                     suggestedActions.add(jsonNode);
                 }
 
                 // write the merged actions to the output streams
                 return new ReleasableInputStream( //
-                        IOUtils.toInputStream(suggestedActions.toString(), "UTF-8"), //
+                        IOUtils.toInputStream(suggestedActions.toString(), UTF_8), //
                         request::releaseConnection);
             } catch (IOException e) {
                 throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e);

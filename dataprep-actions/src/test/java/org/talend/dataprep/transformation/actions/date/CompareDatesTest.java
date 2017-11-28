@@ -12,6 +12,15 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
@@ -26,18 +35,6 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 /**
  * Test class for CompareDates action. Creates one consumer, and test it.
@@ -66,13 +63,13 @@ public class CompareDatesTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testParameters() throws Exception {
         // given
-        final List<Parameter> actionParameters = action.getParameters();
+        final List<Parameter> actionParameters = action.getParameters(Locale.US);
 
         // then
         assertEquals(6, actionParameters.size());

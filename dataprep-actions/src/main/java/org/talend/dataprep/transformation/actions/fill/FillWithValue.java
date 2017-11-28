@@ -22,6 +22,8 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 
+import java.util.Locale;
+
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillWithValue.ACTION_NAME)
 public class FillWithValue extends AbstractFillWith implements ColumnAction {
 
@@ -41,8 +43,8 @@ public class FillWithValue extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

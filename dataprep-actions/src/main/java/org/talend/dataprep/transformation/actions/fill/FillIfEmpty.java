@@ -53,38 +53,38 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(Locale locale) {
         switch (type) {
         case STRING:
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_EMPTY_STRING);
+            return ActionsBundle.actionDescription(this, locale, FILL_EMPTY_STRING);
         case NUMERIC:
         case DOUBLE:
         case FLOAT:
         case INTEGER:
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_EMPTY_INTEGER);
+            return ActionsBundle.actionDescription(this, locale, FILL_EMPTY_INTEGER);
         case BOOLEAN:
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_EMPTY_BOOLEAN);
+            return ActionsBundle.actionDescription(this, locale, FILL_EMPTY_BOOLEAN);
         case DATE:
-            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, FILL_EMPTY_DATE);
+            return ActionsBundle.actionDescription(this, locale, FILL_EMPTY_DATE);
         default:
             throw new UnsupportedOperationException("Type '" + type + "' is not supported.");
         }
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Locale locale) {
         switch (type) {
         case STRING:
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_EMPTY_STRING);
+            return ActionsBundle.actionLabel(this, locale, FILL_EMPTY_STRING);
         case NUMERIC:
         case DOUBLE:
         case FLOAT:
         case INTEGER:
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_EMPTY_INTEGER);
+            return ActionsBundle.actionLabel(this, locale, FILL_EMPTY_INTEGER);
         case BOOLEAN:
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_EMPTY_BOOLEAN);
+            return ActionsBundle.actionLabel(this, locale, FILL_EMPTY_BOOLEAN);
         case DATE:
-            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, FILL_EMPTY_DATE);
+            return ActionsBundle.actionLabel(this, locale, FILL_EMPTY_DATE);
         default:
             throw new UnsupportedOperationException("Type '" + type + "' is not supported.");
         }
@@ -92,8 +92,8 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return DATA_CLEANSING.getDisplayName();
+    public String getCategory(Locale locale) {
+        return DATA_CLEANSING.getDisplayName(locale);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        Assert.assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
+        Assert.assertThat(action.getCategory(Locale.US), is(ActionCategory.COLUMN_METADATA.getDisplayName(Locale.US)));
     }
 
     @Test

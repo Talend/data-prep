@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.math;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.daikon.number.BigDecimalParser;
@@ -44,8 +45,8 @@ public class CompareNumbers extends AbstractCompareAction implements ColumnActio
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.NUMBERS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.NUMBERS.getDisplayName(locale);
     }
 
     @Override

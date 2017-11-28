@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
@@ -42,8 +43,8 @@ public class ProperCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.STRINGS.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.STRINGS.getDisplayName(locale);
     }
 
     /**

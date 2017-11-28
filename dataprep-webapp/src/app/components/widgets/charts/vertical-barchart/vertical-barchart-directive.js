@@ -81,35 +81,35 @@ export default function VerticalBarchart($timeout) {
 			let renderPrimaryTimeout;
 			let renderSecondaryTimeout;
 			let updateLimitsTimeout;
-			const containerId = '#' + attrs.id;
+			const containerId = `#${attrs.id}`;
 
-            // Define chart sizes and margin
+			// Define chart sizes and margin
 			let margin;
 			let containerWidth;
 			let containerHeight;
 			let width;
 			let height;
 
-            //------------------------------------------------------------------------------------------------------
-            // ----------------------------------------------- Tooltip ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ----------------------------------------------- Tooltip ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			const tooltip = d3Tip()
-                .attr('class', 'vertical-barchart-cls d3-tip')
-                .offset([0, -11])
-                .direction('w')
-                .html(function (primaryDatum, index) {
-	const secondaryDatum = scope.secondaryData ? scope.secondaryData[index] : undefined;
-	return scope.tooltipContent({
-		keyLabel: scope.keyLabel,
-		key: getXAxisDomain(primaryDatum),
-		primaryValue: getPrimaryValue(primaryDatum),
-		secondaryValue: secondaryDatum && getSecondaryValue(secondaryDatum),
-	});
-});
+				.attr('class', 'vertical-barchart-cls d3-tip')
+				.offset([0, -11])
+				.direction('w')
+				.html((primaryDatum, index) => {
+					const secondaryDatum = scope.secondaryData ? scope.secondaryData[index] : undefined;
+					return scope.tooltipContent({
+						keyLabel: scope.keyLabel,
+						key: getXAxisDomain(primaryDatum),
+						primaryValue: getPrimaryValue(primaryDatum),
+						secondaryValue: secondaryDatum && getSecondaryValue(secondaryDatum),
+					});
+				});
 
-            //------------------------------------------------------------------------------------------------------
-            // ------------------------------------------ Data adaptation -------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ------------------------------------------ Data adaptation -------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			function getXAxisDomain(data) {
 				return getRangeLabel(data) || getInterval(data);
 			}
@@ -140,9 +140,9 @@ export default function VerticalBarchart($timeout) {
 				return labelLength * 8;// the longer the label is, the more space we need
 			}
 
-            //------------------------------------------------------------------------------------------------------
-            // ------------------------------------------- Chart utils ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ------------------------------------------- Chart utils ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			let svg;
 			let xScale;
 			let yScale;
@@ -172,21 +172,21 @@ export default function VerticalBarchart($timeout) {
 
 			function createContainer() {
 				svg = d3.select(containerId)
-                    .append('svg')
-                    .attr('class', 'vertical-barchart-cls')
-                    .attr('width', containerWidth)
-                    .attr('height', containerHeight)
-                    .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+					.append('svg')
+					.attr('class', 'vertical-barchart-cls')
+					.attr('width', containerWidth)
+					.attr('height', containerHeight)
+					.append('g')
+					.attr('transform', `translate(${margin.left},${margin.top})`);
 				svg.call(tooltip);
 			}
 
 			function createBarsContainers() {
 				svg.append('g')
-                    .attr('class', 'primaryBar');
+					.attr('class', 'primaryBar');
 
 				svg.append('g')
-                    .attr('class', 'secondaryBar');
+					.attr('class', 'secondaryBar');
 			}
 
 			function adaptToMinHeight(realHeight) {
@@ -200,76 +200,68 @@ export default function VerticalBarchart($timeout) {
 			}
 
 			function drawBars(containerClassName, statData, getValue, barClassName) {
-				const bars = svg.select('.' + containerClassName)
-                    .selectAll('.' + barClassName)
-                    .data(statData, function (d) {
-	return '' + getInterval(d);
-});
+				const bars = svg.select(`.${containerClassName}`)
+					.selectAll(`.${barClassName}`)
+					.data(statData, d => `${getInterval(d)}`);
 
-                // enter
+				// enter
 				bars.enter()
-                    .append('rect')
-                    .attr('class', barClassName)
-                    .attr('x', function (d) {
-	return xScale(getXAxisDomain(d));
-})
-                    .attr('width', xScale.rangeBand())
-                    .attr('y', function () {
-	return yScale(0);
-})
-                    .attr('height', 0)
-                    .transition()
-                    .ease('cubic')
-                    .delay((d, i) => i * 10)
-                    .attr('height', function (d) {
-	const realHeight = height - yScale(getValue(d));
-	return adaptToMinHeight(realHeight);
-})
-                    .attr('y', function (d) {
-	const realYPosition = yScale(getValue(d));
-	return adaptToMinHeightYPosition(realYPosition);
-});
+					.append('rect')
+					.attr('class', barClassName)
+					.attr('x', d => xScale(getXAxisDomain(d)))
+					.attr('width', xScale.rangeBand())
+					.attr('y', () => yScale(0))
+					.attr('height', 0)
+					.transition()
+					.ease('cubic')
+					.delay((d, i) => i * 10)
+					.attr('height', (d) => {
+						const realHeight = height - yScale(getValue(d));
+						return adaptToMinHeight(realHeight);
+					})
+					.attr('y', (d) => {
+						const realYPosition = yScale(getValue(d));
+						return adaptToMinHeightYPosition(realYPosition);
+					});
 
-                // update
-				bars.transition().ease('exp').delay(function (d, i) {
-					return i * 30;
-				})
-                    .attr('height', function (d) {
-	const realHeight = height - yScale(getValue(d));
-	return adaptToMinHeight(realHeight);
-})
-                    .attr('y', function (d) {
-	const realYPosition = yScale(getValue(d));
-	return adaptToMinHeightYPosition(realYPosition);
-});
+				// update
+				bars.transition().ease('exp').delay((d, i) => i * 30)
+					.attr('height', (d) => {
+						const realHeight = height - yScale(getValue(d));
+						return adaptToMinHeight(realHeight);
+					})
+					.attr('y', (d) => {
+						const realYPosition = yScale(getValue(d));
+						return adaptToMinHeightYPosition(realYPosition);
+					});
 			}
 
 			function drawXAxis() {
 				svg.append('g')
-                    .attr('class', 'x axis')
-                    .attr('transform', 'translate(0,' + height + ')')
-                    .call(d3.svg.axis()
-                        .scale(xScale)
-                        .orient('bottom')
-                        .ticks(5)
-                    )
-                    .selectAll('text')
-                    .attr('y', 5)
-                    .attr('x', -9)
-                    .attr('dy', '.35em')
-                    .style('text-anchor', 'end')
-                    .attr('transform', 'rotate(295)');
+					.attr('class', 'x axis')
+					.attr('transform', `translate(0,${height})`)
+					.call(d3.svg.axis()
+						.scale(xScale)
+						.orient('bottom')
+						.ticks(5)
+					)
+					.selectAll('text')
+					.attr('y', 5)
+					.attr('x', -9)
+					.attr('dy', '.35em')
+					.style('text-anchor', 'end')
+					.attr('transform', 'rotate(295)');
 			}
 
 			function drawYAxis() {
 				svg.append('g')
-                    .attr('class', 'yAxis')
-                    .append('text')
-                    .attr('x', -height / 2)
-                    .attr('y', -2)
-                    .attr('transform', 'rotate(-90)')
-                    .style('text-anchor', 'middle')
-                    .text(labelTooltip);
+					.attr('class', 'yAxis')
+					.append('text')
+					.attr('x', -height / 2)
+					.attr('y', -2)
+					.attr('transform', 'rotate(-90)')
+					.style('text-anchor', 'middle')
+					.text(labelTooltip);
 			}
 
 			function drawHorizontalGrid() {
@@ -278,63 +270,61 @@ export default function VerticalBarchart($timeout) {
 				const ticksNbre = yScale.domain()[1] > ticksThreshold ? ticksThreshold : yScale.domain()[1];
 
 				svg.append('g')
-                    .attr('class', 'grid')
-                    .call(d3.svg.axis()
-                        .scale(yScale)
-                        .orient('right')
-                        .tickSize(width, 0, 0)
-                        .tickFormat(d3.format(',d'))
-                        .ticks(ticksNbre)
-                    )
-                    // place text
-                    .selectAll('.tick text')
-                    .attr('y', -5)
-                    .attr('x', width)
-                    .attr('dy', '.15em')
-                    .style('text-anchor', 'end');
+					.attr('class', 'grid')
+					.call(d3.svg.axis()
+						.scale(yScale)
+						.orient('right')
+						.tickSize(width, 0, 0)
+						.tickFormat(d3.format(',d'))
+						.ticks(ticksNbre)
+					)
+					// place text
+					.selectAll('.tick text')
+					.attr('y', -5)
+					.attr('x', width)
+					.attr('dy', '.15em')
+					.style('text-anchor', 'end');
 			}
 
 			function drawHoverBars(statData) {
 				svg.selectAll('g.bg-rect')
-                    .data(statData)
-                    .enter()
-                    .append('g')
-                    .attr('class', 'hover')
-                    .attr('transform', function (d) {
-	return 'translate(' + (xScale(getXAxisDomain(d)) - 2) + ', 0)';
-})
-                    .append('rect')
-                    .attr('width', xScale.rangeBand() + 4)
-                    .attr('height', height)
-                    .attr('class', 'bg-rect')
-                    .style('opacity', 0)
-                    .on('mouseenter', function (d, i) {
-	d3.select(this).style('opacity', 0.4);
-	tooltip.show(d, i);
-})
-                    .on('mouseleave', function (d) {
-	d3.select(this).style('opacity', 0);
-	tooltip.hide(d);
-})
-                    .on('click', function (d) {
-                        // create a new reference as the data object could be modified outside the component
-	const interval = _.extend({}, getRangeInfos(d));
-	if (d3.event.ctrlKey || d3.event.metaKey) {
-		scope.onCtrlClick({ interval });
-		return;
-	}
-	else if (d3.event.shiftKey) {
-		scope.onShiftClick({ interval });
-		return;
-	}
+					.data(statData)
+					.enter()
+					.append('g')
+					.attr('class', 'hover')
+					.attr('transform', d => `translate(${xScale(getXAxisDomain(d)) - 2}, 0)`)
+					.append('rect')
+					.attr('width', xScale.rangeBand() + 4)
+					.attr('height', height)
+					.attr('class', 'bg-rect')
+					.style('opacity', 0)
+					.on('mouseenter', function (d, i) {
+						d3.select(this).style('opacity', 0.4);
+						tooltip.show(d, i);
+					})
+					.on('mouseleave', function (d) {
+						d3.select(this).style('opacity', 0);
+						tooltip.hide(d);
+					})
+					.on('click', (d) => {
+						// create a new reference as the data object could be modified outside the component
+						const interval = _.extend({}, getRangeInfos(d));
+						if (d3.event.ctrlKey || d3.event.metaKey) {
+							scope.onCtrlClick({ interval });
+							return;
+						}
+						else if (d3.event.shiftKey) {
+							scope.onShiftClick({ interval });
+							return;
+						}
 
-	scope.onClick({ interval });
-});
+						scope.onClick({ interval });
+					});
 			}
 
-            //------------------------------------------------------------------------------------------------------
-            // ------------------------------------------- Chart render ---------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ------------------------------------------- Chart render ---------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			function renderWholeVBarchart(firstVisuData, secondVisuData) {
 				initChartSizes();
 				initScales();
@@ -363,59 +353,57 @@ export default function VerticalBarchart($timeout) {
 			function updateBarsLookFeel() {
 				if (activeLimits) {
 					scope.buckets.transition()
-                        .delay(function (d, i) {
-	return i * 10;
-})
-                        .style('opacity', function (d) {
-	const range = getRangeInfos(d);
-	const rangeMin = range.min;
-	const rangeMax = range.max;
-	const minLimit = activeLimits[0];
-	const maxLimit = activeLimits[1];
-	return rangeMin === minLimit || (rangeMin < maxLimit && rangeMax > minLimit) ? '1' : '.4';
-});
+						.delay((d, i) => i * 10)
+						.style('opacity', (d) => {
+							const range = getRangeInfos(d);
+							const rangeMin = range.min;
+							const rangeMax = range.max;
+							const minLimit = activeLimits[0];
+							const maxLimit = activeLimits[1];
+							return rangeMin === minLimit || (rangeMin < maxLimit && rangeMax > minLimit) ? '1' : '.4';
+						});
 				}
 			}
 
-            //------------------------------------------------------------------------------------------------------
-            // ---------------------------------------------- Watchers ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ---------------------------------------------- Watchers ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			scope.$watchGroup(['primaryData', 'secondaryData'],
-                function (newValues) {
-	const firstVisuData = newValues[0];
-	const secondVisuData = newValues[1];
-	const firstDataHasChanged = firstVisuData !== oldVisuData;
+				function (newValues) {
+					const firstVisuData = newValues[0];
+					const secondVisuData = newValues[1];
+					const firstDataHasChanged = firstVisuData !== oldVisuData;
 
-	if (firstDataHasChanged) {
-		oldVisuData = firstVisuData;
-		element.empty();
-                        // because the tooltip is not a child of the vertical barchart element
-		d3.selectAll('.vertical-barchart-cls.d3-tip').remove();
-		if (firstVisuData) {
-			$timeout.cancel(renderPrimaryTimeout);
-			renderPrimaryTimeout = $timeout(renderWholeVBarchart.bind(this, firstVisuData, secondVisuData), 100, false);
-		}
-	}
-	else {
-		$timeout.cancel(renderSecondaryTimeout);
-		renderSecondaryTimeout = $timeout(renderSecondVBars.bind(this, secondVisuData), 100, false);
-	}
-}
-            );
+					if (firstDataHasChanged) {
+						oldVisuData = firstVisuData;
+						element.empty();
+						// because the tooltip is not a child of the vertical barchart element
+						d3.selectAll('.vertical-barchart-cls.d3-tip').remove();
+						if (firstVisuData) {
+							$timeout.cancel(renderPrimaryTimeout);
+							renderPrimaryTimeout = $timeout(renderWholeVBarchart.bind(this, firstVisuData, secondVisuData), 100, false);
+						}
+					}
+					else {
+						$timeout.cancel(renderSecondaryTimeout);
+						renderSecondaryTimeout = $timeout(renderSecondVBars.bind(this, secondVisuData), 100, false);
+					}
+				}
+			);
 
 			scope.$watch('activeLimits',
-                function (newLimits) {
-	if (newLimits) {
-		$timeout.cancel(updateLimitsTimeout);
-		updateLimitsTimeout = $timeout(function () {
-			activeLimits = newLimits;
-			updateBarsLookFeel();
-		}, 500, false);
-	}
-}
-            );
+				(newLimits) => {
+					if (newLimits) {
+						$timeout.cancel(updateLimitsTimeout);
+						updateLimitsTimeout = $timeout(() => {
+							activeLimits = newLimits;
+							updateBarsLookFeel();
+						}, 500, false);
+					}
+				}
+			);
 
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				d3.selectAll('.vertical-barchart-cls.d3-tip').remove();
 				$timeout.cancel(renderPrimaryTimeout);
 				$timeout.cancel(renderSecondaryTimeout);

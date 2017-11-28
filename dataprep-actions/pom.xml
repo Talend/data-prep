@@ -58,6 +58,11 @@
             <artifactId>dataprep-backend-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-backend-common</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
             <groupId>javax.measure</groupId>
             <artifactId>jsr-275</artifactId>
         </dependency>

@@ -63,10 +63,10 @@ public class ChangeDatePatternTest extends BaseDateTest {
     @Test
     public void testParameters() throws Exception {
         // 4 predefined patterns + custom = 6
-        assertThat(action.getParameters().size(), is(6));
+        assertThat(action.getParameters(Locale.US).size(), is(6));
 
         // Test on items label for TDP-2944:
-        final SelectParameter newFormatParam = (SelectParameter) action.getParameters().get(5);
+        final SelectParameter newFormatParam = (SelectParameter) action.getParameters(Locale.US).get(5);
         assertEquals("American standard", newFormatParam.getItems().get(0).getLabel());
     }
 
@@ -79,7 +79,7 @@ public class ChangeDatePatternTest extends BaseDateTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
     @Test(expected = TalendRuntimeException.class)

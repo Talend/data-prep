@@ -19,10 +19,10 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -84,13 +84,14 @@ public class SearchAPI extends APIService {
             // Add static information about documentation category
             generator.writeStartObject();
             generator.writeStringField("type", "documentation");
-            generator.writeStringField("label", messagesBundle.getString(Locale.ENGLISH, "search.documentation"));
+            generator.writeStringField("label",
+                    messagesBundle.getString(LocaleContextHolder.getLocale(), "search.documentation"));
             generator.writeEndObject();
 
             // Now the search types categories
             searchDelegates.forEach(searchDelegate -> {
-                final String categoryLabel = messagesBundle.getString(Locale.ENGLISH,
-                        "search." + searchDelegate.getSearchLabel());
+                final String categoryLabel =
+                        messagesBundle.getString(LocaleContextHolder.getLocale(), "search." + searchDelegate.getSearchLabel());
                 try {
                     generator.writeStartObject();
                     generator.writeStringField("type", searchDelegate.getInventoryType());

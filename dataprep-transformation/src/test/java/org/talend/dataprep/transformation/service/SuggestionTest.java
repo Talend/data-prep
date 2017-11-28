@@ -193,6 +193,7 @@ public class SuggestionTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
+
         assertEquals(expectedSuggestions, response, false);
     }
 
@@ -235,13 +236,13 @@ public class SuggestionTest extends TransformationServiceBaseTest {
                 "}";
 
         given() //
-            .contentType(JSON) //
-            .body(columnMetadata) //
-        .when() //
-            .post("/suggest/column?limit=100") // 100 just to make sure that we get all the suggestions
-        .then()
-            .statusCode(200)
-            .body("name", hasItems("mask_data_by_domain", "format_phone_number"));
+                .contentType(JSON) //
+                .body(columnMetadata) //
+                .when() //
+                .post("/suggest/column?limit=100") // 100 just to make sure that we get all the suggestions
+                .then()
+                .statusCode(200)
+                .body("name", hasItems("mask_data_by_domain", "format_phone_number"));
         // @formatter:on
 
     }

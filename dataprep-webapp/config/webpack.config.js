@@ -53,7 +53,7 @@ function getDefaultConfig(options) {
 				{
 					test: /\.(png|jpg|jpeg|gif)$/,
 					loader: isTestMode ? 'null-loader' : 'url-loader',
-					options: { mimetype: 'image/png' }
+					options: { mimetype: 'image/png' },
 				},
 				{
 					test: /\.html$/,
@@ -66,21 +66,29 @@ function getDefaultConfig(options) {
 				{
 					test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,
 					loader: isTestMode ? 'null-loader' : 'url-loader',
-					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' }
+					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' },
 				},
 				{
 					test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
 					loader: isTestMode ? 'null-loader' : 'url-loader',
-					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' }
+					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' },
 				},
-			]
+			],
+		},
+		resolve: {
+			alias: {
+				react: path.join(__dirname, '../node_modules/react'),
+				i18next: path.join(__dirname, '../node_modules/i18next'),
+			},
 		},
 		plugins: [
 			extractCSS,
 			new webpack.ProvidePlugin({
 				$: 'jquery',
 				jQuery: 'jquery',
+				jquery: 'jquery',
 				'window.jQuery': 'jquery',
+				moment: 'moment',
 			}),
 			// for compatibility, needed for some loaders
 			new webpack.LoaderOptionsPlugin({
@@ -89,8 +97,8 @@ function getDefaultConfig(options) {
 					output: {
 						path: BUILD_PATH,
 					},
-				}
-			})
+				},
+			}),
 		],
 		cache: true,
 		devtool: options.devtool,
@@ -104,14 +112,14 @@ function getCommonStyleLoaders(enableModules) {
 	return [
 		{ loader: 'css-loader', options: cssOptions },
 		{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
-		{ loader: 'resolve-url-loader' }
+		{ loader: 'resolve-url-loader' },
 	];
 }
 
 function getSassLoaders(enableModules) {
 	return getCommonStyleLoaders(enableModules).concat({
 		loader: 'sass-loader',
-		options: { sourceMap: true, data: SASS_DATA }
+		options: { sourceMap: true, data: SASS_DATA },
 	});
 }
 
@@ -149,14 +157,14 @@ function addDevServerConfig(config) {
 		compress: true,
 		inline: true,
 		contentBase: BUILD_PATH,
-		setup: function (app) {
+		setup(app) {
 			app.get('/assets/config/config.json', function (req, res) {
 				const configFile = require('./../src/assets/config/config.json');
-				configFile.serverUrl = "http://localhost:8888";
+				configFile.serverUrl = 'http://localhost:8888';
 				res.json(configFile);
 			});
 		},
-	}
+	};
 }
 
 function addFilesConfig(config) {
@@ -217,7 +225,7 @@ function addPlugins(config, options) {
 					return -1;
 				}
 				return 0;
-			}
+			},
 		}),
 
 		/*

@@ -181,8 +181,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Object visit(AllFields allFields) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Not implemented.");
         }
-
     }
 }

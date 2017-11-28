@@ -18,6 +18,8 @@ import {
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
 
+import i18n from './../../../i18n/en.json';
+
 describe('Onboarding service', () => {
 	let stateMock;
 
@@ -30,6 +32,11 @@ describe('Onboarding service', () => {
 		$provide.constant('state', stateMock);
 	}));
 
+	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
+
 	beforeEach(inject(($state) => {
 		spyOn($state, 'go').and.returnValue();
 	}));
@@ -39,7 +46,7 @@ describe('Onboarding service', () => {
 		spyOn(StorageService, 'getTourOptions').and.returnValue({ preparation: false });
 
 		// when
-		var result = OnboardingService.shouldStartTour('preparation');
+		const result = OnboardingService.shouldStartTour('preparation');
 
 		// then
 		expect(result).toBe(true);
@@ -50,7 +57,7 @@ describe('Onboarding service', () => {
 		spyOn(StorageService, 'getTourOptions').and.returnValue({ preparation: true });
 
 		// when
-		var result = OnboardingService.shouldStartTour('preparation');
+		const result = OnboardingService.shouldStartTour('preparation');
 
 		// then
 		expect(result).toBe(false);
@@ -66,10 +73,10 @@ describe('Onboarding service', () => {
 
 		// then
 		const options = OnboardingService.currentTour._options;
-		expect(options.nextLabel).toBe('NEXT');
-		expect(options.prevLabel).toBe('BACK');
-		expect(options.skipLabel).toBe('SKIP');
-		expect(options.doneLabel).toBe('LET ME TRY');
+		expect(options.nextLabel).toBe('Next');
+		expect(options.prevLabel).toBe('Back');
+		expect(options.skipLabel).toBe('Skip');
+		expect(options.doneLabel).toBe('Let me try');
 	}));
 
 	it('should create/adapt preparation tour step', inject(($timeout, OnboardingService) => {
@@ -83,9 +90,9 @@ describe('Onboarding service', () => {
 		// then
 		const options = OnboardingService.currentTour._options;
 		expect(options.steps[0]).toEqual({
-			element: '#side-panel-nav-preparations',
+			element: '#side-panel-nav-menu-preparations',
 			position: 'right',
-			intro: '<div class="introjs-tooltiptitle"><center>Preparations</center></div><div class="introjs-tooltipcontent">Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.</div>',
+			intro: '<div class="introjs-tooltiptitle">Preparations</div><div class="introjs-tooltipcontent">Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.</div>',
 		});
 	}));
 
@@ -102,7 +109,7 @@ describe('Onboarding service', () => {
 		expect(options.steps[0]).toEqual({
 			element: '.no-js',
 			position: 'right',
-			intro: '<div class="introjs-tooltiptitle"><center>Welcome to the preparation view</center></div><div class="introjs-tooltipcontent">In this view, you can apply preparation steps to your dataset.</br>This table represents the result of your preparation.</div>',
+			intro: '<div class="introjs-tooltiptitle">Welcome to the preparation view</div><div class="introjs-tooltipcontent">In this view, you can apply preparation steps to your dataset.</br>This table represents the result of your preparation.</div>',
 		});
 	}));
 
@@ -119,7 +126,7 @@ describe('Onboarding service', () => {
 		expect(options.steps[1]).toEqual({
 			element: '#datagrid .slick-header-columns-right > .slick-header-column',
 			position: 'right',
-			intro: '<div class="introjs-tooltiptitle"><center>Columns</center></div><div class="introjs-tooltipcontent">Select a column to discover the transformation functions you can apply to your data.</div>',
+			intro: '<div class="introjs-tooltiptitle">Columns</div><div class="introjs-tooltipcontent">Select a column to discover the transformation functions you can apply to your data.</div>',
 		});
 	}));
 
@@ -136,7 +143,7 @@ describe('Onboarding service', () => {
 		expect(options.steps[0]).toEqual({
 			element: '#help-recipe > .recipe',
 			position: 'right',
-			intro: '<div class="introjs-tooltiptitle"><center>Recipe</center></div><div class="introjs-tooltipcontent">Here is your recipe. A recipe is literally defined as "a set of directions with a list of ingredients for making or preparing something".</br>In Talend Data Preparation, the ingredients are the raw data, called datasets, and the directions are the set of functions applied to the dataset.</br>Here you can preview, edit, delete, activate or deactivate every function included in the recipe you created.</div>',
+			intro: '<div class="introjs-tooltiptitle">Recipe</div><div class="introjs-tooltipcontent">Here is your recipe. A recipe is literally defined as "a set of directions with a list of ingredients for making or preparing something".</br>In Talend Data Preparation, the ingredients are the raw data, called datasets, and the directions are the set of functions applied to the dataset.</br>Here you can preview, edit, delete, activate or deactivate every function included in the recipe you created.</div>',
 		});
 	}));
 

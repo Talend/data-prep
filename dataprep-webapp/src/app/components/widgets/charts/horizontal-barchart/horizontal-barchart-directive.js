@@ -55,7 +55,7 @@ import _ from 'lodash';
  * @param {function}    tooltipContent The tooltip content generator. It can take 4 infos : keyLabel (the label), key (the key), primaryValue (the selected primary value), secondaryValue (the selected secondary value)
  * */
 
-export default function HorizontalBarchart($timeout) {
+export default function HorizontalBarchart($timeout, $translate) {
 	'ngInject';
 
 	return {
@@ -76,11 +76,11 @@ export default function HorizontalBarchart($timeout) {
 		},
 		link(scope, element, attrs) {
 			const BAR_MIN_WIDTH = 3;
-			const containerId = '#' + attrs.id;
+			const containerId = `#${attrs.id}`;
 			let renderPrimaryTimeout;
 			let renderSecondaryTimeout;
 
-            // Define chart sizes and margin
+			// Define chart sizes and margin
 			const margin = { top: 15, right: 20, bottom: 10, left: 10 };
 			const containerWidth = +attrs.width;
 
@@ -90,25 +90,25 @@ export default function HorizontalBarchart($timeout) {
 			selectedValues = [];
 			min = max = -1;
 
-            //------------------------------------------------------------------------------------------------------
-            // ----------------------------------------------- Tooltip ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ----------------------------------------------- Tooltip ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			const tooltip = d3Tip()
-                .attr('class', 'horizontal-barchart-cls d3-tip')
-                .offset([-10, 0])
-                .html(function (primaryDatum, index) {
-	const secondaryDatum = scope.secondaryData ? scope.secondaryData[index] : undefined;
-	return scope.tooltipContent({
-		keyLabel: scope.keyLabel,
-		key: getKey(primaryDatum),
-		primaryValue: getPrimaryValue(primaryDatum),
-		secondaryValue: secondaryDatum && getSecondaryValue(secondaryDatum),
-	});
-});
+				.attr('class', 'horizontal-barchart-cls d3-tip')
+				.offset([-10, 0])
+				.html((primaryDatum, index) => {
+					const secondaryDatum = scope.secondaryData ? scope.secondaryData[index] : undefined;
+					return scope.tooltipContent({
+						keyLabel: scope.keyLabel,
+						key: getKey(primaryDatum),
+						primaryValue: getPrimaryValue(primaryDatum),
+						secondaryValue: secondaryDatum && getSecondaryValue(secondaryDatum),
+					});
+				});
 
-            //------------------------------------------------------------------------------------------------------
-            // ---------------------------------------- Data manipulation -------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ---------------------------------------- Data manipulation -------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			function getKey(data) {
 				return data[scope.keyField];
 			}
@@ -121,9 +121,9 @@ export default function HorizontalBarchart($timeout) {
 				return data[scope.secondaryValueField];
 			}
 
-            //------------------------------------------------------------------------------------------------------
-            // --------------------------------------------- Bar class ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// --------------------------------------------- Bar class ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			function getPrimaryClassName() {
 				return scope.primaryBarClass ? scope.primaryBarClass : 'transparentBar';
 			}
@@ -132,9 +132,9 @@ export default function HorizontalBarchart($timeout) {
 				return scope.secondaryBarClass ? scope.secondaryBarClass : 'blueBar';
 			}
 
-            //------------------------------------------------------------------------------------------------------
-            // ------------------------------------------- Chart utils ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ------------------------------------------- Chart utils ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			let xScale;
 			let yScale;
 			let xAxis;
@@ -168,39 +168,39 @@ export default function HorizontalBarchart($timeout) {
 				const ticksNbre = xScale.domain()[1] > ticksThreshold ? ticksThreshold : xScale.domain()[1];
 
 				xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .tickFormat(d3.format(',d'))
-                    .orient('top')
-                    .tickSize(-height)
-                    .ticks(ticksNbre);
+					.scale(xScale)
+					.tickFormat(d3.format(',d'))
+					.orient('top')
+					.tickSize(-height)
+					.ticks(ticksNbre);
 			}
 
 			function createContainer(width, height) {
 				svg = d3.select(containerId)
-                    .append('svg')
-                    .attr('class', 'horizontal-barchart-cls')
-                    .attr('width', width)
-                    .attr('height', height)
-                    .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+					.append('svg')
+					.attr('class', 'horizontal-barchart-cls')
+					.attr('width', width)
+					.attr('height', height)
+					.append('g')
+					.attr('transform', `translate(${margin.left},${margin.top})`);
 
 				svg.call(tooltip);
 			}
 
 			function drawGrid() {
 				svg.append('g')
-                    .attr('class', 'grid')
-                    .call(xAxis)
-                    .selectAll('.tick text')
-                    .style('text-anchor', 'middle');
+					.attr('class', 'grid')
+					.call(xAxis)
+					.selectAll('.tick text')
+					.style('text-anchor', 'middle');
 			}
 
 			function createBarsContainers() {
 				svg.append('g')
-                    .attr('class', 'primaryBar');
+					.attr('class', 'primaryBar');
 
 				svg.append('g')
-                    .attr('class', 'secondaryBar');
+					.attr('class', 'secondaryBar');
 			}
 
 			function adaptToMinHeight(realWidth) {
@@ -208,143 +208,127 @@ export default function HorizontalBarchart($timeout) {
 			}
 
 			function drawBars(containerClassName, statData, getValue, barClassName) {
-				const bars = svg.select('.' + containerClassName)
-                    .selectAll('.' + barClassName)
-                    .data(statData, getKey);
+				const bars = svg.select(`.${containerClassName}`)
+					.selectAll(`.${barClassName}`)
+					.data(statData, getKey);
 
-                // enter
+				// enter
 				bars.enter()
-                    .append('rect')
-                    .attr('class', barClassName)
-                    .attr('transform', function (d) {
-	return 'translate(0,' + yScale(getKey(d)) + ')';
-})
-                    .attr('height', yScale.rangeBand())
-                    .attr('width', xScale(0))
-                    .transition()
-                    .delay((d, i) => i * 30)
-                    .attr('width', function (d) {
-	const realWidth = xScale(getValue(d));
-	return adaptToMinHeight(realWidth);
-});
+					.append('rect')
+					.attr('class', barClassName)
+					.attr('transform', d => `translate(0,${yScale(getKey(d))})`)
+					.attr('height', yScale.rangeBand())
+					.attr('width', xScale(0))
+					.transition()
+					.delay((d, i) => i * 30)
+					.attr('width', d => adaptToMinHeight(xScale(getValue(d))));
 
-                // update
+				// update
 				bars.transition()
-                    .ease('exp')
-                    .delay(function (d, i) {
-	return i * 30;
-})
-                    .attr('width', function (d) {
-	const realWidth = xScale(getValue(d));
-	return adaptToMinHeight(realWidth);
-});
+					.ease('exp')
+					.delay((d, i) => i * 30)
+					.attr('width', d => adaptToMinHeight(xScale(getValue(d))));
 			}
 
 			function drawKeysLabels(statData, width) {
 				svg.append('g')
-                    .attr('class', 'labels')
-                    .selectAll('label')
-                    .data(statData)
-                    .enter()
+					.attr('class', 'labels')
+					.selectAll('label')
+					.data(statData)
+					.enter()
 
-                    // label container
-                    .append('foreignObject')
-                    .attr('width', width)
-                    .attr('height', yScale.rangeBand())
-                    .attr('transform', function (d) {
-	return 'translate(0,' + yScale(getKey(d)) + ')';
-})
+					// label container
+					.append('foreignObject')
+					.attr('width', width)
+					.attr('height', yScale.rangeBand())
+					.attr('transform', d => `translate(0,${yScale(getKey(d))})`)
 
-                    // label
-                    .append('xhtml:div')
-                    .attr('class', 'label ' + getSecondaryClassName())
-                    .html(function (d) {
-	return getKey(d) || '(EMPTY)';
-});
+					// label
+					.append('xhtml:div')
+					.attr('class', `label ${getSecondaryClassName()}`)
+					.html(d => getKey(d) || `(${$translate.instant('EMPTY')})`);
 			}
 
 			function drawHoverBars(statData, width) {
 				svg.selectAll('g.bg-rect')
-                    .data(statData)
-                    .enter()
-                    .append('g')
-                    .attr('class', 'hover')
-                    .attr('transform', function (d) {
-	return 'translate(0, ' + (yScale(getKey(d)) - 2) + ')';
-})
-                    .append('rect')
-                    .attr('width', width)
-                    .attr('height', yScale.rangeBand() + 4)
-                    .attr('class', 'bg-rect')
-                    .style('opacity', 0)
-                    .on('mouseenter', function (d, i) {
-	d3.select(this).style('opacity', 0.4);
-	tooltip.show(d, i);
-})
-                    .on('mouseleave', function (d) {
-	d3.select(this).style('opacity', 0);
-	tooltip.hide(d);
-})
-                    .on('click', function (d) {
-	const item = _.extend({}, d);
-	const index = _.findIndex(statData, d);
-	if (d3.event.ctrlKey || d3.event.metaKey) {
-		if (_.find(selectedValues, item)) {
-			_.remove(selectedValues, item);
-		}
-		else {
-			selectedValues.push(item);
-		}
-		scope.onCtrlClick({ item });
-	}
-	else if (d3.event.shiftKey) {
-		if (min > -1 && max > -1 && index > min && index < max) {
-			const previousMax = max;
-			max = index;
-			for (let i = (index + 1); i <= previousMax; i++) {
-				const currentItem = _.extend({}, statData[i]);
-				_.remove(selectedValues, currentItem);
-				scope.onCtrlClick({ item: currentItem });
-			}
-		}
-		else {
-			if (min < 0 || min > index) {
-				min = index;
+					.data(statData)
+					.enter()
+					.append('g')
+					.attr('class', 'hover')
+					.attr('transform', d => `translate(0, ${yScale(getKey(d)) - 2})`)
+					.append('rect')
+					.attr('width', width)
+					.attr('height', yScale.rangeBand() + 4)
+					.attr('class', 'bg-rect')
+					.style('opacity', 0)
+					.on('mouseenter', (d, i) => {
+						d3.select(this).style('opacity', 0.4);
+						tooltip.show(d, i);
+					})
+					.on('mouseleave', (d) => {
+						d3.select(this).style('opacity', 0);
+						tooltip.hide(d);
+					})
+					.on('click', (d) => {
+						const item = _.extend({}, d);
+						const index = _.findIndex(statData, d);
+						if (d3.event.ctrlKey || d3.event.metaKey) {
+							if (_.find(selectedValues, item)) {
+								_.remove(selectedValues, item);
+							}
+							else {
+								selectedValues.push(item);
+							}
+							scope.onCtrlClick({ item });
+						}
+						else if (d3.event.shiftKey) {
+							if (min > -1 && max > -1 && index > min && index < max) {
+								const previousMax = max;
+								max = index;
+								for (let i = (index + 1); i <= previousMax; i++) {
+									const currentItem = _.extend({}, statData[i]);
+									delete selectedValues.currentItem;
+									scope.onCtrlClick({ item: currentItem });
+								}
+							}
+							else {
+								if (min < 0 || min > index) {
+									min = index;
+								}
+
+								if (max < 0 || max < index) {
+									max = index;
+								}
+
+								for (let i = min; i <= max; i++) {
+									const currentItem = _.extend({}, statData[i]);
+									if (!_.find(selectedValues, currentItem)) {
+										selectedValues.push(currentItem);
+										scope.onCtrlClick({ item: currentItem });
+									}
+								}
+							}
+						}
+						else {
+							selectedValues = [];
+							if (_.find(selectedValues, item)) {
+								min = max = -1;
+							}
+							else {
+								selectedValues.push(item);
+								min = max = index;
+							}
+							// create a new reference as the data object could be modified outside the component
+							scope.onClick({ item });
+						}
+					});
 			}
 
-			if (max < 0 || max < index) {
-				max = index;
-			}
-
-			for (let i = min; i <= max; i++) {
-				const currentItem = _.extend({}, statData[i]);
-				if (!_.find(selectedValues, currentItem)) {
-					selectedValues.push(currentItem);
-					scope.onCtrlClick({ item: currentItem });
-				}
-			}
-		}
-	}
-	else {
-		selectedValues = [];
-		if (_.find(selectedValues, item)) {
-			min = max = -1;
-		}
-		else {
-			selectedValues.push(item);
-			min = max = index;
-		}
-                            // create a new reference as the data object could be modified outside the component
-		scope.onClick({ item });
-	}
-});
-			}
-
-            //------------------------------------------------------------------------------------------------------
-            // ------------------------------------------- Chart render ---------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ------------------------------------------- Chart render ---------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			function renderWholeHBarchart(firstVisuData, secondVisuData) {
-                // Chart sizes dynamically computed (it depends on the bars number)
+				// Chart sizes dynamically computed (it depends on the bars number)
 				const containerHeight = Math.ceil(((+attrs.height) / 15) * (firstVisuData.length + 1));
 				const width = containerWidth - margin.left - margin.right;
 				const height = containerHeight - margin.top - margin.bottom;
@@ -369,34 +353,34 @@ export default function HorizontalBarchart($timeout) {
 				}
 			}
 
-            //------------------------------------------------------------------------------------------------------
-            // ---------------------------------------------- Watchers ----------------------------------------------
-            //------------------------------------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------------------
+			// ---------------------------------------------- Watchers ----------------------------------------------
+			//------------------------------------------------------------------------------------------------------
 			let oldVisuData;
 			scope.$watchGroup(['primaryData', 'secondaryData'],
-                function (newValues) {
-	const firstVisuData = newValues[0];
-	const secondVisuData = newValues[1];
-	const firstDataHasChanged = firstVisuData !== oldVisuData;
+				(newValues) => {
+					const firstVisuData = newValues[0];
+					const secondVisuData = newValues[1];
+					const firstDataHasChanged = firstVisuData !== oldVisuData;
 
-	if (firstDataHasChanged) {
-		oldVisuData = firstVisuData;
-		element.empty();
-                        // because the tooltip is not a child of the horizontal barchart element
-		d3.selectAll('.horizontal-barchart-cls.d3-tip').remove();
-		if (firstVisuData) {
-			$timeout.cancel(renderPrimaryTimeout);
-			renderPrimaryTimeout = $timeout(renderWholeHBarchart.bind(this, firstVisuData, secondVisuData), 100, false);
-		}
-	}
-	else {
-		$timeout.cancel(renderSecondaryTimeout);
-		renderSecondaryTimeout = $timeout(renderSecondaryBars.bind(this, secondVisuData), 100, false);
-	}
-}
-            );
+					if (firstDataHasChanged) {
+						oldVisuData = firstVisuData;
+						element.empty();
+						// because the tooltip is not a child of the horizontal barchart element
+						d3.selectAll('.horizontal-barchart-cls.d3-tip').remove();
+						if (firstVisuData) {
+							$timeout.cancel(renderPrimaryTimeout);
+							renderPrimaryTimeout = $timeout(renderWholeHBarchart.bind(this, firstVisuData, secondVisuData), 100, false);
+						}
+					}
+					else {
+						$timeout.cancel(renderSecondaryTimeout);
+						renderSecondaryTimeout = $timeout(renderSecondaryBars.bind(this, secondVisuData), 100, false);
+					}
+				}
+			);
 
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				d3.selectAll('.horizontal-barchart-cls.d3-tip').remove();
 				$timeout.cancel(renderPrimaryTimeout);
 				$timeout.cancel(renderSecondaryTimeout);

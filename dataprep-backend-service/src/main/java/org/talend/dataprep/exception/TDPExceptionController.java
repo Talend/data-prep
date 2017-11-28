@@ -79,7 +79,7 @@ public class TDPExceptionController {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         context.put("binding_results", e.getBindingResult().getAllErrors());
         TdpExceptionDto exceptionDto = new TdpExceptionDto(CommonErrorCodes.UNEXPECTED_CONTENT.getCode(), null,
-                e.getMessage(), "Invalid argument", context);
+                e.getMessage(), e.getLocalizedMessage(), "Invalid argument", context);
         return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, NOT_ACCEPTABLE);
     }
 

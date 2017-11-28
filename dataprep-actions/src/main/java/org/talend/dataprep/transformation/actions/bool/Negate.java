@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.bool;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
@@ -31,22 +32,19 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  *
  * @see Negate
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Negate.NEGATE_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Negate.ACTION_NAME)
 public class Negate extends AbstractActionMetadata implements ColumnAction {
 
-    /**
-     * Action name.
-     */
-    static final String NEGATE_ACTION_NAME = "negate";
+    public static final String ACTION_NAME = "negate";
 
     @Override
     public String getName() {
-        return NEGATE_ACTION_NAME;
+        return ACTION_NAME;
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.BOOLEAN.getDisplayName();
+    public String getCategory(Locale locale) {
+        return ActionCategory.BOOLEAN.getDisplayName(locale);
     }
 
     @Override

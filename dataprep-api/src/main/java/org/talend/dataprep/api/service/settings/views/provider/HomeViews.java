@@ -33,14 +33,14 @@ public interface HomeViews {
             .id("appheaderbar")
             .brand(
                     LinkSettings.builder()
-                            .name("Data Preparation")
+                            .label("appheaderbar.brand")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build()
             )
             .logo(
                     LinkSettings.builder()
-                            .name("Talend")
-                            .label("Go to home page")
+                            .name("appheaderbar.logo")
+                            .label("appheaderbar.logo.tooltip")
                             .onClick(MENU_PREPARATIONS.getId())
                             .build())
             .search(
@@ -54,7 +54,7 @@ public interface HomeViews {
                             .onSelect("preparation", MENU_PLAYGROUND_PREPARATION.getId())
                             .onSelect("folder", MENU_FOLDERS.getId())
                             .onSelect("dataset", DATASET_OPEN.getId())
-                            .placeholder("Search Talend Data Preparation and Documentation")
+                            .placeholder("appheaderbar.search.placeholder")
                             .build()
             )
             .help(HEADERBAR_HELP.getId())

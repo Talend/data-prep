@@ -79,12 +79,13 @@ $search-actions-height: 25px;
 	.filters-actions-form {
 		display: flex;
 		align-items: center;
+		justify-content: flex-start;
 		flex-basis: 30px;
 		flex-grow: 0;
 		flex-shrink: 0;
 		background-color: #DDDDDD;
 		right: 10px;
-		padding: 5px 10px 0 10px;
+		padding: 0 10px;
 
 		&.ng-enter {
 			animation: fadeIn 0.25s;

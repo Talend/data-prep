@@ -201,6 +201,7 @@ describe('Datagrid header directive', () => {
 
 		//then
 		expect(document.activeElement).toBe(element.find('.grid-header-title-input').eq(0)[0]); //eslint-disable-line angular/document-service
+		console.log($window.getSelection());
 		expect($window.getSelection().toString()).toBe('MostPopulousCity');
 	}));
 

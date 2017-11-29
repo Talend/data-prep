@@ -397,6 +397,9 @@
   "DATASET_PARAMETERS": "Dataset parameters",
   "DATASET_PARAMETERS_ENCODING": "Encoding",
   "DATASET_PARAMETERS_SEPARATOR": "Field delimiter",
+  "DATASET_PARAMETERS_ESCAPE_CHARACTER": "Escape character",
+  "DATASET_PARAMETERS_DELIMITER": "Character to use as a delimiter",
+
   "ACTION_HELP": "Learn more…",
   "NAME": "Name",
   "SIZE": "Size",

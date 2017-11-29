@@ -42,13 +42,12 @@
         </p>
 
         <p class="details">
-            <span class="important name" title="{{inventoryTileCtrl.dataset.name}}">{{inventoryTileCtrl.dataset.name}}</span>
-            &nbsp;- {{ inventoryTileCtrl.dataset.records}}
+            <span class="important name" title="{{inventoryTileCtrl.dataset.name}}">{{inventoryTileCtrl.dataset.model.name}}</span>
+            &nbsp;- {{ inventoryTileCtrl.dataset.model.records}}
             <span translate-once="ROWS"></span>
         </p>
         <p class="details">
-            <span class="important">{{inventoryTileCtrl.preparation.steps.length - 1}}</span> <span class="important" translate-once="STEPS"></span> <span translate-once="RECIPE"></span>
-        </p>
+            <span class="important">{{inventoryTileCtrl.preparation.steps.length - 1}}</span> <span class="important" translate-once="STEPS"></span>
     </div>
 
     <div class="actions">

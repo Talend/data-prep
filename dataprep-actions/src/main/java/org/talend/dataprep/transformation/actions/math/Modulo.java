@@ -39,7 +39,11 @@ public class Modulo extends AbstractMathOneParameterAction {
         String mod = Double.toString(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
 
         if (StringUtils.isNotBlank(parameter)) {
-            mod = BigDecimalParser.toBigDecimal(columnValue).remainder(BigDecimalParser.toBigDecimal(parameter)).abs().toString();
+            mod = BigDecimalParser
+                    .toBigDecimal(columnValue)
+                    .remainder(BigDecimalParser.toBigDecimal(parameter))
+                    .abs()
+                    .toString();
         }
         return mod;
     }

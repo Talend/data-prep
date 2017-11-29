@@ -19,6 +19,8 @@ import 'intro.js';
 
 // Jquery plugins
 import 'jquery-ui';
+import 'jquery-ui/ui/widgets/sortable';
+import 'jquery-ui/ui/widgets/resizable';
 
 // Angular
 import 'angular';
@@ -83,4 +85,3 @@ import 'ngreact';
 
 // slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
 import './lib/slick.autocolumnsize';
-

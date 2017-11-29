@@ -86,7 +86,7 @@ export function GridStateService() {
 	function updateFilteredOccurrencesOnSelectedColumn() {
 		gridState.filteredOccurences =
 			chain(gridState.filteredRecords)
-				.pluck(gridState.selectedColumns[0].id)
+				.map(gridState.selectedColumns[0].id)
 				.groupBy(function (value) {
 					return value;
 				})

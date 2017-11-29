@@ -30,6 +30,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
+import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
 public class RemoteResourceGetterTest {
 
@@ -166,7 +167,7 @@ public class RemoteResourceGetterTest {
     @Test
     public void testGetDictionaries() throws Exception {
         // Given
-        TdqCategories o = new TdqCategories(null, null, null, null);
+        TdqCategories o = TdqCategoriesFactory.createEmptyTdqCategories();
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(bos))) {
             oos.writeObject(o);

@@ -40,6 +40,7 @@ import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
+import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
 public class DefaultActionParserTest {
 
@@ -76,7 +77,7 @@ public class DefaultActionParserTest {
         apiUrl = serverMock.getServerUrl();
         parser = new DefaultActionParser(apiUrl, login, password);
 
-        TdqCategories o = new TdqCategories(null, null, null, null);
+        TdqCategories o = TdqCategoriesFactory.createEmptyTdqCategories();
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(bos))) {
             oos.writeObject(o);

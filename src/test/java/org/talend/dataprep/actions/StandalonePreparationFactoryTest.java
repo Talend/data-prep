@@ -32,6 +32,7 @@ import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
+import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
 public class StandalonePreparationFactoryTest {
 
@@ -39,7 +40,7 @@ public class StandalonePreparationFactoryTest {
 
     private StandalonePreparationFactory factory = new StandalonePreparationFactory();
 
-    private static DictionaryResource dictionaryResource = new DictionaryResource(new TdqCategories(null, null, null, null));
+    private static DictionaryResource dictionaryResource = new DictionaryResource(TdqCategoriesFactory.createEmptyTdqCategories());
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidJSON() throws Exception {

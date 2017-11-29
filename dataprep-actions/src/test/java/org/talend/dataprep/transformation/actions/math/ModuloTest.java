@@ -146,6 +146,21 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_not_calc_with_divisor_0() {
+        // given
+        DataSetRow row = getRow("6", "3", "Done !");
+
+        parameters.put(Modulo.MODE_PARAMETER, Modulo.CONSTANT_MODE);
+        parameters.put(Modulo.DIVISOR, "0");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(null, row.get("0003"));
+    }
+
+    @Test
     public void should_not_calc_mod_with_alpha_other_column() {
         // given
         final DataSetRow row = builder() //

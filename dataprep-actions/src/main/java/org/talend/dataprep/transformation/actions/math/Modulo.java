@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.actions.math;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,11 +40,6 @@ import java.util.*;
 public class Modulo extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     protected static final String MODULO_NAME = "modulo";
-
-    /**
-     * Mode: tells if operand is taken from another column or is a constant
-     */
-    public static final String MODE_PARAMETER = "mode";
 
     /** Number of the divisor. */
     protected static final String DIVISOR = "divisor";
@@ -67,7 +74,7 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
                         Parameter
                                 .parameter(locale)
                                 .setName(DIVISOR)
-                                .setType(ParameterType.STRING)
+                                .setType(ParameterType.INTEGER)
                                 .setDefaultValue("2")
                                 .build(this))
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
@@ -88,24 +95,25 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            checkParameters(actionContext.getParameters(), actionContext.getRowMetadata());
+            if (!checkParameters(actionContext.getParameters(), actionContext.getRowMetadata())) {
+                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            }
 
             // Create column
             final Map<String, String> parameters = actionContext.getParameters();
             final String columnId = actionContext.getColumnId();
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final ColumnMetadata sourceColumn = rowMetadata.getById(columnId);
+
             String divisorName;
+
             if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
-                if (actionContext.getParameters().get(DIVISOR).isEmpty()) {
-                    LOGGER.debug("miss parameter: " + DIVISOR + " is empty.");
-                    actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
-                }
                 divisorName = parameters.get(DIVISOR);
             } else {
                 final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
                 divisorName = selectedColumn.getName();
             }
+
             actionContext.column("result", r -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
@@ -130,21 +138,24 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
             divisor = parameters.get(DIVISOR);
+            if (!NumericHelper.isBigDecimal(value)) {
+                LOGGER.trace("value is not a number.");
+                return;
+            }
         } else {
             final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             divisor = row.get(selectedColumn.getId());
+            if (!NumericHelper.isBigDecimal(value) && NumericHelper.isBigDecimal(divisor)) {
+                LOGGER.trace("value or " + DIVISOR + " is not a number.");
+                return;
+            }
         }
-
-        if (NumericHelper.isBigDecimal(value) && NumericHelper.isBigDecimal(divisor)) {
-            row.set(newColumnId,
-                    BigDecimalParser
-                            .toBigDecimal(value)
-                            .remainder(BigDecimalParser.toBigDecimal(divisor))
-                            .abs()
-                            .toString());
-        } else {
-            LOGGER.trace("value or " + DIVISOR + " is not a number.");
-        }
+        row.set(newColumnId,
+                BigDecimalParser
+                        .toBigDecimal(value)
+                        .remainder(BigDecimalParser.toBigDecimal(divisor))
+                        .abs()
+                        .toString());
     }
 
     /**
@@ -154,7 +165,7 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
      * @param parameters where to look the parameter value.
      * @param rowMetadata the row where to look for the column.
      */
-    private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
+    private boolean checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DIVISOR)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", DIVISOR));
@@ -164,6 +175,15 @@ public class Modulo extends AbstractActionMetadata implements ColumnAction, Othe
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
+
+        if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
+            if (parameters.get(DIVISOR).isEmpty() || parameters.get(DIVISOR) == "0") {
+                LOGGER.debug(DIVISOR + " should not be empty or 0");
+                return false;
+            }
+
+        }
+        return true;
     }
 
     @Override

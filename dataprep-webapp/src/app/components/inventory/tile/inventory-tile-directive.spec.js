@@ -32,13 +32,15 @@ describe('Inventory Tile Component', () => {
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
         scope.dataset = {
-            id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-            name: 'customers_jso_light',
-            author: 'anonymousUser',
-            records: 15,
-            nbLinesHeader: 1,
-            nbLinesFooter: 0,
-            created: '03-30-2015 08:06',
+            model: {
+                id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+                name: 'customers_jso_light',
+                author: 'anonymousUser',
+                records: 15,
+                nbLinesHeader: 1,
+                nbLinesFooter: 0,
+                created: '03-30-2015 08:06',
+            },
         };
         scope.preparation = {
             id: 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',

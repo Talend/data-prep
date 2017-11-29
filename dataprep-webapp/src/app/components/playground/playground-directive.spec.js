@@ -153,11 +153,13 @@ describe('Playground directive', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(($rootScope, $compile) => {
+	beforeEach(inject(($rootScope, $compile, $q, DatasetService) => {
 		scope = $rootScope.$new();
+		spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when());
 
 		createElement = () => {
 			element = angular.element('<playground></playground>');
+			angular.element('body').append(element);
 			$compile(element)(scope);
 			scope.$digest();
 
@@ -231,6 +233,27 @@ describe('Playground directive', () => {
 			expect(element.find('.playground-recipe').eq(0).hasClass('slide-hide')).toBe(true);
 			expect(element.find('.playground-recipe').eq(0).find('.action').eq(0).hasClass('right')).toBe(false);
 		});
+
+		it('should hide preparation picker modal', () => {
+			// given
+			stateMock.playground.isPreprationPickerVisible = false;
+
+			// when
+			createElement();
+
+			expect(angular.element('body').find('preparation-picker').length).toBe(0);
+		});
+
+		it('should display preparation picker modal', inject(() => {
+			// given
+			stateMock.playground.dataset = metadata;
+			stateMock.playground.isPreprationPickerVisible = true;
+
+			// when
+			createElement();
+
+			expect(angular.element('body').find('preparation-picker').length).toBe(1);
+		}));
 	});
 
 	describe('dataset parameters', () => {

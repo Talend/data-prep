@@ -17,6 +17,7 @@ import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
@@ -36,16 +37,20 @@ public class Modulo extends AbstractMathOneParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, String parameter) {
-        String mod = Double.toString(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
-
+        BigDecimal value = new BigDecimal(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
+        BigDecimal mod = new BigDecimal(BigDecimalParser.toBigDecimal(parameter).doubleValue());
         if (StringUtils.isNotBlank(parameter)) {
-            mod = BigDecimalParser
+            value = BigDecimalParser
                     .toBigDecimal(columnValue)
-                    .remainder(BigDecimalParser.toBigDecimal(parameter))
-                    .abs()
-                    .toString();
+                    .remainder(BigDecimalParser.toBigDecimal(parameter));
+            if (value.doubleValue() < 0) {
+                if (mod.doubleValue() < 0) {
+                    value = value.subtract(mod);
+                }
+                value = value.add(mod);
+            }
         }
-        return mod;
+        return value.toString();
     }
 
     @Override

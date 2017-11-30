@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.actions.math;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +78,38 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         // then
         assertColumnWithResultCreated(row);
         assertEquals("1", row.get("0003"));
+    }
+
+    @Test
+    public void should_calc_mod_with_negative_value() {
+        // given
+        DataSetRow row = getRow("-7", "3", "Done !");
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "3");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("2", row.get("0003"));
+    }
+
+    @Test
+    public void should_calc_mod_with_negative_value_and_parameter() {
+        // given
+        DataSetRow row = getRow("-7", "3", "Done !");
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "-3");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("-1", row.get("0003"));
     }
 
     @Test

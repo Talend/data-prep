@@ -18,6 +18,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
@@ -37,20 +38,27 @@ public class Modulo extends AbstractMathOneParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, String parameter) {
-        BigDecimal value = new BigDecimal(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
-        BigDecimal mod = new BigDecimal(BigDecimalParser.toBigDecimal(parameter).doubleValue());
+        BigDecimal value = BigDecimalParser.toBigDecimal(columnValue);
+        BigDecimal mod = BigDecimalParser.toBigDecimal(parameter);
         if (StringUtils.isNotBlank(parameter)) {
-            value = BigDecimalParser
-                    .toBigDecimal(columnValue)
-                    .remainder(BigDecimalParser.toBigDecimal(parameter));
-            if (value.doubleValue() < 0) {
-                if (mod.doubleValue() < 0) {
-                    value = value.subtract(mod);
-                }
-                value = value.add(mod);
-            }
+            value = modulo(value, mod);
         }
         return value.toString();
+
+    }
+
+    protected BigDecimal modulo(BigDecimal value, BigDecimal mod) {
+            value = value.remainder(mod);
+            if (value.compareTo(BigDecimal.ZERO) == -1) {
+                if (mod.compareTo(BigDecimal.ZERO) == 1) {
+                    value = value.add(mod);
+                }
+            } else {
+                if (mod.compareTo(BigDecimal.ZERO) == -1) {
+                    value = value.add(mod);
+                }
+            }
+            return value.stripTrailingZeros();
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -65,6 +66,15 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void testModulo() {
+        assertEquals(new BigDecimal("1.2"), action.modulo(new BigDecimal("3.2"), new BigDecimal("2")));
+        assertEquals(new BigDecimal("0.8"), action.modulo(new BigDecimal("3"), new BigDecimal("2.2")));
+        assertEquals(new BigDecimal("0.8"), action.modulo(new BigDecimal("-3.2"), new BigDecimal("2")));
+        assertEquals(new BigDecimal("-1.4"), action.modulo(new BigDecimal("3"), new BigDecimal("-2.2")));
+        assertEquals(new BigDecimal("-1"), action.modulo(new BigDecimal("-3.2"), new BigDecimal("-2.2")));
+    }
+
+    @Test
     public void should_calc_mod() {
         // given
         DataSetRow row = getRow("6", "3", "Done !");
@@ -99,10 +109,10 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_calc_mod_with_negative_value_and_parameter() {
         // given
-        DataSetRow row = getRow("-7", "3", "Done !");
+        DataSetRow row = getRow("-6", "3", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
-        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "-3");
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "-5");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -149,7 +159,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals("1.0", row.get("0003"));
+        assertEquals("1", row.get("0003"));
     }
 
     @Test

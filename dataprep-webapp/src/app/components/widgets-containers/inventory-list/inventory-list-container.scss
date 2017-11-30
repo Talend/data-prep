@@ -21,26 +21,42 @@ $icon-xls-badge-color: #8ABC00;
 $large-screen: 57.3em !default;
 $x-large-screen: 120em !default;
 
-.list-item-preparation {
-	.tc-list-icon {
-		fill: $icon-preparation-color;
-	}
-}
-
-.list-item-folder {
-	.tc-list-icon {
-		fill: $icon-folder-color;
-	}
-}
-
-.list-item-favorite {
-	button[id^="datasets-list-"][id$="dataset:favorite"] {
-		visibility: visible;
-		svg {
-			fill: $icon-favorite-color;
+.tc-list-display-virtualized {
+	div.tc-list-cell-name {
+		flex: 1 0 450px;
+		@media(max-width: $x-large-screen) {
+			flex: 1 0 700px;
 		}
 	}
+
+	div.tc-list-cell-statusActions{ flex: 0 0 200px;}
+
+	div.tc-list-cell-nbRecords,
+	div.tc-list-cell-nbSteps{ flex: 0 0 60px;}
+
+	div.tc-list-cell-author,
+	div.tc-list-cell-creationDate,
+	div.tc-list-cell-lastModificationDate { flex: 1 0 120px;}
+	div.tc-list-cell-datasetName { flex: 1 0 200px; }
 }
+
+//#talend-dataprep {
+//	fill: $icon-preparation-color;
+//}
+//
+//#talend-folder-closed {
+//	fill: $icon-folder-color;
+//
+//}
+//
+//.list-item-favorite {
+//	button[id^="datasets-list-"][id$="dataset:favorite"] {
+//		visibility: visible;
+//		svg {
+//			fill: $icon-favorite-color;
+//		}
+//	}
+//}
 
 .ti-file-connect-o-badge {
 	fill: $icon-connect-badge-color;
@@ -74,29 +90,5 @@ $x-large-screen: 120em !default;
 
 	&-icon + span {
 		padding-left: 20px;
-	}
-}
-
-.tc-list-display-table {
-	td {
-		&:first-child {
-			width: 450px;
-			max-width: 450px;
-			+ td .actions {
-				width: auto;
-			}
-			@media(max-width: $x-large-screen) {
-				width: 700px;
-				max-width: 700px;
-			}
-		}
-		.item-text {
-			max-width: 200px;
-		}
-		@media(max-width: $x-large-screen) {
-			.item-text {
-				max-width: 250px;
-			}
-		}
 	}
 }

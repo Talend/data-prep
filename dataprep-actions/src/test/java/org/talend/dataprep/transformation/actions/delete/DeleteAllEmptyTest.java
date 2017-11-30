@@ -131,7 +131,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
         final DataSetRow row2 = getDataSetRow("David", "Bowie");
 
         // row 3
-        final DataSetRow row3 = getDataSetRow(" ", " ");
+        final DataSetRow row3 = getDataSetRow("", " ");
 
         //when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));

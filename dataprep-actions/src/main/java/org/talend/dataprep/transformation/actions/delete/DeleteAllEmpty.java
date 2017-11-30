@@ -92,11 +92,11 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
                 String value = row.get(column.getId());
                 switch (mode) {
                     case DELETE:
-                        if (!StringUtils.isEmpty(value) && !StringUtils.isBlank(value)) {
+                        if (StringUtils.isNotBlank(value)) {
                             return;
                         }
                     case KEEP:
-                        if (!StringUtils.isEmpty(value)) {
+                        if (StringUtils.isNotEmpty(value)) {
                             return;
                         }
                 }

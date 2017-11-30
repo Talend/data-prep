@@ -291,6 +291,16 @@
         "label": "Filter",
         "description": "An optional filter to apply action on matching values only.",
         "default": ""
+      },
+      {
+        "name": "non_printing",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Rows containing only non-printing characters",
+        "description": "Delete rows containing only non-printing characters",
+        "default": "delete"
       }
     ],
     "actionScope": [

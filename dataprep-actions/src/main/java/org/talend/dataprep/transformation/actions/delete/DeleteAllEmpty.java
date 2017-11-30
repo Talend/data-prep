@@ -84,49 +84,24 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
     }
 
     @Override
-    public void compile(ActionContext actionContext) {
-        super.compile(actionContext);
-        if(actionContext.getActionStatus()==ActionContext.ActionStatus.OK) {
-
-        }
-    }
-    @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        if(!row.isDeleted()) {
-            if (checkEmptyRow(row)) {
-                row.setDeleted(true);
-            } else if (checkBlankRow(row, context.getParameters())) {
-                row.setDeleted(true);
-            }
-        }
-    }
-
-    private boolean checkBlankRow(DataSetRow row, Map<String, String> parameters) {
-        for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-            String value = row.get(column.getId());
-                if (!StringUtils.isBlank(value)) {
-                    return false;
+        if (!row.isDeleted()) {
+            Map<String, String> parameters = context.getParameters();
+            String mode = parameters.get(NON_PRINTING_PARAMETER);
+            for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
+                String value = row.get(column.getId());
+                switch (mode) {
+                    case DELETE:
+                        if (!StringUtils.isEmpty(value) && !StringUtils.isBlank(value)) {
+                            return;
+                        }
+                    case KEEP:
+                        if (!StringUtils.isEmpty(value)) {
+                            return;
+                        }
                 }
             }
-        if (parameters.get(NON_PRINTING_PARAMETER) == KEEP) {
-            return false;
+            row.setDeleted(true);
         }
-        return true;
-    }
-
-    /**
-     * Check if the row is empty or not. Return true if the row is empty, else false.
-     *
-     * @param row to test.
-     * @return boolean
-     */
-    protected boolean checkEmptyRow(DataSetRow row) {
-        for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-            String value = row.get(column.getId());
-            if (!StringUtils.isEmpty(value)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

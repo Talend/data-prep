@@ -4,7 +4,8 @@
       "action": "delete_all_empty",
       "parameters": {
         "column_id": "0000",
-        "scope": "dataset"
+        "scope": "dataset",
+        "non_printing": "delete"
       }
     }
   ]

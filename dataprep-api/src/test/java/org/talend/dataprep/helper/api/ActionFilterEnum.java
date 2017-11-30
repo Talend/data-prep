@@ -4,8 +4,9 @@ import static org.talend.dataprep.helper.api.ParamType.INTEGER;
 import static org.talend.dataprep.helper.api.ParamType.STRING;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -31,11 +32,17 @@ public enum ActionFilterEnum {
         paramType = pParamType;
     }
 
-    public static ActionFilterEnum getActionFilterEnum(String pName) {
-        List<ActionFilterEnum> ret = Arrays.stream(ActionFilterEnum.values()) //
-                .filter(e -> e.name.equals(pName)) //
-                .collect(Collectors.toList());
-        return ret.size() == 0 ? null : ret.get(0);
+    /**
+     * Get a corresponding {@link ActionFilterEnum} from a {@link String}.
+     * 
+     * @param pName the {@link ActionFilterEnum#name}.
+     * @return the corresponding {@link ActionFilterEnum} or <code>null</code> if there isn't.
+     */
+    @Nullable
+    public static ActionFilterEnum getActionFilterEnum(@NotNull String pName) {
+        return Arrays.stream(ActionFilterEnum.values()) //
+                .filter(e -> e.name.equalsIgnoreCase(pName)) //
+                .findFirst().orElse(null);
     }
 
     public String getName() {

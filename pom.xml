@@ -31,6 +31,7 @@
     </properties>
     <build>
         <plugins>
+            <!-- To build a big zip with all dependencies for the Studio. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

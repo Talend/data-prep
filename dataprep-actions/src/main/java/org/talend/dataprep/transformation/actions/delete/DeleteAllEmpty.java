@@ -55,8 +55,8 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(NON_PRINTING_PARAMETER) //
-                .item(DELETE, DELETE)//
-                .item(KEEP, KEEP)
+                .item(DELETE)//
+                .item(KEEP)
                 .defaultValue(DELETE)
                 .build(this));
 
@@ -88,20 +88,26 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
         if (!row.isDeleted()) {
             Map<String, String> parameters = context.getParameters();
             String mode = parameters.get(NON_PRINTING_PARAMETER);
-            for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-                String value = row.get(column.getId());
-                switch (mode) {
-                    case DELETE:
-                        if (StringUtils.isNotBlank(value)) {
-                            return;
-                        }
-                    case KEEP:
-                        if (StringUtils.isNotEmpty(value)) {
-                            return;
-                        }
-                }
-            }
-            row.setDeleted(true);
+            row.setDeleted(toDelete(row, mode));
         }
+    }
+
+    public boolean toDelete(DataSetRow row, String mode) {
+        for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
+            String value = row.get(column.getId());
+            switch (mode) {
+                case KEEP:
+                    if (StringUtils.isNotEmpty(value)) {
+                        return false;
+                    }
+                    break;
+                case DELETE:
+                    if (StringUtils.isNotBlank(value)) {
+                        return false;
+                    }
+                    break;
+            }
+        }
+        return true;
     }
 }

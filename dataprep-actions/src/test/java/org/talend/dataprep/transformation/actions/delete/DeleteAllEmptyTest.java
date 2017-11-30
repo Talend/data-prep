@@ -133,13 +133,21 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
         // row 3
         final DataSetRow row3 = getDataSetRow("", " ");
 
+        //row 4
+        final DataSetRow row4 = getDataSetRow("     ", " ");
+
+        //row 5
+        final DataSetRow row5 = getDataSetRow("", "\n\t");
+
         //when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row1.isDeleted(), is(false));
         assertThat(row2.isDeleted(), is(false));
         assertThat(row3.isDeleted(), is(true));
+        assertThat(row4.isDeleted(), is(true));
+        assertThat(row5.isDeleted(), is(true));
     }
 
     @Test
@@ -152,17 +160,25 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
         final DataSetRow row2 = getDataSetRow("David", "Bowie");
 
         // row 3
-        final DataSetRow row3 = getDataSetRow(" ", " ");
+        final DataSetRow row3 = getDataSetRow(" ", "    ");
+
+        //row4
+        final DataSetRow row4 = getDataSetRow("", "");
+
+        //row 5
+        final DataSetRow row5 = getDataSetRow("", "\n\t");
 
         parameters.remove(DeleteAllEmpty.NON_PRINTING_PARAMETER);
         parameters.put(DeleteAllEmpty.NON_PRINTING_PARAMETER, DeleteAllEmpty.KEEP);
         //when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row1.isDeleted(), is(false));
         assertThat(row2.isDeleted(), is(false));
         assertThat(row3.isDeleted(), is(false));
+        assertThat(row4.isDeleted(), is(true));
+        assertThat(row5.isDeleted(), is(false));
     }
 
     @Test

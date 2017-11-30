@@ -201,8 +201,8 @@ describe('Datagrid header directive', () => {
 
 		//then
 		expect(document.activeElement).toBe(element.find('.grid-header-title-input').eq(0)[0]); //eslint-disable-line angular/document-service
-		console.log($window.getSelection());
-		expect($window.getSelection().toString()).toBe('MostPopulousCity');
+		console.log($window.getSelection(), $window.getSelection().toLocaleString());
+		expect($window.getSelection().toLocaleString()).toBe('MostPopulousCity');
 	}));
 
 	it('should switch from input to text on ESC keydown', () => {

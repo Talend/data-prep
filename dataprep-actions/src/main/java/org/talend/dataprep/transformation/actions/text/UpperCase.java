@@ -13,9 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -55,8 +53,8 @@ public class UpperCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
+        return Collections.singletonList(new AdditionnalColumn(context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

@@ -1,9 +1,23 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.actions.delete;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -24,9 +38,29 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
      */
     public static final String DELETE_ALL_EMPTY_ACTION_NAME = "delete_all_empty";
 
+    protected static final String NON_PRINTING_PARAMETER = "non_printing";
+
+    protected static final String DELETE = "delete";
+
+    protected static final String KEEP = "keep";
+
     @Override
     public String getName() {
         return DELETE_ALL_EMPTY_ACTION_NAME;
+    }
+
+    @Override
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
+
+        parameters.add(SelectParameter.selectParameter(locale) //
+                .name(NON_PRINTING_PARAMETER) //
+                .item(DELETE, DELETE)//
+                .item(KEEP, KEEP)
+                .defaultValue(DELETE)
+                .build(this));
+
+        return parameters;
     }
 
     @Override
@@ -50,12 +84,34 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
     }
 
     @Override
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        if(actionContext.getActionStatus()==ActionContext.ActionStatus.OK) {
+
+        }
+    }
+    @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
         if(!row.isDeleted()) {
             if (checkEmptyRow(row)) {
                 row.setDeleted(true);
+            } else if (checkBlankRow(row, context.getParameters())) {
+                row.setDeleted(true);
             }
         }
+    }
+
+    private boolean checkBlankRow(DataSetRow row, Map<String, String> parameters) {
+        for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
+            String value = row.get(column.getId());
+                if (!StringUtils.isBlank(value)) {
+                    return false;
+                }
+            }
+        if (parameters.get(NON_PRINTING_PARAMETER) == KEEP) {
+            return false;
+        }
+        return true;
     }
 
     /**

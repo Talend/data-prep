@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.transformation.actions.delete;
 
 import org.junit.Before;
@@ -71,7 +84,24 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_delete_because_value_not_set() {
+    public void should_accept_column() {
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.ANY)));
+    }
+
+    @Test
+    public void should_have_expected_behavior() {
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_DELETE_ROWS));
+    }
+
+    @Test
+    public void should_delete_with_empty_row() {
         // given
         // row 1
         final DataSetRow row1 = getDataSetRow("David", "Bowie");
@@ -89,6 +119,50 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
         assertThat(row1.isDeleted(), is(false));
         assertThat(row2.isDeleted(), is(false));
         assertThat(row3.isDeleted(), is(true));
+    }
+
+    @Test
+    public void should_delete_with_blank_row() {
+        // given
+        // row 1
+        final DataSetRow row1 = getDataSetRow("David", "Bowie");
+
+        // row 2
+        final DataSetRow row2 = getDataSetRow("David", "Bowie");
+
+        // row 3
+        final DataSetRow row3 = getDataSetRow(" ", " ");
+
+        //when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertThat(row1.isDeleted(), is(false));
+        assertThat(row2.isDeleted(), is(false));
+        assertThat(row3.isDeleted(), is(true));
+    }
+
+    @Test
+    public void should_not_delete_with_blank_row() {
+        // given
+        // row 1
+        final DataSetRow row1 = getDataSetRow("David", "Bowie");
+
+        // row 2
+        final DataSetRow row2 = getDataSetRow("David", "Bowie");
+
+        // row 3
+        final DataSetRow row3 = getDataSetRow(" ", " ");
+
+        parameters.remove(DeleteAllEmpty.NON_PRINTING_PARAMETER);
+        parameters.put(DeleteAllEmpty.NON_PRINTING_PARAMETER, DeleteAllEmpty.KEEP);
+        //when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertThat(row1.isDeleted(), is(false));
+        assertThat(row2.isDeleted(), is(false));
+        assertThat(row3.isDeleted(), is(false));
     }
 
     @Test
@@ -134,22 +208,5 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
         // then
         assertThat(row1.isDeleted(), is(false));
         assertThat(row2.isDeleted(), is(true));
-    }
-
-    @Test
-    public void should_accept_column() {
-        assertTrue(action.acceptField(getColumn(Type.STRING)));
-        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
-        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
-        assertTrue(action.acceptField(getColumn(Type.DATE)));
-        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
-        assertTrue(action.acceptField(getColumn(Type.ANY)));
-    }
-
-    @Test
-    public void should_have_expected_behavior() {
-        assertEquals(2, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_DELETE_ROWS));
     }
 }

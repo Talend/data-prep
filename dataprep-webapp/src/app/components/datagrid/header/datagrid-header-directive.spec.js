@@ -202,7 +202,7 @@ describe('Datagrid header directive', () => {
 		//then
 		const activeElement = document.activeElement; //eslint-disable-line angular/document-service
 		expect(activeElement).toBe(element.find('.grid-header-title-input').eq(0)[0]);
-		console.log(activeElement);
+		console.log(activeElement.value);
 		console.log(activeElement.value.slice(activeElement.selectionStart, activeElement.selectionEnd));
 		console.log($window.getSelection());
 		console.log($window.getSelection().toString());

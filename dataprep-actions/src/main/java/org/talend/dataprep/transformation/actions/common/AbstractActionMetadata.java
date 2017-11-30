@@ -298,13 +298,13 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      *
      * Actions that creates more than one column ('split', 'extract email parts', etc...) should manage this on their own.
      */
-    protected void createNewColumn(ActionContext context) {
+    final private void createNewColumn(ActionContext context) {
         if (doesCreateNewColumn(context.getParameters())) {
             String columnId = context.getColumnId();
             RowMetadata rowMetadata = context.getRowMetadata();
 
             context.get(TARGET_COLUMN, r -> {
-                final List<String> cols = new ArrayList<String>();
+                final Map<String, String> cols = new HashMap<String, String>();
 
                 String nextId = columnId; // id of the column to put the new one after, initially the current column
 
@@ -321,7 +321,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
                     ColumnMetadata columnMetadata = c.build();
                     rowMetadata.insertAfter(nextId, columnMetadata);
                     nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
-                    cols.add(columnMetadata.getId());
+                    cols.put(additionnalColumn.getKey(), columnMetadata.getId());
                 }
 
                 return cols;
@@ -332,28 +332,28 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * Helper to retrieve the target column Id stored in the context.
      *
+     * It can be the current column id if the function applies in place or id of the new column if the function creates one.
+     * Must not be used for function that creates many columns. Use getTargetColumnIds(ActionContext context) instead in this case.
+     *
      * @param context the action context
      * @return the target column ID
      */
     public String getTargetColumnId(ActionContext context) {
         if (doesCreateNewColumn(context.getParameters())) {
-            final List<String> newColumns = context.get(TARGET_COLUMN);
-            return newColumns.get(0);
+            final Map<String, String> newColumns = context.get(TARGET_COLUMN);
+            return newColumns.values().iterator().next();
         } else {
             return context.getColumnId();
         }
     }
 
     /**
-     * ça n'est pas très beau de gérer ça comme ça. ça et la méthode du dessus.
+     * Returns new columns created by the function in case of it creates multiple ones. Like 'Split' or 'ExtractDateTokens'.
+     *
+     * @return a map in which keys are the 'key' from AdditionnalColumn bean, and values columns ids.
      */
-    public List<String> getTargetColumnIds(ActionContext context) {
-        if (doesCreateNewColumn(context.getParameters())) {
-            final List<String> newColumns = context.get(TARGET_COLUMN);
-            return newColumns;
-        } else {
-            throw new RuntimeException("bizarre");
-        }
+    public Map<String, String> getTargetColumnIds(ActionContext context) {
+        return context.get(TARGET_COLUMN);
     }
 
     protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
@@ -371,7 +371,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      *
      * @return The Type of the new column
      */
-    public Type getColumnType(ActionContext context) {
+    protected Type getColumnType(ActionContext context) {
         return Type.STRING;
     }
 
@@ -380,11 +380,18 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      *
      * @return The name of the new column
      */
-    public String getCreatedColumnName(ActionContext context) {
+    protected String getCreatedColumnName(ActionContext context) {
         return null; // Must be implemented for all actions but those which always applies in place
     }
 
+    /**
+     * Bean used to described all columns that can be created by a function.
+     *
+     * This will be used by createNewColumn(ActionContext context) to create all the new columns.
+     */
     protected class AdditionnalColumn {
+
+        private String key;
 
         private String name;
 
@@ -393,12 +400,26 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
         private ColumnMetadata copyFrom;
 
         public AdditionnalColumn(String name) {
+            this(name, name);
+        }
+
+        public AdditionnalColumn(String key, String name) {
+            this.key = key;
             this.name = name;
         }
 
-        public AdditionnalColumn(Type type, String name) {
+        public AdditionnalColumn(String key, Type type, String name) {
+            this(key, name);
             this.type = type;
-            this.name = name;
+        }
+
+        public AdditionnalColumn(Type type, String name) {
+            this(name);
+            this.type = type;
+        }
+
+        public String getKey() {
+            return key;
         }
 
         public String getName() {

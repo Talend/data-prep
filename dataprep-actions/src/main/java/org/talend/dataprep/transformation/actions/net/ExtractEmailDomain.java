@@ -86,8 +86,8 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
 
 
-        additionnalColumns.add(new AdditionnalColumn(column.getName() + LOCAL));
-        additionnalColumns.add(new AdditionnalColumn(column.getName() + DOMAIN));
+        additionnalColumns.add(new AdditionnalColumn(LOCAL, column.getName() + LOCAL));
+        additionnalColumns.add(new AdditionnalColumn(DOMAIN, column.getName() + DOMAIN));
 
         return additionnalColumns;
     }
@@ -100,8 +100,8 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
         final String columnId = context.getColumnId();
         final String originalValue = row.get(columnId);
         // Perform metadata level actions (add local + domain columns).
-        final String local = getTargetColumnIds(context).get(0); // ça n'est pas très élégant
-        final String domain = getTargetColumnIds(context).get(1);
+        final String local = getTargetColumnIds(context).get(LOCAL);
+        final String domain = getTargetColumnIds(context).get(DOMAIN);
         // Set the values in newly created columns
         if (originalValue == null) {
             return;

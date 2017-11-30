@@ -18,9 +18,7 @@ import static org.talend.dataprep.api.type.Type.STRING;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +31,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.actions.date.ExtractDateTokens;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
@@ -74,29 +73,20 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
-    protected void createNewColumn(ActionContext context) {
-        final String columnId = context.getColumnId();
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
+    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
+        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
 
-        String lastId = column.getId();
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-            final String columnName = column.getName() + urlTokenExtractor.getTokenName();
-            String columnToInsertAfter = lastId;
-            lastId = context.column(columnName, r -> {
-                final ColumnMetadata newColumn = column().name(columnName).type(urlTokenExtractor.getType()).build();
-                rowMetadata.insertAfter(columnToInsertAfter, newColumn);
-                return newColumn;
-            });
+            additionnalColumns.add(new AdditionnalColumn(urlTokenExtractor.getTokenName(), urlTokenExtractor.getType(), context.getColumnName() + urlTokenExtractor.getTokenName()));
         }
+
+        return additionnalColumns;
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String originalValue = row.get(columnId);
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
 
         URI url = null;
         try {
@@ -107,11 +97,10 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         }
         // if url is null, we still loop on urlTokenExtractors in order to create the column metadata for all rows, even
         // invalid ones.
+        final Map<String, String> newColumns = getTargetColumnIds(context);
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-            final String columnName = column.getName() + urlTokenExtractor.getTokenName();
-            final String id = context.column(columnName);
             final String tokenValue = url == null ? StringUtils.EMPTY : urlTokenExtractor.extractToken(url);
-            row.set(id, (tokenValue == null ? StringUtils.EMPTY : tokenValue));
+            row.set(newColumns.get(urlTokenExtractor.getTokenName()), (tokenValue == null ? StringUtils.EMPTY : tokenValue));
         }
     }
 

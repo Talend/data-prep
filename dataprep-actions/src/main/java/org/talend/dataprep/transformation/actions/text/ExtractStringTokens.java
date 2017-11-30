@@ -145,33 +145,18 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
     }
 
     @Override
-    protected void createNewColumn(ActionContext context) {
-        // Create result column
-        final Map<String, String> parameters = context.getParameters();
-        final String columnId = context.getColumnId();
+    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
+        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
 
-        // create the new columns
+        final Map<String, String> parameters = context.getParameters();
         int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT))
                 : 1;
 
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
-        final List<String> newColumns = new ArrayList<>();
-        final Deque<String> lastColumnId = new ArrayDeque<>();
-        lastColumnId.push(columnId);
         for (int i = 0; i < limit; i++) {
-            final int newColumnIndex = i + 1;
-            newColumns.add(context.column(column.getName() + APPENDIX + i, r -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .type(Type.STRING) //
-                        .computedId(StringUtils.EMPTY) //
-                        .name(column.getName() + APPENDIX + newColumnIndex) //
-                        .build();
-                lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
-                return c;
-            }));
+            additionnalColumns.add(new AdditionnalColumn("" + i, context.getColumnName() + APPENDIX + (i + 1)));
         }
+
+        return additionnalColumns;
     }
 
     @Override
@@ -184,10 +169,7 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final List<String> newColumns = new ArrayList<>();
-        for (int i = 0; i < limit; i++) {
-            newColumns.add(context.column(column.getName() + APPENDIX + i));
-        }
+        final Map<String, String> newColumns = getTargetColumnIds(context);
 
         // Set the split values in newly created columns
         final String originalValue = row.get(columnId);
@@ -211,16 +193,16 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
         if (parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE)) {
             for (int i = 0; i < newColumns.size(); i++) {
                 if (i < extractedValues.size()) {
-                    row.set(newColumns.get(i), extractedValues.get(i));
+                    row.set(newColumns.get("" + i), extractedValues.get(i));
                 } else {
                     // If we found less tokens than limit, we complete with empty entries
-                    row.set(newColumns.get(i), EMPTY);
+                    row.set(newColumns.get("" + i), EMPTY);
                 }
             }
         } else {
             StrBuilder strBuilder = new StrBuilder();
             strBuilder.appendWithSeparators(extractedValues, parameters.get(PARAMETER_SEPARATOR));
-            row.set(newColumns.get(0), strBuilder.toString());
+            row.set(getTargetColumnId(context), strBuilder.toString());
         }
     }
 

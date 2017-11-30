@@ -136,7 +136,7 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         int limit = Integer.parseInt(context.getParameters().get(LIMIT));
 
         for (int i = 0; i < limit; i++) {
-            additionnalColumns.add(new AdditionnalColumn(column.getName() + SPLIT_APPENDIX + (i + 1)));
+            additionnalColumns.add(new AdditionnalColumn("" + i, column.getName() + SPLIT_APPENDIX + (i + 1)));
         }
 
         return additionnalColumns;
@@ -158,12 +158,11 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         }
         final int limit = Integer.parseInt(parameters.get(LIMIT));
         final String[] split = originalValue.split(realSeparator, limit);
-        final List<String> newColumns = getTargetColumnIds(context);
+        final Map<String, String> newColumns = getTargetColumnIds(context);
         if (split.length != 0) {
-            final Iterator<String> iterator = newColumns.iterator();
-            for (int i = 0; i < limit && iterator.hasNext(); i++) {
+            for (int i = 0; i < limit; i++) {
                 final String newValue = i < split.length ? split[i] : EMPTY;
-                row.set(iterator.next(), newValue);
+                row.set(newColumns.get("" + i), newValue);
             }
         }
     }

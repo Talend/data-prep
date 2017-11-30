@@ -149,30 +149,16 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    protected void createNewColumn(ActionContext context) {
-        if (doesCreateNewColumn(context.getParameters())) {
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final String columnId = context.getColumnId();
-            final Map<String, String> parameters = context.getParameters();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            for (DateFieldMappingBean date_field : DATE_FIELDS) {
-                if (Boolean.valueOf(parameters.get(date_field.key))) {
-                    context.column(column.getName() + SEPARATOR + date_field.key, r -> {
-                        final ColumnMetadata c = ColumnMetadata.Builder //
-                                .column() //
-                                .name(column.getName() + SEPARATOR + date_field.key) //
-                                .type(Type.INTEGER) //
-                                .empty(column.getQuality().getEmpty()) //
-                                .invalid(column.getQuality().getInvalid()) //
-                                .valid(column.getQuality().getValid()) //
-                                .headerSize(column.getHeaderSize()) //
-                                .build();
-                        rowMetadata.insertAfter(columnId, c);
-                        return c;
-                    });
-                }
+    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
+        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+
+        for (DateFieldMappingBean date_field : DATE_FIELDS) {
+            if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
+                additionnalColumns.add(new AdditionnalColumn(date_field.key, Type.INTEGER, context.getColumnName() + SEPARATOR + date_field.key));
             }
         }
+
+        return additionnalColumns;
     }
 
     @Override
@@ -181,15 +167,6 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         final String columnId = context.getColumnId();
         final Map<String, String> parameters = context.getParameters();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-
-        // Create new columns for date tokens
-        final Map<String, String> dateFieldColumns = new HashMap<>();
-        for (DateFieldMappingBean date_field : DATE_FIELDS) {
-            if (Boolean.valueOf(parameters.get(date_field.key))) {
-                final String newColumn = context.column(column.getName() + SEPARATOR + date_field.key);
-                dateFieldColumns.put(date_field.key, newColumn);
-            }
-        }
 
         // Get the most used pattern formatter and parse the date
         final String value = row.get(columnId);
@@ -212,7 +189,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                         temporalAccessor.isSupported(date_field.field)) {
                     newValue = String.valueOf(temporalAccessor.get(date_field.field));
                 }
-                row.set(dateFieldColumns.get(date_field.key), newValue);
+                row.set(getTargetColumnIds(context).get(date_field.key), newValue);
             }
         }
     }

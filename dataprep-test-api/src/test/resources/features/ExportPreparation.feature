@@ -12,6 +12,7 @@ Feature: Export Preparation
   Scenario: Verify transformation result
     # escape and enclosure characters shoud be given because they can be empty
     When I export the preparation with parameters :
+      | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |
       | csv_escape_character | "                |
       | csv_enclosure_char   | "                |
@@ -21,6 +22,7 @@ Feature: Export Preparation
 
   Scenario: Verify transformation result with another escape char
     When I export the preparation with parameters :
+      | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |
       | dataSetName          | 6L3C_dataset     |
       | csv_escape_character | #                |
@@ -31,6 +33,7 @@ Feature: Export Preparation
   @CleanAfter
   Scenario: Verify transformation result with custom parameters
     When I export the preparation with parameters :
+      | exportType           | CSV              |
       | csv_fields_delimiter | -                                 |
       | csv_escape_character | #                                 |
       | csv_enclosure_mode   | all_fields                        |

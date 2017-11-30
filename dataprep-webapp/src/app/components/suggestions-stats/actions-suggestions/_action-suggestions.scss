@@ -80,9 +80,12 @@ $search-actions-height: 25px;
 		flex-basis: 30px;
 		flex-grow: 0;
 		flex-shrink: 0;
+
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 		background-color: #DDDDDD;
-		right: 10px;
-		padding: 5px 10px 0 10px;
+		padding: 0 10px;
 
 		&.ng-enter {
 			animation: fadeIn 0.25s;
@@ -108,17 +111,15 @@ $search-actions-height: 25px;
 			}
 		}
 
+		> span,
 		label {
-			display: inline-flex;
-			align-items: center;
-			cursor: pointer;
-			vertical-align: middle;
 			font-weight: 600;
 			font-size: 0.8em;
-			position: relative;
-			span {
-				padding: 0 5px;
-			}
+			text-transform: none;
+		}
+
+		label span {
+			padding: 0 5px;
 		}
 
 		input {

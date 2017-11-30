@@ -27,7 +27,7 @@ import cucumber.api.java.en.Then;
  */
 public class PreparationStep extends DataPrepStep {
 
-    public static final String DATASET_NAME = "datasetName";
+    public static final String DATASET_NAME = "dataSetName";
 
     public static final String NB_STEPS = "nbSteps";
 

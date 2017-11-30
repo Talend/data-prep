@@ -113,7 +113,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_calc_mod_with_decimal() {
+    public void should_calc_mod_with_decimal_value() {
         // given
         final DataSetRow row = builder() //
                 .with(value("6.5").type(Type.STRING).name("0000")) //
@@ -130,6 +130,26 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         // then
         assertColumnWithResultCreated(row);
         assertEquals("1.5", row.get("0003"));
+    }
+
+    @Test
+    public void should_calc_mod_with_decimal_param() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("6").type(Type.STRING).name("0000")) //
+                .with(value("2.5").type(Type.STRING).name("0001")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("1.0", row.get("0003"));
     }
 
     @Test

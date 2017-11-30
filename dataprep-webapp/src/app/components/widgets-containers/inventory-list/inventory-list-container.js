@@ -32,7 +32,7 @@ const InventoryListContainer = {
 			list="$ctrl.listProps"
 			toolbar="$ctrl.toolbarProps"
 			watch-depth="reference"
-			virtualized=true
+			virtualized="true"
 		/>
 	`,
 	bindings: {

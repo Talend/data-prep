@@ -31,8 +31,10 @@ $x-large-screen: 120em !default;
 
 	div.tc-list-cell-statusActions{ flex: 0 0 200px;}
 
-	div.tc-list-cell-nbRecords,
-	div.tc-list-cell-nbSteps{ flex: 0 0 60px;}
+	div.tc-list-cell {
+		&-nbRecords,
+		&-nbSteps { flex: 0 0 60px;}
+	}
 
 	div.tc-list-cell-author,
 	div.tc-list-cell-creationDate,
@@ -40,23 +42,26 @@ $x-large-screen: 120em !default;
 	div.tc-list-cell-datasetName { flex: 1 0 200px; }
 }
 
-//#talend-dataprep {
-//	fill: $icon-preparation-color;
-//}
-//
-//#talend-folder-closed {
-//	fill: $icon-folder-color;
-//
-//}
-//
-//.list-item-favorite {
-//	button[id^="datasets-list-"][id$="dataset:favorite"] {
-//		visibility: visible;
-//		svg {
-//			fill: $icon-favorite-color;
-//		}
-//	}
-//}
+.list-item-preparation {
+	div > svg.tc-svg-icon {
+		fill: $icon-preparation-color;
+	}
+}
+
+.list-item-folder {
+	div > svg.tc-svg-icon {
+		fill: $icon-folder-color;
+	}
+}
+
+.list-item-favorite .tc-list-cell-statusActions {
+	button[id^="datasets-list-"][id$="dataset:favorite"] {
+		opacity: 1;
+		svg {
+			fill: $icon-favorite-color;
+		}
+	}
+}
 
 .ti-file-connect-o-badge {
 	fill: $icon-connect-badge-color;

@@ -17,16 +17,14 @@ import org.junit.runner.RunWith;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 /**
  * This runner is used to run only OS cucumber test (do not need authentification)
  */
-@RunWith(Cucumber.class)
+@RunWith(Cucumber.class) //
 @CucumberOptions(plugin = { "pretty", "html:target/cucumber", "json:target/cucumber.json" }, //
         glue = { "classpath:org/talend/dataprep/qa/step", "classpath:org/talend/dataprep/qa/config" }, //
-        features = "classpath:features")
+        features = "classpath:features") //
 public class OSRunnerConfigurationTest {
 
 }

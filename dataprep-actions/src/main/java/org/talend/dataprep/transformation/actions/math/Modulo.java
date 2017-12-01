@@ -18,7 +18,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
@@ -48,17 +47,17 @@ public class Modulo extends AbstractMathOneParameterAction {
     }
 
     protected BigDecimal modulo(BigDecimal value, BigDecimal mod) {
-            value = value.remainder(mod);
-            if (value.compareTo(BigDecimal.ZERO) == -1) {
-                if (mod.compareTo(BigDecimal.ZERO) == 1) {
-                    value = value.add(mod);
-                }
-            } else {
-                if (mod.compareTo(BigDecimal.ZERO) == -1) {
-                    value = value.add(mod);
-                }
+        value = value.remainder(mod);
+        if (value.compareTo(BigDecimal.ZERO) == -1) {
+            if (mod.compareTo(BigDecimal.ZERO) == 1) {
+                value = value.add(mod);
             }
-            return value.stripTrailingZeros();
+        } else {
+            if (mod.compareTo(BigDecimal.ZERO) == -1) {
+                value = value.add(mod);
+            }
+        }
+        return value.stripTrailingZeros();
     }
 
     @Override

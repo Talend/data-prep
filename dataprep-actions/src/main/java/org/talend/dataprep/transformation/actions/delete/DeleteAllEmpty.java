@@ -40,9 +40,9 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
 
     protected static final String NON_PRINTING_PARAMETER = "non_printing";
 
-    protected static final String DELETE = "delete";
+    protected static final String DELETE = "Delete";
 
-    protected static final String KEEP = "keep";
+    protected static final String KEEP = "Keep";
 
     @Override
     public String getName() {
@@ -53,9 +53,10 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.selectParameter(locale) //
-                .name(NON_PRINTING_PARAMETER) //
-                .item(DELETE)//
+        parameters.add(SelectParameter
+                .selectParameter(locale)
+                .name(NON_PRINTING_PARAMETER)
+                .item(DELETE)
                 .item(KEEP)
                 .defaultValue(DELETE)
                 .build(this));
@@ -96,16 +97,16 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
             String value = row.get(column.getId());
             switch (mode) {
-                case KEEP:
-                    if (StringUtils.isNotEmpty(value)) {
-                        return false;
-                    }
-                    break;
-                case DELETE:
-                    if (StringUtils.isNotBlank(value)) {
-                        return false;
-                    }
-                    break;
+            case KEEP:
+                if (StringUtils.isNotEmpty(value)) {
+                    return false;
+                }
+                break;
+            case DELETE:
+                if (StringUtils.isNotBlank(value)) {
+                    return false;
+                }
+                break;
             }
         }
         return true;

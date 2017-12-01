@@ -146,7 +146,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_not_delete_with_blank_row() {
+    public void should_not_delete_with_keep() {
         // given
         // row 1
         final DataSetRow row1 = getDataSetRow("David", "Bowie");

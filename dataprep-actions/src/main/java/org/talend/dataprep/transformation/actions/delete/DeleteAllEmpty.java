@@ -40,9 +40,9 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
 
     protected static final String NON_PRINTING_PARAMETER = "non_printing";
 
-    protected static final String DELETE = "Delete";
+    protected static final String DELETE = "delete";
 
-    protected static final String KEEP = "Keep";
+    protected static final String KEEP = "keep";
 
     @Override
     public String getName() {

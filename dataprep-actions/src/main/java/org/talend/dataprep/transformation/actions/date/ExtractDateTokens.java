@@ -149,16 +149,16 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
         for (DateFieldMappingBean date_field : DATE_FIELDS) {
             if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
-                additionnalColumns.add(new AdditionnalColumn(date_field.key, Type.INTEGER, context.getColumnName() + SEPARATOR + date_field.key));
+                additionalColumns.add(new AdditionalColumn(date_field.key, Type.INTEGER, context.getColumnName() + SEPARATOR + date_field.key));
             }
         }
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     @Override

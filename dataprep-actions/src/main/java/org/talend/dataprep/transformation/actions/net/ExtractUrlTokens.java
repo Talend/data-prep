@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.net;
 
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.type.Type.STRING;
 
 import java.net.URI;
@@ -25,13 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
-import org.talend.dataprep.transformation.actions.date.ExtractDateTokens;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
@@ -73,14 +70,14 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-            additionnalColumns.add(new AdditionnalColumn(urlTokenExtractor.getTokenName(), urlTokenExtractor.getType(), context.getColumnName() + urlTokenExtractor.getTokenName()));
+            additionalColumns.add(new AdditionalColumn(urlTokenExtractor.getTokenName(), urlTokenExtractor.getType(), context.getColumnName() + urlTokenExtractor.getTokenName()));
         }
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     @Override

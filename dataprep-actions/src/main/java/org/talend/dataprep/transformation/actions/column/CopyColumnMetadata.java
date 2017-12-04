@@ -74,20 +74,20 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
 
-        additionnalColumns.add(new AdditionnalColumn(context.getColumnName() + COPY_APPENDIX) {
+        additionalColumns.add(new AdditionalColumn(context.getColumnName() + COPY_APPENDIX) {
 
             {
                 setCopyFrom(column);
             }
         });
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     @Override

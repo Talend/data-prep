@@ -53,8 +53,8 @@ public class UpperCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        return Collections.singletonList(new AdditionnalColumn(context.getColumnName() + NEW_COLUMN_SUFFIX));
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return Collections.singletonList(new AdditionalColumn(context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

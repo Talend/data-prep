@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+
 import java.util.*;
 import java.util.function.Function;
 
@@ -31,8 +33,6 @@ import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
 /**
  * Adapter for {@link ActionDefinition} to have default implementation and behavior for actions. Every dataprep actions
@@ -308,20 +308,20 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
                 String nextId = columnId; // id of the column to put the new one after, initially the current column
 
-                    for (AdditionnalColumn additionnalColumn : getAdditionnalColumns(context)) {
+                    for (AdditionalColumn additionalColumn : getAdditionalColumns(context)) {
                         ColumnMetadata.Builder c = ColumnMetadata.Builder.column();
 
-                        if (additionnalColumn.getCopyFrom() != null) {
-                            c.copy(additionnalColumn.getCopyFrom())//
+                        if (additionalColumn.getCopyFrom() != null) {
+                            c.copy(additionalColumn.getCopyFrom())//
                              .computedId(StringUtils.EMPTY);
                         }
-                        c.name(additionnalColumn.getName()) //
-                         .type(additionnalColumn.getType()); //
+                        c.name(additionalColumn.getName()) //
+                         .type(additionalColumn.getType()); //
 
                     ColumnMetadata columnMetadata = c.build();
                     rowMetadata.insertAfter(nextId, columnMetadata);
                     nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
-                    cols.put(additionnalColumn.getKey(), columnMetadata.getId());
+                    cols.put(additionalColumn.getKey(), columnMetadata.getId());
                 }
 
                 return cols;
@@ -356,12 +356,12 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
         return context.get(TARGET_COLUMN);
     }
 
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
-        additionnalColumns.add(new AdditionnalColumn(getColumnType(context), getCreatedColumnName(context)));
+        additionalColumns.add(new AdditionalColumn(getColumnType(context), getCreatedColumnName(context)));
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     /**
@@ -389,7 +389,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      *
      * This will be used by createNewColumn(ActionContext context) to create all the new columns.
      */
-    protected class AdditionnalColumn {
+    protected class AdditionalColumn {
 
         private String key;
 
@@ -399,21 +399,21 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
         private ColumnMetadata copyFrom;
 
-        public AdditionnalColumn(String name) {
+        public AdditionalColumn(String name) {
             this(name, name);
         }
 
-        public AdditionnalColumn(String key, String name) {
+        public AdditionalColumn(String key, String name) {
             this.key = key;
             this.name = name;
         }
 
-        public AdditionnalColumn(String key, Type type, String name) {
+        public AdditionalColumn(String key, Type type, String name) {
             this(key, name);
             this.type = type;
         }
 
-        public AdditionnalColumn(Type type, String name) {
+        public AdditionalColumn(Type type, String name) {
             this(name);
             this.type = type;
         }

@@ -15,11 +15,7 @@ package org.talend.dataprep.transformation.actions.net;
 
 import static org.talend.dataprep.api.type.Type.STRING;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
@@ -79,17 +75,17 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
 
 
-        additionnalColumns.add(new AdditionnalColumn(LOCAL, column.getName() + LOCAL));
-        additionnalColumns.add(new AdditionnalColumn(DOMAIN, column.getName() + DOMAIN));
+        additionalColumns.add(new AdditionalColumn(LOCAL, column.getName() + LOCAL));
+        additionalColumns.add(new AdditionalColumn(DOMAIN, column.getName() + DOMAIN));
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     /**

@@ -145,18 +145,18 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final Map<String, String> parameters = context.getParameters();
         int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT))
                 : 1;
 
         for (int i = 0; i < limit; i++) {
-            additionnalColumns.add(new AdditionnalColumn("" + i, context.getColumnName() + APPENDIX + (i + 1)));
+            additionalColumns.add(new AdditionalColumn("" + i, context.getColumnName() + APPENDIX + (i + 1)));
         }
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     @Override

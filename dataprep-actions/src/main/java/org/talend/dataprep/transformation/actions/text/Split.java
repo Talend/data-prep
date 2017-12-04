@@ -127,8 +127,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionnalColumn> getAdditionnalColumns(ActionContext context) {
-        final List<AdditionnalColumn> additionnalColumns = new ArrayList<>();
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
@@ -136,10 +136,10 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         int limit = Integer.parseInt(context.getParameters().get(LIMIT));
 
         for (int i = 0; i < limit; i++) {
-            additionnalColumns.add(new AdditionnalColumn("" + i, column.getName() + SPLIT_APPENDIX + (i + 1)));
+            additionalColumns.add(new AdditionalColumn("" + i, column.getName() + SPLIT_APPENDIX + (i + 1)));
         }
 
-        return additionnalColumns;
+        return additionalColumns;
     }
 
     @Override

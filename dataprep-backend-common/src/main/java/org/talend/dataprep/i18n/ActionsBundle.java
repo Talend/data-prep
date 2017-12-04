@@ -85,7 +85,6 @@ public class ActionsBundle implements MessagesBundle {
     /**
      * Simple cache.
      */
-    // might be a good idea to make it customizable
     private Cache<CacheKey, String> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -117,7 +116,7 @@ public class ActionsBundle implements MessagesBundle {
 
     /**
      * Fetches action label at {@code action.<action_name>.label} in the dataprep actions resource bundle. If message does not
-     * exist, code will lookup in fallback resource bundles (i.e. Data Prep one) for message.
+     * exist, code will lookup in fallback resource bundle (i.e. Data Prep one) for message.
      */
     public static String actionLabel(Object action, Locale locale, String actionName, Object... values) {
         final String actionLabelKey = ACTION_PREFIX + actionName + LABEL_SUFFIX;
@@ -126,7 +125,7 @@ public class ActionsBundle implements MessagesBundle {
 
     /**
      * Fetches action description at {@code action.<action_name>.desc} in the dataprep actions resource bundle. If message does
-     * not exist, code will lookup in fallBack resource bundles (i.e. Data Prep one) for message.
+     * not exist, code will lookup in fallback resource bundle (i.e. Data Prep one) for message.
      */
     public static String actionDescription(Object action, Locale locale, String actionName, Object... values) {
         final String actionDescriptionKey = ACTION_PREFIX + actionName + DESCRIPTION_SUFFIX;
@@ -153,7 +152,7 @@ public class ActionsBundle implements MessagesBundle {
 
     /**
      * Fetches action label at {@code action.<action_name>.label} in the dataprep actions resource bundle. If message does not
-     * exist, code will lookup in fallBack resource bundles (i.e. Data Prep one) for message.
+     * exist, code will lookup in fallback resource bundle (i.e. Data Prep one) for message.
      */
     public static String categoryName(Object action, Locale locale, String categoryName, Object... values) {
         final String categoryLabelKey = CATEGORY_PREFIX + categoryName + LABEL_SUFFIX;
@@ -162,7 +161,7 @@ public class ActionsBundle implements MessagesBundle {
 
     /**
      * Fetches parameter label at {@code parameter.<parameter_name>.label} in the dataprep actions resource bundle. If message
-     * does not exist, code will lookup in fallBack resource bundles (i.e. Data Prep one) for message.
+     * does not exist, code will lookup in fallback resource bundle (i.e. Data Prep one) for message.
      */
     public static String parameterLabel(Object action, Locale locale, String parameterName, Object... values) {
         final String parameterLabelKey = PARAMETER_PREFIX + parameterName + LABEL_SUFFIX;
@@ -171,7 +170,7 @@ public class ActionsBundle implements MessagesBundle {
 
     /**
      * Fetches parameter description at {@code parameter.<parameter_name>.desc} in the dataprep actions resource bundle. If
-     * message does not exist, code will lookup in fallBack resource bundles (i.e. Data Prep one) for message.
+     * message does not exist, code will lookup in fallback resource bundle (i.e. Data Prep one) for message.
      */
     public static String parameterDescription(Object action, Locale locale, String parameterName, Object... values) {
         final String parameterDescriptionKey = PARAMETER_PREFIX + parameterName + DESCRIPTION_SUFFIX;
@@ -180,7 +179,7 @@ public class ActionsBundle implements MessagesBundle {
 
     /**
      * Fetches choice at {@code choice.<choice_name>} in the dataprep actions resource bundle. If message does not exist, code
-     * will lookup in fallBack resource bundles (i.e. Data Prep one) for message.
+     * will lookup in fallback resource bundle (i.e. Data Prep one) for message.
      */
     public static String choice(Object action, Locale locale, String choiceName, Object... values) {
         final String choiceKey = CHOICE_PREFIX + choiceName;
@@ -218,14 +217,8 @@ public class ActionsBundle implements MessagesBundle {
      * If message is not present, null is returned
      */
     private String getOptionalMessage(Object action, Locale locale, String code, Object... args) {
-        String message;
-        String bundleMessage = getBundleValue(action, locale, code);
-        if (bundleMessage != null) {
-            message = formatMessage(bundleMessage, args);
-        } else {
-            message = null;
-        }
-        return message;
+        String messageFormat = getBundleValue(action, locale, code);
+        return  messageFormat == null ? null : formatMessage(messageFormat, args);
     }
 
     private String getBundleValue(Object action, Locale locale, String code) {
@@ -262,13 +255,13 @@ public class ActionsBundle implements MessagesBundle {
      */
     private ResourceBundle findBundleContainingKey(Object action, Locale locale, String key, Collection<String> bundleFallbacks) {
         ResourceBundle bundle = null;
-        ResourceBundle bundleSearched;
-        for (String packageName : bundleFallbacks) {
+        Iterator<String> iterator = bundleFallbacks.iterator();
+        while (iterator.hasNext() && bundle == null) {
+            String packageName = iterator.next();
             try {
-                bundleSearched = ResourceBundle.getBundle(packageName + '.' + ACTIONS_MESSAGES, locale);
-                if (bundleSearched.containsKey(key)) {
-                    bundle = bundleSearched;
-                    break; // Found, exit lookup
+                ResourceBundle searchedBundle = ResourceBundle.getBundle(packageName + '.' + ACTIONS_MESSAGES, locale);
+                if (searchedBundle.containsKey(key)) {
+                    bundle = searchedBundle;
                 }
             } catch (MissingResourceException e) {
                 LOGGER.debug("No action resource bundle found for action '{}' at '{}'", action, packageName, e);
@@ -319,11 +312,13 @@ public class ActionsBundle implements MessagesBundle {
 
     private static class CacheKey {
 
-        final Object action;
-        final Locale locale;
-        final String code;
+        private final Object action;
 
-        public CacheKey(Object action, Locale locale, String code) {
+        private final Locale locale;
+
+        private final String code;
+
+        private CacheKey(Object action, Locale locale, String code) {
             this.action = action;
             this.locale = locale;
             this.code = code;

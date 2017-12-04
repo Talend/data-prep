@@ -9,14 +9,14 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.qa.step.export.ExportStep;
-import org.talend.dataprep.qa.step.export.ExportStepCSV;
+import org.talend.dataprep.qa.step.export.ExportSampleStep;
+import org.talend.dataprep.qa.step.export.ExportSampleStepCSV;
 
 @Component
 public class ExportParamAnalyzer {
 
     @Autowired
-    private ExportStepCSV exportStepCSV;
+    private ExportSampleStepCSV exportSampleStepCSV;
 
     @Nullable
     public ExportType detectExportType(@NotNull Map<String, String> params) {
@@ -37,11 +37,11 @@ public class ExportParamAnalyzer {
     }
 
     @Nullable
-    public ExportStep getExporter(@NotNull ExportType exportType) {
-        ExportStep ret = null;
+    public ExportSampleStep getExporter(@NotNull ExportType exportType) {
+        ExportSampleStep ret = null;
         switch (exportType) {
         case CSV:
-            ret = exportStepCSV;
+            ret = exportSampleStepCSV;
             break;
         case HDFS:
             break;

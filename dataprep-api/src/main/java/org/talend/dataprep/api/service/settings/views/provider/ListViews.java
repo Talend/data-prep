@@ -18,6 +18,7 @@ import org.talend.dataprep.api.service.settings.views.api.list.*;
 
 import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.InventoryActions.INVENTORY_CANCEL_EDIT;
+import static org.talend.dataprep.api.service.settings.actions.provider.InventoryActions.INVENTORY_CHANGE_DISPLAY_MODE;
 import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.MENU_FOLDERS;
 import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.MENU_PLAYGROUND_PREPARATION;
 import static org.talend.dataprep.api.service.settings.actions.provider.PreparationActions.*;
@@ -74,6 +75,9 @@ public interface ListViews {
                                             .action(LEFT, PREPARATION_FOLDER_CREATE.getId())
                                             .build()
                             )
+                            .display(
+                                ListDisplaySettings.builder().onChange(INVENTORY_CHANGE_DISPLAY_MODE.getId()).build()
+                            )
                             .build()
             )
             .build();
@@ -108,6 +112,9 @@ public interface ListViews {
                                     ActionsBarSettings.builder()
                                             .action(LEFT, DATASET_CREATE.getId())
                                             .build()
+                            )
+                            .display(
+                                ListDisplaySettings.builder().onChange(INVENTORY_CHANGE_DISPLAY_MODE.getId()).build()
                             )
                             .build()
             )

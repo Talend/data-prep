@@ -31,11 +31,19 @@ public interface InventoryActions {
             .payload(PAYLOAD_METHOD_KEY, "enableInventoryEdit")
             .build();
 
+
     ActionSettings INVENTORY_CANCEL_EDIT = builder()
             .id("inventory:cancel-edit")
             .name("inventory.canceledit")
             .type("@@inventory/CANCEL_EDIT")
             .payload(PAYLOAD_METHOD_KEY, "disableInventoryEdit")
             .build();
+
+    ActionSettings INVENTORY_CHANGE_DISPLAY_MODE = builder()
+        .id("inventory:change-display-mode")
+        .name("inventory.changedisplaymode")
+        .type("@@inventory/CHANGE_DISPLAY_MODE")
+        .payload(PAYLOAD_METHOD_KEY, "changeDisplayMode")
+        .build();
 }
 // @formatter:on

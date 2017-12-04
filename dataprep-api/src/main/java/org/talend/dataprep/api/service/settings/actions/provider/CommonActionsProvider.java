@@ -49,6 +49,7 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
 
                 InventoryActions.INVENTORY_CANCEL_EDIT,
                 InventoryActions.INVENTORY_EDIT,
+                InventoryActions.INVENTORY_CHANGE_DISPLAY_MODE,
 
                 MenuActions.MENU_DATASETS,
                 MenuActions.MENU_FOLDERS,

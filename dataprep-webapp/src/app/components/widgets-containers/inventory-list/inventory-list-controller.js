@@ -17,7 +17,13 @@ const SPLITDROPDOWN_ACTION = 'splitDropdown';
 const ACTION_TYPE = 'actions';
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, appSettings, SettingsActionsService, state) {
+	constructor(
+		$element,
+		$translate,
+		appSettings,
+		SettingsActionsService,
+		state
+	) {
 		'ngInject';
 
 		this.$element = $element;
@@ -32,8 +38,7 @@ export default class InventoryListCtrl {
 	}
 
 	$onInit() {
-		const didMountActionCreator = this.appSettings
-			.views[this.viewKey]
+		const didMountActionCreator = this.appSettings.views[this.viewKey]
 			.didMountActionCreator;
 		if (didMountActionCreator) {
 			const action = this.appSettings.actions[didMountActionCreator];
@@ -59,8 +64,16 @@ export default class InventoryListCtrl {
 		if (changes.sortBy || changes.sortDesc) {
 			const field = this.sortBy;
 			const isDescending = this.sortDesc;
-			this.toolbarProps = this.changeSort(this.toolbarProps, field, isDescending);
-			this.listProps = this.changeSort(this.listProps, field, isDescending);
+			this.toolbarProps = this.changeSort(
+				this.toolbarProps,
+				field,
+				isDescending
+			);
+			this.listProps = this.changeSort(
+				this.listProps,
+				field,
+				isDescending
+			);
 		}
 	}
 
@@ -101,15 +114,16 @@ export default class InventoryListCtrl {
 	}
 
 	getActionBarProps(actionBarSettings) {
-		return actionBarSettings &&
-			actionBarSettings.actions &&
-			{
+		return (
+			actionBarSettings &&
+			actionBarSettings.actions && {
 				...actionBarSettings,
 				actions: {
 					left: this.adaptActions(actionBarSettings.actions.left),
 					right: this.adaptActions(actionBarSettings.actions.right),
 				},
-			};
+			}
+		);
 	}
 
 	getDisplayModeProps(displayModeSettings) {
@@ -117,11 +131,16 @@ export default class InventoryListCtrl {
 			return null;
 		}
 
-		const displayModeAction = displayModeSettings &&
+		const displayModeAction =
+			displayModeSettings &&
 			displayModeSettings.onChange &&
 			this.appSettings.actions[displayModeSettings.onChange];
-		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
-		const onDisplayModeChange = dispatchDisplayMode ? ((event, mode) => dispatchDisplayMode(event, { mode })) : NO_OP;
+		const dispatchDisplayMode =
+			displayModeAction &&
+			this.SettingsActionsService.createDispatcher(displayModeAction);
+		const onDisplayModeChange = dispatchDisplayMode
+			? (event, mode) => dispatchDisplayMode(event, { mode })
+			: NO_OP;
 
 		return {
 			...displayModeSettings,
@@ -134,12 +153,13 @@ export default class InventoryListCtrl {
 			return null;
 		}
 
-		const sortByAction = sortSettings &&
+		const sortByAction =
+			sortSettings &&
 			sortSettings.onChange &&
 			this.appSettings.actions[sortSettings.onChange];
-		const onSortByChange = sortByAction ?
-			this.SettingsActionsService.createDispatcher(sortByAction) :
-			NO_OP;
+		const onSortByChange = sortByAction
+			? this.SettingsActionsService.createDispatcher(sortByAction)
+			: NO_OP;
 		return {
 			...sortSettings,
 			onChange: onSortByChange,
@@ -147,22 +167,34 @@ export default class InventoryListCtrl {
 	}
 
 	getListTitleProps(titleSettings) {
-		const onItemClick = this.getTitleActionDispatcher(this.viewKey, 'onClick');
+		const onItemClick = this.getTitleActionDispatcher(
+			this.viewKey,
+			'onClick'
+		);
 		let onClick = onItemClick;
 		if (this.folderViewKey) {
-			const onFolderClick = this.getTitleActionDispatcher(this.folderViewKey, 'onClick');
+			const onFolderClick = this.getTitleActionDispatcher(
+				this.folderViewKey,
+				'onClick'
+			);
 			onClick = (event, payload) => {
-				return payload.type === 'folder' ?
-					onFolderClick(event, payload) :
-					onItemClick(event, payload);
+				return payload.type === 'folder'
+					? onFolderClick(event, payload)
+					: onItemClick(event, payload);
 			};
 		}
 
 		return {
 			...titleSettings,
 			onClick,
-			onEditCancel: this.getTitleActionDispatcher(this.viewKey, 'onEditCancel'),
-			onEditSubmit: this.getTitleActionDispatcher(this.viewKey, 'onEditSubmit'),
+			onEditCancel: this.getTitleActionDispatcher(
+				this.viewKey,
+				'onEditCancel'
+			),
+			onEditSubmit: this.getTitleActionDispatcher(
+				this.viewKey,
+				'onEditSubmit'
+			),
 		};
 	}
 
@@ -170,7 +202,9 @@ export default class InventoryListCtrl {
 		let dispatcher = this.actionsDispatchers[actionName];
 		if (!dispatcher) {
 			const actionSettings = this.appSettings.actions[actionName];
-			dispatcher = this.SettingsActionsService.createDispatcher(actionSettings);
+			dispatcher = this.SettingsActionsService.createDispatcher(
+				actionSettings
+			);
 			this.actionsDispatchers[actionName] = dispatcher;
 		}
 		return dispatcher;
@@ -178,7 +212,9 @@ export default class InventoryListCtrl {
 
 	getTitleActionDispatcher(viewKey, actionKey) {
 		const listSettings = this.appSettings.views[viewKey].list;
-		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
+		const action = this.appSettings.actions[
+			listSettings.titleProps[actionKey]
+		];
 		return this.SettingsActionsService.createDispatcher(action);
 	}
 
@@ -215,7 +251,8 @@ export default class InventoryListCtrl {
 	}
 
 	adaptActions(actions, hostModel) {
-		return actions &&
+		return (
+			actions &&
 			actions.map((actionName) => {
 				const adaptedAction = this.createBaseAction(actionName);
 
@@ -227,28 +264,43 @@ export default class InventoryListCtrl {
 					// dropdown static actions are applied to the host model
 					// ex: dataset > "create new preparation action" is applied to the dataset
 					const staticActions = actionSettings.staticActions.map(
-						staticAction => this.createDropdownItemAction(hostModel, staticAction)
+						staticAction =>
+							this.createDropdownItemAction(
+								hostModel,
+								staticAction
+							)
 					);
 					// dropdown dynamic action is the unique action on each item click
 					// ex: dataset > "open preparation x" is applied to "preparation x"
-					const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamicAction);
+					const dynamicActions = this.createDropdownActions(
+						modelItems,
+						actionSettings.dynamicAction
+					);
 					adaptedAction.items = staticActions.concat(dynamicActions);
 				}
 				else if (adaptedAction.displayMode === SPLITDROPDOWN_ACTION) {
 					const dispatch = this.getActionDispatcher(actionName);
-					const splitDropdownAction = this.appSettings.actions[actionName];
-					adaptedAction.items = this.createDropdownActions(splitDropdownAction.items, actionName);
-					adaptedAction.onClick = event => dispatch(event, { items: splitDropdownAction.items });
+					const splitDropdownAction = this.appSettings.actions[
+						actionName
+					];
+					adaptedAction.items = this.createDropdownActions(
+						splitDropdownAction.items,
+						actionName
+					);
+					adaptedAction.onClick = event =>
+						dispatch(event, { items: splitDropdownAction.items });
 					return adaptedAction;
 				}
 				else {
 					const dispatch = this.getActionDispatcher(actionName);
 					adaptedAction.model = hostModel;
-					adaptedAction.onClick = (event, payload) => dispatch(event, payload && payload.model);
+					adaptedAction.onClick = (event, payload) =>
+						dispatch(event, payload && payload.model);
 				}
 
 				return adaptedAction;
-			});
+			})
+		);
 	}
 
 	adaptItemActions(item, actions, index) {
@@ -260,7 +312,9 @@ export default class InventoryListCtrl {
 	}
 
 	adaptItemsActions(items) {
-		const actionsColumns = this.listProps.columns.filter(column => column.type === ACTION_TYPE);
+		const actionsColumns = this.listProps.columns.filter(
+			column => column.type === ACTION_TYPE
+		);
 		return items.map((item, index) => {
 			const actions = this.adaptItemActions(item, item.actions, index);
 			const adaptedItem = {
@@ -268,7 +322,11 @@ export default class InventoryListCtrl {
 				actions,
 			};
 			actionsColumns.forEach(({ key }) => {
-				adaptedItem[key] = this.adaptItemActions(item, item[key], index);
+				adaptedItem[key] = this.adaptItemActions(
+					item,
+					item[key],
+					index
+				);
 			});
 			return adaptedItem;
 		});

@@ -90,6 +90,8 @@ describe('Dataset parameters controller', function () {
             ctrl.onParametersChange = jasmine.createSpy('on parameter change');
             ctrl.parameters = {
                 separator: ';',
+                textEnclosureCharacter: '"',
+                escapeCharacter: '"',
                 encoding: 'UTF-8',
             };
             expect(ctrl.onParametersChange).not.toHaveBeenCalledWith();
@@ -102,6 +104,36 @@ describe('Dataset parameters controller', function () {
                 dataset: { id: '1348b684f2e548' },
                 parameters: {
                     separator: ';',
+                    textEnclosureCharacter: '"',
+                    escapeCharacter: '"',
+                    encoding: 'UTF-8',
+                },
+            });
+        });
+
+        it('should allow empty escape character and text enclosure character', function () {
+            //given
+            var ctrl = createController();
+            ctrl.dataset = { id: '1348b684f2e548' };
+            ctrl.onParametersChange = jasmine.createSpy('on parameter change');
+            ctrl.parameters = {
+                separator: ';',
+                textEnclosureCharacter: '',
+                escapeCharacter: '',
+                encoding: 'UTF-8',
+            };
+            expect(ctrl.onParametersChange).not.toHaveBeenCalledWith();
+
+            //when
+            ctrl.validate();
+
+            //then
+            expect(ctrl.onParametersChange).toHaveBeenCalledWith({
+                dataset: { id: '1348b684f2e548' },
+                parameters: {
+                    separator: ';',
+                    textEnclosureCharacter: '',
+                    escapeCharacter: '',
                     encoding: 'UTF-8',
                 },
             });

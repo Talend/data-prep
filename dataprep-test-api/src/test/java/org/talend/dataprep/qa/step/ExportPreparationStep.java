@@ -29,7 +29,6 @@ public class ExportPreparationStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
         ExportType exportType = epAnalyzer.detectExportType(params);
-//        EnumMap<MandatoryParameters, String> mParams = epAnalyzer.extractMandatoryParameters(params);
 
         ExportSampleStep exporter = epAnalyzer.getExporter(exportType);
         exporter.exportSample(params);

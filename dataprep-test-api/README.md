@@ -64,5 +64,8 @@ The ``@CleanAfter`` annotation calls a cleaning procedure in the test environmen
 * Don't forget to register any created item in the context in order to have it cleaned by ``@CleanAfter``
 * As the values passed to the folder API differs depending on the environment, always use ``folderUtil`` functions first instead of direct ``OSDataPrepAPIHelper`` calls, in order to keep your features runnable in an on premise environment.
 
+### How to support a new kind of sample export for Integration Tests
+[Read the wiki !]('http://wiki.talend.com/display/rd/How+to+support+a+new+kind+of+sample+export+for+Integration+Tests')
+
 ## License
 Copyright (c) 2006-2017 Talend

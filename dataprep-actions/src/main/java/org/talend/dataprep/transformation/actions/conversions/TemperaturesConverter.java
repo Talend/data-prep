@@ -18,6 +18,7 @@ import static org.talend.dataprep.transformation.actions.conversions.Temperature
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -107,16 +108,13 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
         Map<String, String> parameters = context.getParameters();
         String name = parameters.get(TO_UNIT_PARAMETER);
         TemperatureUnit temperatureUnit = TemperatureUnit.valueOf(name);
-        return context.getColumnName() + "_in_" + temperatureUnit.toString();
-    }
-
-    @Override
-    public Type getColumnType(ActionContext context){
-        return Type.DOUBLE;
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + "_in_" + temperatureUnit.toString()));
+        return additionalColumns;
     }
 
     /**

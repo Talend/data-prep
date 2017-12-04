@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.util.Collections.singletonList;
 import static org.talend.daikon.number.BigDecimalParser.*;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 
@@ -119,8 +120,8 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

@@ -12,14 +12,10 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -34,8 +30,12 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
     protected static final String ERROR_RESULT = StringUtils.EMPTY;
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.DOUBLE;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, null));
+
+        return additionalColumns;
     }
 
     @Override

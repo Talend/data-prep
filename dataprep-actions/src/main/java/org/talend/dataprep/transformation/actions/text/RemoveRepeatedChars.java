@@ -60,8 +60,10 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     protected static final String NEW_COLUMN_SUFFIX = "_without_consecutive";
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        additionalColumns.add(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+        return additionalColumns;
     }
 
     @Override

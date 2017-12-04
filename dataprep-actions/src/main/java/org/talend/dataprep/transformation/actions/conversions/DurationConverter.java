@@ -17,10 +17,7 @@ import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -73,13 +70,11 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER);
-    }
-
-    @Override
-    public Type getColumnType(ActionContext context){
-        return Type.DOUBLE;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE,
+                context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER)));
+        return additionalColumns;
     }
 
     @Override

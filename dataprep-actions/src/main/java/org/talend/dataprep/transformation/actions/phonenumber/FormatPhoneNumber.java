@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.phonenumber;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.CONSTANT_MODE;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
@@ -201,8 +202,8 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

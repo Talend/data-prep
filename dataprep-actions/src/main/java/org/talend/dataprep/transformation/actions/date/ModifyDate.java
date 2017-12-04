@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import static java.time.temporal.ChronoUnit.*;
+import static java.util.Collections.singletonList;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
 
 import java.time.DateTimeException;
@@ -29,6 +30,7 @@ import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -70,8 +72,8 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

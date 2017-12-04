@@ -133,13 +133,10 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     }
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.BOOLEAN;
-    }
-
-    @Override
-    public String getCreatedColumnName(ActionContext context){
-        return context.getColumnName() + APPENDIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN, context.getColumnName() + APPENDIX));
+        return additionalColumns;
     }
 
     @Override

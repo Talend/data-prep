@@ -12,30 +12,40 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.lang.String.valueOf;
+import static java.text.CharacterIterator.DONE;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.math.NumberUtils.isNumber;
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CREATE_COLUMNS;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.SPLIT;
+import static org.talend.dataprep.util.NumericHelper.isBigDecimal;
+
 import java.math.BigDecimal;
-import java.text.CharacterIterator;
 import java.text.DecimalFormat;
 import java.text.StringCharacterIterator;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.util.NumericHelper;
 
 /**
  * This will extract the numeric part
- *
+ * <p>
  * We use metric prefix from <a href="https://en.wikipedia.org/wiki/Metric_prefix">Wikipedia</a>
- *
+ * <p>
  * <ul>
  * <li>tera, T, 1000000000000</li>
  * <li>giga, G, 1000000000</li>
@@ -65,7 +75,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     private static final int MAX_FRACTION_DIGITS_DISPLAY = 30;
 
     /** List of supported separators. */
-    private static final List<Character> SEPARATORS = Arrays.asList('.', ',');
+    private static final List<Character> SEPARATORS = asList('.', ',');
 
     /** K: the prefix, V: the value. */
     private static Map<String, MetricPrefix> METRICPREFIXES = new ConcurrentHashMap<>(13);
@@ -112,21 +122,21 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     }
 
     /**
-     * @param value the value to parse.
+     * @param value        the value to parse.
      * @param defaultValue the value to return when no number can be extracted
      * @return the number extracted out of the given value.
      */
     protected static String extractNumber(String value, String defaultValue) {
 
         // easy case
-        if (StringUtils.isEmpty(value)) {
+        if (isEmpty(value)) {
             return defaultValue;
         }
 
         // Test if the input value is a valid number before removing any characters:
-        if (NumericHelper.isBigDecimal(value)) {
+        if (isBigDecimal(value)) {
             // If yes (no exception thrown), return the value as it, no change required:
-            return String.valueOf(BigDecimalParser.toBigDecimal(value));
+            return valueOf(toBigDecimal(value));
         }
 
         StringCharacterIterator iter = new StringCharacterIterator(value);
@@ -138,21 +148,21 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
         // we build a new value including only number or separator as , or .
         StringBuilder reducedValue = new StringBuilder(value.length());
 
-        for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
+        for (char c = iter.first(); c != DONE; c = iter.next()) {
             // we remove all non numeric characters but keep separators
-            if (NumberUtils.isNumber(String.valueOf(c)) || SEPARATORS.contains(c)) {
+            if (isNumber(valueOf(c)) || SEPARATORS.contains(c)) {
                 reducedValue.append(c);
                 numberFound = true;
             } else {
                 // we take the first metric prefix found before and after a number found
                 if (metricPrefixBefore == null) {
-                    MetricPrefix found = METRICPREFIXES.get(String.valueOf(c));
+                    MetricPrefix found = METRICPREFIXES.get(valueOf(c));
                     if (found != null && !numberFound) {
                         metricPrefixBefore = found;
                     }
                 }
                 if (metricPrefixAfter == null) {
-                    MetricPrefix found = METRICPREFIXES.get(String.valueOf(c));
+                    MetricPrefix found = METRICPREFIXES.get(valueOf(c));
                     if (found != null && numberFound) {
                         metricPrefixAfter = found;
                     }
@@ -161,10 +171,10 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
             }
         }
 
-        if (!NumericHelper.isBigDecimal(reducedValue.toString())) {
+        if (!isBigDecimal(reducedValue.toString())) {
             return defaultValue;
         }
-        BigDecimal bigDecimal = BigDecimalParser.toBigDecimal(reducedValue.toString());
+        BigDecimal bigDecimal = toBigDecimal(reducedValue.toString());
 
         if (metricPrefixBefore != null || metricPrefixAfter != null) {
             // the metrix found after use first
@@ -184,7 +194,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
 
     @Override
     public String getCategory(Locale locale) {
-        return ActionCategory.SPLIT.getDisplayName(locale);
+        return SPLIT.getDisplayName(locale);
     }
 
     @Override
@@ -203,8 +213,8 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context){
-        return context.getColumnName() + "_number";
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + "_number"));
     }
 
     @Override
@@ -215,7 +225,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
 
     @Override
     public Set<Behavior> getBehavior() {
-        return Collections.singleton(Behavior.METADATA_CREATE_COLUMNS);
+        return singleton(METADATA_CREATE_COLUMNS);
     }
 
     /**

@@ -100,8 +100,22 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
     }
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.BOOLEAN;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+
+        final Map<String, String> parameters = context.getParameters();
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final String sourceColumnName = context.getColumnName();
+        String prefix;
+        if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
+            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            prefix = selectedColumn.getName();
+        } else {
+            prefix = parameters.get(CONSTANT_VALUE);
+        }
+        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN, sourceColumnName + APPENDIX + prefix));
+
+        return additionalColumns;
     }
 
     @Override
@@ -133,21 +147,6 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
 
         boolean contains = value.contains(referenceValue);
         row.set(containsColumn, toStringTrueFalse(contains));
-    }
-
-    @Override
-    public String getCreatedColumnName(ActionContext context){
-        final Map<String, String> parameters = context.getParameters();
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final String sourceColumnName = context.getColumnName();
-        String prefix;
-        if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
-            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-            prefix = selectedColumn.getName();
-        } else {
-            prefix = parameters.get(CONSTANT_VALUE);
-        }
-        return sourceColumnName + APPENDIX + prefix;
     }
 
     /**

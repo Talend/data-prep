@@ -25,6 +25,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -146,14 +147,16 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context){
+    public List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
+        String columnName;
         if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE)) {
             ColumnMetadata selectedColumn =context.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-            return selectedColumn.getName() + CopyColumnMetadata.COPY_APPENDIX;
+            columnName = selectedColumn.getName() + CopyColumnMetadata.COPY_APPENDIX;
         } else {
-            return "new column";
+            columnName = "new column";
         }
+        return Collections.singletonList(new AdditionalColumn(Type.STRING, columnName));
     }
 
     /**

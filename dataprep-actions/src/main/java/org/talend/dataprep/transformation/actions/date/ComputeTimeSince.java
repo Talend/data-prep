@@ -127,14 +127,14 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.INTEGER;
-    }
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
-    @Override
-    public String getCreatedColumnName(ActionContext context){
         TemporalUnit unit = ChronoUnit.valueOf(context.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase());
-        return PREFIX + context.getColumnName() + SUFFIX + unit.toString().toLowerCase();
+        additionalColumns.add(new AdditionalColumn(Type.INTEGER,
+                PREFIX + context.getColumnName() + SUFFIX + unit.toString().toLowerCase()));
+
+        return additionalColumns;
     }
 
     @Override

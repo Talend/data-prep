@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
+import static java.util.Collections.singletonList;
+
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +24,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -176,7 +179,8 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        String result;
         ColumnMetadata selectedColumn = context.getRowMetadata().getById(context.getParameters().get(SELECTED_COLUMN_PARAMETER));
         String sourceColumnName = context.getColumnName();
         final Map<String, String> parameters = context.getParameters();
@@ -184,10 +188,11 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         final String suffix = getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY);
 
         if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
-            return sourceColumnName + COLUMN_NAMES_SEPARATOR + selectedColumn.getName();
+            result = sourceColumnName + COLUMN_NAMES_SEPARATOR + selectedColumn.getName();
         } else {
-            return prefix + sourceColumnName + suffix;
+            result = prefix + sourceColumnName + suffix;
         }
+        return singletonList(new AdditionalColumn(Type.STRING, result));
     }
 
     /**

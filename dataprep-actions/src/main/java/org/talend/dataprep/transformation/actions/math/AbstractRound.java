@@ -16,10 +16,7 @@ import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -61,11 +58,6 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
-    }
-
-    @Override
     public void applyOnColumn(final DataSetRow row, final ActionContext context) {
         final String precisionAsString = context.getParameters().get(PRECISION);
 
@@ -103,8 +95,12 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     }
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.DOUBLE;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + NEW_COLUMN_SUFFIX));
+
+        return additionalColumns;
     }
 
     @Override

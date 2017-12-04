@@ -15,10 +15,7 @@ package org.talend.dataprep.transformation.actions.date;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
@@ -74,19 +71,18 @@ public class TimestampToDate extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context){
-        return context.getColumnName() + APPENDIX;
-    }
-
-    @Override
-    public Type getColumnType(ActionContext context) {
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        Type result;
         if ("custom".equals(context.getParameters().get(NEW_PATTERN))) {
             // Custom pattern might not be detected as a valid date, create the new column as string for the most
             // permissive type detection.
-            return Type.STRING;
+            result = Type.STRING;
         } else {
-            return Type.DATE;
+            result = Type.DATE;
         }
+        additionalColumns.add(new AdditionalColumn(result, context.getColumnName() + APPENDIX));
+        return additionalColumns;
     }
 
     @Override

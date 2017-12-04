@@ -357,31 +357,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     }
 
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
-        additionalColumns.add(new AdditionalColumn(getColumnType(context), getCreatedColumnName(context)));
-
-        return additionalColumns;
-    }
-
-    /**
-     * Used by createNewColumn(ActionContext context) to know which column Type to use when creating a new column.
-     *
-     * Default implementation is STRING, actions that creates a column of a different type should override this method.
-     *
-     * @return The Type of the new column
-     */
-    protected Type getColumnType(ActionContext context) {
-        return Type.STRING;
-    }
-
-    /**
-     * Used by createNewColumn(ActionContext context) to know which name to use when creating a new column.
-     *
-     * @return The name of the new column
-     */
-    protected String getCreatedColumnName(ActionContext context) {
-        return null; // Must be implemented for all actions but those which always applies in place
+        return Collections.singletonList(new AdditionalColumn(Type.STRING, null));
     }
 
     /**

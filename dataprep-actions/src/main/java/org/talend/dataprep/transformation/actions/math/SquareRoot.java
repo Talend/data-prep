@@ -14,11 +14,13 @@ package org.talend.dataprep.transformation.actions.math;
 
 import static org.talend.dataprep.transformation.actions.math.SquareRoot.SQRT_NAME;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -39,8 +41,10 @@ public class SquareRoot extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + SQRT_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + SQRT_SUFFIX));
+        return additionalColumns;
     }
 
     @Override

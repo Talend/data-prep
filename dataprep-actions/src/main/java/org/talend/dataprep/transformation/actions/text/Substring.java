@@ -134,8 +134,10 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + APPENDIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        additionalColumns.add(new AdditionalColumn(Type.STRING, context.getColumnName() + APPENDIX));
+        return additionalColumns;
     }
 
     @Override

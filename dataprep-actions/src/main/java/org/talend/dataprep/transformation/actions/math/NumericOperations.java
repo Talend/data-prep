@@ -125,12 +125,8 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.DOUBLE;
-    }
-
-    @Override
-    public String getCreatedColumnName(ActionContext context){
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
         final Map<String, String> parameters = context.getParameters();
         final RowMetadata rowMetadata = context.getRowMetadata();
         final String operator = parameters.get(OPERATOR_PARAMETER);
@@ -141,7 +137,8 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             operandName = selectedColumn.getName();
         }
-        return context.getColumnName() + " " + operator + " " + operandName;
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + " " + operator + " " + operandName));
+        return additionalColumns;
     }
 
     @Override

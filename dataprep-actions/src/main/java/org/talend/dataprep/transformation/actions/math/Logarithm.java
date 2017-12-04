@@ -12,13 +12,16 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.lang.Double.isNaN;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.math3.util.FastMath.log10;
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Logarithm.LOGARITHM_NAME;
 
-import java.util.Map;
+import java.util.List;
 
-import org.apache.commons.math3.util.FastMath;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -32,16 +35,16 @@ public class Logarithm extends AbstractMathNoParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
-        double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
+        double value = toBigDecimal(columnValue).doubleValue();
 
-        double result = FastMath.log10(value);
+        double result = log10(value);
 
-        return Double.isNaN(result) ? ERROR_RESULT : Double.toString(result);
+        return isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + "_logarithm";
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + "_logarithm"));
     }
 
     @Override

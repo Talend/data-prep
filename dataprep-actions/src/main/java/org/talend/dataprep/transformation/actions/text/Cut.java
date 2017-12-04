@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
@@ -66,8 +67,8 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + NEW_COLUMN_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

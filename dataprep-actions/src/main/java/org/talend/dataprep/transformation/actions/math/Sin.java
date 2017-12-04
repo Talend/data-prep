@@ -14,9 +14,13 @@ package org.talend.dataprep.transformation.actions.math;
 
 import static org.talend.dataprep.transformation.actions.math.Sin.SIN_NAME;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -33,15 +37,15 @@ public class Sin extends AbstractMathNoParameterAction {
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
         double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
-
         double result = FastMath.sin(value);
-
         return Double.isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + SIN_SUFFIX;
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + SIN_SUFFIX));
+        return additionalColumns;
     }
 
     @Override

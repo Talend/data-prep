@@ -100,12 +100,9 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     }
 
     @Override
-    public Type getColumnType(ActionContext context){
-        return Type.BOOLEAN;
-    }
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
-    @Override
-    public String getCreatedColumnName(ActionContext context) {
         final RowMetadata rowMetadata = context.getRowMetadata();
         final Map<String, String> parameters = context.getParameters();
         final String compareMode = getCompareMode(parameters);
@@ -118,7 +115,10 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
             compareToLabel = selectedColumn.getName();
         }
 
-        return context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?";
+        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN,
+                context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?"));
+
+        return additionalColumns;
     }
 
     /**

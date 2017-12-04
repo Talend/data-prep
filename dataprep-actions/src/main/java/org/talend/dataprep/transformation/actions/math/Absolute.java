@@ -12,9 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
@@ -57,13 +55,12 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public String getCreatedColumnName(ActionContext context) {
-        return context.getColumnName() + "_absolute";
-    }
+    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
 
-    @Override
-    public Type getColumnType(ActionContext context){
-        return Type.DOUBLE;
+        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + "_absolute"));
+
+        return additionalColumns;
     }
 
     @Override

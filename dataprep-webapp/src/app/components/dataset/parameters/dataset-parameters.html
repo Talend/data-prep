@@ -36,10 +36,10 @@
                 </select>
             </div>
 
-            <div class="form-group escape-character-group"
+            <div class="form-group text-enclosure-group"
                  ng-if="datasetParametersCtrl.dataset.type === 'text/csv'">
-                <label for="escape-character" translate-once="DATASET_PARAMETERS_DELIMITER"></label>
-                <input  id="escape-character"
+                <label for="text-enclosure" translate-once="DATASET_PARAMETERS_TEXT_ENCLOSURE_CHARACTER"></label>
+                <input  id="text-enclosure"
                         class="form-control small-input"
                         type="text"
                         ng-trim="false"

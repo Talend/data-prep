@@ -11,7 +11,6 @@
 
 package org.talend.dataprep.api.action;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.talend.dataprep.parameters.Parameter;
@@ -19,7 +18,9 @@ import org.talend.dataprep.parameters.Parameter;
 /**
  * User-oriented representation of an action.
  */
-public class ActionForm implements Serializable{
+public class ActionForm implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** Action unique id. Non i18n. */
     private String name;

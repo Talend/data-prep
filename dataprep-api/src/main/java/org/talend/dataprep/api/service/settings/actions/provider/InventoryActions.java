@@ -38,12 +38,5 @@ public interface InventoryActions {
             .type("@@inventory/CANCEL_EDIT")
             .payload(PAYLOAD_METHOD_KEY, "disableInventoryEdit")
             .build();
-
-    ActionSettings INVENTORY_CHANGE_DISPLAY_MODE = builder()
-        .id("inventory:change-display-mode")
-        .name("inventory.changedisplaymode")
-        .type("@@inventory/CHANGE_DISPLAY_MODE")
-        .payload(PAYLOAD_METHOD_KEY, "changeDisplayMode")
-        .build();
 }
 // @formatter:on

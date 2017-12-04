@@ -25,6 +25,7 @@ const HomePreparationContainer = {
 				items="$ctrl.state.inventory.folder.content.preparations"
 				sort-by="$ctrl.state.inventory.folder.sort.field"
 				sort-desc="$ctrl.state.inventory.folder.sort.isDescending"
+				display-mode="$ctrl.state.inventory.preparationsDisplayMode"
 				view-key="'listview:preparations'"
 				folder-view-key="'listview:folders'"
 			></inventory-list>

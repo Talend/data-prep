@@ -8,6 +8,6 @@ public enum StepParamType {
     IN, //
     /** Represent a parameter that will be send to the API but that isn't given directly in the step datatable. */
     OUT, //
-    /** Represent a parameter given in the step datatablen that will be send directly to the API. */
+    /** Represent a parameter given in the step datatable that will be send directly to the API. */
     IN_OUT;
 }

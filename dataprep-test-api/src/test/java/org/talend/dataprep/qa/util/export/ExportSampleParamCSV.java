@@ -12,7 +12,10 @@ import org.talend.dataprep.qa.util.StepParamType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ExportParamCSV implements ExportParam {
+/**
+ * Represent parameters from a CSV export.
+ */
+public enum ExportSampleParamCSV implements ExportParam {
     PREPARATION_ID(OUT, null, "preparationId"), //
     STEP_ID(OUT, null, "stepId"), //
     DATASET_ID(OUT, null, "datasetId"), //
@@ -30,21 +33,21 @@ public enum ExportParamCSV implements ExportParam {
 
     private String jsonName;
 
-    ExportParamCSV(StepParamType pType, String pName, String pJsonName) {
+    ExportSampleParamCSV(StepParamType pType, String pName, String pJsonName) {
         type = pType;
         name = pName;
         jsonName = pJsonName;
     }
 
     /**
-     * Get a corresponding {@link ExportParamCSV} from a {@link String}.
+     * Get a corresponding {@link ExportSampleParamCSV} from a {@link String}.
      *
-     * @param pName the {@link ExportParamCSV#name}.
-     * @return the corresponding {@link ExportParamCSV} or <code>null</code> if there isn't.
+     * @param pName the {@link ExportSampleParamCSV#name}.
+     * @return the corresponding {@link ExportSampleParamCSV} or <code>null</code> if there isn't.
      */
     @Nullable
-    public static ExportParamCSV getExportParamCSV(@NotNull String pName) {
-        return Arrays.stream(ExportParamCSV.values()) //
+    public static ExportSampleParamCSV getExportSampleParamCSV(@NotNull String pName) {
+        return Arrays.stream(ExportSampleParamCSV.values()) //
                 .filter(e -> !e.type.equals(OUT) && e.name.equalsIgnoreCase(pName)) //
                 .findFirst() //
                 .orElse(null);

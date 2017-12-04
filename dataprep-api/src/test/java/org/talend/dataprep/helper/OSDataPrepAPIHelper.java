@@ -259,7 +259,6 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
-                .log().all()//
                 .when() //
                 .queryParameters(parameters) //
                 .get("/api/export");

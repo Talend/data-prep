@@ -2,6 +2,9 @@ package org.talend.dataprep.helper.api;
 
 import java.util.Arrays;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -29,12 +32,18 @@ public enum ActionParamEnum {
         jsonName = pJsonName;
     }
 
-    public static ActionParamEnum getActionParamEnum(String pName) {
-        ActionParamEnum ret = Arrays.stream(ActionParamEnum.values()) //
-                .filter(e -> e.name.equals(pName)) //
+    /**
+     * Get a corresponding {@link ActionParamEnum} from a {@link String}.
+     *
+     * @param pName the {@link ActionParamEnum#name}.
+     * @return the corresponding {@link ActionParamEnum} or <code>null</code> if there isn't.
+     */
+    @Nullable
+    public static ActionParamEnum getActionParamEnum(@NotNull String pName) {
+        return Arrays.stream(ActionParamEnum.values()) //
+                .filter(e -> e.name.equalsIgnoreCase(pName)) //
                 .findFirst() //
                 .orElse(null);
-        return ret;
     }
 
     public String getName() {

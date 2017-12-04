@@ -55,6 +55,7 @@ Feature: Perform an OS Smoke Test
   Scenario: Export and check the exported file
     # escape and enclosure characters shoud be given because they can be empty
     When I export the preparation with parameters :
+      | exportType           | CSV              |
       | preparationName      | 10L3C_preparation |
       | dataSetName          | 10L3C_dataset     |
       | fileName             | acote.csv         |
@@ -65,7 +66,7 @@ Feature: Perform an OS Smoke Test
   Scenario: Move a preparation in a new folder
     Given A preparation with the following parameters exists :
       | preparationName | 10L3C_preparation |
-      | datasetName     | 10L3C_dataset     |
+      | dataSetName     | 10L3C_dataset     |
       | nbSteps         | 4                 |
     And I create a folder with the following parameters :
       | origin     | /          |
@@ -80,6 +81,7 @@ Feature: Perform an OS Smoke Test
   Scenario: Export and check the exported file
     # escape and enclosure characters shoud be given because they can be empty
     When I export the preparation with parameters :
+      | exportType           | CSV              |
       | preparationName      | 10L3C_preparation |
       | dataSetName          | 10L3C_dataset     |
       | fileName             | 10L3C_result.csv  |

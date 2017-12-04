@@ -49,11 +49,12 @@ public class CSVFormatUtils {
      * @param separator the separator object detected by the {@link CSVSchemaParser}
      * @return a map associating to header and separator parameters their corresponding value
      */
-    public Map<String, String> compileSeparatorProperties(Separator separator) {
+    public Map<String, String> compileSeparatorProperties(Separator separator, Map<String, String> newParameters) {
         return compileSeparatorProperties( //
                 String.valueOf(separator.getSeparator()), //
                 separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList()), //
-                separator.isFirstLineAHeader() ? 1 : 0 //
+                separator.isFirstLineAHeader() ? 1 : 0, //
+                newParameters
         );
     }
 
@@ -81,7 +82,7 @@ public class CSVFormatUtils {
      * @param header the specified header
      * @param headerNbLines the specified number of lines spanned by the header
      */
-    private Map<String, String> compileSeparatorProperties(String separator, List<String> header, int headerNbLines) {
+    private Map<String, String> compileSeparatorProperties(String separator, List<String> header, int headerNbLines, Map<String, String> newParameters) {
         Map<String, String> parameters = new HashMap<>();
         // separator
         parameters.put(SEPARATOR_PARAMETER, separator);
@@ -94,6 +95,12 @@ public class CSVFormatUtils {
         parameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
         // nb lines of header
         parameters.put(HEADER_NB_LINES_PARAMETER, Integer.toString(headerNbLines));
+
+        final String newEscapeChar = newParameters.get(ESCAPE_CHAR);
+        final String newEnclosureChar = newParameters.get(TEXT_ENCLOSURE_CHAR);
+        parameters.put(ESCAPE_CHAR, newEscapeChar);
+        parameters.put(TEXT_ENCLOSURE_CHAR, newEnclosureChar);
+
         return parameters;
     }
 
@@ -113,8 +120,44 @@ public class CSVFormatUtils {
         final Map<String, String> parameters = compileSeparatorProperties( //
                 newSeparator, //
                 newHeader, //
-                Integer.valueOf(newHeaderLines) //
+                Integer.valueOf(newHeaderLines), //
+                newParameters
         );
+
+        final String newEscapeChar = newParameters.get(ESCAPE_CHAR);
+        final String newEnclosureChar = newParameters.get(TEXT_ENCLOSURE_CHAR);
+        parameters.put(ESCAPE_CHAR, newEscapeChar);
+        parameters.put(TEXT_ENCLOSURE_CHAR, newEnclosureChar);
+
         updated.getContent().setParameters(parameters);
+    }
+
+    public Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
+
+        Map<String, String> parameters = new HashMap<>();
+
+        // separator
+        parameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
+
+        // header list
+        List<String> header = separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList());
+        String jsonHeader;
+        try {
+            jsonHeader = mapper.writeValueAsString(header);
+        } catch (Exception e) {
+            throw new TDPException(UNABLE_TO_SERIALIZE_TO_JSON, e);
+        }
+        parameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
+
+        // nb lines of header
+        int headerNbLines = separator.isFirstLineAHeader() ? 1 : 0;
+        parameters.put(HEADER_NB_LINES_PARAMETER, Integer.toString(headerNbLines));
+
+        final String newEscapeChar = updatedParameters.get(SEPARATOR_PARAMETER);
+        final String newEnclosureChar = updatedParameters.get(HEADER_NB_LINES_PARAMETER);
+        parameters.put(SEPARATOR_PARAMETER, newEscapeChar);
+        parameters.put(HEADER_NB_LINES_PARAMETER, newEnclosureChar);
+
+        return parameters;
     }
 }

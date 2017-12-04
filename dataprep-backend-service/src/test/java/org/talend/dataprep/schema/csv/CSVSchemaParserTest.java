@@ -427,6 +427,6 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         headers.stream().forEach(h -> columns.add(new Pair<>(h, Type.STRING)));
         newSeparator.setHeaders(columns); // default type to string
         newSeparator.setFirstLineAHeader(isFirstLineHeader);
-        dataSetMetadata.getContent().setParameters(csvFormatUtils.compileSeparatorProperties(newSeparator));
+        dataSetMetadata.getContent().setParameters(csvFormatUtils.compileSeparatorProperties(newSeparator, dataSetMetadata.getContent().getParameters()));
     }
 }

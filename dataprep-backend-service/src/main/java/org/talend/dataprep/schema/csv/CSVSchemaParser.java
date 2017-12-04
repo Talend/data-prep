@@ -122,12 +122,12 @@ public class CSVSchemaParser implements SchemaParser {
         final String temp = request.getMetadata().getContent().getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER);
         if (temp != null && StringUtils.isNotEmpty(temp)) {
             forcedSeparator = Optional.of(temp.charAt(0));
-            csvFormatUtils.useNewSeparator(request.getMetadata());
+            //csvFormatUtils.useNewSeparator(request.getMetadata());
         }
 
         Separator sep = guessSeparator(request.getContent(), encoding, forcedSeparator);
 
-        return csvFormatUtils.compileSeparatorProperties(sep);
+        return csvFormatUtils.compileSeparatorProperties(sep, request.getMetadata().getContent().getParameters());
     }
 
     /**

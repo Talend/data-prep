@@ -48,10 +48,10 @@ public class CSVSerializer implements Serializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
 
     /** Default text enclosure char. */
-    private final static char DEFAULT_TEXT_ENCLOSURE_CHAR = '"';
+    private static final char DEFAULT_TEXT_ENCLOSURE_CHAR = '"';
 
     /** Default text enclosure char. */
-    private final static char DEFAULT_ESCAPE_CHAR = '\0';
+    private static final char DEFAULT_ESCAPE_CHAR = '\0';
 
     /** Task executor used to serialize CSV dataset into JSON. */
     @Resource(name = "serializer#csv#executor")

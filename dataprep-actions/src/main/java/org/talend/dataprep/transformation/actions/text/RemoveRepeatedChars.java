@@ -12,6 +12,9 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.STRING;
+
 import java.util.*;
 
 import javax.annotation.Nonnull;
@@ -61,9 +64,7 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

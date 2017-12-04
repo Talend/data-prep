@@ -12,7 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import java.util.*;
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DOUBLE;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -31,11 +37,7 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
-        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, null));
-
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(DOUBLE, null));
     }
 
     @Override

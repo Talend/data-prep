@@ -13,8 +13,10 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 import java.util.*;
@@ -109,9 +111,7 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN, context.getColumnName() + APPENDIX));
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(BOOLEAN, context.getColumnName() + APPENDIX));
     }
 
     @Override

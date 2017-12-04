@@ -12,11 +12,16 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DOUBLE;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -107,10 +112,8 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.DOUBLE,
+        return singletonList(new AdditionalColumn(DOUBLE,
                 context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER)));
-        return additionalColumns;
     }
 
     @Override

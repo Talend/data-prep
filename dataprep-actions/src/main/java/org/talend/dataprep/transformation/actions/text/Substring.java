@@ -13,7 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.STRINGS;
 
 import java.util.*;
@@ -135,9 +137,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.STRING, context.getColumnName() + APPENDIX));
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + APPENDIX));
     }
 
     @Override

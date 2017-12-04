@@ -13,7 +13,13 @@
 
 package org.talend.dataprep.transformation.actions.bool;
 
-import java.util.*;
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.BOOLEAN;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.talend.dataprep.api.action.Action;
@@ -54,9 +60,7 @@ public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN, context.getColumnName() + NEW_COLUMN_SUFFIX));
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(BOOLEAN, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

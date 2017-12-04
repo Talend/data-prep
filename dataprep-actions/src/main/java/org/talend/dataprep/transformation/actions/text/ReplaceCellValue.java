@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
 import static java.util.EnumSet.of;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -81,9 +82,7 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

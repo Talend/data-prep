@@ -13,8 +13,11 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.parameters.ParameterType.*;
+import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.parameters.ParameterType.REGEX;
 
 import java.security.InvalidParameterException;
 import java.util.*;
@@ -25,6 +28,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
@@ -68,7 +72,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
                 Parameter.parameter(locale).setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
                         this));
         parameters.add(
-                Parameter.parameter(locale).setName(REPLACE_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(
+                Parameter.parameter(locale).setName(REPLACE_VALUE_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(
                         this));
         parameters.add(Parameter.parameter(locale).setName(REPLACE_ENTIRE_CELL_PARAMETER)
                 .setType(BOOLEAN)
@@ -79,9 +83,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-        additionalColumns.add(new AdditionalColumn(Type.STRING, context.getColumnName() + "_replace"));
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + "_replace"));
     }
 
     @Override

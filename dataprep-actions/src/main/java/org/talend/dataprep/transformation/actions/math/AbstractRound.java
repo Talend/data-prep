@@ -12,11 +12,16 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DOUBLE;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -96,11 +101,7 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
 
     @Override
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
-        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + NEW_COLUMN_SUFFIX));
-
-        return additionalColumns;
+        return singletonList(new AdditionalColumn(DOUBLE, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

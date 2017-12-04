@@ -11,6 +11,7 @@
 
 package org.talend.dataprep.api.action;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.talend.dataprep.parameters.Parameter;

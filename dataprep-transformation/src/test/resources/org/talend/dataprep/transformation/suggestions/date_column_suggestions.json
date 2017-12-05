@@ -47,7 +47,6 @@
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter"
       }
-
     ],
     "description": "Clear cells that contain a value recognized as invalid",
     "label": "Clear the cells with invalid values",

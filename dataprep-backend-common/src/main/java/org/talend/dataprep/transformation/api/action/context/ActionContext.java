@@ -231,10 +231,20 @@ public class ActionContext implements Serializable {
         this.parameters = parameters;
     }
 
+    /**
+     * The selected column Id, privileged to apply the action.
+     *
+     * @return the selected column Id or null if no column is selected
+     */
     public String getColumnId() {
         return parameters.get(ImplicitParameters.COLUMN_ID.getKey());
     }
 
+    /**
+     * The selected column name, privileged to apply the action.
+     *
+     * @return the selected column name or null if no column is selected
+     */
     public String getColumnName() {
         return getRowMetadata().getById(getColumnId()).getName();
     }

@@ -31,7 +31,6 @@ public interface InventoryActions {
             .payload(PAYLOAD_METHOD_KEY, "enableInventoryEdit")
             .build();
 
-
     ActionSettings INVENTORY_CANCEL_EDIT = builder()
             .id("inventory:cancel-edit")
             .name("inventory.canceledit")

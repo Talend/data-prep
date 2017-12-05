@@ -27,10 +27,24 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(NON_NULL)
 public class ListDisplaySettings {
+
+    /**
+     * The list of display modes to show.
+     */
+    private List<String> displayModes;
+
     /**
      * The option select action identifier
      */
     private String onChange;
+
+    public List<String> getDisplayModes() {
+        return displayModes;
+    }
+
+    public void setDisplayModes(final List<String> modes) {
+        this.displayModes = modes;
+    }
 
     public String getOnChange() {
         return onChange;
@@ -50,7 +64,14 @@ public class ListDisplaySettings {
 
         private static final String NAME = "name";
 
+        private List<String> displayModes = new ArrayList<>();
+
         private String onChange;
+
+        public Builder displayMode(final String mode) {
+            this.displayModes.add(mode);
+            return this;
+        }
 
         public Builder onChange(final String onChange) {
             this.onChange = onChange;
@@ -59,6 +80,7 @@ public class ListDisplaySettings {
 
         public ListDisplaySettings build() {
             final ListDisplaySettings settings = new ListDisplaySettings();
+            settings.setDisplayModes(this.displayModes);
             settings.setOnChange(this.onChange);
             return settings;
         }

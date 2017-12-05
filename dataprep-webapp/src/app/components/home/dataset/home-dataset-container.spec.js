@@ -55,4 +55,9 @@ describe('Home Dataset Container', () => {
 		//then
 		expect(element.find('#inputUpdateDataset').length).toBe(1);
 	});
+
+	if('should render display mode dropdown', () => {
+		createElement();
+		expect(element.find('datasets-list-display-mode').length).toBe(1);
+	});
 });

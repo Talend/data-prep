@@ -65,4 +65,9 @@ describe('Home Preparation Container', () => {
 		//then
 		expect(element.find('inventory-list').length).toBe(1);
 	});
+
+	if('should render display mode dropdown', () => {
+		createElement();
+		expect(element.find('preparations-list-display-mode').length).toBe(1);
+	});
 });

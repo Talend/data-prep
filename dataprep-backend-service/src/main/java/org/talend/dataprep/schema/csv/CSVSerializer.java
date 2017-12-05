@@ -45,7 +45,7 @@ public class CSVSerializer implements Serializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
 
     /** The default enclosure character. */
-    @Value("${default.import.text.enclosure=:\"}")
+    @Value("${default.import.text.enclosure:\"}")
     private String defaultTextEnclosure;
 
     /** The default escape character. */
@@ -66,8 +66,8 @@ public class CSVSerializer implements Serializer {
                 final Map<String, String> parameters = metadata.getContent().getParameters();
                 final String separator = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER);
                 final char actualSeparator = separator.charAt(0);
-                final char textEnclosureChar = getFromParameters(parameters, TEXT_ENCLOSURE_CHAR, defaultTextEnclosure.charAt(0));
-                final char escapeChar = getFromParameters(parameters, CSVFormatFamily.ESCAPE_CHAR, defaultEscapeChar.charAt(0));
+                final char textEnclosureChar = getFromParameters(parameters, TEXT_ENCLOSURE_CHAR, defaultTextEnclosure);
+                final char escapeChar = getFromParameters(parameters, CSVFormatFamily.ESCAPE_CHAR, defaultEscapeChar);
 
                 try (InputStreamReader input = new InputStreamReader(rawContent, metadata.getEncoding());
                         CSVReader reader = new CSVReader(input, actualSeparator, textEnclosureChar, escapeChar)) {
@@ -109,10 +109,10 @@ public class CSVSerializer implements Serializer {
      * @param defaultValue the default value to use if the parameter is not found.
      * @return the parameter value from the dataset parameters or return the given default value if not found.
      */
-    private char getFromParameters(Map<String, String> parameters, String key, char defaultValue) {
+    private char getFromParameters(Map<String, String> parameters, String key, String defaultValue) {
         final String fromParameters = parameters.get(key);
         if (fromParameters == null || fromParameters.length() > 1) {
-            return defaultValue;
+            return defaultValue.isEmpty() ? Character.MIN_VALUE : defaultValue.charAt(0);
         } else if (fromParameters.length() == 0) {
             return Character.MIN_VALUE;
         } else {

@@ -14,8 +14,7 @@
 package org.talend.dataprep.schema.csv;
 
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.HEADER_COLUMNS_PARAMETER;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.SEPARATOR_PARAMETER;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.exception.TDPException;
 
@@ -40,6 +40,14 @@ public class CSVFormatUtils {
      */
     @Autowired
     private ObjectMapper mapper;
+
+    /** The default enclosure character. */
+    @Value("${default.import.text.enclosure:\"}")
+    private String defaultTextEnclosure;
+
+    /** The default escape character. */
+    @Value("${default.import.text.escape:\u0000}")
+    private String defaultEscapeChar;
 
     /**
      * @param parameters the dataset format parameters.
@@ -79,6 +87,14 @@ public class CSVFormatUtils {
 
         // separator
         updatedParameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
+
+        // if no parameter set set take the default one
+        if (updatedParameters.get(TEXT_ENCLOSURE_CHAR) == null) {
+            updatedParameters.put(TEXT_ENCLOSURE_CHAR, defaultTextEnclosure);
+        }
+        if (updatedParameters.get(ESCAPE_CHAR) == null) {
+            updatedParameters.put(ESCAPE_CHAR, defaultEscapeChar);
+        }
         return updatedParameters;
     }
 }

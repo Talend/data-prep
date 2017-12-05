@@ -296,6 +296,46 @@ public class CSVSerializerTest {
         JSONAssert.assertEquals(expected, actual, false);
     }
 
+    // https://jira.talendforge.org/browse/TDP-4579
+    @Test
+    public void should_use_custom_import_parameters_double_quote() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("test_4579_doublequote_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code","Description");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils
+                .toString(this.getClass().getResourceAsStream("test_4579_doublequote_import.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    // https://jira.talendforge.org/browse/TDP-4579
+    @Test
+    public void should_use_custom_import_parameters_pb_double_quote() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("test_4579_doublequote_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code","Description");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils
+                .toString(this.getClass().getResourceAsStream("test_4579_doublequote_import_pb.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
     private DataSetMetadata getSimpleDataSetMetadata(String... columnsName) {
         List<ColumnMetadata> columns = new ArrayList<>(columnsName.length);
         for (int i = 0; i < columnsName.length; i++) {

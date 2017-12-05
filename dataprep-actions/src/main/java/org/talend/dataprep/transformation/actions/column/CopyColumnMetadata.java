@@ -83,7 +83,7 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
         additionalColumns.add(new AdditionalColumn(context.getColumnName() + COPY_APPENDIX) {
 
             {
-                setCopyFrom(column);
+                setCopyFrom(column.getId());
             }
         });
 

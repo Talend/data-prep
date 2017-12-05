@@ -120,6 +120,14 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         return parameters;
     }
 
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+            checkParameters(context.getParameters(), context.getRowMetadata());
+        }
+    }
+
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
      */

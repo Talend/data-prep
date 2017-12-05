@@ -309,16 +309,16 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
                 String nextId = columnId; // id of the column to put the new one after, initially the current column
 
                     for (AdditionalColumn additionalColumn : getAdditionalColumns(context)) {
-                        ColumnMetadata.Builder c = ColumnMetadata.Builder.column();
+                        ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
 
                         if (additionalColumn.getCopyFrom() != null) {
-                            c.copy(additionalColumn.getCopyFrom())//
-                             .computedId(StringUtils.EMPTY);
+                            ColumnMetadata tagada = context.getRowMetadata().getById(additionalColumn.getCopyFrom());
+                            brandNewColumnBuilder.copy(tagada).computedId(StringUtils.EMPTY);
                         }
-                        c.name(additionalColumn.getName()) //
+                        brandNewColumnBuilder.name(additionalColumn.getName()) //
                          .type(additionalColumn.getType()); //
 
-                    ColumnMetadata columnMetadata = c.build();
+                    ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
                     rowMetadata.insertAfter(nextId, columnMetadata);
                     nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
                     cols.put(additionalColumn.getKey(), columnMetadata.getId());
@@ -356,6 +356,11 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
         return context.get(TARGET_COLUMN);
     }
 
+    /**
+     * Actions can define their new columns (name, type). This will be used by createNewColumn(ActionContext context).
+     *
+     * Action can define a single new column (like 'UpperCase') or many (like 'ExtractEmailTokens' or 'Split').
+     */
     protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
         return Collections.singletonList(new AdditionalColumn(Type.STRING, null));
     }
@@ -373,7 +378,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
         private Type type = Type.STRING;
 
-        private ColumnMetadata copyFrom;
+        /* Id of the column to copy metadata from */
+        private String copyFrom;
 
         public AdditionalColumn(String name) {
             this(name, name);
@@ -414,11 +420,11 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
             this.type = type;
         }
 
-        public ColumnMetadata getCopyFrom() {
+        public String getCopyFrom() {
             return copyFrom;
         }
 
-        public void setCopyFrom(ColumnMetadata from) {
+        public void setCopyFrom(String from) {
             this.copyFrom = from;
         }
     }

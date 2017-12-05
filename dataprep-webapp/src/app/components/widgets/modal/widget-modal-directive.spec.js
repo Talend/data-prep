@@ -468,7 +468,7 @@ describe('Modal directive', () => {
 			//then
 			const activeElement = document.activeElement; //eslint-disable-line angular/document-service
 			expect(activeElement.id).toBe('secondInput');
-			expect($window.getSelection().toString()).toBe('city');
+			expect(activeElement.value).toBe('city');
 		}));
 
 		it('should focus on next last shown modal on focused modal close', () => {

@@ -645,6 +645,9 @@ public class DataSetService extends BaseDataSetService {
             dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
             dataSetMetadataRepository.save(dataSetMetadata);
 
+
+            publisher.publishEvent(new DataSetMetadataBeforeUpdateEvent(dataSetMetadata));
+
             // analyze the content
             publisher.publishEvent(new DataSetRawContentUpdateEvent(dataSetMetadata));
 

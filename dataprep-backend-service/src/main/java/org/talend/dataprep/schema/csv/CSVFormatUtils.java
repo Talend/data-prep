@@ -14,17 +14,16 @@
 package org.talend.dataprep.schema.csv;
 
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.*;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.HEADER_COLUMNS_PARAMETER;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.SEPARATOR_PARAMETER;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,22 +42,6 @@ public class CSVFormatUtils {
     private ObjectMapper mapper;
 
     /**
-     * Retrieve properties (separator, header and the headerNbLines) associated with a dataset content and put them in a
-     * map with their corresponding key.
-     *
-     * @param separator the separator object detected by the {@link CSVSchemaParser}
-     * @return a map associating to header and separator parameters their corresponding value
-     */
-    public Map<String, String> compileSeparatorProperties(Separator separator, Map<String, String> newParameters) {
-        return compileSeparatorProperties( //
-                String.valueOf(separator.getSeparator()), //
-                separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList()), //
-                separator.isFirstLineAHeader() ? 1 : 0, //
-                newParameters
-        );
-    }
-
-    /**
      * @param parameters the dataset format parameters.
      * @return the list of the dataset header or an empty list of an error occurs while computing the headers.
      */
@@ -75,89 +58,27 @@ public class CSVFormatUtils {
     }
 
     /**
-     * Retrieve properties (separator, header and the headerNbLines) associated with a dataset content and put them in a
+     * Retrieve properties associated with a dataset content and put them in a
      * map with their corresponding key.
-     * 
-     * @param separator the specified separator
-     * @param header the specified header
-     * @param headerNbLines the specified number of lines spanned by the header
-     */
-    private Map<String, String> compileSeparatorProperties(String separator, List<String> header, int headerNbLines, Map<String, String> newParameters) {
-        Map<String, String> parameters = new HashMap<>();
-        // separator
-        parameters.put(SEPARATOR_PARAMETER, separator);
-        String jsonHeader;
-        try {
-            jsonHeader = mapper.writeValueAsString(header);
-        } catch (Exception e) {
-            throw new TDPException(UNABLE_TO_SERIALIZE_TO_JSON, e);
-        }
-        parameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
-        // nb lines of header
-        parameters.put(HEADER_NB_LINES_PARAMETER, Integer.toString(headerNbLines));
-
-        final String newEscapeChar = newParameters.get(ESCAPE_CHAR);
-        final String newEnclosureChar = newParameters.get(TEXT_ENCLOSURE_CHAR);
-        parameters.put(ESCAPE_CHAR, newEscapeChar);
-        parameters.put(TEXT_ENCLOSURE_CHAR, newEnclosureChar);
-
-        return parameters;
-    }
-
-    /**
-     * Use the separator from the metadata
      *
-     * @param updated the dataset metadata to use.
+     * @param separator the specified separator
+     * @param updatedParameters the updated header
+     *
      */
-    public void useNewSeparator(DataSetMetadata updated) {
+    protected Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
 
-        final Map<String, String> newParameters = updated.getContent().getParameters();
-        final String newSeparator = newParameters.get(SEPARATOR_PARAMETER);
-        final String newHeaderLines = newParameters.get(HEADER_NB_LINES_PARAMETER);
-        List<String> newHeader = Collections.emptyList();
-
-        // update the metadata with the new parameters
-        final Map<String, String> parameters = compileSeparatorProperties( //
-                newSeparator, //
-                newHeader, //
-                Integer.valueOf(newHeaderLines), //
-                newParameters
-        );
-
-        final String newEscapeChar = newParameters.get(ESCAPE_CHAR);
-        final String newEnclosureChar = newParameters.get(TEXT_ENCLOSURE_CHAR);
-        parameters.put(ESCAPE_CHAR, newEscapeChar);
-        parameters.put(TEXT_ENCLOSURE_CHAR, newEnclosureChar);
-
-        updated.getContent().setParameters(parameters);
-    }
-
-    public Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
-
-        Map<String, String> parameters = new HashMap<>();
-
-        // separator
-        parameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
-
-        // header list
         List<String> header = separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList());
+        // header
         String jsonHeader;
         try {
             jsonHeader = mapper.writeValueAsString(header);
         } catch (Exception e) {
             throw new TDPException(UNABLE_TO_SERIALIZE_TO_JSON, e);
         }
-        parameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
+        updatedParameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
 
-        // nb lines of header
-        int headerNbLines = separator.isFirstLineAHeader() ? 1 : 0;
-        parameters.put(HEADER_NB_LINES_PARAMETER, Integer.toString(headerNbLines));
-
-        final String newEscapeChar = updatedParameters.get(SEPARATOR_PARAMETER);
-        final String newEnclosureChar = updatedParameters.get(HEADER_NB_LINES_PARAMETER);
-        parameters.put(SEPARATOR_PARAMETER, newEscapeChar);
-        parameters.put(HEADER_NB_LINES_PARAMETER, newEnclosureChar);
-
-        return parameters;
+        // separator
+        updatedParameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
+        return updatedParameters;
     }
 }

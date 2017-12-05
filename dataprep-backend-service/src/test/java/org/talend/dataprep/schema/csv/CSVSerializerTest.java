@@ -13,9 +13,7 @@
 package org.talend.dataprep.schema.csv;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.ESCAPE_CHAR;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.SEPARATOR_PARAMETER;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.TEXT_ENCLOSURE_CHAR;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.*;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
@@ -50,6 +48,9 @@ public class CSVSerializerTest {
         this.serializer = new CSVSerializer();
         TaskExecutor executor = new SimpleAsyncTaskExecutor();
         ReflectionTestUtils.setField(serializer, "executor", executor);
+        ReflectionTestUtils.setField(serializer, "defaultTextEnclosure", "\"");
+        ReflectionTestUtils.setField(serializer, "defaultEscapeChar", "\u0000");
+
     }
 
     @Test
@@ -170,6 +171,131 @@ public class CSVSerializerTest {
         JSONAssert.assertEquals(expected, actual, false);
     }
 
+    // https://jira.talendforge.org/browse/TDP-4602
+    @Test
+    public void should_use_custom_import_parameters_double_quote_escape() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("column1", "column2");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "\"");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "+");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils.toString(
+                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_double_quote_escape.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    // https://jira.talendforge.org/browse/TDP-4602
+    @Test
+    public void should_use_custom_import_parameters_backslash_escape() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("column1", "column2");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "\\");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "+");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils
+                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_backslash_escape.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    // https://jira.talendforge.org/browse/TDP-4602
+    @Test
+    public void should_use_custom_import_parameters_default_empty_escape() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("column1", "column2");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "+");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils
+                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_default_escape.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    // https://jira.talendforge.org/browse/TDP-4602
+    @Test
+    public void should_use_custom_import_parameters_empty_escape() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("column1", "column2");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "+");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils
+                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_default_escape.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    // https://jira.talendforge.org/browse/TDP-4602
+    @Test
+    public void should_use_custom_import_parameters() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("column1", "column2");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "'");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "+");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.json"),
+                UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    // https://jira.talendforge.org/browse/TDP-4602
+    @Test
+    public void should_use_custom_import_parameters_empty_enclosure() throws IOException {
+
+        // given (text escape char is |)
+        InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("column1", "column2");
+        datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
+        datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "\"");
+        datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "");
+
+        // when
+        InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
+        String actual = IOUtils.toString(input, UTF_8);
+
+        // then
+        final String expected = IOUtils
+                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_empty_enclosure.json"), UTF_8);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
     private DataSetMetadata getSimpleDataSetMetadata(String... columnsName) {
         List<ColumnMetadata> columns = new ArrayList<>(columnsName.length);
         for (int i = 0; i < columnsName.length; i++) {
@@ -184,4 +310,5 @@ public class CSVSerializerTest {
 
         return datasetMetadata;
     }
+
 }

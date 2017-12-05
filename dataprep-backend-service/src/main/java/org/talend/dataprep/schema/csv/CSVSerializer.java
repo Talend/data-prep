@@ -15,11 +15,7 @@ package org.talend.dataprep.schema.csv;
 
 import static org.talend.dataprep.schema.csv.CSVFormatFamily.TEXT_ENCLOSURE_CHAR;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +24,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -47,11 +44,13 @@ public class CSVSerializer implements Serializer {
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
 
-    /** Default text enclosure char. */
-    private static final char DEFAULT_TEXT_ENCLOSURE_CHAR = '"';
+    /** The default enclosure character. */
+    @Value("${default.import.text.enclosure=:\"}")
+    private String defaultTextEnclosure;
 
-    /** Default text enclosure char. */
-    private static final char DEFAULT_ESCAPE_CHAR = '\0';
+    /** The default escape character. */
+    @Value("${default.import.text.escape:\u0000}")
+    private String defaultEscapeChar;
 
     /** Task executor used to serialize CSV dataset into JSON. */
     @Resource(name = "serializer#csv#executor")
@@ -67,11 +66,12 @@ public class CSVSerializer implements Serializer {
                 final Map<String, String> parameters = metadata.getContent().getParameters();
                 final String separator = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER);
                 final char actualSeparator = separator.charAt(0);
-                final char textEnclosureChar = getFromParameters(parameters, TEXT_ENCLOSURE_CHAR, DEFAULT_TEXT_ENCLOSURE_CHAR);
-                final char escapeChar = getFromParameters(parameters, CSVFormatFamily.ESCAPE_CHAR, DEFAULT_ESCAPE_CHAR);
+                final char textEnclosureChar = getFromParameters(parameters, TEXT_ENCLOSURE_CHAR, defaultTextEnclosure.charAt(0));
+                final char escapeChar = getFromParameters(parameters, CSVFormatFamily.ESCAPE_CHAR, defaultEscapeChar.charAt(0));
 
                 try (InputStreamReader input = new InputStreamReader(rawContent, metadata.getEncoding());
                         CSVReader reader = new CSVReader(input, actualSeparator, textEnclosureChar, escapeChar)) {
+
                     JsonGenerator generator = new JsonFactory().createGenerator(jsonOutput);
                     int i = 0;
                     while (i++ < metadata.getContent().getNbLinesInHeader()) {
@@ -111,10 +111,13 @@ public class CSVSerializer implements Serializer {
      */
     private char getFromParameters(Map<String, String> parameters, String key, char defaultValue) {
         final String fromParameters = parameters.get(key);
-        if (fromParameters != null) {
+        if (fromParameters == null || fromParameters.length() > 1) {
+            return defaultValue;
+        } else if (fromParameters.length() == 0) {
+            return Character.MIN_VALUE;
+        } else {
             return fromParameters.charAt(0);
         }
-        return defaultValue;
     }
 
     /**

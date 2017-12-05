@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
@@ -177,8 +176,7 @@ public class FolderServiceTest extends BasePreparationTest {
 
         // when
         given() //
-                .body("faa")
-                .expect().statusCode(200).log().ifError()//
+                .body("faa").expect().statusCode(200).log().ifError()//
                 .when() //
                 .put("/folders/" + fooFolder.getId() + "/name");
 
@@ -189,15 +187,13 @@ public class FolderServiceTest extends BasePreparationTest {
 
         final List<Folder> children = getFolderChildren(folders.get(0).getId());
         assertThat(children, hasSize(2));
-        final List<String> childrenPath = children
-                .stream()
-                .map(Folder::getPath)
-                .collect(toList());
+        final List<String> childrenPath = children.stream().map(Folder::getPath).collect(toList());
         assertThat(childrenPath, containsInAnyOrder("/faa/fooChildOne", "/faa/fooChildTwo"));
     }
 
     @Test
     public void shouldReturnEntireFolderTree() throws Exception {
+        // @formatter:off
         // given
         //                        HOME
         //              ___________|____________
@@ -209,7 +205,7 @@ public class FolderServiceTest extends BasePreparationTest {
         //                                      |
         //                                      |
         //                                  second child child
-
+        // @formatter:on
         createFolder(home.getId(), "first");
         createFolder(home.getId(), "second");
 
@@ -231,19 +227,20 @@ public class FolderServiceTest extends BasePreparationTest {
         // then
         final FolderTreeNode tree = mapper.readValue(response.asString(), new TypeReference<FolderTreeNode>() {
         });
-        assertTree(tree, "/", new String[]{"/first", "/second"});
+        assertTree(tree, "/", new String[] { "/first", "/second" });
 
         final FolderTreeNode firstFolderNode = getChild(tree, "first");
         final FolderTreeNode secondFolderNode = getChild(tree, "second");
-        assertTree(firstFolderNode, "/first", new String[]{"/first/first child one", "/first/first child two"});
-        assertTree(secondFolderNode, "/second", new String[]{"/second/second child"});
+        assertTree(firstFolderNode, "/first", new String[] { "/first/first child one", "/first/first child two" });
+        assertTree(secondFolderNode, "/second", new String[] { "/second/second child" });
 
         final FolderTreeNode secondChildFolderNode = getChild(secondFolderNode, "second child");
-        assertTree(secondChildFolderNode, "/second/second child", new String[]{"/second/second child/second child child"});
+        assertTree(secondChildFolderNode, "/second/second child", new String[] { "/second/second child/second child child" });
     }
 
     @Test
     public void shouldFolderMetadataWithHierarchy() throws Exception {
+        // @formatter:off
         // given
         //                        HOME
         //              ___________|____________
@@ -255,7 +252,7 @@ public class FolderServiceTest extends BasePreparationTest {
         //                                      |
         //                                      |
         //                                  second child child
-
+        // @formatter:on
         createFolder(home.getId(), "first");
         createFolder(home.getId(), "second");
 
@@ -298,8 +295,8 @@ public class FolderServiceTest extends BasePreparationTest {
         createFolder(home.getId(), "foo/bar/tototo");
 
         // when / then
-        assertSearch("toto", strict, new String[]{"/foo/toto"});
-        assertSearch("tot", nonStrict, new String[]{"/foo/toto", "/foo/bar/tototo"});
+        assertSearch("toto", strict, new String[] { "/foo/toto" });
+        assertSearch("tot", nonStrict, new String[] { "/foo/toto", "/foo/bar/tototo" });
     }
 
     private void assertSearch(final String name, final boolean strict, final String[] expectedResultPaths) throws IOException {
@@ -312,54 +309,23 @@ public class FolderServiceTest extends BasePreparationTest {
 
         // then
         assertThat(response.getStatusCode(), is(200));
-        final List<Folder> folders = mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {});
+        final List<Folder> folders = mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
+        });
         final List<String> foldersNames = folders.stream().map(Folder::getPath).collect(toList());
         assertThat(foldersNames.size(), is(expectedResultPaths.length));
         assertThat(foldersNames, containsInAnyOrder(expectedResultPaths));
     }
 
-
-    private void createFolder(final String parentId, final String path) {
-        given().queryParam("parentId", parentId) //
-                .queryParam("path", path) //
-                .expect().statusCode(200).log().ifError()//
-                .when() //
-                .put("/folders").then().assertThat().statusCode(200);
-    }
-
-    private List<Folder> getFolderChildren(final String id) throws IOException {
-        final Response response = given() //
-                .when() //
-                .get("/folders?parentId={parentId}", id);
-
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
-        return mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
-        });
-    }
-
-    private Folder getFolder(final String parentId, final String name) throws IOException {
-        return getFolderChildren(parentId)
-                .stream()
-                .filter((folder) -> folder.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
     private void assertTree(final FolderTreeNode node, final String nodePath, final String[] expectedChildrenPaths) {
         assertThat(node.getFolder().getPath(), is(nodePath));
         assertThat(node.getChildren(), hasSize(expectedChildrenPaths.length));
-        final List<String> actualChildrenPaths = node.getChildren()
-                .stream()
-                .map((folderTreeNode -> folderTreeNode.getFolder().getPath()))
-                .collect(toList());
+        final List<String> actualChildrenPaths = node.getChildren().stream()
+                .map((folderTreeNode -> folderTreeNode.getFolder().getPath())).collect(toList());
         assertThat(actualChildrenPaths, containsInAnyOrder(expectedChildrenPaths));
     }
 
     private FolderTreeNode getChild(final FolderTreeNode tree, final String childName) {
-        return tree.getChildren()
-                .stream()
-                .filter((child) -> child.getFolder().getName().equals(childName))
-                .findFirst()
+        return tree.getChildren().stream().filter((child) -> child.getFolder().getName().equals(childName)).findFirst()
                 .orElse(null);
     }
 }

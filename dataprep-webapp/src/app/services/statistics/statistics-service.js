@@ -339,7 +339,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		const parameters = {
 			rangeData: state.playground.statistics.histogram.data,
 			patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
-                .pluck('pattern')
+                .map('pattern')
                 .map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
                 .value(),
 			filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null,
@@ -856,7 +856,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 			}
 		}
 		else {
-			const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+			const aggregatedColumn = columnAggregation && _.find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
 			if (aggregatedColumn) {
 				const aggregationProcess = processAggregation(aggregatedColumn, aggregationName);
 				asyncProcess.push(aggregationProcess);
@@ -889,7 +889,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		initPatternsFrequency();
 
 		const columnAggregation = getSavedColumnAggregation();
-		const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+		const aggregatedColumn = columnAggregation && _.find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
 		const aggregation = columnAggregation && columnAggregation.aggregation;
 		if (aggregatedColumn && aggregation) {
 			processAggregation(aggregatedColumn, aggregation);

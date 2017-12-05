@@ -134,28 +134,28 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
     @Test
     public void testComputeScaleAndRoundMultiply() {
         assertEquals("6.66", action.compute("3.33", "x", "2"));
-        assertEquals("36.22", action.compute("18.1111", "x", "2"));
+        assertEquals("36.2222", action.compute("18.1111", "x", "2"));
     }
 
     @Test
     public void testComputeScaleAndRoundDivide() {
         assertEquals("1.5", action.compute("3", "/", "2"));
         assertEquals("2", action.compute("18", "/", "9"));
-        assertEquals("2.11", action.compute("19", "/", "9"));
-        assertEquals("211.11", action.compute("1900", "/", "9"));
-        assertEquals("21111.11", action.compute("190000", "/", "9"));
+        assertEquals("2.111111111111111", action.compute("19", "/", "9"));
+        assertEquals("211.111111111111111", action.compute("1900", "/", "9"));
+        assertEquals("21111.111111111111111", action.compute("190000", "/", "9"));
     }
 
     @Test
     public void testComputeScaleAndRoundAdd() {
         assertEquals("5.33", action.compute("3.33", "+", "2"));
-        assertEquals("20.11", action.compute("18.1111", "+", "2"));
+        assertEquals("20.1111", action.compute("18.1111", "+", "2"));
     }
 
     @Test
     public void testComputeScaleAndRoundSubstract() {
         assertEquals("1.33", action.compute("3.33", "-", "2"));
-        assertEquals("16.11", action.compute("18.1111", "-", "2"));
+        assertEquals("16.1111", action.compute("18.1111", "-", "2"));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
         assertEquals("5.1", action.compute("3", "+", "2.1"));
         assertEquals("6.3", action.compute("3", "x", "2.1"));
         assertEquals("0.9", action.compute("3", "-", "2.1"));
-        assertEquals("1.9", action.compute("4", "/", "2.1"));
+        assertEquals("1.904761904761905", action.compute("4", "/", "2.1"));
     }
 
     @Test

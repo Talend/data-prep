@@ -13,8 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.dataquality;
 
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
 
@@ -25,7 +26,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -62,7 +62,7 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
      */
     private static final String COLUMN_IS_SEMANTIC_KEY = "is_semantic_category";
 
-    private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
+    private static final List<String> ACTION_SCOPE = singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardizeInvalid.class);
 

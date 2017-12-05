@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.math.RoundingMode.HALF_UP;
+import static java.math.RoundingMode.HALF_EVEN;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -183,8 +183,8 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
             BigDecimal toReturn;
 
-            final int scale = 2;
-            final RoundingMode rm = HALF_UP;
+            final int scale = 15;
+            final RoundingMode rm = HALF_EVEN;
 
             switch (operator) {
             case PLUS:

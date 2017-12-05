@@ -12,6 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.dataquality;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
+
+import java.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,13 +35,6 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
-
 /**
  * Test class for StandardizeInvalid action
  *
@@ -44,7 +44,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     private final String MATCH_THRESHOLD_PARAMETER = "match_threshold";
 
-    private final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
+    private final List<String> ACTION_SCOPE = Collections.singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
 
     private final String fixedName = "David Bowie";
 

@@ -24,7 +24,14 @@ import { chain } from 'lodash';
  * @requires data-prep.services.utils.service:StorageService
  */
 export default class ExportCtrl {
-	constructor($timeout, state, RestURLs, StepUtilsService, ExportService, StorageService) {
+	constructor(
+		$timeout,
+		state,
+		RestURLs,
+		StepUtilsService,
+		ExportService,
+		StorageService
+	) {
 		'ngInject';
 
 		this.$timeout = $timeout;
@@ -38,7 +45,7 @@ export default class ExportCtrl {
 		this.selectedType = ExportService.getType(this.exportParams.exportType);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name selectType
      * @methodOf data-prep.export.controller:ExportCtrl
@@ -53,7 +60,7 @@ export default class ExportCtrl {
 		}
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name saveType
      * @methodOf data-prep.export.controller:ExportCtrl
@@ -65,7 +72,7 @@ export default class ExportCtrl {
 		this.launchExport();
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name launchDefaultExport
      * @methodOf data-prep.export.controller:ExportCtrl
@@ -76,7 +83,7 @@ export default class ExportCtrl {
 		this.launchExport();
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name launchExport
      * @methodOf data-prep.export.controller:ExportCtrl
@@ -85,13 +92,17 @@ export default class ExportCtrl {
 	launchExport() {
 		this.exportParams = this._extractParameters(this.selectedType);
 
-		this.$timeout(() => {
-			this.form.action = this.RestURLs.exportUrl;
-			this.form.submit();
-		}, 0, false);
+		this.$timeout(
+			() => {
+				this.form.action = this.RestURLs.exportUrl;
+				this.form.submit();
+			},
+			0,
+			false
+		);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name _initExportParameters
      * @methodOf data-prep.export.controller:ExportCtrl
@@ -100,16 +111,17 @@ export default class ExportCtrl {
      */
 	_initExportParameters(exportType) {
 		chain(exportType.parameters)
-            .filter({ name: 'fileName' })
-            .forEach((param) => {
-	param.value = this.state.playground.preparation ?
-                    this.state.playground.preparation.name :
-                    this.state.playground.dataset.name;
-})
-            .value();
+			.filter({ name: 'fileName' })
+			.forEach((param) => {
+				const state = this.state.playground;
+				param.value = state.preparation
+					? state.preparation.name
+					: state.dataset.name;
+			})
+			.value();
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name _extractParameters
      * @methodOf data-prep.export.controller:ExportCtrl
@@ -119,7 +131,10 @@ export default class ExportCtrl {
 	_extractParameters(exportType) {
 		const parameters = { exportType: exportType.id };
 		exportType.parameters.forEach((param) => {
-			parameters['exportParameters.' + param.name] = param.value ? param.value : param.default;
+			parameters['exportParameters.' + param.name] =
+				typeof param.value !== 'undefined'
+					? param.value
+					: param.default;
 		});
 
 		return parameters;
@@ -132,12 +147,13 @@ export default class ExportCtrl {
  * @propertyOf data-prep.export.controller:ExportCtrl
  * @description The current stepId
  */
-Object.defineProperty(ExportCtrl.prototype,
-    'stepId', {
+Object.defineProperty(ExportCtrl.prototype, 'stepId', {
 	enumerable: true,
 	configurable: false,
 	get() {
-		const step = this.StepUtilsService.getLastActiveStep(this.state.playground.recipe);
+		const step = this.StepUtilsService.getLastActiveStep(
+			this.state.playground.recipe
+		);
 		return step ? step.transformation.stepId : '';
 	},
 });

@@ -112,7 +112,7 @@ public class CSVSerializer implements Serializer {
     private char getFromParameters(Map<String, String> parameters, String key, String defaultValue) {
         final String fromParameters = parameters.get(key);
         if (fromParameters == null || fromParameters.length() > 1) {
-            return defaultValue.isEmpty() ? Character.MIN_VALUE : defaultValue.charAt(0);
+            return StringUtils.isEmpty(defaultValue) ? Character.MIN_VALUE : defaultValue.charAt(0);
         } else if (fromParameters.length() == 0) {
             return Character.MIN_VALUE;
         } else {
@@ -137,7 +137,7 @@ public class CSVSerializer implements Serializer {
 
         while ((line = reader.readNext()) != null && withinLimit(limit, current)) {
             // skip empty lines
-            if (line.length == 1 && (StringUtils.isEmpty(line[0]) || line[0].charAt(0) == '\u0000')) {
+            if (line.length == 1 && (StringUtils.isEmpty(line[0]) || line[0].charAt(0) == Character.MIN_VALUE)) {
                 continue;
             }
 
@@ -173,7 +173,7 @@ public class CSVSerializer implements Serializer {
     }
 
     private String cleanCharacters(final String value) {
-        return StringUtils.remove(value, '\u0000'); // unicode null character
+        return StringUtils.remove(value, Character.MIN_VALUE); // unicode null character
     }
 
     /**

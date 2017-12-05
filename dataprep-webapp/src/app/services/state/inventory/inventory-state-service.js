@@ -28,14 +28,16 @@ export const HOME_FOLDER = {
 	path: '/',
 };
 
+const FALLBACK_DISPLAY_MODE = 'table';
+
 export const inventoryState = {
 	datasetToUpdate: null,
 
 	sortList,
 	orderList,
 
-	datasetsDisplayMode: 'table',
-	preparationsDisplayMode: 'table',
+	datasetsDisplayMode: FALLBACK_DISPLAY_MODE,
+	preparationsDisplayMode: FALLBACK_DISPLAY_MODE,
 
 	datasets: {
 		sort: {
@@ -64,10 +66,12 @@ export const inventoryState = {
 	isFetchingPreparations: false,
 };
 
-export function InventoryStateService($translate) {
+export function InventoryStateService($translate, StorageService) {
 	'ngInject';
 
 	return {
+		init,
+
 		enableEdit,
 		disableEdit,
 
@@ -90,6 +94,11 @@ export function InventoryStateService($translate) {
 		setFetchingDatasets,
 		setFetchingPreparations,
 	};
+
+	function init() {
+		inventoryState.datasetsDisplayMode = StorageService.getDatasetsListDisplayMode() || FALLBACK_DISPLAY_MODE;
+		inventoryState.preparationsDisplayMode = StorageService.getPreparationsListDisplayMode() || FALLBACK_DISPLAY_MODE;
+	}
 
 	function createNextEntities(type, fn) {
 		switch (type) {
@@ -292,8 +301,11 @@ export function InventoryStateService($translate) {
 	 * @param {string} displayMode.mode The display mode
 	 * @description Set the dataset display mode
 	 */
-	function setDatasetsDisplayMode(displayMode) {
-		inventoryState.datasetsDisplayMode = displayMode.mode;
+	function setDatasetsDisplayMode({ mode }) {
+		if (mode !== inventoryState.datasetsDisplayMode) {
+			StorageService.setDatasetsListDisplayMode(mode);
+			inventoryState.datasetsDisplayMode = mode;
+		}
 	}
 
 	/**
@@ -318,7 +330,10 @@ export function InventoryStateService($translate) {
 	 * @param {string} displayMode.mode The display mode
 	 * @description Set the preparation display mode
 	 */
-	function setPreparationsDisplayMode(displayMode) {
-		inventoryState.preparationsDisplayMode = displayMode.mode;
+	function setPreparationsDisplayMode({ mode }) {
+		if (mode !== inventoryState.preparationsDisplayMode) {
+			StorageService.setPreparationsListDisplayMode(mode);
+			inventoryState.preparationsDisplayMode = mode;
+		}
 	}
 }

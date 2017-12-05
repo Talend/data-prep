@@ -23,6 +23,8 @@ const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
 const PREPARATIONS_SORT_KEY = 'org.talend.dataprep.preparations.sort';
 const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
 const SIDE_PANEL_DOCK_KEY = 'org.talend.dataprep.sidePanel.docked';
+const PREPARATIONS_LIST_DISPLAY_MODE_KEY = 'org.talend.dataprep.preparations_list_display_mode';
+const DATASETS_LIST_DISPLAY_MODE_KEY = 'org.talend.dataprep.datasets_list_display_mode';
 
 /**
  * @ngdoc service
@@ -393,6 +395,49 @@ export default class StorageService {
      */
 	setPreparationsSort(field, isDescending) {
 		this.setItem(PREPARATIONS_SORT_KEY, { field, isDescending });
+	}
+
+    // --------------------------------------------------------------------------------------------
+    // ---------------------------------------------Display modes-------------------------------------
+    // --------------------------------------------------------------------------------------------
+    /**
+     * @ngdoc method
+     * @name getPreparationsListDisplayMode
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @description Get the preparations list display mode from localStorage
+     */
+	getPreparationsListDisplayMode() {
+		return this.getItem(PREPARATIONS_LIST_DISPLAY_MODE_KEY);
+	}
+
+    /**
+     * @ngdoc method
+     * @name setPreparationsListDisplayMode
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @description Save the preparations list display mode in localStorage
+     */
+	setPreparationsListDisplayMode(mode) {
+		this.setItem(PREPARATIONS_LIST_DISPLAY_MODE_KEY, mode);
+	}
+
+    /**
+     * @ngdoc method
+     * @name getDatasetsListDisplayMode
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @description Get the datasets list display mode from localStorage
+     */
+	getDatasetsListDisplayMode() {
+		return this.getItem(DATASETS_LIST_DISPLAY_MODE_KEY);
+	}
+
+    /**
+     * @ngdoc method
+     * @name setDatasetsListDisplayMode
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @description Save the datasets list display mode in localStorage
+     */
+	setDatasetsListDisplayMode(mode) {
+		this.setItem(DATASETS_LIST_DISPLAY_MODE_KEY, mode);
 	}
 
     // --------------------------------------------------------------------------------------------

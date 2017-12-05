@@ -124,10 +124,11 @@ window.fetchConfiguration = function fetchConfiguration() {
 				}
 			})
 			// Fetch dynamic configuration
-			.run((SettingsService) => {
+			.run((SettingsService, InventoryStateService) => {
 				'ngInject';
 				// base settings
 				SettingsService.setSettings(appSettings);
+				InventoryStateService.init();
 			})
 			// Configure server api urls and refresh supported encoding
 			.run((DatasetService, HelpService, RestURLs) => {

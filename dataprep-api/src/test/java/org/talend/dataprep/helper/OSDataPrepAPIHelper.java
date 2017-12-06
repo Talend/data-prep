@@ -157,9 +157,28 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
+    }
+
+    /**
+     * Update a existing dataset with current file
+     *
+     * @param datasetName the dataset name to update
+     * @param filename the file to use to update the dataset
+     * @return the response
+     */
+    public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
+        return given() //
+                .header(new Header("Content-Type", "text/plain")) //
+                .baseUri(apiBaseUrl) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .when() //
+                .queryParam("name", datasetName) //
+                .put("/api/datasets/" + datasetId);
+
     }
 
     /**
@@ -209,6 +228,23 @@ public class OSDataPrepAPIHelper {
                 .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/preparations/" + preparationId + "/details");
+    }
+
+    /**
+     * Get preparation content by id and at a given version.
+     *
+     * @param preparationId the preparation id.
+     * @param version version of the preparation
+     * @param from
+     * @return the response.
+     */
+    public Response getPreparationContent(String preparationId, String version, String from) {
+        return given() //
+                .baseUri(getApiBaseUrl()) //
+                .queryParam("version", version) //
+                .queryParam("from", from) //
+                .when() //
+                .get("/api/preparations/" + preparationId + "/content");
     }
 
     /**

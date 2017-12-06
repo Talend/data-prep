@@ -12,13 +12,16 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-
-import java.math.BigDecimal;
-import java.util.*;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
 public class Modulo extends AbstractMathOneParameterAction {
@@ -42,11 +45,15 @@ public class Modulo extends AbstractMathOneParameterAction {
         if (StringUtils.isNotBlank(parameter)) {
             value = modulo(value, mod);
         }
-        return value.toString();
+        return value.toPlainString();
 
     }
 
     protected BigDecimal modulo(BigDecimal value, BigDecimal mod) {
+
+        final int scale = ConstantUtilMath.SCALE_PRECISION;
+        final RoundingMode rm = ConstantUtilMath.ROUNDING_MODE;
+
         value = value.remainder(mod);
         if (value.compareTo(BigDecimal.ZERO) == -1) {
             if (mod.compareTo(BigDecimal.ZERO) == 1) {
@@ -57,7 +64,7 @@ public class Modulo extends AbstractMathOneParameterAction {
                 value = value.add(mod);
             }
         }
-        return value.stripTrailingZeros();
+        return value.setScale(scale, rm).stripTrailingZeros();
     }
 
     @Override

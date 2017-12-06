@@ -65,12 +65,38 @@ public class ModuloTest extends AbstractMetadataBaseTest {
         assertEquals(new BigDecimal("0.8"), action.modulo(new BigDecimal("-3.2"), new BigDecimal("2")));
         assertEquals(new BigDecimal("-1.4"), action.modulo(new BigDecimal("3"), new BigDecimal("-2.2")));
         assertEquals(new BigDecimal("-1"), action.modulo(new BigDecimal("-3.2"), new BigDecimal("-2.2")));
+
+        assertEquals(new BigDecimal("1"), action.modulo(new BigDecimal("3"), new BigDecimal("2")));
+        assertEquals(new BigDecimal("1"), action.modulo(new BigDecimal("-3"), new BigDecimal("2")));
+        assertEquals(new BigDecimal("-1"), action.modulo(new BigDecimal("3"), new BigDecimal("-2")));
+        assertEquals(new BigDecimal("-1"), action.modulo(new BigDecimal("-3"), new BigDecimal("-2")));
+
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("10"), new BigDecimal("1")));
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("10"), new BigDecimal("-1")));
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("10"), new BigDecimal("1")));
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("10"), new BigDecimal("-1")));
+
+        assertEquals(new BigDecimal("3"), action.modulo(new BigDecimal("10"), new BigDecimal("7")));
+        assertEquals(new BigDecimal("-4"), action.modulo(new BigDecimal("10"), new BigDecimal("-7")));
+        assertEquals(new BigDecimal("4"), action.modulo(new BigDecimal("-10"), new BigDecimal("7")));
+        assertEquals(new BigDecimal("-3"), action.modulo(new BigDecimal("-10"), new BigDecimal("-7")));
+
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("10"), new BigDecimal("10")));
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("10"), new BigDecimal("-10")));
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("-10"), new BigDecimal("10")));
+        assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("-10"), new BigDecimal("-10")));
+
+        assertEquals(new BigDecimal("0.888888898090093"), action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("2.12345678910121415")));
+        assertEquals(new BigDecimal("0.123456789101112"), action.modulo(new BigDecimal("0.123456789101112"), new BigDecimal("2.12345678910121415")));
+        assertEquals(new BigDecimal("-1.234567891011121"), action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("-7.91012141512345678")));
+        assertEquals(new BigDecimal("-5.070615265797878"), action.modulo(new BigDecimal("2.839506149325579"), new BigDecimal("-7.91012141512345678")));
+
     }
 
     @Test
     public void should_calc_mod() {
         // given
-        DataSetRow row = getRow("6", "3", "Done !");
+        DataSetRow row = getRow("6", "A", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "5");
@@ -86,7 +112,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_calc_mod_with_negative_value() {
         // given
-        DataSetRow row = getRow("-7", "3", "Done !");
+        DataSetRow row = getRow("-7", "A", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "3");
@@ -102,7 +128,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_calc_mod_with_negative_value_and_parameter() {
         // given
-        DataSetRow row = getRow("-6", "3", "Done !");
+        DataSetRow row = getRow("-6", "A", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "-5");
@@ -158,7 +184,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_calc_mod_with_empty_divisor() {
         // given
-        DataSetRow row = getRow("6", "3", "Done !");
+        DataSetRow row = getRow("6", "B", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "");
@@ -174,7 +200,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_calc_mod_with_char() {
         // given
-        DataSetRow row = getRow("6", "3", "Done !");
+        DataSetRow row = getRow("6", "Z", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "aaaa");
@@ -190,7 +216,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_calc_with_divisor_0() {
         // given
-        DataSetRow row = getRow("6", "3", "Done !");
+        DataSetRow row = getRow("6", "T", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "0");
@@ -226,7 +252,7 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_calc_without_divisor() {
         // given
-        DataSetRow row = getRow("6", "3", "Done !");
+        DataSetRow row = getRow("6", "U", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
 

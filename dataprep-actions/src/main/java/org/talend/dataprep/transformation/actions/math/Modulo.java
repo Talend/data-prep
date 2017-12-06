@@ -54,17 +54,17 @@ public class Modulo extends AbstractMathOneParameterAction {
         final int scale = ConstantUtilMath.SCALE_PRECISION;
         final RoundingMode rm = ConstantUtilMath.ROUNDING_MODE;
 
-        value = value.remainder(mod);
-        if (value.compareTo(BigDecimal.ZERO) == -1) {
-            if (mod.compareTo(BigDecimal.ZERO) == 1) {
-                value = value.add(mod);
+        BigDecimal result = value.remainder(mod);
+        if (result.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        } else if (value.compareTo(BigDecimal.ZERO) < 0) {
+            if (mod.compareTo(BigDecimal.ZERO) > 0) {
+                result = result.add(mod);
             }
-        } else {
-            if (mod.compareTo(BigDecimal.ZERO) == -1) {
-                value = value.add(mod);
-            }
+        } else if (mod.compareTo(BigDecimal.ZERO) < 0) {
+            result = result.add(mod);
         }
-        return value.setScale(scale, rm).stripTrailingZeros();
+        return result.setScale(scale, rm).stripTrailingZeros();
     }
 
     @Override

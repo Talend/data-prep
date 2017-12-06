@@ -30,4 +30,8 @@ public enum ExportType {
                 .findFirst() //
                 .orElse(null);
     }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -3,11 +3,6 @@ package org.talend.dataprep.qa.util.export;
 import static org.talend.dataprep.qa.util.StepParamType.IN_OUT;
 import static org.talend.dataprep.qa.util.StepParamType.OUT;
 
-import java.util.Arrays;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import org.talend.dataprep.qa.util.StepParamType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -37,20 +32,6 @@ public enum ExportSampleParamCSV implements ExportParam {
         type = pType;
         name = pName;
         jsonName = pJsonName;
-    }
-
-    /**
-     * Get a corresponding {@link ExportSampleParamCSV} from a {@link String}.
-     *
-     * @param pName the {@link ExportSampleParamCSV#name}.
-     * @return the corresponding {@link ExportSampleParamCSV} or <code>null</code> if there isn't.
-     */
-    @Nullable
-    public static ExportSampleParamCSV getExportSampleParamCSV(@NotNull String pName) {
-        return Arrays.stream(ExportSampleParamCSV.values()) //
-                .filter(e -> !e.type.equals(OUT) && e.name.equalsIgnoreCase(pName)) //
-                .findFirst() //
-                .orElse(null);
     }
 
     @Override

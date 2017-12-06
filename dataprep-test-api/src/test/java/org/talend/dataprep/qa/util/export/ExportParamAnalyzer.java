@@ -1,7 +1,5 @@
 package org.talend.dataprep.qa.util.export;
 
-import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -22,18 +20,6 @@ public class ExportParamAnalyzer {
     public ExportType detectExportType(@NotNull Map<String, String> params) {
         String exportType = params.get(MandatoryParameters.EXPORT_TYPE.getName());
         return ExportType.getExportType(exportType);
-    }
-
-    @NotNull
-    public EnumMap<MandatoryParameters, String> extractMandatoryParameters(@NotNull Map<String, String> params) {
-        EnumMap<MandatoryParameters, String> ret = new EnumMap<>(MandatoryParameters.class);
-        Arrays.asList(MandatoryParameters.values()).forEach(mp -> {
-            String pValue = params.get(mp.getName());
-            if (pValue != null) {
-                ret.put(mp, pValue);
-            }
-        });
-        return ret;
     }
 
     @Nullable

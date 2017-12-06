@@ -398,7 +398,7 @@ describe('Storage service', () => {
 
 		it('should save lists display modes', inject(($window, StorageService) => {
 			StorageService.setListsDisplayModes(mock);
-			expect($window.localStorage.getItem(LISTS_DISPLAY_MODES_KEY)).toBe('{"datasets":"large","preparations":"table"}');
+			expect($window.localStorage.getItem(LISTS_DISPLAY_MODES_KEY)).toBe(JSON.stringify(mock));
 		}));
 	});
 

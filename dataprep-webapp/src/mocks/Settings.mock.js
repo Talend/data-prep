@@ -91,6 +91,13 @@ const settingsMock = {
 					],
 					onChange: 'preparation:sort',
 				},
+				display: {
+					displayModes: [
+						'table',
+						'large',
+					],
+					onChange: 'preparation:display-mode',
+				},
 				actionBar: {
 					actions: {
 						left: ['preparation:create', 'preparation:folder:create'],
@@ -134,6 +141,13 @@ const settingsMock = {
 						{ id: 'date', name: 'Creation Date' },
 					],
 					onChange: 'dataset:sort',
+				},
+				display: {
+					displayModes: [
+						'table',
+						'large',
+					],
+					onChange: 'preparation:display-mode',
 				},
 				actionBar: {
 					actions: {

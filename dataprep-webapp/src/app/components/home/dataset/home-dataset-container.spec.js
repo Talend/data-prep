@@ -56,8 +56,13 @@ describe('Home Dataset Container', () => {
 		expect(element.find('#inputUpdateDataset').length).toBe(1);
 	});
 
-	if('should render display mode dropdown', () => {
+	it('should render display mode dropdown', () => {
 		createElement();
-		expect(element.find('datasets-list-display-mode').length).toBe(1);
+		expect(element.find('#datasets-list-display-mode').length).toBe(1);
+	});
+
+	it('should render sort dropdown', () => {
+		createElement();
+		expect(element.find('#datasets-list-sort-by').length).toBe(1);
 	});
 });

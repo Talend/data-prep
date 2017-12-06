@@ -156,13 +156,7 @@ describe('Inventory state service', () => {
 			});
 		}));
 
-		it('should not persist the datasets display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
-			inventoryState.datasetsDisplayMode = 'table';
-			InventoryStateService.setDatasetsDisplayMode({ mode: 'table' });
-			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
-		}));
-
-		it('should not persist the datasets display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
+		it('should not persist the datasets list display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
 			inventoryState.datasetsDisplayMode = 'table';
 			InventoryStateService.setDatasetsDisplayMode({ mode: 'table' });
 			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
@@ -215,13 +209,7 @@ describe('Inventory state service', () => {
 			});
 		}));
 
-		it('should not persist the preparations display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
-			inventoryState.preparationsDisplayMode = 'table';
-			InventoryStateService.setPreparationsDisplayMode({ mode: 'table' });
-			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
-		}));
-
-		it('should not persist the preparations display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
+		it('should not persist the preparations list display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
 			inventoryState.preparationsDisplayMode = 'table';
 			InventoryStateService.setPreparationsDisplayMode({ mode: 'table' });
 			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();

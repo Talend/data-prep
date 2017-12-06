@@ -178,7 +178,7 @@ export default function RangeSlider($timeout) {
 				// brush rect that reflect the values
 				brushg.selectAll('.resize')
 					.append('rect')
-					.attr('transform', (d, i) => i ? 'translate(-10, 0)' : 'translate(0,0)')
+					.attr('transform', (d, i) => `translate(${i ? '-10' : '0'}, 0)`)
 					.attr('width', 10)
 					.attr('height', 20);
 

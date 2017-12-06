@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.PreparationRequest;
-import org.talend.dataprep.helper.object.ExportRequest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
@@ -251,34 +250,12 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Execute a preparation full run on a dataset followed by an export.
-     *
-     * @param exportType export format.
-     * @param datasetId the dataset id on which the full run will be applied.
-     * @param preparationId the full run preparation id.
-     * @param stepId the last step id.
-     * @param delimiter the column delimiter.
-     * @param filename the name for the exported generated file.
-     * @param escapeCharacter the escape character for the exported generated file.
+     * Export the current preparation sample depending the given parameters.
+     * 
+     * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
-            String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
-
-        ExportRequest exportRequest = new ExportRequest() //
-                .setExportType(exportType) //
-                .setDatasetId(datasetId) //
-                .setPreparationId(preparationId) //
-                .setStepId(stepId) //
-                .setCsv_fields_delimiter(delimiter) //
-                .setFileName(filename) //
-                .setEscapeCharacter(escapeCharacter) //
-                .setEnclosureCharacter(enclosureCharacter) //
-                .setEnclosureMode(enclosureMode) //
-                .setCharset(charset);
-
-        Map<String, Object> parameters = exportRequest.returnParameters();
-
+    public Response executeExport(Map<String, Object> parameters) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //

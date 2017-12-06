@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const SassLintPlugin = require('sasslint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' });
 
@@ -111,7 +112,10 @@ function getCommonStyleLoaders(enableModules) {
 		{};
 	return [
 		{ loader: 'css-loader', options: cssOptions },
-		{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
+		{
+			loader: 'postcss-loader',
+			options: { sourceMap: true, plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] },
+		},
 		{ loader: 'resolve-url-loader' },
 	];
 }
@@ -252,8 +256,12 @@ function addPlugins(config, options) {
 
 function addMinifyConfig(config) {
 	config.plugins.push(
-		new webpack.optimize.UglifyJsPlugin(),
-		new webpack.LoaderOptionsPlugin({ minimize: true })
+		new UglifyJsPlugin({
+			parallel: true,
+		}),
+		new webpack.LoaderOptionsPlugin({
+          minimize: true,
+        })
 	);
 }
 

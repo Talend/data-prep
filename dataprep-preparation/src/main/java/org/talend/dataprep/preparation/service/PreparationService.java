@@ -75,16 +75,24 @@ public class PreparationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationService.class);
 
-    private final ActionFactory factory = new ActionFactory();
-
-    @Autowired
-    private org.springframework.context.ApplicationContext springContext;
+    private static final String STEP_ID = "stepId";
 
     /**
      * Where preparation are stored.
      */
     @Autowired
     protected PreparationRepository preparationRepository;
+
+    /**
+     * DataPrep abstraction to the underlying security (whether it's enabled or not).
+     */
+    @Autowired
+    protected Security security;
+
+    private final ActionFactory factory = new ActionFactory();
+
+    @Autowired
+    private org.springframework.context.ApplicationContext springContext;
 
     /**
      * Where the folders are stored.
@@ -97,12 +105,6 @@ public class PreparationService {
      */
     @Autowired
     private ActionMetadataValidation validator;
-
-    /**
-     * DataPrep abstraction to the underlying security (whether it's enabled or not).
-     */
-    @Autowired
-    protected Security security;
 
     /**
      * Version service.
@@ -169,6 +171,7 @@ public class PreparationService {
     /**
      * List all preparation details.
      *
+     * @param name of the preparation.
      * @param folderPath filter on the preparation path.
      * @param path preparation full path in the form folder_path/preparation_name. Overrides folderPath and name if present.
      * @param sort how to sort the preparations.
@@ -179,6 +182,10 @@ public class PreparationService {
         if (path != null) {
             // Transform path argument into folder path + preparation name
             if (path.contains(PATH_SEPARATOR.toString())) {
+                // Special case the path should start with /
+                if (!path.startsWith(PATH_SEPARATOR.toString())) {
+                    path = PATH_SEPARATOR.toString().concat(path);
+                }
                 folderPath = org.apache.commons.lang3.StringUtils.substringBeforeLast(path, PATH_SEPARATOR.toString());
                 // Special case if the preparation is in the root folder
                 if (org.apache.commons.lang3.StringUtils.isEmpty(folderPath)) {
@@ -186,6 +193,7 @@ public class PreparationService {
                 }
                 name = org.apache.commons.lang3.StringUtils.substringAfterLast(path, PATH_SEPARATOR.toString());
             } else {
+                // the preparation is in the root folder
                 folderPath = PATH_SEPARATOR.toString();
                 name = path;
                 LOGGER.warn("Using path argument without '{}'. {} filter has been transformed into {}{}.", PATH_SEPARATOR, path,
@@ -587,7 +595,7 @@ public class PreparationService {
                 preparation.setSteps(preparationUtils.listSteps(stepId, preparationRepository));
                 preparation.setHeadId(stepId);
             } else {
-                throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation).put("stepId", stepId));
+                throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation).put(STEP_ID, stepId));
             }
         }
 
@@ -785,7 +793,7 @@ public class PreparationService {
     public void setPreparationHead(final String preparationId, final String headId) {
         final Step head = getStep(headId);
         if (head == null) {
-            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparationId).put("stepId", headId));
+            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparationId).put(STEP_ID, headId));
         }
 
         final Preparation preparation = lockPreparation(preparationId);
@@ -981,7 +989,7 @@ public class PreparationService {
         final List<String> steps = preparationUtils.listStepsIds(preparation.getHeadId(), fromStepId, preparationRepository);
         if (!fromStepId.equals(steps.get(0))) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
-                    build().put("id", preparation.getId()).put("stepId", fromStepId));
+                    build().put("id", preparation.getId()).put(STEP_ID, fromStepId));
         }
         return steps;
     }
@@ -1259,11 +1267,11 @@ public class PreparationService {
         final int parentIndex = steps.indexOf(parentStepId);
 
         if (stepIndex < 0) {
-            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation.getId()).put("stepId", stepId));
+            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation.getId()).put(STEP_ID, stepId));
         }
         if (parentIndex < 0) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
-                    build().put("id", preparation.getId()).put("stepId", parentStepId));
+                    build().put("id", preparation.getId()).put(STEP_ID, parentStepId));
         }
 
         if (stepIndex - 1 == parentIndex) {

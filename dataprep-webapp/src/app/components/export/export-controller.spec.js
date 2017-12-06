@@ -76,6 +76,16 @@ describe('Export controller', () => {
 						"description": "Name of the generated export file",
 						"label": "Filename",
 						"default": ""
+					},
+					{
+						"name": "escapeCharacter",
+						"type": "string",
+						"implicit": false,
+						"canBeBlank": true,
+						"placeHolder": "",
+						"description": "Escape character",
+						"label": "Escape character",
+						"default": "@"
 					}
 				]
 			},
@@ -226,6 +236,7 @@ describe('Export controller', () => {
 			const ctrl = createController();
 			ctrl.selectedType = exportTypes[0];
 			ctrl.selectedType.parameters[1].value = 'my prep';
+			ctrl.selectedType.parameters[2].value = '#';
 
 			//when
 			ctrl.saveAndExport();
@@ -235,6 +246,27 @@ describe('Export controller', () => {
 				exportType: 'CSV',
 				'exportParameters.csvSeparator': ';',
 				'exportParameters.fileName': 'my prep',
+				'exportParameters.escapeCharacter': '#',
+			});
+		});
+
+
+		it('should allow empty parameters', () => {
+			//given
+			const ctrl = createController();
+			ctrl.selectedType = exportTypes[0];
+			ctrl.selectedType.parameters[1].value = 'my prep';
+			ctrl.selectedType.parameters[2].value = '';
+
+			//when
+			ctrl.saveAndExport();
+
+			//then
+			expect(ctrl.exportParams).toEqual({
+				exportType: 'CSV',
+				'exportParameters.csvSeparator': ';',
+				'exportParameters.fileName': 'my prep',
+				'exportParameters.escapeCharacter': '',
 			});
 		});
 
@@ -251,7 +283,8 @@ describe('Export controller', () => {
 			expect(ExportService.setExportParams).toHaveBeenCalledWith({
 				exportType: exportTypes[0].id,
 				'exportParameters.csvSeparator': ';',
-				'exportParameters.fileName': ''
+				'exportParameters.fileName': '',
+				'exportParameters.escapeCharacter': '@',
 			});
 		}));
 	});
@@ -297,7 +330,8 @@ describe('Export controller', () => {
 			expect(ctrl.exportParams).toEqual({
 				exportType: 'CSV',
 				'exportParameters.csvSeparator': ';',
-				'exportParameters.fileName': 'prepname'
+				'exportParameters.fileName': 'prepname',
+				'exportParameters.escapeCharacter': '@',
 			});
 		});
 	});
@@ -317,6 +351,7 @@ describe('Export controller', () => {
 				exportType: 'CSV',
 				'exportParameters.csvSeparator': ';',
 				'exportParameters.fileName': 'my prep',
+				'exportParameters.escapeCharacter': '@',
 			});
 		});
 

@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.i18n.custom.actions.TestAction;
 import org.talend.dataprep.test.LocalizationRule;
+import org.talend.dataprep.transformation.actions.bool.Negate;
 
 public class ActionsBundleTest {
 
@@ -71,6 +72,11 @@ public class ActionsBundleTest {
     @Test
     public void customActionLabel() throws Exception {
         assertEquals("Nice custom label", ActionsBundle.actionLabel(new TestAction(), Locale.US, "custom"));
+    }
+
+    @Test
+    public void customActionLabel_fallbacks() throws Exception {
+        assertEquals("Nice custom label", ActionsBundle.actionLabel(new Negate(), Locale.US, "custom"));
     }
 
     @Test

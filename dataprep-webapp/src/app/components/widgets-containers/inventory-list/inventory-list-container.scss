@@ -19,11 +19,16 @@ $icon-job-badge-color: #266092;
 $icon-xls-badge-color: #8ABC00;
 
 .tc-list-display-virtualized {
-	div.tc-list-cell-name {
-		flex: 2 1 450px;
-	}
-
 	div.tc-list-cell {
+		&-name,
+		&-datasetName {
+			flex-grow: 2;
+			flex-shrink: 1;
+		}
+
+		&-name { flex-basis: 450px; }
+		&-datasetName { flex-basis: 200px; }
+
 		&-nbRecords,
 		&-nbSteps,
 		&-author,
@@ -31,8 +36,6 @@ $icon-xls-badge-color: #8ABC00;
 		&-lastModificationDate,
 		&-statusActions { flex: 1 0 120px;}
 	}
-
-	div.tc-list-cell-datasetName { flex: 2 1 200px; }
 }
 
 .list-item-preparation {
@@ -71,22 +74,4 @@ $icon-xls-badge-color: #8ABC00;
 .ti-file-xls-o-badge,
 .ti-file-xlsx-o-badge {
 	fill: $icon-xls-badge-color;
-}
-
-.fetch-loader {
-	&,
-	&-wrapper {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	&-wrapper {
-		flex-direction: column;
-		height: 100%;
-	}
-
-	&-icon + span {
-		padding-left: 20px;
-	}
 }

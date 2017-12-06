@@ -46,6 +46,7 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownS
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
+import org.talend.dataprep.api.service.settings.views.api.list.ToolbarDetailsSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
 
 public class AppSettingsAPITest extends ApiServiceTestBase {
@@ -365,6 +366,10 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
+        final ToolbarDetailsSettings toolbar = ((ListSettings) settings.getViews().get("listview:preparations")).getToolbar();
+        assertThat(toolbar.getDisplay().getDisplayModes(), contains("table", "large"));
+        assertThat(toolbar.getDisplay().getOnChange(), is("preparation:display-mode"));
+
         final ListSettings list = (ListSettings) settings.getViews().get("listview:preparations");
         assertThat(list.getDidMountActionCreator(), is("preparations:folder:fetch"));
 

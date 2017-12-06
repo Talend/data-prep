@@ -114,6 +114,34 @@ public class ExtractDateTokensTest extends BaseDateTest {
     }
 
     @Test
+    public void test_TDP_4494() throws Exception {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("Apr-25-1999").type(Type.DATE).statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING)) //
+                .build();
+
+        parameters.put(ExtractDateTokens.QUARTER, "true");
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "toto");
+        expectedValues.put("0001", "Apr-25-1999");
+        expectedValues.put("0003", "2");
+        expectedValues.put("0004", "1999");
+        expectedValues.put("0005", "4");
+        expectedValues.put("0006", "0");
+        expectedValues.put("0007", "0");
+        expectedValues.put("0002", "tata");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_process_row_with_time() throws Exception {
         // given
         final DataSetRow row = builder() //

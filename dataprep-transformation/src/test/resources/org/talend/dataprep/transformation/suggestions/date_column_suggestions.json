@@ -712,6 +712,16 @@
         "label": "Year"
       },
       {
+        "name": "QUARTER",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "default": "false",
+        "description": "Extract quarter of year from date (08/24/2015 -> 3)",
+        "label": "Quarter of year"
+      },
+      {
         "name": "MONTH",
         "type": "boolean",
         "implicit": false,

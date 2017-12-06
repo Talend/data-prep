@@ -208,7 +208,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                 if (temporalAccessor != null && // may occurs if date can not be parsed with pattern
                         temporalAccessor.isSupported(date_field.field)) {
                     if (QUARTER.equals(date_field.key)) {
-                        newValue = String.valueOf((temporalAccessor.get(date_field.field)-1) / 3 + 1);
+                        newValue = String.valueOf(getQuarter(temporalAccessor.get(date_field.field)));
                     }
                     else {
                         newValue = String.valueOf(temporalAccessor.get(date_field.field));
@@ -217,6 +217,16 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                 row.set(dateFieldColumns.get(date_field.key), newValue);
             }
         }
+    }
+
+    /**
+     * Get the quarter of the year.
+     *
+     * @param numMonth the number of the month
+     * @return the quarter
+     */
+    protected int getQuarter(int numMonth) {
+        return (numMonth - 1) / 3 + 1;
     }
 
     @Override

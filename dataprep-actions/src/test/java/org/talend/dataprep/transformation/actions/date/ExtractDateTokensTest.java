@@ -127,8 +127,8 @@ public class ExtractDateTokensTest extends BaseDateTest {
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
         expectedValues.put("0001", "Apr-25-1999");
-        expectedValues.put("0003", "2");
-        expectedValues.put("0004", "1999");
+        expectedValues.put("0003", "1999");
+        expectedValues.put("0004", "2");
         expectedValues.put("0005", "4");
         expectedValues.put("0006", "0");
         expectedValues.put("0007", "0");

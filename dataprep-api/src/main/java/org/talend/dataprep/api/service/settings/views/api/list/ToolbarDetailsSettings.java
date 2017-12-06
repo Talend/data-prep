@@ -69,8 +69,7 @@ public class ToolbarDetailsSettings {
     }
 
     public static Builder from(final ToolbarDetailsSettings viewSettings) {
-        return builder() //
-                .actionBar(viewSettings.getActionBar());
+        return builder().actionBar(viewSettings.getActionBar());
     }
 
     public static class Builder {

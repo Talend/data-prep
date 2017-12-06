@@ -76,7 +76,5 @@ public class CommonViewsProviderTest {
         assertTrue(settings.contains(ListViews.FOLDERS_LIST));
         assertTrue(settings.contains(ListViews.PREPARATIONS_LIST));
         assertTrue(settings.contains(ListViews.DATASETS_LIST));
-
     }
-
 }

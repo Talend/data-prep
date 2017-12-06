@@ -88,6 +88,5 @@ public class ListSortSettings {
             settings.setOnChange(this.onChange);
             return settings;
         }
-
     }
 }

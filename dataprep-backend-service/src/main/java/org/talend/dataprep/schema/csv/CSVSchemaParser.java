@@ -144,11 +144,7 @@ public class CSVSchemaParser implements SchemaParser {
             List<String> sampleLines = new ArrayList<>();
             final List<Character> validSepartors;
 
-            if (forcedSeparator.isPresent()) {
-                validSepartors = Collections.singletonList(forcedSeparator.get());
-            } else {
-                validSepartors = DEFAULT_VALID_SEPARATORS;
-            }
+            validSepartors = forcedSeparator.map(Collections::singletonList).orElse(DEFAULT_VALID_SEPARATORS);
 
             while ((line = csvStreamReader.readLine()) != null) {
                 if (!line.isEmpty() && sampleLines.size() < SMALL_SAMPLE_LIMIT) {

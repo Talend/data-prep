@@ -53,7 +53,7 @@ public class CSVFormatUtils {
      * @param parameters the dataset format parameters.
      * @return the list of the dataset header or an empty list of an error occurs while computing the headers.
      */
-    public List<String> retrieveHeader(Map<String, String> parameters) {
+    List<String> retrieveHeader(Map<String, String> parameters) {
         List<String> header;
         try {
             String jsonMap = parameters.get(HEADER_COLUMNS_PARAMETER);
@@ -73,7 +73,7 @@ public class CSVFormatUtils {
      * @param updatedParameters the updated header
      *
      */
-    protected Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
+    Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
 
         List<String> header = separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList());
         // header
@@ -89,12 +89,9 @@ public class CSVFormatUtils {
         updatedParameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
 
         // if no parameter set set take the default one
-        if (updatedParameters.get(TEXT_ENCLOSURE_CHAR) == null) {
-            updatedParameters.put(TEXT_ENCLOSURE_CHAR, defaultTextEnclosure);
-        }
-        if (updatedParameters.get(ESCAPE_CHAR) == null) {
-            updatedParameters.put(ESCAPE_CHAR, defaultEscapeChar);
-        }
+        updatedParameters.putIfAbsent(TEXT_ENCLOSURE_CHAR, defaultTextEnclosure);
+        updatedParameters.putIfAbsent(ESCAPE_CHAR, defaultEscapeChar);
+
         return updatedParameters;
     }
 }

@@ -14,8 +14,7 @@
 package org.talend.dataprep.schema.csv;
 
 import static org.junit.Assert.assertEquals;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.HEADER_NB_LINES_PARAMETER;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.SEPARATOR_PARAMETER;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,11 +44,12 @@ public class CSVFormatUtilsTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void shouldUseNewSeparator() {
+    public void should_compile_parameters() {
+        // given
+        ReflectionTestUtils.setField(csvFormatUtils, "defaultTextEnclosure", "\"");
+        ReflectionTestUtils.setField(csvFormatUtils, "defaultEscapeChar", "\u0000");
 
-        // when
-        final Map<String, String> entryParameters = new HashMap<>();
-        entryParameters.put(HEADER_NB_LINES_PARAMETER, "12");
+        final Map<String, String> entryParameters = initMapParam();
 
         final Separator separator = new Separator("|".charAt(0));
 
@@ -56,7 +57,21 @@ public class CSVFormatUtilsTest {
         csvFormatUtils.compileParameterProperties(separator, entryParameters);
 
         // then
+        assertEquals(5, entryParameters.size());
+        assertEquals("\u0000", entryParameters.get(ESCAPE_CHAR));
+        assertEquals("\"", entryParameters.get(TEXT_ENCLOSURE_CHAR));
         assertEquals("|", entryParameters.get(SEPARATOR_PARAMETER));
+        assertEquals("12", entryParameters.get(HEADER_NB_LINES_PARAMETER));
+        assertEquals(null, entryParameters.get(HEADER_COLUMNS_PARAMETER));
+    }
+
+    private Map initMapParam() {
+        final Map<String, String> entryParameters = new HashMap<>();
+        entryParameters.put(HEADER_NB_LINES_PARAMETER, "12");
+        entryParameters.put(HEADER_COLUMNS_PARAMETER,
+                "[\"nickname|secret\",\"firstname|secret\",\"lastname|date\",\"of\",\"birth|city\"]");
+        entryParameters.put(SEPARATOR_PARAMETER, ",");
+        return entryParameters;
     }
 
 }

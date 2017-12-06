@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -51,7 +51,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
 
     private Map<String, String> parameters;
 
-    final private DecimalFormat format = new DecimalFormat("0000");
+    private final DecimalFormat format = new DecimalFormat("0000");
 
     @Before
     public void init() throws IOException {
@@ -96,7 +96,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_delete_with_empty_row() {
-        // given
+        //given
         // row 1
         final DataSetRow row1 = getDataSetRow("David", "Bowie");
 
@@ -117,7 +117,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_delete_with_blank_row() {
-        // given
+        //given
         // row 1
         final DataSetRow row1 = getDataSetRow("David", "Bowie");
 
@@ -147,7 +147,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_delete_with_keep() {
-        // given
+        //given
         // row 1
         final DataSetRow row1 = getDataSetRow("David", "Bowie");
 
@@ -163,8 +163,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
         // row 5
         final DataSetRow row5 = getDataSetRow("", "\n\t");
 
-        parameters.remove(DeleteAllEmpty.NON_PRINTING_PARAMETER);
-        parameters.put(DeleteAllEmpty.NON_PRINTING_PARAMETER, DeleteAllEmpty.KEEP);
+        parameters.put(DeleteAllEmpty.ACTION_PARAMETER, DeleteAllEmpty.KEEP);
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry,
                 factory.create(action, parameters));
@@ -179,6 +178,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_delete_with_multiple_empty() {
+        //given
         // row 1
         final DataSetRow row1 = getDataSetRow("David", "Bowie");
 
@@ -207,26 +207,34 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_delete_with_date() {
-
+    public void should_not_delete_when_only_cells_empty() {
+        //given
         // row 1
-        final DataSetRow row1 = getDataSetRow("24/11/2017", "25/11/2017");
+        final DataSetRow row1 = getDataSetRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = getDataSetRow("", "");
+        final DataSetRow row2 = getDataSetRow("a", "");
+
+        // row 3
+        final DataSetRow row3 = getDataSetRow(" ", "b");
+
+        // row 4
+        final DataSetRow row4 = getDataSetRow(null, "c");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4), actionRegistry,
+                factory.create(action, parameters));
 
         // then
         assertThat(row1.isDeleted(), is(false));
-        assertThat(row2.isDeleted(), is(true));
+        assertThat(row2.isDeleted(), is(false));
+        assertThat(row3.isDeleted(), is(false));
+        assertThat(row4.isDeleted(), is(false));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+        assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_DELETE_ROWS));
     }
 }

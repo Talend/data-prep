@@ -293,7 +293,7 @@
         "default": ""
       },
       {
-        "name": "non_printing",
+        "name": "action_on_blank_lines",
         "type": "select",
         "implicit": false,
         "canBeBlank": false,

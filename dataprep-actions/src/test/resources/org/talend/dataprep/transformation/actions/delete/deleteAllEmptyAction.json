@@ -5,7 +5,7 @@
       "parameters": {
         "column_id": "0000",
         "scope": "dataset",
-        "non_printing": "delete"
+        "action_on_blank_lines": "delete"
       }
     }
   ]

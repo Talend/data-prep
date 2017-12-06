@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -23,6 +23,7 @@ import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
@@ -38,7 +39,7 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
      */
     public static final String DELETE_ALL_EMPTY_ACTION_NAME = "delete_all_empty";
 
-    protected static final String NON_PRINTING_PARAMETER = "non_printing";
+    protected static final String ACTION_PARAMETER = "action_on_blank_lines";
 
     protected static final String DELETE = "delete";
 
@@ -55,7 +56,7 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
 
         parameters.add(SelectParameter
                 .selectParameter(locale)
-                .name(NON_PRINTING_PARAMETER)
+                .name(ACTION_PARAMETER)
                 .item(DELETE)
                 .item(KEEP)
                 .defaultValue(DELETE)
@@ -76,7 +77,7 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.FORBID_DISTRIBUTED, Behavior.VALUES_DELETE_ROWS);
+        return EnumSet.of(Behavior.VALUES_DELETE_ROWS);
     }
 
     @Override
@@ -87,26 +88,22 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
         if (!row.isDeleted()) {
-            Map<String, String> parameters = context.getParameters();
-            String mode = parameters.get(NON_PRINTING_PARAMETER);
+            String mode = context.getParameters().get(ACTION_PARAMETER);
             row.setDeleted(toDelete(row, mode));
         }
     }
 
     public boolean toDelete(DataSetRow row, String mode) {
+        Predicate<String> nonDeletableCriteria;
+        if (KEEP.equals(mode)) {
+            nonDeletableCriteria = s -> StringUtils.isNotEmpty(s);
+        } else {
+            nonDeletableCriteria = s -> StringUtils.isNotBlank(s);
+        }
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
             String value = row.get(column.getId());
-            switch (mode) {
-            case KEEP:
-                if (StringUtils.isNotEmpty(value)) {
-                    return false;
-                }
-                break;
-            case DELETE:
-                if (StringUtils.isNotBlank(value)) {
-                    return false;
-                }
-                break;
+            if (nonDeletableCriteria.test(value)) {
+                return false;
             }
         }
         return true;

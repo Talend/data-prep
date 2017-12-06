@@ -67,14 +67,14 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     private static final String DE_REGION_CODE = "DE";
 
-    static final String OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
+    static final String OTHER_REGION_TO_BE_SPECIFIED = "other_region";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FormatPhoneNumber.class);
 
     /** the follow 4 types is provided to user selection on UI */
-    static final String TYPE_INTERNATIONAL = "International"; //$NON-NLS-1$
+    static final String TYPE_INTERNATIONAL = "international"; //$NON-NLS-1$
 
-    static final String TYPE_NATIONAL = "National"; //$NON-NLS-1$
+    static final String TYPE_NATIONAL = "national"; //$NON-NLS-1$
 
     static final String TYPE_E164 = "E164"; //$NON-NLS-1$
 
@@ -149,7 +149,8 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
                                 .item(FR_REGION_CODE, FR_REGION_CODE) //
                                 .item(UK_REGION_CODE, UK_REGION_CODE) //
                                 .item(DE_REGION_CODE, DE_REGION_CODE) //
-                                .item(OTHER_REGION_TO_BE_SPECIFIED, Parameter.parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
+                                .item(OTHER_REGION_TO_BE_SPECIFIED, OTHER_REGION_TO_BE_SPECIFIED,
+                                        Parameter.parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
                                         .setType(ParameterType.STRING)
                                         .setDefaultValue(EMPTY)
                                         .build(this))
@@ -157,8 +158,8 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
                 .defaultValue(CONSTANT_MODE).build(this));
 
         parameters.add(SelectParameter.selectParameter(locale).name(FORMAT_TYPE_PARAMETER) //
-                .item(TYPE_INTERNATIONAL) //
-                .item(TYPE_NATIONAL) //
+                .item(TYPE_INTERNATIONAL, TYPE_INTERNATIONAL) //
+                .item(TYPE_NATIONAL, TYPE_NATIONAL) //
                 .item(TYPE_E164) //
                 .item(TYPE_RFC3966) //
                 .defaultValue(TYPE_INTERNATIONAL).build(this));

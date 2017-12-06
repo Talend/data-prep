@@ -85,7 +85,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         final SelectParameter parameter4 = (SelectParameter) parameters.get(4);
         assertEquals(2,parameter4.getItems().size());
         assertEquals("Whitespace", parameter4.getItems().get(0).getLabel());
-        assertEquals("other", parameter4.getItems().get(1).getLabel());
+        assertEquals("Other", parameter4.getItems().get(1).getLabel());
     }
 
     @Test

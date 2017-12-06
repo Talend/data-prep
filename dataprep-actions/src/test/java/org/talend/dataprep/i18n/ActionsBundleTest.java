@@ -59,7 +59,7 @@ public class ActionsBundleTest {
 
     @Test
     public void choice() throws Exception {
-        assertEquals("other", ActionsBundle.choice(this, Locale.US, "custom"));
+        assertEquals("Other", ActionsBundle.choice(this, Locale.US, "custom"));
     }
 
     @Test

@@ -34,7 +34,7 @@ Feature: Perform an OS Smoke Test
 
   Scenario: Update date split step
     Given I update the first step like "dateSplit" on the preparation "10L3C_preparation" with the following parameters :
-      | separator             | other (string) |
+      | separator             | other_string |
       | manualSeparatorString | /              |
     Then I check that a step like "dateSplit" exists in the preparation "10L3C_preparation"
     Given I move the first step like "dateSplit" after the first step like "stepUp" on the preparation "10L3C_preparation"

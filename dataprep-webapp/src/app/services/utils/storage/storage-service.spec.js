@@ -382,8 +382,27 @@ describe('Storage service', () => {
 		}));
 	});
 
-	describe('selected columns', () => {
+	describe('display modes', () => {
+		const LISTS_DISPLAY_MODES_KEY = 'org.talend.dataprep.lists_display_mode';
+		const mock = {
+			datasets: 'large',
+			preparations: 'table',
+		};
 
+		it('should get lists display modes', inject(($window, StorageService) => {
+			expect(StorageService.getListsDisplayModes()).toEqual({});
+			$window.localStorage.setItem(LISTS_DISPLAY_MODES_KEY, JSON.stringify(mock));
+			const modes = StorageService.getListsDisplayModes();
+			expect(modes).toEqual(mock);
+		}));
+
+		it('should save lists display modes', inject(($window, StorageService) => {
+			StorageService.setListsDisplayModes(mock);
+			expect($window.localStorage.getItem(LISTS_DISPLAY_MODES_KEY)).toBe('{"datasets":"large","preparations":"table"}');
+		}));
+	});
+
+	describe('selected columns', () => {
 		const SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_abcd';
 
 		it('should return the selected columns from local storage', inject(($window, StorageService) => {

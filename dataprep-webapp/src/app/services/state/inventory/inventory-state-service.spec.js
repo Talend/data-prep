@@ -25,6 +25,10 @@ describe('Inventory state service', () => {
 		$translateProvider.preferredLanguage('en');
 	}));
 
+	beforeEach(inject(($q,  StorageService) => {
+		spyOn(StorageService, 'setListsDisplayModes').and.returnValue();
+	}));
+
 	beforeEach(() => {
 		datasets = [
 			{
@@ -142,6 +146,27 @@ describe('Inventory state service', () => {
 			// then
 			expect(inventoryState.datasetToUpdate).toBe(datasetToUpdate);
 		}));
+
+		it('should set datasets list display mode', inject((inventoryState, InventoryStateService, StorageService) => {
+			InventoryStateService.setDatasetsDisplayMode({ mode: 'large' });
+			expect(inventoryState.datasetsDisplayMode).toBe('large');
+			expect(StorageService.setListsDisplayModes).toHaveBeenCalledWith({
+				datasets: 'large',
+				preparations: 'table',
+			});
+		}));
+
+		it('should not persist the datasets display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
+			inventoryState.datasetsDisplayMode = 'table';
+			InventoryStateService.setDatasetsDisplayMode({ mode: 'table' });
+			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
+		}));
+
+		it('should not persist the datasets display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
+			inventoryState.datasetsDisplayMode = 'table';
+			InventoryStateService.setDatasetsDisplayMode({ mode: 'table' });
+			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
+		}));
 	});
 
 	describe('preparation', () => {
@@ -179,6 +204,27 @@ describe('Inventory state service', () => {
 
 			// then
 			expect(inventoryState.folder.content.preparations[1].displayMode).toBe(undefined);
+		}));
+
+		it('should set preparations list display mode', inject((inventoryState, InventoryStateService, StorageService) => {
+			InventoryStateService.setPreparationsDisplayMode({ mode: 'large' });
+			expect(inventoryState.preparationsDisplayMode).toBe('large');
+			expect(StorageService.setListsDisplayModes).toHaveBeenCalledWith({
+				preparations: 'large',
+				datasets: 'table',
+			});
+		}));
+
+		it('should not persist the preparations display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
+			inventoryState.preparationsDisplayMode = 'table';
+			InventoryStateService.setPreparationsDisplayMode({ mode: 'table' });
+			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
+		}));
+
+		it('should not persist the preparations display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
+			inventoryState.preparationsDisplayMode = 'table';
+			InventoryStateService.setPreparationsDisplayMode({ mode: 'table' });
+			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
 		}));
 	});
 

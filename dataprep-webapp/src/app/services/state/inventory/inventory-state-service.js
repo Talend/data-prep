@@ -96,8 +96,9 @@ export function InventoryStateService($translate, StorageService) {
 	};
 
 	function init() {
-		inventoryState.datasetsDisplayMode = StorageService.getDatasetsListDisplayMode() || FALLBACK_DISPLAY_MODE;
-		inventoryState.preparationsDisplayMode = StorageService.getPreparationsListDisplayMode() || FALLBACK_DISPLAY_MODE;
+		const { datasets, preparations } = StorageService.getListsDisplayModes();
+		inventoryState.datasetsDisplayMode = datasets || FALLBACK_DISPLAY_MODE;
+		inventoryState.preparationsDisplayMode = preparations || FALLBACK_DISPLAY_MODE;
 	}
 
 	function createNextEntities(type, fn) {
@@ -303,8 +304,11 @@ export function InventoryStateService($translate, StorageService) {
 	 */
 	function setDatasetsDisplayMode({ mode }) {
 		if (mode !== inventoryState.datasetsDisplayMode) {
-			StorageService.setDatasetsListDisplayMode(mode);
 			inventoryState.datasetsDisplayMode = mode;
+			StorageService.setListsDisplayModes({
+				preparations: inventoryState.preparationsDisplayMode,
+				datasets: inventoryState.datasetsDisplayMode,
+			});
 		}
 	}
 
@@ -332,8 +336,11 @@ export function InventoryStateService($translate, StorageService) {
 	 */
 	function setPreparationsDisplayMode({ mode }) {
 		if (mode !== inventoryState.preparationsDisplayMode) {
-			StorageService.setPreparationsListDisplayMode(mode);
 			inventoryState.preparationsDisplayMode = mode;
+			StorageService.setListsDisplayModes({
+				preparations: inventoryState.preparationsDisplayMode,
+				datasets: inventoryState.datasetsDisplayMode,
+			});
 		}
 	}
 }

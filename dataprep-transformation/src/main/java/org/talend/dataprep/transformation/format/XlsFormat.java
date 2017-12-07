@@ -32,16 +32,18 @@ public class XlsFormat extends ExportFormat {
     /** XLS format type name. */
     public static final String XLSX = "XLSX";
 
-    /**
-     * Default constructor.
-     */
-    //@formatter:off
     public XlsFormat() {
         super(XLSX, "application/vnd.ms-excel", ".xlsx", true, true,
                 Collections.singletonList(
-                        Parameter.parameter(getLocale()).setName("fileName").setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(null)));
+                        Parameter.parameter(getLocale()) //
+                                .setName("fileName") //
+                                .setType(ParameterType.STRING) //
+                                .setDefaultValue(StringUtils.EMPTY) //
+                                .setCanBeBlank(false) //
+                                .build(null) //
+                ) //
+        );
     }
-    //@formatter:on
 
     @Override
     public int getOrder() {

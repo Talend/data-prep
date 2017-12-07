@@ -69,6 +69,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     public static final String NEW_COLUMN = "new_column";
 
+    /**
+     * Name of the new column.
+     */
+    public static final String NEW_COLUMN_NAME = "column_name";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -92,6 +97,12 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+
+        parameters.add(Parameter.parameter(locale).setName(NEW_COLUMN_NAME)
+                .setType(ParameterType.STRING)
+                .setDefaultValue("")
+                .setCanBeBlank(false)
+                .build(this));
 
         Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                 .setType(ParameterType.STRING)

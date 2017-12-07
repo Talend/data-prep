@@ -246,6 +246,14 @@ public class ExtractDateTokensTest extends BaseDateTest {
         assertNull(rowMetadata.getById("0007"));
     }
 
+    @Test
+    public void test_getQuarter() {
+        assertEquals(3, action.getQuarter(8));
+        assertEquals(4, action.getQuarter(12));
+        assertEquals(1, action.getQuarter(3));
+        assertEquals(1, action.getQuarter(1));
+    }
+
     private ColumnMetadata createMetadata(String id) {
         return createMetadata(id, Type.STRING);
     }

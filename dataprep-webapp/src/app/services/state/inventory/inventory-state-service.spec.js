@@ -17,6 +17,7 @@ describe('Inventory state service', () => {
 	let datasets;
 	let preparations;
 	let folders;
+	let storageSpy;
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
@@ -26,8 +27,14 @@ describe('Inventory state service', () => {
 	}));
 
 	beforeEach(inject(($q,  StorageService) => {
-		spyOn(StorageService, 'setListsDisplayModes').and.returnValue();
+		storageSpy = spyOn(StorageService, 'setListsDisplayModes').and.returnValue();
 	}));
+
+	beforeEach(inject(inventoryState => {
+		inventoryState.preparationsDisplayMode = 'table';
+		inventoryState.datasetsDisplayMode = 'table';
+	}));
+
 
 	beforeEach(() => {
 		datasets = [
@@ -147,18 +154,18 @@ describe('Inventory state service', () => {
 			expect(inventoryState.datasetToUpdate).toBe(datasetToUpdate);
 		}));
 
-		it('should set datasets list display mode', inject((inventoryState, InventoryStateService, StorageService) => {
+		it('should set datasets list display mode and persist it if different from the actual', inject((inventoryState, InventoryStateService, StorageService) => {
 			InventoryStateService.setDatasetsDisplayMode({ mode: 'large' });
+
 			expect(inventoryState.datasetsDisplayMode).toBe('large');
 			expect(StorageService.setListsDisplayModes).toHaveBeenCalledWith({
 				datasets: 'large',
 				preparations: 'table',
 			});
-		}));
 
-		it('should not persist the datasets list display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
-			inventoryState.datasetsDisplayMode = 'table';
-			InventoryStateService.setDatasetsDisplayMode({ mode: 'table' });
+			storageSpy.calls.reset();
+
+			InventoryStateService.setDatasetsDisplayMode({ mode: 'large' });
 			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
 		}));
 	});
@@ -200,18 +207,18 @@ describe('Inventory state service', () => {
 			expect(inventoryState.folder.content.preparations[1].displayMode).toBe(undefined);
 		}));
 
-		it('should set preparations list display mode', inject((inventoryState, InventoryStateService, StorageService) => {
+		it('should set preparations list display mode and persist it if different from actual', inject((inventoryState, InventoryStateService, StorageService) => {
 			InventoryStateService.setPreparationsDisplayMode({ mode: 'large' });
+
 			expect(inventoryState.preparationsDisplayMode).toBe('large');
 			expect(StorageService.setListsDisplayModes).toHaveBeenCalledWith({
 				preparations: 'large',
 				datasets: 'table',
 			});
-		}));
 
-		it('should not persist the preparations list display mode if it is the same', inject((inventoryState, InventoryStateService, StorageService) => {
-			inventoryState.preparationsDisplayMode = 'table';
-			InventoryStateService.setPreparationsDisplayMode({ mode: 'table' });
+			storageSpy.calls.reset();
+
+			InventoryStateService.setPreparationsDisplayMode({ mode: 'large' });
 			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
 		}));
 	});

@@ -158,7 +158,7 @@
                 "label": "tab"
               },
               {
-                "value": "other (string)",
+                "value": "other_string",
                 "parameters": [
                   {
                     "name": "manual_separator_string",
@@ -174,7 +174,7 @@
                 "label": "other (string)"
               },
               {
-                "value": "other (regex)",
+                "value": "other_regex",
                 "parameters": [
                   {
                     "name": "manual_separator_regex",

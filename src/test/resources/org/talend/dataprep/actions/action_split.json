@@ -19,7 +19,7 @@
       "action": "split",
       "parameters": {
         "limit": 3,
-        "separator": "other (string)",
+        "separator": "other_string",
         "manual_separator_string": " ",
         "scope": "column",
         "column_id": "0000",

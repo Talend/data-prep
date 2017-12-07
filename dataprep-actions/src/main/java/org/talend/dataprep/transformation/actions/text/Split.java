@@ -98,7 +98,7 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
                         .item("-")
                         .item("_")
                         .item(" ", "space")
-                        .item("\t", "tab")
+                        .item("\t", "tabulation")
                         .item(OTHER_STRING, OTHER_STRING, //
                                 Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
                         .item(OTHER_REGEX, OTHER_REGEX, //

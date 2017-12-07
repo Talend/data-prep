@@ -72,7 +72,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     /**
      * Name of the new column.
      */
-    public static final String NEW_COLUMN_NAME = "column_name";
+    public static final String NEW_COLUMN_NAME = "create_new_column_name";
 
     @Override
     public String getName() {
@@ -100,7 +100,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
         parameters.add(Parameter.parameter(locale).setName(NEW_COLUMN_NAME)
                 .setType(ParameterType.STRING)
-                .setDefaultValue("")
+                .setDefaultValue("New column")
                 .setCanBeBlank(false)
                 .build(this));
 
@@ -131,7 +131,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
             // Create new column
             final RowMetadata rowMetadata = context.getRowMetadata();
             final String columnId = context.getColumnId();
-            final Map<String, String> parameters = context.getParameters();
             context.column(NEW_COLUMN, (r) -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
@@ -170,15 +169,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         }
 
         row.set(newColumn, newValue);
-    }
-
-    private String evalNewColumnName(RowMetadata rowMetadata, Map<String, String> parameters) {
-        if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE)) {
-            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-            return selectedColumn.getName() + CopyColumnMetadata.COPY_APPENDIX;
-        } else {
-            return "new column";
-        }
     }
 
     /**

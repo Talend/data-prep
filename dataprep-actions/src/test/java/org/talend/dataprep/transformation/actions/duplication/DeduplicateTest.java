@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,7 +29,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -81,13 +81,13 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void should_deduplicate() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row2 = getRow("David", "Bowie");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow("Toto", "Cafe");
+        final DataSetRow row3 = getRow("Toto", "Cafe");
 
         initParameters();
 
@@ -104,10 +104,10 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_empty_string() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("DavidBowie", "");
+        final DataSetRow row2 = getRow("DavidBowie", "");
 
         initParameters();
 
@@ -123,10 +123,10 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_uppercase() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("DAvid", "Bowie");
+        final DataSetRow row2 = getRow("DAvid", "Bowie");
 
         initParameters();
 
@@ -142,10 +142,10 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_num() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("1David", "Bowie");
+        final DataSetRow row2 = getRow("1David", "Bowie");
 
         initParameters();
 
@@ -161,10 +161,10 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_accentued_carac() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("Dàvid", "Bowie");
+        final DataSetRow row2 = getRow("Dàvid", "Bowie");
 
         initParameters();
 
@@ -180,10 +180,10 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_date() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("05/10/2017", "06/10/2017");
+        final DataSetRow row1 = getRow("05/10/2017", "06/10/2017");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("05/10/2017", "07/10/2017");
+        final DataSetRow row2 = getRow("05/10/2017", "07/10/2017");
 
         initParameters();
 
@@ -199,10 +199,10 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_ponct() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("David.", "Bowie");
+        final DataSetRow row2 = getRow("David.", "Bowie");
 
         initParameters();
 
@@ -218,19 +218,19 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     public void deduplicate_with_mutiple_deletes() {
 
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("Toto", "Cafe");
+        final DataSetRow row2 = getRow("Toto", "Cafe");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow("Toto", "Cafe");
+        final DataSetRow row3 = getRow("Toto", "Cafe");
 
         // row 4
-        final DataSetRow row4 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row4 = getRow("David", "Bowie");
 
         // row 5
-        final DataSetRow row5 = ActionMetadataTestUtils.getRow("Bowie", "David");
+        final DataSetRow row5 = getRow("Bowie", "David");
 
         initParameters();
 
@@ -248,14 +248,14 @@ public class DeduplicateTest extends AbstractMetadataBaseTest {
     @Test
     public void deduplicate_with_deleted_row() {
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
         row1.setDeleted(true);
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("Toto", "Cafe");
+        final DataSetRow row2 = getRow("Toto", "Cafe");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row3 = getRow("David", "Bowie");
 
         initParameters();
 

@@ -36,6 +36,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 /**
  * Test class for DeleteAllEmpty action. Creates one consumer, and test it.
@@ -86,13 +87,13 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     public void should_delete_with_empty_row() {
         //given
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row2 = getRow("David", "Bowie");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow("", "");
+        final DataSetRow row3 = getRow("", "");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
@@ -107,19 +108,19 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     public void should_delete_with_blank_row() {
         //given
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row2 = getRow("David", "Bowie");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow("", " ");
+        final DataSetRow row3 = getRow("", " ");
 
         // row 4
-        final DataSetRow row4 = ActionMetadataTestUtils.getRow("     ", " ");
+        final DataSetRow row4 = getRow("     ", " ");
 
         // row 5
-        final DataSetRow row5 = ActionMetadataTestUtils.getRow("", "\n\t");
+        final DataSetRow row5 = getRow("", "\n\t");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry,
@@ -137,19 +138,19 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     public void should_not_delete_with_keep() {
         //given
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row2 = getRow("David", "Bowie");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow(" ", "    ");
+        final DataSetRow row3 = getRow(" ", "    ");
 
         // row4
-        final DataSetRow row4 = ActionMetadataTestUtils.getRow("", "");
+        final DataSetRow row4 = getRow("", "");
 
         // row 5
-        final DataSetRow row5 = ActionMetadataTestUtils.getRow("", "\n\t");
+        final DataSetRow row5 = getRow("", "\n\t");
 
         parameters.put(DeleteAllEmpty.ACTION_PARAMETER, DeleteAllEmpty.KEEP);
         // when
@@ -168,19 +169,19 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     public void should_delete_with_multiple_empty() {
         //given
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("", "");
+        final DataSetRow row2 = getRow("", "");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow("", "");
+        final DataSetRow row3 = getRow("", "");
 
         // row 4
-        final DataSetRow row4 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row4 = getRow("David", "Bowie");
 
         // row 5
-        final DataSetRow row5 = ActionMetadataTestUtils.getRow("", null);
+        final DataSetRow row5 = getRow("", null);
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry,
@@ -198,16 +199,16 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
     public void should_not_delete_when_only_cells_empty() {
         //given
         // row 1
-        final DataSetRow row1 = ActionMetadataTestUtils.getRow("David", "Bowie");
+        final DataSetRow row1 = getRow("David", "Bowie");
 
         // row 2
-        final DataSetRow row2 = ActionMetadataTestUtils.getRow("a", "");
+        final DataSetRow row2 = getRow("a", "");
 
         // row 3
-        final DataSetRow row3 = ActionMetadataTestUtils.getRow(" ", "b");
+        final DataSetRow row3 = getRow(" ", "b");
 
         // row 4
-        final DataSetRow row4 = ActionMetadataTestUtils.getRow(null, "c");
+        final DataSetRow row4 = getRow(null, "c");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4), actionRegistry,

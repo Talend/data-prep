@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.FORBID_DISTRIBUTED;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
 import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.NEW_VALUE_PARAMETER;
 import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.ORIGINAL_VALUE_PARAMETER;
@@ -139,7 +140,7 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         // given
         final Long rowId = 1L;
         final String joe = "Joe";
-        final DataSetRow row = ActionMetadataTestUtils.getRow(joe);
+        final DataSetRow row = getRow(joe);
         row.setTdpId(rowId);
 
         final Map<String, String> parameters = getParameters(rowId, joe, "Jimmy");
@@ -157,7 +158,7 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         // given
         final Long rowId = 1L;
         final String joe = "Joe";
-        final DataSetRow row = ActionMetadataTestUtils.getRow(joe);
+        final DataSetRow row = getRow(joe);
         row.setTdpId(2L);
 
         final Map<String, String> parameters = getParameters(rowId, "Jimmy", joe);
@@ -172,7 +173,7 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
     @Test
     public void should_tag_invalid_value() {
         // given
-        final DataSetRow row = ActionMetadataTestUtils.getRow("True");
+        final DataSetRow row = getRow("True");
         row.setTdpId(1L);
         final ColumnMetadata columnMetadata = row.getRowMetadata().getColumns().get(0);
         columnMetadata.setType(Type.BOOLEAN.getName()); // Column is a boolean

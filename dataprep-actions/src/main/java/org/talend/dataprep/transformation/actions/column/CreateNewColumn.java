@@ -135,7 +135,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
             context.column(NEW_COLUMN, (r) -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
-                        .name(evalNewColumnName(rowMetadata, parameters)) //
+                        .name(context.getParameters().get(NEW_COLUMN_NAME)) //
                         .type(Type.STRING) //
                         .build();
                 rowMetadata.insertAfter(columnId, c);

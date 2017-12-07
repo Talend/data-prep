@@ -111,13 +111,13 @@ public class CSVSerializer implements Serializer {
      */
     private char getFromParameters(Map<String, String> parameters, String key, String defaultValue) {
         final String fromParameters = parameters.get(key);
+
+        // wrong parameter use (empty or more than one character)
         if (fromParameters == null || fromParameters.length() > 1) {
             return StringUtils.isEmpty(defaultValue) ? Character.MIN_VALUE : defaultValue.charAt(0);
-        } else if (fromParameters.length() == 0) {
-            return Character.MIN_VALUE;
-        } else {
-            return fromParameters.charAt(0);
         }
+
+        return (fromParameters.length() == 0)  ? Character.MIN_VALUE : fromParameters.charAt(0);
     }
 
     /**

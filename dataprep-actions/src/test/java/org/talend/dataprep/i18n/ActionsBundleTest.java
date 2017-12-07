@@ -17,6 +17,18 @@ public class ActionsBundleTest {
     public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @Test
+    public void testLocaleOverride() {
+        Locale.setDefault(Locale.FRENCH);
+        assertEquals("Negate value", ActionsBundle.actionLabel(this, Locale.US, "negate"));
+    }
+
+    @Test
+    public void testLocalOverrideWithUnsupportedLocale() {
+        Locale.setDefault(Locale.CHINESE);
+        assertEquals("Negate value", ActionsBundle.actionLabel(this, Locale.ITALY, "negate"));
+    }
+
+    @Test
     public void actionLabel() throws Exception {
         assertEquals("Negate value", ActionsBundle.actionLabel(this, Locale.US, "negate"));
     }

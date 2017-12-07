@@ -259,7 +259,10 @@ public class ActionsBundle implements MessagesBundle {
         while (iterator.hasNext() && bundle == null) {
             String packageName = iterator.next();
             try {
-                ResourceBundle searchedBundle = ResourceBundle.getBundle(packageName + '.' + ACTIONS_MESSAGES, locale);
+                ResourceBundle searchedBundle = ResourceBundle.getBundle(packageName + '.' + ACTIONS_MESSAGES, //
+                        locale, //
+                        ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)
+                );
                 if (searchedBundle.containsKey(key)) {
                     bundle = searchedBundle;
                 }

@@ -187,7 +187,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
         parameters.put("precision", precision);
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expected, row1.get("0001"));
@@ -212,7 +212,7 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest {
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("1.0", row1.get("0001"));

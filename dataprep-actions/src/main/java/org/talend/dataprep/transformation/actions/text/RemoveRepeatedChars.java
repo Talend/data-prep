@@ -24,8 +24,6 @@ import java.util.*;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -49,8 +47,6 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     public static final String ACTION_NAME = "remove_repeated_chars";
 
     private static final String DUPLICATE_CHAR_ERASER_KEY = "duplicate_char_eraser_key";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemoveRepeatedChars.class);
 
     /** The selected remmove type within the provided list.*/
     protected static final String REMOVE_TYPE = "remove_type";

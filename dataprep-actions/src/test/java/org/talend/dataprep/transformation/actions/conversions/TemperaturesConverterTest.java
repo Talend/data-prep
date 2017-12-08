@@ -84,7 +84,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
         parameters.put("precision", "0");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
         // assertEquals("365", row1.get("0001"));
@@ -110,7 +110,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("0", row1.get("0001"));

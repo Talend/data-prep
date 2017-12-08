@@ -39,8 +39,6 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DurationConverterTest extends BaseDateTest {
 
-    private Map<String, String> parameters;
-
     public DurationConverterTest() {
         super(new DurationConverter());
     }
@@ -80,21 +78,21 @@ public class DurationConverterTest extends BaseDateTest {
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
     }
 
-    private static double year = 1.0;
+    private static final double year = 1.0;
 
-    private static double month = 12.2;
+    private static final double month = 12.2;
 
-    private static double week = 52.1;
+    private static final double week = 52.1;
 
-    private static double day = 365;
+    private static final double day = 365;
 
-    private static double hour = 8760;// 365 * 24;
+    private static final double hour = 8760;// 365 * 24;
 
-    private static double minute = 525600;// 365 * 24 * 60;
+    private static final double minute = 525600;// 365 * 24 * 60;
 
-    private static double second = 31536000;// 3.1536E7; //31536000;// 365 * 24 * 60 * 60;
+    private static final double second = 31536000;// 3.1536E7; //31536000;// 365 * 24 * 60 * 60;
 
-    private static double millisecond = 31536000000L;// (365 * 24 * 60 * 60 * 1000);
+    private static final double millisecond = 31536000000L;// (365 * 24 * 60 * 60 * 1000);
 
     @Test
     public void test_apply_inplace() {
@@ -113,7 +111,7 @@ public class DurationConverterTest extends BaseDateTest {
         parameters.put("precision", "0");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("1", row1.get("0001"));
@@ -142,7 +140,7 @@ public class DurationConverterTest extends BaseDateTest {
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("365", row1.get("0001"));

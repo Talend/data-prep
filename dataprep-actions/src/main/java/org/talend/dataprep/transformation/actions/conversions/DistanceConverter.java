@@ -66,8 +66,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     /**
      * @return The list of parameters required for this Action to be executed.
-     *
-     * @param locale*/
+     */
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);

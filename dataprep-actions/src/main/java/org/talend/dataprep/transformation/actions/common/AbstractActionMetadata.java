@@ -86,7 +86,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * @return The label of the action, translated in the user locale.
      * @see MessagesBundle
-     * @param locale
      */
     @Override
     public String getLabel(Locale locale) {
@@ -96,7 +95,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * @return The description of the action, translated in the user locale.
      * @see MessagesBundle
-     * @param locale
      */
     @Override
     public String getDescription(Locale locale) {
@@ -204,8 +202,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     /**
      * @return The list of parameters required for this Action to be executed.
-     *
-     * @param locale
      */
     @Override
     public List<Parameter> getParameters(Locale locale) {

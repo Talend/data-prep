@@ -49,7 +49,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
     /**
      * The action to test.
      */
-    private Split action = new Split();
+    private final Split action = new Split();
 
     public SplitTest() {
         super(new Split());
@@ -281,9 +281,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    /**
-     * @see SplitTest#should_split_row()
-     */
     public void test_TDP_876() {
         // given
         final DataSetRow row = builder() //

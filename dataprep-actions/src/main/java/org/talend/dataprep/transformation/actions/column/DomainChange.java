@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
+import static java.util.Collections.singletonList;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
@@ -64,7 +65,7 @@ public class DomainChange extends AbstractActionMetadata implements ColumnAction
 
     @Override
     public List<String> getActionScope() {
-        return Arrays.asList(HIDDEN_IN_ACTION_LIST.getDisplayName());
+        return singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     /**

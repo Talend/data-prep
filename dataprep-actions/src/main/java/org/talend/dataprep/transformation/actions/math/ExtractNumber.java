@@ -78,9 +78,9 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     private static final List<Character> SEPARATORS = asList('.', ',');
 
     /** K: the prefix, V: the value. */
-    private static Map<String, MetricPrefix> METRIC_PREFIXES = new ConcurrentHashMap<>(13);
+    private static final Map<String, MetricPrefix> METRIC_PREFIXES = new ConcurrentHashMap<>(13);
 
-    /**
+    /*
      * Initialize the supported metrics.
      *
      * <ul>

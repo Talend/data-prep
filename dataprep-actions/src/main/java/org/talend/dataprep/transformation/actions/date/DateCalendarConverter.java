@@ -237,7 +237,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                     newValue = dateConverter.convert(value);
                 }
             } else {//it is From JulianDay.JulianDay->Chronology OR JulianDay->JulianDay
-                JulianDayConverter julianDayConvert = (JulianDayConverter) context.get(JULIAN_DAY_CONVERT_KEY);
+                JulianDayConverter julianDayConvert = context.get(JULIAN_DAY_CONVERT_KEY);
                 newValue = julianDayConvert.convert(value);
             }
             if (StringUtils.isNotEmpty(newValue) && StringUtils.isNotBlank(newValue)) {
@@ -251,9 +251,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     /**
      * Create instance DateCalendarConverter only once for each pattern. It is used to covert from Chronology.
-     * @param fromPattern
-     * @param context
-     * @return
      */
     private org.talend.dataquality.converters.DateCalendarConverter getDateCalendarConverterInstance(String fromPattern,ActionContext context) {
         if (!isFromChronology || StringUtils.isEmpty(fromPattern)) {
@@ -288,7 +285,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
      *
      * @param value      the text to parse.
      * @param patterns   the patterns to use.
-     * @param chronology
+     * @param chronology the chronology to use.
      * @return the parsed date pattern
      */
     public static String parseDateFromPatterns(String value, List<DatePattern> patterns, AbstractChronology chronology,
@@ -330,7 +327,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         RATA_DIE(false, "RataDie", JulianFields.RATA_DIE),
         EPOCH_DAY(false, "EpochDay", ChronoField.EPOCH_DAY);
 
-        private String displayName;
+        private final String displayName;
 
         private transient AbstractChronology chronologyType;
 
@@ -344,7 +341,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         /**
          * It is a Chronology or a TemporalField instance.
          */
-        private boolean isChronology;
+        private final boolean isChronology;
 
         CalendarUnit(boolean isChronology, String displayName, AbstractChronology calendarType, Locale defaultLocale) {
             this.displayName = displayName;

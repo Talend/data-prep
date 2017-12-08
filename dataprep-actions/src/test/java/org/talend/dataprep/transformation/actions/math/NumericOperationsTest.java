@@ -76,8 +76,8 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(7, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "operator")).findFirst().isPresent());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "operator")));
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode")));
     }
 
     @Test

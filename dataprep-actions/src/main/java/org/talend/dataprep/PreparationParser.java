@@ -46,7 +46,7 @@ public class PreparationParser {
 
     private static final ActionFactory actionFactory = new ActionFactory();
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static void assertPreparation(Object preparation) {
         if (preparation == null) {

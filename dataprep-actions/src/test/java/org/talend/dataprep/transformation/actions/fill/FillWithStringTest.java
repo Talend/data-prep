@@ -32,7 +32,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -47,7 +46,7 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
     }
 
     @PostConstruct
-    public void FillWithStringTest() {
+    public void fillWithStringTest() {
         action = (FillWithValue) action.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
     }
 

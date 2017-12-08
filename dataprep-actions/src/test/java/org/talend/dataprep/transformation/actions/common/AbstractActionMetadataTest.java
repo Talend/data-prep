@@ -27,7 +27,7 @@ public class AbstractActionMetadataTest {
 
     public static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
-    private static AbstractActionMetadata doNothingAction = new AbstractActionMetadata() {
+    private static final AbstractActionMetadata doNothingAction = new AbstractActionMetadata() {
 
         @Override
         public String getName() {

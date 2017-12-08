@@ -288,7 +288,7 @@ public class ContainsTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(5, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode")));
     }
 
     @Test

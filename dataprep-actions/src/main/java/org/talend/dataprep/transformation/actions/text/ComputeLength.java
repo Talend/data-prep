@@ -17,7 +17,6 @@ import java.util.*;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -73,9 +72,7 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         // create new column and append it after current column
-        final RowMetadata rowMetadata = context.getRowMetadata();
         final String columnId = context.getColumnId();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
         final String lengthColumn = ActionsUtils.getTargetColumnId(context);
 
         // Set length value

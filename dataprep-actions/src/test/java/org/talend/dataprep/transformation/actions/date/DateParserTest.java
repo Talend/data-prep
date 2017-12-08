@@ -14,7 +14,6 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +41,7 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 public class DateParserTest {
 
     /** The action to test. */
-    private DateParser action = new DateParser(new AnalyzerService());
+    private final DateParser action = new DateParser(new AnalyzerService());
 
     protected InputStream getDateTestJsonAsStream(String testFileName) {
         return BaseDateTest.class.getResourceAsStream(testFileName);

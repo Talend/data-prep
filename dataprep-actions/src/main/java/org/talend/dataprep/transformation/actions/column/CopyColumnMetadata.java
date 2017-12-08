@@ -13,8 +13,11 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
+import static java.util.Collections.singletonList;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.additionalColumn;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.createNewColumn;
 
 import java.util.*;
 
@@ -67,15 +70,17 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
 
-        ActionsUtils.AdditionalColumn additionalColumn = ActionsUtils.additionalColumn()
-                .withName(context.getColumnName() + COPY_APPENDIX);
-        additionalColumn.withCopyMetadataFromId(column.getId());
-        additionalColumns.add(additionalColumn);
-        ActionsUtils.createNewColumn(context, additionalColumns);
+        createNewColumn( //
+                context, //
+                singletonList( //
+                        additionalColumn() //
+                                .withName(context.getColumnName() + COPY_APPENDIX) //
+                                .withCopyMetadataFromId(column.getId()) //
+                ) //
+        );
     }
 
     @Override

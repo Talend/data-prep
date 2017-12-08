@@ -57,7 +57,6 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
 
     /**
      * initialize  parameters for custom repeated char
-     * @param repStr
      */
     private void initParameterCustom(String repStr) {
         parameters = new HashMap<>();

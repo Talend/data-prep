@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
@@ -103,8 +102,6 @@ public class TimestampToDate extends AbstractDate implements ColumnAction {
         final String columnId = context.getColumnId();
 
         // create new column and append it after current column
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
         final String newColumn = ActionsUtils.getTargetColumnId(context);
 
         final String value = row.get(columnId);

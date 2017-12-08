@@ -16,7 +16,6 @@ package org.talend.dataprep.transformation.actions.date;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -37,7 +36,7 @@ public abstract class BaseDateTest<T extends  AbstractActionMetadata> extends Ab
      * @param statisticsFileName the statistics file name to use.
      * @return a row with default settings for the tests.
      */
-    protected DataSetRow getDefaultRow(String statisticsFileName) throws IOException {
+    protected DataSetRow getDefaultRow(String statisticsFileName) {
         return builder() //
                 .with(value("lorem bacon").type(Type.STRING).name("recipe")) //
                 .with(value("01/01/2010").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream(statisticsFileName))) //

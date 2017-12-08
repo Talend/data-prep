@@ -162,10 +162,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
 
     /**
      * Applicable row only when the column uses semantic and the row value is invalid.
-     *
-     * @param row
-     * @param context
-     * @return
      */
     private boolean isApplicable(DataSetRow row, ActionContext context) {
         boolean isColumnUseSemantic = context.get(COLUMN_IS_SEMANTIC_KEY);
@@ -196,9 +192,9 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
         DEFAULT("default_match", 0.8),
         NONE("none_match", 0.0);
 
-        private String label;
+        private final String label;
 
-        private Double threshold;
+        private final Double threshold;
 
         MatchThresholdEnum(String label, Double threshold) {
             this.label = label;

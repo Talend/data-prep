@@ -101,7 +101,6 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     /**
      *
      * @return {@link Parameter} the default value (can be a different type/value)
-     * @param locale
      */
     protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy no idea why this 2 but was here before so just keep backward compat :-)
@@ -156,9 +155,6 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
 
     /**
      * can be overridden as keys can be different (date have different keys/labels)
-     *
-     * @param parameters
-     * @return
      */
     protected String getCompareMode(Map<String, String> parameters) {
         return parameters.get(CompareAction.COMPARE_MODE);
@@ -183,19 +179,16 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     }
 
     /**
-     * do the real comparison
+     * Do the real comparison.
      *
-     * @param comparisonRequest
      * @return same result as {@link Comparable#compareTo(Object)} if any type issue or any problem use
      * #ERROR_COMPARE_RESULT
      */
     protected abstract int doCompare(ComparisonRequest comparisonRequest);
 
     /**
-     *
-     * @param comparisonRequest
-     * @return transforming boolean to <code>true</code> or <code>false</code> as String in case of #doCompare returning
-     * #ERROR_COMPARE_RESULT the label #ERROR_COMPARE_RESULT_LABEL is returned
+     * Transforming boolean to <code>true</code> or <code>false</code> as String in case of #doCompare returning
+     * #ERROR_COMPARE_RESULT the label #ERROR_COMPARE_RESULT_LABEL is returned.
      */
     public String toStringCompareResult(ComparisonRequest comparisonRequest) {
         boolean booleanResult;

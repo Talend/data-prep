@@ -123,9 +123,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
         final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
         Map<String, String> parameters = context.getParameters();
 
         final String containsColumn = ActionsUtils.getTargetColumnId(context);

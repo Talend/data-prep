@@ -71,8 +71,8 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest<CompareNumbers>
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(7, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.COMPARE_MODE)).findFirst().isPresent());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.MODE_PARAMETER)).findFirst().isPresent());
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), CompareNumbers.COMPARE_MODE)));
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), CompareNumbers.MODE_PARAMETER)));
     }
 
     @Test

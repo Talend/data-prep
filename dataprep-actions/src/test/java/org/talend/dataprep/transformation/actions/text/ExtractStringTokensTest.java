@@ -29,7 +29,6 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -338,9 +337,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_extract_token_no_match() {
         // given
@@ -379,9 +375,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -405,9 +398,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata_twice() {
         // given
@@ -432,7 +422,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    public void should_not_update_metadata_because_null_separator() throws IOException {
+    public void should_not_update_metadata_because_null_separator() {
         // given
         final List<ColumnMetadata> input = new ArrayList<>();
         input.add(createMetadata("0000", "recipe"));

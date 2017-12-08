@@ -127,8 +127,6 @@ public class ActionsUtils {
      * For most actions, the default implementation is ok, but some actions (like 'split' that always creates new column) may
      * override it. In this case, no need to override createNewColumnParamVisible() and true.
      *
-     * @param parameters
-     * @param createNewColumnDefaultValue
      * @return 'true' if this step (action+parameters) creates a new column, 'false' if it's applied in-place.
      */
     public static boolean doesCreateNewColumn(Map<String, String> parameters, boolean createNewColumnDefaultValue) {

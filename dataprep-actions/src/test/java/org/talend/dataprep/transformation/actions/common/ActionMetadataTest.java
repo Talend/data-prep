@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -38,13 +37,13 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 public class ActionMetadataTest {
 
-    private CellTransformation cellTransformation = new CellTransformation();
+    private final CellTransformation cellTransformation = new CellTransformation();
 
-    private LineTransformation lineTransformation = new LineTransformation();
+    private final LineTransformation lineTransformation = new LineTransformation();
 
-    private ColumnTransformation columnTransformation = new ColumnTransformation();
+    private final ColumnTransformation columnTransformation = new ColumnTransformation();
 
-    private TableTransformation tableTransformation = new TableTransformation();
+    private final TableTransformation tableTransformation = new TableTransformation();
 
     protected final ActionFactory factory = new ActionFactory();
 

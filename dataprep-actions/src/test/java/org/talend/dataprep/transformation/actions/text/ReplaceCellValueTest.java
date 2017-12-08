@@ -104,7 +104,8 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         assertEquals(CANCELED, context.getActionStatus());
     }
 
-    private ActionContext getActionContext(SimpleEntry<String, String>... entries) {
+    @SafeVarargs
+    private final ActionContext getActionContext(SimpleEntry<String, String>... entries) {
         Map<String, String> parameters = new HashMap<>();
         for (SimpleEntry<String, String> entry : entries) {
             parameters.put(entry.getKey(), entry.getValue());

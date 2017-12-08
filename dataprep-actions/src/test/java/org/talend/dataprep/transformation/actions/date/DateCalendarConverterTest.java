@@ -116,8 +116,6 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
 
     private static final String IsoStr2 = "1996-10-29";
 
-    private static final String HijrahStr1 = "1417/06/16";
-
     private static final String HijrahStr3 = "06/16/1417";
 
     private static final String MinguoStr1 = "0085/10/29";
@@ -133,8 +131,6 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     private static final String RataDie = "728961";
 
     private static final String EpochDay = "9798";
-
-    private static final String patternWithG = "yyyy/MM/dd G";
 
     @Test
     public void testBlank_values() {

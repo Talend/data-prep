@@ -437,7 +437,6 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
      * Format number does not work if there is a null or an invalid in the column.
      * Values after a null or an invalid value (which is not a number) were not formatted by the transformation.
      * Have look at https://jira.talendforge.org/browse/TDP-1361
-     * @throws Exception
      */
     @Test
     public void TDP_1361() throws Exception {

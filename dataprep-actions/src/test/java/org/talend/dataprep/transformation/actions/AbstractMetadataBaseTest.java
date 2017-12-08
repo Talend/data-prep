@@ -74,7 +74,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         VISIBLE_ENABLED, // checkbox param is visible, default to 'true' (like 'Compare dates')
         INVISIBLE_DISABLED, // no checkbox, always in-place (like 'Mask data')
         INVISIBLE_ENABLED, // no checkbox, always creates new column (like 'Extract email parts')
-        NA; // Not applicable for this action (like 'Delete row')
+        NA // Not applicable for this action (like 'Delete row')
     }
 
     /**
@@ -222,7 +222,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
 
         private final List<ValueBuilder> valueBuilders = new ArrayList<>();
 
-        Map<ColumnMetadata, String> values = new LinkedHashMap<>();
+        final Map<ColumnMetadata, String> values = new LinkedHashMap<>();
 
         public static ValuesBuilder builder() {
             return new ValuesBuilder();

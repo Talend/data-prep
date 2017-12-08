@@ -241,7 +241,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
 
-    private void inner_test(String from, String expected, Type expectedType) throws Exception {
+    private void inner_test(String from, String expected, Type expectedType) {
         // given
         DataSetRow row = getRow(from);
         Assertions.assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);

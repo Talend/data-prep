@@ -17,7 +17,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
@@ -50,24 +49,20 @@ public class Localization {
                                             BeanDefinitionRegistry registry) {
             if (registry instanceof BeanFactory) {
                 final Environment environment = ((BeanFactory) registry).getBean(Environment.class);
-                Locale locale;
+
                 final String defaultLocale = environment.getProperty("dataprep.default.locale", "en-US");
-                if (StringUtils.isEmpty(defaultLocale)) {
-                    LOGGER.debug("No configuration for JVM default locale. Defaulting to US english.");
-                    locale = Locale.US;
+                Locale locale = new Locale.Builder().setLanguageTag(defaultLocale).build();
+                if (LocaleUtils.isAvailableLocale(locale)) {
+                    LOGGER.debug("Setting default JVM locale to configured {}", locale);
                 } else {
-                    locale = new Locale.Builder().setLanguageTag(defaultLocale).build();
-                    if (LocaleUtils.isAvailableLocale(locale)) {
-                        LOGGER.debug("Setting default JVM locale to configured {}", locale);
-                    } else {
-                        LOGGER.debug("Configured JVM Locale {} is not available. Defaulting to {}", locale, Locale.US);
-                        locale = Locale.US;
-                    }
+                    LOGGER.debug("Configured JVM Locale {} is not available. Defaulting to {}", locale, Locale.US);
+                    locale = Locale.US;
                 }
                 Locale.setDefault(locale);
                 LOGGER.info("JVM Default locale set to: '{}'", locale);
             } else {
-                LOGGER.warn("Unable to set default locale (unexpected bean registry of type '{}')", registry.getClass().getName());
+                LOGGER.warn("Unable to set default locale (unexpected bean registry of type '{}')",
+                        registry.getClass().getName());
             }
         }
     }

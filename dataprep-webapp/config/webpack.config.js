@@ -66,8 +66,14 @@ function getDefaultConfig(options) {
 				},
 				{
 					test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,
-					loader: isTestMode ? 'null-loader' : 'url-loader',
-					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' },
+					loader: isTestMode ? 'null-loader' : 'file-loader',
+					options: {
+						name: '[name].[ext]',
+						limit: 10000,
+						mimetype: 'application/font-woff',
+						publicPath: '/',
+						outputPath: 'assets/fonts/',
+					},
 				},
 				{
 					test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -260,8 +266,8 @@ function addMinifyConfig(config) {
 			parallel: true,
 		}),
 		new webpack.LoaderOptionsPlugin({
-          minimize: true,
-        })
+			minimize: true,
+		})
 	);
 }
 

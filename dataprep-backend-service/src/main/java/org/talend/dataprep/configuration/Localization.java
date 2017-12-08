@@ -50,7 +50,7 @@ public class Localization {
             if (registry instanceof BeanFactory) {
                 final Environment environment = ((BeanFactory) registry).getBean(Environment.class);
 
-                final String defaultLocale = environment.getProperty("dataprep.default.locale", "en-US");
+                final String defaultLocale = environment.getProperty("dataprep.locale", "en-US");
                 Locale locale = new Locale.Builder().setLanguageTag(defaultLocale).build();
                 if (LocaleUtils.isAvailableLocale(locale)) {
                     LOGGER.debug("Setting default JVM locale to configured {}", locale);

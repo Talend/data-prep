@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.format;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
@@ -33,15 +34,18 @@ public class XlsFormat extends ExportFormat {
     public static final String XLSX = "XLSX";
 
     public XlsFormat() {
-        super(XLSX, "application/vnd.ms-excel", ".xlsx", true, true,
-                Collections.singletonList(
-                        Parameter.parameter(getLocale()) //
-                                .setName("fileName") //
-                                .setType(ParameterType.STRING) //
-                                .setDefaultValue(StringUtils.EMPTY) //
-                                .setCanBeBlank(false) //
-                                .build(null) //
-                ) //
+        super(XLSX, "application/vnd.ms-excel", ".xlsx", true, true);
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return Collections.singletonList(
+                Parameter.parameter(getLocale()) //
+                        .setName("fileName") //
+                        .setType(ParameterType.STRING) //
+                        .setDefaultValue(StringUtils.EMPTY) //
+                        .setCanBeBlank(false) //
+                        .build(null) //
         );
     }
 

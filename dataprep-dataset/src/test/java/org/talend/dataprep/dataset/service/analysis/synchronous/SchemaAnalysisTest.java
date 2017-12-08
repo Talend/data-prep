@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import java.io.InputStream;
 import java.util.Random;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -117,6 +118,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testTDP_471() throws Exception {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../semantic_type_threshold.csv"));

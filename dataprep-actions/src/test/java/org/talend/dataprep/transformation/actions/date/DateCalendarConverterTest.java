@@ -36,7 +36,7 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -512,7 +512,7 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
         parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));

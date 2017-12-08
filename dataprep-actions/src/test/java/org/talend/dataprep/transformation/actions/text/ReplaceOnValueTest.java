@@ -20,10 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.api.type.Type.STRING;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
-import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.NEW_VALUE_PARAMETER;
-import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.ORIGINAL_VALUE_PARAMETER;
 import static org.talend.dataprep.transformation.actions.text.ReplaceOnValue.*;
 
 import java.util.HashMap;
@@ -39,7 +36,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -91,7 +88,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest<ReplaceOnValue>
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
         assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder(COLUMN_ID.getKey(), //
-                AbstractActionMetadata.CREATE_NEW_COLUMN, //
+                ActionsUtils.CREATE_NEW_COLUMN, //
                 ROW_ID.getKey(), //
                 SCOPE.getKey(), //
                 FILTER.getKey(), //
@@ -142,7 +139,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest<ReplaceOnValue>
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

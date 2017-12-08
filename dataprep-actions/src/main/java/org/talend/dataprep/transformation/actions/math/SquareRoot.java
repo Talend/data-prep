@@ -12,11 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Collections.singletonList;
-import static org.talend.dataprep.api.type.Type.DOUBLE;
 import static org.talend.dataprep.transformation.actions.math.SquareRoot.SQRT_NAME;
-
-import java.util.List;
 
 import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
@@ -33,6 +29,7 @@ public class SquareRoot extends AbstractMathNoParameterAction {
     protected static final String SQRT_NAME = "square_root_numbers";
 
     protected static final String SQRT_SUFFIX = "_square_root";
+
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
         double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
@@ -40,9 +37,8 @@ public class SquareRoot extends AbstractMathNoParameterAction {
         return value < 0 ? ERROR_RESULT : Double.toString(FastMath.sqrt(value));
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(DOUBLE, context.getColumnName() + SQRT_SUFFIX));
+    protected String getSuffix(ActionContext context) {
+        return SQRT_SUFFIX;
     }
 
     @Override

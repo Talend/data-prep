@@ -12,17 +12,16 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.avro.generic.GenericRecord;
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.i18n.DocumentationLinkGenerator;
 import org.talend.dataprep.i18n.MessagesBundle;
@@ -41,16 +40,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class AbstractActionMetadata implements InternalActionDefinition {
 
     public static final String ACTION_BEAN_PREFIX = "action#"; //$NON-NLS-1$
-
-    /**
-     * Key for the "Create new column" parameter.
-     */
-    public static final String CREATE_NEW_COLUMN = "create_new_column";
-
-    /**
-     * Key for the context map to retrieve column created by "Create new comumn" parameter.
-     */
-    private static final String TARGET_COLUMN = "target";
 
     @Override
     public ActionDefinition adapt(ColumnMetadata column) {
@@ -193,7 +182,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
                     actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
                     return;
                 }
-                createNewColumn(actionContext);
                 break;
             case LINE:
             case DATASET:
@@ -221,20 +209,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        final List<Parameter> parameters = ImplicitParameters.getParameters(locale);
-
-        // For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
-        // creates a new column:
-        if (createNewColumnParamVisible()) {
-            parameters.add(Parameter.parameter(locale).setName(CREATE_NEW_COLUMN)
-                    .setType(BOOLEAN)
-                    .setDefaultValue("" + getCreateNewColumnDefaultValue())
-                    .setCanBeBlank(false)
-                    .setImplicit(false)
-                    .build(this));
-        }
-
-        return parameters;
+        return ImplicitParameters.getParameters(locale);
     }
 
     @JsonIgnore
@@ -244,189 +219,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     @Override
     public Function<GenericRecord, GenericRecord> action(List<Parameter> parameters) {
         return r -> r;
-    }
-
-    /**
-     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
-     * creates a new column.
-     * This method will be use by framework to define if the parameter is visible for this action or not.
-     * For most actions, checkbox is visible, but other actions (like 'mask data' that is always 'in place' or 'split' that
-     * always creates new columns) the checkbox will not be visible. In this case, these actions should override this method.
-     *
-     * @return 'true' if the 'create new column' checkbox is visible, 'false' otherwise
-     */
-    protected boolean createNewColumnParamVisible() {
-        return true;
-    }
-
-    /**
-     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
-     * creates a new column.
-     * This method will be use by framework to define:
-     * - the default value of the checkbox, if it's visible
-     * - the value of the parameter if the checkbox is not visible
-     *
-     * For most actions, default will be 'false', but for some actions (like 'compare numbers') it will be 'true'. In this case,
-     * these actions should override this method.
-     *
-     * @return 'true' if the 'create new column' is checked by default, 'false' otherwise
-     */
-    public boolean getCreateNewColumnDefaultValue() {
-        return false;
-    }
-
-    /**
-     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
-     * creates a new column.
-     * This method is used by framework to evaluate if this step (action+parameters) creates a new column or is applied in place.
-     *
-     * For most actions, the default implementation is ok, but some actions (like 'split' that always creates new column) may
-     * override it. In this case, no need to override createNewColumnParamVisible() and getCreateNewColumnDefaultValue().
-     *
-     * @param parameters
-     * @return 'true' if this step (action+parameters) creates a new column, 'false' if it's applied in-place.
-     */
-    public boolean doesCreateNewColumn(Map<String, String> parameters) {
-        if (parameters.containsKey(AbstractActionMetadata.CREATE_NEW_COLUMN)) {
-            return Boolean.parseBoolean(parameters.get(CREATE_NEW_COLUMN));
-        }
-        return getCreateNewColumnDefaultValue();
-    }
-
-    /**
-     * Used by compile(ActionContext actionContext), evaluate if a new column needs to be created, if yes creates one.
-     *
-     * Actions that creates more than one column ('split', 'extract email parts', etc...) should manage this on their own.
-     */
-    final private void createNewColumn(ActionContext context) {
-        if (doesCreateNewColumn(context.getParameters())) {
-            String columnId = context.getColumnId();
-            RowMetadata rowMetadata = context.getRowMetadata();
-
-            context.get(TARGET_COLUMN, r -> {
-                final Map<String, String> cols = new HashMap<String, String>();
-
-                String nextId = columnId; // id of the column to put the new one after, initially the current column
-
-                    for (AdditionalColumn additionalColumn : getAdditionalColumns(context)) {
-                        ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
-
-                        if (additionalColumn.getCopyFrom() != null) {
-                            ColumnMetadata tagada = context.getRowMetadata().getById(additionalColumn.getCopyFrom());
-                            brandNewColumnBuilder.copy(tagada).computedId(StringUtils.EMPTY);
-                        }
-                        brandNewColumnBuilder.name(additionalColumn.getName()) //
-                         .type(additionalColumn.getType()); //
-
-                    ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
-                    rowMetadata.insertAfter(nextId, columnMetadata);
-                    nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
-                    cols.put(additionalColumn.getKey(), columnMetadata.getId());
-                }
-
-                return cols;
-            });
-        }
-    }
-
-    /**
-     * Helper to retrieve the target column Id stored in the context.
-     *
-     * It can be the current column id if the function applies in place or id of the new column if the function creates one.
-     * Must not be used for function that creates many columns. Use getTargetColumnIds(ActionContext context) instead in this case.
-     *
-     * @param context the action context
-     * @return the target column ID
-     */
-    public String getTargetColumnId(ActionContext context) {
-        if (doesCreateNewColumn(context.getParameters())) {
-            final Map<String, String> newColumns = context.get(TARGET_COLUMN);
-            return newColumns.values().iterator().next();
-        } else {
-            return context.getColumnId();
-        }
-    }
-
-    /**
-     * Returns new columns created by the function in case of it creates multiple ones. Like 'Split' or 'ExtractDateTokens'.
-     *
-     * @return a map in which keys are the 'key' from AdditionnalColumn bean, and values columns ids.
-     */
-    public Map<String, String> getTargetColumnIds(ActionContext context) {
-        return context.get(TARGET_COLUMN);
-    }
-
-    /**
-     * Actions can define their new columns (name, type). This will be used by createNewColumn(ActionContext context).
-     *
-     * Action can define a single new column (like 'UpperCase') or many (like 'ExtractEmailTokens' or 'Split').
-     */
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return Collections.singletonList(new AdditionalColumn(Type.STRING, null));
-    }
-
-    /**
-     * Bean used to described all columns that can be created by a function.
-     *
-     * This will be used by createNewColumn(ActionContext context) to create all the new columns.
-     */
-    protected class AdditionalColumn {
-
-        private String key;
-
-        private String name;
-
-        private Type type = Type.STRING;
-
-        /* Id of the column to copy metadata from */
-        private String copyFrom;
-
-        public AdditionalColumn(String name) {
-            this(name, name);
-        }
-
-        public AdditionalColumn(String key, String name) {
-            this.key = key;
-            this.name = name;
-        }
-
-        public AdditionalColumn(String key, Type type, String name) {
-            this(key, name);
-            this.type = type;
-        }
-
-        public AdditionalColumn(Type type, String name) {
-            this(name);
-            this.type = type;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Type getType() {
-            return type;
-        }
-
-        public void setType(Type type) {
-            this.type = type;
-        }
-
-        public String getCopyFrom() {
-            return copyFrom;
-        }
-
-        public void setCopyFrom(String from) {
-            this.copyFrom = from;
-        }
     }
 
 }

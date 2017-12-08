@@ -13,16 +13,19 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
+
+import java.util.*;
+
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.parameters.Parameter;
 
-import java.util.*;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-
 public class AbstractActionMetadataTest {
+
+    public static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     private static AbstractActionMetadata doNothingAction = new AbstractActionMetadata() {
 
@@ -55,11 +58,11 @@ public class AbstractActionMetadataTest {
 
         // then
         // test that action will not create a new column:
-        assertThat(doNothingAction.doesCreateNewColumn(emptyMap), is(false));
+        assertThat(ActionsUtils.doesCreateNewColumn(emptyMap, CREATE_NEW_COLUMN_DEFAULT), is(false));
 
         // test that 'create_new_column' parameter is present and set to false by default:
         final List<Parameter> parameters = action.getParameters(Locale.ENGLISH);
-        assertEquals(5, parameters.size());
+        assertEquals(4, parameters.size());
         final Parameter createNewColumnParam = parameters.get(4);
         assertEquals("Create new column", createNewColumnParam.getLabel());
         assertFalse(Boolean.parseBoolean( createNewColumnParam.getDefault()));
@@ -70,15 +73,15 @@ public class AbstractActionMetadataTest {
         // given
         AbstractActionMetadata action = doNothingAction;
         Map<String, String> emptyMap = new HashMap<>();
-        emptyMap.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "tagada");
+        emptyMap.put(CREATE_NEW_COLUMN, "tagada");
 
         // then
         // test that action will not create a new column:
-        assertThat(doNothingAction.doesCreateNewColumn(emptyMap), is(false));
+        assertThat(ActionsUtils.doesCreateNewColumn(emptyMap, CREATE_NEW_COLUMN_DEFAULT), is(false));
 
         // test that 'create_new_column' parameter is present and set to false by default:
         final List<Parameter> parameters = action.getParameters(Locale.ENGLISH);
-        assertEquals(5, parameters.size());
+        assertEquals(4, parameters.size());
         final Parameter createNewColumnParam = parameters.get(4);
         assertEquals("Create new column", createNewColumnParam.getLabel());
         assertFalse(Boolean.parseBoolean( createNewColumnParam.getDefault()));
@@ -88,11 +91,6 @@ public class AbstractActionMetadataTest {
     public void testCreateNewColumn_defaultTrue() throws Exception {
         // given an action that by default creates new column (like 'compare numbers'):
         AbstractActionMetadata action = new AbstractActionMetadata() {
-
-            @Override
-            public boolean getCreateNewColumnDefaultValue() {
-                return true;
-            }
 
             @Override
             public String getName() {
@@ -118,8 +116,6 @@ public class AbstractActionMetadataTest {
 
         // then
         // test that action will create a new column:
-        assertThat(action.doesCreateNewColumn(emptyMap), is(true));
-
         // test that 'create_new_column' parameter is present and set to false by default:
         final List<Parameter> parameters = action.getParameters(Locale.ENGLISH);
         assertEquals(5, parameters.size());
@@ -132,11 +128,6 @@ public class AbstractActionMetadataTest {
     public void testCreateNewColumn_optionHiddenAndFalse() throws Exception {
         // given an action that always create new columns (like 'split'):
         AbstractActionMetadata action = new AbstractActionMetadata() {
-
-            @Override
-            protected boolean createNewColumnParamVisible(){
-                return false;
-            }
 
             @Override
             public String getName() {
@@ -162,7 +153,7 @@ public class AbstractActionMetadataTest {
 
         // then
         // test that action will not create a new column:
-        assertThat(action.doesCreateNewColumn(emptyMap), is(false));
+        assertThat(ActionsUtils.doesCreateNewColumn(emptyMap, CREATE_NEW_COLUMN_DEFAULT), is(false));
 
         // test that 'create_new_column' parameter is not present:
         final List<Parameter> parameters = action.getParameters(Locale.ENGLISH);
@@ -179,16 +170,6 @@ public class AbstractActionMetadataTest {
         AbstractActionMetadata action = new AbstractActionMetadata() {
 
             @Override
-            protected boolean createNewColumnParamVisible(){
-                return false;
-            }
-
-            @Override
-            public boolean getCreateNewColumnDefaultValue() {
-                return false;
-            }
-
-            @Override
             public String getName() {
                 return null;
             }
@@ -212,7 +193,7 @@ public class AbstractActionMetadataTest {
 
         // then
         // test that action will not create a new column:
-        assertThat(action.doesCreateNewColumn(emptyMap), is(false));
+        assertThat(ActionsUtils.doesCreateNewColumn(emptyMap, CREATE_NEW_COLUMN_DEFAULT), is(false));
 
         // test that 'create_new_column' parameter is not present:
         final List<Parameter> parameters = action.getParameters(Locale.ENGLISH);

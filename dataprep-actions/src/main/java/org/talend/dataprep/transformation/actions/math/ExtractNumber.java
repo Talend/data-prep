@@ -38,6 +38,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -78,7 +79,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     private static final List<Character> SEPARATORS = asList('.', ',');
 
     /** K: the prefix, V: the value. */
-    private static Map<String, MetricPrefix> METRICPREFIXES = new ConcurrentHashMap<>(13);
+    private static Map<String, MetricPrefix> METRIC_PREFIXES = new ConcurrentHashMap<>(13);
 
     /**
      * Initialize the supported metrics.
@@ -100,18 +101,18 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
      * </ul>
      */
     static {
-        METRICPREFIXES.put("T", new MetricPrefix(new BigDecimal("1000000000000"), "tera"));
-        METRICPREFIXES.put("G", new MetricPrefix(new BigDecimal("1000000000"), "giga"));
-        METRICPREFIXES.put("M", new MetricPrefix(new BigDecimal("1000000"), "mega"));
-        METRICPREFIXES.put("k", new MetricPrefix(new BigDecimal("1000"), "kilo"));
-        METRICPREFIXES.put("h", new MetricPrefix(new BigDecimal("100"), "hecto"));
-        METRICPREFIXES.put("da", new MetricPrefix(new BigDecimal("10"), "deca"));
-        METRICPREFIXES.put("d", new MetricPrefix(new BigDecimal("0.1"), "deci"));
-        METRICPREFIXES.put("c", new MetricPrefix(new BigDecimal("0.01"), "centi"));
-        METRICPREFIXES.put("m", new MetricPrefix(new BigDecimal("0.001"), "milli"));
-        METRICPREFIXES.put("μ", new MetricPrefix(new BigDecimal("0.000001"), "micro"));
-        METRICPREFIXES.put("n", new MetricPrefix(new BigDecimal("0.000000001"), "nano"));
-        METRICPREFIXES.put("p", new MetricPrefix(new BigDecimal("0.000000000001"), "pico"));
+        METRIC_PREFIXES.put("T", new MetricPrefix(new BigDecimal("1000000000000"), "tera"));
+        METRIC_PREFIXES.put("G", new MetricPrefix(new BigDecimal("1000000000"), "giga"));
+        METRIC_PREFIXES.put("M", new MetricPrefix(new BigDecimal("1000000"), "mega"));
+        METRIC_PREFIXES.put("k", new MetricPrefix(new BigDecimal("1000"), "kilo"));
+        METRIC_PREFIXES.put("h", new MetricPrefix(new BigDecimal("100"), "hecto"));
+        METRIC_PREFIXES.put("da", new MetricPrefix(new BigDecimal("10"), "deca"));
+        METRIC_PREFIXES.put("d", new MetricPrefix(new BigDecimal("0.1"), "deci"));
+        METRIC_PREFIXES.put("c", new MetricPrefix(new BigDecimal("0.01"), "centi"));
+        METRIC_PREFIXES.put("m", new MetricPrefix(new BigDecimal("0.001"), "milli"));
+        METRIC_PREFIXES.put("μ", new MetricPrefix(new BigDecimal("0.000001"), "micro"));
+        METRIC_PREFIXES.put("n", new MetricPrefix(new BigDecimal("0.000000001"), "nano"));
+        METRIC_PREFIXES.put("p", new MetricPrefix(new BigDecimal("0.000000000001"), "pico"));
     }
 
     private static String extractNumber(String value) {
@@ -126,7 +127,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
      * @param defaultValue the value to return when no number can be extracted
      * @return the number extracted out of the given value.
      */
-    protected static String extractNumber(String value, String defaultValue) {
+    static String extractNumber(String value, String defaultValue) {
 
         // easy case
         if (isEmpty(value)) {
@@ -156,13 +157,13 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
             } else {
                 // we take the first metric prefix found before and after a number found
                 if (metricPrefixBefore == null) {
-                    MetricPrefix found = METRICPREFIXES.get(valueOf(c));
+                    MetricPrefix found = METRIC_PREFIXES.get(valueOf(c));
                     if (found != null && !numberFound) {
                         metricPrefixBefore = found;
                     }
                 }
                 if (metricPrefixAfter == null) {
-                    MetricPrefix found = METRICPREFIXES.get(valueOf(c));
+                    MetricPrefix found = METRIC_PREFIXES.get(valueOf(c));
                     if (found != null && numberFound) {
                         metricPrefixAfter = found;
                     }
@@ -203,24 +204,17 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + "_number"));
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + "_number")));
+        }
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
-        row.set(getTargetColumnId(context), extractNumber(row.get(columnId)));
+        row.set(ActionsUtils.getTargetColumnId(context), extractNumber(row.get(columnId)));
     }
 
     @Override

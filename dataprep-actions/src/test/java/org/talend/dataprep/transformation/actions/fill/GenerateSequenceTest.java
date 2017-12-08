@@ -13,6 +13,8 @@
 package org.talend.dataprep.transformation.actions.fill;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.util.*;
 
@@ -24,14 +26,9 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 /**
  * Test to generate a sequence function.
@@ -98,7 +95,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(GenerateSequence.START_VALUE, "0");
         parameters.put(GenerateSequence.STEP_VALUE, "2");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         final DataSetRow row = getRow("toto", "0012.50", "tata");
         row.setTdpId(1L);
@@ -118,7 +115,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(GenerateSequence.START_VALUE, "0");
         parameters.put(GenerateSequence.STEP_VALUE, "2");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         //row1
         Map<String, String> values = new HashMap<>();
@@ -160,7 +157,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(GenerateSequence.START_VALUE, "1");
         parameters.put(GenerateSequence.STEP_VALUE, "2");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         //row1
         Map<String, String> values = new HashMap<>();
@@ -243,7 +240,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(GenerateSequence.START_VALUE, "1");
         parameters.put(GenerateSequence.STEP_VALUE, "2");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         // row1
         Map<String, String> values = new HashMap<>();

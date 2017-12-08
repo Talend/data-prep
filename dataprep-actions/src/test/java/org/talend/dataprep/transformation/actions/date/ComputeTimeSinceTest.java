@@ -47,7 +47,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -113,7 +113,7 @@ public class ComputeTimeSinceTest extends BaseDateTest {
         expectedValues.put("0001", result);
         expectedValues.put("0002", "Bacon");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         //when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

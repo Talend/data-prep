@@ -12,13 +12,14 @@
 
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.ACTION_NAME;
 import static org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter.TemperatureUnit.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,9 +32,7 @@ import javax.measure.unit.Unit;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.math.AbstractMathNoParameterAction;
@@ -73,7 +72,7 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                 .item(FAHRENHEIT.name(), FAHRENHEIT.toString())
                 .item(CELSIUS.name(), CELSIUS.toString())
                 .item(KELVIN.name(), KELVIN.toString())
@@ -82,7 +81,7 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
                 .name(FROM_UNIT_PARAMETER)
                 .build(this));
 
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                 .item(FAHRENHEIT.name(), FAHRENHEIT.toString())
                 .item(CELSIUS.name(), CELSIUS.toString())
                 .item(KELVIN.name(), KELVIN.toString())
@@ -92,8 +91,7 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
                 .build(this));
 
         parameters.add(
-                Parameter.parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setPlaceHolder("precision").build(
-                        this));
+                parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setPlaceHolder("precision").build(this));
         return parameters;
     }
 
@@ -107,14 +105,11 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
         return ActionCategory.CONVERSIONS.getDisplayName(locale);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+    protected String getSuffix(ActionContext context) {
         Map<String, String> parameters = context.getParameters();
         String name = parameters.get(TO_UNIT_PARAMETER);
         TemperatureUnit temperatureUnit = TemperatureUnit.valueOf(name);
-        additionalColumns.add(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + "_in_" + temperatureUnit.toString()));
-        return additionalColumns;
+        return "_in_" + temperatureUnit.toString(); // TODO "in" is not translated
     }
 
     /**

@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.date;
 
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -88,14 +90,12 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         return TIME_SINCE_ACTION_NAME;
     }
 
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
+    public static final Boolean CREATE_NEW_COLUMN_DEFAULT = true;
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
-            List<Parameter> parameters = super.getParameters(locale);
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
@@ -126,12 +126,11 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         return parameters;
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
 
         TemporalUnit unit = ChronoUnit.valueOf(context.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase());
-        additionalColumns.add(new AdditionalColumn(Type.INTEGER,
+        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.INTEGER,
                 PREFIX + context.getColumnName() + SUFFIX + unit.toString().toLowerCase()));
 
         return additionalColumns;
@@ -140,12 +139,13 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
             // Create new column
             Map<String, String> parameters = context.getParameters();
-            context.get(SINCE_WHEN_PARAMETER, m -> parameters.containsKey(SINCE_WHEN_PARAMETER) ?
-                    parameters.get(SINCE_WHEN_PARAMETER) :
-                    NOW_SERVER_SIDE_MODE);
+            context.get(SINCE_WHEN_PARAMETER, m -> parameters.getOrDefault(SINCE_WHEN_PARAMETER, NOW_SERVER_SIDE_MODE));
             context.get(SINCE_DATE_PARAMETER, m -> parseSinceDateIfConstant(parameters));
         }
     }
@@ -188,7 +188,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             // Nothing to do: in this case, temporalAccessor is left null
             newValue = StringUtils.EMPTY;
         }
-        row.set(getTargetColumnId(context), newValue);
+        row.set(ActionsUtils.getTargetColumnId(context), newValue);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     private static LocalDateTime parseSinceDateIfConstant(Map<String, String> parameters) {
-        String mode = parameters.containsKey(SINCE_WHEN_PARAMETER) ? parameters.get(SINCE_WHEN_PARAMETER) : NOW_SERVER_SIDE_MODE;
+        String mode = parameters.getOrDefault(SINCE_WHEN_PARAMETER, NOW_SERVER_SIDE_MODE);
 
         LocalDateTime since;
         switch (mode) {

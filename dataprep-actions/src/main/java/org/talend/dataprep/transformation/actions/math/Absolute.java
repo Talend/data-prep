@@ -26,8 +26,10 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
@@ -61,8 +63,16 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(DOUBLE, context.getColumnName() + "_absolute"));
+    public List<Parameter> getParameters(Locale locale) {
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, false);
+    }
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), false)) {
+            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(DOUBLE, context.getColumnName() + "_absolute")));
+        }
     }
 
     @Override
@@ -84,7 +94,7 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
             absValueStr = BigDecimalParser.toBigDecimal(value).abs().toPlainString();
         }
         if (absValueStr != null) {
-            row.set(getTargetColumnId(context), absValueStr);
+            row.set(ActionsUtils.getTargetColumnId(context), absValueStr);
         }
     }
 

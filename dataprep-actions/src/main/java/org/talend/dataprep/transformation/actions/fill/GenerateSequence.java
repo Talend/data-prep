@@ -13,11 +13,15 @@
 package org.talend.dataprep.transformation.actions.fill;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.math.BigInteger;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -25,9 +29,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -58,28 +62,23 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         return GenerateSequence.ACTION_NAME;
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, true));
 
-        Parameter startParameter = Parameter.parameter(locale).setName(START_VALUE)
-                .setType(ParameterType.INTEGER)
+        Parameter startParameter = parameter(locale).setName(START_VALUE)
+                .setType(INTEGER)
                 .setDefaultValue("1")
                 .build(this);
         parameters.add(startParameter);
 
-        Parameter stepParameter = Parameter.parameter(locale).setName(STEP_VALUE)
-                .setType(ParameterType.INTEGER)
+        Parameter stepParameter = parameter(locale).setName(STEP_VALUE)
+                .setType(INTEGER)
                 .setDefaultValue("1")
                 .build(this);
         parameters.add(stepParameter);
@@ -105,13 +104,16 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), true)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
         Map<String, String> parameters = actionContext.getParameters();
-        if (StringUtils.isEmpty(parameters.get(START_VALUE)) || StringUtils.isEmpty(parameters.get(STEP_VALUE))) {
+        if (isEmpty(parameters.get(START_VALUE)) || isEmpty(parameters.get(STEP_VALUE))) {
             LOGGER.warn("At least one of the parameters is invalid {}/{} {}/{} ", START_VALUE, parameters.get(START_VALUE),
                     STEP_VALUE, parameters.get(STEP_VALUE));
-            actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            actionContext.setActionStatus(CANCELED);
         }
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (actionContext.getActionStatus() == OK) {
             actionContext.get(SEQUENCE, values -> new CalcSequence(parameters));
         }
     }
@@ -122,7 +124,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             return;
         }
         final CalcSequence sequence = context.get(SEQUENCE);
-        row.set(getTargetColumnId(context), sequence.getNextValue());
+        row.set(ActionsUtils.getTargetColumnId(context), sequence.getNextValue());
     }
 
     /** this class is used to calculate the sequence next step */

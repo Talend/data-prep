@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
+
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,12 +25,13 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -44,10 +48,7 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Swap.class);
 
-    @Override
-    public boolean createNewColumnParamVisible() {
-        return false;
-    }
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -80,6 +81,9 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+        }
 
         Map<String, String> parameters = actionContext.getParameters();
 
@@ -94,7 +98,7 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
         String domain = selectedColumn.getDomain();
         String type = selectedColumn.getType();
 
-        String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
+        String columnId = parameters.get(COLUMN_ID.getKey());
 
         ColumnMetadata originColumn = rowMetadata.getById(columnId);
 

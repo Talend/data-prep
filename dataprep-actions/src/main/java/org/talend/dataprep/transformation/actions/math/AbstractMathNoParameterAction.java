@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.math;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
@@ -46,7 +47,7 @@ public abstract class AbstractMathNoParameterAction extends AbstractMathAction i
             }
         }
 
-        row.set(getTargetColumnId(context), result);
+        row.set(ActionsUtils.getTargetColumnId(context), result);
     }
 
 }

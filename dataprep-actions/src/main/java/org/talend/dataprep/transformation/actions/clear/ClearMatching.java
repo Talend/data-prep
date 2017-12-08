@@ -13,6 +13,13 @@
 
 package org.talend.dataprep.transformation.actions.clear;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.BOOLEAN;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.REGEX;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
 import java.util.List;
@@ -27,8 +34,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
@@ -72,23 +77,18 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
         public List<Parameter> getParameters(Locale locale) {
-            final List<Parameter> parameters = super.getParameters(locale);
-        if (this.type == Type.BOOLEAN) {
-            parameters.add(SelectParameter.selectParameter(locale) //
+        final List<Parameter> parameters = super.getParameters(locale);
+        if (this.type == BOOLEAN) {
+            parameters.add(selectParameter(locale) //
                     .name(VALUE_PARAMETER) //
-                    .item(Boolean.TRUE.toString()) //
-                    .item(Boolean.FALSE.toString()) //
+                    .item(TRUE.toString()) //
+                    .item(FALSE.toString()) //
                     .build(this));
         } else {
-            parameters.add(Parameter.parameter(locale).setName(VALUE_PARAMETER)
-                    .setType(ParameterType.REGEX)
-                    .setDefaultValue(StringUtils.EMPTY)
+            parameters.add(parameter(locale).setName(VALUE_PARAMETER)
+                    .setType(REGEX)
+                    .setDefaultValue(EMPTY)
                     .setCanBeBlank(false)
                     .build(this));
         }

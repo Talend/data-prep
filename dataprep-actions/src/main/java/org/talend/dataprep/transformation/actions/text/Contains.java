@@ -15,10 +15,14 @@ package org.talend.dataprep.transformation.actions.text;
 
 import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.Action;
@@ -28,10 +32,9 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -68,30 +71,20 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
         public List<Parameter> getParameters(Locale locale) {
-            final List<Parameter> parameters = super.getParameters(locale);
+        final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(selectParameter(locale) //
                 .name(MODE_PARAMETER) //
                 .item(CONSTANT_MODE, CONSTANT_MODE,//
-                        Parameter.parameter(locale).setName(CONSTANT_VALUE)
-                                .setType(ParameterType.STRING)
+                        parameter(locale).setName(CONSTANT_VALUE)
+                                .setType(STRING)
                                 .setDefaultValue(EMPTY)
                                 .build(this)) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,//
-                        Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
-                                .setType(ParameterType.COLUMN)
-                                .setDefaultValue(StringUtils.EMPTY)
+                        parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(COLUMN)
+                                .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
                                 .build(this)) //
                 .defaultValue(CONSTANT_MODE).build(this));
@@ -99,9 +92,8 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         return parameters;
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final Map<String, String> parameters = context.getParameters();
         final RowMetadata rowMetadata = context.getRowMetadata();
@@ -113,7 +105,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         } else {
             prefix = parameters.get(CONSTANT_VALUE);
         }
-        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN, sourceColumnName + APPENDIX + prefix));
+        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.BOOLEAN, sourceColumnName + APPENDIX + prefix));
 
         return additionalColumns;
     }
@@ -121,7 +113,10 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
             checkSelectedColumnParameter(context.getParameters(), context.getRowMetadata());
         }
     }
@@ -133,7 +128,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         final ColumnMetadata column = rowMetadata.getById(columnId);
         Map<String, String> parameters = context.getParameters();
 
-        final String containsColumn = getTargetColumnId(context);
+        final String containsColumn = ActionsUtils.getTargetColumnId(context);
 
         String value = row.get(context.getColumnId());
         String referenceValue;

@@ -33,7 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -190,7 +190,7 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
 
         parameters.put(CompareDates.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

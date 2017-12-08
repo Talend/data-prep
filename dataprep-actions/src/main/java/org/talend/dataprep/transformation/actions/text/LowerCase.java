@@ -24,8 +24,10 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -41,6 +43,8 @@ public class LowerCase extends AbstractActionMetadata implements ColumnAction {
     public static final String LOWER_CASE_ACTION_NAME = "lowercase"; //$NON-NLS-1$
 
     protected static final String NEW_COLUMN_SUFFIX = "_lower";
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -58,8 +62,17 @@ public class LowerCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    public List<Parameter> getParameters(Locale locale) {
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT);
+    }
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), false)) {
+            ActionsUtils.createNewColumn(context,
+                    singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX)));
+        }
     }
 
     @Override
@@ -67,7 +80,7 @@ public class LowerCase extends AbstractActionMetadata implements ColumnAction {
         final String columnId = context.getColumnId();
         final String toLowerCase = row.get(columnId);
         if (toLowerCase != null) {
-            row.set(getTargetColumnId(context), toLowerCase.toLowerCase());
+            row.set(ActionsUtils.getTargetColumnId(context), toLowerCase.toLowerCase());
         }
     }
 

@@ -14,8 +14,13 @@ package org.talend.dataprep.transformation.actions.phonenumber;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.CONSTANT_MODE;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
@@ -29,10 +34,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -83,15 +87,20 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     protected static final String NEW_COLUMN_SUFFIX = "_formatted";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
             try {
                 context.get(PHONE_NUMBER_HANDLER_KEY, p -> new PhoneNumberHandlerBase());
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                context.setActionStatus(CANCELED);
             }
         }
     }
@@ -108,7 +117,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
         final String formatedStr = formatIfValid(regionCode,
                 context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
-        row.set(getTargetColumnId(context), formatedStr);
+        row.set(ActionsUtils.getTargetColumnId(context), formatedStr);
     }
 
     /**
@@ -138,28 +147,28 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(SelectParameter.selectParameter(locale) //
-                .name(OtherColumnParameters.MODE_PARAMETER) //
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        parameters.add(selectParameter(locale) //
+                .name(MODE_PARAMETER) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
-                        Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
-                                .setType(ParameterType.COLUMN)
-                                .setDefaultValue(StringUtils.EMPTY)
+                        parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(COLUMN)
+                                .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
                                 .build(this)) //
                 .item(CONSTANT_MODE, CONSTANT_MODE, //
-                        SelectParameter.selectParameter(locale).name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
+                        selectParameter(locale).name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
                                 .item(US_REGION_CODE, US_REGION_CODE) //
                                 .item(FR_REGION_CODE, FR_REGION_CODE) //
                                 .item(UK_REGION_CODE, UK_REGION_CODE) //
                                 .item(DE_REGION_CODE, DE_REGION_CODE) //
-                                .item(OTHER_REGION_TO_BE_SPECIFIED, Parameter.parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
-                                        .setType(ParameterType.STRING)
+                                .item(OTHER_REGION_TO_BE_SPECIFIED, parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
+                                        .setType(STRING)
                                         .setDefaultValue(EMPTY)
-                                        .build(this))
-                                .defaultValue(US_REGION_CODE).build(this)) //
+                                        .build(this)).defaultValue(US_REGION_CODE).build(this)) //
                 .defaultValue(CONSTANT_MODE).build(this));
 
-        parameters.add(SelectParameter.selectParameter(locale).name(FORMAT_TYPE_PARAMETER) //
+        parameters.add(selectParameter(locale).name(FORMAT_TYPE_PARAMETER) //
                 .item(TYPE_INTERNATIONAL) //
                 .item(TYPE_NATIONAL) //
                 .item(TYPE_E164) //
@@ -201,9 +210,8 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
         return ActionCategory.PHONE_NUMBER.getDisplayName(locale);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

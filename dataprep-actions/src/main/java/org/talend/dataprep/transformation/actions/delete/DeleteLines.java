@@ -34,11 +34,6 @@ public class DeleteLines extends AbstractFilteringAction {
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         if (context.getFilter().test(row)) {
             row.setDeleted(true);

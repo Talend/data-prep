@@ -16,6 +16,9 @@ package org.talend.dataprep.transformation.actions.text;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.STRINGS;
 
 import java.util.*;
@@ -26,9 +29,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -61,6 +63,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
      */
     private static final String APPENDIX = "_substring"; //$NON-NLS-1$
 
+    public static final boolean CREATE_NEW_COLUMN_DEFAULT = true;
+
     @Override
     public String getName() {
         return SUBSTRING_ACTION_NAME;
@@ -73,25 +77,25 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        final Parameter fromIndexParameters = Parameter.parameter(locale).setName(FROM_INDEX_PARAMETER)
-                .setType(ParameterType.INTEGER)
+        final Parameter fromIndexParameters = parameter(locale).setName(FROM_INDEX_PARAMETER)
+                .setType(INTEGER)
                 .setDefaultValue("0")
                 .build(this);
-        final Parameter fromNBeforeEndParameters = Parameter.parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER)
-                .setType(ParameterType.INTEGER)
+        final Parameter fromNBeforeEndParameters = parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER)
+                .setType(INTEGER)
                 .setDefaultValue("5")
                 .build(this);
-        final Parameter toIndexParameters = Parameter.parameter(locale).setName(TO_INDEX_PARAMETER)
-                .setType(ParameterType.INTEGER)
+        final Parameter toIndexParameters = parameter(locale).setName(TO_INDEX_PARAMETER)
+                .setType(INTEGER)
                 .setDefaultValue("5")
                 .build(this);
-        final Parameter toNBeforeEndParameters = Parameter.parameter(locale).setName(TO_N_BEFORE_END_PARAMETER)
-                .setType(ParameterType.INTEGER)
+        final Parameter toNBeforeEndParameters = parameter(locale).setName(TO_N_BEFORE_END_PARAMETER)
+                .setType(INTEGER)
                 .setDefaultValue("1")
                 .build(this);
 
         // "to" parameter with all possible values
-        final Parameter toCompleteParameters = SelectParameter.selectParameter(locale) //
+        final Parameter toCompleteParameters = selectParameter(locale) //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END, TO_END) //
                 .item(TO_INDEX_PARAMETER, TO_INDEX_PARAMETER, toIndexParameters) //
@@ -101,7 +105,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
         // "to" parameter with possible values for "From N Before End" selection
         // the "to index" option should not be available
-        final Parameter toParametersWithoutIndexSelection = SelectParameter.selectParameter(locale) //
+        final Parameter toParametersWithoutIndexSelection = selectParameter(locale) //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END, TO_END) //
                 .item(TO_N_BEFORE_END_PARAMETER, TO_N_BEFORE_END_PARAMETER, toNBeforeEndParameters) //
@@ -109,25 +113,30 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
                 .build(this);
 
         // "from" parameter
-        final Parameter fromParameters = SelectParameter.selectParameter(locale) //
+        final Parameter fromParameters = selectParameter(locale) //
                 .name(FROM_MODE_PARAMETER) //
                 .item(FROM_BEGINNING, FROM_BEGINNING, toCompleteParameters) // has all the "To" choices
                 .item(FROM_INDEX_PARAMETER, FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all the "To" choices
-                .item(FROM_N_BEFORE_END_PARAMETER, FROM_N_BEFORE_END_PARAMETER, fromNBeforeEndParameters, toParametersWithoutIndexSelection) // cannot
-                                                                                                                // choose
-                                                                                                                // "To
-                                                                                                                // index"
+                .item(FROM_N_BEFORE_END_PARAMETER, FROM_N_BEFORE_END_PARAMETER, fromNBeforeEndParameters,
+                        toParametersWithoutIndexSelection) // cannot
+                // choose
+                // "To
+                // index"
                 .defaultValue(FROM_BEGINNING) //
                 .build(this);
 
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
         parameters.add(fromParameters);
         return parameters;
     }
 
     @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
     }
 
     @Override
@@ -135,9 +144,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + APPENDIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(STRING, context.getColumnName() + APPENDIX));
     }
 
     @Override
@@ -146,7 +154,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         final RowMetadata rowMetadata = context.getRowMetadata();
         final String columnId = context.getColumnId();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final String substringColumn = getTargetColumnId(context);
+        final String substringColumn = ActionsUtils.getTargetColumnId(context);
 
         // Perform substring
         final String value = row.get(columnId);

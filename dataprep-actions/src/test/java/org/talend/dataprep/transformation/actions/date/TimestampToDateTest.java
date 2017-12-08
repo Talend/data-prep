@@ -30,7 +30,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -83,7 +83,7 @@ public class TimestampToDateTest extends BaseDateTest<TimestampToDate> {
         expectedValues.put("0001", "01-01-1970");
         expectedValues.put("0002", "01/01/2015");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

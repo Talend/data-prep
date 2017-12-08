@@ -25,6 +25,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -65,27 +66,16 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
-        final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
-
-
-        additionalColumns.add(new AdditionalColumn(LOCAL, column.getName() + LOCAL));
-        additionalColumns.add(new AdditionalColumn(DOMAIN, column.getName() + DOMAIN));
-
-        return additionalColumns;
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
+            final RowMetadata rowMetadata = context.getRowMetadata();
+            final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
+            additionalColumns.add(new ActionsUtils.AdditionalColumn(LOCAL, column.getName() + LOCAL));
+            additionalColumns.add(new ActionsUtils.AdditionalColumn(DOMAIN, column.getName() + DOMAIN));
+            ActionsUtils.createNewColumn(context, additionalColumns);
+        }
     }
 
     /**
@@ -96,8 +86,8 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
         final String columnId = context.getColumnId();
         final String originalValue = row.get(columnId);
         // Perform metadata level actions (add local + domain columns).
-        final String local = getTargetColumnIds(context).get(LOCAL);
-        final String domain = getTargetColumnIds(context).get(DOMAIN);
+        final String local = ActionsUtils.getTargetColumnIds(context).get(LOCAL);
+        final String domain = ActionsUtils.getTargetColumnIds(context).get(DOMAIN);
         // Set the values in newly created columns
         if (originalValue == null) {
             return;

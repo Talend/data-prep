@@ -12,11 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Collections.singletonList;
-import static org.talend.dataprep.api.type.Type.DOUBLE;
 import static org.talend.dataprep.transformation.actions.math.Tan.TAN_NAME;
-
-import java.util.List;
 
 import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
@@ -41,9 +37,8 @@ public class Tan extends AbstractMathNoParameterAction {
         return Double.isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(DOUBLE, context.getColumnName() + TAN_SUFFIX));
+    protected String getSuffix(ActionContext context) {
+        return TAN_SUFFIX;
     }
 
     @Override

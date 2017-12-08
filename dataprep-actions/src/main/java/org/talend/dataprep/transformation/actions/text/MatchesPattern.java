@@ -18,7 +18,11 @@ import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
@@ -29,9 +33,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -80,28 +84,18 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         // @formatter:off
-		parameters.add(SelectParameter.selectParameter(locale)
+		parameters.add(selectParameter(locale)
 				.name(PATTERN_PARAMETER)
 				.item("[a-z]+", "[a-z]+")
 				.item("[A-Z]+", "[A-Z]+")
 				.item("[0-9]+", "[0-9]+")
 				.item("[a-zA-Z]+", "[a-zA-Z]+")
 				.item("[a-zA-Z0-9]+", "[a-zA-Z0-9]+")
-				.item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this))
+				.item(CUSTOM, CUSTOM, parameter(locale).setName(MANUAL_PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this))
 				.defaultValue("[a-zA-Z]+")
 				.build(this ));
 		// @formatter:on
@@ -125,18 +119,20 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
             try {
                 context.get(REGEX_HELPER_KEY, p -> getPattern(context.getParameters()));
             } catch (IllegalArgumentException e) {
-                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                context.setActionStatus(CANCELED);
             }
         }
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(BOOLEAN, context.getColumnName() + APPENDIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(BOOLEAN, context.getColumnName() + APPENDIX));
     }
 
     @Override
@@ -144,7 +140,7 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
         final String newValue = toStringTrueFalse(computeNewValue(value, context));
-        row.set(getTargetColumnId(context), newValue);
+        row.set(ActionsUtils.getTargetColumnId(context), newValue);
     }
 
     /**

@@ -14,6 +14,10 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static java.util.Collections.singletonList;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 
 import java.util.*;
 
@@ -23,10 +27,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -59,6 +62,8 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     protected static final String NEW_COLUMN_SUFFIX = "_padded";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -77,17 +82,18 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter(locale).setName(SIZE_PARAMETER)
-                .setType(ParameterType.INTEGER)
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        parameters.add(parameter(locale).setName(SIZE_PARAMETER)
+                .setType(INTEGER)
                 .setDefaultValue("5")
                 .build(this));
-        parameters.add(Parameter.parameter(locale).setName(PADDING_CHAR_PARAMETER)
-                .setType(ParameterType.STRING)
+        parameters.add(parameter(locale).setName(PADDING_CHAR_PARAMETER)
+                .setType(STRING)
                 .setDefaultValue("0")
                 .build(this));
 
         //@formatter:off
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                         .name(PADDING_POSITION_PARAMETER)
                         .item(LEFT_POSITION)
                         .item(RIGHT_POSITION)
@@ -100,8 +106,12 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context,
+                    singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX)));
+        }
     }
 
     @Override
@@ -114,7 +124,7 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         final char paddingChar = parameters.get(PADDING_CHAR_PARAMETER).charAt(0);
         final String paddingPosition = parameters.get(PADDING_POSITION_PARAMETER);
 
-        row.set(getTargetColumnId(context), apply(original, size, paddingChar, paddingPosition));
+        row.set(ActionsUtils.getTargetColumnId(context), apply(original, size, paddingChar, paddingPosition));
     }
 
     protected String apply(String from, int size, char paddingChar, String position) {

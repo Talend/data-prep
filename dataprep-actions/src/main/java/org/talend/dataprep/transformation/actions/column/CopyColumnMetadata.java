@@ -24,6 +24,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -64,36 +65,22 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
+    public void compile(ActionContext context) {
+        super.compile(context);
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
 
-        additionalColumns.add(new AdditionalColumn(context.getColumnName() + COPY_APPENDIX) {
-
-            {
-                setCopyFrom(column.getId());
-            }
-        });
-
-        return additionalColumns;
+        ActionsUtils.AdditionalColumn additionalColumn = new ActionsUtils.AdditionalColumn(context.getColumnName() + COPY_APPENDIX);
+        additionalColumn.setCopyMetadataFromId(column.getId());
+        additionalColumns.add(additionalColumn);
+        ActionsUtils.createNewColumn(context, additionalColumns);
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
-        row.set(getTargetColumnId(context), row.get(columnId));
+        row.set(ActionsUtils.getTargetColumnId(context), row.get(columnId));
     }
 
     @Override

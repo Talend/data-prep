@@ -12,14 +12,10 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Collections.singletonList;
 import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Negate.NEGATE_NAME;
 
-import java.util.List;
-
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -36,9 +32,8 @@ public class Negate extends AbstractMathNoParameterAction {
         return toBigDecimal(columnValue).negate().toString();
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + "_negate"));
+    protected String getSuffix(ActionContext context) {
+        return "_negate";
     }
 
     @Override

@@ -39,7 +39,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -184,7 +184,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
     public void test_apply_in_newcolumn() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -214,7 +214,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
     public void should_apply_on_created_column() {
         // given
         DataSetRow row = getRow("5", "3");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
@@ -235,7 +235,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
         parameters.remove(NumericOperations.SELECTED_COLUMN_PARAMETER);
         parameters.put(NumericOperations.MODE_PARAMETER, NumericOperations.CONSTANT_MODE);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -255,7 +255,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
                 .build();
         parameters.remove(NumericOperations.OPERAND_PARAMETER);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -277,7 +277,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
         parameters.remove(NumericOperations.SELECTED_COLUMN_PARAMETER);
         parameters.put(NumericOperations.MODE_PARAMETER, NumericOperations.CONSTANT_MODE);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

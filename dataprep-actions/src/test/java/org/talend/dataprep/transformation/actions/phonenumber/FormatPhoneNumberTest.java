@@ -29,7 +29,7 @@ import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -89,7 +89,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "FR");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.TYPE_INTERNATIONAL);
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         Map<String, String> values = new HashMap<>();
         values.put("0000", "+33656965822");
 

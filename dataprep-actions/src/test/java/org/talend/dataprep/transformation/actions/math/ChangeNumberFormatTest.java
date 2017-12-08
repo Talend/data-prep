@@ -32,7 +32,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -92,7 +92,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
     public void test_apply_in_newcolumn() throws Exception {
         // given
         final DataSetRow row = getRow("toto", "0012.50", "tata");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

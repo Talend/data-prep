@@ -28,6 +28,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -60,24 +61,15 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
-        for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-            additionalColumns.add(new AdditionalColumn(urlTokenExtractor.getTokenName(), urlTokenExtractor.getType(), context.getColumnName() + urlTokenExtractor.getTokenName()));
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
+            for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
+                additionalColumns.add(new ActionsUtils.AdditionalColumn(urlTokenExtractor.getTokenName(), urlTokenExtractor.getType(), context.getColumnName() + urlTokenExtractor.getTokenName()));
+            }
+            ActionsUtils.createNewColumn(context, additionalColumns);
         }
-
-        return additionalColumns;
     }
 
     @Override
@@ -94,7 +86,7 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         }
         // if url is null, we still loop on urlTokenExtractors in order to create the column metadata for all rows, even
         // invalid ones.
-        final Map<String, String> newColumns = getTargetColumnIds(context);
+        final Map<String, String> newColumns = ActionsUtils.getTargetColumnIds(context);
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
             final String tokenValue = url == null ? StringUtils.EMPTY : urlTokenExtractor.extractToken(url);
             row.set(newColumns.get(urlTokenExtractor.getTokenName()), (tokenValue == null ? StringUtils.EMPTY : tokenValue));

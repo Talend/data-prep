@@ -61,14 +61,6 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
-    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         LOGGER.debug("DeleteColumn for columnId {}", columnId);

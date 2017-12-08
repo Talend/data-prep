@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
@@ -29,9 +32,9 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -102,34 +105,28 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractDateTokens.class);
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = true;
+
     @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters
-                .add(Parameter.parameter(locale).setName(YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters
-                .add(Parameter.parameter(locale).setName(MONTH).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(Parameter.parameter(locale).setName(DAY).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(parameter(locale).setName(YEAR).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(parameter(locale).setName(MONTH).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(parameter(locale).setName(DAY).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(
-                Parameter.parameter(locale).setName(HOUR_12).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
+                parameter(locale).setName(HOUR_12).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters.add(
-                Parameter.parameter(locale).setName(AM_PM).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
+                parameter(locale).setName(AM_PM).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters.add(
-                Parameter.parameter(locale).setName(HOUR_24).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+                parameter(locale).setName(HOUR_24).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(
-                Parameter.parameter(locale).setName(MINUTE).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+                parameter(locale).setName(MINUTE).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(
-                Parameter.parameter(locale).setName(SECOND).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters
-                .add(Parameter.parameter(locale).setName(DAY_OF_WEEK).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
-                        this));
-        parameters
-                .add(Parameter.parameter(locale).setName(DAY_OF_YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
-                        this));
-        parameters.add(
-                Parameter.parameter(locale).setName(WEEK_OF_YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(
-                        this));
+                parameter(locale).setName(SECOND).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_WEEK).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         return parameters;
     }
 
@@ -139,26 +136,18 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
-
-        for (DateFieldMappingBean date_field : DATE_FIELDS) {
-            if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
-                additionalColumns.add(new AdditionalColumn(date_field.key, Type.INTEGER, context.getColumnName() + SEPARATOR + date_field.key));
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
+            for (DateFieldMappingBean date_field : DATE_FIELDS) {
+                if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
+                    additionalColumns.add(new ActionsUtils.AdditionalColumn(date_field.key, Type.INTEGER, context.getColumnName() + SEPARATOR + date_field.key));
+                }
             }
-        }
 
-        return additionalColumns;
+            ActionsUtils.createNewColumn(context, additionalColumns);
+        }
     }
 
     @Override
@@ -189,7 +178,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                         temporalAccessor.isSupported(date_field.field)) {
                     newValue = String.valueOf(temporalAccessor.get(date_field.field));
                 }
-                row.set(getTargetColumnIds(context).get(date_field.key), newValue);
+                row.set(ActionsUtils.getTargetColumnIds(context).get(date_field.key), newValue);
             }
         }
     }

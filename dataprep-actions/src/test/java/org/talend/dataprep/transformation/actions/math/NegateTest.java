@@ -13,8 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.InputStream;
@@ -32,7 +32,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -71,7 +71,7 @@ public class NegateTest extends AbstractMetadataBaseTest<Negate> {
         DataSetRow row = getRow("5", "3", "Done !");
 
         // when
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
@@ -98,7 +98,7 @@ public class NegateTest extends AbstractMetadataBaseTest<Negate> {
         DataSetRow row = getRow("-5", "3", "Done !");
 
         // when
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
@@ -125,7 +125,7 @@ public class NegateTest extends AbstractMetadataBaseTest<Negate> {
         DataSetRow row = getRow("beer", "3", "Done !");
 
         // when
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then

@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static java.util.Collections.singletonList;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.appendColumnCreationParameter;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -25,8 +26,10 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -36,6 +39,8 @@ public class ProperCase extends AbstractActionMetadata implements ColumnAction {
     public static final String PROPER_CASE_ACTION_NAME = "propercase"; //$NON-NLS-1$
 
     protected static final String NEW_COLUMN_SUFFIX = "_title";
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -53,19 +58,25 @@ public class ProperCase extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    public List<Parameter> getParameters(Locale locale) {
+        return appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT);
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context,
+                    singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX)));
+        }
+    }
+
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toProperCase = row.get(columnId);
         if (toProperCase != null) {
-            row.set(getTargetColumnId(context), WordUtils.capitalizeFully(toProperCase));
+            row.set(ActionsUtils.getTargetColumnId(context), WordUtils.capitalizeFully(toProperCase));
         }
     }
 

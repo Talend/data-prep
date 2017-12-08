@@ -14,7 +14,9 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -29,11 +31,13 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -64,6 +68,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
      */
     private static final String FROM_DATE_PATTERNS = "from_date_patterns";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -72,6 +78,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
         // @formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
@@ -89,7 +96,10 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+        }
+        if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);
 
             // register the new pattern in column stats as most used pattern, to be able to process date action more
@@ -100,8 +110,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             final ColumnMetadata column = rowMetadata.getById(columnId);
             final Statistics statistics = column.getStatistics();
 
-            final ColumnMetadata targetColumn = rowMetadata.getById(getTargetColumnId(actionContext));
-            if (targetColumn.getId() != columnId) {
+            final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
+            if (!Objects.equals(targetColumn.getId(), columnId)) {
                 targetColumn.setStatistics(statistics);
             }
 
@@ -117,7 +127,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
             long mostUsedPatternCount = getMostUsedPatternCount(column);
             newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
-            rowMetadata.update(getTargetColumnId(actionContext), targetColumn);
+            rowMetadata.update(ActionsUtils.getTargetColumnId(actionContext), targetColumn);
         }
     }
 
@@ -156,7 +166,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             LocalDateTime date = Providers.get().parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS));
 
             if (date != null) {
-                row.set(getTargetColumnId(context), newPattern.getFormatter().format(date));
+                row.set(ActionsUtils.getTargetColumnId(context), newPattern.getFormatter().format(date));
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is

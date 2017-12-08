@@ -19,6 +19,7 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
 import java.io.IOException;
 import java.util.*;
@@ -35,7 +36,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -127,7 +127,7 @@ public class ChangeDatePatternTest extends BaseDateTest {
                 .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.DATE).name("last update")) //
                 .build();
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -177,7 +177,7 @@ public class ChangeDatePatternTest extends BaseDateTest {
         setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
         parameters.put(ChangeDatePattern.NEW_PATTERN, "custom");
         parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "ff");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -239,7 +239,7 @@ public class ChangeDatePatternTest extends BaseDateTest {
                 .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.DATE).name("last update")) //
                 .build();
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

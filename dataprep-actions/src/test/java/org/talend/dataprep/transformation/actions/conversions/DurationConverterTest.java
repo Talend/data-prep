@@ -16,12 +16,10 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
-import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -29,11 +27,10 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.date.BaseDateTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-import org.talend.dataquality.converters.DistanceEnum;
 
 /**
  * Test class for DurationConverter action. Creates one consumer, and test it.
@@ -142,7 +139,7 @@ public class DurationConverterTest extends BaseDateTest {
         parameters.put("to_unit", ChronoUnit.YEARS.name());
         parameters.put("precision", "0");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));

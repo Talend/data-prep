@@ -33,7 +33,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -95,7 +95,7 @@ public class SubstringTest extends AbstractMetadataBaseTest {
         expectedValues.put("0001", " ipsum ");
         expectedValues.put("0002", "01/01/2015");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "false");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
         //when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

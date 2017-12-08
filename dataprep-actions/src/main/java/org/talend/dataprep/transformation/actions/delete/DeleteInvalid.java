@@ -50,11 +50,6 @@ public class DeleteInvalid extends AbstractDelete {
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
     public boolean toDelete(DataSetRow dataSetRow, String columnId, ActionContext context) {
         return dataSetRow.isInvalid(columnId);
     }

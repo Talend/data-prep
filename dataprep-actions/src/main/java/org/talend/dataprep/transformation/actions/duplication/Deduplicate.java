@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.duplication;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 import java.util.EnumSet;
@@ -22,8 +23,10 @@ import java.util.Set;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -40,6 +43,8 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
 
     /** Key to store in context hashes */
     private static final String HASHES_NAME = "hashes";
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -62,13 +67,11 @@ public class Deduplicate extends AbstractActionMetadata implements DataSetAction
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+        }
         final Set<String> hashes = new HashSet<>();
         actionContext.get(HASHES_NAME, p -> hashes);
     }

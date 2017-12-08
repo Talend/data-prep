@@ -33,7 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -107,7 +107,7 @@ public class LowerCaseTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "May 20th 2015");
         expectedValues.put("0003", "r&d"); // R&D --> r&d
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         //when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

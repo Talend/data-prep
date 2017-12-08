@@ -55,11 +55,6 @@ public class TextClustering extends AbstractActionMetadata implements ColumnActi
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);

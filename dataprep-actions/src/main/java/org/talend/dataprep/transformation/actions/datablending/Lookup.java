@@ -13,12 +13,17 @@
 
 package org.talend.dataprep.transformation.actions.datablending;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.parameters.ParameterType.LIST;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.transformation.actions.Providers.get;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
 import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.*;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,10 +35,11 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -58,6 +64,8 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
 
     /** Adapted value of the dataset_id parameter. */
     private String adaptedDatasetIdValue = EMPTY;
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     /**
      * @return A unique name used to identify action.
@@ -134,13 +142,16 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+        }
+        if (context.getActionStatus() == OK) {
             List<LookupSelectedColumnParameter> colsToAdd = getColsToAdd(context.getParameters());
             if (colsToAdd.isEmpty()) {
-                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                context.setActionStatus(CANCELED);
             }
 
-            LookupRowMatcher rowMatcher = context.get("rowMatcher", p -> Providers.get(LookupRowMatcher.class, p));
+            LookupRowMatcher rowMatcher = context.get("rowMatcher", p -> get(LookupRowMatcher.class, p));
             // Create lookup result columns
             final Map<String, String> parameters = context.getParameters();
             final String columnId = parameters.get(COLUMN_ID.getKey());
@@ -151,8 +162,8 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
                 final String toAddColumnId = toAdd.getId();
                 final ColumnMetadata metadata = lookupRowMetadata.getById(toAddColumnId);
                 context.column(toAddColumnId, r -> {
-                    final ColumnMetadata colMetadata = ColumnMetadata.Builder //
-                            .column() //
+                    final ColumnMetadata colMetadata = //
+                            column() //
                             .copy(metadata) //
                             .computedId(null) // id should be set by the insertAfter method
                             .build();

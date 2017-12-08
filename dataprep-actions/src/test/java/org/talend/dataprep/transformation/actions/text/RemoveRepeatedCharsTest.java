@@ -17,11 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -32,10 +28,9 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for RemoveRepeatedChars action. Creates one consumer, and test it.
@@ -114,7 +109,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "May 20th 2015");
 
         initParametersWhitespace();
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         //when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

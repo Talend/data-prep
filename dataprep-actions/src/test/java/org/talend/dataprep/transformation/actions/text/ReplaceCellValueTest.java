@@ -40,7 +40,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
@@ -76,7 +76,7 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
         assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder( //
-                AbstractActionMetadata.CREATE_NEW_COLUMN,
+                ActionsUtils.CREATE_NEW_COLUMN,
                 COLUMN_ID.getKey(), //
                 SCOPE.getKey(), //
                 ROW_ID.getKey(), //
@@ -160,7 +160,7 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         parameters.put(SCOPE.getKey().toLowerCase(), "cell");
         parameters.put(COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(ROW_ID.getKey(), String.valueOf(rowId));
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

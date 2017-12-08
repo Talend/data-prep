@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.actions.math;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.InputStream;
@@ -30,7 +29,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -80,7 +79,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "7");
@@ -100,7 +99,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -118,7 +117,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "beer");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -136,7 +135,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -154,7 +153,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "000xx");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -172,7 +171,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0002");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -190,7 +189,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "2");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -207,7 +206,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "2");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -240,7 +239,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

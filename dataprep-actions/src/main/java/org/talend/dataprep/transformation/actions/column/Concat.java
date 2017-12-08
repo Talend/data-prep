@@ -14,6 +14,12 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
@@ -27,10 +33,9 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -76,6 +81,8 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
 
     public static final String ALWAYS = "concat_always";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return CONCAT_ACTION_NAME;
@@ -89,22 +96,23 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        parameters.add(Parameter.parameter(locale).setName(PREFIX_PARAMETER)
-                .setType(ParameterType.STRING)
-                .setDefaultValue(StringUtils.EMPTY)
+        parameters.add(parameter(locale).setName(PREFIX_PARAMETER)
+                .setType(STRING)
+                .setDefaultValue(EMPTY)
                 .build(this));
 
-        parameters.add(SelectParameter.selectParameter(locale).name(MODE_PARAMETER)
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
-                                .setType(ParameterType.COLUMN)
-                                .setDefaultValue(StringUtils.EMPTY)
+        parameters.add(selectParameter(locale).name(MODE_PARAMETER)
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(COLUMN)
+                                .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
-                                .build(this), Parameter.parameter(locale).setName(SEPARATOR_PARAMETER)
-                                .setType(ParameterType.STRING)
-                                .setDefaultValue(StringUtils.EMPTY)
+                                .build(this), parameter(locale).setName(SEPARATOR_PARAMETER)
+                                .setType(STRING)
+                                .setDefaultValue(EMPTY)
                                 .build(this), //
-                        SelectParameter.selectParameter(locale) //
+                        selectParameter(locale) //
                                 .name(SEPARATOR_CONDITION) //
                                 .item(BOTH_NOT_EMPTY, BOTH_NOT_EMPTY) //
                                 .item(ALWAYS, ALWAYS) //
@@ -114,9 +122,9 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
                 .defaultValue(OTHER_COLUMN_MODE) //
                 .build(this));
 
-        parameters.add(Parameter.parameter(locale).setName(SUFFIX_PARAMETER)
-                .setType(ParameterType.STRING)
-                .setDefaultValue(StringUtils.EMPTY)
+        parameters.add(parameter(locale).setName(SUFFIX_PARAMETER)
+                .setType(STRING)
+                .setDefaultValue(EMPTY)
                 .build(this));
         return parameters;
     }
@@ -130,7 +138,10 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
             checkSelectedColumnParameter(context.getParameters(), context.getRowMetadata());
         }
     }
@@ -175,11 +186,10 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
 
         newValue.append(getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY));
 
-        row.set(getTargetColumnId(context), newValue.toString());
+        row.set(ActionsUtils.getTargetColumnId(context), newValue.toString());
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
         String result;
         ColumnMetadata selectedColumn = context.getRowMetadata().getById(context.getParameters().get(SELECTED_COLUMN_PARAMETER));
         String sourceColumnName = context.getColumnName();
@@ -192,7 +202,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         } else {
             result = prefix + sourceColumnName + suffix;
         }
-        return singletonList(new AdditionalColumn(Type.STRING, result));
+        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, result));
     }
 
     /**

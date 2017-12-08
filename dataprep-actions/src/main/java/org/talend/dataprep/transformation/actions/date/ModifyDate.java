@@ -14,11 +14,13 @@ package org.talend.dataprep.transformation.actions.date;
 
 import static java.time.temporal.ChronoUnit.*;
 import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.dataset.row.RowMetadataUtils.getMostUsedDatePattern;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +31,6 @@ import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
@@ -37,6 +38,7 @@ import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -66,19 +68,21 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
     protected static final String NEW_COLUMN_SUFFIX = "_modified";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
-            List<Parameter> parameters = super.getParameters(locale);
+    public List<Parameter> getParameters(Locale locale) {
+        List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
@@ -109,20 +113,22 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
+        if (actionContext.getActionStatus() == OK) {
             try {
-                actionContext.get(PATTERN_CONTEXT_KEY, p -> RowMetadataUtils
-                        .getMostUsedDatePattern((actionContext.getRowMetadata().getById(actionContext.getColumnId()))));
+                actionContext.get(PATTERN_CONTEXT_KEY, p -> getMostUsedDatePattern((actionContext.getRowMetadata().getById(actionContext.getColumnId()))));
 
                 actionContext.get(UNIT_CONTEXT_KEY,
-                        p -> ChronoUnit.valueOf(actionContext.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase()));
+                        p -> valueOf(actionContext.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase()));
 
                 if (actionContext.getParameters().get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
                     actionContext.get(AMOUNT_CONTEXT_KEY, p -> computeAmount(actionContext.getParameters().get(CONSTANT_VALUE)));
                 }
 
             } catch (IllegalArgumentException e) {
-                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                actionContext.setActionStatus(CANCELED);
             }
         }
     }
@@ -167,7 +173,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
             date = date.plus(amount, context.get(UNIT_CONTEXT_KEY));
 
-            row.set(getTargetColumnId(context), outputPattern.getFormatter().format(date));
+            row.set(ActionsUtils.getTargetColumnId(context), outputPattern.getFormatter().format(date));
 
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is

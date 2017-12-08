@@ -29,7 +29,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -61,7 +61,7 @@ public class SinTest extends AbstractMetadataBaseTest {
     public void test_apply_in_newcolumn() {
         // given
         DataSetRow row = getRow("10", "3", "Done !");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -100,7 +100,7 @@ public class SinTest extends AbstractMetadataBaseTest {
     public void sin_with_negative() {
         // given
         DataSetRow row = getRow("-10", "3", "Done !");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -114,7 +114,7 @@ public class SinTest extends AbstractMetadataBaseTest {
     public void sin_with_NaN() {
         // given
         DataSetRow row = getRow("beer", "3", "Done !");
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

@@ -13,20 +13,23 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.StringTrimmer;
@@ -60,6 +63,8 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
 
     protected static final String NEW_COLUMN_SUFFIX = "_trim";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return TRIM_ACTION_NAME;
@@ -75,20 +80,20 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override
         public List<Parameter> getParameters(Locale locale) {
-            final List<Parameter> parameters = super.getParameters(locale);
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
         // @formatter:off
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                 .name(PADDING_CHAR_PARAMETER)
                 .item(WHITESPACE,WHITESPACE)
-                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(CUSTOM_PADDING_CHAR_PARAMETER).setType(ParameterType.STRING).setDefaultValue(StringUtils.EMPTY).build(this))
+                .item(CUSTOM, CUSTOM, parameter(locale).setName(CUSTOM_PADDING_CHAR_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(this))
                 .canBeBlank(true)
                 .defaultValue(WHITESPACE)
                 .build(this ));
@@ -99,7 +104,10 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
+        if (actionContext.getActionStatus() == OK) {
             actionContext.get(STRING_TRIMMER, p -> new StringTrimmer());
         }
     }
@@ -115,9 +123,9 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
             final Map<String, String> parameters = context.getParameters();
             final StringTrimmer stringTrimmer = context.get(STRING_TRIMMER);
             if (CUSTOM.equals(parameters.get(PADDING_CHAR_PARAMETER))) {
-                row.set(getTargetColumnId(context), stringTrimmer.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER)));
+                row.set(ActionsUtils.getTargetColumnId(context), stringTrimmer.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER)));
             } else {
-                row.set(getTargetColumnId(context), stringTrimmer.removeTrailingAndLeadingWhitespaces(toTrim));
+                row.set(ActionsUtils.getTargetColumnId(context), stringTrimmer.removeTrailingAndLeadingWhitespaces(toTrim));
             }
         }
     }

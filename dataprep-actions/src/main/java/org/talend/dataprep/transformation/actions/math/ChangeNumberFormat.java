@@ -14,7 +14,11 @@ package org.talend.dataprep.transformation.actions.math;
 
 import static java.util.Collections.singletonList;
 import static org.talend.daikon.number.BigDecimalParser.*;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -35,6 +39,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
@@ -103,6 +108,8 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     private static final DecimalFormat CH_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
             DecimalFormatSymbols.getInstance(new Locale("FR", "CH")));
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -119,17 +126,17 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         return Type.NUMERIC.isAssignableFrom(columnType);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override
         public List<Parameter> getParameters(Locale locale) {
-            final List<Parameter> parameters = super.getParameters(locale);
+        final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
         // @formatter:off
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                 .name(FROM_SEPARATORS)
                 .item(UNKNOWN_SEPARATORS, UNKNOWN_SEPARATORS)
                 .item(US_SEPARATORS, US_SEPARATORS)
@@ -141,13 +148,13 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         // @formatter:on
 
         // @formatter:off
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                 .name(TARGET_PATTERN)
                 .item(US_PATTERN, US_PATTERN)
                 .item(EU_PATTERN, EU_PATTERN)
                 .item(CH_PATTERN, CH_PATTERN)
                 .item(SCIENTIFIC, SCIENTIFIC)
-                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).build(this),
+                .item(CUSTOM, CUSTOM, parameter(locale).setName(TARGET_PATTERN + "_" + CUSTOM).setType(STRING).setDefaultValue(US_DECIMAL_PATTERN.toPattern()).build(this),
                         buildDecimalSeparatorParameter(TARGET, locale),
                         buildGroupingSeparatorParameter(TARGET, locale))
                 .defaultValue(US_PATTERN)
@@ -251,12 +258,15 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
+        if (actionContext.getActionStatus() == OK) {
             try {
                 actionContext.get(COMPILED_TARGET_FORMAT, p -> getFormat(actionContext.getParameters()));
             } catch (IllegalArgumentException e) {
                 LOGGER.warn("Unsupported number format", e);
-                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                actionContext.setActionStatus(CANCELED);
             }
         }
     }
@@ -310,7 +320,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         }
 
         String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);
-        row.set(getTargetColumnId(context), newValue);
+        row.set(ActionsUtils.getTargetColumnId(context), newValue);
     }
 
     /**

@@ -13,6 +13,12 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.getColumnCreationParameter;
+
 import java.util.*;
 
 import javax.annotation.Nonnull;
@@ -39,29 +45,35 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompareAction.class);
 
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT_VALUE = true;
 
     @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT_VALUE));
 
         parameters.add(getCompareModeSelectParameter(locale));
 
         //@formatter:off
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(selectParameter(locale) //
                         .name(MODE_PARAMETER) //
                         .item(CONSTANT_MODE, CONSTANT_MODE, getDefaultConstantValue(locale)) //
-                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this)) //
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(COLUMN).setDefaultValue(EMPTY).setCanBeBlank(false).build(this)) //
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );
         //@formatter:on
 
         return parameters;
+    }
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT_VALUE)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
     }
 
     /**
@@ -99,9 +111,8 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
                 .build(this);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final Map<String, String> parameters = context.getParameters();
@@ -115,7 +126,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
             compareToLabel = selectedColumn.getName();
         }
 
-        additionalColumns.add(new AdditionalColumn(Type.BOOLEAN,
+        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.BOOLEAN,
                 context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?"));
 
         return additionalColumns;
@@ -130,7 +141,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         final Map<String, String> parameters = context.getParameters();
         final String compareMode = getCompareMode(parameters);
 
-        final String newColumnId = getTargetColumnId(context);
+        final String newColumnId = ActionsUtils.getTargetColumnId(context);
 
         ComparisonRequest comparisonRequest = new ComparisonRequest() //
                 .setMode(compareMode) //

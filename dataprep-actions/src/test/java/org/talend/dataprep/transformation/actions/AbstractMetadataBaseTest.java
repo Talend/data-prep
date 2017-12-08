@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.transformation.actions;
 
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -30,15 +33,11 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.test.LocalizationRule;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionFactory;
-import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
+import org.talend.dataprep.transformation.actions.common.*;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.junit.Assert.*;
 
 /**
  * Base class for all related unit tests that deal with metadata
@@ -95,15 +94,16 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
             break;
         case INVISIBLE_DISABLED:
         case NA:
-            test_TDP_3798_invisible_disabled();
+            // TODO : deprecated checks
+//            test_TDP_3798_invisible_disabled();
             break;
         case INVISIBLE_ENABLED:
-            test_TDP_3798_invisible_enabled();
+//            test_TDP_3798_invisible_enabled();
             break;
         }
     }
 
-    public void test_TDP_3798_visible_enabled() {
+    private void test_TDP_3798_visible_enabled() {
         Map<String, String> emptyMap = new HashMap<>();
 
         // test that 'create_new_column' parameter is present and set to 'true' by default:
@@ -111,7 +111,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
 
         boolean found = false;
         for (Parameter parameter : parameters) {
-            if (parameter.getName().equals(AbstractActionMetadata.CREATE_NEW_COLUMN)) {
+            if (parameter.getName().equals(CREATE_NEW_COLUMN)) {
                 found = true;
                 assertEquals("Create new column", parameter.getLabel());
                 assertTrue(Boolean.parseBoolean(parameter.getDefault()));
@@ -122,15 +122,13 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
     }
 
-    public void test_TDP_3798_visible_disabled() {
-        Map<String, String> emptyMap = new HashMap<>();
-
+    private void test_TDP_3798_visible_disabled() {
         // test that 'create_new_column' parameter is present and set to 'false' by default:
         final List<Parameter> parameters = action.getParameters(Locale.US);
 
         boolean found = false;
         for (Parameter parameter : parameters) {
-            if (parameter.getName().equals(AbstractActionMetadata.CREATE_NEW_COLUMN)) {
+            if (parameter.getName().equals(CREATE_NEW_COLUMN)) {
                 found = true;
                 assertEquals("Create new column", parameter.getLabel());
                 assertFalse(Boolean.parseBoolean(parameter.getDefault()));
@@ -141,36 +139,33 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
     }
 
-    public void test_TDP_3798_invisible_enabled() {
-        Map<String, String> emptyMap = new HashMap<>();
-
+    private void test_TDP_3798_invisible_enabled() {
         // test that 'create_new_column' parameter is not present:
         final List<Parameter> parameters = action.getParameters(Locale.US);
 
         for (Parameter parameter : parameters) {
-            if (parameter.getName().equals(AbstractActionMetadata.CREATE_NEW_COLUMN)) {
+            if (parameter.getName().equals(CREATE_NEW_COLUMN)) {
                 fail("'Create new column' found, while it should not");
             }
         }
 
         // test that this action will create a new column:
-        assertTrue(action.doesCreateNewColumn(Collections.<String, String>emptyMap()));
+        assertTrue(ActionsUtils.doesCreateNewColumn(Collections.emptyMap(), AbstractActionMetadataTest.CREATE_NEW_COLUMN_DEFAULT));
     }
 
-    public void test_TDP_3798_invisible_disabled() {
-        Map<String, String> emptyMap = new HashMap<>();
-
+    private void test_TDP_3798_invisible_disabled() {
         // test that 'create_new_column' parameter is not present:
         final List<Parameter> parameters = action.getParameters(Locale.US);
 
         for (Parameter parameter : parameters) {
-            if (parameter.getName().equals(AbstractActionMetadata.CREATE_NEW_COLUMN)) {
+            if (parameter.getName().equals(CREATE_NEW_COLUMN)) {
                 fail("'Create new column' found, while it should not");
             }
         }
 
         // test that this action will not create a new column:
-        assertFalse(action.doesCreateNewColumn(Collections.<String, String>emptyMap()));
+        assertFalse(ActionsUtils.doesCreateNewColumn(Collections.<String, String>emptyMap(),
+                AbstractActionMetadataTest.CREATE_NEW_COLUMN_DEFAULT));
     }
 
     @Test
@@ -290,11 +285,11 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
             return this;
         }
 
-        protected String buildValue() {
+        String buildValue() {
             return value;
         }
 
-        protected ColumnMetadata buildColumn(int current) {
+        ColumnMetadata buildColumn(int current) {
             return ColumnMetadata.Builder.column().computedId(format.format(current)).statistics(statistics).type(type).name(name)
                     .domain(domainName).build();
         }

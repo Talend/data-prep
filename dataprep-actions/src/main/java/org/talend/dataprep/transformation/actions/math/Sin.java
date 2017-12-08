@@ -12,11 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static java.util.Collections.singletonList;
-import static org.talend.dataprep.api.type.Type.DOUBLE;
 import static org.talend.dataprep.transformation.actions.math.Sin.SIN_NAME;
-
-import java.util.List;
 
 import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.number.BigDecimalParser;
@@ -30,9 +26,9 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + SIN_NAME)
 public class Sin extends AbstractMathNoParameterAction {
 
-    protected static final String SIN_NAME = "sin_numbers";
+    static final String SIN_NAME = "sin_numbers";
 
-    protected static final String SIN_SUFFIX = "_sin";
+    private static final String SIN_SUFFIX = "_sin";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
@@ -41,9 +37,8 @@ public class Sin extends AbstractMathNoParameterAction {
         return Double.isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(DOUBLE, context.getColumnName() + SIN_SUFFIX));
+    protected String getSuffix(ActionContext context) {
+        return SIN_SUFFIX;
     }
 
     @Override

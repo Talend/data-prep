@@ -16,8 +16,11 @@ package org.talend.dataprep.transformation.actions.text;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.security.InvalidParameterException;
 import java.util.*;
@@ -31,6 +34,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -55,6 +59,8 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     /** Scope Value (replace the entire cell or only the part that matches). */
     public static final String REPLACE_ENTIRE_CELL_PARAMETER = "replace_entire_cell";
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return REPLACE_ON_VALUE_ACTION_NAME;
@@ -68,22 +74,19 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
         parameters.add(
-                Parameter.parameter(locale).setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
-                        this));
-        parameters.add(
-                Parameter.parameter(locale).setName(REPLACE_VALUE_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(
-                        this));
-        parameters.add(Parameter.parameter(locale).setName(REPLACE_ENTIRE_CELL_PARAMETER)
+                parameter(locale).setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this));
+        parameters.add(parameter(locale).setName(REPLACE_VALUE_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(this));
+        parameters.add(parameter(locale).setName(REPLACE_ENTIRE_CELL_PARAMETER)
                 .setType(BOOLEAN)
-                .setDefaultValue("false")
+                .setDefaultValue(Boolean.FALSE.toString())
                 .build(this));
         return parameters;
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(STRING, context.getColumnName() + "_replace"));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(new ActionsUtils.AdditionalColumn(STRING, context.getColumnName() + "_replace"));
     }
 
     @Override
@@ -94,7 +97,10 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
+        if (actionContext.getActionStatus() == OK) {
             final Map<String, String> parameters = actionContext.getParameters();
             String rawParam = parameters.get(CELL_VALUE_PARAMETER);
 
@@ -102,7 +108,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
                 final ReplaceOnValueHelper regexParametersHelper = new ReplaceOnValueHelper();
                 actionContext.get(REGEX_HELPER_KEY, p -> regexParametersHelper.build(rawParam, false));
             } catch (IllegalArgumentException e) {
-                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                actionContext.setActionStatus(CANCELED);
             }
         }
     }
@@ -130,7 +136,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         }
 
         final String newValue = computeNewValue(context, value);
-        row.set(getTargetColumnId(context), newValue);
+        row.set(ActionsUtils.getTargetColumnId(context), newValue);
     }
 
     /**

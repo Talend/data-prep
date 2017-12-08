@@ -173,6 +173,10 @@ public class ActionContext implements Serializable {
         throw new IllegalArgumentException("Key '" + key + "' does not exist.");
     }
 
+    public boolean contains(String key) {
+        return getContext().containsKey(key);
+    }
+
     /**
      * Return the object from the context or use the supplier to create it and cache it.
      *

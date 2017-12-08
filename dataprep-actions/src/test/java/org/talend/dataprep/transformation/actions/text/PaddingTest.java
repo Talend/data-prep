@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -84,7 +84,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         expectedValues.put("0002", "May 20th 2015");
         expectedValues.put("0003", "0010");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

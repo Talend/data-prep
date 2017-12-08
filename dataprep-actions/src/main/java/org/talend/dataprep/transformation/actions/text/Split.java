@@ -14,9 +14,14 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.SPLIT;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
@@ -31,8 +36,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -74,23 +79,12 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("2").build(
-                this));
+        parameters.add(parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("2").build(this));
         //@formatter:off
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(selectParameter(locale)
                         .name(SEPARATOR_PARAMETER)
                         .canBeBlank(true)
                         .item(":")
@@ -101,8 +95,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
                         .item("_")
                         .item(" ", "space")
                         .item("\t", "tab")
-                        .item("other (string)", Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
-                        .item("other (regex)", Parameter.parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this))
+                        .item("other (string)", parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
+                        .item("other (regex)", parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this))
                         .defaultValue(":")
                         .build(this )
         );
@@ -118,17 +112,19 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            if (StringUtils.isEmpty(getSeparator(context))) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
+            if (isEmpty(getSeparator(context))) {
                 LOGGER.warn("Cannot split on an empty separator");
-                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                context.setActionStatus(CANCELED);
             }
         }
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final List<AdditionalColumn> additionalColumns = new ArrayList<>();
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
@@ -136,7 +132,7 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         int limit = Integer.parseInt(context.getParameters().get(LIMIT));
 
         for (int i = 0; i < limit; i++) {
-            additionalColumns.add(new AdditionalColumn("" + i, column.getName() + SPLIT_APPENDIX + (i + 1)));
+            additionalColumns.add(new ActionsUtils.AdditionalColumn("" + i, column.getName() + SPLIT_APPENDIX + (i + 1)));
         }
 
         return additionalColumns;
@@ -158,7 +154,7 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         }
         final int limit = Integer.parseInt(parameters.get(LIMIT));
         final String[] split = originalValue.split(realSeparator, limit);
-        final Map<String, String> newColumns = getTargetColumnIds(context);
+        final Map<String, String> newColumns = ActionsUtils.getTargetColumnIds(context);
         if (split.length != 0) {
             for (int i = 0; i < limit; i++) {
                 final String newValue = i < split.length ? split[i] : EMPTY;

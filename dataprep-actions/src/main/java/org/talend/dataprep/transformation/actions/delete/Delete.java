@@ -53,11 +53,6 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
     public String getName() {
         return DELETE_ACTION_NAME;
     }

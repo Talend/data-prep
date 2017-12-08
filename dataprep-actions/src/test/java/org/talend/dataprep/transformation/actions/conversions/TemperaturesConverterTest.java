@@ -31,7 +31,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -107,7 +107,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
         parameters.put("to_temperature", FAHRENHEIT.name());
         parameters.put("precision", "0");
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1), actionRegistry, factory.create(action, parameters));
@@ -194,7 +194,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
         parameters.put("from_temperature", fromUnit.name());
         parameters.put("to_temperature", toUnit.name());
 
-        parameters.put(AbstractActionMetadata.CREATE_NEW_COLUMN, "true");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));

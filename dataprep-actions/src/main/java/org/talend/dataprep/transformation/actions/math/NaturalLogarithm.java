@@ -13,15 +13,11 @@
 package org.talend.dataprep.transformation.actions.math;
 
 import static java.lang.Double.isNaN;
-import static java.util.Collections.singletonList;
 import static org.apache.commons.math3.util.FastMath.log;
 import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.NaturalLogarithm.NATURAL_LOGARITHM_NAME;
 
-import java.util.List;
-
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -42,9 +38,8 @@ public class NaturalLogarithm extends AbstractMathNoParameterAction {
         return isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new AdditionalColumn(Type.DOUBLE, context.getColumnName() + "_natural_logarithm"));
+    protected String getSuffix(ActionContext context) {
+        return "_natural_logarithm";
     }
 
     @Override

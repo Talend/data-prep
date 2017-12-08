@@ -22,6 +22,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -54,18 +55,15 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
     }
 
-    @Override
-    public boolean getCreateNewColumnDefaultValue() {
-        return true;
-    }
-
-    @Override
-    protected List<AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return Collections.singletonList(new AdditionalColumn(Type.INTEGER, context.getColumnName() + APPENDIX));
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return Collections.singletonList(new ActionsUtils.AdditionalColumn(Type.INTEGER, context.getColumnName() + APPENDIX));
     }
 
     /**
@@ -77,7 +75,7 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
         final RowMetadata rowMetadata = context.getRowMetadata();
         final String columnId = context.getColumnId();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final String lengthColumn = getTargetColumnId(context);
+        final String lengthColumn = ActionsUtils.getTargetColumnId(context);
 
         // Set length value
         final String value = row.get(columnId);

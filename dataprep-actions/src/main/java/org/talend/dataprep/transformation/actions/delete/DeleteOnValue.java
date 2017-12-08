@@ -77,7 +77,7 @@ public class DeleteOnValue extends AbstractDelete {
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
         }
         if (actionContext.getActionStatus() == OK) {
             final Map<String, String> parameters = actionContext.getParameters();

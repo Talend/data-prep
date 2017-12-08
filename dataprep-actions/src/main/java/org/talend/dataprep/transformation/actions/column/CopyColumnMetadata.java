@@ -71,8 +71,9 @@ public class CopyColumnMetadata extends AbstractActionMetadata implements Column
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
 
-        ActionsUtils.AdditionalColumn additionalColumn = new ActionsUtils.AdditionalColumn(context.getColumnName() + COPY_APPENDIX);
-        additionalColumn.setCopyMetadataFromId(column.getId());
+        ActionsUtils.AdditionalColumn additionalColumn = ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + COPY_APPENDIX);
+        additionalColumn.withCopyMetadataFromId(column.getId());
         additionalColumns.add(additionalColumn);
         ActionsUtils.createNewColumn(context, additionalColumns);
     }

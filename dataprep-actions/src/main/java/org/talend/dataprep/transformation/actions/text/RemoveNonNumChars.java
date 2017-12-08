@@ -74,7 +74,7 @@ public class RemoveNonNumChars extends AbstractActionMetadata implements ColumnA
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

@@ -72,8 +72,8 @@ public class ExtractEmailDomain extends AbstractActionMetadata implements Column
             final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
             final RowMetadata rowMetadata = context.getRowMetadata();
             final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
-            additionalColumns.add(new ActionsUtils.AdditionalColumn(LOCAL, column.getName() + LOCAL));
-            additionalColumns.add(new ActionsUtils.AdditionalColumn(DOMAIN, column.getName() + DOMAIN));
+            additionalColumns.add(ActionsUtils.additionalColumn().withKey(LOCAL).withName(column.getName() + LOCAL));
+            additionalColumns.add(ActionsUtils.additionalColumn().withKey(DOMAIN).withName(column.getName() + DOMAIN));
             ActionsUtils.createNewColumn(context, additionalColumns);
         }
     }

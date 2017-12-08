@@ -126,8 +126,9 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
             compareToLabel = selectedColumn.getName();
         }
 
-        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.BOOLEAN,
-                context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?"));
+        additionalColumns.add(ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?")
+                .withType(Type.BOOLEAN));
 
         return additionalColumns;
     }

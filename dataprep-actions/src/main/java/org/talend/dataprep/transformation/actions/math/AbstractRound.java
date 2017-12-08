@@ -112,7 +112,7 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new ActionsUtils.AdditionalColumn(DOUBLE, context.getColumnName() + NEW_COLUMN_SUFFIX));
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(DOUBLE));
     }
 
     @Override

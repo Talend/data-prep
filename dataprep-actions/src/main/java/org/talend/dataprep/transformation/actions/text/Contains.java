@@ -105,7 +105,7 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         } else {
             prefix = parameters.get(CONSTANT_VALUE);
         }
-        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.BOOLEAN, sourceColumnName + APPENDIX + prefix));
+        additionalColumns.add(ActionsUtils.additionalColumn().withName(sourceColumnName + APPENDIX + prefix).withType(Type.BOOLEAN));
 
         return additionalColumns;
     }

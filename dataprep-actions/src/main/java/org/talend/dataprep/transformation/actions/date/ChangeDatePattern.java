@@ -31,7 +31,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -97,7 +96,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
         }
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);

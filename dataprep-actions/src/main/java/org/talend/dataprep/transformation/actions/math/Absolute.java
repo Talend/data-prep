@@ -42,6 +42,8 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ABSOLUTE_ACTION_NAME = "absolute"; //$NON-NLS-1$
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     private final Type type;
 
     public Absolute() {
@@ -64,14 +66,15 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, false);
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT);
     }
 
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), false)) {
-            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(DOUBLE, context.getColumnName() + "_absolute")));
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + "_absolute").withType(DOUBLE)));
         }
     }
 

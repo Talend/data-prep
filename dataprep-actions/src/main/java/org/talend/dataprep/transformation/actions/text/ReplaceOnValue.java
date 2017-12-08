@@ -86,7 +86,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new ActionsUtils.AdditionalColumn(STRING, context.getColumnName() + "_replace"));
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + "_replace").withType(STRING));
     }
 
     @Override

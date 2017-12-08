@@ -64,14 +64,16 @@ public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.BOOLEAN.equals(Type.get(column.getType()));
+        return BOOLEAN.equals(Type.get(column.getType()));
     }
 
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT_VALUE)) {
-            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(BOOLEAN, context.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ActionsUtils.createNewColumn(context, singletonList(ActionsUtils.additionalColumn()
+                    .withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
+                    .withType(BOOLEAN)));
         }
     }
 

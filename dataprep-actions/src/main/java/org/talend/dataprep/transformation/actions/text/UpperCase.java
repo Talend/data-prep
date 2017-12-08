@@ -67,7 +67,8 @@ public class UpperCase extends AbstractActionMetadata implements ColumnAction {
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context, Collections.singletonList(new ActionsUtils.AdditionalColumn(context.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ActionsUtils.createNewColumn(context, Collections.singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
     }
 

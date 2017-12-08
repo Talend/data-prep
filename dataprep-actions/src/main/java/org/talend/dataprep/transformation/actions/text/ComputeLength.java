@@ -63,7 +63,8 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return Collections.singletonList(new ActionsUtils.AdditionalColumn(Type.INTEGER, context.getColumnName() + APPENDIX));
+        return Collections.singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(Type.INTEGER));
     }
 
     /**

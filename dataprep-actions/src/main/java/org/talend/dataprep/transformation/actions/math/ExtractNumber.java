@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
@@ -207,7 +206,8 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
-            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + "_number")));
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + "_number")));
         }
     }
 

@@ -144,7 +144,9 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             operandName = selectedColumn.getName();
         }
-        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.DOUBLE, context.getColumnName() + " " + operator + " " + operandName));
+        additionalColumns.add(ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + " " + operator + " " + operandName)
+                .withType(Type.DOUBLE));
         return additionalColumns;
     }
 

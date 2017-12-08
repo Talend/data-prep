@@ -113,8 +113,9 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new ActionsUtils.AdditionalColumn(DOUBLE,
-                context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER)));
+        return singletonList(ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER))
+                .withType(DOUBLE));
     }
 
     @Override

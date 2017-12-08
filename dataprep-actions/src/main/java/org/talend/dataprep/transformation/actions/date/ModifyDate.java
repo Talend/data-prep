@@ -31,7 +31,6 @@ import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -76,7 +75,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX));
     }
 
     @Override

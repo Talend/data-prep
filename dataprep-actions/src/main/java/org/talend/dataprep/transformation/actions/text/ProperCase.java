@@ -67,7 +67,7 @@ public class ProperCase extends AbstractActionMetadata implements ColumnAction {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
             ActionsUtils.createNewColumn(context,
-                    singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, context.getColumnName() + NEW_COLUMN_SUFFIX)));
+                    singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
     }
 

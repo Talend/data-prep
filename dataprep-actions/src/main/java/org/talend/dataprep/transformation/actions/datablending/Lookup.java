@@ -35,7 +35,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -143,7 +142,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context, singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, null)));
+            ActionsUtils.createNewColumn(context, singletonList(ActionsUtils.additionalColumn()));
         }
         if (context.getActionStatus() == OK) {
             List<LookupSelectedColumnParameter> colsToAdd = getColsToAdd(context.getParameters());

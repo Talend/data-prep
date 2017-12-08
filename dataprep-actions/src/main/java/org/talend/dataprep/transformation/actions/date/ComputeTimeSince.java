@@ -130,8 +130,9 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
 
         TemporalUnit unit = ChronoUnit.valueOf(context.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase());
-        additionalColumns.add(new ActionsUtils.AdditionalColumn(Type.INTEGER,
-                PREFIX + context.getColumnName() + SUFFIX + unit.toString().toLowerCase()));
+        additionalColumns.add(ActionsUtils.additionalColumn()
+                .withName(PREFIX + context.getColumnName() + SUFFIX + unit.toString().toLowerCase())
+                .withType(Type.INTEGER));
 
         return additionalColumns;
     }

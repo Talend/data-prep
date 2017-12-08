@@ -30,7 +30,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -202,7 +201,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         } else {
             result = prefix + sourceColumnName + suffix;
         }
-        return singletonList(new ActionsUtils.AdditionalColumn(Type.STRING, result));
+        return singletonList(ActionsUtils.additionalColumn().withName(result));
     }
 
     /**

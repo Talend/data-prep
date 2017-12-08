@@ -42,17 +42,22 @@ public class ActionsUtils {
 
     // For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
     // creates a new column:
-    public static Parameter getColumnCreationParameter(Locale locale, boolean createNewColumnDefaultValue) {
+    public static Parameter getColumnCreationParameter(Locale locale, boolean createNewColumnDefault) {
         return Parameter.parameter(locale).setName(CREATE_NEW_COLUMN)
                 .setType(BOOLEAN)
-                .setDefaultValue(Boolean.toString(createNewColumnDefaultValue))
+                .setDefaultValue(Boolean.toString(createNewColumnDefault))
                 .setCanBeBlank(false)
                 .setImplicit(false)
                 .build(null);
     }
 
-    public static List<Parameter> appendColumnCreationParameter(List<Parameter> parameters, Locale locale, boolean createNewColumnDefaultValue) {
-        parameters.add(getColumnCreationParameter(locale, createNewColumnDefaultValue));
+    /**
+     * Utility method to add the column creation parameter in the supplied list.
+     *
+     * @return the supplied parameter list with the column creation parameter
+     */
+    public static List<Parameter> appendColumnCreationParameter(List<Parameter> parameters, Locale locale, boolean createNewColumnDefault) {
+        parameters.add(getColumnCreationParameter(locale, createNewColumnDefault));
         return parameters;
     }
 
@@ -133,6 +138,10 @@ public class ActionsUtils {
         return createNewColumnDefaultValue;
     }
 
+    public static AdditionalColumn additionalColumn() {
+        return new AdditionalColumn();
+    }
+
     /**
      * Bean used to described all columns that can be created by a function.
      *
@@ -152,51 +161,41 @@ public class ActionsUtils {
         /** Id of the column to copy metadata from */
         private String copyMetadataFromId;
 
-        public AdditionalColumn(String name) {
-            this(name, name);
-        }
-
-        public AdditionalColumn(String key, String name) {
-            this.key = key;
-            this.name = name;
-        }
-
-        public AdditionalColumn(String key, Type type, String name) {
-            this(key, name);
-            this.type = type;
-        }
-
-        public AdditionalColumn(Type type, String name) {
-            this(name);
-            this.type = type;
-        }
-
         public String getKey() {
             return key;
+        }
+
+        public AdditionalColumn withKey(String key) {
+            this.key = key;
+            return this;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
+        public AdditionalColumn withName(String name) {
             this.name = name;
+            return this;
         }
 
         public Type getType() {
             return type;
         }
 
-        public void setType(Type type) {
+        public AdditionalColumn withType(Type type) {
             this.type = type;
+            return this;
         }
 
         public String getCopyMetadataFromId() {
             return copyMetadataFromId;
         }
 
-        public void setCopyMetadataFromId(String from) {
+        public AdditionalColumn withCopyMetadataFromId(String from) {
             this.copyMetadataFromId = from;
+            return this;
         }
+
     }
 }

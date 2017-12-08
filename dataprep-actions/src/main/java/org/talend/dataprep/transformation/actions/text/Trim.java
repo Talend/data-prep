@@ -81,7 +81,7 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(new ActionsUtils.AdditionalColumn(STRING, context.getColumnName() + NEW_COLUMN_SUFFIX));
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING));
     }
 
     @Override

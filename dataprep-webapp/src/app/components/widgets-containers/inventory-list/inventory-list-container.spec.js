@@ -180,7 +180,7 @@ describe('Inventory list container', () => {
 	}));
 
 	describe('render', () => {
-		beforeEach(()=> {
+		beforeEach(() => {
 			// given
 			scope.displayMode = 'table';
 			scope.sortBy = 'name';
@@ -194,32 +194,15 @@ describe('Inventory list container', () => {
 			scope.$digest();
 		});
 
-		it('should render folders', inject(($timeout)=> {
-
-			$timeout(()=> {
-				// then
-				console.log(element);
-				const rows = element.find('.list-item-folder');
-				expect(rows.length).toBe(2);
-
-				expect(rows.eq(0).find('button').eq(0).text()).toBe('JSO folder 1');
-				expect(rows.eq(1).find('button').eq(0).text()).toBe('JSO folder 2');
-			}, 500);
-
-		}));
-
-		it('should render preparations', inject(($timeout) => {
-
-			$timeout(()=> {
-				// then
-				const rows = element.find('.list-item-preparation');
-				expect(rows.length).toBe(2);
-
-				expect(rows.eq(0).find('button').eq(0).text()).toBe('JSO prep 1');
-				expect(rows.eq(1).find('button').eq(0).text()).toBe('JSO prep 2');
-			}, 500);
-
-		}));
+		it('should render items', () => {
+			// then
+			const rows = element.find('.ReactVirtualized__Table__row');
+			expect(rows.length).toBe(4);
+			expect(rows.eq(0).find('button').eq(0).text()).toBe('JSO folder 1');
+			expect(rows.eq(1).find('button').eq(0).text()).toBe('JSO folder 2');
+			expect(rows.eq(2).find('button').eq(0).text()).toBe('JSO prep 1');
+			expect(rows.eq(3).find('button').eq(0).text()).toBe('JSO prep 2');
+		});
 	});
 
 	// describe('folder actions', () => {
@@ -484,7 +467,7 @@ describe('Inventory list container', () => {
 	// 		expect(lastCallArgs.type).toBe('@@dataset/SORT');
 	// 	}));
 	//
- 	// 	it('should have an invisible and screen reader compatible header', inject(() => {
+	// 	it('should have an invisible and screen reader compatible header', inject(() => {
 	// 		// when
 	// 		const actionsHeaderChildren = element.find('thead tr th').eq(1).children();
 	//
@@ -492,6 +475,6 @@ describe('Inventory list container', () => {
 	// 		expect(actionsHeaderChildren.length).toBe(1);
 	// 		expect(actionsHeaderChildren[0].tagName).toBe('SPAN');
 	// 		expect(actionsHeaderChildren.hasClass('sr-only'));
- 	// 	}));
+	// 	}));
 	// });
 });

@@ -23,8 +23,10 @@ import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
+import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
@@ -63,7 +65,9 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
         final TransformationCacheKey contentKey = getCacheKey(parameters);
-        ExportUtils.setExportHeaders(parameters.getExportName(), getFormat(parameters.getExportType()));
+        ExportUtils.setExportHeaders(parameters.getExportName(), //
+                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
+                getFormat(parameters.getExportType()));
         return outputStream -> {
             try (InputStream cachedContent = contentCache.get(contentKey)) {
                 IOUtils.copy(cachedContent, outputStream);

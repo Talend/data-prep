@@ -84,7 +84,14 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
     }
 
     @Test
-    public void should_copy_row_constant() {
+    @Override
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    @Override
+    public void test_apply_in_newcolumn() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

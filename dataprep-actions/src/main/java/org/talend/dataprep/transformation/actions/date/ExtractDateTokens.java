@@ -199,7 +199,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
      * @param numMonth the number of the month
      * @return the quarter
      */
-    protected int getQuarter(int numMonth) {
+    int getQuarter(int numMonth) {
         return (numMonth - 1) / 3 + 1;
     }
 

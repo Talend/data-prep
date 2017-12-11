@@ -54,7 +54,7 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
 
     @Override
     protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
-        return CreateNewColumnPolicy.VISIBLE_ENABLED;
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
     @Test

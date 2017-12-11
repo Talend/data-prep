@@ -54,7 +54,7 @@ public class DeleteAllEmptyTest extends AbstractMetadataBaseTest<DeleteAllEmpty>
 
     @Override
     protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
-        return CreateNewColumnPolicy.VISIBLE_ENABLED;
+        return CreateNewColumnPolicy.NA;
     }
 
     @Before

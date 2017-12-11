@@ -261,15 +261,21 @@ export default class InventoryListCtrl {
 
 	adaptItemsActions(items) {
 		const actionsColumns = this.listProps.columns.filter(column => column.type === ACTION_TYPE);
+		const persistentActionsKey = this.listProps.titleProps.persistentActionsKey;
 		return items.map((item, index) => {
-			const actions = this.adaptItemActions(item, item.actions, index);
 			const adaptedItem = {
 				...item,
-				actions,
+				actions: this.adaptItemActions(item, item.actions, index),
 			};
+
+			if (persistentActionsKey) {
+				adaptedItem[persistentActionsKey] = this.adaptItemActions(item, item[persistentActionsKey], index);
+			}
+
 			actionsColumns.forEach(({ key }) => {
 				adaptedItem[key] = this.adaptItemActions(item, item[key], index);
 			});
+
 			return adaptedItem;
 		});
 	}

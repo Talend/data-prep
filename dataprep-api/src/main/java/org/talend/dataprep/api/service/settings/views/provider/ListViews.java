@@ -58,6 +58,7 @@ public interface ListViews {
                                     ListTitleSettings.builder()
                                             .displayModeKey("displayMode")
                                             .iconKey("icon")
+                                            .persistentActionsKey("statusActions")
                                             .key("name")
                                             .onClick(MENU_PLAYGROUND_PREPARATION.getId())
                                             .onEditCancel(INVENTORY_CANCEL_EDIT.getId())
@@ -102,7 +103,6 @@ public interface ListViews {
             .list(
                     ListDetailsSettings.builder()
                             .column("name", "list.column.name")
-                            .column("statusActions", "list.column.actions", Boolean.TRUE, "actions")
                             .column("author", "list.column.author")
                             .column("creationDate", "list.column.created")
                             .column("nbRecords", "list.column.rows")
@@ -112,6 +112,7 @@ public interface ListViews {
                                     ListTitleSettings.builder()
                                             .displayModeKey("displayMode")
                                             .iconKey("icon")
+                                            .persistentActionsKey("statusActions")
                                             .key("name")
                                             .onClick(DATASET_OPEN.getId())
                                             .onEditCancel(INVENTORY_CANCEL_EDIT.getId())

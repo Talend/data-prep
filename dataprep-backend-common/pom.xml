@@ -24,7 +24,7 @@
     </parent>
 
     <artifactId>dataprep-backend-common</artifactId>
-    <version>2.3.0</version>
+    <version>${dataprep.action.version}</version>
     <packaging>jar</packaging>
     <name>dataprep-backend-common</name>
 

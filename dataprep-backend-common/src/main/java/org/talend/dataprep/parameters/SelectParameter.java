@@ -59,7 +59,7 @@ public class SelectParameter extends Parameter {
      */
     private SelectParameter(String name, String defaultValue, boolean implicit, boolean canBeBlank, List<Item> items,
             boolean multiple, boolean radio, String label, String description) {
-        super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank, EMPTY, label, description);
+        super(name, ParameterType.SELECT, defaultValue, implicit, canBeBlank, EMPTY, label, description, true);
         setRadio(radio);
         setItems(items);
         setMultiple(multiple);

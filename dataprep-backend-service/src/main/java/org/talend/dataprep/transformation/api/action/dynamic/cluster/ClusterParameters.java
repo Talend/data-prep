@@ -74,7 +74,7 @@ public class ClusterParameters implements DynamicParameters {
     private static class ConstantParameter extends Parameter {
 
         private ConstantParameter(String value, ParameterType type) {
-            super(value, type, null, false, true, EMPTY, EMPTY, EMPTY);
+            super(value, type, null, false, true, EMPTY, EMPTY, EMPTY, true);
         }
 
         @Override

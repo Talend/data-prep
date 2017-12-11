@@ -50,11 +50,6 @@ public class FailedAction extends AbstractActionMetadata implements ColumnAction
     }
 
     @Override
-    protected boolean createNewColumnParamVisible() {
-        return false;
-    }
-
-    @Override
     public void applyOnCell(DataSetRow row, ActionContext context) {
         throw new RuntimeException("On purpose unchecked exception");
     }

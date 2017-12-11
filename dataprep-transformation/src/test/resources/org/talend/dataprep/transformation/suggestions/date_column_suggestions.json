@@ -719,7 +719,7 @@
         "placeHolder": "",
         "default": "false",
         "description": "Extract quarter of year from date (08/24/2015 -> 3)",
-        "label": "Quarter of year"
+        "label": "Quarter of the year"
       },
       {
         "name": "MONTH",
@@ -729,7 +729,7 @@
         "placeHolder": "",
         "default": "true",
         "description": "Extract month of year from date (08/24/2015 -> 8)",
-        "label": "Month of year"
+        "label": "Month of the year"
       },
       {
         "name": "DAY",
@@ -749,7 +749,7 @@
         "placeHolder": "",
         "default": "false",
         "description": "Extract the hour of the day (from an AM/PM format), from 0 to 11",
-        "label": "Hour of am-pm"
+        "label": "Hour of the day (12-hour clock)"
       },
       {
         "name": "AM_PM",
@@ -759,7 +759,7 @@
         "placeHolder": "",
         "default": "false",
         "description": "Extract the AM/PM information of the day, from 0 (AM) to 1 (PM)",
-        "label": "The am-pm of the day"
+        "label": "am (0) or pm (1)"
       },
       {
         "name": "HOUR_24",
@@ -769,7 +769,7 @@
         "placeHolder": "",
         "default": "true",
         "description": "Extract the hour of the day, from 0 to 23",
-        "label": "Hour of the day"
+        "label": "Hour of the day (24-hour clock)"
       },
       {
         "name": "MINUTE",

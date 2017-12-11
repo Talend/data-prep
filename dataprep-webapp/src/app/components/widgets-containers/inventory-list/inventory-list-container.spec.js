@@ -180,6 +180,42 @@ describe('Inventory list container', () => {
 	}));
 
 	describe('render', () => {
+		beforeEach(()=> {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:preparations';
+
+			// when
+			createElement();
+			scope.items = preparations;
+			scope.folders = folders;
+			scope.$digest();
+		});
+
+		it('should render folders', inject(()=> {
+			// then
+			const rows = element.find('.list-item-folder');
+			expect(rows.length).toBe(2);
+
+			expect(rows.eq(0).find('button').eq(0).text()).toBe('JSO folder 1');
+			expect(rows.eq(1).find('button').eq(0).text()).toBe('JSO folder 2');
+
+		}));
+
+		it('should render preparations', inject(() => {
+			// then
+			const rows = element.find('.list-item-preparation');
+			expect(rows.length).toBe(2);
+
+			expect(rows.eq(0).find('button').eq(0).text()).toBe('JSO prep 1');
+			expect(rows.eq(1).find('button').eq(0).text()).toBe('JSO prep 2');
+
+		}));
+	});
+
+	describe('folder actions', () => {
 		beforeEach(() => {
 			// given
 			scope.displayMode = 'table';
@@ -194,287 +230,258 @@ describe('Inventory list container', () => {
 			scope.$digest();
 		});
 
-		it('should render items', () => {
-			// then
-			const rows = element.find('.ReactVirtualized__Table__row');
-			expect(rows.length).toBe(4);
-			expect(rows.eq(0).find('button').eq(0).text()).toBe('JSO folder 1');
-			expect(rows.eq(1).find('button').eq(0).text()).toBe('JSO folder 2');
-			expect(rows.eq(2).find('button').eq(0).text()).toBe('JSO prep 1');
-			expect(rows.eq(3).find('button').eq(0).text()).toBe('JSO prep 2');
-		});
+		it('should dispatch folder creation',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+				// when
+				element.find('#list-actions-preparation\\:folder\\:create').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:folder:create');
+				expect(lastCallArgs.type).toBe('@@preparation/CREATE');
+			})
+		);
+
+		it('should dispatch folder redirection on title click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-0-title-cell-btn').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('menu:folders');
+				expect(lastCallArgs.type).toBe('@@router/GO_FOLDER');
+				expect(lastCallArgs.payload.id).toBe(folders[0].id);
+			})
+		);
+
+		it('should dispatch folder edit on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-0-inventory\\:edit').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('inventory:edit');
+				expect(lastCallArgs.type).toBe('@@inventory/EDIT');
+				expect(lastCallArgs.payload.model).toBe(folders[0].model);
+			})
+		);
+
+		it('should dispatch folder remove on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-0-preparation\\:folder\\:remove').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:folder:remove');
+				expect(lastCallArgs.type).toBe('@@preparation/FOLDER_REMOVE');
+				expect(lastCallArgs.payload.model).toBe(folders[0].model);
+			})
+		);
 	});
 
-	// describe('folder actions', () => {
-	// 	beforeEach(() => {
-	// 		// given
-	// 		scope.displayMode = 'table';
-	// 		scope.sortBy = 'name';
-	// 		scope.sortDesc = true;
-	// 		scope.viewKey = 'listview:preparations';
-	//
-	// 		// when
-	// 		createElement();
-	// 		scope.items = preparations;
-	// 		scope.folders = folders;
-	// 		scope.$digest();
-	// 	});
-	//
-	// 	it('should dispatch folder creation',
-	// 		inject(($timeout, SettingsActionsService) => {
-	// 			$timeout(()=> {
-	// 				// given
-	// 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 				// when
-	// 				element.find('#list-actions-preparation\\:folder\\:create').click();
-	//
-	// 				// then
-	// 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 				expect(lastCallArgs.id).toBe('preparation:folder:create');
-	// 				expect(lastCallArgs.type).toBe('@@preparation/CREATE');
-	// 			}, 500);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch folder redirection on title click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-0-title').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('menu:folders');
-	// 			expect(lastCallArgs.type).toBe('@@router/GO_FOLDER');
-	// 			expect(lastCallArgs.payload.id).toBe(folders[0].id);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch folder edit on action click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-0-inventory\\:edit').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('inventory:edit');
-	// 			expect(lastCallArgs.type).toBe('@@inventory/EDIT');
-	// 			expect(lastCallArgs.payload.model).toBe(folders[0].model);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch folder remove on action click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-0-preparation\\:folder\\:remove').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('preparation:folder:remove');
-	// 			expect(lastCallArgs.type).toBe('@@preparation/FOLDER_REMOVE');
-	// 			expect(lastCallArgs.payload.model).toBe(folders[0].model);
-	// 		})
-	// 	);
-	// });
-	//
-	// describe('preparation actions', () => {
-	// 	beforeEach(() => {
-	// 		// given
-	// 		scope.displayMode = 'table';
-	// 		scope.sortBy = 'name';
-	// 		scope.sortDesc = true;
-	// 		scope.viewKey = 'listview:preparations';
-	//
-	// 		// when
-	// 		createElement();
-	// 		scope.items = preparations;
-	// 		scope.folders = folders;
-	// 		scope.$digest();
-	// 	});
-	//
-	// 	it('should dispatch preparation creation',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-actions-preparation\\:create').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('preparation:create');
-	// 			expect(lastCallArgs.type).toBe('@@preparation/CREATE');
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch preparation edit on action click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-2-inventory\\:edit').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('inventory:edit');
-	// 			expect(lastCallArgs.type).toBe('@@inventory/EDIT');
-	// 			expect(lastCallArgs.payload.model).toBe(preparations[0].model);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch preparation copy/move on action click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-2-preparation\\:copy-move').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('preparation:copy-move');
-	// 			expect(lastCallArgs.type).toBe('@@preparation/COPY_MOVE');
-	// 			expect(lastCallArgs.payload.model).toBe(preparations[0].model);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch preparation remove on action click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-2-preparation\\:remove').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('preparation:remove');
-	// 			expect(lastCallArgs.type).toBe('@@preparation/REMOVE');
-	// 			expect(lastCallArgs.payload.model).toBe(preparations[0].model);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch preparation playground on title click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-2-title').click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('menu:playground:preparation');
-	// 			expect(lastCallArgs.type).toBe('@@router/GO_PREPARATION');
-	// 			expect(lastCallArgs.payload.id).toBe(preparations[0].id);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch preparation sort on action click',
-	// 		inject((SettingsActionsService) => {
-	// 			// given
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 			// when
-	// 			element.find('#list-sort-order')[0].click();
-	//
-	// 			// then
-	// 			expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-	// 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 			expect(lastCallArgs.id).toBe('preparation:sort');
-	// 			expect(lastCallArgs.type).toBe('@@preparation/SORT');
-	// 			expect(lastCallArgs.payload.field).toBe('name');
-	// 			expect(lastCallArgs.payload.isDescending).toBe(false);
-	// 		})
-	// 	);
-	//
-	// 	it('should dispatch sort toggle on name column', inject((SettingsActionsService) => {
-	// 		// given
-	// 		expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 		// when
-	// 		element.find('thead tr th button').eq(0).click();
-	//
-	// 		// then
-	// 		const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 		expect(lastCallArgs.id).toBe('preparation:sort');
-	// 		expect(lastCallArgs.type).toBe('@@preparation/SORT');
-	// 	}));
-	// });
-	//
-	// describe('dataset actions', () => {
-	// 	beforeEach(() => {
-	// 		// given
-	// 		scope.displayMode = 'table';
-	// 		scope.sortBy = 'name';
-	// 		scope.sortDesc = true;
-	// 		scope.viewKey = 'listview:datasets';
-	//
-	// 		// when
-	// 		createElement();
-	// 		scope.items = datasets;
-	// 		scope.$digest();
-	// 	});
-	//
-	// 	it('should render favorite action', () => {
-	// 		// then
-	// 		const rows = element.find('.tc-list-display-virtualized').eq(0).find('tbody tr');
-	// 		expect(rows.eq(0).find('td').eq(1).find('#list-0-dataset\\:favorite').length).toBe(1);
-	// 	});
-	//
-	// 	it('should dispatch favorite toggle', inject((SettingsActionsService) => {
-	// 		// given
-	// 		expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 		// when
-	// 		element.find('#list-0-dataset\\:favorite').click();
-	//
-	// 		// then
-	// 		const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 		expect(lastCallArgs.id).toBe('dataset:favorite');
-	// 		expect(lastCallArgs.type).toBe('@@dataset/FAVORITE');
-	// 	}));
-	//
-	// 	it('should dispatch sort toggle on name column', inject((SettingsActionsService) => {
-	// 		// given
-	// 		expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-	//
-	// 		// when
-	// 		element.find('thead tr th button').eq(0).click();
-	//
-	// 		// then
-	// 		const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-	// 		expect(lastCallArgs.id).toBe('dataset:sort');
-	// 		expect(lastCallArgs.type).toBe('@@dataset/SORT');
-	// 	}));
-	//
-	// 	it('should have an invisible and screen reader compatible header', inject(() => {
-	// 		// when
-	// 		const actionsHeaderChildren = element.find('thead tr th').eq(1).children();
-	//
-	// 		// then
-	// 		expect(actionsHeaderChildren.length).toBe(1);
-	// 		expect(actionsHeaderChildren[0].tagName).toBe('SPAN');
-	// 		expect(actionsHeaderChildren.hasClass('sr-only'));
-	// 	}));
-	// });
+	describe('preparation actions', () => {
+		beforeEach(() => {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:preparations';
+
+			// when
+			createElement();
+			scope.items = preparations;
+			scope.folders = folders;
+			scope.$digest();
+		});
+
+		it('should dispatch preparation creation',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-actions-preparation\\:create').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:create');
+				expect(lastCallArgs.type).toBe('@@preparation/CREATE');
+			})
+		);
+
+		it('should dispatch preparation edit on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-2-inventory\\:edit').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('inventory:edit');
+				expect(lastCallArgs.type).toBe('@@inventory/EDIT');
+				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
+			})
+		);
+
+		it('should dispatch preparation copy/move on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-2-preparation\\:copy-move').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:copy-move');
+				expect(lastCallArgs.type).toBe('@@preparation/COPY_MOVE');
+				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
+			})
+		);
+
+		it('should dispatch preparation remove on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-2-preparation\\:remove').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:remove');
+				expect(lastCallArgs.type).toBe('@@preparation/REMOVE');
+				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
+			})
+		);
+
+		it('should dispatch preparation playground on title click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-2-title-cell-btn').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('menu:playground:preparation');
+				expect(lastCallArgs.type).toBe('@@router/GO_PREPARATION');
+				expect(lastCallArgs.payload.id).toBe(preparations[0].id);
+			})
+		);
+
+		it('should dispatch preparation sort on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#list-sort-order')[0].click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:sort');
+				expect(lastCallArgs.type).toBe('@@preparation/SORT');
+				expect(lastCallArgs.payload.field).toBe('name');
+				expect(lastCallArgs.payload.isDescending).toBe(false);
+			})
+		);
+
+		it('should dispatch sort toggle on name column', inject((SettingsActionsService) => {
+			// given
+			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+			// when
+			element.find('.tc-list-cell-name').eq(0).click();
+
+			// then
+			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+			expect(lastCallArgs.id).toBe('preparation:sort');
+			expect(lastCallArgs.type).toBe('@@preparation/SORT');
+		}));
+	});
+
+	describe('dataset actions', () => {
+		beforeEach(() => {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:datasets';
+
+			// when
+			createElement();
+			scope.items = datasets;
+			scope.$digest();
+		});
+
+		it('should render favorite action', () => {
+			// then
+			const rows = element.find('.tc-list-cell-statusActions');
+			expect(rows.eq(1).find('#list-0-dataset\\:favorite').length).toBe(1);
+		});
+
+		it('should dispatch favorite toggle', inject((SettingsActionsService) => {
+			// given
+			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+			// when
+			element.find('#list-0-dataset\\:favorite').click();
+
+			// then
+			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+			expect(lastCallArgs.id).toBe('dataset:favorite');
+			expect(lastCallArgs.type).toBe('@@dataset/FAVORITE');
+		}));
+
+		it('should dispatch sort toggle on name column', inject((SettingsActionsService) => {
+			// given
+			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+			// when
+			element.find('.tc-list-cell-name').eq(0).click();
+
+			// then
+			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+			expect(lastCallArgs.id).toBe('dataset:sort');
+			expect(lastCallArgs.type).toBe('@@dataset/SORT');
+		}));
+
+ 		it('should have an invisible and screen reader compatible header', inject(() => {
+			// when
+			const actionsHeaderChildren = element.find('.tc-list-cell-statusActions');
+
+			// then
+			expect(actionsHeaderChildren.length).toBe(2);
+			expect(actionsHeaderChildren[0].tagName).toBe('DIV');
+			expect(actionsHeaderChildren.hasClass('sr-only'));
+ 		}));
+	});
 });

@@ -97,7 +97,9 @@ class ActionsStaticProfiler {
                 }
             }
 
-            if (createColumn || actionMetadata.getActionForm(Locale.US).getParameters().stream().anyMatch(p -> Objects.equals(p.getName(), CREATE_NEW_COLUMN))) {
+            ;
+
+            if (createColumn || isCreateColumnParameterOn(action)) {
                 createColumnActions++;
             }
         }
@@ -114,6 +116,10 @@ class ActionsStaticProfiler {
 
         return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
                 filterForInvalidAnalysis);
+    }
+
+    private static boolean isCreateColumnParameterOn(Action action) {
+        return action.getParameters().entrySet().stream().anyMatch(e -> Objects.equals(e.getKey(), CREATE_NEW_COLUMN) && Boolean.TRUE.toString().equals(e.getValue()));
     }
 
     private static class FilterForFullAnalysis implements SerializablePredicate<ColumnMetadata> {

@@ -32,6 +32,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
@@ -70,6 +71,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     public static final String COLUMN_MODE = "other_column_mode";
 
+    /**
+     * Name of the new column.
+     */
+    public static final String NEW_COLUMN_NAME = "create_new_column_name";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -91,10 +97,16 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        Parameter constantParameter = parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
+        parameters.add(parameter(locale).setName(NEW_COLUMN_NAME)
+                .setType(ParameterType.STRING)
+                .setDefaultValue("New column")
+                .setCanBeBlank(false)
+                .build(this));
+
+        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .build(this);
@@ -151,14 +163,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     public List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        final Map<String, String> parameters = context.getParameters();
-        String columnName;
-        if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE)) {
-            ColumnMetadata selectedColumn =context.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-            columnName = selectedColumn.getName() + CopyColumnMetadata.COPY_APPENDIX;
-        } else {
-            columnName = "new column";
-        }
+        String columnName = context.getParameters().get(NEW_COLUMN_NAME);
         return Collections.singletonList(ActionsUtils.additionalColumn().withName(columnName));
     }
 

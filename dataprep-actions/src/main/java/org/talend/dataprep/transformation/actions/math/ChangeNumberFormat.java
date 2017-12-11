@@ -142,7 +142,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .item(US_SEPARATORS, US_SEPARATORS)
                 .item(EU_SEPARATORS, EU_SEPARATORS)
                 .item(CH_SEPARATORS, CH_SEPARATORS)
-                .item(CUSTOM, buildDecimalSeparatorParameter(FROM, locale), buildGroupingSeparatorParameter(FROM, locale))
+                .item(CUSTOM, CUSTOM,  buildDecimalSeparatorParameter(FROM, locale), buildGroupingSeparatorParameter(FROM, locale))
                 .defaultValue(UNKNOWN_SEPARATORS)
                 .build(this ));
         // @formatter:on

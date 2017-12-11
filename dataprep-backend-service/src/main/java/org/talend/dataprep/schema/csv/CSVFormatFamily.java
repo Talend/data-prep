@@ -25,7 +25,13 @@ import org.talend.dataprep.schema.Serializer;
 public class CSVFormatFamily implements FormatFamily {
 
     /** Name of the separator parameter. */
-    public static final String SEPARATOR_PARAMETER = "SEPARATOR"; //$NON-NLS-1$
+    public static final String SEPARATOR_PARAMETER = "SEPARATOR";
+
+    /** Name of the text enclosure parameter. */
+    public static final String TEXT_ENCLOSURE_CHAR = "TEXT_ENCLOSURE_CHAR";
+
+    /** Name of the escape character parameter. */
+    public static final String ESCAPE_CHAR = "ESCAPE_CHAR";
 
     /** The parameter used to set and retrieve header information. */
     public static final String HEADER_COLUMNS_PARAMETER = "COLUMN_HEADERS";

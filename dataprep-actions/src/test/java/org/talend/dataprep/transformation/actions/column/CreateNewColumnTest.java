@@ -67,7 +67,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
     @Test
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
-        assertEquals(5, parameters.size());
+        assertEquals(6, parameters.size());
         assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode_new_column")));
     }
 
@@ -84,12 +84,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void test_apply_inplace() throws Exception {
-        // Nothing to test, this action is never applied in place
-    }
-
-    @Test
-    public void test_apply_in_newcolumn() throws Exception {
+    public void should_copy_row_constant() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

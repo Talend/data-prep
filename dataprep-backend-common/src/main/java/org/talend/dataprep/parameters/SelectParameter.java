@@ -143,7 +143,7 @@ public class SelectParameter extends Parameter {
          * Set the name of the select parameter.
          *
          * @param name the name of the select parameter.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder name(String name) {
             this.name = name;
@@ -154,7 +154,7 @@ public class SelectParameter extends Parameter {
          * Set the defaultValue of the select parameter.
          *
          * @param defaultValue the default value of the select parameter.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder defaultValue(String defaultValue) {
             this.defaultValue = defaultValue;
@@ -165,7 +165,7 @@ public class SelectParameter extends Parameter {
          * Set the implicit of the select parameter.
          *
          * @param implicit true if the parameter is implicit.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder implicit(boolean implicit) {
             this.implicit = implicit;
@@ -176,7 +176,7 @@ public class SelectParameter extends Parameter {
          * Set the canBeBlank of the select parameter.
          *
          * @param canBeBlank true if the parameter is implicit.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder canBeBlank(boolean canBeBlank) {
             this.canBeBlank = canBeBlank;
@@ -188,7 +188,7 @@ public class SelectParameter extends Parameter {
          *
          * @param value the item value.
          * @param parameter the item optional parameter.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder item(String value, Parameter... parameter) {
             this.items.add(new Item(value, value, Arrays.asList(parameter)));
@@ -209,8 +209,8 @@ public class SelectParameter extends Parameter {
          * Add an item to the select parameter builder.
          *
          * @param value the item value.
-         * @param labelKey the item label
-         * @return the builder to carry on building the column.
+         * @param labelKey the key of the item label. The item's label will be by default looked up with key ("choice." + value).
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder item(String value, String labelKey) {
             this.items.add(new Item(value, choice(null, locale, labelKey),  null));
@@ -218,13 +218,13 @@ public class SelectParameter extends Parameter {
         }
 
         /**
-         * Add an 'constant' item (an item with a value, but no label translation) to the select parameter builder. Unlike the
+         * Add a 'constant' item (an item with a value, but no label translation) to the select parameter builder. Unlike the
          * {@link #item(String, String)} the second parameter
          * is <b>not</b> a key to a i18n label but a constant label to be taken as is.
          *
          * @param value the item value.
          * @param text the item (constant) label
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder constant(String value, String text) {
             this.items.add(new Item(value, text, null));
@@ -235,8 +235,9 @@ public class SelectParameter extends Parameter {
          * Add an item to the select parameter builder.
          *
          * @param value the item value.
+         * @param labelKey the key of the item label. The item's label will be by default looked up with key ("choice." + value).
          * @param parameter the item optional parameter.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder item(String value, String labelKey, Parameter... parameter) {
             this.items.add(new Item(value, choice(null, locale, labelKey), Arrays.asList(parameter)));
@@ -247,7 +248,7 @@ public class SelectParameter extends Parameter {
          * Add all items to the select parameter builder.
          *
          * @param items the item name.
-         * @return the builder to carry on building the column.
+         * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder items(List<Item> items) {
             this.items.addAll(items);

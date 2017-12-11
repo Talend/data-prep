@@ -392,6 +392,9 @@
   "DATASET_PARAMETERS": "Paramètres du jeu de données",
   "DATASET_PARAMETERS_ENCODING": "Encodage",
   "DATASET_PARAMETERS_SEPARATOR": "Séparateur de champs",
+  "DATASET_PARAMETERS_ESCAPE_CHARACTER": "Caractère d'échappement",
+  "DATASET_PARAMETERS_TEXT_ENCLOSURE_CHARACTER": "Entourage du texte",
+
   "ACTION_HELP": "En savoir plus…",
   "SIZE": "Taille",
 
@@ -455,7 +458,7 @@
   "RECIPE_STEP_2_TITLE": "Annuler/Rétablir",
   "RECIPE_STEP_2_CONTENT": "Ne vous inquiètez pas, vous pouvez annuler ou rétablir vos dernières modifications à tout moment.",
   "RECIPE_STEP_3_TITLE": "Sauvegarder",
-  "RECIPE_STEP_3_CONTENT": "'Ne cherchez pas de bouton de sauvegarde : chaque modification effectuée est automatiquement sauvegardée.",
+  "RECIPE_STEP_3_CONTENT": "Ne cherchez pas de bouton de sauvegarde : chaque modification effectuée est automatiquement sauvegardée.",
   "RECIPE_STEP_4_TITLE": "Exporter",
   "RECIPE_STEP_4_CONTENT": "Cliquer ici pour exporter le résultat de votre préparation.",
 

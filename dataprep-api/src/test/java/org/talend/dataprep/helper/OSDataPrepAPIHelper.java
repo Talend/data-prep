@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.PreparationRequest;
-import org.talend.dataprep.helper.object.ExportRequest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
@@ -157,9 +156,28 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())).when() //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
+    }
+
+    /**
+     * Update a existing dataset with current file
+     *
+     * @param datasetName the dataset name to update
+     * @param filename the file to use to update the dataset
+     * @return the response
+     */
+    public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
+        return given() //
+                .header(new Header("Content-Type", "text/plain")) //
+                .baseUri(apiBaseUrl) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .when() //
+                .queryParam("name", datasetName) //
+                .put("/api/datasets/" + datasetId);
+
     }
 
     /**
@@ -212,6 +230,23 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Get preparation content by id and at a given version.
+     *
+     * @param preparationId the preparation id.
+     * @param version version of the preparation
+     * @param from
+     * @return the response.
+     */
+    public Response getPreparationContent(String preparationId, String version, String from) {
+        return given() //
+                .baseUri(getApiBaseUrl()) //
+                .queryParam("version", version) //
+                .queryParam("from", from) //
+                .when() //
+                .get("/api/preparations/" + preparationId + "/content");
+    }
+
+    /**
      * List all preparations.
      *
      * @return the response.
@@ -251,34 +286,12 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Execute a preparation full run on a dataset followed by an export.
-     *
-     * @param exportType export format.
-     * @param datasetId the dataset id on which the full run will be applied.
-     * @param preparationId the full run preparation id.
-     * @param stepId the last step id.
-     * @param delimiter the column delimiter.
-     * @param filename the name for the exported generated file.
-     * @param escapeCharacter the escape character for the exported generated file.
+     * Export the current preparation sample depending the given parameters.
+     * 
+     * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeFullExport(String exportType, String datasetId, String preparationId, String stepId, String delimiter,
-            String filename, String escapeCharacter, String enclosureCharacter, String enclosureMode, String charset) {
-
-        ExportRequest exportRequest = new ExportRequest() //
-                .setExportType(exportType) //
-                .setDatasetId(datasetId) //
-                .setPreparationId(preparationId) //
-                .setStepId(stepId) //
-                .setCsv_fields_delimiter(delimiter) //
-                .setFileName(filename) //
-                .setEscapeCharacter(escapeCharacter) //
-                .setEnclosureCharacter(enclosureCharacter) //
-                .setEnclosureMode(enclosureMode) //
-                .setCharset(charset);
-
-        Map<String, Object> parameters = exportRequest.returnParameters();
-
+    public Response executeExport(Map<String, Object> parameters) {
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //

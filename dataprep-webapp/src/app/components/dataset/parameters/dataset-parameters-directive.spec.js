@@ -175,7 +175,19 @@ describe('Dataset parameters directive', () => {
 				createElement();
 
 				//then
-				expect(element.find('.dataset-parameters-separator').length).toBe(0);
+				expect(element.find('.separator-group').length).toBe(0);
+			});
+
+			it('should NOT render text enclosure and escape character on NON csv', () => {
+				//given
+				scope.dataset = { type: 'other' };
+
+				//when
+				createElement();
+
+				//then
+				expect(element.find('.text-enclosure-group').length).toBe(0);
+				expect(element.find('.escape-character-group').length).toBe(0);
 			});
 
 			it('should render separators on csv dataset', () => {
@@ -217,6 +229,29 @@ describe('Dataset parameters directive', () => {
 
 				//then
 				expect(separatorContainer.find('input').length).toBe(1);
+			});
+
+			it('should render separators on csv dataset', () => {
+				//given
+				scope.dataset = { type: 'text/csv' };
+
+				//when
+				createElement();
+
+				//then
+				expect(element.find('.separator-group').length).toBe(1);
+			});
+
+			it('should render text enclosure and escape character on csv dataset', () => {
+				//given
+				scope.dataset = { type: 'text/csv' };
+
+				//when
+				createElement();
+
+				//then
+				expect(element.find('.text-enclosure-group').length).toBe(1);
+				expect(element.find('.escape-character-group').length).toBe(1);
 			});
 		});
 

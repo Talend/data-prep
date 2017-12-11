@@ -56,6 +56,12 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     /** The selected separator within the provided list. */
     protected static final String SEPARATOR_PARAMETER = "separator"; //$NON-NLS-1$
 
+    /** Choice of other separator as string. */
+    protected static final String OTHER_STRING = "other_string";
+
+    /** Choice of other separator as regex. */
+    protected static final String OTHER_REGEX = "other_regex";
+
     /** The string separator specified by the user. Should be used only if SEPARATOR_PARAMETER value is 'other'. */
     protected static final String MANUAL_SEPARATOR_PARAMETER_STRING = "manual_separator_string"; //$NON-NLS-1$
 
@@ -94,9 +100,11 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
                         .item("-")
                         .item("_")
                         .item(" ", "space")
-                        .item("\t", "tab")
-                        .item("other (string)", parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
-                        .item("other (regex)", parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this))
+                        .item("\t", "tabulation")
+                        .item(OTHER_STRING, OTHER_STRING, //
+                                parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_STRING).setType(STRING).setDefaultValue(EMPTY).build(this))
+                        .item(OTHER_REGEX, OTHER_REGEX, //
+                                parameter(locale).setName(MANUAL_SEPARATOR_PARAMETER_REGEX).setType(STRING).setDefaultValue(EMPTY).build(this))
                         .defaultValue(":")
                         .build(this )
         );
@@ -170,7 +178,7 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
      */
     private boolean isRegexMode(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
-        return StringUtils.equals("other (regex)", parameters.get(SEPARATOR_PARAMETER));
+        return StringUtils.equals(OTHER_REGEX, parameters.get(SEPARATOR_PARAMETER));
     }
 
     /**
@@ -179,9 +187,9 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
      */
     private String getSeparator(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
-        if (StringUtils.equals("other (string)", parameters.get(SEPARATOR_PARAMETER))) {
+        if (StringUtils.equals(OTHER_STRING, parameters.get(SEPARATOR_PARAMETER))) {
             return parameters.get(MANUAL_SEPARATOR_PARAMETER_STRING);
-        } else if (StringUtils.equals("other (regex)", parameters.get(SEPARATOR_PARAMETER))) {
+        } else if (StringUtils.equals(OTHER_REGEX, parameters.get(SEPARATOR_PARAMETER))) {
             return parameters.get(MANUAL_SEPARATOR_PARAMETER_REGEX);
         } else {
             return parameters.get(SEPARATOR_PARAMETER);

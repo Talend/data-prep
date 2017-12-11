@@ -9,11 +9,24 @@ import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.i18n.custom.actions.TestAction;
 import org.talend.dataprep.test.LocalizationRule;
+import org.talend.dataprep.transformation.actions.bool.Negate;
 
 public class ActionsBundleTest {
 
     @Rule
     public LocalizationRule rule = new LocalizationRule(Locale.US);
+
+    @Test
+    public void testLocaleOverride() {
+        Locale.setDefault(Locale.FRENCH);
+        assertEquals("Negate value", ActionsBundle.actionLabel(this, Locale.US, "negate"));
+    }
+
+    @Test
+    public void testLocalOverrideWithUnsupportedLocale() {
+        Locale.setDefault(Locale.CHINESE);
+        assertEquals("Negate value", ActionsBundle.actionLabel(this, Locale.ITALY, "negate"));
+    }
 
     @Test
     public void actionLabel() throws Exception {
@@ -58,7 +71,7 @@ public class ActionsBundleTest {
 
     @Test
     public void choice() throws Exception {
-        assertEquals("other", ActionsBundle.choice(this, Locale.US, "custom"));
+        assertEquals("Other", ActionsBundle.choice(this, Locale.US, "custom"));
     }
 
     @Test
@@ -71,6 +84,11 @@ public class ActionsBundleTest {
     @Test
     public void customActionLabel() throws Exception {
         assertEquals("Nice custom label", ActionsBundle.actionLabel(new TestAction(), Locale.US, "custom"));
+    }
+
+    @Test
+    public void customActionLabel_fallbacks() throws Exception {
+        assertEquals("Nice custom label", ActionsBundle.actionLabel(new Negate(), Locale.US, "custom"));
     }
 
     @Test

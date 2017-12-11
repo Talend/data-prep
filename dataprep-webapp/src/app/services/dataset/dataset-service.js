@@ -373,6 +373,8 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 
 	function setParameters(metadata, parameters) {
 		metadata.parameters.SEPARATOR = parameters.separator;
+		metadata.parameters.ESCAPE_CHAR = parameters.escapeCharacter;
+		metadata.parameters.TEXT_ENCLOSURE_CHAR = parameters.textEnclosureCharacter;
 		metadata.encoding = parameters.encoding;
 	}
 

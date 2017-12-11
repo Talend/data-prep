@@ -179,7 +179,8 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         // given
         final Long rowId = 1L;
         final String joe = "Joe";
-        final DataSetRow row = getDataSetRow(rowId, joe);
+        final DataSetRow row = getRow(joe);
+        row.setTdpId(rowId);
 
         final Map<String, String> parameters = getParameters(rowId, joe, "Jimmy");
 
@@ -196,7 +197,8 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         // given
         final Long rowId = 1L;
         final String joe = "Joe";
-        final DataSetRow row = getDataSetRow(2L, joe);
+        final DataSetRow row = getRow(joe);
+        row.setTdpId(2L);
 
         final Map<String, String> parameters = getParameters(rowId, "Jimmy", joe);
 
@@ -210,7 +212,8 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
     @Test
     public void should_tag_invalid_value() {
         // given
-        final DataSetRow row = getDataSetRow(1L, "True");
+        final DataSetRow row = getRow("True");
+        row.setTdpId(1L);
         final ColumnMetadata columnMetadata = row.getRowMetadata().getColumns().get(0);
         columnMetadata.setType(Type.BOOLEAN.getName()); // Column is a boolean
         columnMetadata.setTypeForced(true);
@@ -248,15 +251,5 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         parameters.put(COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(ROW_ID.getKey(), String.valueOf(rowId));
         return parameters;
-    }
-
-    private DataSetRow getDataSetRow(Long rowId, String firstValue) {
-
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", firstValue);
-
-        final DataSetRow row = new DataSetRow(values);
-        row.setTdpId(rowId);
-        return row;
     }
 }

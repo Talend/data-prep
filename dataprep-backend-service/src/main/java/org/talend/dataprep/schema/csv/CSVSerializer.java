@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.schema.csv;
 
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.TEXT_ENCLOSURE_CHAR;
+
 import java.io.*;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -38,10 +41,20 @@ import au.com.bytecode.opencsv.CSVReader;
 @Service("serializer#csv")
 public class CSVSerializer implements Serializer {
 
+    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
 
+    /** The default enclosure character. */
+    @Value("${default.import.text.enclosure:\"}")
+    private String defaultTextEnclosure;
+
+    /** The default escape character. */
+    @Value("${default.import.text.escape:\u0000}")
+    private String defaultEscapeChar;
+
+    /** Task executor used to serialize CSV dataset into JSON. */
     @Resource(name = "serializer#csv#executor")
-    TaskExecutor executor;
+    private TaskExecutor executor;
 
     @Override
     public InputStream serialize(InputStream rawContent, DataSetMetadata metadata, long limit) {
@@ -52,8 +65,13 @@ public class CSVSerializer implements Serializer {
             Runnable r = () -> {
                 final Map<String, String> parameters = metadata.getContent().getParameters();
                 final String separator = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER);
-                try (CSVReader reader = new CSVReader(new InputStreamReader(rawContent, metadata.getEncoding()),
-                        separator.charAt(0),  '\"', '\0')) {
+                final char actualSeparator = separator.charAt(0);
+                final char textEnclosureChar = getFromParameters(parameters, TEXT_ENCLOSURE_CHAR, defaultTextEnclosure);
+                final char escapeChar = getFromParameters(parameters, CSVFormatFamily.ESCAPE_CHAR, defaultEscapeChar);
+
+                try (InputStreamReader input = new InputStreamReader(rawContent, metadata.getEncoding());
+                        CSVReader reader = new CSVReader(input, actualSeparator, textEnclosureChar, escapeChar)) {
+
                     JsonGenerator generator = new JsonFactory().createGenerator(jsonOutput);
                     int i = 0;
                     while (i++ < metadata.getContent().getNbLinesInHeader()) {
@@ -84,6 +102,25 @@ public class CSVSerializer implements Serializer {
     }
 
     /**
+     * Extract the parameter value from the dataset parameters or return the given default value if not found.
+     *
+     * @param parameters where to look for the wanted parameter value.
+     * @param key the parameter key.
+     * @param defaultValue the default value to use if the parameter is not found.
+     * @return the parameter value from the dataset parameters or return the given default value if not found.
+     */
+    private char getFromParameters(Map<String, String> parameters, String key, String defaultValue) {
+        final String fromParameters = parameters.get(key);
+
+        // wrong parameter use (empty or more than one character)
+        if (fromParameters == null || fromParameters.length() > 1) {
+            return StringUtils.isEmpty(defaultValue) ? Character.MIN_VALUE : defaultValue.charAt(0);
+        }
+
+        return (fromParameters.length() == 0)  ? Character.MIN_VALUE : fromParameters.charAt(0);
+    }
+
+    /**
      * Write the line content.
      *
      * @param reader the csv reader to use as data source.
@@ -93,14 +130,14 @@ public class CSVSerializer implements Serializer {
      * @param limit The maximum number of lines in the exported content.
      * @throws IOException if an error occurs.
      */
-    private void writeLineContent(CSVReader reader, DataSetMetadata metadata, JsonGenerator generator, String separator, long limit)
-            throws IOException {
+    private void writeLineContent(CSVReader reader, DataSetMetadata metadata, JsonGenerator generator, String separator,
+            long limit) throws IOException {
         String[] line;
         int current = 0;
 
         while ((line = reader.readNext()) != null && withinLimit(limit, current)) {
             // skip empty lines
-            if (line.length == 1 && (StringUtils.isEmpty(line[0]) || line[0].charAt(0) == '\u0000')) {
+            if (line.length == 1 && (StringUtils.isEmpty(line[0]) || line[0].charAt(0) == Character.MIN_VALUE)) {
                 continue;
             }
 
@@ -136,7 +173,7 @@ public class CSVSerializer implements Serializer {
     }
 
     private String cleanCharacters(final String value) {
-        return StringUtils.remove(value, '\u0000');
+        return StringUtils.remove(value, Character.MIN_VALUE); // unicode null character
     }
 
     /**

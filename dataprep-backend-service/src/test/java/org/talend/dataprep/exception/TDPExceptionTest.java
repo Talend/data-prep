@@ -38,7 +38,7 @@ public class TDPExceptionTest {
         final TDPException tdpException = new TDPException(UNEXPECTED_EXCEPTION);
 
         // Then
-        assertThat(tdpException.getMessage(), startsWith("Sorry an unexpected error occurred and we could"));
+        assertThat(tdpException.getMessage(), startsWith("An unexpected error occurred and we could"));
     }
 
     @Test

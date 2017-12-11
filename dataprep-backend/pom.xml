@@ -26,6 +26,7 @@
     <name>dataprep-backend</name>
     <properties>
         <dataprep.core.version>2.3.0-SNAPSHOT</dataprep.core.version>
+        <dataprep.action.version>2.3.1-SNAPSHOT</dataprep.action.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
         <java.version>1.8</java.version>
@@ -272,7 +273,7 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-actions</artifactId>
-                <version>${dataprep.core.version}</version>
+                <version>${dataprep.action.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
@@ -301,7 +302,7 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-common</artifactId>
-                <version>${dataprep.core.version}</version>
+                <version>${dataprep.action.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.daikon</groupId>

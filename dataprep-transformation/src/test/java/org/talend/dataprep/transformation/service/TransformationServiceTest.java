@@ -328,7 +328,6 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
     }
 
     @Test
-    @Ignore
     public void shouldGetPreparationColumnTypes() throws Exception {
 
         // given

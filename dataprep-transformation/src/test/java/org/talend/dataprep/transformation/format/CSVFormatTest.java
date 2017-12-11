@@ -49,7 +49,7 @@ public class CSVFormatTest extends BaseFormatTest {
         final ExportFormatMessage exportFormatMessage = beanConversionService.convert(format, ExportFormatMessage.class);
 
         // then
-        assertEquals("text/csv;Charset=UTF-8", exportFormatMessage.getMimeType());
+        assertEquals("text/csv", exportFormatMessage.getMimeType());
         assertEquals("CSV", exportFormatMessage.getId());
         assertEquals("Local CSV file", exportFormatMessage.getName());
         assertEquals(true, exportFormatMessage.isNeedParameters());

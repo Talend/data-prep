@@ -33,7 +33,10 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.test.LocalizationRule;
-import org.talend.dataprep.transformation.actions.common.*;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionFactory;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
+import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,7 +67,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
     }
 
     /**
-     * For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
+     * For TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
      * creates a new column.
      * This enum declares the possible policy for an action.
      * This is used to ensure that every action test classes declare their policy, and that they are tested.
@@ -84,28 +87,27 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
     protected abstract CreateNewColumnPolicy getCreateNewColumnPolicy();
 
     @Test
-    public void test_TDP_3798_createNewColumnPolicy() {
+    public void testCreateNewColumnPolicy() {
         switch (getCreateNewColumnPolicy()) {
         case VISIBLE_DISABLED:
-            test_TDP_3798_visible_disabled();
+            allowCreateColumn_disabledByDefault();
             break;
         case VISIBLE_ENABLED:
-            test_TDP_3798_visible_enabled();
+            allowCreateColumn_enabledByDefault();
             break;
         case INVISIBLE_DISABLED:
         case NA:
-            // TODO : deprecated checks
-//            test_TDP_3798_invisible_disabled();
+            forbidCreateColumn_alwaysDisabled();
             break;
         case INVISIBLE_ENABLED:
-//            test_TDP_3798_invisible_enabled();
+            forbidCreateColumn_alwaysEnabled();
             break;
         }
     }
 
-    private void test_TDP_3798_visible_enabled() {
+    private void allowCreateColumn_enabledByDefault() {
         // test that 'create_new_column' parameter is present and set to 'true' by default:
-        final List<Parameter> parameters = action.getParameters(Locale.US);
+        final List<Parameter> parameters = action.getParameters(Locale.getDefault());
 
         boolean found = false;
         for (Parameter parameter : parameters) {
@@ -120,9 +122,9 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
     }
 
-    private void test_TDP_3798_visible_disabled() {
+    private void allowCreateColumn_disabledByDefault() {
         // test that 'create_new_column' parameter is present and set to 'false' by default:
-        final List<Parameter> parameters = action.getParameters(Locale.US);
+        final List<Parameter> parameters = action.getParameters(Locale.getDefault());
 
         boolean found = false;
         for (Parameter parameter : parameters) {
@@ -137,9 +139,9 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
     }
 
-    private void test_TDP_3798_invisible_enabled() {
+    private void forbidCreateColumn_alwaysEnabled() {
         // test that 'create_new_column' parameter is not present:
-        final List<Parameter> parameters = action.getParameters(Locale.US);
+        final List<Parameter> parameters = action.getParameters(Locale.getDefault());
 
         for (Parameter parameter : parameters) {
             if (parameter.getName().equals(CREATE_NEW_COLUMN)) {
@@ -148,12 +150,12 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
 
         // test that this action will create a new column:
-        assertTrue(ActionsUtils.doesCreateNewColumn(Collections.emptyMap(), AbstractActionMetadataTest.CREATE_NEW_COLUMN_DEFAULT));
+        assertTrue(ActionsUtils.doesCreateNewColumn(Collections.emptyMap(), true));
     }
 
-    private void test_TDP_3798_invisible_disabled() {
+    private void forbidCreateColumn_alwaysDisabled() {
         // test that 'create_new_column' parameter is not present:
-        final List<Parameter> parameters = action.getParameters(Locale.US);
+        final List<Parameter> parameters = action.getParameters(Locale.getDefault());
 
         for (Parameter parameter : parameters) {
             if (parameter.getName().equals(CREATE_NEW_COLUMN)) {
@@ -162,8 +164,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
 
         // test that this action will not create a new column:
-        assertFalse(ActionsUtils.doesCreateNewColumn(Collections.<String, String>emptyMap(),
-                AbstractActionMetadataTest.CREATE_NEW_COLUMN_DEFAULT));
+        assertFalse(ActionsUtils.doesCreateNewColumn(Collections.<String, String>emptyMap(), false));
     }
 
     @Test

@@ -42,7 +42,7 @@ public class ActionsUtils {
     private ActionsUtils() {
     }
 
-    // For TDP-TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
+    // For TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
     // creates a new column:
     public static Parameter getColumnCreationParameter(Locale locale, boolean createNewColumnDefault) {
         return Parameter.parameter(locale).setName(CREATE_NEW_COLUMN)

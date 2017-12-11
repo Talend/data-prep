@@ -119,7 +119,11 @@ class ActionsStaticProfiler {
     }
 
     private static boolean isCreateColumnParameterOn(Action action) {
-        return action.getParameters().entrySet().stream().anyMatch(e -> Objects.equals(e.getKey(), CREATE_NEW_COLUMN) && Boolean.parseBoolean(e.getValue()));
+        return action //
+                .getParameters() //
+                .entrySet() //
+                .stream() //
+                .anyMatch(e -> Objects.equals(e.getKey(), CREATE_NEW_COLUMN) && Boolean.parseBoolean(e.getValue()));
     }
 
     private static class FilterForFullAnalysis implements SerializablePredicate<ColumnMetadata> {

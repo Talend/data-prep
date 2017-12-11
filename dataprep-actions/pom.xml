@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>dataprep-actions</artifactId>
-    <version>${dataprep.core.version}</version>
+    <version>2.3.0</version>
     <packaging>jar</packaging>
 
     <dependencies>

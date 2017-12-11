@@ -402,7 +402,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-sort-order')[0].click();
+				element.find('.tc-list-cell-name').eq(0).click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);

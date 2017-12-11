@@ -29,6 +29,8 @@ public class ActionsUtils {
 
     /**
      * Key for the "Create new column" parameter.
+     *
+     * @see org.talend.dataprep.transformation.pipeline.builder.ActionsStaticProfiler#CREATE_NEW_COLUMN
      */
     public static final String CREATE_NEW_COLUMN = "create_new_column";
 

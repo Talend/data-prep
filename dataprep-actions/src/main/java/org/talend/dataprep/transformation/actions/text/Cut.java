@@ -19,6 +19,7 @@ import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.STRINGS;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.getColumnCreationParameter;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
@@ -67,7 +68,7 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        parameters.add(getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
         parameters.add(parameter(locale).setName(PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this));
         return parameters;
     }
@@ -117,7 +118,6 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
                 } else {
                     String value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
                     row.set(ActionsUtils.getTargetColumnId(context), value);
-
                 }
             }
         }

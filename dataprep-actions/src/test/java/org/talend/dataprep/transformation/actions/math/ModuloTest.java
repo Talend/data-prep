@@ -12,6 +12,17 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,42 +31,38 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 /**
  * Unit test for the Pow action.
  *
  * @see ModuloTest
  */
-public class ModuloTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private Modulo action = new Modulo();
+public class ModuloTest extends AbstractMetadataBaseTest<Modulo> {
 
     /**
      * The action parameters.
      */
     private Map<String, String> parameters;
 
+    public ModuloTest() {
+        super(new Modulo());
+    }
+
+    @Override
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.NA;
+    }
+
     @Before
     public void setUp() throws Exception {
-        final InputStream parametersSource = PowTest.class.getResourceAsStream("moduloAction.json");
-        parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
+        parameters = new HashMap<>();
+        parameters.put("column_id", "0000");
+        parameters.put("scope", "column");
+        parameters.put("mode", "Another column");
+        parameters.put("selected_column", "0001");
+        parameters.put(CREATE_NEW_COLUMN, Boolean.TRUE.toString());
     }
 
     @Test
@@ -286,9 +293,8 @@ public class ModuloTest extends AbstractMetadataBaseTest {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_mod").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_mod").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
-
 }

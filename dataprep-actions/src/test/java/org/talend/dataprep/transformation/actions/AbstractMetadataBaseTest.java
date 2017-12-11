@@ -104,8 +104,6 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
     }
 
     private void test_TDP_3798_visible_enabled() {
-        Map<String, String> emptyMap = new HashMap<>();
-
         // test that 'create_new_column' parameter is present and set to 'true' by default:
         final List<Parameter> parameters = action.getParameters(Locale.US);
 

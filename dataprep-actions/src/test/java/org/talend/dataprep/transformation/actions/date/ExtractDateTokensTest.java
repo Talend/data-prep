@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ExtractDateTokensTest extends BaseDateTest {
+public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
 
     private Map<String, String> parameters;
 
@@ -54,7 +54,7 @@ public class ExtractDateTokensTest extends BaseDateTest {
 
     @Override
     protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
-        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+        return CreateNewColumnPolicy.VISIBLE_ENABLED;
     }
 
     @Test

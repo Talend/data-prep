@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 
-public class CreateNewColumnTest extends AbstractMetadataBaseTest {
+public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColumn> {
 
     private Map<String, String> parameters;
 

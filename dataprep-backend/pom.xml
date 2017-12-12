@@ -272,7 +272,7 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-actions</artifactId>
-                <version>${dataprep.core.version}</version>
+                <version>${dataprep.action.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
@@ -301,7 +301,7 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-common</artifactId>
-                <version>${dataprep.core.version}</version>
+                <version>${dataprep.action.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.daikon</groupId>

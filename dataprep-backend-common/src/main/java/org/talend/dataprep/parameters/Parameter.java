@@ -266,7 +266,7 @@ public class Parameter implements Serializable {
             return this;
         }
 
-        public ParameterBuilder setReadOnly(boolean readonly) {
+        public ParameterBuilder setReadonly(boolean readonly) {
             this.readonly = readonly;
             return this;
         }

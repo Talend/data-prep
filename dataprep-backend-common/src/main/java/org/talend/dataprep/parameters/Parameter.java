@@ -173,7 +173,7 @@ public class Parameter implements Serializable {
         this.configuration = configuration;
     }
 
-    public Boolean isReadOnly() {
+    public Boolean isReadonly() {
         return readonly;
     }
 
@@ -189,12 +189,12 @@ public class Parameter implements Serializable {
         return implicit == parameter.implicit && canBeBlank == parameter.canBeBlank && Objects.equals(name, parameter.name)
                 && Objects.equals(type, parameter.type) && Objects.equals(defaultValue, parameter.defaultValue) && Objects.equals(
                 placeHolder, parameter.placeHolder) && Objects.equals(configuration, parameter.configuration) && Objects.equals(
-                label, parameter.label) && Objects.equals(description, parameter.description);
+                label, parameter.label) && Objects.equals(description, parameter.description) && Objects.equals(readonly, parameter.readonly);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, defaultValue, implicit, canBeBlank, placeHolder, configuration, label, description);
+        return Objects.hash(name, type, defaultValue, implicit, canBeBlank, placeHolder, configuration, label, description, readonly);
     }
 
     public static class ParameterBuilder {

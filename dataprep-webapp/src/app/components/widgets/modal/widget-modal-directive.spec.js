@@ -70,7 +70,7 @@ describe('Modal directive', () => {
 		};
 
 		createButtonElement = () => {
-			const html = '<talend-modal fullscreen="fullscreen" state="state" close-button="closeButton" disable-enter="disableEnter">' +
+			const html = '<talend-modal fullscreen="fullscreen" state="state" close-button="closeButton">' +
 				'   <button class="modal-primary-button" ng-click="click()"/>' +
 				'</talend-modal>';
 			scope.click = () => {
@@ -319,45 +319,6 @@ describe('Modal directive', () => {
 			throw new Error('should have thrown error because no timeout is pending');
 		}));
 
-		it('should hit primary button on ENTER keydown', inject(() => {
-			//given
-			scope.fullscreen = false;
-			scope.state = true;
-			scope.closeButton = true;
-			createButtonElement();
-
-			expect(scope.primaryButtonClicked).toBeFalsy();
-			const event = angular.element.Event('keydown');
-			event.keyCode = 13;
-
-			//when
-			element.find('.modal-inner').trigger(event);
-			scope.$digest();
-
-			//then
-			expect(scope.primaryButtonClicked).toBe(true);
-		}));
-
-		it('should not hit primary button on ENTER keydown when disable-enter attribute is true', inject(() => {
-			//given
-			scope.fullscreen = false;
-			scope.state = true;
-			scope.closeButton = true;
-			scope.disableEnter = true;
-			createButtonElement();
-
-			expect(scope.primaryButtonClicked).toBeFalsy();
-			const event = angular.element.Event('keydown');
-			event.keyCode = 13;
-
-			//when
-			element.find('.modal-inner').trigger(event);
-			scope.$digest();
-
-			//then
-			expect(scope.primaryButtonClicked).toBeFalsy();
-		}));
-
 		it('should call close callback', inject(($rootScope) => {
 			//given
 			scope.state = true;
@@ -445,7 +406,7 @@ describe('Modal directive', () => {
 			expect(document.activeElement.className).toContain('modal-inner'); //eslint-disable-line angular/document-service
 		});
 
-		it('should focus on second input on show and select the text coz first has "no-focus" class', inject(($timeout, $window) => {
+		it('should focus on second input on show and select the text coz first has "no-focus" class', inject(($window) => {
 			//given
 			scope.fullscreen = false;
 			scope.state = false;
@@ -463,7 +424,6 @@ describe('Modal directive', () => {
 			//when
 			scope.state = true;
 			scope.$digest();
-			$timeout.flush();
 
 			//then
 			const activeElement = document.activeElement; //eslint-disable-line angular/document-service

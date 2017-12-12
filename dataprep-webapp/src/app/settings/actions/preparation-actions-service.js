@@ -77,7 +77,7 @@ export default class PreparationActionsService {
 			const preparation = action.payload.model;
 			this.TalendConfirmService
 				.confirm(
-					{ disableEnter: true },
+					{},
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: 'preparation', name: preparation.name }
 				)

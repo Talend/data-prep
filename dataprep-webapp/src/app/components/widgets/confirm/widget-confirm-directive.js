@@ -25,10 +25,8 @@ import template from './confirm.html';
  * @restrict E
  * @usage
  <talend-confirm
-     disable-enter="disableEnter"
      texts="texts">
  </talend-confirm>
- * @param {boolean} disableEnter Disable the ENTER key support
  * @param {string[]} texts The texts ids (translation ids) to display
  */
 export default function TalendConfirm() {
@@ -36,7 +34,6 @@ export default function TalendConfirm() {
 		restrict: 'E',
 		templateUrl: template,
 		scope: {
-			disableEnter: '=',
 			texts: '=',
 		},
 		bindToController: true,

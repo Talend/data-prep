@@ -26,8 +26,7 @@ export default {
 			close-button="true"
 			state="$ctrl.state.home.preparations.creator.isVisible"
 			ng-if="$ctrl.state.home.preparations.creator.isVisible"
-			before-close="$ctrl.canBeClosed()"
-			disable-enter="false">
+			before-close="$ctrl.canBeClosed()">
 			<preparation-creator-form />
 		</talend-modal>
 	`,

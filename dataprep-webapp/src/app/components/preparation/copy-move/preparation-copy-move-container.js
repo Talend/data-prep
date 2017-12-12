@@ -24,8 +24,7 @@ const PreparationCopyMoveContainer = {
 		<talend-modal fullscreen="false"
               close-button="true"
               ng-if="$ctrl.state.home.preparations.copyMove.isVisible"
-              state="$ctrl.state.home.preparations.copyMove.isVisible"
-              disable-enter="true">
+              state="$ctrl.state.home.preparations.copyMove.isVisible">
 		    <inventory-copy-move
 				initial-folder="$ctrl.state.inventory.homeFolder"
 				item="$ctrl.state.home.preparations.copyMove.preparation"

@@ -81,7 +81,6 @@ function getLastRegisteredInnerElement() {
  * @usage
  <talend-modal   fullscreen="false"
  state="homeCtrl.dataModalSmall"
- disable-enter="true"
  on-close="homeCtrl.closeHandler()"
  close-button="true">
  Modal content
@@ -89,7 +88,6 @@ function getLastRegisteredInnerElement() {
 
  <talend-modal   fullscreen="true"
  state="homeCtrl.dataModal"
- disable-enter="false"
  on-close="homeCtrl.closeHandler()"
  close-button="true">
  <div class="modal-header">
@@ -107,7 +105,6 @@ function getLastRegisteredInnerElement() {
  * @param {boolean} state Flag that represents the modal display state
  * @param {boolean} close-button Display a close button on the top right corner
  * @param {boolean} fullscreen Determine the modal mode. Default `false`
- * @param {boolean} disable-enter Flag that disable the validation on ENTER press. The validation is a click on the button with `modal-primary-button` class
  * @param {function} before-close Optional callback that is called before user close event. If the callback return true, the modal is closed.
  * @param {function} on-close Optional close callback which is called at each modal close
  * @param {boolean} disableCloseOnBackgroundClick enables/disables the user to hide the modal on background click/Escape hit
@@ -128,7 +125,6 @@ export default function TalendModal($timeout) {
 			state: '=',
 			closeButton: '=',
 			fullscreen: '=',
-			disableEnter: '=',
 			beforeClose: '&',
 			onClose: '&',
 			disableCloseOnBackgroundClick: '=',
@@ -142,7 +138,6 @@ export default function TalendModal($timeout) {
 			post(scope, iElement, iAttrs, ctrl) {
 				const body = angular.element('body').eq(0);
 				const innerElement = iElement.find('.modal-inner').eq(0);
-				const primaryButton = iElement.find('.modal-primary-button').eq(0);
 				const hasBeforeEachFn = angular.isDefined(iAttrs.beforeClose);
 
 				/**
@@ -223,11 +218,6 @@ export default function TalendModal($timeout) {
 								hideModal();
 							}
 						}
-
-						// click on primary button on 'ENTER' keydown
-						else if (e.keyCode === 13 && !ctrl.disableEnter && primaryButton.length) {
-							primaryButton.click();
-						}
 					});
 				};
 
@@ -263,14 +253,21 @@ export default function TalendModal($timeout) {
 							registerShownElement(innerElement);
 							innerElement.focus();
 
-							$timeout(() => {
-								// focus on first input (ignore first because it's the state checkbox)
-								const inputs = iElement.find('input:not(".no-focus")').eq(1);
-								if (inputs.length) {
-									inputs.focus();
-									inputs.select();
+							// focus on first input (ignore first because it's the state checkbox)
+							const inputs = iElement.find('[type="text"], [type="radio"], select, textarea');
+							const focusableInputs = inputs.not('.no-focus');
+							if (focusableInputs.length) {
+								const input = focusableInputs.eq(0);
+								input.focus();
+								input.select();
+							}
+							else {
+								// or focus on first primary button
+								const btns = iElement.find('.btn-primary');
+								if (btns.length) {
+									btns.focus();
 								}
-							}, 0, false);
+							}
 						}
 						else if (oldValue) {
 							ctrl.onClose();

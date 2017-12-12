@@ -24,8 +24,7 @@ export default {
 			fullscreen="false"
 			close-button="true"
 			state="$ctrl.state.home.folders.creator.isVisible"
-			ng-if="$ctrl.state.home.folders.creator.isVisible"
-			disable-enter="true">
+			ng-if="$ctrl.state.home.folders.creator.isVisible">
 			<folder-creator-form />
 		</talend-modal>
 	`,

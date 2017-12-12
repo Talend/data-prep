@@ -4,16 +4,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.talend.dataquality.semantic.index.DictionarySearchMode.MATCH_SEMANTIC_DICTIONARY;
+import static org.talend.dataquality.semantic.index.DictionarySearchMode.MATCH_SEMANTIC_KEYWORD;
 
+import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.semantic.classifier.custom.UserDefinedClassifier;
+import org.talend.dataquality.semantic.index.Index;
+import org.talend.dataquality.semantic.index.LuceneIndex;
+import org.talend.dataquality.semantic.model.DQCategory;
+import org.talend.dataquality.semantic.recognizer.DictionaryConstituents;
+import org.talend.dataquality.semantic.recognizer.DictionaryConstituentsProviders;
 
 public class AnalyzerServiceTest {
 
@@ -21,7 +37,20 @@ public class AnalyzerServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        service = new AnalyzerService();
+
+        LuceneIndex sharedDataDict = Mockito.mock(LuceneIndex.class);
+        LuceneIndex customDataDict = Mockito.mock(LuceneIndex.class);
+
+        DictionaryConstituents constituents = Mockito.mock(DictionaryConstituents.class);
+        when(constituents.getMetadata()).thenReturn(createMetadata());
+        when(constituents.getCustomDataDict()).thenReturn(customDataDict);
+        when(constituents.getSharedDataDict()).thenReturn(sharedDataDict);
+        when(constituents.getRegexClassifier()).thenReturn(new UserDefinedClassifier());
+
+        DictionaryConstituentsProviders.DicoProviderInterface provider = Mockito.mock(DictionaryConstituentsProviders.DicoProviderInterface.class);
+        when(provider.get()).thenReturn(constituents);
+
+        service = new AnalyzerService(provider);
     }
 
     @Test
@@ -63,5 +92,17 @@ public class AnalyzerServiceTest {
                 }
             }
         }
+    }
+
+    private Map<String, DQCategory> createMetadata() {
+        Map<String, DQCategory> metadata = new HashMap<>();
+
+        DQCategory airportCodeCategory = new DQCategory();
+        airportCodeCategory.setId("1");
+        airportCodeCategory.setName("AIRPORT_CODE");
+        airportCodeCategory.setLabel("Airport code");
+
+        metadata.put("AIRPORT_CODE", airportCodeCategory);
+        return metadata;
     }
 }

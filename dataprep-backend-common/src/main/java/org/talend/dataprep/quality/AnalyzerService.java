@@ -13,17 +13,6 @@
 
 package org.talend.dataprep.quality;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +28,7 @@ import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.Metadata;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
-import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-import org.talend.dataquality.semantic.index.ClassPathDirectory;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
 import org.talend.dataquality.semantic.recognizer.DictionaryConstituents;
 import org.talend.dataquality.semantic.recognizer.DictionaryConstituentsProviders;
 import org.talend.dataquality.semantic.statistics.SemanticAnalyzer;
@@ -71,6 +57,17 @@ import org.talend.dataquality.statistics.type.DataTypeAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Service in charge of analyzing dataset quality.
  */
@@ -85,70 +82,20 @@ public class AnalyzerService {
 
     private final Set<Analyzer> openedAnalyzers = new HashSet<>();
 
-    private final String indexesLocation;
-
-    private CategoryRecognizerBuilder builder;
-
     private DictionaryConstituentsProviders.DicoProviderInterface dicoProvider;
 
     public AnalyzerService() {
-        this(CategoryRecognizerBuilder.newBuilder().lucene());
+        this(new DictionaryConstituentsProviders.SingletonProvider());
     }
 
-    public AnalyzerService(CategoryRecognizerBuilder builder) {
-        this(System.getProperty("java.io.tmpdir") + "/tdp/org.talend.dataquality.semantic", //
-                "singleton", //
-                builder);
-    }
-
-    public AnalyzerService(String indexesLocation, String indexStrategy, CategoryRecognizerBuilder builder) {
-        this.indexesLocation = indexesLocation;
-        LOGGER.info("DataQuality indexes location : '{}'", this.indexesLocation);
-        CategoryRegistryManager.setLocalRegistryPath(this.indexesLocation);
-        // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
-        LOGGER.info("Analyzer service lucene index strategy set to '{}'", indexStrategy);
-        if ("basic".equalsIgnoreCase(indexStrategy)) {
-            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
-        } else if ("singleton".equalsIgnoreCase(indexStrategy)) {
-            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
-        } else {
-            // Default
-            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", indexStrategy);
-            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
-        }
-        // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
-        this.builder = builder;
-        this.dateParser = new DateParser(this);
-        this.dicoProvider = new DictionaryConstituentsProviders.SingletonProvider();
-    }
-
-    public AnalyzerService(String indexesLocation, String indexStrategy, DictionaryConstituentsProviders.DicoProviderInterface dicoProvider) {
-        this.indexesLocation = indexesLocation;
-        LOGGER.info("DataQuality indexes location : '{}'", this.indexesLocation);
-        CategoryRegistryManager.setLocalRegistryPath(this.indexesLocation);
-
+    public AnalyzerService(DictionaryConstituentsProviders.DicoProviderInterface dicoProvider) {
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
         this.dicoProvider = dicoProvider;
         this.dateParser = new DateParser(this);
     }
 
-    public void setDictionaryConstituentsProvider(DictionaryConstituentsProviders.DicoProviderInterface provider){
+    public void setDictionaryConstituentsProvider(DictionaryConstituentsProviders.DicoProviderInterface provider) {
         this.dicoProvider = dicoProvider;
-    }
-
-    /**
-     * Setter for categoryRecognizerBuilder
-     * @param categoryRecognizerBuilder the categoryRecognizerBuilder instance
-     */
-    public void setCategoryRecognizerBuilder(CategoryRecognizerBuilder categoryRecognizerBuilder) {
-        this.builder = categoryRecognizerBuilder;
-    }
-
-    /**
-     * @return The file path where DQ dictionaries are.
-     */
-    public String getIndexesLocation() {
-        return indexesLocation;
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {

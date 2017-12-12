@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see LowerCase
  */
-public class LowerCaseTest extends AbstractMetadataBaseTest {
+public class LowerCaseTest extends AbstractMetadataBaseTest<LowerCase> {
 
     private Map<String, String> parameters;
 

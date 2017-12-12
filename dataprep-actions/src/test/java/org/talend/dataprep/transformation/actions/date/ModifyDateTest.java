@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class ModifyDateTest extends BaseDateTest {
+public class ModifyDateTest extends BaseDateTest<ModifyDate> {
 
     private Map<String, String> parameters;
 

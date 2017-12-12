@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see RoundCeil
  */
-public class RoundCeilTest extends AbstractRoundTest {
+public class RoundCeilTest extends AbstractRoundTest<RoundCeil> {
 
     public RoundCeilTest() {
         super(new RoundCeil());

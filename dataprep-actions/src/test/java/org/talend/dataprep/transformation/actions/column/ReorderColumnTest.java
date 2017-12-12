@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ReorderColumn
  */
-public class ReorderColumnTest extends AbstractMetadataBaseTest {
+public class ReorderColumnTest extends AbstractMetadataBaseTest<ReorderColumn> {
 
     private Map<String, String> parameters;
 

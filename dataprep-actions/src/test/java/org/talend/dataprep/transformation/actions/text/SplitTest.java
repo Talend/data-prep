@@ -44,7 +44,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Split
  */
-public class SplitTest extends AbstractMetadataBaseTest {
+public class SplitTest extends AbstractMetadataBaseTest<Split> {
 
     /**
      * The action to test.

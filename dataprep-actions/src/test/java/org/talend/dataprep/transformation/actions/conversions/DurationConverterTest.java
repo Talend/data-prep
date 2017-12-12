@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see DurationConverter
  */
-public class DurationConverterTest extends BaseDateTest {
+public class DurationConverterTest extends BaseDateTest<DurationConverter> {
 
     public DurationConverterTest() {
         super(new DurationConverter());

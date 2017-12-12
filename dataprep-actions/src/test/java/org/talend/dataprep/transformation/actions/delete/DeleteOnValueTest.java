@@ -39,7 +39,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see DeleteOnValue
  */
-public class DeleteOnValueTest extends AbstractMetadataBaseTest {
+public class DeleteOnValueTest extends AbstractMetadataBaseTest<DeleteOnValue> {
 
     private Map<String, String> parameters;
 

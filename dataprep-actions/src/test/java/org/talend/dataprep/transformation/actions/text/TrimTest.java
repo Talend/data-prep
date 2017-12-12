@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Trim
  */
-public class TrimTest extends AbstractMetadataBaseTest {
+public class TrimTest extends AbstractMetadataBaseTest<Trim> {
 
     private Map<String, String> parameters;
 

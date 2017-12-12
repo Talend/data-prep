@@ -40,7 +40,7 @@ import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
  *
  * @see StandardizeInvalid
  */
-public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
+public class StandardizeInvalidTest extends AbstractMetadataBaseTest<StandardizeInvalid> {
 
     private final String MATCH_THRESHOLD_PARAMETER = "match_threshold";
 

@@ -48,7 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @see FillInvalid
  */
-public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
+public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest<FillInvalid> {
 
     public FillWithDateIfInvalidTest() {
         super(new FillInvalid());

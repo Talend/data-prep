@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class DeleteLinesTest extends AbstractMetadataBaseTest {
+public class DeleteLinesTest extends AbstractMetadataBaseTest<DeleteLines> {
 
     private Map<String, String> parameters;
 

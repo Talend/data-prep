@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 /**
  * Test to generate a sequence function.
  */
-public class GenerateSequenceTest extends AbstractMetadataBaseTest {
+public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSequence> {
 
     public GenerateSequenceTest() {
         super(new GenerateSequence());

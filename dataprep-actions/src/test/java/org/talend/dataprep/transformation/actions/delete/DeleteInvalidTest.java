@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see DeleteInvalid
  */
-public class DeleteInvalidTest extends AbstractMetadataBaseTest {
+public class DeleteInvalidTest extends AbstractMetadataBaseTest<DeleteInvalid> {
 
     private Map<String, String> parameters;
 

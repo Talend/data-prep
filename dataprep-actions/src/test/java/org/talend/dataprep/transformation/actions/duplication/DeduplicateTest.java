@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Deduplicate
  */
-public class DeduplicateTest extends AbstractMetadataBaseTest {
+public class DeduplicateTest extends AbstractMetadataBaseTest<Deduplicate> {
 
     private Map<String, String> parameters;
 

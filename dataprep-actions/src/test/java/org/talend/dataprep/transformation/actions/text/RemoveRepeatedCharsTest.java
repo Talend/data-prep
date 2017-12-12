@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see RemoveRepeatedChars
  */
-public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest {
+public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepeatedChars> {
 
     private Map<String, String> parameters;
 

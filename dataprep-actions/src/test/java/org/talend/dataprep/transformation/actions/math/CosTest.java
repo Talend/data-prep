@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Cos
  */
-public class CosTest extends AbstractMetadataBaseTest {
+public class CosTest extends AbstractMetadataBaseTest<Cos> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

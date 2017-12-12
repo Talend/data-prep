@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Max
  */
-public class MaxTest extends AbstractMetadataBaseTest {
+public class MaxTest extends AbstractMetadataBaseTest<Max> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

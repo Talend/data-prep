@@ -35,7 +35,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Delete
  */
-public class DeleteTest extends AbstractMetadataBaseTest {
+public class DeleteTest extends AbstractMetadataBaseTest<Delete> {
 
     public DeleteTest() {
         super(new Delete());

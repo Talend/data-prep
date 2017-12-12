@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Split
  */
-public class SubstringTest extends AbstractMetadataBaseTest {
+public class SubstringTest extends AbstractMetadataBaseTest<Substring> {
 
     private Map<String, String> parameters;
 

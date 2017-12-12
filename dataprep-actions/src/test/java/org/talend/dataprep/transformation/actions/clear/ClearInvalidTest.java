@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see ClearInvalid
  */
-public class ClearInvalidTest extends AbstractMetadataBaseTest {
+public class ClearInvalidTest extends AbstractMetadataBaseTest<ClearInvalid> {
 
     private Map<String, String> parameters;
 

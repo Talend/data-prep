@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see RoundFloor
  */
-public class RoundFloorTest extends AbstractRoundTest {
+public class RoundFloorTest extends AbstractRoundTest<RoundFloor> {
 
     public RoundFloorTest() {
         super(new RoundFloor());

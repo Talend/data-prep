@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ProperCase
  */
-public class ProperCaseTest extends AbstractMetadataBaseTest {
+public class ProperCaseTest extends AbstractMetadataBaseTest<ProperCase> {
 
     private Map<String, String> parameters;
 

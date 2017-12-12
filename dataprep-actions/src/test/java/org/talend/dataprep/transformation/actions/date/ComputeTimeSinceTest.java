@@ -54,7 +54,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ComputeTimeSince
  */
-public class ComputeTimeSinceTest extends BaseDateTest {
+public class ComputeTimeSinceTest extends BaseDateTest<ComputeTimeSince> {
 
     private Map<String, String> parameters;
 

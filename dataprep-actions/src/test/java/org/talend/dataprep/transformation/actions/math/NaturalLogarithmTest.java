@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see NaturalLogarithm
  */
-public class NaturalLogarithmTest extends AbstractMetadataBaseTest {
+public class NaturalLogarithmTest extends AbstractMetadataBaseTest<NaturalLogarithm> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

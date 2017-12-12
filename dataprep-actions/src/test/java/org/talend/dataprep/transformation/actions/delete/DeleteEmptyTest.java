@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see DeleteEmpty
  */
-public class DeleteEmptyTest extends AbstractMetadataBaseTest {
+public class DeleteEmptyTest extends AbstractMetadataBaseTest<DeleteEmpty> {
 
     private Map<String, String> parameters;
 

@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class TypeChangeTest extends AbstractMetadataBaseTest {
+public class TypeChangeTest extends AbstractMetadataBaseTest<TypeChange> {
 
     private Map<String, String> parameters;
 

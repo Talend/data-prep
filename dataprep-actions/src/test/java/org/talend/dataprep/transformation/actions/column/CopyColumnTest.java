@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see CopyColumnMetadata
  */
-public class CopyColumnTest extends AbstractMetadataBaseTest {
+public class CopyColumnTest extends AbstractMetadataBaseTest<CopyColumnMetadata> {
 
     private Map<String, String> parameters;
 

@@ -30,7 +30,7 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class TextClusteringTest extends AbstractMetadataBaseTest {
+public class TextClusteringTest extends AbstractMetadataBaseTest<TextClustering> {
 
     public TextClusteringTest() {
         super(new TextClustering());

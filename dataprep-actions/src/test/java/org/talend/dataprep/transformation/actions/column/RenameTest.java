@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Rename
  */
-public class RenameTest extends AbstractMetadataBaseTest {
+public class RenameTest extends AbstractMetadataBaseTest<Rename> {
 
     private Map<String, String> parameters;
 

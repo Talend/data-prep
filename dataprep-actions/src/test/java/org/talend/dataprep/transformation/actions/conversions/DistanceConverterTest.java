@@ -39,7 +39,7 @@ import org.talend.dataquality.converters.DistanceEnum;
  *
  * @see DistanceConverterTest
  */
-public class DistanceConverterTest extends AbstractMetadataBaseTest {
+public class DistanceConverterTest extends AbstractMetadataBaseTest<DistanceConverter> {
 
     public DistanceConverterTest() {
         super(new DistanceConverter());

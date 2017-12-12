@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class DomainChangeTest extends AbstractMetadataBaseTest {
+public class DomainChangeTest extends AbstractMetadataBaseTest<DomainChange> {
 
     private Map<String, String> parameters;
 

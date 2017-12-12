@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Sin
  */
-public class SinTest extends AbstractMetadataBaseTest {
+public class SinTest extends AbstractMetadataBaseTest<Sin> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

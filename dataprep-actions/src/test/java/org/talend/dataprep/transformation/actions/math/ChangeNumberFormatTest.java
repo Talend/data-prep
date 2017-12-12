@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ChangeNumberFormat
  */
-public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
+public class ChangeNumberFormatTest extends AbstractMetadataBaseTest<ChangeNumberFormat> {
 
     private Map<String, String> parameters;
 

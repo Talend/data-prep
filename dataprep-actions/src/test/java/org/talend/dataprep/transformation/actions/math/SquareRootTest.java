@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see SquareRoot
  */
-public class SquareRootTest extends AbstractMetadataBaseTest {
+public class SquareRootTest extends AbstractMetadataBaseTest<SquareRoot> {
 
     public SquareRootTest() {
         super(new SquareRoot());

@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Exponential
  */
-public class ExponentialTest extends AbstractMetadataBaseTest {
+public class ExponentialTest extends AbstractMetadataBaseTest<Exponential> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

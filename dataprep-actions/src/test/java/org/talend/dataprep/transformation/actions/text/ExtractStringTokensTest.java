@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractStringTokens
  */
-public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
+public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStringTokens> {
 
     /**
      * The action parameters.

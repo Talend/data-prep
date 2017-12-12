@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Pow
  */
-public class PowTest extends AbstractMetadataBaseTest {
+public class PowTest extends AbstractMetadataBaseTest<Pow> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

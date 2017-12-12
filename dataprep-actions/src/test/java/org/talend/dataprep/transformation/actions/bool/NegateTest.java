@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Negate
  */
-public class NegateTest extends AbstractMetadataBaseTest {
+public class NegateTest extends AbstractMetadataBaseTest<Negate> {
 
     private Map<String, String> parameters;
 

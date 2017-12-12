@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see FillInvalid
  */
-public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
+public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest<FillInvalid> {
 
     public FillWithNumericIfInvalidTest() {
         super(new FillInvalid());

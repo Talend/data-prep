@@ -39,7 +39,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see DeleteNegativeValues
  */
-public class DeleteNegativeValuesTest extends AbstractMetadataBaseTest {
+public class DeleteNegativeValuesTest extends AbstractMetadataBaseTest<DeleteNegativeValues> {
 
     private Map<String, String> parameters;
 

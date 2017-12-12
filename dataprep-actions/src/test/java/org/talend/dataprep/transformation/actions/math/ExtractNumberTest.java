@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractNumber
  */
-public class ExtractNumberTest extends AbstractMetadataBaseTest {
+public class ExtractNumberTest extends AbstractMetadataBaseTest<ExtractNumber> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

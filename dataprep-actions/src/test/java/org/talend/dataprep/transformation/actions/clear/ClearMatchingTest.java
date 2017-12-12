@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ClearMatching
  */
-public class ClearMatchingTest extends AbstractMetadataBaseTest {
+public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
 
     private Map<String, String> parameters;
 

@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FillIfEmpty
  */
-public class FillWithIntegerIfEmptyTest extends AbstractMetadataBaseTest {
+public class FillWithIntegerIfEmptyTest extends AbstractMetadataBaseTest<FillIfEmpty> {
 
     public FillWithIntegerIfEmptyTest() {
         super(new FillIfEmpty());

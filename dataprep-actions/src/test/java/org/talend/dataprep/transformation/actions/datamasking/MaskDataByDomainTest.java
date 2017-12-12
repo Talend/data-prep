@@ -42,7 +42,7 @@ import org.talend.dataquality.datamasking.semantic.MaskableCategoryEnum;
  *
  * @see MaskDataByDomain
  */
-public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
+public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDomain> {
 
     private Map<String, String> parameters;
 

@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FuzzyMatching
  */
-public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
+public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
 
     private Map<String, String> parameters;
 

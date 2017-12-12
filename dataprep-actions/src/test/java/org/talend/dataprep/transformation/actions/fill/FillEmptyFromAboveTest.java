@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FillEmptyFromAbove
  */
-public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
+public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFromAbove> {
 
     public FillEmptyFromAboveTest() {
         super(new FillEmptyFromAbove());

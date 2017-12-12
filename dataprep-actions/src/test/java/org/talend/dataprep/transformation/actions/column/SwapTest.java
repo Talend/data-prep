@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Swap
  */
-public class SwapTest extends BaseDateTest {
+public class SwapTest extends BaseDateTest<Swap> {
 
     public SwapTest() {
         super(new Swap());

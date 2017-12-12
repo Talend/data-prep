@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  * @see UpperCase
  */
 
-public class UpperCaseTest extends AbstractMetadataBaseTest {
+public class UpperCaseTest extends AbstractMetadataBaseTest<UpperCase> {
 
     private Map<String, String> parameters;
 

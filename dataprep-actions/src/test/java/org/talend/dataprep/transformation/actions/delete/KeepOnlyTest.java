@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class KeepOnlyTest extends AbstractMetadataBaseTest {
+public class KeepOnlyTest extends AbstractMetadataBaseTest<KeepOnly> {
 
     private Map<String, String> parameters;
 

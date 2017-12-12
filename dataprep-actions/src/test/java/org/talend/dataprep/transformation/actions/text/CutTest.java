@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Cut
  */
-public class CutTest extends AbstractMetadataBaseTest {
+public class CutTest extends AbstractMetadataBaseTest<Cut> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

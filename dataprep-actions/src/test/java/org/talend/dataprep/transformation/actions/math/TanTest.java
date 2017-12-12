@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Tan
  */
-public class TanTest extends AbstractMetadataBaseTest {
+public class TanTest extends AbstractMetadataBaseTest<Tan> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

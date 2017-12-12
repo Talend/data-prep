@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractEmailDomain
  */
-public class ExtractUrlTokensTest extends AbstractMetadataBaseTest {
+public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTokens> {
 
     private Map<String, String> parameters;
 

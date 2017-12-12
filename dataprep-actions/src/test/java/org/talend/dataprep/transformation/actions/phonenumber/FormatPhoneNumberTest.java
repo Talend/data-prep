@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
+public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneNumber> {
 
     private Map<String, String> parameters;
 

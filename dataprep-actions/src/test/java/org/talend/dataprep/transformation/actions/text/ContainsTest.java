@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Contains
  */
-public class ContainsTest extends AbstractMetadataBaseTest {
+public class ContainsTest extends AbstractMetadataBaseTest<Contains> {
 
     private Map<String, String> parameters;
 

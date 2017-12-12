@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see RemoveFractionalPart
  */
-public class RemoveFractionalPartTest extends AbstractRoundTest {
+public class RemoveFractionalPartTest extends AbstractRoundTest<RemoveFractionalPart> {
 
     public RemoveFractionalPartTest() {
         super(new RemoveFractionalPart());

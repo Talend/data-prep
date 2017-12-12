@@ -50,7 +50,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see ReplaceCellValue
  */
-public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
+public class ReplaceCellValueTest extends AbstractMetadataBaseTest<ReplaceCellValue> {
 
     public ReplaceCellValueTest() {
         super(new ReplaceCellValue());

@@ -35,7 +35,7 @@ import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.text.UpperCase;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
+public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader> {
 
     public MakeLineHeaderTest() {
         super(new MakeLineHeader());

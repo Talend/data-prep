@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class DeleteColumnTest extends AbstractMetadataBaseTest {
+public class DeleteColumnTest extends AbstractMetadataBaseTest<DeleteColumn> {
 
     private RowMetadata rowMetadata;
 

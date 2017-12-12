@@ -47,7 +47,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Concat
  */
-public class ConcatTest extends AbstractMetadataBaseTest {
+public class ConcatTest extends AbstractMetadataBaseTest<Concat> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

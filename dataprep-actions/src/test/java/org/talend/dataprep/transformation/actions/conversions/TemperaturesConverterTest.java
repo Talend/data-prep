@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 /**
  * Unit test for the CelsiusToFahrenheit action.
  */
-public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
+public class TemperaturesConverterTest extends AbstractMetadataBaseTest<TemperaturesConverter> {
 
     public TemperaturesConverterTest() {
         super(new TemperaturesConverter());

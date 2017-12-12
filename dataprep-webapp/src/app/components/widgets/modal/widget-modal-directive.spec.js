@@ -396,7 +396,7 @@ describe('Modal directive', () => {
 
 			const body = angular.element('body');
 			body.append(element);
-			expect(document.activeElement).not.toBe(element); //eslint-disable-line angular/document-service
+			expect(document.activeElement).not.toBe(element.find('input')[0]); //eslint-disable-line angular/document-service
 
 			//when
 			scope.state = true;
@@ -427,6 +427,7 @@ describe('Modal directive', () => {
 
 			//then
 			const activeElement = document.activeElement; //eslint-disable-line angular/document-service
+			console.log(activeElement);
 			expect(activeElement.id).toBe('secondInput');
 			expect(activeElement.value).toBe('city');
 		}));

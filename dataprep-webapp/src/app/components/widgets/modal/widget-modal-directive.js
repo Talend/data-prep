@@ -254,7 +254,7 @@ export default function TalendModal($timeout) {
 							innerElement.focus();
 
 							// focus on first input (ignore first because it's the state checkbox)
-							const inputs = iElement.find('[type="text"], [type="radio"], select, textarea');
+							const inputs = innerElement.find('[type="checkbox"], [type="email"], [type="search"], [type="submit"], [type="radio"], [type="text"], select, textarea');
 							const focusableInputs = inputs.not('.no-focus');
 							if (focusableInputs.length) {
 								const input = focusableInputs.eq(0);
@@ -263,7 +263,7 @@ export default function TalendModal($timeout) {
 							}
 							else {
 								// or focus on first primary button
-								const btns = iElement.find('.btn-primary');
+								const btns = innerElement.find('.btn-primary');
 								if (btns.length) {
 									btns.focus();
 								}

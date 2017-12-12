@@ -23,6 +23,7 @@
         "scope": "column",
         "operator": "+",
         "mode":"Another column",
+        "create_new_column" : true,
         "selected_column": "0001",
         "operand": "2"
       }

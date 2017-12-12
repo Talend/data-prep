@@ -40,7 +40,7 @@ import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
  *
  * @see StandardizeInvalid
  */
-public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
+public class StandardizeInvalidTest extends AbstractMetadataBaseTest<StandardizeInvalid> {
 
     private final String MATCH_THRESHOLD_PARAMETER = "match_threshold";
 
@@ -52,16 +52,14 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     private final String columnId1 = "0001";
 
-    /**
-     * The action to test.
-     */
-    private StandardizeInvalid standardizeInvalid;
-
     private Map<String, String> parameters;
+
+    public StandardizeInvalidTest() {
+        super(new StandardizeInvalid());
+    }
 
     @Before
     public void setUp() throws Exception {
-        standardizeInvalid = new StandardizeInvalid();
         parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId1);
@@ -71,24 +69,34 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testGetParameters() throws Exception {
-        final List<Parameter> parameters = standardizeInvalid.getParameters(Locale.US);
+        final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(5, parameters.size());
     }
 
     @Test
     public void testAdapt() throws Exception {
-        assertThat(standardizeInvalid.adapt((ColumnMetadata) null), is(standardizeInvalid));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(standardizeInvalid.adapt(column), is(standardizeInvalid));
+        assertThat(action.adapt(column), is(action));
     }
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(standardizeInvalid.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
+    @Override
+    public void test_apply_in_newcolumn() {
+        // Nothing to do, always in place
     }
 
     @Test
-    public void should_standardize() {
+    public void test_apply_inplace() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, fixedName);
@@ -102,7 +110,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("__tdpInvalid", columnId1);
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -121,7 +129,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("__tdpInvalid", columnId1);
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -140,7 +148,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         final Map<String, String> expectedValues = values;
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -161,7 +169,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("__tdpInvalid", columnId1);
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -181,7 +189,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("__tdpInvalid", columnId1);
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(standardizeInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -189,8 +197,8 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_action_Scope() {
-        assertTrue(standardizeInvalid.getActionScope().size() == 1);
-        assertTrue(standardizeInvalid.getActionScope().equals(ACTION_SCOPE));
+        assertTrue(action.getActionScope().size() == 1);
+        assertTrue(action.getActionScope().equals(ACTION_SCOPE));
     }
 
     private DataSetRow createRow(Map<String, String> inputValues, String invalidColumnId, String domain) {
@@ -219,21 +227,21 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest {
                 .semanticDomains(semanticDomainLs)
                 .domain(semantic.name())
                 .build();
-        assertTrue(standardizeInvalid.acceptField(column));
+        assertTrue(action.acceptField(column));
     }
 
     @Test
     public void should_not_accept_column() {
         // no semantic
         ColumnMetadata column = ColumnMetadata.Builder.column().id(0).name("name").type(Type.STRING).build();
-        assertFalse(standardizeInvalid.acceptField(column));
+        assertFalse(action.acceptField(column));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, standardizeInvalid.getBehavior().size());
-        assertTrue(standardizeInvalid.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
-        assertTrue(standardizeInvalid.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
     }
 
 }

@@ -30,7 +30,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
@@ -42,16 +41,27 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see CopyColumnMetadata
  */
-public class CopyColumnTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private CopyColumnMetadata action = new CopyColumnMetadata();
+public class CopyColumnTest extends AbstractMetadataBaseTest<CopyColumnMetadata> {
 
     private Map<String, String> parameters;
+
+    public CopyColumnTest() {
+        super(new CopyColumnMetadata());
+    }
 
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters(CopyColumnTest.class.getResourceAsStream("copyColumnAction.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
     }
 
     @Test
@@ -67,7 +77,7 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_copy_row() {
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
@@ -88,9 +98,6 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -138,7 +145,7 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
         assertEquals(actual.size(), 4);
         final ColumnMetadata copiedColumn = row.getRowMetadata().getById("0004");
         assertNotNull(copiedColumn);
-        assertEquals(copiedColumn.getName(), "steps_copy");
+        assertEquals("steps_copy", copiedColumn.getName());
     }
 
     @Test

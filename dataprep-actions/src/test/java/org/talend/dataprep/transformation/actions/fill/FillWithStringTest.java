@@ -39,25 +39,36 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FillWithValue
  */
-public class FillWithStringTest extends AbstractMetadataBaseTest {
+public class FillWithStringTest extends AbstractMetadataBaseTest<FillWithValue> {
 
-    /** The action to test. */
-    private FillWithValue fillWithValue = new FillWithValue();
+    public FillWithStringTest() {
+        super(new FillWithValue());
+    }
 
     @PostConstruct
-    public void init() {
-        fillWithValue = (FillWithValue) fillWithValue.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
+    public void fillWithStringTest() {
+        action = (FillWithValue) action.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
     }
 
     @Test
     public void test_adapt() throws Exception {
-        assertThat(fillWithValue.adapt((ColumnMetadata) null), is(fillWithValue));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(fillWithValue.adapt(column), is(fillWithValue));
+        assertThat(action.adapt(column), is(action));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
     }
 
     @Test
-    public void should_fill_empty_string() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // always in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "David Bowie");
@@ -72,7 +83,7 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
                 this.getClass().getResourceAsStream("fillEmptyStringAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillWithValue, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("beer", row.get("0001"));
@@ -95,7 +106,7 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
                 this.getClass().getResourceAsStream("fillEmptyStringAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillWithValue, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("beer", row.get("0001"));
@@ -119,7 +130,7 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
         parameters.put(AbstractFillWith.DEFAULT_VALUE_PARAMETER, "12.5");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillWithValue, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("12.5", row.get("0001"));
@@ -143,7 +154,7 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
         parameters.put(AbstractFillWith.DEFAULT_VALUE_PARAMETER, "12.5");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillWithValue, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("12.5", row.get("0001"));
@@ -169,7 +180,7 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
         // when
         parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.OTHER_COLUMN_MODE);
         parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0002");
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillWithValue, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("Something", row.get("0001"));
@@ -178,19 +189,19 @@ public class FillWithStringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillWithValue.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillWithValue.acceptField(getColumn(Type.NUMERIC)));
-        assertFalse(fillWithValue.acceptField(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, fillWithValue.getBehavior().size());
-        assertTrue(fillWithValue.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

@@ -40,6 +40,7 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
@@ -49,9 +50,11 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see ReplaceCellValue
  */
-public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
+public class ReplaceCellValueTest extends AbstractMetadataBaseTest<ReplaceCellValue> {
 
-    private ReplaceCellValue action = new ReplaceCellValue();
+    public ReplaceCellValueTest() {
+        super(new ReplaceCellValue());
+    }
 
     @Test
     public void test_action_name() throws Exception {
@@ -69,10 +72,11 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         final List<Parameter> actionParams = action.getParameters(Locale.US);
 
         // then
-        assertThat(actionParams, hasSize(6));
+        assertThat(actionParams, hasSize(7));
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
         assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder( //
+                ActionsUtils.CREATE_NEW_COLUMN,
                 COLUMN_ID.getKey(), //
                 SCOPE.getKey(), //
                 ROW_ID.getKey(), //
@@ -80,6 +84,11 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
                 FILTER.getKey(), //
                 NEW_VALUE_PARAMETER) //
         );
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Test
@@ -95,7 +104,8 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
         assertEquals(CANCELED, context.getActionStatus());
     }
 
-    private ActionContext getActionContext(SimpleEntry<String, String>... entries) {
+    @SafeVarargs
+    private final ActionContext getActionContext(SimpleEntry<String, String>... entries) {
         Map<String, String> parameters = new HashMap<>();
         for (SimpleEntry<String, String> entry : entries) {
             parameters.put(entry.getKey(), entry.getValue());
@@ -135,7 +145,36 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_replace_value() {
+    public void test_apply_in_newcolumn() {
+        // given
+        final Long rowId = 1L;
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Joe");
+        final DataSetRow row = new DataSetRow(values);
+        row.setTdpId(rowId);
+        DataSetRow expectedRow = getRow("Joe", "Jimmy");
+        expectedRow.setTdpId(rowId);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ORIGINAL_VALUE_PARAMETER, "Joe");
+        parameters.put(NEW_VALUE_PARAMETER, "Jimmy");
+        parameters.put(SCOPE.getKey().toLowerCase(), "cell");
+        parameters.put(COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(ROW_ID.getKey(), String.valueOf(rowId));
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedRow, row);
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0000_replace").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0001");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
 
         // given
         final Long rowId = 1L;

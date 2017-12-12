@@ -15,13 +15,13 @@ package org.talend.dataprep.transformation.actions.math;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
 public class Modulo extends AbstractMathOneParameterAction {
@@ -34,8 +34,8 @@ public class Modulo extends AbstractMathOneParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "mod";
+    protected String getSuffix(ActionContext context) {
+        return "_mod";
     }
 
     @Override
@@ -46,10 +46,10 @@ public class Modulo extends AbstractMathOneParameterAction {
             value = modulo(value, mod);
         }
         return value.toPlainString();
-
     }
 
-    protected BigDecimal modulo(BigDecimal value, BigDecimal mod) {
+    // TODO: Must be private as only visible for test purpose
+    BigDecimal modulo(BigDecimal value, BigDecimal mod) {
 
         final int scale = ConstantUtilMath.SCALE_PRECISION;
         final RoundingMode rm = ConstantUtilMath.ROUNDING_MODE;

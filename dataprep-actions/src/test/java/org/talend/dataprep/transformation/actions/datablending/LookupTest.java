@@ -44,10 +44,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Lookup
  */
-public class LookupTest extends AbstractMetadataBaseTest {
+public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
 
-    /** The action to test. */
-    private Lookup action = new Lookup();
+    public LookupTest() {
+        super(new Lookup());
+    }
 
     @Test
     public void testAccept() throws Exception {
@@ -62,6 +63,11 @@ public class LookupTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() {
         assertEquals("data blending", action.getCategory(Locale.US));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

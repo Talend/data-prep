@@ -29,6 +29,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -36,13 +37,14 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Exponential
  */
-public class ExponentialTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private Exponential action = new Exponential();
+public class ExponentialTest extends AbstractMetadataBaseTest<Exponential> {
 
     /** The action parameters. */
     private Map<String, String> parameters;
+
+    public ExponentialTest() {
+        super(new Exponential());
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -50,10 +52,30 @@ public class ExponentialTest extends AbstractMetadataBaseTest {
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
-    public void exponential_with_positive() {
+    public void test_apply_inplace() {
         // given
         DataSetRow row = getRow("3", "3", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(3, row.getRowMetadata().size());
+        assertEquals("20.085536923187668", row.get("0000"));
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        DataSetRow row = getRow("3", "3", "Done !");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -72,14 +94,15 @@ public class ExponentialTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertColumnWithResultCreated(row);
-        assertEquals("20.085536923187668", row.get("0003"));
+        assertEquals("20.085536923187668", row.get("0000"));
     }
 
     @Test
     public void exponential_with_negative() {
         // given
         DataSetRow row = getRow("-3", "3", "Done !");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -93,6 +116,8 @@ public class ExponentialTest extends AbstractMetadataBaseTest {
     public void exponential_with_NaN() {
         // given
         DataSetRow row = getRow("beer", "3", "Done !");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -109,7 +134,7 @@ public class ExponentialTest extends AbstractMetadataBaseTest {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_exponential").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_exponential").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

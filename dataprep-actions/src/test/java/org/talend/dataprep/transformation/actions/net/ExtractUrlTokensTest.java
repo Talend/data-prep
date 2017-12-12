@@ -40,12 +40,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractEmailDomain
  */
-public class ExtractUrlTokensTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private ExtractUrlTokens action = new ExtractUrlTokens();
+public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTokens> {
 
     private Map<String, String> parameters;
+
+    public ExtractUrlTokensTest() {
+        super(new ExtractUrlTokens());
+    }
 
     @Before
     public void init() throws IOException {
@@ -65,8 +66,18 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void test_values() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

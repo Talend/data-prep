@@ -19,6 +19,9 @@ class ActionsStaticProfiler {
 
     private final ActionRegistry actionRegistry;
 
+    /** Copy of ActionsUtils column creation parameter to optimize if a column is created. */
+    public static final String CREATE_NEW_COLUMN = "create_new_column";
+
     public ActionsStaticProfiler(final ActionRegistry actionRegistry) {
         this.actionRegistry = actionRegistry;
     }
@@ -55,6 +58,9 @@ class ActionsStaticProfiler {
             final ActionDefinition actionMetadata = entry.getValue();
             final Action action = entry.getKey();
             Set<ActionDefinition.Behavior> behavior = actionMetadata.getBehavior();
+
+            boolean createColumn = false;
+
             for (ActionDefinition.Behavior currentBehavior : behavior) {
                 switch (currentBehavior) {
                 case VALUES_ALL:
@@ -80,7 +86,7 @@ class ActionsStaticProfiler {
                     break;
                 case METADATA_COPY_COLUMNS:
                 case METADATA_CREATE_COLUMNS:
-                    createColumnActions++;
+                    createColumn = true;
                     break;
                 case METADATA_DELETE_COLUMNS:
                 case METADATA_CHANGE_NAME:
@@ -89,6 +95,12 @@ class ActionsStaticProfiler {
                 default:
                     break;
                 }
+            }
+
+            ;
+
+            if (createColumn || isCreateColumnParameterOn(action)) {
+                createColumnActions++;
             }
         }
 
@@ -104,6 +116,14 @@ class ActionsStaticProfiler {
 
         return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
                 filterForInvalidAnalysis);
+    }
+
+    private static boolean isCreateColumnParameterOn(Action action) {
+        return action //
+                .getParameters() //
+                .entrySet() //
+                .stream() //
+                .anyMatch(e -> Objects.equals(e.getKey(), CREATE_NEW_COLUMN) && Boolean.parseBoolean(e.getValue()));
     }
 
     private static class FilterForFullAnalysis implements SerializablePredicate<ColumnMetadata> {

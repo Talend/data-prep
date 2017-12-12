@@ -38,10 +38,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FillEmptyFromAbove
  */
-public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
+public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFromAbove> {
 
-    /** The action to test. */
-    private FillEmptyFromAbove action = new FillEmptyFromAbove();
+    public FillEmptyFromAboveTest() {
+        super(new FillEmptyFromAbove());
+    }
 
     @PostConstruct
     public void init() {
@@ -55,10 +56,15 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt(column), is(action));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("column_id", "row_id", "scope", "filter");
+        List<String> parameterNames = Arrays.asList("create_new_column", "column_id", "row_id", "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
@@ -73,7 +79,12 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_fill_empty_string() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Always in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         Map<String, String> rowContent = new HashMap<>();
 

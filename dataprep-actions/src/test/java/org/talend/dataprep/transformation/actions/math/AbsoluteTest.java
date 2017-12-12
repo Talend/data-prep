@@ -33,6 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -40,21 +41,27 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Absolute
  */
-public class AbsoluteTest extends AbstractMetadataBaseTest {
+public class AbsoluteTest extends AbstractMetadataBaseTest<Absolute> {
 
     private static final String FLOAT_COLUMN = "0000"; //$NON-NLS-1$
 
     private static final String INT_COLUMN = "0000"; //$NON-NLS-1$
 
-    private Absolute absolute = new Absolute();
-
     private Map<String, String> absFloatParameters;
 
     private Map<String, String> absIntParameters;
 
+    public AbsoluteTest() {
+        super(new Absolute());
+    }
+
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     private void assertInteger(DataSetRow row, String expected) {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(absolute, absIntParameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absIntParameters));
 
         // then
         assertEquals(expected, row.get(INT_COLUMN)); //$NON-NLS-1$
@@ -62,7 +69,7 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
 
     private void assertFloat(DataSetRow row, String expected) {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(absolute, absFloatParameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absFloatParameters));
 
         // then
         assertEquals(expected, row.get(FLOAT_COLUMN)); //$NON-NLS-1$
@@ -78,21 +85,21 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testAdaptFloat() throws Exception {
-        assertThat(absolute.adapt((ColumnMetadata) null), is(absolute));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.FLOAT).build();
-        assertThat(absolute.adapt(column), not(is(absolute)));
+        assertThat(action.adapt(column), not(is(action)));
     }
 
     @Test
     public void testAdaptInt() throws Exception {
-        assertThat(absolute.adapt((ColumnMetadata) null), is(absolute));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.INTEGER).build();
-        assertThat(absolute.adapt(column), not(is(absolute)));
+        assertThat(action.adapt(column), not(is(action)));
     }
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(absolute.getCategory(Locale.US), is(ActionCategory.MATH.getDisplayName(Locale.US)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.MATH.getDisplayName(Locale.US)));
     }
 
     @Test
@@ -302,7 +309,7 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(absolute, absFloatParameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absFloatParameters));
 
         // then
         assertEquals("-12", row.get("wrong_column")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -316,30 +323,105 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(absolute, absFloatParameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absFloatParameters));
 
         // then
         assertEquals("-13", row.get("wrong_column")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
+    public void test_apply_inplace() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "-10");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "10");
+        expectedValues.put("0002", "May 20th 2015");
+
+        absFloatParameters.put("column_id", "0001");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absFloatParameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "-10");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "-10");
+        expectedValues.put("0002", "May 20th 2015");
+        expectedValues.put("0003", "10");
+
+        absFloatParameters.put("column_id", "0001");
+        absFloatParameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absFloatParameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_absolute").type(Type.DOUBLE).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_in_newcolumn_not_applicable() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "-10");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "-10");
+        expectedValues.put("0002", "May 20th 2015");
+
+        absFloatParameters.put("column_id", "0000");
+        absFloatParameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, absFloatParameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_accept_column() {
-        assertTrue(absolute.acceptField(getColumn(Type.INTEGER)));
-        assertTrue(absolute.acceptField(getColumn(Type.FLOAT)));
-        assertTrue(absolute.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(absolute.acceptField(getColumn(Type.STRING)));
-        assertFalse(absolute.acceptField(getColumn(Type.DATE)));
-        assertFalse(absolute.acceptField(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, absolute.getBehavior().size());
-        assertTrue(absolute.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

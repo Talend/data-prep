@@ -14,9 +14,9 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -38,10 +38,14 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
  * Unit test for the DateParser class.
  * @see DateParser
  */
-public class DateParserTest extends BaseDateTest {
+public class DateParserTest {
 
     /** The action to test. */
-    private DateParser action = new DateParser(new AnalyzerService());
+    private final DateParser action = new DateParser(new AnalyzerService());
+
+    protected InputStream getDateTestJsonAsStream(String testFileName) {
+        return BaseDateTest.class.getResourceAsStream(testFileName);
+    }
 
     @Test(expected = DateTimeException.class)
     public void shouldNotParseNull() {

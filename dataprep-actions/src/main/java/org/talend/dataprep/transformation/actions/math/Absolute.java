@@ -12,7 +12,11 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DOUBLE;
+
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -22,8 +26,10 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
@@ -35,6 +41,8 @@ import org.talend.dataprep.util.NumericHelper;
 public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ABSOLUTE_ACTION_NAME = "absolute"; //$NON-NLS-1$
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     private final Type type;
 
@@ -57,6 +65,20 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
+    public List<Parameter> getParameters(Locale locale) {
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT);
+    }
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + "_absolute").withType(DOUBLE)));
+        }
+    }
+
+    @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.FLOAT.equals(Type.get(column.getType())) //
                 || Type.DOUBLE.equals(Type.get(column.getType())) //
@@ -75,7 +97,7 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
             absValueStr = BigDecimalParser.toBigDecimal(value).abs().toPlainString();
         }
         if (absValueStr != null) {
-            row.set(columnId, absValueStr);
+            row.set(ActionsUtils.getTargetColumnId(context), absValueStr);
         }
     }
 

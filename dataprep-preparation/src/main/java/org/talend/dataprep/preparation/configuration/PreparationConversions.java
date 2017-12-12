@@ -15,6 +15,7 @@ package org.talend.dataprep.preparation.configuration;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,13 +28,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.action.ActionForm;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.api.preparation.PreparationSummary;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.service.UserPreparation;
@@ -146,6 +141,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                         List<ActionForm> actionDefinitions = actions.stream() //
                                 .map(a -> actionRegistry.get(a.getName())) //
                                 .map(a -> a.getActionForm(getLocale())) //
+                                .map(PreparationConversions::disallowColumnCreationChange) //
                                 .collect(Collectors.toList());
                         target.setMetadata(actionDefinitions);
                     }
@@ -162,5 +158,17 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             target.setMetadata(Collections.emptyList());
         }
         return target;
+    }
+
+    /**
+     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in TDP-4531 to
+     * avoid removing columns used by other actions.
+     * <p>
+     * Such method is not ideal as the system should be able to handle such removal in  a much more generic way.
+     * </p>
+     */
+    private static ActionForm disallowColumnCreationChange(ActionForm form) {
+        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(p -> p.setReadonly(true));
+        return form;
     }
 }

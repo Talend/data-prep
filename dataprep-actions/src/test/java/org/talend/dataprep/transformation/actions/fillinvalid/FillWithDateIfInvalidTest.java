@@ -48,14 +48,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @see FillInvalid
  */
-public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
+public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest<FillInvalid> {
 
-    /** The action to test. */
-    private FillInvalid fillInvalid = new FillInvalid();
+    public FillWithDateIfInvalidTest() {
+        super(new FillInvalid());
+    }
 
     @PostConstruct
     public void init() {
-        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.DATE).build());
+        action = (FillInvalid) action.adapt(ColumnMetadata.Builder.column().type(Type.DATE).build());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test
@@ -80,7 +86,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("09/07/2015 13:31:36", row.get("0001"));
@@ -107,7 +113,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("09/07/2015 13:31:35", row.get("0001"));
@@ -127,7 +133,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillInvalid, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("2015-07-09", row.get("0001"));
@@ -136,24 +142,24 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Test
     public void should_adapt_null() throws Exception {
-        assertThat(fillInvalid.adapt((ColumnMetadata) null), is(fillInvalid));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, fillInvalid.getBehavior().size());
-        assertTrue(fillInvalid.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
-        assertTrue(fillInvalid.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
     public Statistics getStatistics(InputStream source) throws IOException {

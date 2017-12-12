@@ -13,6 +13,18 @@
 
 package org.talend.dataprep.transformation.actions.delete;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -24,31 +36,26 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
-
 /**
  * Test class for DeleteAllEmpty action. Creates one consumer, and test it.
  *
  * @see DeleteAllEmpty
  */
-public class DeleteAllEmptyTest extends AbstractMetadataBaseTest {
+public class DeleteAllEmptyTest extends AbstractMetadataBaseTest<DeleteAllEmpty> {
 
     /** The action to test. */
     private DeleteAllEmpty action = new DeleteAllEmpty();
 
     private Map<String, String> parameters;
+
+    public DeleteAllEmptyTest() {
+        super(new DeleteAllEmpty());
+    }
+
+    @Override
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.NA;
+    }
 
     @Before
     public void init() throws IOException {

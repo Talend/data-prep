@@ -60,7 +60,8 @@
                                        ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                                        ng-trim="false"
                                        is-type="{{::simpleParamCtrl.parameter.type}}"
-                                       can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
+                                       can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"
+                                       ng-disabled="!!simpleParamCtrl.parameter.readonly"/>
                             </div>
                             <div class="checkbox" ng-switch-when="true">
                                 <label>
@@ -71,7 +72,8 @@
                                            ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                                            ng-trim="false"
                                            is-type="{{::simpleParamCtrl.parameter.type}}"
-                                           can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
+                                           can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"
+                                           ng-disabled="!!simpleParamCtrl.parameter.readonly"/>
                                     <span>{{simpleParamCtrl.parameter.label || simpleParamCtrl.parameter.name}}</span>
                                 </label>
                             </div>

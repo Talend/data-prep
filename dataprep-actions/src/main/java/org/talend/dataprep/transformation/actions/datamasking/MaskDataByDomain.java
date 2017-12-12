@@ -13,11 +13,17 @@
 
 package org.talend.dataprep.transformation.actions.datamasking;
 
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.talend.dataprep.api.type.Type.DATE;
+import static org.talend.dataprep.api.type.Type.get;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -30,9 +36,9 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus;
 import org.talend.dataquality.datamasking.semantic.ValueDataMasker;
 
 /**
@@ -51,6 +57,8 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
      * Key for storing in ActionContext:
      */
     private static final String MASKER = "masker"; //$NON-NLS-1$
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -85,26 +93,29 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+        }
+        if (actionContext.getActionStatus() == OK) {
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final String columnId = actionContext.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
             final String domain = column.getDomain();
-            final Type type = Type.get(column.getType());
+            final Type type = get(column.getType());
             LOGGER.trace(">>> type: " + type + " metadata: " + column);
             try {
-                if (Type.DATE.equals(type)) {
+                if (DATE.equals(type)) {
                     final List<PatternFrequency> patternFreqList = column.getStatistics().getPatternFrequencies();
                     final List<String> dateTimePatternList = patternFreqList.stream() //
                             .map(PatternFrequency::getPattern) //
-                            .collect(Collectors.toList());
+                            .collect(toList());
                     actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName(), dateTimePatternList));
                 } else {
                     actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName()));
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                actionContext.setActionStatus(ActionStatus.CANCELED);
+                actionContext.setActionStatus(CANCELED);
             }
         }
     }

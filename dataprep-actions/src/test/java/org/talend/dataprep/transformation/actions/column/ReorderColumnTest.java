@@ -43,12 +43,18 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ReorderColumn
  */
-public class ReorderColumnTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private ReorderColumn action = new ReorderColumn();
+public class ReorderColumnTest extends AbstractMetadataBaseTest<ReorderColumn> {
 
     private Map<String, String> parameters;
+
+    public ReorderColumnTest() {
+        super(new ReorderColumn());
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
+    }
 
     @Before
     public void init() throws IOException {

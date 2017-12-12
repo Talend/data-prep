@@ -20,10 +20,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
@@ -44,13 +41,14 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractNumber
  */
-public class ExtractNumberTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private ExtractNumber action = new ExtractNumber();
+public class ExtractNumberTest extends AbstractMetadataBaseTest<ExtractNumber> {
 
     /** The action parameters. */
     private Map<String, String> parameters;
+
+    public ExtractNumberTest() {
+        super(new ExtractNumber());
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -86,6 +84,39 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
+    }
+
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "j'ai 10 ans");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "j'ai 10 ans");
+        expectedValues.put("0003", "0");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
     }
 
     @Test
@@ -210,7 +241,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
 
-    private void inner_test(String from, String expected, Type expectedType) throws Exception {
+    private void inner_test(String from, String expected, Type expectedType) {
         // given
         DataSetRow row = getRow(from);
         Assertions.assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);

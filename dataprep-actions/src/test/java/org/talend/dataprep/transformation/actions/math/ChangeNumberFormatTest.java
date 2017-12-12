@@ -32,6 +32,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -39,12 +40,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ChangeNumberFormat
  */
-public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private ChangeNumberFormat action = new ChangeNumberFormat();
+public class ChangeNumberFormatTest extends AbstractMetadataBaseTest<ChangeNumberFormat> {
 
     private Map<String, String> parameters;
+
+    public ChangeNumberFormatTest() {
+        super(new ChangeNumberFormat());
+    }
 
     @Before
     public void init() throws IOException {
@@ -59,7 +61,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testParameters() throws Exception {
-        assertThat(action.getParameters(Locale.US).size(), is(6));
+        assertThat(action.getParameters(Locale.US).size(), is(7));
     }
 
     @Test
@@ -67,6 +69,11 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
         assertThat(action.adapt(column), is(action));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Test
@@ -82,7 +89,24 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_process_row_US() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // given
+        final DataSetRow row = getRow("toto", "0012.50", "tata");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "0012.50", "tata", "12.5");
+        assertEquals(expectedRow.values(), row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0001_formatted").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final DataSetRow row = getRow("toto", "0012.50", "tata");
 
@@ -413,7 +437,6 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
      * Format number does not work if there is a null or an invalid in the column.
      * Values after a null or an invalid value (which is not a number) were not formatted by the transformation.
      * Have look at https://jira.talendforge.org/browse/TDP-1361
-     * @throws Exception
      */
     @Test
     public void TDP_1361() throws Exception {

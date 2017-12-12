@@ -12,12 +12,11 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.lang.Double.isNaN;
+import static org.apache.commons.math3.util.FastMath.log;
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.NaturalLogarithm.NATURAL_LOGARITHM_NAME;
 
-import java.util.Map;
-
-import org.apache.commons.math3.util.FastMath;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -32,16 +31,15 @@ public class NaturalLogarithm extends AbstractMathNoParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
-        double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
+        double value = toBigDecimal(columnValue).doubleValue();
 
-        double result = FastMath.log(value);
+        double result = log(value);
 
-        return Double.isNaN(result) ? ERROR_RESULT : Double.toString(result);
+        return isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
-    @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "natural_logarithm";
+    protected String getSuffix(ActionContext context) {
+        return "_natural_logarithm";
     }
 
     @Override

@@ -39,10 +39,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FillIfEmpty
  */
-public class FillWithDateTest extends AbstractMetadataBaseTest {
+public class FillWithDateTest extends AbstractMetadataBaseTest<FillWithValue> {
 
-    /** The action to test. */
-    private FillWithValue action = new FillWithValue();
+    public FillWithDateTest() {
+        super(new FillWithValue());
+    }
 
     @PostConstruct
     public void init() {
@@ -56,8 +57,18 @@ public class FillWithDateTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt(column), is(action));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_fill_empty_date() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Always in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final DataSetRow row = builder() //
                 .value("David Bowie", Type.STRING) //

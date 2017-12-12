@@ -12,11 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
-public class SerializableTest extends AbstractMetadataBaseTest {
+public class SerializableTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SerializableTest.class);
+
+    protected final ActionFactory factory = new ActionFactory();
 
     ActionDefinition[] actions = new ActionDefinition[0];
 

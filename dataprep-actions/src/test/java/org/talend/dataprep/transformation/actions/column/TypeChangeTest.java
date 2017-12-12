@@ -33,13 +33,15 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class TypeChangeTest extends AbstractMetadataBaseTest {
-
-    private TypeChange typeChange = new TypeChange();
+public class TypeChangeTest extends AbstractMetadataBaseTest<TypeChange> {
 
     private Map<String, String> parameters;
 
     private DataSetRow row;
+
+    public TypeChangeTest() {
+        super(new TypeChange());
+    }
 
     @Before
     public void init() {
@@ -55,10 +57,20 @@ public class TypeChangeTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_change_type() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Nothing to test, this action is always applied in place
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(typeChange, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         final ColumnMetadata column = row.getRowMetadata().getById("0002");
@@ -68,7 +80,7 @@ public class TypeChangeTest extends AbstractMetadataBaseTest {
     @Test
     public void should_reset_domain() throws Exception {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(typeChange, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         final ColumnMetadata column = row.getRowMetadata().getById("0002");
@@ -80,7 +92,7 @@ public class TypeChangeTest extends AbstractMetadataBaseTest {
     @Test
     public void should_add_column_to_force_columns() throws Exception {
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(typeChange, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row.getRowMetadata().getById("0002").isTypeForced()).isTrue();
@@ -110,8 +122,8 @@ public class TypeChangeTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, typeChange.getBehavior().size());
-        assertTrue(typeChange.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_TYPE));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_TYPE));
     }
 
 }

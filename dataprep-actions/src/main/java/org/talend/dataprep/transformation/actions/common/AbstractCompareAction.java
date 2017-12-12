@@ -13,6 +13,12 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.getColumnCreationParameter;
+
 import java.util.*;
 
 import javax.annotation.Nonnull;
@@ -39,24 +45,35 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompareAction.class);
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT_VALUE = true;
+
     @Override
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT_VALUE));
 
         parameters.add(getCompareModeSelectParameter(locale));
 
         //@formatter:off
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(selectParameter(locale) //
                         .name(MODE_PARAMETER) //
                         .item(CONSTANT_MODE, CONSTANT_MODE, getDefaultConstantValue(locale)) //
-                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(ParameterType.COLUMN).setDefaultValue(StringUtils.EMPTY).setCanBeBlank(false).build(this)) //
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(COLUMN).setDefaultValue(EMPTY).setCanBeBlank(false).build(this)) //
                         .defaultValue(CONSTANT_MODE)
                         .build(this )
         );
         //@formatter:on
 
         return parameters;
+    }
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT_VALUE)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
     }
 
     /**
@@ -84,7 +101,6 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     /**
      *
      * @return {@link Parameter} the default value (can be a different type/value)
-     * @param locale
      */
     protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy no idea why this 2 but was here before so just keep backward compat :-)
@@ -94,34 +110,26 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
                 .build(this);
     }
 
-    @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-            final String columnId = context.getColumnId();
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final Map<String, String> parameters = context.getParameters();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            final String compareMode = getCompareMode(parameters);
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
 
-            String compareToLabel;
-            if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
-                compareToLabel = parameters.get(CONSTANT_VALUE);
-            } else {
-                final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-                compareToLabel = selectedColumn.getName();
-            }
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final Map<String, String> parameters = context.getParameters();
+        final String compareMode = getCompareMode(parameters);
 
-            context.column("result", (r) -> {
-                final ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + "_" + compareMode + "_" + compareToLabel + "?") //
-                        .type(Type.BOOLEAN) //
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
+        String compareToLabel;
+        if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
+            compareToLabel = parameters.get(CONSTANT_VALUE);
+        } else {
+            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            compareToLabel = selectedColumn.getName();
         }
+
+        additionalColumns.add(ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?")
+                .withType(Type.BOOLEAN));
+
+        return additionalColumns;
     }
 
     /**
@@ -133,8 +141,7 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         final Map<String, String> parameters = context.getParameters();
         final String compareMode = getCompareMode(parameters);
 
-        // create new column and append it after current column
-        final String newColumnId = context.column("result");
+        final String newColumnId = ActionsUtils.getTargetColumnId(context);
 
         ComparisonRequest comparisonRequest = new ComparisonRequest() //
                 .setMode(compareMode) //
@@ -148,9 +155,6 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
 
     /**
      * can be overridden as keys can be different (date have different keys/labels)
-     *
-     * @param parameters
-     * @return
      */
     protected String getCompareMode(Map<String, String> parameters) {
         return parameters.get(CompareAction.COMPARE_MODE);
@@ -175,19 +179,16 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
     }
 
     /**
-     * do the real comparison
+     * Do the real comparison.
      *
-     * @param comparisonRequest
      * @return same result as {@link Comparable#compareTo(Object)} if any type issue or any problem use
      * #ERROR_COMPARE_RESULT
      */
     protected abstract int doCompare(ComparisonRequest comparisonRequest);
 
     /**
-     *
-     * @param comparisonRequest
-     * @return transforming boolean to <code>true</code> or <code>false</code> as String in case of #doCompare returning
-     * #ERROR_COMPARE_RESULT the label #ERROR_COMPARE_RESULT_LABEL is returned
+     * Transforming boolean to <code>true</code> or <code>false</code> as String in case of #doCompare returning
+     * #ERROR_COMPARE_RESULT the label #ERROR_COMPARE_RESULT_LABEL is returned.
      */
     public String toStringCompareResult(ComparisonRequest comparisonRequest) {
         boolean booleanResult;

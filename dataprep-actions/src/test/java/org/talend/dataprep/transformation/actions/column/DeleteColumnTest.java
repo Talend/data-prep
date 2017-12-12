@@ -32,13 +32,15 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class DeleteColumnTest extends AbstractMetadataBaseTest {
-
-    private DeleteColumn deleteColumn = new DeleteColumn();
+public class DeleteColumnTest extends AbstractMetadataBaseTest<DeleteColumn> {
 
     private RowMetadata rowMetadata;
 
     private Map<String, String> parameters;
+
+    public DeleteColumnTest() {
+        super(new DeleteColumn());
+    }
 
     @Before
     public void init() {
@@ -66,6 +68,11 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
+    }
+
     @Test
     public void shouldDeleteColumn() throws Exception {
         // given
@@ -76,7 +83,7 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(deleteColumn, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
         final int rowSize = row.getRowMetadata().getColumns().size();
@@ -98,7 +105,7 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
-        ActionTestWorkbench.test(Arrays.asList(row, row2), actionRegistry, factory.create(deleteColumn, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row, row2), actionRegistry, factory.create(action, parameters));
 
         // then
         final int rowSize = row.getRowMetadata().getColumns().size();
@@ -122,9 +129,9 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
-        final RunnableAction action1 = factory.create(deleteColumn, parameters);
+        final RunnableAction action1 = factory.create(action, parameters);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0001");
-        final RunnableAction action2 = factory.create(deleteColumn, parameters);
+        final RunnableAction action2 = factory.create(action, parameters);
         ActionTestWorkbench.test(row, actionRegistry, action1, action2);
         ActionTestWorkbench.test(row2, actionRegistry, action1, action2);
 
@@ -139,29 +146,29 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
     public void testCategory() throws Exception {
         // We test the real value of the category here (not based on the enum), because the frontent use this label for
         // display purpose:
-        assertThat(deleteColumn.getCategory(Locale.US), is("columns"));
+        assertThat(action.getCategory(Locale.US), is("columns"));
     }
 
     @Test
     public void should_accept_column() {
-        assertTrue(deleteColumn.acceptField(getColumn(Type.STRING)));
-        assertTrue(deleteColumn.acceptField(getColumn(Type.NUMERIC)));
-        assertTrue(deleteColumn.acceptField(getColumn(Type.FLOAT)));
-        assertTrue(deleteColumn.acceptField(getColumn(Type.DATE)));
-        assertTrue(deleteColumn.acceptField(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void testAdapt() throws Exception {
-        assertThat(deleteColumn.adapt((ColumnMetadata) null), is(deleteColumn));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(deleteColumn.adapt(column), is(deleteColumn));
+        assertThat(action.adapt(column), is(action));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, deleteColumn.getBehavior().size());
-        assertTrue(deleteColumn.getBehavior().contains(ActionDefinition.Behavior.METADATA_DELETE_COLUMNS));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_DELETE_COLUMNS));
     }
 
 }

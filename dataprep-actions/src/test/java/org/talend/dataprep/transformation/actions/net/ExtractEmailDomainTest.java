@@ -38,17 +38,28 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractEmailDomain
  */
-public class ExtractEmailDomainTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private ExtractEmailDomain action = new ExtractEmailDomain();
+public class ExtractEmailDomainTest extends AbstractMetadataBaseTest<ExtractEmailDomain> {
 
     private Map<String, String> parameters;
+
+    public ExtractEmailDomainTest() {
+        super(new ExtractEmailDomain());
+    }
 
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils
                 .parseParameters(ExtractEmailDomainTest.class.getResourceAsStream("extractDomainAction.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
     }
 
     @Test
@@ -64,7 +75,7 @@ public class ExtractEmailDomainTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void test_values() {
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

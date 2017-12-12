@@ -29,7 +29,6 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -43,17 +42,16 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ExtractStringTokens
  */
-public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private ExtractStringTokens action = new ExtractStringTokens();
+public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStringTokens> {
 
     /**
      * The action parameters.
      */
     private Map<String, String> parameters;
+
+    public ExtractStringTokensTest() {
+        super(new ExtractStringTokens());
+    }
 
     @Before
     public void init() throws IOException {
@@ -87,8 +85,18 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_extract_tokens_1() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final DataSetRow row = getRow("lorem bacon", "Great #bigdata presentations at #TalendConnect", "01/01/2015");
 
@@ -329,9 +337,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_extract_token_no_match() {
         // given
@@ -370,9 +375,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -396,9 +398,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata_twice() {
         // given
@@ -423,7 +422,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    public void should_not_update_metadata_because_null_separator() throws IOException {
+    public void should_not_update_metadata_because_null_separator() {
         // given
         final List<ColumnMetadata> input = new ArrayList<>();
         input.add(createMetadata("0000", "recipe"));

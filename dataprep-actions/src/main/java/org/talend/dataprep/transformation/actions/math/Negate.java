@@ -12,11 +12,9 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Negate.NEGATE_NAME;
 
-import java.util.Map;
-
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -31,12 +29,11 @@ public class Negate extends AbstractMathNoParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
-        return BigDecimalParser.toBigDecimal(columnValue).negate().toString();
+        return toBigDecimal(columnValue).negate().toString();
     }
 
-    @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "negate";
+    protected String getSuffix(ActionContext context) {
+        return "_negate";
     }
 
     @Override

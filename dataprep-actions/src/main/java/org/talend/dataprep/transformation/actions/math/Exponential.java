@@ -12,12 +12,10 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.apache.commons.math3.util.FastMath.exp;
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Exponential.EXPONENTIAL_NAME;
 
-import java.util.Map;
-
-import org.apache.commons.math3.util.FastMath;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -32,14 +30,13 @@ public class Exponential extends AbstractMathNoParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
-        double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
+        double value = toBigDecimal(columnValue).doubleValue();
 
-        return Double.toString(FastMath.exp(value));
+        return Double.toString(exp(value));
     }
 
-    @Override
-    protected String getColumnNameSuffix(Map<String, String> parameters) {
-        return "exponential";
+    protected String getSuffix(ActionContext context) {
+        return "_exponential";
     }
 
     @Override

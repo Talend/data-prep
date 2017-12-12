@@ -29,6 +29,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -37,13 +38,14 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Min
  */
-public class MinTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private Min action = new Min();
+public class MinTest extends AbstractMetadataBaseTest<Min> {
 
     /** The action parameters. */
     private Map<String, String> parameters;
+
+    public MinTest() {
+        super(new Min());
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -51,13 +53,38 @@ public class MinTest extends AbstractMetadataBaseTest {
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
+
     @Test
-    public void min_with_constant() {
+    public void test_apply_inplace() throws Exception {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "7");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(3, row.getRowMetadata().size());
+        assertEquals("5.0", row.get("0000"));
+    }
+
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        DataSetRow row = getRow("5", "3", "Done !");
+
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "7");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -74,6 +101,7 @@ public class MinTest extends AbstractMetadataBaseTest {
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "70%");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -89,6 +117,8 @@ public class MinTest extends AbstractMetadataBaseTest {
         DataSetRow row = getRow("5", "3", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -106,6 +136,8 @@ public class MinTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "beer");
 
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
@@ -121,6 +153,8 @@ public class MinTest extends AbstractMetadataBaseTest {
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -138,6 +172,8 @@ public class MinTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "000xx");
 
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
@@ -153,6 +189,8 @@ public class MinTest extends AbstractMetadataBaseTest {
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0002");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -170,6 +208,8 @@ public class MinTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(OtherColumnParameters.CONSTANT_VALUE, "7");
 
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
@@ -186,6 +226,8 @@ public class MinTest extends AbstractMetadataBaseTest {
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
 
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
@@ -201,7 +243,7 @@ public class MinTest extends AbstractMetadataBaseTest {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

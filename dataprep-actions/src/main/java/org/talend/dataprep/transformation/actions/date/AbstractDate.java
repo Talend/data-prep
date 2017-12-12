@@ -39,21 +39,20 @@ public abstract class AbstractDate extends AbstractActionMetadata {
     /**
      * Name of the new date pattern parameter.
      */
-    public static String NEW_PATTERN = "new_pattern"; //$NON-NLS-1$
+    public static final String NEW_PATTERN = "new_pattern"; //$NON-NLS-1$
 
     /**
      * The parameter object for the custom new pattern.
      */
-    public static String CUSTOM_PATTERN = "custom_date_pattern"; //$NON-NLS-1$
+    public static final String CUSTOM_PATTERN = "custom_date_pattern"; //$NON-NLS-1$
 
     /**
      * Key to store compiled pattern in action context.
      */
-    public static String COMPILED_DATE_PATTERN = "compiled_datePattern";
+    public static final String COMPILED_DATE_PATTERN = "compiled_datePattern";
 
     /**
      * @return the Parameters to display for the date related action.
-     * @param locale
      */
     protected List<Parameter> getParametersForDatePattern(Locale locale) {
         HashMap<String, String> datePatterns = loadDatePatterns();
@@ -89,7 +88,7 @@ public abstract class AbstractDate extends AbstractActionMetadata {
     private Comparator<Item> compareOnLabelWithCustomLast() {
         return new Comparator<Item>() {
 
-            private Comparator<Item> labelComparator = Comparator.comparing(Item::getLabel);
+            private final Comparator<Item> labelComparator = Comparator.comparing(Item::getLabel);
 
             @Override
             public int compare(Item o1, Item o2) {

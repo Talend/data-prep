@@ -34,15 +34,22 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class KeepOnlyTest extends AbstractMetadataBaseTest {
-
-    private KeepOnly action = new KeepOnly();
+public class KeepOnlyTest extends AbstractMetadataBaseTest<KeepOnly> {
 
     private Map<String, String> parameters;
+
+    public KeepOnlyTest() {
+        super(new KeepOnly());
+    }
 
     @Before
     public void setUp() throws Exception {
         parameters = ActionMetadataTestUtils.parseParameters(KeepOnlyTest.class.getResourceAsStream("keepOnly.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

@@ -64,13 +64,13 @@ public class Parameter implements Serializable {
     private String description;
 
     /** If the field is editable or not. */
-    private Boolean editable;
+    private Boolean readonly;
 
     public Parameter() {
     }
 
     protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit, final boolean canBeBlank, String placeHolder, String label, String description,
-                        Boolean editable) {
+                        Boolean readonly) {
         this.name = name;
         this.placeHolder = placeHolder;
         this.type = type == null ? null : type.asString();
@@ -79,7 +79,7 @@ public class Parameter implements Serializable {
         this.canBeBlank = canBeBlank;
         this.label = label;
         this.description = description;
-        this.editable = editable;
+        this.readonly = readonly;
     }
 
     public static ParameterBuilder parameter(Locale locale) {
@@ -173,12 +173,12 @@ public class Parameter implements Serializable {
         this.configuration = configuration;
     }
 
-    public Boolean isEditable() {
-        return editable;
+    public Boolean isReadOnly() {
+        return readonly;
     }
 
-    public void setEditable(Boolean editable) {
-        this.editable = editable;
+    public void setReadonly(Boolean readonly) {
+        this.readonly = readonly;
     }
 
     @Override
@@ -219,8 +219,8 @@ public class Parameter implements Serializable {
 
         private Locale locale;
 
-        /** If the field is editable or not. */
-        private Boolean editable;
+        /** If the field is readonly or not (null means 'can be edited'). */
+        private Boolean readonly = null;
 
         private ParameterBuilder(Locale locale) {
             this.locale = locale;
@@ -266,8 +266,8 @@ public class Parameter implements Serializable {
             return this;
         }
 
-        public ParameterBuilder setEditable(Boolean editable) {
-            this.editable = editable;
+        public ParameterBuilder setReadOnly(boolean readonly) {
+            this.readonly = readonly;
             return this;
         }
 
@@ -292,7 +292,7 @@ public class Parameter implements Serializable {
                     LOGGER.trace("Error while auto-finding description parameter for [{}].", name);
                 }
             }
-            return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description, editable);
+            return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description, readonly);
         }
     }
 }

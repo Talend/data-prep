@@ -61,7 +61,7 @@
                                        ng-trim="false"
                                        is-type="{{::simpleParamCtrl.parameter.type}}"
                                        can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"
-                                       ng-disabled="!simpleParamCtrl.parameter.editable"/>
+                                       ng-disabled="!!simpleParamCtrl.parameter.readonly"/>
                             </div>
                             <div class="checkbox" ng-switch-when="true">
                                 <label>
@@ -73,7 +73,7 @@
                                            ng-trim="false"
                                            is-type="{{::simpleParamCtrl.parameter.type}}"
                                            can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"
-                                           ng-disabled="!simpleParamCtrl.parameter.editable"/>
+                                           ng-disabled="!!simpleParamCtrl.parameter.readonly"/>
                                     <span>{{simpleParamCtrl.parameter.label || simpleParamCtrl.parameter.name}}</span>
                                 </label>
                             </div>

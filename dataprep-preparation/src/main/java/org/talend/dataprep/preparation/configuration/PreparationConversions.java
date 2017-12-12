@@ -168,7 +168,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
      * </p>
      */
     private static ActionForm disallowColumnCreationChange(ActionForm form) {
-        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(p -> p.setEditable(false));
+        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(p -> p.setReadonly(false));
         return form;
     }
 }

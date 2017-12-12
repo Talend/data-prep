@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Min
  */
-public class MinTest extends AbstractMetadataBaseTest {
+public class MinTest extends AbstractMetadataBaseTest<Min> {
 
     /** The action parameters. */
     private Map<String, String> parameters;

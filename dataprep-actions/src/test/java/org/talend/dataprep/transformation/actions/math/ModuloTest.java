@@ -31,6 +31,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -52,7 +53,7 @@ public class ModuloTest extends AbstractMetadataBaseTest<Modulo> {
 
     @Override
     protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
-        return CreateNewColumnPolicy.NA;
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Before
@@ -97,7 +98,37 @@ public class ModuloTest extends AbstractMetadataBaseTest<Modulo> {
         assertEquals(new BigDecimal("0.123456789101112"), action.modulo(new BigDecimal("0.123456789101112"), new BigDecimal("2.12345678910121415")));
         assertEquals(new BigDecimal("-1.234567891011121"), action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("-7.91012141512345678")));
         assertEquals(new BigDecimal("-5.070615265797878"), action.modulo(new BigDecimal("2.839506149325579"), new BigDecimal("-7.91012141512345678")));
+    }
 
+    @Override
+    public void test_apply_inplace() throws Exception {
+        // given
+        DataSetRow row = getRow("6", "A", "Done !");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "5");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("1", row.get("0000"));
+    }
+
+    @Override
+    public void test_apply_in_newcolumn() throws Exception {
+        // given
+        DataSetRow row = getRow("6", "A", "Done !");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(OtherColumnParameters.CONSTANT_VALUE, "5");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertColumnWithResultCreated(row);
+        assertEquals("1", row.get("0003"));
     }
 
     @Test

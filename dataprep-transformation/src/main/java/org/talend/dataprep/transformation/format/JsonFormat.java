@@ -13,10 +13,12 @@
 package org.talend.dataprep.transformation.format;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * Json format type.
@@ -31,7 +33,7 @@ public class JsonFormat extends ExportFormat {
      * Default constructor.
      */
     public JsonFormat() {
-        super(JSON, "application/json", ".json", false, false, Collections.emptyList());
+        super(JSON, "application/json", ".json", false, false);
     }
 
     @Override
@@ -47,5 +49,10 @@ public class JsonFormat extends ExportFormat {
     @Override
     public boolean supportSampling() {
         return true;
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return Collections.emptyList();
     }
 }

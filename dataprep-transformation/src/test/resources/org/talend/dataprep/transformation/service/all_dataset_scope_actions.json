@@ -1,308 +1,365 @@
 [
   {
-    "name":"testfailedaction",
-    "category":"TEST",
-    "parameters":[
+    "name": "testfailedaction",
+    "category": "TEST",
+    "parameters": [
       {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The column to which you want to apply this action",
-        "label":"Column"
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"row_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The row to which you want to apply this action",
-        "label":"Row"
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"scope",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label":"Scope"
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "default": ""
       },
       {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"An optional filter to apply action on matching values only.",
-        "label":"Filter"
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only.",
+        "default": ""
       }
     ],
-    "description":"Failed action",
-    "label":"Failed action",
-    "dynamic":false,
-    "docUrl":"",
-    "actionScope":[
-
-    ]
+    "actionScope": [],
+    "description": "Failed action",
+    "label": "Failed action",
+    "docUrl": "",
+    "dynamic": false
   },
   {
-    "name":"testtransformationfailure",
-    "category":"TEST",
-    "parameters":[
+    "name": "testtransformationfailure",
+    "category": "TEST",
+    "parameters": [
       {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The column to which you want to apply this action",
-        "label":"Column"
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"row_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The row to which you want to apply this action",
-        "label":"Row"
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"scope",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label":"Scope"
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "default": ""
       },
       {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"An optional filter to apply action on matching values only.",
-        "label":"Filter"
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only.",
+        "default": ""
       }
     ],
-    "description":"Error failure action",
-    "label":"Error failure action",
-    "dynamic":false,
-    "docUrl":"",
-    "actionScope":[
-
-    ]
+    "actionScope": [],
+    "description": "Error failure action",
+    "label": "Error failure action",
+    "docUrl": "",
+    "dynamic": false
   },
   {
-    "name":"reorder",
-    "parameters":[
+    "name": "reorder",
+    "category": "columns",
+    "parameters": [
       {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The column to which you want to apply this action",
-        "label":"Column"
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"row_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The row to which you want to apply this action",
-        "label":"Row"
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"scope",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label":"Scope"
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "default": ""
       },
       {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"An optional filter to apply action on matching values only.",
-        "label":"Filter"
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only.",
+        "default": ""
       },
       {
-        "name":"selected_column",
-        "type":"column",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "default":"",
-        "description":"Combine the current column with this one",
-        "label":"Column"
+        "name": "selected_column",
+        "type": "column",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "Combine the current column with this one",
+        "default": ""
       }
     ],
-    "category":"columns",
-    "actionScope":[
+    "actionScope": [
       "column_metadata",
       "hidden_in_action_list"
     ],
-    "description":"Change column order",
-    "label":"Reorder columns",
-    "dynamic":false,
-    "docUrl":""
+    "description": "Change column order",
+    "label": "Reorder columns",
+    "docUrl": "",
+    "dynamic": false
   },
   {
-    "name":"lookup",
-    "parameters":[
+    "name": "lookup",
+    "category": "data blending",
+    "parameters": [
       {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The column to which you want to apply this action",
-        "label":"Column"
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"An optional filter to apply action on matching values only.",
-        "label":"Filter"
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only.",
+        "default": ""
       },
       {
-        "name":"lookup_ds_name",
-        "type":"string",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "default":"",
-        "description":"Lookup dataset name",
-        "label":"Lookup dataset name"
+        "name": "lookup_ds_name",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Lookup dataset name",
+        "description": "Lookup dataset name",
+        "default": ""
       },
       {
-        "name":"lookup_ds_id",
-        "type":"string",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "default":"",
-        "description":"Lookup dataset id",
-        "label":"Lookup dataset id"
+        "name": "lookup_ds_id",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Lookup dataset id",
+        "description": "Lookup dataset id",
+        "default": ""
       },
       {
-        "name":"lookup_join_on",
-        "type":"string",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "default":"",
-        "description":"Lookup column join",
-        "label":"Lookup column join"
+        "name": "lookup_join_on",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Lookup column join",
+        "description": "Lookup column join",
+        "default": ""
       },
       {
-        "name":"lookup_join_on_name",
-        "type":"string",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "default":"",
-        "description":"Lookup column join name",
-        "label":"Lookup column join name"
+        "name": "lookup_join_on_name",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Lookup column join name",
+        "description": "Lookup column join name",
+        "default": ""
       },
       {
-        "name":"lookup_selected_cols",
-        "type":"list",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "default":"",
-        "description":"Lookup selected columns",
-        "label":"Lookup selected columns"
+        "name": "lookup_selected_cols",
+        "type": "list",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Lookup selected columns",
+        "description": "Lookup selected columns",
+        "default": ""
       }
     ],
-    "category":"data blending",
-    "description":"Blends columns from another dataset into this one",
-    "label":"Lookup",
-    "dynamic":false,
-    "docUrl":"",
-    "actionScope":[
+    "actionScope": [
       "hidden_in_action_list"
-    ]
+    ],
+    "description": "Blends columns from another dataset into this one",
+    "label": "Lookup",
+    "docUrl": "",
+    "dynamic": false
   },
   {
-    "name":"deduplication",
-    "parameters":[
+    "name": "delete_all_empty",
+    "category": "data cleansing",
+    "parameters": [
       {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The column to which you want to apply this action",
-        "label":"Column"
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"row_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The row to which you want to apply this action",
-        "label":"Row"
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action",
+        "default": ""
       },
       {
-        "name":"scope",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label":"Scope"
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "default": ""
       },
       {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "default":"",
-        "description":"An optional filter to apply action on matching values only.",
-        "label":"Filter"
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only.",
+        "default": ""
+      },
+      {
+        "name": "action_on_blank_lines",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "label": "Rows containing only non-printing characters",
+        "description": "Delete rows containing only non-printing characters",
+        "default": "delete"
       }
     ],
-    "category":"deduplication",
-    "actionScope":[
-
+    "actionScope": [
+      "empty"
     ],
-    "description":"Keep only one occurrence of duplicated rows",
-    "label":"Remove duplicate rows",
-    "dynamic":false,
-    "docUrl":""
+    "description": "Delete all rows which do not contain any data",
+    "label": "Delete empty rows",
+    "docUrl": "",
+    "dynamic": false
+  },
+  {
+    "name": "deduplication",
+    "category": "deduplication",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only.",
+        "default": ""
+      }
+    ],
+    "actionScope": [],
+    "description": "Keep only one occurrence of duplicated rows",
+    "label": "Remove duplicate rows",
+    "docUrl": "",
+    "dynamic": false
   }
 ]

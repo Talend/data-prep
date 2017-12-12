@@ -16,6 +16,8 @@ export const parametersState = {
 	isSending: false,
 	configuration: {
 		encodings: [],
+		textEnclosureCharacter: '\"',
+		escapeCharacter: '\"',
 		separators: [
             { label: ';', value: ';' },
             { label: ',', value: ',' },
@@ -27,6 +29,8 @@ export const parametersState = {
 	values: {
 		separator: null,
 		encoding: null,
+		textEnclosureCharacter: null,
+		escapeCharacter: null,
 	},
 };
 
@@ -96,6 +100,8 @@ export function ParametersStateService() {
      */
 	function update(dataset) {
 		parametersState.values.separator = dataset.parameters.SEPARATOR;
+		parametersState.values.escapeCharacter = dataset.parameters.ESCAPE_CHAR;
+		parametersState.values.textEnclosureCharacter = dataset.parameters.TEXT_ENCLOSURE_CHAR;
 		parametersState.values.encoding = dataset.encoding;
 	}
 
@@ -111,6 +117,8 @@ export function ParametersStateService() {
 		parametersState.values = {
 			separator: null,
 			encoding: null,
+			escapeCharacter: null,
+			textEnclosureCharacter: null,
 		};
 	}
 }

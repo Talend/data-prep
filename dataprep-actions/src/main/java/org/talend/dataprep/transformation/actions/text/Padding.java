@@ -85,8 +85,8 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         //@formatter:off
         parameters.add(SelectParameter.selectParameter(locale)
                         .name(PADDING_POSITION_PARAMETER)
-                        .item(LEFT_POSITION)
-                        .item(RIGHT_POSITION)
+                        .item(LEFT_POSITION, LEFT_POSITION)
+                        .item(RIGHT_POSITION, RIGHT_POSITION)
                         .defaultValue(LEFT_POSITION)
                         .build(this )
         );

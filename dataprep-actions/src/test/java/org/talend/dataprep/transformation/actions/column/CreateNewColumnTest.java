@@ -60,7 +60,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
     @Test
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
-        assertEquals(5, parameters.size());
+        assertEquals(6, parameters.size());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode_new_column")).findFirst().isPresent());
     }
 

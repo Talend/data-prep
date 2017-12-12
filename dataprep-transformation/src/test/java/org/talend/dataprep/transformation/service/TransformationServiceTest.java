@@ -17,10 +17,7 @@ import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
@@ -346,12 +343,12 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
          * {
          *   "id": "CITY",
          *   "label": "City",
-         *   "frequency": 99.24
+         *   "frequency": 100.0
          * }
          */
         assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
-        assertEquals(7, rootNode.size());
+        assertEquals(8, rootNode.size());
         for (JsonNode type : rootNode) {
             assertTrue(type.has("id"));
             assertTrue(type.has("label"));

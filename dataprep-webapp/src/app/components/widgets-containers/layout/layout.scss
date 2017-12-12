@@ -30,7 +30,6 @@ $tc-layout-main-min-width: 1000px;
 
 		.main {
 			flex-grow: 1;
-			overflow: auto;
 			height: calc(100vh - #{$tc-layout-header-height});
 		}
 

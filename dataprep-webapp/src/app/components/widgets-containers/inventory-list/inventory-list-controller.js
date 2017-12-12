@@ -62,6 +62,12 @@ export default class InventoryListCtrl {
 			this.toolbarProps = this.changeSort(this.toolbarProps, field, isDescending);
 			this.listProps = this.changeSort(this.listProps, field, isDescending);
 		}
+		if (changes.isLoading) {
+			this.listProps = {
+				...this.listProps,
+				inProgress: this.isLoading,
+			};
+		}
 	}
 
 	changeSort(subProps, field, isDescending) {
@@ -97,6 +103,7 @@ export default class InventoryListCtrl {
 			...listSettings,
 			titleProps: this.getListTitleProps(listSettings.titleProps),
 			sort: this.getSortProps(listSettings.sort),
+			inProgress: this.isLoading,
 		};
 	}
 

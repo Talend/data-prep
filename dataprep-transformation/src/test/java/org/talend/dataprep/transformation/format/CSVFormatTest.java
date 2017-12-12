@@ -16,7 +16,6 @@ import static junit.framework.TestCase.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +44,7 @@ public class CSVFormatTest extends BaseFormatTest {
     }
 
     @Test
-    public void csv() throws IOException {
+    public void csv() {
         // when
         final ExportFormatMessage exportFormatMessage = beanConversionService.convert(format, ExportFormatMessage.class);
 

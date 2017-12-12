@@ -4,7 +4,7 @@
       "action": "split",
       "parameters": {
         "limit": 2,
-        "separator": "other (string)",
+        "separator": "other_string",
         "manual_separator_string": " ",
         "scope": "column",
         "column_id": "0000",

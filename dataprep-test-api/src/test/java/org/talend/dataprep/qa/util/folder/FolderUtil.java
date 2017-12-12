@@ -1,4 +1,4 @@
-package org.talend.dataprep.qa.util;
+package org.talend.dataprep.qa.util.folder;
 
 import java.io.IOException;
 import java.util.Collection;

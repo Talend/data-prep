@@ -33,9 +33,10 @@ public class Item {
     private final String label;
 
     /**
-     * Create a select Item. The item's label will be by default looked up with key ("choice." + value).
+     * Create a select Item.
      *
      * @param value the item value.
+     * @param label the item label.
      * @param parameters the item optional parameters.
      */
     public Item(String value, String label, List<Parameter> parameters) {

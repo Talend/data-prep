@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import cucumber.api.java.en.When;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -57,5 +58,14 @@ public class DatasetStep extends DataPrepStep {
                         .filter(d -> params.get(DATASET_NAME).equals(d.name) //
                                 && params.get(NB_ROW).equals(d.records)) //
                         .count());
+    }
+
+    @When("^I update the dataset named \"(.*)\" with data \"(.*)\"$") //
+    public void givenIUpdateTheDatasetNamedWithData(String datasetName, String fileName) throws Throwable {
+        LOGGER.debug("I update the dataset named {} with data {}.", datasetName, fileName);
+        String datasetId = context.getDatasetId(datasetName);
+
+        Response response = api.updateDataset(fileName, datasetName, datasetId);
+        response.then().statusCode(200);
     }
 }

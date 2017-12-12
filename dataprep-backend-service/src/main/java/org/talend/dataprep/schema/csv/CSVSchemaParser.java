@@ -35,12 +35,13 @@ import org.talend.dataprep.schema.SchemaParser;
 @Service("parser#csv")
 public class CSVSchemaParser implements SchemaParser {
 
+    /** A list of supported separators for a CSV content */
+    public static final List<Character> DEFAULT_VALID_SEPARATORS = Collections
+            .unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSchemaParser.class);
 
     private static final String META_KEY = "key";
-
-    @Autowired
-    protected CSVFormatUtils csvFormatUtils;
 
     /**
      * The maximum size used to guess the schema of a CSV input stream.
@@ -58,9 +59,8 @@ public class CSVSchemaParser implements SchemaParser {
      */
     private static final int SMALL_SAMPLE_LIMIT = 10;
 
-    /** A list of supported separators for a CSV content */
-    public static final List<Character> DEFAULT_VALID_SEPARATORS = Collections
-            .unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
+    @Autowired
+    protected CSVFormatUtils csvFormatUtils;
 
     @Override
     public boolean accept(DataSetMetadata metadata) {
@@ -122,12 +122,11 @@ public class CSVSchemaParser implements SchemaParser {
         final String temp = request.getMetadata().getContent().getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER);
         if (temp != null && StringUtils.isNotEmpty(temp)) {
             forcedSeparator = Optional.of(temp.charAt(0));
-            csvFormatUtils.useNewSeparator(request.getMetadata());
         }
 
         Separator sep = guessSeparator(request.getContent(), encoding, forcedSeparator);
 
-        return csvFormatUtils.compileSeparatorProperties(sep);
+        return csvFormatUtils.compileParameterProperties(sep, request.getMetadata().getContent().getParameters());
     }
 
     /**
@@ -145,11 +144,7 @@ public class CSVSchemaParser implements SchemaParser {
             List<String> sampleLines = new ArrayList<>();
             final List<Character> validSepartors;
 
-            if (forcedSeparator.isPresent()) {
-                validSepartors = Collections.singletonList(forcedSeparator.get());
-            } else {
-                validSepartors = DEFAULT_VALID_SEPARATORS;
-            }
+            validSepartors = forcedSeparator.map(Collections::singletonList).orElse(DEFAULT_VALID_SEPARATORS);
 
             while ((line = csvStreamReader.readLine()) != null) {
                 if (!line.isEmpty() && sampleLines.size() < SMALL_SAMPLE_LIMIT) {

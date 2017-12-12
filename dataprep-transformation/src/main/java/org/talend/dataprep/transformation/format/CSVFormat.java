@@ -13,7 +13,6 @@
 package org.talend.dataprep.transformation.format;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 import java.nio.charset.Charset;
@@ -60,9 +59,7 @@ public class CSVFormat extends ExportFormat {
      * Default constructor.
      */
     public CSVFormat() {
-        //@formatter:off
-        super(ParametersCSV.CSV_NAME_FORMAT, "text/csv", ".csv", true, false, emptyList());
-        //@formatter:on
+        super(ParametersCSV.CSV_NAME_FORMAT, "text/csv", ".csv", true, false);
     }
 
     @Override

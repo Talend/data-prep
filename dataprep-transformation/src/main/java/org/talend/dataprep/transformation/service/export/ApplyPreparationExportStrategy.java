@@ -37,6 +37,7 @@ import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
@@ -69,7 +70,9 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
     public StreamingResponseBody execute(ExportParameters parameters) {
         final String formatName = parameters.getExportType();
         final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), format);
+        ExportUtils.setExportHeaders(parameters.getExportName(), //
+                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
+                format);
 
         return outputStream -> executeApplyPreparation(parameters, outputStream);
     }

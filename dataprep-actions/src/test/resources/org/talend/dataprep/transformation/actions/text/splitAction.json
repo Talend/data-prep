@@ -5,7 +5,7 @@
       "parameters": {
         "column_id": "0001",
         "column_name": "steps",
-        "separator": "other (string)",
+        "separator": "other_string",
         "manual_separator_string": " ",
         "limit":"2",
         "scope": "column"

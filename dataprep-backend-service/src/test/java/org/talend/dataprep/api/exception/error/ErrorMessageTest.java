@@ -110,7 +110,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation", exception.getMessage());
+        assertEquals("An unexpected error occurred and we could not complete your last operation. You can continue to use Data Preparation", exception.getMessage());
         assertEquals("An error has occurred", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
 
@@ -141,7 +141,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("Deletion not allowed, dataset still used by preparation(s)", exception.getMessage());
+        assertEquals("You cannot delete the dataset, it is being used by preparation(s)", exception.getMessage());
         assertEquals("Deletion forbidden", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
 
@@ -157,7 +157,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("This action cannot be deleted alone because other following actions depends on it", exception.getMessage());
+        assertEquals("This action cannot be deleted because subsequent actions depend on it", exception.getMessage());
         assertEquals("Delete action not authorized", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
     }
@@ -229,7 +229,7 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation", exception.getMessage());
+        assertEquals("An unexpected error occurred and we could not complete your last operation. You can continue to use Data Preparation", exception.getMessage());
         assertEquals("An error has occurred", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
     }

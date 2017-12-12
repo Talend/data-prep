@@ -16,6 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -32,8 +33,12 @@ public class ExportUtils {
     private ExportUtils() {
     }
 
-    public static void setExportHeaders(String exportName, ExportFormat format) {
-        HttpResponseContext.contentType(format.getMimeType());
+    public static void setExportHeaders(String exportName, String encoding, ExportFormat format) {
+        String responseEncoding = encoding;
+        if (StringUtils.isEmpty(encoding)) {
+            responseEncoding = "UTF-8";
+        }
+        HttpResponseContext.contentType(format.getMimeType() + ";Charset=" + responseEncoding);
         // TDP-2925 a multi-byte file name cannot export the file correctly
         // Current [RFC 2045] grammar restricts parameter values (and hence Content-Disposition filenames) to US-ASCII
         try {

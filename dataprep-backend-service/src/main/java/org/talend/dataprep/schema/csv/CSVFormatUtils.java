@@ -17,14 +17,13 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_SER
 import static org.talend.dataprep.schema.csv.CSVFormatFamily.*;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -42,26 +41,19 @@ public class CSVFormatUtils {
     @Autowired
     private ObjectMapper mapper;
 
-    /**
-     * Retrieve properties (separator, header and the headerNbLines) associated with a dataset content and put them in a
-     * map with their corresponding key.
-     *
-     * @param separator the separator object detected by the {@link CSVSchemaParser}
-     * @return a map associating to header and separator parameters their corresponding value
-     */
-    public Map<String, String> compileSeparatorProperties(Separator separator) {
-        return compileSeparatorProperties( //
-                String.valueOf(separator.getSeparator()), //
-                separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList()), //
-                separator.isFirstLineAHeader() ? 1 : 0 //
-        );
-    }
+    /** The default enclosure character. */
+    @Value("${default.import.text.enclosure:\"}")
+    private String defaultTextEnclosure;
+
+    /** The default escape character. */
+    @Value("${default.import.text.escape:\u0000}")
+    private String defaultEscapeChar;
 
     /**
      * @param parameters the dataset format parameters.
      * @return the list of the dataset header or an empty list of an error occurs while computing the headers.
      */
-    public List<String> retrieveHeader(Map<String, String> parameters) {
+    List<String> retrieveHeader(Map<String, String> parameters) {
         List<String> header;
         try {
             String jsonMap = parameters.get(HEADER_COLUMNS_PARAMETER);
@@ -74,47 +66,32 @@ public class CSVFormatUtils {
     }
 
     /**
-     * Retrieve properties (separator, header and the headerNbLines) associated with a dataset content and put them in a
+     * Retrieve properties associated with a dataset content and put them in a
      * map with their corresponding key.
-     * 
+     *
      * @param separator the specified separator
-     * @param header the specified header
-     * @param headerNbLines the specified number of lines spanned by the header
+     * @param updatedParameters the updated header
+     *
      */
-    private Map<String, String> compileSeparatorProperties(String separator, List<String> header, int headerNbLines) {
-        Map<String, String> parameters = new HashMap<>();
-        // separator
-        parameters.put(SEPARATOR_PARAMETER, separator);
+    Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
+
+        List<String> header = separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList());
+        // header
         String jsonHeader;
         try {
             jsonHeader = mapper.writeValueAsString(header);
         } catch (Exception e) {
             throw new TDPException(UNABLE_TO_SERIALIZE_TO_JSON, e);
         }
-        parameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
-        // nb lines of header
-        parameters.put(HEADER_NB_LINES_PARAMETER, Integer.toString(headerNbLines));
-        return parameters;
-    }
+        updatedParameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
 
-    /**
-     * Use the separator from the metadata
-     *
-     * @param updated the dataset metadata to use.
-     */
-    public void useNewSeparator(DataSetMetadata updated) {
+        // separator
+        updatedParameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
 
-        final Map<String, String> newParameters = updated.getContent().getParameters();
-        final String newSeparator = newParameters.get(SEPARATOR_PARAMETER);
-        final String newHeaderLines = newParameters.get(HEADER_NB_LINES_PARAMETER);
-        List<String> newHeader = Collections.emptyList();
+        // if no parameter set set take the default one
+        updatedParameters.putIfAbsent(TEXT_ENCLOSURE_CHAR, defaultTextEnclosure);
+        updatedParameters.putIfAbsent(ESCAPE_CHAR, defaultEscapeChar);
 
-        // update the metadata with the new parameters
-        final Map<String, String> parameters = compileSeparatorProperties( //
-                newSeparator, //
-                newHeader, //
-                Integer.valueOf(newHeaderLines) //
-        );
-        updated.getContent().setParameters(parameters);
+        return updatedParameters;
     }
 }

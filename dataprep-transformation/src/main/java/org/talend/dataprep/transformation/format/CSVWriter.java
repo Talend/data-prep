@@ -70,7 +70,7 @@ public class CSVWriter extends AbstractTransformerWriter {
     private String defaultSeparator;
 
     /** The default enclosure character. */
-    @Value("${default.text.enclosure=:\"}")
+    @Value("${default.text.enclosure:\"}")
     private String defaultTextEnclosure;
 
     /** The default escape character. */

@@ -200,8 +200,9 @@ describe('Datagrid header directive', () => {
 		$timeout.flush(100);
 
 		//then
-		expect(document.activeElement).toBe(element.find('.grid-header-title-input').eq(0)[0]); //eslint-disable-line angular/document-service
-		//FIXME expect($window.getSelection().toString()).toBe('MostPopulousCity');
+		const activeElement = document.activeElement; //eslint-disable-line angular/document-service
+		expect(activeElement).toBe(element.find('.grid-header-title-input').eq(0)[0]);
+		expect(activeElement.value).toBe('MostPopulousCity');
 	}));
 
 	it('should switch from input to text on ESC keydown', () => {

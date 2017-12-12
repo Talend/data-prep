@@ -69,6 +69,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     public static final String NEW_COLUMN = "new_column";
 
+    /**
+     * Name of the new column.
+     */
+    public static final String NEW_COLUMN_NAME = "create_new_column_name";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -92,6 +97,12 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+
+        parameters.add(Parameter.parameter(locale).setName(NEW_COLUMN_NAME)
+                .setType(ParameterType.STRING)
+                .setDefaultValue("New column")
+                .setCanBeBlank(false)
+                .build(this));
 
         Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
                 .setType(ParameterType.STRING)
@@ -120,11 +131,10 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
             // Create new column
             final RowMetadata rowMetadata = context.getRowMetadata();
             final String columnId = context.getColumnId();
-            final Map<String, String> parameters = context.getParameters();
             context.column(NEW_COLUMN, (r) -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
-                        .name(evalNewColumnName(rowMetadata, parameters)) //
+                        .name(context.getParameters().get(NEW_COLUMN_NAME)) //
                         .type(Type.STRING) //
                         .build();
                 rowMetadata.insertAfter(columnId, c);
@@ -159,15 +169,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         }
 
         row.set(newColumn, newValue);
-    }
-
-    private String evalNewColumnName(RowMetadata rowMetadata, Map<String, String> parameters) {
-        if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE)) {
-            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-            return selectedColumn.getName() + CopyColumnMetadata.COPY_APPENDIX;
-        } else {
-            return "new column";
-        }
     }
 
     /**

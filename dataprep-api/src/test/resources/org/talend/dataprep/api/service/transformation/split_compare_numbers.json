@@ -8,7 +8,7 @@
         "scope": "column",
         "limit": "3",
         "row_id": "2",
-        "separator": "other (string)"
+        "separator": "other_string"
       }
     },
     {

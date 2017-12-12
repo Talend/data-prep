@@ -47,6 +47,9 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Separator. */
     private static final String SEPARATOR = "_";
 
+    /** Quarter constat value. */
+    protected static final String QUARTER = "QUARTER";
+
     /** Year constant value. */
     private static final String YEAR = "YEAR";
 
@@ -88,6 +91,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
+            new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(DAY, ChronoField.DAY_OF_MONTH), //
             new DateFieldMappingBean(HOUR_12, ChronoField.HOUR_OF_AMPM), //
@@ -108,6 +112,8 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters
                 .add(Parameter.parameter(locale).setName(YEAR).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters
+                .add(Parameter.parameter(locale).setName(QUARTER).setType(ParameterType.BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters
                 .add(Parameter.parameter(locale).setName(MONTH).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(Parameter.parameter(locale).setName(DAY).setType(ParameterType.BOOLEAN).setDefaultValue(TRUE).build(this));
@@ -201,11 +207,26 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                 String newValue = StringUtils.EMPTY;
                 if (temporalAccessor != null && // may occurs if date can not be parsed with pattern
                         temporalAccessor.isSupported(date_field.field)) {
-                    newValue = String.valueOf(temporalAccessor.get(date_field.field));
+                    if (QUARTER.equals(date_field.key)) {
+                        newValue = String.valueOf(getQuarter(temporalAccessor.get(date_field.field)));
+                    }
+                    else {
+                        newValue = String.valueOf(temporalAccessor.get(date_field.field));
+                    }
                 }
                 row.set(dateFieldColumns.get(date_field.key), newValue);
             }
         }
+    }
+
+    /**
+     * Get the quarter of the year.
+     *
+     * @param numMonth the number of the month
+     * @return the quarter
+     */
+    protected int getQuarter(int numMonth) {
+        return (numMonth - 1) / 3 + 1;
     }
 
     @Override

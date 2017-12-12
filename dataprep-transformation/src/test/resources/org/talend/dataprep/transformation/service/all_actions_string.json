@@ -1782,7 +1782,7 @@
               "value": ";"
             },
             {
-              "value": "other (string)",
+              "value": "other_string",
               "parameters": [
                 {
                   "name": "manual_separator_string",
@@ -1796,7 +1796,7 @@
               ]
             },
             {
-              "value": "other (regex)",
+              "value": "other_regex",
               "parameters": [
                 {
                   "name": "manual_separator_regex",

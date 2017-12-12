@@ -77,7 +77,7 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         if (this.type == BOOLEAN) {
             parameters.add(selectParameter(locale) //

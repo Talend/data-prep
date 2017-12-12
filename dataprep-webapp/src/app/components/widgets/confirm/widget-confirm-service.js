@@ -31,14 +31,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @description [PRIVATE] Translate the texts to display
 	 * @returns {promise} The promise that resolves the translated texts
 	 */
-	const translateTexts = function (textIds, textArgs) {
+	function translateTexts(textIds, textArgs) {
 		return $translate(textIds, textArgs)
-			.then(function (translations) {
-				return _.map(textIds, function (id) {
-					return translations[id];
-				});
-			});
-	};
+			.then(translations => _.map(textIds, id => translations[id]));
+	}
 
 	/**
 	 * @ngdoc method
@@ -49,17 +45,17 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @param {object} textArgs The translation args
 	 * @description [PRIVATE] Create confirm modal isolated scope
 	 */
-	const createScope = function (options, textIds, textArgs) {
+	function createScope(options, textIds, textArgs) {
 		if (self.modalScope) {
 			throw new Error('A confirm popup is already created');
 		}
 
 		self.modalScope = $rootScope.$new(true);
 		translateTexts(textIds, textArgs)
-			.then(function (translatedTexts) {
+			.then((translatedTexts) => {
 				self.modalScope.texts = translatedTexts;
 			});
-	};
+	}
 
 	/**
 	 * @ngdoc method
@@ -67,10 +63,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @methodOf talend.widget.service:TalendConfirmService
 	 * @description [PRIVATE] Destroy the modal scope
 	 */
-	const removeScope = function () {
+	function removeScope() {
 		self.modalScope.$destroy();
 		self.modalScope = null;
-	};
+	}
 
 	/**
 	 * @ngdoc method
@@ -78,11 +74,11 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @methodOf talend.widget.service:TalendConfirmService
 	 * @description [PRIVATE] Create the confirm modal element and attach it to the body
 	 */
-	const createElement = function () {
+	function createElement() {
 		self.element = angular.element('<talend-confirm texts="texts"></talend-confirm>');
 		$compile(self.element)(self.modalScope);
 		body.append(self.element);
-	};
+	}
 
 	/**
 	 * @ngdoc method
@@ -90,10 +86,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @methodOf talend.widget.service:TalendConfirmService
 	 * @description [PRIVATE] Remove the the element
 	 */
-	const removeElement = function () {
+	function removeElement() {
 		self.element.remove();
 		self.element = null;
-	};
+	}
 
 	/**
 	 * @ngdoc method
@@ -101,13 +97,13 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @methodOf talend.widget.service:TalendConfirmService
 	 * @description [PRIVATE] Remove the modal and reset everything
 	 */
-	const close = function () {
+	function close() {
 		removeScope();
 		removeElement();
 
 		self.confirmResolve = null;
 		self.confirmReject = null;
-	};
+	}
 
 	/**
 	 * @ngdoc method
@@ -147,7 +143,7 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 		createScope(options, textIds, textArgs);
 		createElement();
 
-		return $q(function (resolve, reject) {
+		return $q((resolve, reject) => {
 			self.confirmResolve = resolve;
 			self.confirmReject = reject;
 		});

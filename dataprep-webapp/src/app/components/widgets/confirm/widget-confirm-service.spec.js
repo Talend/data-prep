@@ -11,12 +11,12 @@
 
   ============================================================================*/
 
-describe('Confirm widget service', function () {
+describe('Confirm widget service', () => {
 	'use strict';
 
 	beforeEach(angular.mock.module('talend.widget'));
 
-	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en_US', {
 			TEXT_1: 'TEXT_1_VALUE',
 			TEXT_2: 'TEXT_2_VALUE',
@@ -25,18 +25,19 @@ describe('Confirm widget service', function () {
 		$translateProvider.preferredLanguage('en_US');
 	}));
 
-	afterEach(inject(function ($timeout, TalendConfirmService) {
+	afterEach(inject(($timeout, TalendConfirmService) => {
 		if (TalendConfirmService.element) {
 			TalendConfirmService.resolve();
 			$timeout.flush();
 		}
 	}));
 
-	it('should create scope and confirm element with options', inject(function ($rootScope, TalendConfirmService) {
+	it('should create scope and confirm element with options', inject(($rootScope, TalendConfirmService) => {
 		//given
-		var text1 = 'TEXT_1';
-		var text2 = 'TEXT_2';
-		var body = angular.element('body');
+		const text1 = 'TEXT_1';
+		const text2 = 'TEXT_2';
+		const body = angular.element('body');
+
 		expect(TalendConfirmService.modalScope).toBeFalsy();
 		expect(TalendConfirmService.element).toBeFalsy();
 		expect(body.has('talend-confirm').length).toBe(0);
@@ -54,11 +55,12 @@ describe('Confirm widget service', function () {
 		expect(body.has('talend-confirm').length).toBe(1);
 	}));
 
-	it('should create scope and confirm element without options', inject(function ($rootScope, TalendConfirmService) {
+	it('should create scope and confirm element without options', inject(($rootScope, TalendConfirmService) => {
 		//given
-		var text1 = 'TEXT_1';
-		var text2 = 'TEXT_2';
-		var body = angular.element('body');
+		const text1 = 'TEXT_1';
+		const text2 = 'TEXT_2';
+		const body = angular.element('body');
+
 		expect(TalendConfirmService.modalScope).toBeFalsy();
 		expect(TalendConfirmService.element).toBeFalsy();
 		expect(body.has('talend-confirm').length).toBe(0);
@@ -76,11 +78,12 @@ describe('Confirm widget service', function () {
 		expect(body.has('talend-confirm').length).toBe(1);
 	}));
 
-	it('should create scope and confirm element with translate arguments', inject(function ($rootScope, TalendConfirmService) {
+	it('should create scope and confirm element with translate arguments', inject(($rootScope, TalendConfirmService) => {
 		//given
-		var text1 = 'TEXT_1';
-		var text3 = 'TEXT_3';
-		var body = angular.element('body');
+		const text1 = 'TEXT_1';
+		const text3 = 'TEXT_3';
+		const body = angular.element('body');
+
 		expect(TalendConfirmService.modalScope).toBeFalsy();
 		expect(TalendConfirmService.element).toBeFalsy();
 		expect(body.has('talend-confirm').length).toBe(0);
@@ -98,12 +101,12 @@ describe('Confirm widget service', function () {
 		expect(body.has('talend-confirm').length).toBe(1);
 	}));
 
-	describe('with existing confirm', function () {
-		var promise;
-		var element;
-		var scope;
+	describe('with existing confirm', () => {
+		let promise;
+		let element;
+		let scope;
 
-		beforeEach(inject(function ($rootScope, TalendConfirmService) {
+		beforeEach(inject(($rootScope, TalendConfirmService) => {
 			promise = TalendConfirmService.confirm();
 			$rootScope.$digest();
 
@@ -113,14 +116,12 @@ describe('Confirm widget service', function () {
 			spyOn(element, 'remove').and.returnValue();
 		}));
 
-		it('should throw error on confirm create but another confirm modal is already created', inject(function ($timeout, TalendConfirmService) {
+		it('should throw error on confirm create but another confirm modal is already created', inject(($timeout, TalendConfirmService) => {
 			//when
 			try {
 				TalendConfirmService.confirm();
-			}
-
-				//then
-			catch (error) {
+			} catch (error) {
+				// then
 				expect(error.message).toBe('A confirm popup is already created');
 				TalendConfirmService.resolve();
 				$timeout.flush();
@@ -130,15 +131,16 @@ describe('Confirm widget service', function () {
 			throw Error('should have thrown error on second confirm() call');
 		}));
 
-		it('should resolve promise and remove/destroy scope and element', inject(function ($timeout, TalendConfirmService) {
+		it('should resolve promise and remove/destroy scope and element', inject(($timeout, TalendConfirmService) => {
 			//given
-			var resolved = false;
-			promise.then(function () {
+			let resolved = false;
+			let scopeDestroyed = false;
+
+			promise.then(() => {
 				resolved = true;
 			});
 
-			var scopeDestroyed = false;
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				scopeDestroyed = true;
 			});
 
@@ -154,15 +156,16 @@ describe('Confirm widget service', function () {
 			expect(TalendConfirmService.element).toBeFalsy();
 		}));
 
-		it('should reject promise and remove/destroy scope and element', inject(function ($timeout, TalendConfirmService) {
+		it('should reject promise and remove/destroy scope and element', inject(($timeout, TalendConfirmService) => {
 			//given
-			var cause = false;
-			promise.catch(function (error) {
+			let cause = false;
+			let scopeDestroyed = false;
+
+			promise.catch((error) => {
 				cause = error;
 			});
 
-			var scopeDestroyed = false;
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', () => {
 				scopeDestroyed = true;
 			});
 

@@ -97,4 +97,46 @@ describe('Transformation simple params directive', () => {
         expect(element.find('.param-input').find('input[type="checkbox"]').length).toBe(1);
         expect(element.find('.param-input span').eq(0).text().trim()).toBe('Param 1');
     });
+
+	it('should render disabled input text if not editable', () => {
+		//given
+		scope.parameter =   {
+			name: 'param1',
+			label: 'Param 1',
+			type: 'text',
+			inputType: 'text',
+			default: '.',
+			value: true,
+			editable: false,
+		};
+
+		//when
+		let element = createElement();
+
+		//then
+        let input = element.find('.param-input').find('input[type="text"]');
+		expect(input.length).toBe(1);
+		expect(input.prop('disabled')).toBe(true);
+	});
+
+	it('should render disabled input checkbox text if not editable', () => {
+		//given
+		scope.parameter =   {
+			name: 'param1',
+			label: 'Param 1',
+			type: 'boolean',
+			inputType: 'checkbox',
+			default: '.',
+			value: true,
+			editable: false,
+		};
+
+		//when
+		let element = createElement();
+
+		//then
+		let input = element.find('.param-input').find('input[type="checkbox"]');
+		expect(input.length).toBe(1);
+		expect(input.prop('disabled')).toBe(true);
+	});
 });

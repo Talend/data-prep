@@ -260,9 +260,11 @@ export default class InventoryListCtrl {
 
 	adaptItemActions(item, actions, index) {
 		const adaptedActions = this.adaptActions(actions, item);
-		adaptedActions && adaptedActions.forEach((action) => {
-			action.id = `${this.id}-${index}-${action.id}`;
-		});
+		if (adaptedActions) {
+			adaptedActions.forEach((action) => {
+				action.id = `${this.id}-${index}-${action.id}`;
+			});
+		}
 		return adaptedActions;
 	}
 

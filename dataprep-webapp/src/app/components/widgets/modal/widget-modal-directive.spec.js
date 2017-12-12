@@ -405,7 +405,7 @@ describe('Modal directive', () => {
 
 			const body = angular.element('body');
 			body.append(element);
-			expect(document.activeElement).not.toBe(element.find('input'));
+			expect(document.activeElement).not.toBe(element);
 
 			//when
 			scope.state = true;

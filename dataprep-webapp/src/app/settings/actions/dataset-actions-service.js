@@ -88,7 +88,6 @@ export default class DatasetActionsService {
 			const dataset = action.payload.model;
 			this.TalendConfirmService
 				.confirm(
-					{},
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: 'dataset', name: dataset.name }
 				)

@@ -43,7 +43,7 @@ describe('Confirm widget service', () => {
 		expect(body.has('talend-confirm').length).toBe(0);
 
 		//when
-		TalendConfirmService.confirm({}, [text1, text2]);
+		TalendConfirmService.confirm([text1, text2]);
 		$rootScope.$digest();
 
 		//then
@@ -66,7 +66,7 @@ describe('Confirm widget service', () => {
 		expect(body.has('talend-confirm').length).toBe(0);
 
 		//when
-		TalendConfirmService.confirm(null, [text1, text2]);
+		TalendConfirmService.confirm([text1, text2]);
 		$rootScope.$digest();
 
 		//then
@@ -89,7 +89,7 @@ describe('Confirm widget service', () => {
 		expect(body.has('talend-confirm').length).toBe(0);
 
 		//when
-		TalendConfirmService.confirm(null, [text1, text3], { argValue: 'my value' });
+		TalendConfirmService.confirm([text1, text3], { argValue: 'my value' });
 		$rootScope.$digest();
 
 		//then

@@ -40,12 +40,11 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @ngdoc method
 	 * @name createScope
 	 * @methodOf talend.widget.service:TalendConfirmService
-	 * @param {object} options The modal options
 	 * @param {string[]} textIds The text ids for translation
 	 * @param {object} textArgs The translation args
 	 * @description [PRIVATE] Create confirm modal isolated scope
 	 */
-	function createScope(options, textIds, textArgs) {
+	function createScope(textIds, textArgs) {
 		if (self.modalScope) {
 			throw new Error('A confirm popup is already created');
 		}
@@ -132,15 +131,14 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
 	 * @ngdoc method
 	 * @name confirm
 	 * @methodOf talend.widget.service:TalendConfirmService
-	 * @param {object} options Confirm modal options {}
 	 * @param {string[]} textIds Array containing the texts ids to display
 	 * @param {object} textArgs Text translation args
 	 * @returns {promise} Promise that resolves (validate) or reject (refuse/cancel) the choice
 	 * @description Create the confirm modal element and return a promise that will be resolve on button click or modal dismiss
-	 * Example : TalendConfirmService.confirm({}, ['First text', 'Second text'], {translateArg: 'value'})
+	 * Example : TalendConfirmService.confirm(['First text', 'Second text'], {translateArg: 'value'})
 	 */
-	this.confirm = function (options, textIds, textArgs) {
-		createScope(options, textIds, textArgs);
+	this.confirm = function (textIds, textArgs) {
+		createScope(textIds, textArgs);
 		createElement();
 
 		return $q((resolve, reject) => {

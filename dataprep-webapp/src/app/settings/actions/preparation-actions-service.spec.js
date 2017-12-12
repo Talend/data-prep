@@ -347,7 +347,6 @@ describe('Preparation actions service', () => {
 		it('should ask confirmation', inject((TalendConfirmService) => {
 			// then
 			expect(TalendConfirmService.confirm).toHaveBeenCalledWith(
-				{},
 				['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 				{ type: 'preparation', name: preparation.name }
 			);

@@ -26,7 +26,7 @@
             "placeHolder": "",
             "description": "Number of Parts to split the value in",
             "label": "Parts",
-            "editable": null,
+            "readonly": null,
             "default": ""
           }
         ]
@@ -37,6 +37,6 @@
   "radio": false,
   "description": "The column to which you want to apply this action",
   "label": "Column",
-  "editable": true,
+  "readonly": true,
   "default": ""
 }

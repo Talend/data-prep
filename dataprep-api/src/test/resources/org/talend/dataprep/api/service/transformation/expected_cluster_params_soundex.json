@@ -16,7 +16,7 @@
             "placeHolder": "",
             "description": "Massachussetts",
             "label": "Massachussetts",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "Masachussets",
@@ -26,7 +26,7 @@
             "placeHolder": "",
             "description": "Masachussets",
             "label": "Masachussets",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "Massachusetts",
@@ -36,7 +36,7 @@
             "placeHolder": "",
             "description": "Massachusetts",
             "label": "Massachusetts",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "Masachusetts",
@@ -46,7 +46,7 @@
             "placeHolder": "",
             "description": "Masachusetts",
             "label": "Masachusetts",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "Massachusets",
@@ -56,7 +56,7 @@
             "placeHolder": "",
             "description": "Massachusets",
             "label": "Massachusets",
-            "editable": true
+            "readonly": true
           }
         ],
         "replace": {
@@ -80,7 +80,7 @@
             "placeHolder": "",
             "description": "t@t@",
             "label": "t@t@",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "T@T@",
@@ -90,7 +90,7 @@
             "placeHolder": "",
             "description": "T@T@",
             "label": "T@T@",
-            "editable": true
+            "readonly": true
           }
         ],
         "replace": {
@@ -114,7 +114,7 @@
             "placeHolder": "",
             "description": "tata",
             "label": "tata",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "Tata",
@@ -124,7 +124,7 @@
             "placeHolder": "",
             "description": "Tata",
             "label": "Tata",
-            "editable": true
+            "readonly": true
           }
         ],
         "replace": {
@@ -148,7 +148,7 @@
             "placeHolder": "",
             "description": "Texas",
             "label": "Texas",
-            "editable": true
+            "readonly": true
           },
           {
             "name": "Tixass",
@@ -158,7 +158,7 @@
             "placeHolder": "",
             "description": "Tixass",
             "label": "Tixass",
-            "editable": true
+            "readonly": true
           }
         ],
         "replace": {

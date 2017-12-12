@@ -7,5 +7,5 @@
   "description": "The column to which you want to apply this action",
   "label": "Column",
   "default": "0001",
-  "editable": true
+  "readonly": true
 }

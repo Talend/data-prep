@@ -119,7 +119,7 @@ describe('Transformation simple params directive', () => {
 		expect(input.prop('disabled')).toBe(true);
 	});
 
-	it('should render disabled input checkbox text if not editable', () => {
+	it('should render disabled input checkbox if not editable', () => {
 		//given
 		scope.parameter =   {
 			name: 'param1',
@@ -138,5 +138,26 @@ describe('Transformation simple params directive', () => {
 		let input = element.find('.param-input').find('input[type="checkbox"]');
 		expect(input.length).toBe(1);
 		expect(input.prop('disabled')).toBe(true);
+	});
+
+	it('should render input checkbox text if editable', () => {
+		//given
+		scope.parameter =   {
+			name: 'param1',
+			label: 'Param 1',
+			type: 'boolean',
+			inputType: 'checkbox',
+			default: '.',
+			value: true,
+			editable: true,
+		};
+
+		//when
+		let element = createElement();
+
+		//then
+		let input = element.find('.param-input').find('input[type="checkbox"]');
+		expect(input.length).toBe(1);
+		expect(input.prop('disabled')).toBe(false);
 	});
 });

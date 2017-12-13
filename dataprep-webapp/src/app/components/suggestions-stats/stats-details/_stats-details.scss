@@ -13,40 +13,46 @@
 
 .stats-part {
 
-  .stat-detail-tab-items {
-    height: calc(100% - 40px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: absolute;
-    width: 100%;
-  }
+  .stats-details {
+    @include flex-column();
+    height: 100%;
+    position: relative;
 
-  .two-columns-values {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    flex-direction: row;
+    .stat-detail-tab-items {
+      height: calc(100% - 40px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: absolute;
+      width: 100%;
+    }
 
-    .stat-table {
-      width: auto;
-      flex-grow: 0;
-      flex-shrink: 0;
+    .two-columns-values {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      flex-direction: row;
 
-      td {
-        border: 0;
-        padding: 0;
-      }
+      .stat-table {
+        width: auto;
+        flex-grow: 0;
+        flex-shrink: 0;
 
-      .stat-key {
-        text-align: right;
-      }
+        td {
+          border: 0;
+          padding: 0;
+        }
 
-      .stat-value {
-        text-align: left;
-        padding-left: 5px;
+        .stat-key {
+          text-align: right;
+        }
 
-        font-size: 15px;
-        font-weight: bold;
+        .stat-value {
+          text-align: left;
+          padding-left: 5px;
+
+          font-size: 15px;
+          font-weight: bold;
+        }
       }
     }
   }

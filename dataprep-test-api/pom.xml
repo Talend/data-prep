@@ -27,14 +27,8 @@
     <artifactId>dataprep-test-api</artifactId>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.24</slf4j.version>
-        <log4j.version>2.7</log4j.version>
         <cucumber.version>1.2.5</cucumber.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <!-- =================================================================================== -->
@@ -44,15 +38,16 @@
     <dependencies>
         <!--DataPrep API module-->
         <dependency>
-            <artifactId>dataprep-api</artifactId>
             <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-api</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <artifactId>dataprep-api</artifactId>
             <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
@@ -60,7 +55,7 @@
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>2.6.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Spring -->
@@ -96,7 +91,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
         </dependency>
     </dependencies>
 
@@ -111,10 +105,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <!-- by defaults, tests are skipped -->
+                    <!-- by default, tests are skipped (use dedicated profile to run them) -->
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
@@ -133,7 +126,6 @@
             <plugin>
                 <groupId>net.masterthought</groupId>
                 <artifactId>maven-cucumber-reporting</artifactId>
-                <version>3.10.0</version>
                 <executions>
                     <execution>
                         <id>execution</id>
@@ -155,7 +147,7 @@
     </build>
 
     <profiles>
-        <!-- this profile do run the integration tests -->
+        <!-- this profile runs the integration tests -->
         <profile>
             <id>run-tests</id>
             <build>
@@ -163,7 +155,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.20.1</version>
                         <configuration>
                             <testFailureIgnore>true</testFailureIgnore>
                             <skipTests>false</skipTests>

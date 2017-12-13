@@ -31,6 +31,7 @@ import org.talend.dataprep.maintenance.BaseMaintenanceTest;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.tql.api.TqlBuilder;
+import org.talend.tql.model.Expression;
 
 public class PreparationCleanerTest extends BaseMaintenanceTest {
 
@@ -39,6 +40,9 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
 
     @Mock
     private PreparationRepository repository;
+
+    @Mock
+    private StepMarker marker;
 
     @Test
     public void removeOrphanSteps_should_remove_orphan_step_after_at_least_X_hours() {
@@ -66,7 +70,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         // then
         verify(repository, never()).remove(eq(firstStep));
         verify(repository, never()).remove(eq(secondStep));
-        verify(repository, times(1)).remove(eq(orphanStep));
+        verify(repository, times(1)).remove(refEq(Step.class), any(Expression.class));
     }
 
     @Test
@@ -138,7 +142,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         cleaner.removeOrphanSteps();
 
         // then
-        verify(repository, times(1)).remove(eq(content));
+        verify(repository, times(1)).remove(refEq(Step.class), any(Expression.class));
     }
 
     @Test
@@ -260,8 +264,19 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         cleaner.removeOrphanSteps();
 
         // then
-        verify(repository, times(2)).remove(eq(content)); // 2 steps content
+        verify(repository, times(1)).remove(refEq(Step.class), any(Expression.class));
     }
 
+    @Test
+    public void shouldInterruptWhenMarkerAsksForInterruption() {
+        // given
+        cleaner.setMarkers(Collections.singletonList(marker));
+        when(marker.mark(any(), anyString())).thenReturn(StepMarker.Result.INTERRUPTED);
 
+        // when
+        cleaner.removeOrphanSteps();
+
+        // then
+        verify(repository, never()).remove(refEq(Step.class), any(Expression.class));
+    }
 }

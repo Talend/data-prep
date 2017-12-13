@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.preparation.store;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.preparation.Identifiable;
@@ -56,6 +57,12 @@ public interface PreparationRepository {
     void add(Identifiable object);
 
     /**
+     * Save of update a collection of {@link Identifiable} objects.
+     * @param objects The objects to save.
+     */
+    void add(Collection<? extends Identifiable> objects);
+
+    /**
      * Returns the Identifiable that matches the id and the class or <code>null</code> if none match.
      *
      * @param id the wanted Identifiable id.
@@ -78,4 +85,12 @@ public interface PreparationRepository {
      */
     void remove(Identifiable object);
 
+    /**
+     * Removes all the {@link Identifiable identifiable} from repository that matches the {@link Expression filter}.
+     * @param clazz The wanted Identifiable class.
+     * @param filter A TQL filter (i.e. storage-agnostic)
+     */
+    <T extends Identifiable> void remove(Class<T> clazz, Expression filter);
+
+    long count(Class<? extends Identifiable> clazz, Expression filter);
 }

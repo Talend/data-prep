@@ -50,6 +50,8 @@ public class Step extends Identifiable implements Serializable {
         ROOT_STEP.parent = null;
     }
 
+    private String marker;
+
     /**
      * Default empty constructor;
      */
@@ -181,12 +183,23 @@ public class Step extends Identifiable implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         Step step = (Step) o;
-        return Objects.equals(getId(), step.getId());
+        return Objects.equals(getId(), step.getId()) && Objects.equals(getMarker(), step.getMarker());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parent, preparationActions, rowMetadata, appVersion, diff);
+        return Objects.hash(parent, preparationActions, rowMetadata, appVersion, diff, marker);
     }
 
+    /**
+     * Sets a marker on this object (for efficient mass deletion, for example).
+     * @param marker The marker (as string) to set.
+     */
+    public void setMarker(String marker) {
+        this.marker = marker;
+    }
+
+    public String getMarker() {
+        return marker;
+    }
 }

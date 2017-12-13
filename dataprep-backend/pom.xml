@@ -18,10 +18,10 @@
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-parent</artifactId>
-        <version>2.3.0-BETA</version>
+        <version>2.3.0-BETA2</version>
     </parent>
     <artifactId>dataprep-backend</artifactId>
-    <version>2.3.0-BETA</version>
+    <version>2.3.0-BETA2</version>
     <packaging>pom</packaging>
     <name>dataprep-backend</name>
     <properties>
@@ -534,7 +534,7 @@
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
-                <version>2.3.0</version>
+                <version>2.7.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>

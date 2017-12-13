@@ -54,11 +54,10 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter
-                .selectParameter(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(ACTION_PARAMETER)
-                .item(DELETE)
-                .item(KEEP)
+                .item(DELETE, DELETE)
+                .item(KEEP, KEEP)
                 .defaultValue(DELETE)
                 .build(this));
 

@@ -77,13 +77,17 @@ public class PreparationServiceTest extends BasePreparationTest {
         assertThat(preparationService.listAll(null, null, "prep_name_home", null, null) //
                 .collect(Collectors.toList()).size(), is(1));
 
-        // then : : should list preparation with special character in preparation (see https://jira.talendforge.org/browse/TDP-4779)
-        assertThat(preparationService.listAll(null, null, "foo/Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv", null, null).collect(Collectors.toList()).size(),
-                is(1));
+        // then : : should list preparation with special character in preparation (see
+        // https://jira.talendforge.org/browse/TDP-4779)
+        assertThat(preparationService
+                .listAll(null, null, "foo/Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv", null, null)
+                .collect(Collectors.toList()).size(), is(1));
 
-        // then : : should list preparation with special character in folder and preparation (see https://jira.talendforge.org/browse/TDP-4779)
-        assertThat(preparationService.listAll(null, null, "Folder Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv/Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv", null, null).collect(Collectors.toList()).size(),
-                is(1));
+        // then : : should list preparation with special character in folder and preparation (see
+        // https://jira.talendforge.org/browse/TDP-4779)
+        assertThat(preparationService.listAll(null, null,
+                "Folder Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv/Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv",
+                null, null).collect(Collectors.toList()).size(), is(1));
     }
 
     private void init() throws IOException {

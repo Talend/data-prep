@@ -25,7 +25,6 @@ import static org.talend.dataprep.preparation.service.PreparationSearchCriterion
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 import static org.talend.tql.api.TqlBuilder.*;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -312,7 +311,7 @@ public class PreparationService {
      * @param destination the folder path where to copy the preparation, if empty, the copy is in the same folder.
      * @return The new preparation id.
      */
-    public String copy(String preparationId, String name, String destination) throws IOException {
+    public String copy(String preparationId, String name, String destination) {
 
         LOGGER.debug("copy {} to folder {} with {} as new name");
 
@@ -420,7 +419,7 @@ public class PreparationService {
      * @param destination The new folder of the preparation.
      * @param newName The new preparation name.
      */
-    public void move(String preparationId, String folder, String destination, String newName) throws IOException {
+    public void move(String preparationId, String folder, String destination, String newName) {
         //@formatter:on
 
         LOGGER.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);

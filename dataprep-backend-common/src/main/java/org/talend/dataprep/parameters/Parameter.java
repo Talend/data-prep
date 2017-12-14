@@ -24,10 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.i18n.ActionsBundle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -65,60 +63,14 @@ public class Parameter implements Serializable {
 
     private String description;
 
+    /** If the field is editable or not. */
+    private Boolean readonly;
+
     public Parameter() {
     }
 
-    /**
-     * Minimal default constructor.
-     *
-     * @param name The parameter name.
-     * @param type The parameter type.
-     */
-    protected Parameter(String name, ParameterType type) {
-        this(name, type, null, false, true);
-    }
-
-    /**
-     * Constructor with a default value.
-     *
-     * @param name The parameter name.
-     * @param type The parameter type.
-     * @param defaultValue the parameter default value.
-     */
-    protected Parameter(String name, ParameterType type, String defaultValue) {
-        this(name, type, defaultValue, false);
-    }
-
-    /**
-     * Constructor with a default value and the implicit flag.
-     *
-     * @param name The parameter name.
-     * @param type The parameter type.
-     * @param defaultValue the parameter default value.
-     * @param implicit true if the parameter is implicit.
-     */
-    protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit) {
-        this(name, type, defaultValue, implicit, true);
-    }
-
-    /**
-     * Full constructor.
-     *
-     * @param name The parameter name.
-     * @param type The parameter type.
-     * @param defaultValue the parameter default value.
-     * @param implicit true if the parameter is implicit.
-     * @param canBeBlank True if the parameter can be blank.
-     */
-    protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
-            final boolean canBeBlank) {
-        this(name, type, defaultValue, implicit, canBeBlank,
-                StringUtils.EMPTY, ActionsBundle.parameterLabel(null, Locale.US, name), ActionsBundle.parameterDescription(null, Locale.US,
-                        name));
-    }
-
-    protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
-            final boolean canBeBlank, String placeHolder, String label, String description) {
+    protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit, final boolean canBeBlank, String placeHolder, String label, String description,
+                        Boolean readonly) {
         this.name = name;
         this.placeHolder = placeHolder;
         this.type = type == null ? null : type.asString();
@@ -127,6 +79,7 @@ public class Parameter implements Serializable {
         this.canBeBlank = canBeBlank;
         this.label = label;
         this.description = description;
+        this.readonly = readonly;
     }
 
     public static ParameterBuilder parameter(Locale locale) {
@@ -220,6 +173,14 @@ public class Parameter implements Serializable {
         this.configuration = configuration;
     }
 
+    public Boolean isReadonly() {
+        return readonly;
+    }
+
+    public void setReadonly(Boolean readonly) {
+        this.readonly = readonly;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -228,12 +189,12 @@ public class Parameter implements Serializable {
         return implicit == parameter.implicit && canBeBlank == parameter.canBeBlank && Objects.equals(name, parameter.name)
                 && Objects.equals(type, parameter.type) && Objects.equals(defaultValue, parameter.defaultValue) && Objects.equals(
                 placeHolder, parameter.placeHolder) && Objects.equals(configuration, parameter.configuration) && Objects.equals(
-                label, parameter.label) && Objects.equals(description, parameter.description);
+                label, parameter.label) && Objects.equals(description, parameter.description) && Objects.equals(readonly, parameter.readonly);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, defaultValue, implicit, canBeBlank, placeHolder, configuration, label, description);
+        return Objects.hash(name, type, defaultValue, implicit, canBeBlank, placeHolder, configuration, label, description, readonly);
     }
 
     public static class ParameterBuilder {
@@ -257,6 +218,9 @@ public class Parameter implements Serializable {
         private String description;
 
         private Locale locale;
+
+        /** If the field is readonly or not (null means 'can be edited'). */
+        private Boolean readonly = null;
 
         private ParameterBuilder(Locale locale) {
             this.locale = locale;
@@ -302,6 +266,11 @@ public class Parameter implements Serializable {
             return this;
         }
 
+        public ParameterBuilder setReadonly(boolean readonly) {
+            this.readonly = readonly;
+            return this;
+        }
+
         // for now we still are forced to auto detect label and description parameters but if it is possible to do this
         // without binding parameter builder with the I18n mechanism it would be really great, hence the warnings
         public Parameter build(Object action) {
@@ -323,7 +292,7 @@ public class Parameter implements Serializable {
                     LOGGER.trace("Error while auto-finding description parameter for [{}].", name);
                 }
             }
-            return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description);
+            return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description, readonly);
         }
     }
 }

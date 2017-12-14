@@ -43,10 +43,11 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Swap
  */
-public class SwapTest extends BaseDateTest {
+public class SwapTest extends BaseDateTest<Swap> {
 
-    /** The action to test. */
-    private Swap action = new Swap();
+    public SwapTest() {
+        super(new Swap());
+    }
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -170,4 +171,18 @@ public class SwapTest extends BaseDateTest {
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_ROW));
     }
 
+    @Test
+    public void test_apply_in_newcolumn() {
+        // Nothing to test, this action is never applied in newcolumn
+    }
+
+    @Test
+    public void test_apply_inplace() {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.NA;
+    }
 }

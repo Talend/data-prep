@@ -15,7 +15,10 @@ package org.talend.dataprep.transformation.actions.dataquality;
 
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
@@ -27,9 +30,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
@@ -66,6 +69,8 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardizeInvalid.class);
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -74,7 +79,7 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        Parameter startParameter = SelectParameter.selectParameter(locale)
+        Parameter startParameter = selectParameter(locale)
                 .name(MATCH_THRESHOLD_PARAMETER)
                 .item(MatchThresholdEnum.HIGH.name(), MatchThresholdEnum.HIGH.getLabel())
                 .item(MatchThresholdEnum.DEFAULT.name(), MatchThresholdEnum.DEFAULT.getLabel())
@@ -88,7 +93,10 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+        }
+        if (actionContext.getActionStatus() == OK) {
             Map<String, String> parameters = actionContext.getParameters();
             Optional<Double> thresholdValue = getThresholdFromParameters(parameters);
             if (thresholdValue.isPresent()) {
@@ -100,7 +108,7 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
                 actionContext.get(COLUMN_IS_SEMANTIC_KEY, p -> isDictionaryType(column));
             } else {
                 LOGGER.warn("No valid threshold value received: got {}.", parameters.get(MATCH_THRESHOLD_PARAMETER));
-                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                actionContext.setActionStatus(CANCELED);
             }
         }
     }
@@ -154,10 +162,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
 
     /**
      * Applicable row only when the column uses semantic and the row value is invalid.
-     *
-     * @param row
-     * @param context
-     * @return
      */
     private boolean isApplicable(DataSetRow row, ActionContext context) {
         boolean isColumnUseSemantic = context.get(COLUMN_IS_SEMANTIC_KEY);
@@ -188,9 +192,9 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
         DEFAULT("default_match", 0.8),
         NONE("none_match", 0.0);
 
-        private String label;
+        private final String label;
 
-        private Double threshold;
+        private final Double threshold;
 
         MatchThresholdEnum(String label, Double threshold) {
             this.label = label;

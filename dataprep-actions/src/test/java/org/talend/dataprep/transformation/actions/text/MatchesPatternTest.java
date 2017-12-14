@@ -30,6 +30,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
@@ -39,14 +40,13 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see Split
  */
-public class MatchesPatternTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private MatchesPattern action = new MatchesPattern();
+public class MatchesPatternTest extends AbstractMetadataBaseTest<MatchesPattern> {
 
     private Map<String, String> parameters;
+
+    public MatchesPatternTest() {
+        super(new MatchesPattern());
+    }
 
     @Before
     public void init() throws IOException {
@@ -65,8 +65,18 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void shouldMatchPattern() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
@@ -192,7 +202,21 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
 
     private ActionContext buildPatternActionContext(String regex) {
         ActionContext context = new ActionContext(new TransformationContext());
-        context.setParameters(Collections.singletonMap(MatchesPattern.PATTERN_PARAMETER, regex));
+        // create and add a single column
+        RowMetadata rowMetadata = new RowMetadata();
+        ColumnMetadata column = new ColumnMetadata();
+        column.setId("0000");
+        column.setName("toto");
+        column.setType(Type.STRING.name());
+        rowMetadata.setColumns(Collections.singletonList(column));
+        context.setRowMetadata(rowMetadata);
+
+        // create and add minimalist parameters
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(MatchesPattern.PATTERN_PARAMETER, regex);
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey(), "0000");
+        context.setParameters(parameters);
+
         action.compile(context);
         return context;
     }

@@ -13,10 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 import java.util.*;
 
@@ -31,8 +29,6 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 
 /**
  * Change the domain of a column. <b>This action is not displayed in the UI it's here to ease recording it as a Step
@@ -69,7 +65,7 @@ public class DomainChange extends AbstractActionMetadata implements ColumnAction
 
     @Override
     public List<String> getActionScope() {
-        return Arrays.asList(HIDDEN_IN_ACTION_LIST.getDisplayName());
+        return singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
     }
 
     /**

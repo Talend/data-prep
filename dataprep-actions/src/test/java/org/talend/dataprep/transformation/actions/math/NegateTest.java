@@ -18,6 +18,8 @@ import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,8 +29,10 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -36,18 +40,29 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Negate
  */
-public class NegateTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private Negate action = new Negate();
+public class NegateTest extends AbstractMetadataBaseTest<Negate> {
 
     /** The action parameters. */
     private Map<String, String> parameters;
+
+    public NegateTest() {
+        super(new Negate());
+    }
 
     @Before
     public void setUp() throws Exception {
         final InputStream parametersSource = NegateTest.class.getResourceAsStream("negateAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
+    }
+
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
+    @Test
+    public void testActionParameters() throws Exception {
+        final List<Parameter> parameters = action.getParameters(Locale.US);
+        assertEquals(5, parameters.size());
     }
 
     @Test
@@ -56,6 +71,7 @@ public class NegateTest extends AbstractMetadataBaseTest {
         DataSetRow row = getRow("5", "3", "Done !");
 
         // when
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
@@ -64,7 +80,7 @@ public class NegateTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void negate_with_negative() {
+    public void test_apply_inplace() {
         // given
         DataSetRow row = getRow("-5", "3", "Done !");
 
@@ -72,6 +88,21 @@ public class NegateTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
+        assertEquals(3, row.getRowMetadata().size());
+        assertEquals("5", row.get("0000"));
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
+        // given
+        DataSetRow row = getRow("-5", "3", "Done !");
+
+        // when
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(4, row.getRowMetadata().size());
         assertColumnWithResultCreated(row);
         assertEquals("5", row.get("0003"));
     }
@@ -85,8 +116,7 @@ public class NegateTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertColumnWithResultCreated(row);
-        assertEquals("0.05", row.get("0003"));
+        assertEquals("0.05", row.get("0000"));
     }
 
     @Test
@@ -95,6 +125,7 @@ public class NegateTest extends AbstractMetadataBaseTest {
         DataSetRow row = getRow("beer", "3", "Done !");
 
         // when
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
@@ -109,7 +140,7 @@ public class NegateTest extends AbstractMetadataBaseTest {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_negate").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_negate").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

@@ -42,14 +42,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see FuzzyMatching
  */
-public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private FuzzyMatching action = new FuzzyMatching();
+public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
 
     private Map<String, String> parameters;
+
+    public FuzzyMatchingTest() {
+        super(new FuzzyMatching());
+    }
 
     @Before
     public void init() throws IOException {
@@ -67,8 +66,18 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_be_true_as_less_than_distance_with_constant() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "pale ale");
@@ -203,8 +212,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "sensitivity")).findFirst().isPresent());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "sensitivity")));
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode")));
     }
 
     @Test

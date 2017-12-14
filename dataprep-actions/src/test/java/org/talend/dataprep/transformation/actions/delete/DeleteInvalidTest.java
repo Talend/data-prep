@@ -37,10 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  *
  * @see DeleteInvalid
  */
-public class DeleteInvalidTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private DeleteInvalid deleteInvalid = new DeleteInvalid();
+public class DeleteInvalidTest extends AbstractMetadataBaseTest<DeleteInvalid> {
 
     private Map<String, String> parameters;
 
@@ -48,13 +45,19 @@ public class DeleteInvalidTest extends AbstractMetadataBaseTest {
      * Default constructor.
      */
     public DeleteInvalidTest() throws IOException {
-        parameters = ActionMetadataTestUtils
-                .parseParameters(DeleteInvalidTest.class.getResourceAsStream("deleteInvalidAction.json"));
+        super(new DeleteInvalid());
+        parameters = ActionMetadataTestUtils.parseParameters(DeleteInvalidTest.class
+                .getResourceAsStream("deleteInvalidAction.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test
     public void testActionScope() throws Exception {
-        assertThat(deleteInvalid.getActionScope(), hasItem("invalid"));
+        assertThat(action.getActionScope(), hasItem("invalid"));
     }
 
     @Test
@@ -71,30 +74,28 @@ public class DeleteInvalidTest extends AbstractMetadataBaseTest {
         rowMetadata.getById("0001").setType(Type.STRING.getName());
 
         //when
-        final RunnableAction action = factory.create(deleteInvalid, parameters);
+        final RunnableAction runnableAction = factory.create(action, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        runnableAction.getRowAction().apply(row, context);
 
         // then
         assertTrue(row.isDeleted());
         assertEquals("David Bowie", row.get("0000"));
     }
 
-
     @Test
     public void should_accept_column() {
         for (Type type : Type.values()) {
-            assertTrue(deleteInvalid.acceptField(getColumn(type)));
+            assertTrue(action.acceptField(getColumn(type)));
         }
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, deleteInvalid.getBehavior().size());
-        assertTrue(deleteInvalid.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
-        assertTrue(deleteInvalid.getBehavior().contains(ActionDefinition.Behavior.VALUES_ALL));
+        assertEquals(2, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_ALL));
     }
-
 
 }

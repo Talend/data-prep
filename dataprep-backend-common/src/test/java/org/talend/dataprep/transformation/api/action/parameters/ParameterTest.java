@@ -41,6 +41,7 @@ public class ParameterTest extends ParameterBaseTest {
                 .setDefaultValue("0001")
                 .setImplicit(true)
                 .setCanBeBlank(false)
+                .setReadonly(true)
                 .build(this);
 
         // when

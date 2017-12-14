@@ -29,6 +29,7 @@ import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -110,7 +111,6 @@ public abstract class AbstractMathOneParameterAction extends AbstractMathAction 
             LOGGER.debug(e.getMessage(), e);
         }
 
-        String newColumnId = context.column("result");
-        row.set(newColumnId, result);
+        row.set(ActionsUtils.getTargetColumnId(context), result);
     }
 }

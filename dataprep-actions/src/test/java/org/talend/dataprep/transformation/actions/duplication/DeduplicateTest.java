@@ -38,19 +38,23 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Deduplicate
  */
-public class DeduplicateTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private Deduplicate action = new Deduplicate();
+public class DeduplicateTest extends AbstractMetadataBaseTest<Deduplicate> {
 
     private Map<String, String> parameters;
+
+    public DeduplicateTest(){
+        super(new Deduplicate());
+    }
 
     private void initParameters() {
         parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "dataset");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

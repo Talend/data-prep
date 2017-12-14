@@ -48,8 +48,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     /**
      * <p>
-     * Adapts the current action metadata to the scope. This method may return <code>this</code> if no action specific
-     * change should be done. It may return a different instance with information from scope (like a different label).
+     * Adapts the current action metadata to the scope. This method may return <code>this</code> if no action specific change
+     * should be done. It may return a different instance with information from scope (like a different label).
      * </p>
      *
      * @param scope A {@link ScopeCategory scope}.
@@ -86,7 +86,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * @return The label of the action, translated in the user locale.
      * @see MessagesBundle
-     * @param locale
      */
     @Override
     public String getLabel(Locale locale) {
@@ -96,7 +95,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * @return The description of the action, translated in the user locale.
      * @see MessagesBundle
-     * @param locale
      */
     @Override
     public String getDescription(Locale locale) {
@@ -163,8 +161,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     /**
      * Called by transformation process <b>before</b> the first transformation occurs. This method allows action
      * implementation to compute reusable objects in actual transformation execution. Implementations may also indicate
-     * that action is not applicable and should be discarded (
-     * {@link ActionContext.ActionStatus#CANCELED}.
+     * that action is not applicable and should be discarded ( {@link ActionContext.ActionStatus#CANCELED}.
      *
      * @param actionContext The action context that contains the parameters and allows compile step to change action
      * status.
@@ -205,8 +202,6 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     /**
      * @return The list of parameters required for this Action to be executed.
-     *
-     * @param locale
      */
     @Override
     public List<Parameter> getParameters(Locale locale) {
@@ -221,4 +216,5 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
     public Function<GenericRecord, GenericRecord> action(List<Parameter> parameters) {
         return r -> r;
     }
+
 }

@@ -15,11 +15,14 @@ package org.talend.dataprep.transformation.actions.text;
 
 import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.api.type.Type.BOOLEAN;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.Action;
@@ -29,10 +32,9 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -53,11 +55,6 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
      */
     public static final String APPENDIX = "_contains_";
 
-    /**
-     * New column name context key.
-     */
-    public static final String NEW_COLUMN_NAME = "newColumnName";
-
     @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
@@ -74,20 +71,20 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
     }
 
     @Override
-    public List<Parameter> getParameters(Locale locale) {
+        public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(selectParameter(locale) //
                 .name(MODE_PARAMETER) //
                 .item(CONSTANT_MODE, CONSTANT_MODE,//
-                        Parameter.parameter(locale).setName(CONSTANT_VALUE)
-                                .setType(ParameterType.STRING)
+                        parameter(locale).setName(CONSTANT_VALUE)
+                                .setType(STRING)
                                 .setDefaultValue(EMPTY)
                                 .build(this)) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,//
-                        Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
-                                .setType(ParameterType.COLUMN)
-                                .setDefaultValue(StringUtils.EMPTY)
+                        parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(COLUMN)
+                                .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
                                 .build(this)) //
                 .defaultValue(CONSTANT_MODE).build(this));
@@ -95,45 +92,41 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         return parameters;
     }
 
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
+
+        final Map<String, String> parameters = context.getParameters();
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final String sourceColumnName = context.getColumnName();
+        String prefix;
+        if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
+            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            prefix = selectedColumn.getName();
+        } else {
+            prefix = parameters.get(CONSTANT_VALUE);
+        }
+        additionalColumns.add(ActionsUtils.additionalColumn().withName(sourceColumnName + APPENDIX + prefix).withType(Type.BOOLEAN));
+
+        return additionalColumns;
+    }
+
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+        if (context.getActionStatus() == OK) {
             checkSelectedColumnParameter(context.getParameters(), context.getRowMetadata());
-            // Create result column
-            final String columnId = context.getColumnId();
-            final RowMetadata rowMetadata = context.getRowMetadata();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            if (column != null) {
-                String newColumnName = evalNewColumnName(column.getName(), rowMetadata, context.getParameters());
-                context.get(NEW_COLUMN_NAME, p -> newColumnName);
-
-                context.column(newColumnName, r -> {
-                    final ColumnMetadata c = ColumnMetadata.Builder //
-                            .column() //
-                            .name(newColumnName) //
-                            .type(BOOLEAN) //
-                            .empty(column.getQuality().getEmpty()) //
-                            .invalid(column.getQuality().getInvalid()) //
-                            .valid(column.getQuality().getValid()) //
-                            .headerSize(column.getHeaderSize()) //
-                            .build();
-                    rowMetadata.insertAfter(columnId, c);
-                    return c;
-                });
-            }
         }
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
         final RowMetadata rowMetadata = context.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
         Map<String, String> parameters = context.getParameters();
 
-        // create new column and append it after current column
-        final String containsColumn = context.column(context.get(NEW_COLUMN_NAME));
+        final String containsColumn = ActionsUtils.getTargetColumnId(context);
 
         String value = row.get(context.getColumnId());
         String referenceValue;
@@ -147,17 +140,6 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
 
         boolean contains = value.contains(referenceValue);
         row.set(containsColumn, toStringTrueFalse(contains));
-    }
-
-    private String evalNewColumnName(String sourceColumnName, RowMetadata rowMetadata, Map<String, String> parameters) {
-        String prefix;
-        if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
-            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-            prefix = selectedColumn.getName();
-        } else {
-            prefix = parameters.get(CONSTANT_VALUE);
-        }
-        return sourceColumnName + APPENDIX + prefix;
     }
 
     /**

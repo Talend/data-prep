@@ -12,32 +12,40 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.lang.String.valueOf;
+import static java.text.CharacterIterator.DONE;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.math.NumberUtils.isNumber;
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CREATE_COLUMNS;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.SPLIT;
+import static org.talend.dataprep.util.NumericHelper.isBigDecimal;
+
 import java.math.BigDecimal;
-import java.text.CharacterIterator;
 import java.text.DecimalFormat;
 import java.text.StringCharacterIterator;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.util.NumericHelper;
 
 /**
  * This will extract the numeric part
- *
+ * <p>
  * We use metric prefix from <a href="https://en.wikipedia.org/wiki/Metric_prefix">Wikipedia</a>
- *
+ * <p>
  * <ul>
  * <li>tera, T, 1000000000000</li>
  * <li>giga, G, 1000000000</li>
@@ -67,12 +75,12 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     private static final int MAX_FRACTION_DIGITS_DISPLAY = 30;
 
     /** List of supported separators. */
-    private static final List<Character> SEPARATORS = Arrays.asList('.', ',');
+    private static final List<Character> SEPARATORS = asList('.', ',');
 
     /** K: the prefix, V: the value. */
-    private static Map<String, MetricPrefix> METRICPREFIXES = new ConcurrentHashMap<>(13);
+    private static final Map<String, MetricPrefix> METRIC_PREFIXES = new ConcurrentHashMap<>(13);
 
-    /**
+    /*
      * Initialize the supported metrics.
      *
      * <ul>
@@ -92,18 +100,18 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
      * </ul>
      */
     static {
-        METRICPREFIXES.put("T", new MetricPrefix(new BigDecimal("1000000000000"), "tera"));
-        METRICPREFIXES.put("G", new MetricPrefix(new BigDecimal("1000000000"), "giga"));
-        METRICPREFIXES.put("M", new MetricPrefix(new BigDecimal("1000000"), "mega"));
-        METRICPREFIXES.put("k", new MetricPrefix(new BigDecimal("1000"), "kilo"));
-        METRICPREFIXES.put("h", new MetricPrefix(new BigDecimal("100"), "hecto"));
-        METRICPREFIXES.put("da", new MetricPrefix(new BigDecimal("10"), "deca"));
-        METRICPREFIXES.put("d", new MetricPrefix(new BigDecimal("0.1"), "deci"));
-        METRICPREFIXES.put("c", new MetricPrefix(new BigDecimal("0.01"), "centi"));
-        METRICPREFIXES.put("m", new MetricPrefix(new BigDecimal("0.001"), "milli"));
-        METRICPREFIXES.put("μ", new MetricPrefix(new BigDecimal("0.000001"), "micro"));
-        METRICPREFIXES.put("n", new MetricPrefix(new BigDecimal("0.000000001"), "nano"));
-        METRICPREFIXES.put("p", new MetricPrefix(new BigDecimal("0.000000000001"), "pico"));
+        METRIC_PREFIXES.put("T", new MetricPrefix(new BigDecimal("1000000000000"), "tera"));
+        METRIC_PREFIXES.put("G", new MetricPrefix(new BigDecimal("1000000000"), "giga"));
+        METRIC_PREFIXES.put("M", new MetricPrefix(new BigDecimal("1000000"), "mega"));
+        METRIC_PREFIXES.put("k", new MetricPrefix(new BigDecimal("1000"), "kilo"));
+        METRIC_PREFIXES.put("h", new MetricPrefix(new BigDecimal("100"), "hecto"));
+        METRIC_PREFIXES.put("da", new MetricPrefix(new BigDecimal("10"), "deca"));
+        METRIC_PREFIXES.put("d", new MetricPrefix(new BigDecimal("0.1"), "deci"));
+        METRIC_PREFIXES.put("c", new MetricPrefix(new BigDecimal("0.01"), "centi"));
+        METRIC_PREFIXES.put("m", new MetricPrefix(new BigDecimal("0.001"), "milli"));
+        METRIC_PREFIXES.put("μ", new MetricPrefix(new BigDecimal("0.000001"), "micro"));
+        METRIC_PREFIXES.put("n", new MetricPrefix(new BigDecimal("0.000000001"), "nano"));
+        METRIC_PREFIXES.put("p", new MetricPrefix(new BigDecimal("0.000000000001"), "pico"));
     }
 
     private static String extractNumber(String value) {
@@ -114,21 +122,21 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     }
 
     /**
-     * @param value the value to parse.
+     * @param value        the value to parse.
      * @param defaultValue the value to return when no number can be extracted
      * @return the number extracted out of the given value.
      */
-    protected static String extractNumber(String value, String defaultValue) {
+    static String extractNumber(String value, String defaultValue) {
 
         // easy case
-        if (StringUtils.isEmpty(value)) {
+        if (isEmpty(value)) {
             return defaultValue;
         }
 
         // Test if the input value is a valid number before removing any characters:
-        if (NumericHelper.isBigDecimal(value)) {
+        if (isBigDecimal(value)) {
             // If yes (no exception thrown), return the value as it, no change required:
-            return String.valueOf(BigDecimalParser.toBigDecimal(value));
+            return valueOf(toBigDecimal(value));
         }
 
         StringCharacterIterator iter = new StringCharacterIterator(value);
@@ -140,21 +148,21 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
         // we build a new value including only number or separator as , or .
         StringBuilder reducedValue = new StringBuilder(value.length());
 
-        for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
+        for (char c = iter.first(); c != DONE; c = iter.next()) {
             // we remove all non numeric characters but keep separators
-            if (NumberUtils.isNumber(String.valueOf(c)) || SEPARATORS.contains(c)) {
+            if (isNumber(valueOf(c)) || SEPARATORS.contains(c)) {
                 reducedValue.append(c);
                 numberFound = true;
             } else {
                 // we take the first metric prefix found before and after a number found
                 if (metricPrefixBefore == null) {
-                    MetricPrefix found = METRICPREFIXES.get(String.valueOf(c));
+                    MetricPrefix found = METRIC_PREFIXES.get(valueOf(c));
                     if (found != null && !numberFound) {
                         metricPrefixBefore = found;
                     }
                 }
                 if (metricPrefixAfter == null) {
-                    MetricPrefix found = METRICPREFIXES.get(String.valueOf(c));
+                    MetricPrefix found = METRIC_PREFIXES.get(valueOf(c));
                     if (found != null && numberFound) {
                         metricPrefixAfter = found;
                     }
@@ -163,10 +171,10 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
             }
         }
 
-        if (!NumericHelper.isBigDecimal(reducedValue.toString())) {
+        if (!isBigDecimal(reducedValue.toString())) {
             return defaultValue;
         }
-        BigDecimal bigDecimal = BigDecimalParser.toBigDecimal(reducedValue.toString());
+        BigDecimal bigDecimal = toBigDecimal(reducedValue.toString());
 
         if (metricPrefixBefore != null || metricPrefixAfter != null) {
             // the metrix found after use first
@@ -186,7 +194,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
 
     @Override
     public String getCategory(Locale locale) {
-        return ActionCategory.SPLIT.getDisplayName(locale);
+        return SPLIT.getDisplayName(locale);
     }
 
     @Override
@@ -197,35 +205,21 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-
-            String columnId = context.getColumnId();
-            RowMetadata rowMetadata = context.getRowMetadata();
-            ColumnMetadata column = rowMetadata.getById(columnId);
-
-            // create new column and append it after current column
-            context.column("result", r -> {
-                ColumnMetadata c = ColumnMetadata.Builder //
-                        .column() //
-                        .name(column.getName() + "_number") //
-                        .type(Type.STRING) // Leave actual type detection to transformation
-                        .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + "_number")));
         }
     }
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
-        final String newColumnId = context.column("result");
-        row.set(newColumnId, extractNumber(row.get(columnId)));
+        row.set(ActionsUtils.getTargetColumnId(context), extractNumber(row.get(columnId)));
     }
 
     @Override
     public Set<Behavior> getBehavior() {
-        return Collections.singleton(Behavior.METADATA_CREATE_COLUMNS);
+        return singleton(METADATA_CREATE_COLUMNS);
     }
 
     /**

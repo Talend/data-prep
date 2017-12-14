@@ -34,18 +34,17 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
- * Test class for Split action. Creates one consumer, and test it.
+ * Test class for ComputeLength action. Creates one consumer, and test it.
  *
- * @see Split
+ * @see ComputeLength
  */
-public class ComputeLengthTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private ComputeLength action = new ComputeLength();
+public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
 
     private Map<String, String> parameters;
+
+    public ComputeLengthTest() {
+        super(new ComputeLength());
+    }
 
     @Before
     public void init() throws IOException {
@@ -65,8 +64,18 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_compute_length() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

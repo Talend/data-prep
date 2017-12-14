@@ -12,23 +12,25 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.fill;
 
-import java.math.BigInteger;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Map;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
-import org.apache.commons.lang.StringUtils;
+import java.math.BigInteger;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -52,24 +54,34 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     /** Class logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateSequence.class);
 
+    protected static final String NEW_COLUMN_SUFFIX = "_sequence";
+
     @Override
     public String getName() {
         return GenerateSequence.ACTION_NAME;
     }
 
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX));
+    }
+
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        Parameter startParameter = Parameter.parameter(locale).setName(START_VALUE)
-                .setType(ParameterType.INTEGER)
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, true));
+
+        Parameter startParameter = parameter(locale).setName(START_VALUE)
+                .setType(INTEGER)
                 .setDefaultValue("1")
                 .build(this);
         parameters.add(startParameter);
-        Parameter stepParameter = Parameter.parameter(locale).setName(STEP_VALUE)
-                .setType(ParameterType.INTEGER)
+
+        Parameter stepParameter = parameter(locale).setName(STEP_VALUE)
+                .setType(INTEGER)
                 .setDefaultValue("1")
                 .build(this);
         parameters.add(stepParameter);
+
         return parameters;
     }
 
@@ -91,13 +103,16 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), true)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
         Map<String, String> parameters = actionContext.getParameters();
-        if (StringUtils.isEmpty(parameters.get(START_VALUE)) || StringUtils.isEmpty(parameters.get(STEP_VALUE))) {
+        if (isEmpty(parameters.get(START_VALUE)) || isEmpty(parameters.get(STEP_VALUE))) {
             LOGGER.warn("At least one of the parameters is invalid {}/{} {}/{} ", START_VALUE, parameters.get(START_VALUE),
                     STEP_VALUE, parameters.get(STEP_VALUE));
-            actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            actionContext.setActionStatus(CANCELED);
         }
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (actionContext.getActionStatus() == OK) {
             actionContext.get(SEQUENCE, values -> new CalcSequence(parameters));
         }
     }
@@ -108,8 +123,7 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             return;
         }
         final CalcSequence sequence = context.get(SEQUENCE);
-        final String columnId = context.getColumnId();
-        row.set(columnId, sequence.getNextValue());
+        row.set(ActionsUtils.getTargetColumnId(context), sequence.getNextValue());
     }
 
     /** this class is used to calculate the sequence next step */
@@ -129,5 +143,6 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
             nextValue = nextValue.add(step);
             return toReturn;
         }
+
     }
 }

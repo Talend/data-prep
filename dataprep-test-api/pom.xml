@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ ============================================================================
+  ~ Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+  ~
+  ~ This source code is available under agreement available at
+  ~ https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~ You should have received a copy of the agreement
+  ~ along with this program; if not, write to Talend SA
+  ~ 9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.talend.dataprep</groupId>
-    <artifactId>dataprep-test-api</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
+    <parent>
+        <groupId>org.talend.dataprep</groupId>
+        <artifactId>dataprep-backend</artifactId>
+        <version>2.4.0-SNAPSHOT</version>
+        <relativePath>../dataprep-backend/pom.xml</relativePath>
+    </parent>
 
+    <artifactId>dataprep-test-api</artifactId>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.24</slf4j.version>
-        <log4j.version>2.7</log4j.version>
         <cucumber.version>1.2.5</cucumber.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <!-- =================================================================================== -->
@@ -27,23 +38,24 @@
     <dependencies>
         <!--DataPrep API module-->
         <dependency>
-            <artifactId>dataprep-api</artifactId>
             <groupId>org.talend.dataprep</groupId>
-            <version>2.3.0-SNAPSHOT</version>
+            <artifactId>dataprep-api</artifactId>
+            <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <artifactId>dataprep-api</artifactId>
             <groupId>org.talend.dataprep</groupId>
-            <version>2.3.0-SNAPSHOT</version>
+            <artifactId>dataprep-api</artifactId>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>2.6.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Spring -->
@@ -79,7 +91,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
         </dependency>
     </dependencies>
 
@@ -94,10 +105,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <!-- by defaults, tests are skipped -->
+                    <!-- by default, tests are skipped (use dedicated profile to run them) -->
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
@@ -116,7 +126,6 @@
             <plugin>
                 <groupId>net.masterthought</groupId>
                 <artifactId>maven-cucumber-reporting</artifactId>
-                <version>3.10.0</version>
                 <executions>
                     <execution>
                         <id>execution</id>
@@ -138,7 +147,7 @@
     </build>
 
     <profiles>
-        <!-- this profile do run the integration tests -->
+        <!-- this profile runs the integration tests -->
         <profile>
             <id>run-tests</id>
             <build>
@@ -146,7 +155,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.20.1</version>
                         <configuration>
                             <testFailureIgnore>true</testFailureIgnore>
                             <skipTests>false</skipTests>
@@ -156,16 +164,4 @@
             </build>
         </profile>
     </profiles>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>releases</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
-
 </project>

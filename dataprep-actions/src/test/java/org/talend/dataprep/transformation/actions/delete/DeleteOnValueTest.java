@@ -39,16 +39,22 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see DeleteOnValue
  */
-public class DeleteOnValueTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private DeleteOnValue action = new DeleteOnValue();
+public class DeleteOnValueTest extends AbstractMetadataBaseTest<DeleteOnValue> {
 
     private Map<String, String> parameters;
+
+    public DeleteOnValueTest() {
+        super(new DeleteOnValue());
+    }
 
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters(DeleteOnValueTest.class.getResourceAsStream("deleteOnValueAction.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.NA;
     }
 
     @Test

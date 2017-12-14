@@ -32,6 +32,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -40,10 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Cut
  */
-public class CutTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private Cut action = new Cut();
+public class CutTest extends AbstractMetadataBaseTest<Cut> {
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -52,6 +50,7 @@ public class CutTest extends AbstractMetadataBaseTest {
      * Constructor.
      */
     public CutTest() throws IOException {
+        super(new Cut());
         final InputStream parametersSource = SplitTest.class.getResourceAsStream("cutAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
@@ -68,8 +67,31 @@ public class CutTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+    }
+
     @Test
-    public void should_apply_on_column(){
+    public void test_apply_in_newcolumn() {
+        // given
+        DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
+        DataSetRow expectedRow = getRow("Wait for it...", "The value that gets cut !", "Done !", "value that gets cut !");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedRow, row);
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0001_cut").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", "value that gets cut !", "Done !");

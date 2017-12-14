@@ -42,14 +42,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Contains
  */
-public class ContainsTest extends AbstractMetadataBaseTest {
-
-    /**
-     * The action to test.
-     */
-    private Contains action = new Contains();
+public class ContainsTest extends AbstractMetadataBaseTest<Contains> {
 
     private Map<String, String> parameters;
+
+    public ContainsTest() {
+        super(new Contains());
+    }
 
     @Before
     public void init() throws IOException {
@@ -69,8 +68,18 @@ public class ContainsTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS.getDisplayName(Locale.US)));
     }
 
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
     @Test
-    public void should_set_new_column_name_constant_mode() {
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_in_newcolumn() {
         // given
         final DataSetRow row = builder() //
                 .with(value("first").type(Type.STRING).name("source")) //
@@ -279,7 +288,7 @@ public class ContainsTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(5, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode")));
     }
 
     @Test

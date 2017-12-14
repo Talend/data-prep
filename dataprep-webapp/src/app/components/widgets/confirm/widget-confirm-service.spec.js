@@ -11,173 +11,174 @@
 
   ============================================================================*/
 
-describe('Confirm widget service', function () {
-    'use strict';
+describe('Confirm widget service', () => {
+	'use strict';
 
-    beforeEach(angular.mock.module('talend.widget'));
+	beforeEach(angular.mock.module('talend.widget'));
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
-        $translateProvider.translations('en_US', {
-            TEXT_1: 'TEXT_1_VALUE',
-            TEXT_2: 'TEXT_2_VALUE',
-            TEXT_3: 'TEXT_3_VALUE : {{argValue}}',
-        });
-        $translateProvider.preferredLanguage('en_US');
-    }));
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en_US', {
+			TEXT_1: 'TEXT_1_VALUE',
+			TEXT_2: 'TEXT_2_VALUE',
+			TEXT_3: 'TEXT_3_VALUE : {{argValue}}',
+		});
+		$translateProvider.preferredLanguage('en_US');
+	}));
 
-    afterEach(inject(function ($timeout, TalendConfirmService) {
-        if (TalendConfirmService.element) {
-            TalendConfirmService.resolve();
-            $timeout.flush();
-        }
-    }));
+	afterEach(inject(($timeout, TalendConfirmService) => {
+		if (TalendConfirmService.element) {
+			TalendConfirmService.resolve();
+			$timeout.flush();
+		}
+	}));
 
-    it('should create scope and confirm element with options', inject(function ($rootScope, TalendConfirmService) {
-        //given
-        var text1 = 'TEXT_1';
-        var text2 = 'TEXT_2';
-        var body = angular.element('body');
-        expect(TalendConfirmService.modalScope).toBeFalsy();
-        expect(TalendConfirmService.element).toBeFalsy();
-        expect(body.has('talend-confirm').length).toBe(0);
+	it('should create scope and confirm element with options', inject(($rootScope, TalendConfirmService) => {
+		//given
+		const text1 = 'TEXT_1';
+		const text2 = 'TEXT_2';
+		const body = angular.element('body');
 
-        //when
-        TalendConfirmService.confirm({ disableEnter: true }, [text1, text2]);
-        $rootScope.$digest();
+		expect(TalendConfirmService.modalScope).toBeFalsy();
+		expect(TalendConfirmService.element).toBeFalsy();
+		expect(body.has('talend-confirm').length).toBe(0);
 
-        //then
-        expect(TalendConfirmService.modalScope).toBeTruthy();
-        expect(TalendConfirmService.modalScope.texts).toEqual(['TEXT_1_VALUE', 'TEXT_2_VALUE']);
-        expect(TalendConfirmService.modalScope.disableEnter).toBe(true);
-        expect(TalendConfirmService.element).toBeTruthy();
-        expect(TalendConfirmService.element.scope()).toBe(TalendConfirmService.modalScope);
+		//when
+		TalendConfirmService.confirm([text1, text2]);
+		$rootScope.$digest();
 
-        expect(body.has('talend-confirm').length).toBe(1);
-    }));
+		//then
+		expect(TalendConfirmService.modalScope).toBeTruthy();
+		expect(TalendConfirmService.modalScope.texts).toEqual(['TEXT_1_VALUE', 'TEXT_2_VALUE']);
+		expect(TalendConfirmService.element).toBeTruthy();
+		expect(TalendConfirmService.element.scope()).toBe(TalendConfirmService.modalScope);
 
-    it('should create scope and confirm element without options', inject(function ($rootScope, TalendConfirmService) {
-        //given
-        var text1 = 'TEXT_1';
-        var text2 = 'TEXT_2';
-        var body = angular.element('body');
-        expect(TalendConfirmService.modalScope).toBeFalsy();
-        expect(TalendConfirmService.element).toBeFalsy();
-        expect(body.has('talend-confirm').length).toBe(0);
+		expect(body.has('talend-confirm').length).toBe(1);
+	}));
 
-        //when
-        TalendConfirmService.confirm(null, [text1, text2]);
-        $rootScope.$digest();
+	it('should create scope and confirm element without options', inject(($rootScope, TalendConfirmService) => {
+		//given
+		const text1 = 'TEXT_1';
+		const text2 = 'TEXT_2';
+		const body = angular.element('body');
 
-        //then
-        expect(TalendConfirmService.modalScope).toBeTruthy();
-        expect(TalendConfirmService.modalScope.texts).toEqual(['TEXT_1_VALUE', 'TEXT_2_VALUE']);
-        expect(TalendConfirmService.modalScope.disableEnter).toBeFalsy();
-        expect(TalendConfirmService.element).toBeTruthy();
-        expect(TalendConfirmService.element.scope()).toBe(TalendConfirmService.modalScope);
+		expect(TalendConfirmService.modalScope).toBeFalsy();
+		expect(TalendConfirmService.element).toBeFalsy();
+		expect(body.has('talend-confirm').length).toBe(0);
 
-        expect(body.has('talend-confirm').length).toBe(1);
-    }));
+		//when
+		TalendConfirmService.confirm([text1, text2]);
+		$rootScope.$digest();
 
-    it('should create scope and confirm element with translate arguments', inject(function ($rootScope, TalendConfirmService) {
-        //given
-        var text1 = 'TEXT_1';
-        var text3 = 'TEXT_3';
-        var body = angular.element('body');
-        expect(TalendConfirmService.modalScope).toBeFalsy();
-        expect(TalendConfirmService.element).toBeFalsy();
-        expect(body.has('talend-confirm').length).toBe(0);
+		//then
+		expect(TalendConfirmService.modalScope).toBeTruthy();
+		expect(TalendConfirmService.modalScope.texts).toEqual(['TEXT_1_VALUE', 'TEXT_2_VALUE']);
+		expect(TalendConfirmService.element).toBeTruthy();
+		expect(TalendConfirmService.element.scope()).toBe(TalendConfirmService.modalScope);
 
-        //when
-        TalendConfirmService.confirm(null, [text1, text3], { argValue: 'my value' });
-        $rootScope.$digest();
+		expect(body.has('talend-confirm').length).toBe(1);
+	}));
 
-        //then
-        expect(TalendConfirmService.modalScope).toBeTruthy();
-        expect(TalendConfirmService.modalScope.texts).toEqual(['TEXT_1_VALUE', 'TEXT_3_VALUE : my value']);
-        expect(TalendConfirmService.element).toBeTruthy();
-        expect(TalendConfirmService.element.scope()).toBe(TalendConfirmService.modalScope);
+	it('should create scope and confirm element with translate arguments', inject(($rootScope, TalendConfirmService) => {
+		//given
+		const text1 = 'TEXT_1';
+		const text3 = 'TEXT_3';
+		const body = angular.element('body');
 
-        expect(body.has('talend-confirm').length).toBe(1);
-    }));
+		expect(TalendConfirmService.modalScope).toBeFalsy();
+		expect(TalendConfirmService.element).toBeFalsy();
+		expect(body.has('talend-confirm').length).toBe(0);
 
-    describe('with existing confirm', function () {
-        var promise;
-        var element;
-        var scope;
+		//when
+		TalendConfirmService.confirm([text1, text3], { argValue: 'my value' });
+		$rootScope.$digest();
 
-        beforeEach(inject(function ($rootScope, TalendConfirmService) {
-            promise = TalendConfirmService.confirm();
-            $rootScope.$digest();
+		//then
+		expect(TalendConfirmService.modalScope).toBeTruthy();
+		expect(TalendConfirmService.modalScope.texts).toEqual(['TEXT_1_VALUE', 'TEXT_3_VALUE : my value']);
+		expect(TalendConfirmService.element).toBeTruthy();
+		expect(TalendConfirmService.element.scope()).toBe(TalendConfirmService.modalScope);
 
-            scope = TalendConfirmService.modalScope;
-            element = TalendConfirmService.element;
+		expect(body.has('talend-confirm').length).toBe(1);
+	}));
 
-            spyOn(element, 'remove').and.returnValue();
-        }));
+	describe('with existing confirm', () => {
+		let promise;
+		let element;
+		let scope;
 
-        it('should throw error on confirm create but another confirm modal is already created', inject(function ($timeout, TalendConfirmService) {
-            //when
-            try {
-                TalendConfirmService.confirm();
-            }
+		beforeEach(inject(($rootScope, TalendConfirmService) => {
+			promise = TalendConfirmService.confirm();
+			$rootScope.$digest();
 
-            //then
-            catch (error) {
-                expect(error.message).toBe('A confirm popup is already created');
-                TalendConfirmService.resolve();
-                $timeout.flush();
-                return;
-            }
+			scope = TalendConfirmService.modalScope;
+			element = TalendConfirmService.element;
 
-            throw Error('should have thrown error on second confirm() call');
-        }));
+			spyOn(element, 'remove').and.returnValue();
+		}));
 
-        it('should resolve promise and remove/destroy scope and element', inject(function ($timeout, TalendConfirmService) {
-            //given
-            var resolved = false;
-            promise.then(function () {
-                resolved = true;
-            });
+		it('should throw error on confirm create but another confirm modal is already created', inject(($timeout, TalendConfirmService) => {
+			//when
+			try {
+				TalendConfirmService.confirm();
+			} catch (error) {
+				// then
+				expect(error.message).toBe('A confirm popup is already created');
+				TalendConfirmService.resolve();
+				$timeout.flush();
+				return;
+			}
 
-            var scopeDestroyed = false;
-            scope.$on('$destroy', function () {
-                scopeDestroyed = true;
-            });
+			throw Error('should have thrown error on second confirm() call');
+		}));
 
-            //when
-            TalendConfirmService.resolve();
-            $timeout.flush();
+		it('should resolve promise and remove/destroy scope and element', inject(($timeout, TalendConfirmService) => {
+			//given
+			let resolved = false;
+			let scopeDestroyed = false;
 
-            //then
-            expect(resolved).toBe(true);
-            expect(scopeDestroyed).toBe(true);
-            expect(element.remove).toHaveBeenCalled();
-            expect(TalendConfirmService.modalScope).toBeFalsy();
-            expect(TalendConfirmService.element).toBeFalsy();
-        }));
+			promise.then(() => {
+				resolved = true;
+			});
 
-        it('should reject promise and remove/destroy scope and element', inject(function ($timeout, TalendConfirmService) {
-            //given
-            var cause = false;
-            promise.catch(function (error) {
-                cause = error;
-            });
+			scope.$on('$destroy', () => {
+				scopeDestroyed = true;
+			});
 
-            var scopeDestroyed = false;
-            scope.$on('$destroy', function () {
-                scopeDestroyed = true;
-            });
+			//when
+			TalendConfirmService.resolve();
+			$timeout.flush();
 
-            //when
-            TalendConfirmService.reject('dismiss');
-            $timeout.flush();
+			//then
+			expect(resolved).toBe(true);
+			expect(scopeDestroyed).toBe(true);
+			expect(element.remove).toHaveBeenCalled();
+			expect(TalendConfirmService.modalScope).toBeFalsy();
+			expect(TalendConfirmService.element).toBeFalsy();
+		}));
 
-            //then
-            expect(cause).toBe('dismiss');
-            expect(scopeDestroyed).toBe(true);
-            expect(element.remove).toHaveBeenCalled();
-            expect(TalendConfirmService.modalScope).toBeFalsy();
-            expect(TalendConfirmService.element).toBeFalsy();
-        }));
-    });
+		it('should reject promise and remove/destroy scope and element', inject(($timeout, TalendConfirmService) => {
+			//given
+			let cause = false;
+			let scopeDestroyed = false;
+
+			promise.catch((error) => {
+				cause = error;
+			});
+
+			scope.$on('$destroy', () => {
+				scopeDestroyed = true;
+			});
+
+			//when
+			TalendConfirmService.reject('dismiss');
+			$timeout.flush();
+
+			//then
+			expect(cause).toBe('dismiss');
+			expect(scopeDestroyed).toBe(true);
+			expect(element.remove).toHaveBeenCalled();
+			expect(TalendConfirmService.modalScope).toBeFalsy();
+			expect(TalendConfirmService.element).toBeFalsy();
+		}));
+	});
 });

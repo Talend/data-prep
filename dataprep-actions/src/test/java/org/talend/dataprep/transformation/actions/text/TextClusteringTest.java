@@ -30,12 +30,24 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class TextClusteringTest extends AbstractMetadataBaseTest {
+public class TextClusteringTest extends AbstractMetadataBaseTest<TextClustering> {
 
-    private TextClustering textClustering = new TextClustering();
+    public TextClusteringTest() {
+        super(new TextClustering());
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.INVISIBLE_DISABLED;
+    }
 
     @Test
-    public void create_should_build_textclustering_consumer() {
+    public void test_apply_in_newcolumn() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    public void test_apply_inplace() {
         // given
         final String columnId = "0000";
 
@@ -53,7 +65,7 @@ public class TextClusteringTest extends AbstractMetadataBaseTest {
         rows.add(createRow(columnId, "Tata"));
 
         // when
-        ActionTestWorkbench.test(rows, actionRegistry, factory.create(textClustering, parameters));
+        ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
         rows.stream().map(row -> row.get(columnId)).forEach(uglyState -> Assertions.assertThat(uglyState).isEqualTo("Tata"));
@@ -61,14 +73,14 @@ public class TextClusteringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(textClustering.getCategory(Locale.US), is(ActionCategory.STRINGS_ADVANCED.getDisplayName(Locale.US)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.STRINGS_ADVANCED.getDisplayName(Locale.US)));
     }
 
     @Test
     public void testAdapt() throws Exception {
-        assertThat(textClustering.adapt((ColumnMetadata) null), is(textClustering));
+        assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(textClustering.adapt(column), is(textClustering));
+        assertThat(action.adapt(column), is(action));
     }
 
     @Test
@@ -90,7 +102,7 @@ public class TextClusteringTest extends AbstractMetadataBaseTest {
         rows.add(createRow(columnId, "Tata1"));
 
         // when
-        ActionTestWorkbench.test(rows, actionRegistry, factory.create(textClustering, parameters));
+        ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
         rows.stream().map((row) -> row.get(columnId)).forEach(uglyState -> Assertions.assertThat(uglyState).isNotEqualTo("Tata"));
@@ -103,23 +115,23 @@ public class TextClusteringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(textClustering.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(textClustering.acceptField(getColumn(Type.NUMERIC)));
-        assertFalse(textClustering.acceptField(getColumn(Type.DOUBLE)));
-        assertFalse(textClustering.acceptField(getColumn(Type.FLOAT)));
-        assertFalse(textClustering.acceptField(getColumn(Type.INTEGER)));
-        assertFalse(textClustering.acceptField(getColumn(Type.DATE)));
-        assertFalse(textClustering.acceptField(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.DOUBLE)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.INTEGER)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, textClustering.getBehavior().size());
-        assertTrue(textClustering.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

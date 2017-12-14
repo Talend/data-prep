@@ -36,20 +36,27 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 
-public class CreateNewColumnTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    private CreateNewColumn action = new CreateNewColumn();
+public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColumn> {
 
     private Map<String, String> parameters;
+
+    public CreateNewColumnTest() {
+        super(new CreateNewColumn());
+    }
 
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters(CreateNewColumnTest.class.getResourceAsStream("createNewColumnAction.json"));
+    }
+
+    @Override
+    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
     @Test
@@ -61,7 +68,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters(Locale.US);
         assertEquals(6, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode_new_column")).findFirst().isPresent());
+        assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode_new_column")));
     }
 
     @Test
@@ -77,7 +84,14 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_copy_row_constant() {
+    @Override
+    public void test_apply_inplace() throws Exception {
+        // Nothing to test, this action is never applied in place
+    }
+
+    @Test
+    @Override
+    public void test_apply_in_newcolumn() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
@@ -90,6 +104,8 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         expectedValues.put("0001", "Bacon ipsum");
         expectedValues.put("0003", "tagada");
         expectedValues.put("0002", "01/01/2015");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

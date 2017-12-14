@@ -1,8 +1,7 @@
 <talend-modal fullscreen="false"
               close-button="true"
               state="$ctrl.ImportService.datasetNameModal"
-              ng-if="$ctrl.ImportService.datasetNameModal"
-              disable-enter="true">
+              ng-if="$ctrl.ImportService.datasetNameModal">
     <span translate-once="ENTER_DATASET_NAME"></span>
     <form name="$ctrl.ImportService.datasetNameForm"
           ng-submit="$ctrl.ImportService.datasetNameForm.$valid && $ctrl.ImportService.onImportNameValidation()">

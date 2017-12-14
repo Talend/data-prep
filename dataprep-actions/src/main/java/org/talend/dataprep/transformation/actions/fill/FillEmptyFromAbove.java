@@ -13,7 +13,9 @@
 
 package org.talend.dataprep.transformation.actions.fill;
 
+import static java.util.Collections.singletonList;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.EnumSet;
 import java.util.Locale;
@@ -24,6 +26,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -38,6 +41,8 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
 
     /** previous row's value store. */
     public static final String PREVIOUS = "previous"; //$NON-NLS-1$
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -60,7 +65,10 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+        }
+        if (actionContext.getActionStatus() == OK) {
             actionContext.get(PREVIOUS, values -> new PreviousValueHolder());
         }
     }
@@ -80,10 +88,11 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
         // Empty means null, empty string and any whitespace only strings
         if (StringUtils.isBlank(value)) {
             if (holder.getValue() != null) {
-                row.set(columnId, holder.getValue());
+                row.set(ActionsUtils.getTargetColumnId(context), holder.getValue());
             }
         } else {
             holder.setValue(value);
+            row.set(ActionsUtils.getTargetColumnId(context), value);
         }
     }
 

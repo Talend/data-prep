@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DOUBLE;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 
 import java.math.BigDecimal;
@@ -28,6 +31,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
@@ -40,17 +44,34 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     /** Number of digit after the decimal symbol. */
     protected static final String PRECISION = "precision"; //$NON-NLS-1$
 
+    protected static  final String NEW_COLUMN_SUFFIX = "_rounded";
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.NUMBERS.getDisplayName(locale);
     }
 
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+        }
+    }
+
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter(locale).setName(PRECISION).setType(INTEGER).setDefaultValue("0").build(
-                this));
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        if (hasPrecisionField()) {
+            parameters.add(parameter(locale).setName(PRECISION).setType(INTEGER).setDefaultValue("0").build(this));
+        }
         return parameters;
+    }
+
+    protected boolean hasPrecisionField() {
+        return true;
     }
 
     @Override
@@ -77,7 +98,7 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
         if (NumericHelper.isBigDecimal(value)) {
             BigDecimal bd = BigDecimalParser.toBigDecimal(value);
             bd = bd.setScale(precision, getRoundingMode());
-            row.set(columnId, String.valueOf(bd));
+            row.set(ActionsUtils.getTargetColumnId(context), String.valueOf(bd));
         }
     }
 
@@ -88,6 +109,10 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
         Type columnType = Type.get(column.getType());
         // in order to 'clean' integer typed columns, this function needs to be allowed on any numeric types
         return Type.NUMERIC.isAssignableFrom(columnType);
+    }
+
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(DOUBLE));
     }
 
     @Override

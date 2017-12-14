@@ -13,10 +13,15 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.STRINGS;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.getColumnCreationParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.util.*;
 
@@ -26,6 +31,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -38,12 +44,16 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String CUT_ACTION_NAME = "cut"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_cut";
+
     /**
      * The pattern "where to cut" parameter name
      */
     public static final String PATTERN_PARAMETER = "pattern"; //$NON-NLS-1$
 
     public static final String REGEX_HELPER_KEY = "regex_helper";
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {
@@ -58,9 +68,13 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter(locale).setName(PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(
-                this));
+        parameters.add(getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        parameters.add(parameter(locale).setName(PATTERN_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this));
         return parameters;
+    }
+
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING));
     }
 
     @Override
@@ -71,7 +85,10 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
+        if (actionContext.getActionStatus() == OK) {
             final Map<String, String> parameters = actionContext.getParameters();
             String rawParam = parameters.get(PATTERN_PARAMETER);
 
@@ -79,7 +96,7 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
             try {
                 actionContext.get(REGEX_HELPER_KEY, p -> regexParametersHelper.build(rawParam, false));
             } catch (IllegalArgumentException e) {
-                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                actionContext.setActionStatus(CANCELED);
             }
         }
     }
@@ -97,11 +114,10 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
             if (replaceOnValueParameter.matches(toCut)) {
                 if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
                     String value = toCut.replaceAll(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
-                    row.set(columnId, value);
+                    row.set(ActionsUtils.getTargetColumnId(context), value);
                 } else {
                     String value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
-                    row.set(columnId, value);
-
+                    row.set(ActionsUtils.getTargetColumnId(context), value);
                 }
             }
         }

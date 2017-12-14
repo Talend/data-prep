@@ -39,14 +39,16 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-public class ModifyDateTest extends BaseDateTest {
-
-    /** The action to test. */
-    private ModifyDate action = new ModifyDate();
+public class ModifyDateTest extends BaseDateTest<ModifyDate> {
 
     private Map<String, String> parameters;
+
+    public ModifyDateTest() {
+        super(new ModifyDate());
+    }
 
     @Before
     public void init() throws IOException {
@@ -61,7 +63,7 @@ public class ModifyDateTest extends BaseDateTest {
     @Test
     public void testParameters() throws Exception {
         // 4 predefined patterns + custom = 5
-        assertThat(action.getParameters(Locale.US).size(), is(6));
+        assertThat(action.getParameters(Locale.US).size(), is(7));
     }
 
     @Test
@@ -74,6 +76,11 @@ public class ModifyDateTest extends BaseDateTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
+    }
+
+    @Override
+    public CreateNewColumnPolicy getCreateNewColumnPolicy() {
+        return CreateNewColumnPolicy.VISIBLE_DISABLED;
     }
 
     @Test(expected = TalendRuntimeException.class)
@@ -108,7 +115,29 @@ public class ModifyDateTest extends BaseDateTest {
     }
 
     @Test
-    public void should_process_row() throws Exception {
+    public void test_apply_in_newcolumn() throws Exception {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
+                .build();
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata", "04/25/2000");
+        assertEquals(expectedRow.values(), row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_inplace() throws Exception {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //

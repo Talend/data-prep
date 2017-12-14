@@ -12,7 +12,14 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.conversions;
 
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DOUBLE;
+import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.parameters.SelectParameter.SelectParameterBuilder;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+import static org.talend.dataquality.converters.DistanceEnum.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,9 +36,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.DistanceEnum;
@@ -53,41 +60,39 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     private static final String TARGET_PRECISION = "precision";
 
+    protected static final String NEW_COLUMN_SEPARATOR = "_in_";
+
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
     /**
      * @return The list of parameters required for this Action to be executed.
-     *
-     * @param locale*/
+     */
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
+        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        SelectParameter.SelectParameterBuilder builder = SelectParameter.selectParameter(locale)
-                .item(DistanceEnum.MILLIMETER.name(), DistanceEnum.MILLIMETER.getShortName())
-                .item(DistanceEnum.CENTIMETER.name(), DistanceEnum.CENTIMETER.getShortName())
-                .item(DistanceEnum.DECIMETER.name(), DistanceEnum.DECIMETER.getShortName())
-                .item(DistanceEnum.METER.name(), DistanceEnum.METER.getShortName())
-                .item(DistanceEnum.DEKAMETER.name(), DistanceEnum.DEKAMETER.getShortName())
-                .item(DistanceEnum.HECTOMETER.name(), DistanceEnum.HECTOMETER.getShortName())
-                .item(DistanceEnum.KILOMETER.name(), DistanceEnum.KILOMETER.getShortName())
-                .item(DistanceEnum.INCH.name(), DistanceEnum.INCH.getShortName())
-                .item(DistanceEnum.FOOT.name(), DistanceEnum.FOOT.getShortName())
-                .item(DistanceEnum.YARD.name(), DistanceEnum.YARD.getShortName())
-                .item(DistanceEnum.MILE.name(), DistanceEnum.MILE.getShortName())
-                .item(DistanceEnum.NAUTICAL_MILE.name(), DistanceEnum.NAUTICAL_MILE.getShortName())
-                .item(DistanceEnum.LIGHT_YEAR.name(), DistanceEnum.LIGHT_YEAR.getShortName())
+        SelectParameterBuilder builder = selectParameter(locale)
+                .item(MILLIMETER.name(), MILLIMETER.getShortName())
+                .item(CENTIMETER.name(), CENTIMETER.getShortName())
+                .item(DECIMETER.name(), DECIMETER.getShortName())
+                .item(METER.name(), METER.getShortName())
+                .item(DEKAMETER.name(), DEKAMETER.getShortName())
+                .item(HECTOMETER.name(), HECTOMETER.getShortName())
+                .item(KILOMETER.name(), KILOMETER.getShortName())
+                .item(INCH.name(), INCH.getShortName())
+                .item(FOOT.name(), FOOT.getShortName())
+                .item(YARD.name(), YARD.getShortName())
+                .item(MILE.name(), MILE.getShortName())
+                .item(NAUTICAL_MILE.name(), NAUTICAL_MILE.getShortName())
+                .item(LIGHT_YEAR.name(), LIGHT_YEAR.getShortName())
                 .canBeBlank(false);
 
-        parameters.add(builder
-                .defaultValue(DistanceEnum.MILE.name())
-                .name(FROM_UNIT_PARAMETER)
-                .build(this));
+        parameters.add(builder.defaultValue(MILE.name()).name(FROM_UNIT_PARAMETER).build(this));
 
-        parameters.add(builder
-                .defaultValue(DistanceEnum.KILOMETER.name())
-                .name(TO_UNIT_PARAMETER)
-                .build(this));
+        parameters.add(builder.defaultValue(KILOMETER.name()).name(TO_UNIT_PARAMETER).build(this));
 
-        parameters.add(Parameter.parameter(locale).setName(TARGET_PRECISION)
+        parameters.add(parameter(locale).setName(TARGET_PRECISION)
                 .setType(INTEGER)
                 .setDefaultValue("2")
                 .setPlaceHolder("precision")
@@ -106,6 +111,12 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
         return ActionCategory.CONVERSIONS.getDisplayName(locale);
     }
 
+    protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
+        return singletonList(ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER))
+                .withType(DOUBLE));
+    }
+
     @Override
     public boolean acceptField(ColumnMetadata column) {
         return Type.NUMERIC.isAssignableFrom(column.getType());
@@ -119,10 +130,14 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
-            DistanceEnum unitFrom = DistanceEnum.valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
-            DistanceEnum unitTo = DistanceEnum.valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
-            org.talend.dataquality.converters.DistanceConverter converter = new org.talend.dataquality.converters.DistanceConverter(unitFrom, unitTo);
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
+        }
+        if (actionContext.getActionStatus() == OK) {
+            DistanceEnum unitFrom = valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
+            DistanceEnum unitTo = valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
+            org.talend.dataquality.converters.DistanceConverter converter = new org.talend.dataquality.converters.DistanceConverter(
+                    unitFrom, unitTo);
             actionContext.get(ACTION_NAME, parameters -> converter);
         }
     }
@@ -149,7 +164,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
                 valueToString = columnValue;
             }
 
-            row.set(columnId, valueToString);
+            row.set(ActionsUtils.getTargetColumnId(context), valueToString);
         }
     }
 }

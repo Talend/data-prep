@@ -70,9 +70,4 @@ describe('Home Preparation Container', () => {
 		createElement();
 		expect(element.find('#preparations-list-display-mode').length).toBe(1);
 	});
-
-	it('should render sort dropdown', () => {
-		createElement();
-		expect(element.find('#preparations-list-sort-by').length).toBe(1);
-	});
 });

@@ -60,9 +60,4 @@ describe('Home Dataset Container', () => {
 		createElement();
 		expect(element.find('#datasets-list-display-mode').length).toBe(1);
 	});
-
-	it('should render sort dropdown', () => {
-		createElement();
-		expect(element.find('#datasets-list-sort-by').length).toBe(1);
-	});
 });

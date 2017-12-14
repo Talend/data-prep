@@ -36,11 +36,10 @@ describe('Actions list controller', () => {
         };
     }));
 
-    beforeEach(inject(($q, PlaygroundService, TransformationService, EarlyPreviewService) => {
+    beforeEach(inject(($q, PlaygroundService, TransformationService, EarlyPreviewService, StateService) => {
         spyOn(PlaygroundService, 'completeParamsAndAppend').and.returnValue($q.when());
         spyOn(TransformationService, 'initDynamicParameters').and.returnValue($q.when());
-        spyOn(EarlyPreviewService, 'activatePreview').and.returnValue();
-        spyOn(EarlyPreviewService, 'deactivatePreview').and.returnValue();
+        spyOn(StateService, 'setPreviewDisabled');
         spyOn(EarlyPreviewService, 'cancelPendingPreview').and.returnValue();
         spyOn(EarlyPreviewService, 'earlyPreview').and.returnValue();
     }));
@@ -119,7 +118,7 @@ describe('Actions list controller', () => {
             expect(PlaygroundService.completeParamsAndAppend).toHaveBeenCalledWith(transformation, 'column', undefined);
         }));
 
-        it('should cancel pending preview and disable it', inject((EarlyPreviewService) => {
+        it('should cancel pending preview and disable it', inject((EarlyPreviewService, StateService) => {
             //given
             const transformation = { name: 'tolowercase' };
             const params = { param: 'value' };
@@ -132,11 +131,11 @@ describe('Actions list controller', () => {
             closure(params);
 
             //then
-            expect(EarlyPreviewService.deactivatePreview).toHaveBeenCalled();
+            expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
             expect(EarlyPreviewService.cancelPendingPreview).toHaveBeenCalled();
         }));
 
-        it('should re-enable early preview after 500ms', inject( ($timeout, EarlyPreviewService) => {
+        it('should re-enable early preview after 500ms', inject( ($timeout, StateService) => {
             //given
             const transformation = { name: 'tolowercase' };
             const params = { param: 'value' };
@@ -149,11 +148,11 @@ describe('Actions list controller', () => {
             closure(params);
             scope.$digest();
 
-            expect(EarlyPreviewService.activatePreview).not.toHaveBeenCalled();
+            expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
             $timeout.flush(500);
 
             //then
-            expect(EarlyPreviewService.activatePreview).toHaveBeenCalled();
+            expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(false);
         }));
         it('should update transformationInProgress', inject(($timeout) => {
             //given

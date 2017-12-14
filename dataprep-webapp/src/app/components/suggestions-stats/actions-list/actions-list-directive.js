@@ -45,5 +45,16 @@ export default function ActionsList() {
 			scrollToBottom: '=',
 			scope: '@',
 		},
+		link: {
+			post(scope, iElement, iAttrs, ctrl) {
+				scope.$watch(
+					() => ctrl.actions,
+					(newValue) => {
+						if (newValue) {
+							ctrl.cancelEarlyPreview();
+						}
+					}, true);
+			},
+		},
 	};
 }

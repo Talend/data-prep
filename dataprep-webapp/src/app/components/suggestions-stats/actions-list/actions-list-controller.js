@@ -19,7 +19,8 @@
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.early-preview.service:EarlyPreviewService
  */
-export default function ActionsListCtrl($timeout, state, TransformationService, PlaygroundService, EarlyPreviewService) {
+export default function ActionsListCtrl($timeout, state, TransformationService,
+                                        PlaygroundService, EarlyPreviewService, StateService) {
 	'ngInject';
 
 	const vm = this;
@@ -152,7 +153,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
 	 */
 	vm.transform = function transform(action) {
 		return function (params) {
-			EarlyPreviewService.deactivatePreview();
+			StateService.setPreviewDisabled(true);
 			EarlyPreviewService.cancelPendingPreview();
 
 			if (!vm.transformationInProgress) {
@@ -163,7 +164,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
 					})
 					.finally(function () {
 						$timeout(() => {
-							EarlyPreviewService.activatePreview();
+							StateService.setPreviewDisabled(false);
 							vm.transformationInProgress = false;
 						}, 500, false);
 					});

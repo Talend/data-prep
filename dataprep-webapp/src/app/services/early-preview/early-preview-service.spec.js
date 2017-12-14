@@ -173,7 +173,7 @@ describe('Early Preview Service', () => {
     describe('activation', () => {
         it('should NOT trigger preview when it is disabled', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService) => {
             //given
-            EarlyPreviewService.deactivatePreview();
+	        stateMock.playground.previewDisabled = true;
 
             //when
             EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
@@ -184,9 +184,9 @@ describe('Early Preview Service', () => {
             expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
         }));
 
-        it('should NOT cancel current early preview when it is disabled', inject(($timeout, RecipeService, EarlyPreviewService, PreviewService) => {
+        it('should NOT cancel current early preview when it is disabled', inject(($timeout, RecipeService, EarlyPreviewService, PreviewService, StateService) => {
             //given
-            EarlyPreviewService.deactivatePreview();
+	        stateMock.playground.previewDisabled = true;
 
             //when
             EarlyPreviewService.cancelEarlyPreview();
@@ -197,15 +197,15 @@ describe('Early Preview Service', () => {
             expect(PreviewService.cancelPreview).not.toHaveBeenCalled();
         }));
 
-        it('should trigger preview when it is enabled', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService) => {
+        it('should trigger preview when it is enabled', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService, StateService) => {
             //given
-            EarlyPreviewService.deactivatePreview();
+	        stateMock.playground.previewDisabled = true;
             EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
             $timeout.flush(700);
             expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
 
             //when
-            EarlyPreviewService.activatePreview();
+	        stateMock.playground.previewDisabled = false;
             EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
             $timeout.flush(700);
 

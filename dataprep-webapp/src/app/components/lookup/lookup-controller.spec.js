@@ -232,15 +232,14 @@ describe('Lookup controller', () => {
 	});
 
 	describe('validation', () => {
-		beforeEach(inject(($q, PlaygroundService, EarlyPreviewService) => {
+		beforeEach(inject(($q, PlaygroundService, EarlyPreviewService, StateService) => {
 			spyOn(PlaygroundService, 'completeParamsAndAppend').and.returnValue($q.when(true));
 			spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
-			spyOn(EarlyPreviewService, 'activatePreview').and.returnValue();
-			spyOn(EarlyPreviewService, 'deactivatePreview').and.returnValue();
+			spyOn(StateService, 'setPreviewDisabled');
 			spyOn(EarlyPreviewService, 'cancelPendingPreview').and.returnValue();
 		}));
 
-		it('should cancel and deactivate preview', inject((EarlyPreviewService) => {
+		it('should cancel and deactivate preview', inject((EarlyPreviewService, StateService) => {
 			//given
 			const ctrl = createController();
 
@@ -248,23 +247,23 @@ describe('Lookup controller', () => {
 			ctrl.submit();
 
 			//then
-			expect(EarlyPreviewService.deactivatePreview).toHaveBeenCalled();
+			expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
 			expect(EarlyPreviewService.cancelPendingPreview).toHaveBeenCalled();
 		}));
 
 		it('should reactivate preview after the operation with a delay of 500ms',
-			inject(($q, $timeout, EarlyPreviewService) => {
+			inject(($q, $timeout, StateService) => {
 				//given
 				const ctrl = createController();
 
 				//when
 				ctrl.submit();
-				expect(EarlyPreviewService.activatePreview).not.toHaveBeenCalled();
+				expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
 				scope.$digest();
 				$timeout.flush(500);
 
 				//then
-				expect(EarlyPreviewService.activatePreview).toHaveBeenCalled();
+				expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(false);
 			}));
 
 		it('should add new lookup action', inject(($q, PlaygroundService) => {

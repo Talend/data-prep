@@ -15,13 +15,15 @@ const NO_OP = () => {};
 const DROPDOWN_ACTION = 'dropdown';
 const SPLITDROPDOWN_ACTION = 'splitDropdown';
 const ACTION_TYPE = 'actions';
+const LOADING_TIMEOUT_VALUE = 400;
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, appSettings, SettingsActionsService, state) {
+	constructor($element, $translate, $timeout, appSettings, SettingsActionsService, state) {
 		'ngInject';
 
 		this.$element = $element;
 		this.$translate = $translate;
+		this.$timeout = $timeout;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
 		this.state = state;
@@ -50,10 +52,12 @@ export default class InventoryListCtrl {
 
 	$onChanges(changes) {
 		if (changes.folders || changes.items) {
+			this.$timeout.cancel(this.loadingTimeout);
 			const allItems = (this.folders || []).concat(this.items || []);
 			this.listProps = {
 				...this.listProps,
 				items: this.adaptItemsActions(allItems),
+				inProgress: false,
 			};
 		}
 		if (changes.sortBy || changes.sortDesc) {
@@ -61,6 +65,12 @@ export default class InventoryListCtrl {
 			const isDescending = this.sortDesc;
 			this.toolbarProps = this.changeSort(this.toolbarProps, field, isDescending);
 			this.listProps = this.changeSort(this.listProps, field, isDescending);
+			this.loadingTimeout = this.$timeout(() => {
+				this.listProps = {
+					...this.listProps,
+					inProgress: true,
+				};
+			}, LOADING_TIMEOUT_VALUE);
 		}
 		if (changes.isLoading) {
 			this.listProps = {

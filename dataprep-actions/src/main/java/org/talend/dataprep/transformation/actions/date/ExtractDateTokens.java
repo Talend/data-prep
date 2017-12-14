@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.date;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
+import java.text.DateFormatSymbols;
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
@@ -56,8 +57,14 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Month constant value. */
     private static final String MONTH = "MONTH";
 
+    /** Month constant value. */
+    protected static final String MONTH_LABEL = "MONTH_LABEL";
+
     /** Day constant value. */
     private static final String DAY = "DAY";
+
+    /** Day label constant value. */
+    protected static final String DAY_LABEL = "DAY_LABEL";
 
     /** Hour 12 constant value. */
     private static final String HOUR_12 = "HOUR_12";
@@ -93,7 +100,9 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
             new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
+            new DateFieldMappingBean(MONTH_LABEL, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(DAY, ChronoField.DAY_OF_MONTH), //
+            new DateFieldMappingBean(DAY_LABEL, ChronoField.DAY_OF_WEEK),
             new DateFieldMappingBean(HOUR_12, ChronoField.HOUR_OF_AMPM), //
             new DateFieldMappingBean(AM_PM, ChronoField.AMPM_OF_DAY), //
             new DateFieldMappingBean(HOUR_24, ChronoField.HOUR_OF_DAY), //
@@ -139,7 +148,8 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
             for (DateFieldMappingBean date_field : DATE_FIELDS) {
                 if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
-                    additionalColumns.add(ActionsUtils.additionalColumn()
+                    additionalColumns.add(ActionsUtils
+                            .additionalColumn()
                             .withKey(date_field.key)
                             .withName(context.getColumnName() + SEPARATOR + date_field.key)
                             .withType(Type.INTEGER));
@@ -174,11 +184,19 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                 String newValue = StringUtils.EMPTY;
                 if (temporalAccessor != null && // may occurs if date can not be parsed with pattern
                         temporalAccessor.isSupported(date_field.field)) {
-                    if (QUARTER.equals(date_field.key)) {
+                    switch (date_field.key) {
+                    case QUARTER:
                         newValue = String.valueOf(getQuarter(temporalAccessor.get(date_field.field)));
-                    }
-                    else {
+                        break;
+                    case DAY_LABEL:
+                        newValue = String.valueOf(getLabelDay(temporalAccessor.get(date_field.field)));
+                        break;
+                    case MONTH_LABEL:
+                        newValue = String.valueOf(getLabelMonth(temporalAccessor.get(date_field.field)));
+                        break;
+                    default:
                         newValue = String.valueOf(temporalAccessor.get(date_field.field));
+                        break;
                     }
                 }
                 row.set(ActionsUtils.getTargetColumnIds(context).get(date_field.key), newValue);
@@ -194,6 +212,32 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
      */
     int getQuarter(int numMonth) {
         return (numMonth - 1) / 3 + 1;
+    }
+
+    /**
+     * Get the quarter of the year.
+     *
+     * @param numDayOfWeek the number of the month
+     * @return the day label
+     */
+    String getLabelDay(int numDayOfWeek) {
+        String[] label = DateFormatSymbols.getInstance(Locale.ENGLISH).getWeekdays();
+        if (numDayOfWeek < 7) {
+            return label[numDayOfWeek + 1];
+        } else {
+            return label[1];
+        }
+    }
+
+    /**
+     * Get the quarter of the year.
+     *
+     * @param numMonth the number of the month
+     * @return the month label
+     */
+    String getLabelMonth(int numMonth) {
+        String[] label = DateFormatSymbols.getInstance(Locale.ENGLISH).getMonths();
+        return label[numMonth - 1];
     }
 
     @Override

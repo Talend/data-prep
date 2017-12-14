@@ -30,6 +30,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -219,6 +220,7 @@ public class PreparationService {
                 Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
                 filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
             }
+
             preparationStream = preparationRepository.list(Preparation.class, filter);
         }
 
@@ -293,7 +295,8 @@ public class PreparationService {
     private Expression getNameFilter(String name, boolean exactMatch) {
         LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
         final String regex;
-        final String regexMainPart = "(?i)" + name;
+        // Add case insensitive and escape special characters in name
+        final String regexMainPart = "(?i)" + Pattern.quote(name);
         if (exactMatch) {
             regex = "^" + regexMainPart + "$";
         } else {

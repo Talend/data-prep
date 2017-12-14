@@ -15,11 +15,12 @@ describe('Action list directive', () => {
     let scope;
     let createElement;
     let element;
+    let ctrl;
 
     beforeEach(angular.mock.module('ngSanitize'));
     beforeEach(angular.mock.module('data-prep.actions-list'));
 
-    beforeEach(inject(($rootScope, $compile) => {
+    beforeEach(inject(($rootScope, $compile, $controller) => {
         scope = $rootScope.$new();
         createElement = () => {
             element = angular.element('<actions-list ' +
@@ -29,6 +30,8 @@ describe('Action list directive', () => {
                 'scope="scope"></actions-list>');
             $compile(element)(scope);
             scope.$digest();
+	        ctrl = element.controller('actionsList');
+	        spyOn(ctrl, 'cancelEarlyPreview');
         };
     }));
 
@@ -108,6 +111,38 @@ describe('Action list directive', () => {
             expect(element.find('.actions-group .trigger').eq(3).text().trim()).toBe('action 4');
             expect(element.find('.actions-group .trigger').eq(4).text().trim()).toBe('action 5');
         }));
+
+	    it('should cancel EarlyPreview when rendering actions', inject(() => {
+		    //given
+		    scope.actions = [
+			    {
+				    category: 'cat2',
+				    categoryHtml: 'Category 2',
+				    transformations: [
+					    { name: '3', labelHtml: 'action 3' },
+					    { name: '4', labelHtml: 'action 4' },
+					    { name: '5', labelHtml: 'action 5' },
+				    ],
+			    },
+            ];
+		    //when
+		    createElement();
+
+		    scope.actions = [
+			    {
+				    category: 'cat1',
+				    categoryHtml: 'Category 1',
+				    transformations: [
+					    { name: '1', labelHtml: 'action 1' },
+					    { name: '2', labelHtml: 'action 2' },
+				    ],
+			    },
+		    ];
+		    scope.$digest();
+
+		    //then
+		    expect(ctrl.cancelEarlyPreview).toHaveBeenCalled();
+	    }));
     });
 
     describe('filter', () => {

@@ -142,7 +142,8 @@ describe('Datasets actions service', () => {
 						field: 'name',
 						isDescending: false,
 					}
-				}
+				},
+				isFetchingDatasets : false,
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -153,17 +154,53 @@ describe('Datasets actions service', () => {
 			spyOn(DatasetService, 'init').and.returnValue($q.when());
 			spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.when());
 			spyOn(DatasetService, 'clone').and.returnValue($q.when());
-			spyOn(DatasetService, 'toggleFavorite').and.returnValue();
 			spyOn(DatasetService, 'delete').and.returnValue($q.when());
 			spyOn(DatasetService, 'rename').and.returnValue($q.when());
 			spyOn(StateService, 'setDatasetsDisplayMode').and.returnValue();
 			spyOn(StateService, 'setDatasetToUpdate').and.returnValue();
 			spyOn(StorageService, 'setDatasetsSort').and.returnValue();
+			spyOn(DatasetService, 'changeSort').and.returnValue($q.when());
+			spyOn(DatasetService, 'toggleFavorite').and.returnValue($q.when());
+		}));
+
+		it('should NOT be execute blocking action if loading is processing', inject((DatasetService, DatasetActionsService) => {
+			//given
+			stateMock.inventory.isFetchingDatasets=true;
+			const action = {
+				type: '@@dataset/DATASET_FETCH'
+			};
+
+			// when
+			DatasetActionsService.dispatch(action);
+
+			// then
+			expect(DatasetService.init).not.toHaveBeenCalled();
+		}));
+
+		it('should execute NONE blocking action if loading is processing', inject((DatasetActionsService, UploadWorkflowService) => {
+			//given
+			stateMock.inventory.isFetchingDatasets=true;
+			// given
+			const dataset = { id: 'myDatasetId', draft: true };
+			const event = { button: 1 };
+			const action = {
+				type: '@@dataset/OPEN',
+				payload: { model: dataset },
+				event,
+			};
+
+			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
+
+			// when
+			DatasetActionsService.dispatch(action);
+
+			// then
+			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset, event);
+
 		}));
 
 		it('should change sort', inject((DatasetService, DatasetActionsService) => {
 			// given
-			spyOn(DatasetService, 'changeSort').and.returnValue();
 			const action = {
 				type: '@@dataset/SORT',
 				payload: {

@@ -52,12 +52,10 @@ export default class InventoryListCtrl {
 
 	$onChanges(changes) {
 		if (changes.folders || changes.items) {
-			this.$timeout.cancel(this.loadingTimeout);
 			const allItems = (this.folders || []).concat(this.items || []);
 			this.listProps = {
 				...this.listProps,
 				items: this.adaptItemsActions(allItems),
-				inProgress: false,
 			};
 		}
 		if (changes.sortBy || changes.sortDesc) {
@@ -65,18 +63,23 @@ export default class InventoryListCtrl {
 			const isDescending = this.sortDesc;
 			this.toolbarProps = this.changeSort(this.toolbarProps, field, isDescending);
 			this.listProps = this.changeSort(this.listProps, field, isDescending);
-			this.loadingTimeout = this.$timeout(() => {
-				this.listProps = {
-					...this.listProps,
-					inProgress: true,
-				};
-			}, LOADING_TIMEOUT_VALUE);
 		}
 		if (changes.isLoading) {
-			this.listProps = {
-				...this.listProps,
-				inProgress: this.isLoading,
-			};
+			if (this.isLoading) {
+				this.loadingTimeout = this.$timeout(() => {
+					this.listProps = {
+						...this.listProps,
+						inProgress: true,
+					};
+				}, LOADING_TIMEOUT_VALUE);
+			}
+			else {
+				this.$timeout.cancel(this.loadingTimeout);
+				this.listProps = {
+					...this.listProps,
+					inProgress: false,
+				};
+			}
 		}
 	}
 

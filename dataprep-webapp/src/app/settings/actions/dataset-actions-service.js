@@ -29,21 +29,37 @@ export default class DatasetActionsService {
 		this.UploadWorkflowService = UploadWorkflowService;
 
 		this.renamingList = [];
+
+		this.blocking = [
+			'@@dataset/SORT',
+			'@@dataset/CLONE',
+			'@@dataset/FAVORITE',
+			'@@dataset/DATASET_FETCH',
+		];
 	}
 
+
 	dispatch(action) {
+		if (this.blocking.includes(action.type)) {
+			if (this.state.inventory.isFetchingDatasets) {
+				return;
+			}
+			// all blocking method create a loading interface
+			this.StateService.setFetchingInventoryDatasets(true);
+		}
+
 		switch (action.type) {
 		case '@@dataset/SORT':
 		case '@@dataset/FAVORITE': {
-			this.DatasetService[action.payload.method](action.payload);
+			this.DatasetService[action.payload.method](action.payload)
+				.finally(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		}
 		case '@@dataset/DATASET_FETCH':
 			this.StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
-			this.StateService.setFetchingInventoryDatasets(true);
 			this.DatasetService
 				.init()
-				.then(() => this.StateService.setFetchingInventoryDatasets(false));
+				.finally(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		case '@@dataset/SUBMIT_EDIT': {
 			const newName = action.payload.value;
@@ -102,7 +118,8 @@ export default class DatasetActionsService {
 		case '@@dataset/CLONE': {
 			const dataset = action.payload.model;
 			this.DatasetService.clone(dataset)
-				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
+				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'))
+				.finally(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		}
 		case '@@dataset/UPDATE': {

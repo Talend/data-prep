@@ -837,6 +837,16 @@
         "label": "Second",
         "description": "Extract second from minute",
         "default": "false"
+      },
+      {
+        "name": "LANGUAGE",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "default": "English",
+        "description": "Language for the month and day names",
+        "label": "Language"
       }
     ],
     "actionScope": [],

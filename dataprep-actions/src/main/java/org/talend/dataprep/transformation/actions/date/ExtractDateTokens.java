@@ -15,12 +15,15 @@ package org.talend.dataprep.transformation.actions.date;
 
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 
 import java.text.DateFormatSymbols;
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -31,6 +34,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
@@ -63,9 +67,6 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Day constant value. */
     private static final String DAY = "DAY";
 
-    /** Day label constant value. */
-    protected static final String DAY_LABEL = "DAY_LABEL";
-
     /** Hour 12 constant value. */
     private static final String HOUR_12 = "HOUR_12";
 
@@ -84,11 +85,18 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Day of week constant value. */
     private static final String DAY_OF_WEEK = "DAY_OF_WEEK";
 
+    /** Day label constant value. */
+    protected static final String DAY_LABEL = "DAY_LABEL";
+
     /** Day of year constant value. */
     private static final String DAY_OF_YEAR = "DAY_OF_YEAR";
 
     /** Week of year constant value. */
     private static final String WEEK_OF_YEAR = "WEEK_OF_YEAR";
+
+    private static final String LANGUAGE = "LANGUAGE";
+
+    private static String LOCALE;
 
     /** True constant value. */
     private static final String TRUE = "true";
@@ -102,13 +110,13 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH_LABEL, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(DAY, ChronoField.DAY_OF_MONTH), //
-            new DateFieldMappingBean(DAY_LABEL, ChronoField.DAY_OF_WEEK),
             new DateFieldMappingBean(HOUR_12, ChronoField.HOUR_OF_AMPM), //
             new DateFieldMappingBean(AM_PM, ChronoField.AMPM_OF_DAY), //
             new DateFieldMappingBean(HOUR_24, ChronoField.HOUR_OF_DAY), //
             new DateFieldMappingBean(MINUTE, ChronoField.MINUTE_OF_HOUR), //
             new DateFieldMappingBean(SECOND, ChronoField.SECOND_OF_MINUTE), //
             new DateFieldMappingBean(DAY_OF_WEEK, ChronoField.DAY_OF_WEEK), //
+            new DateFieldMappingBean(DAY_LABEL, ChronoField.DAY_OF_WEEK), //
             new DateFieldMappingBean(DAY_OF_YEAR, ChronoField.DAY_OF_YEAR), //
             new DateFieldMappingBean(WEEK_OF_YEAR, ChronoField.ALIGNED_WEEK_OF_YEAR), //
     };
@@ -133,6 +141,24 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         parameters.add(parameter(locale).setName(HOUR_24).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(parameter(locale).setName(MINUTE).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(parameter(locale).setName(SECOND).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_WEEK).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(DAY_LABEL).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+
+        List<Locale> locales = Stream
+                .of(Locale.CHINESE, Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, //
+                        Locale.ITALIAN, Locale.JAPANESE, Locale.KOREAN, Locale.forLanguageTag("es")) //
+                .sorted(Comparator.comparing(o -> o.getDisplayLanguage(locale))) //
+                .collect(Collectors.toList());
+
+        SelectParameter.SelectParameterBuilder builder = selectParameter(locale).name(LANGUAGE);
+        for (Locale currentLocale : locales) {
+            builder = builder.constant(currentLocale.getLanguage(), currentLocale.getDisplayLanguage(locale));
+        }
+        builder = builder.defaultValue(Locale.ENGLISH.getLanguage());
+
+        parameters.add(builder.build(this));
         return parameters;
     }
 
@@ -157,6 +183,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             }
 
             ActionsUtils.createNewColumn(context, additionalColumns);
+            context.get(LOCALE, p -> new Locale(context.getParameters().get(LANGUAGE)));
         }
     }
 
@@ -189,10 +216,12 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                         newValue = String.valueOf(getQuarter(temporalAccessor.get(date_field.field)));
                         break;
                     case DAY_LABEL:
-                        newValue = String.valueOf(getLabelDay(temporalAccessor.get(date_field.field)));
+                        newValue = String
+                                .valueOf(getLabelDay(temporalAccessor.get(date_field.field), context.get(LOCALE)));
                         break;
                     case MONTH_LABEL:
-                        newValue = String.valueOf(getLabelMonth(temporalAccessor.get(date_field.field)));
+                        newValue = String
+                                .valueOf(getLabelMonth(temporalAccessor.get(date_field.field), context.get(LOCALE)));
                         break;
                     default:
                         newValue = String.valueOf(temporalAccessor.get(date_field.field));
@@ -215,13 +244,13 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     }
 
     /**
-     * Get the quarter of the year.
+     * Get the day label of the week.
      *
      * @param numDayOfWeek the number of the month
      * @return the day label
      */
-    String getLabelDay(int numDayOfWeek) {
-        String[] label = DateFormatSymbols.getInstance(Locale.ENGLISH).getWeekdays();
+    String getLabelDay(int numDayOfWeek, Locale locale) {
+        String[] label = DateFormatSymbols.getInstance(locale).getWeekdays();
         if (numDayOfWeek < 7) {
             return label[numDayOfWeek + 1];
         } else {
@@ -230,13 +259,13 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     }
 
     /**
-     * Get the quarter of the year.
+     * Get the month label of the year.
      *
      * @param numMonth the number of the month
      * @return the month label
      */
-    String getLabelMonth(int numMonth) {
-        String[] label = DateFormatSymbols.getInstance(Locale.ENGLISH).getMonths();
+    String getLabelMonth(int numMonth, Locale locale) {
+        String[] label = DateFormatSymbols.getInstance(locale).getMonths();
         return label[numMonth - 1];
     }
 

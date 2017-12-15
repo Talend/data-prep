@@ -12,25 +12,45 @@
   ============================================================================*/
 
 .stats-part {
-
   .stats-details {
     @include flex-column();
-    height: 100%;
-    position: relative;
+
+    &,
+    > * {
+      height: 100%;
+    }
+
+    .tabs {
+      margin: 0;
+    }
+
+    .tabs + * {
+      position: relative;
+      display: block;
+      height: 100%;
+    }
 
     .stat-detail-tab-items {
-      height: calc(100% - 40px);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      padding: {
+        top: 0.5em;
+        bottom: 0.5em;
+      }
+
       overflow-y: auto;
       overflow-x: hidden;
-      position: absolute;
-      width: 100%;
     }
 
     .two-columns-values {
       display: flex;
+      flex-direction: row;
       flex-wrap: wrap;
       justify-content: space-around;
-      flex-direction: row;
 
       .stat-table {
         width: auto;

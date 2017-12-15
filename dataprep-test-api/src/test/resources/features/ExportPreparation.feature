@@ -10,7 +10,7 @@ Feature: Export Preparation
       | preparationName | 6L3C_preparation |
 
   Scenario: Verify transformation result
-    # escape and enclosure characters shoud be given because they can be empty
+    # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |

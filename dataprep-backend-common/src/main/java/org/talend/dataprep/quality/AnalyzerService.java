@@ -95,7 +95,7 @@ public class AnalyzerService {
         this.dateParser = new DateParser(this);
     }
 
-    public void setDictionaryConstituentsProvider(DictionarySnapshotProvider provider) {
+    public void setDictionarySnapshotProvider(DictionarySnapshotProvider provider) {
         this.dictionarySnapshotProvider = dictionarySnapshotProvider;
     }
 

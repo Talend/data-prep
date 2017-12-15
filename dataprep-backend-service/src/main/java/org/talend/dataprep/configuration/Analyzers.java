@@ -23,7 +23,7 @@ import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
-import org.talend.dataquality.semantic.recognizer.DictionaryConstituentsProviders;
+import org.talend.dataquality.semantic.snapshot.StandardDictionarySnapshotProvider;
 
 @Configuration
 public class Analyzers implements DisposableBean {
@@ -67,7 +67,7 @@ public class Analyzers implements DisposableBean {
         CategoryRegistryManager.setLocalRegistryPath(this.dataqualityIndexesLocation);
 
 
-        return new AnalyzerService(new DictionaryConstituentsProviders.SingletonProvider());
+        return new AnalyzerService(new StandardDictionarySnapshotProvider());
     }
 
     @Override

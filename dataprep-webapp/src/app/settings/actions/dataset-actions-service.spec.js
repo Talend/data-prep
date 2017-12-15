@@ -143,7 +143,7 @@ describe('Datasets actions service', () => {
 						isDescending: false,
 					}
 				},
-				isFetchingDatasets : false,
+				isFetchingDatasets: false,
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -163,36 +163,37 @@ describe('Datasets actions service', () => {
 			spyOn(DatasetService, 'toggleFavorite').and.returnValue($q.when());
 		}));
 
-		it('should NOT be execute blocking action if loading is processing', inject((DatasetService, DatasetActionsService) => {
+		it('should NOT execute a blocking action if loading is processing', inject((DatasetService, DatasetActionsService) => {
 			//given
-			stateMock.inventory.isFetchingDatasets=true;
-			const action = {
+			stateMock.inventory.isFetchingDatasets = true;
+			const blockingAction = {
 				type: '@@dataset/DATASET_FETCH'
 			};
 
 			// when
-			DatasetActionsService.dispatch(action);
+			DatasetActionsService.dispatch(blockingAction);
 
 			// then
 			expect(DatasetService.init).not.toHaveBeenCalled();
 		}));
 
-		it('should execute NONE blocking action if loading is processing', inject((DatasetActionsService, UploadWorkflowService) => {
+		it('should execute not blocking action if loading is processing', inject((DatasetActionsService, UploadWorkflowService) => {
 			//given
-			stateMock.inventory.isFetchingDatasets=true;
+			stateMock.inventory.isFetchingDatasets = true;
+
 			// given
 			const dataset = { id: 'myDatasetId', draft: true };
 			const event = { button: 1 };
-			const action = {
+			const notBlockingAction = {
 				type: '@@dataset/OPEN',
 				payload: { model: dataset },
 				event,
 			};
 
-			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
+			spyOn(UploadWorkflowService, 'openDataset');
 
 			// when
-			DatasetActionsService.dispatch(action);
+			DatasetActionsService.dispatch(notBlockingAction);
 
 			// then
 			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset, event);

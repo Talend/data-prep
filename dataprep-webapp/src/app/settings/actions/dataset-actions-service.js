@@ -30,7 +30,7 @@ export default class DatasetActionsService {
 
 		this.renamingList = [];
 
-		this.blocking = [
+		this.blockingActionTypes = [
 			'@@dataset/SORT',
 			'@@dataset/CLONE',
 			'@@dataset/FAVORITE',
@@ -40,11 +40,11 @@ export default class DatasetActionsService {
 
 
 	dispatch(action) {
-		if (this.blocking.includes(action.type)) {
+		if (this.blockingActionTypes.includes(action.type)) {
 			if (this.state.inventory.isFetchingDatasets) {
 				return;
 			}
-			// all blocking method create a loading interface
+			// all blocking action types requiring a loader
 			this.StateService.setFetchingInventoryDatasets(true);
 		}
 

@@ -179,10 +179,6 @@ angular@1.5.9, "angular@>=1.2.26 <=1.6", angular@^1.0.8, angular@^1.5.3:
   version "1.5.9"
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.5.9.tgz#b7aeff42dad87881e06be16b6690fe766d868b51"
 
-angularjs-toaster@^0.4.10:
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/angularjs-toaster/-/angularjs-toaster-0.4.15.tgz#12a581488a68f551af29e1bb6f01dfbc4bd7bb99"
-
 animate.css@^3.5.1:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-3.5.2.tgz#91e668dc069a808e5e499514867b97aae0166c36"

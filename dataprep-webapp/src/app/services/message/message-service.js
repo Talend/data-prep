@@ -14,7 +14,7 @@
 const MESSAGE_TYPES = {
 	ERROR: 'error',
 	WARNING: 'warning',
-	INFO: 'info',
+	SUCCESS: 'info',
 };
 
 /**
@@ -78,7 +78,7 @@ export default class MessageService {
      * @description Display a success toast. The toast disappear after 5000ms
      */
 	success(title, content, args) {
-		this._pop(MESSAGE_TYPES.INFO, {
+		this._pop(MESSAGE_TYPES.SUCCESS, {
 			title,
 			content,
 			args,

@@ -30,7 +30,7 @@ describe('Message service', () => {
     }));
 
     describe('error', () => {
-        it('should show toast on error without translate arg', inject((MessageService, StateService) => {
+        it('should show toast on error without translate arg', inject(($rootScope, MessageService, StateService) => {
             //given
             var titleId = 'TITLE';
             var contentId = 'CONTENT_WITHOUT_ARG';
@@ -39,12 +39,13 @@ describe('Message service', () => {
 
             //when
             MessageService.error(titleId, contentId);
+            $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('error', 'TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE');
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'error', message: ['TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE'] });
         }));
 
-        it('should show toast on error with translate arg', inject((MessageService, StateService) => {
+        it('should show toast on error with translate arg', inject(($rootScope, MessageService, StateService) => {
             //given
             var titleId = 'TITLE';
             var contentId = 'CONTENT_WITH_ARG';
@@ -54,14 +55,15 @@ describe('Message service', () => {
 
             //when
             MessageService.error(titleId, contentId, args);
+            $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('error', 'TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value');
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'error', message: ['TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value'] });
         }));
     });
 
     describe('warning', () => {
-        it('should show toast on warning without translate arg', inject((MessageService, StateService) => {
+        it('should show toast on warning without translate arg', inject(($rootScope, MessageService, StateService) => {
             //given
             var titleId = 'TITLE';
             var contentId = 'CONTENT_WITHOUT_ARG';
@@ -70,12 +72,13 @@ describe('Message service', () => {
 
             //when
             MessageService.warning(titleId, contentId);
+            $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('warning', 'TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE');
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'warning', message: ['TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE'] });
         }));
 
-        it('should show toast on warning with translate arg', inject((MessageService, StateService) => {
+        it('should show toast on warning with translate arg', inject(($rootScope, MessageService, StateService) => {
             //given
             var titleId = 'TITLE';
             var contentId = 'CONTENT_WITH_ARG';
@@ -85,14 +88,15 @@ describe('Message service', () => {
 
             //when
             MessageService.warning(titleId, contentId, args);
+            $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('warning', 'TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value');
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'warning', message: ['TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value'] });
         }));
     });
 
-    describe('success', () => {
-        it('should show toast on success without translate arg', inject((MessageService, StateService) => {
+    describe('info', () => {
+        it('should show toast on success without translate arg', inject(($rootScope, MessageService, StateService) => {
             //given
             var titleId = 'TITLE';
             var contentId = 'CONTENT_WITHOUT_ARG';
@@ -101,12 +105,13 @@ describe('Message service', () => {
 
             //when
             MessageService.success(titleId, contentId);
+            $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('success', 'TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE');
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'info', message: ['TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE'] });
         }));
 
-        it('should show toast on success with translate arg', inject((MessageService, StateService) => {
+        it('should show toast on success with translate arg', inject(($rootScope, MessageService, StateService) => {
             //given
             var titleId = 'TITLE';
             var contentId = 'CONTENT_WITH_ARG';
@@ -116,55 +121,10 @@ describe('Message service', () => {
 
             //when
             MessageService.success(titleId, contentId, args);
+            $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('success', 'TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value');
-        }));
-    });
-
-    describe('buffer', () => {
-        it('should buffer different messages and display them after 300ms delay', inject((MessageService, StateService) => {
-            //given
-            var firstMessageTitleId = 'TITLE';
-            var firstMessageContentId = 'CONTENT_WITH_ARG';
-            var firstMessageArgs = { argValue: 'my value' };
-
-            var secondMessageTitleId = 'TITLE';
-            var secondMessageContentId = 'CONTENT_WITHOUT_ARG';
-
-            expect(StateService.pushMessage).not.toHaveBeenCalled();
-
-            //when
-            MessageService.success(firstMessageTitleId, firstMessageContentId, firstMessageArgs);
-            MessageService.error(secondMessageTitleId, secondMessageContentId);
-            expect(StateService.pushMessage).not.toHaveBeenCalled();
-
-            //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith('success', 'TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value');
-            expect(StateService.pushMessage).toHaveBeenCalledWith('error', 'TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE');
-        }));
-
-        it('should only display distinct message once', inject((MessageService, StateService) => {
-            //given
-            var firstMessageTitleId = 'TITLE';
-            var firstMessageContentId = 'CONTENT_WITH_ARG';
-            var firstMessageArgs = { argValue: 'my value' };
-
-            var secondMessageTitleId = 'TITLE';
-            var secondMessageContentId = 'CONTENT_WITHOUT_ARG';
-
-            expect(StateService.pushMessage).not.toHaveBeenCalled();
-
-            //when
-            MessageService.success(firstMessageTitleId, firstMessageContentId, firstMessageArgs);
-            MessageService.success(firstMessageTitleId, firstMessageContentId, firstMessageArgs);
-            MessageService.success(firstMessageTitleId, firstMessageContentId, firstMessageArgs);
-            MessageService.error(secondMessageTitleId, secondMessageContentId);
-
-            //then
-            expect(StateService.pushMessage.calls.count()).toBe(2);
-            expect(StateService.pushMessage).toHaveBeenCalledWith('success', 'TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value');
-            expect(StateService.pushMessage).toHaveBeenCalledWith('error', 'TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE');
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'info', message: ['TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value'] });
         }));
     });
 });

@@ -119,6 +119,8 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
                     String value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
                     row.set(ActionsUtils.getTargetColumnId(context), value);
                 }
+            } else {
+                row.set(ActionsUtils.getTargetColumnId(context), toCut);
             }
         }
     }

@@ -1,6 +1,6 @@
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.qa.config.FeatureContext.JVM_HASH_IDENT;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +30,6 @@ public class DatasetStep extends DataPrepStep {
 
     public static final String NB_ROW = "nbRow";
 
-    public static final String ACTION_NAME = "actionName";
-
     /**
      * This class' logger.
      */
@@ -39,12 +37,12 @@ public class DatasetStep extends DataPrepStep {
 
     @Given("^I upload the dataset \"(.*)\" with name \"(.*)\"$") //
     public void givenIUploadTheDataSet(String fileName, String name) throws IOException {
-        name += JVM_HASH_IDENT;
-        LOGGER.debug("I upload the dataset {} with name {}.", fileName, name);
-        String datasetId = api.uploadDataset(fileName, name) //
+        String suffixedName = suffixName(name);
+        LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
+        String datasetId = api.uploadDataset(fileName, suffixedName) //
                 .then().statusCode(200) //
                 .extract().body().asString();
-        context.storeDatasetRef(datasetId, name);
+        context.storeDatasetRef(datasetId, suffixedName);
     }
 
     @Given("^A dataset with the following parameters exists :$") //
@@ -58,18 +56,17 @@ public class DatasetStep extends DataPrepStep {
 
         Assert.assertEquals(1, //
                 datasetMetas.stream() //
-                        .filter(d -> (params.get(DATASET_NAME) + JVM_HASH_IDENT).equals(d.name) //
+                        .filter(d -> (suffixName(params.get(DATASET_NAME))).equals(d.name) //
                                 && params.get(NB_ROW).equals(d.records)) //
                         .count());
     }
 
     @When("^I update the dataset named \"(.*)\" with data \"(.*)\"$") //
     public void givenIUpdateTheDatasetNamedWithData(String datasetName, String fileName) throws Throwable {
-        datasetName += JVM_HASH_IDENT;
-        LOGGER.debug("I update the dataset named {} with data {}.", datasetName, fileName);
-        String datasetId = context.getDatasetId(datasetName);
-
-        Response response = api.updateDataset(fileName, datasetName, datasetId);
+        String suffixedDatasetName = suffixName(datasetName);
+        LOGGER.debug("I update the dataset named {} with data {}.", suffixedDatasetName, fileName);
+        String datasetId = context.getDatasetId(suffixedDatasetName);
+        Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
         response.then().statusCode(200);
     }
 }

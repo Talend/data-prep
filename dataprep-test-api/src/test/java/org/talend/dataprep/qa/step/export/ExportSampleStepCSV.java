@@ -1,6 +1,6 @@
 package org.talend.dataprep.qa.step.export;
 
-import static org.talend.dataprep.qa.config.FeatureContext.JVM_HASH_IDENT;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.CSV_ENCLOSURE_CHARACTER;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.CSV_ENCLOSURE_MODE;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.CSV_ENCODING;
@@ -62,12 +62,12 @@ public class ExportSampleStepCSV extends DataPrepStep implements ExportSampleSte
         Map<String, Object> ret = new HashMap<>();
 
         // Preparation
-        String preparationName = params.get(MandatoryParameters.PREPARATION_NAME.getName()) + JVM_HASH_IDENT;
-        String preparationId = context.getPreparationId(preparationName);
+        String suffixedPreparationName = suffixName(params.get(MandatoryParameters.PREPARATION_NAME.getName()));
+        String preparationId = context.getPreparationId(suffixedPreparationName);
 
         // Dataset
-        String datasetName = params.get(DATASET_NAME.getName()) + JVM_HASH_IDENT;
-        String datasetId = context.getDatasetId(datasetName);
+        String suffixedDatasetName = suffixName(params.get(DATASET_NAME.getName()));
+        String datasetId = context.getDatasetId(suffixedDatasetName);
 
         // File exported
         String filename = params.get(FILENAME.getName());

@@ -14,7 +14,6 @@
 package org.talend.dataprep.qa.config;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,10 +41,9 @@ public class FeatureContext {
     public static final String FULL_RUN_PREFIX = "fullrun-";
 
     /**
-     * Postfix used to
+     * Suffix used to differentiate non deleted TDP items between various IT runs.
      */
-    public static String JVM_HASH_IDENT = "_" + Integer.toString( //
-            Math.abs(ManagementFactory.getRuntimeMXBean().getName().hashCode()));
+    private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
     private Map<String, String> datasetIdByName = new HashMap<>();
 
@@ -72,6 +70,16 @@ public class FeatureContext {
      * All object store on a feature execution.
      */
     private Map<String, Object> featureContext = new HashMap<>();
+
+    /**
+     * Add a suffix to a name depending of the execution instance.
+     * 
+     * @param name the to suffix.
+     * @return the suffixed name.
+     */
+    public static String suffixName(String name) {
+        return name + TI_SUFFIX_UID;
+    }
 
     /**
      * Store a new dataset reference. In order to delete it later.

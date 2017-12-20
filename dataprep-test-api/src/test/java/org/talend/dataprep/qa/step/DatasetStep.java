@@ -1,23 +1,25 @@
 package org.talend.dataprep.qa.step;
 
+import static org.talend.dataprep.qa.config.FeatureContext.JVM_HASH_IDENT;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import cucumber.api.java.en.When;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.dto.DatasetMeta;
 import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.response.Response;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with dataset.
@@ -37,6 +39,7 @@ public class DatasetStep extends DataPrepStep {
 
     @Given("^I upload the dataset \"(.*)\" with name \"(.*)\"$") //
     public void givenIUploadTheDataSet(String fileName, String name) throws IOException {
+        name += JVM_HASH_IDENT;
         LOGGER.debug("I upload the dataset {} with name {}.", fileName, name);
         String datasetId = api.uploadDataset(fileName, name) //
                 .then().statusCode(200) //
@@ -55,13 +58,14 @@ public class DatasetStep extends DataPrepStep {
 
         Assert.assertEquals(1, //
                 datasetMetas.stream() //
-                        .filter(d -> params.get(DATASET_NAME).equals(d.name) //
+                        .filter(d -> (params.get(DATASET_NAME) + JVM_HASH_IDENT).equals(d.name) //
                                 && params.get(NB_ROW).equals(d.records)) //
                         .count());
     }
 
     @When("^I update the dataset named \"(.*)\" with data \"(.*)\"$") //
     public void givenIUpdateTheDatasetNamedWithData(String datasetName, String fileName) throws Throwable {
+        datasetName += JVM_HASH_IDENT;
         LOGGER.debug("I update the dataset named {} with data {}.", datasetName, fileName);
         String datasetId = context.getDatasetId(datasetName);
 

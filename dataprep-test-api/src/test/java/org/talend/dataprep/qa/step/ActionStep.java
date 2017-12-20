@@ -15,6 +15,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
 import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
+import static org.talend.dataprep.qa.config.FeatureContext.JVM_HASH_IDENT;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,8 +26,8 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.PreparationDetails;
 
 import com.jayway.restassured.response.Response;
 
@@ -51,7 +52,7 @@ public class ActionStep extends DataPrepStep {
     @When("^I add a step with parameters :$")
     public void whenIAddAStepToAPreparation(DataTable dataTable) {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
+        String prepId = context.getPreparationId(params.get(PREPARATION_NAME) + JVM_HASH_IDENT);
         Action action = new Action();
         util.mapParamsToAction(params, action);
         api.addAction(prepId, action);
@@ -63,7 +64,7 @@ public class ActionStep extends DataPrepStep {
         whenIAddAStepToAPreparation(dataTable);
         // we recover the preparation details in order to get an action object with the step Id
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
+        String prepId = context.getPreparationId(params.get(PREPARATION_NAME) + JVM_HASH_IDENT);
         Action action = getLastActionfromPreparation(prepId);
         context.storeAction(stepAlias, action);
     }
@@ -84,7 +85,7 @@ public class ActionStep extends DataPrepStep {
 
     @Given("^I check that a step like \"(.*)\" exists in the preparation \"(.*)\"$")
     public void existStep(String stepAlias, String preparationName) throws IOException {
-        String prepId = context.getPreparationId(preparationName);
+        String prepId = context.getPreparationId(preparationName + JVM_HASH_IDENT);
         Action storedAction = context.getAction(stepAlias);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
         Assert.assertTrue(actions.contains(storedAction));
@@ -92,6 +93,7 @@ public class ActionStep extends DataPrepStep {
 
     @Then("^I update the first step like \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
     public void updateStep(String stepName, String prepName, DataTable dataTable) throws IOException {
+        prepName += JVM_HASH_IDENT;
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(prepName);
         Action storedAction = context.getAction(stepName);
@@ -107,12 +109,12 @@ public class ActionStep extends DataPrepStep {
 
     @And("^I move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void successToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
-        moveStep(stepName, parentStepName, prepName).then().statusCode(200);
+        moveStep(stepName, parentStepName, prepName + JVM_HASH_IDENT).then().statusCode(200);
     }
 
     @Then("^I fail to move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void failToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
-        moveStep(stepName, parentStepName, prepName).then().statusCode(409);
+        moveStep(stepName, parentStepName, prepName + JVM_HASH_IDENT).then().statusCode(409);
     }
 
     /**

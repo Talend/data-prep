@@ -14,6 +14,7 @@
 package org.talend.dataprep.qa.config;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,12 @@ public class FeatureContext {
      * Prefix used to build storage key, for fullrun references.
      */
     public static final String FULL_RUN_PREFIX = "fullrun-";
+
+    /**
+     * Postfix used to
+     */
+    public static String JVM_HASH_IDENT = "_" + Integer.toString( //
+            Math.abs(ManagementFactory.getRuntimeMXBean().getName().hashCode()));
 
     private Map<String, String> datasetIdByName = new HashMap<>();
 

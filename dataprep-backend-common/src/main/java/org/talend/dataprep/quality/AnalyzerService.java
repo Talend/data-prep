@@ -96,7 +96,7 @@ public class AnalyzerService {
     }
 
     public void setDictionarySnapshotProvider(DictionarySnapshotProvider provider) {
-        this.dictionarySnapshotProvider = dictionarySnapshotProvider;
+        this.dictionarySnapshotProvider = provider;
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {

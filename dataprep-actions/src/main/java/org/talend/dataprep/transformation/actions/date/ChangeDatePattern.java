@@ -69,6 +69,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
+    protected static final String NEW_COLUMN_SUFFIX = "_format_changed";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -96,7 +98,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);

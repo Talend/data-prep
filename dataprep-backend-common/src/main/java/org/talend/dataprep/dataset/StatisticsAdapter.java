@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.dataset;
 
+import static java.util.Comparator.naturalOrder;
+import static org.talend.dataprep.api.type.Type.*;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -45,8 +48,6 @@ import org.talend.dataquality.statistics.numeric.summary.SummaryStatistics;
 import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
-
-import static org.talend.dataprep.api.type.Type.*;
 
 /**
  * Statistics adapter. This is used to inject every statistics part in the columns metadata.
@@ -162,27 +163,17 @@ public class StatisticsAdapter {
             final SemanticType semanticType = result.get(SemanticType.class);
             final Map<CategoryFrequency, Long> foundSemanticTypes = semanticType.getCategoryToCount();
             // TDP-471: Don't pick semantic type if lower than a threshold.
-            final Optional<Map.Entry<CategoryFrequency, Long>> entry = foundSemanticTypes.entrySet().stream()
-                    .filter(e -> !e.getKey().getCategoryName().isEmpty()).max((o1, o2) -> (o1.getKey().compareTo(o2.getKey())));
-            if (entry.isPresent()) {
+            final Optional<CategoryFrequency> highestCategoryFrequency = //
+                    foundSemanticTypes.keySet().stream() //
+                            .filter(e -> !e.getCategoryName().isEmpty()) //
+                            .max(naturalOrder());
+            if (highestCategoryFrequency.isPresent()) {
                 // TODO (TDP-734) Take into account limit of the semantic analyzer.
-                final float percentage = entry.get().getKey().getFrequency();
-                if (percentage > semanticThreshold) {
-                    final CategoryFrequency key = entry.get().getKey();
-                    final String categoryId = key.getCategoryId();
-                    DQCategory categoryMetadataByName = CategoryRegistryManager.getInstance()
-                            .getCategoryMetadataByName(categoryId);
-                    if (categoryMetadataByName == null) {
-                        LOGGER.error("Could not find {} in known categories.", categoryId);
-                        column.setDomain(categoryId);
-                        column.setDomainLabel(categoryId);
-                    } else {
-                        column.setDomain(categoryMetadataByName.getName());
-                        column.setDomainLabel(categoryMetadataByName.getLabel());
-                    }
-                    column.setDomainFrequency(percentage);
+                final float score = highestCategoryFrequency.get().getScore();
+                if (score > semanticThreshold) {
+                    updateMetadataWithCategoryInfo(column, highestCategoryFrequency.get());
                 } else {
-                    // Ensure the domain is cleared if percentage is lower than threshold (earlier analysis - e.g.
+                    // Ensure the domain is cleared if score is lower than threshold (earlier analysis - e.g.
                     // on the first 20 lines - may be over threshold, but full scan may decide otherwise.
                     column.setDomain(StringUtils.EMPTY);
                     column.setDomainLabel(StringUtils.EMPTY);
@@ -194,22 +185,42 @@ public class StatisticsAdapter {
                 column.setDomainLabel(StringUtils.EMPTY);
                 column.setDomainFrequency(0);
             }
-            // Remembers all suggested semantic categories
-            List<SemanticDomain> semanticDomains = semanticType.getCategoryToCount().entrySet().stream().map(current -> { //
-                // Find category display name
-                final String id = current.getKey().getCategoryId();
-                if (!StringUtils.isEmpty(id)) {
-                    // Takes only actual semantic domains (unknown = "").
-                    final String categoryDisplayName = TypeUtils.getDomainLabel(id);
-                    return new SemanticDomain(id, categoryDisplayName, current.getKey().getFrequency());
-                } else {
-                    return null;
-                }
-            }) //
-                    .filter(semanticDomain -> semanticDomain != null && semanticDomain.getFrequency() >= 1) //
+            // Keep all suggested semantic categories in the column metadata
+            List<SemanticDomain> semanticDomains = semanticType.getCategoryToCount().entrySet().stream() //
+                    .map(Map.Entry::getKey) //
+                    .map(this::toSemanticDomain) //
+                    .filter(semanticDomain -> semanticDomain != null && semanticDomain.getScore() >= 1) //
                     .limit(10) //
                     .collect(Collectors.toList());
             column.setSemanticDomains(semanticDomains);
+        }
+    }
+
+    private void updateMetadataWithCategoryInfo(ColumnMetadata column, CategoryFrequency categoryFrequency) {
+        final String categoryId = categoryFrequency.getCategoryId();
+        DQCategory categoryMetadataByName = CategoryRegistryManager.getInstance()
+                .getCategoryMetadataByName(categoryId);
+        if (categoryMetadataByName == null) {
+            LOGGER.error("Could not find {} in known categories.", categoryId);
+            column.setDomain(categoryId);
+            column.setDomainLabel(categoryId);
+        } else {
+            column.setDomain(categoryMetadataByName.getName());
+            column.setDomainLabel(categoryMetadataByName.getLabel());
+        }
+        column.setDomainFrequency(categoryFrequency.getScore());
+    }
+
+    private SemanticDomain toSemanticDomain(CategoryFrequency categoryFrequency) {
+        // Find category display name
+
+        final String id = categoryFrequency.getCategoryId();
+        if (!StringUtils.isEmpty(id)) {
+            // Takes only actual semantic domains (unknown = "").
+            final String categoryDisplayName = TypeUtils.getDomainLabel(id);
+            return new SemanticDomain(id, categoryDisplayName, categoryFrequency.getScore());
+        } else {
+            return null;
         }
     }
 

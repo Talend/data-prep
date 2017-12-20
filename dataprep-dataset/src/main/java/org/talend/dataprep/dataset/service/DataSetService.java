@@ -24,7 +24,6 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
@@ -987,7 +986,7 @@ public class DataSetService extends BaseDataSetService {
                     if (semanticDomain != null) {
                         column.setDomain(semanticDomain.getId());
                         column.setDomainLabel(semanticDomain.getLabel());
-                        column.setDomainFrequency(semanticDomain.getFrequency());
+                        column.setDomainFrequency(semanticDomain.getScore());
                     }
                 }
             }

@@ -87,6 +87,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
+    protected static final String NEW_COLUMN_SUFFIX = "_converted";
+
     /**
      * if it converts from Chronology
      */
@@ -162,7 +164,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
         if (actionContext.getActionStatus() == OK) {
             dateCalendarConverterMap = new HashMap<>();

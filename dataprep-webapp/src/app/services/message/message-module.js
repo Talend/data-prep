@@ -13,23 +13,18 @@
 
 import angular from 'angular';
 import SERVICES_STATE_MODULE from '../state/state-module';
-import SERVICES_MESSAGE_MODULE from '../message/message-module';
 
-import RestErrorMessageHandler from './rest-error-message-interceptor-factory';
+import MessageService from './message-service';
 
-const MODULE_NAME = 'data-prep.services.rest';
+const MODULE_NAME = 'data-prep.services.message';
 
 /**
  * @ngdoc object
- * @name data-prep.services.rest
- * @description This module contains the REST interceptor
- * @requires data-prep.services.utils
+ * @name data-prep.services.message
+ * @description This module contains the message service
+ * @requires data-prep.services.state
  */
-angular.module(MODULE_NAME, [SERVICES_MESSAGE_MODULE, SERVICES_STATE_MODULE])
-	.factory('RestErrorMessageHandler', RestErrorMessageHandler)
-	.config(($httpProvider) => {
-		'ngInject';
-		$httpProvider.interceptors.push('RestErrorMessageHandler');
-	});
+angular.module(MODULE_NAME, [SERVICES_STATE_MODULE])
+    .service('MessageService', MessageService);
 
 export default MODULE_NAME;

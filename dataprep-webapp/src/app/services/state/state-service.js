@@ -28,7 +28,8 @@ export function StateService(RouteStateService, routeState,
                              ExportStateService, exportState,
                              HomeStateService, homeState,
                              ProgressStateService, progressState,
-                             SearchStateService, searchState) {
+                             SearchStateService, searchState,
+                             MessageStateService, messageState) {
 	'ngInject';
 
 	state.route = routeState;
@@ -42,6 +43,7 @@ export function StateService(RouteStateService, routeState,
 	state.home = homeState;
 	state.search = searchState;
 	state.progress = progressState;
+	state.message = messageState;
 
 	return {
 		// route
@@ -200,5 +202,9 @@ export function StateService(RouteStateService, routeState,
 		resetProgress: ProgressStateService.reset,
 		getCurrentProgressStep: ProgressStateService.getCurrentStep,
 		addProgressSchema: ProgressStateService.addSchema,
+
+		// message
+		pushMessage: MessageStateService.push,
+		popMessage: MessageStateService.pop,
 	};
 }

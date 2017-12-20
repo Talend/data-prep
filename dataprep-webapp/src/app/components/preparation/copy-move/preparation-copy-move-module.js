@@ -17,6 +17,7 @@ import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_FOLDER_MODULE from '../../../services/folder/folder-module';
 import SERVICES_PREPARATION_MODULE from '../../../services/preparation/preparation-module';
 import SERVICES_STATE_MODULE from '../../../services/state/state-module';
+import SERVICES_MESSAGE_MODULE from '../../../services/message/message-module';
 
 import PreparationCopyMoveContainer from './preparation-copy-move-container';
 
@@ -38,6 +39,7 @@ angular.module(MODULE_NAME,
 		TALEND_WIDGET_MODULE,
 		SERVICES_FOLDER_MODULE,
 		SERVICES_PREPARATION_MODULE,
+		SERVICES_MESSAGE_MODULE,
 		SERVICES_STATE_MODULE,
 	])
     .component('preparationCopyMove', PreparationCopyMoveContainer);

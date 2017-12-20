@@ -50,12 +50,12 @@ describe('App directive', () => {
 		element.remove();
 	});
 
-	it('should hold toaster container', () => {
+	it('should hold notifications container', () => {
 		//when
 		createElement();
 
 		//then
-		expect(element.find('#toast-container').length).toBe(1);
+		expect(element.find('notifications').length).toBe(1);
 	});
 
 	it('should hold loader element', () => {

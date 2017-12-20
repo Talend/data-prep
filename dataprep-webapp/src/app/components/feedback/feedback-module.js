@@ -15,7 +15,7 @@ import angular from 'angular';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
 import SERVICES_FEEDBACK_MODULE from '../../services/feedback/feedback-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
-import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
+import SERVICES_MESSAGE_MODULE from '../../services/message/message-module';
 
 import FeedbackCtrl from './feedback-controller';
 import Feedback from './feedback-directive';
@@ -27,7 +27,7 @@ angular.module(MODULE_NAME,
 		TALEND_WIDGET_MODULE,
 		SERVICES_FEEDBACK_MODULE,
 		SERVICES_STATE_MODULE,
-		SERVICES_UTILS_MODULE,
+		SERVICES_MESSAGE_MODULE,
 	])
     .controller('FeedbackCtrl', FeedbackCtrl)
     .directive('feedback', Feedback);

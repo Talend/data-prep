@@ -67,10 +67,6 @@ import 'ng-file-upload/dist/angular-file-upload.min';
 import 'ng-sortable/dist/ng-sortable.min.css';
 import 'ng-sortable';
 
-// https://github.com/jirikavi/AngularJS-Toaster
-import 'angularjs-toaster';
-import 'angularjs-toaster/toaster.scss';
-
 // MassAutocomplete https://github.com/hakib/MassAutocomplete
 import 'angular-mass-autocomplete/massautocomplete.min';
 import 'angular-mass-autocomplete/massautocomplete.theme.css';

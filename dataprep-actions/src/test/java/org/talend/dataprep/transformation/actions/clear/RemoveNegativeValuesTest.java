@@ -23,6 +23,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +34,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNegativeValues> {
 
@@ -100,6 +102,22 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
         // then
         assertEquals("David Bowie", row.get("0000"));
         assertEquals("", row.get("0001"));
+    }
+
+    @Test
+    public void should_delete_with_empty() {
+        // given
+        final DataSetRow row1 = getRow("-12", "-25");
+        final DataSetRow row2 = getRow("", "");
+        final DataSetRow row3 = getRow("-5", "-15");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("", row1.get("0001"));
+        assertEquals("", row2.get("0001") );
+        assertEquals("", row3.get("0001"));
     }
 
     @Test

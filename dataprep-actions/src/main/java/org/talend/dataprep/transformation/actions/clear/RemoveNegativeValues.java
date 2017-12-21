@@ -52,6 +52,9 @@ public class RemoveNegativeValues extends AbstractClear implements ColumnAction 
     @Override
     protected boolean toClear(DataSetRow dataSetRow, String columnId, ActionContext actionContext) {
         final String value = dataSetRow.get(columnId);
+        if (value.isEmpty()) {
+            return false;
+        }
         BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
         return bd.compareTo(BigDecimal.ZERO) < 0;
     }

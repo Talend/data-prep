@@ -87,7 +87,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
-    protected static final String NEW_COLUMN_SUFFIX = "_converted";
+    protected static final String NEW_COLUMN_SUFFIX = "_converted_calendar";
 
     /**
      * if it converts from Chronology

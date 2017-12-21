@@ -197,8 +197,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
 
     @Test
     public void should_action_Scope() {
-        assertTrue(action.getActionScope().size() == 1);
-        assertTrue(action.getActionScope().equals(ACTION_SCOPE));
+        assertTrue(action.getActionScope().isEmpty());
     }
 
     private DataSetRow createRow(Map<String, String> inputValues, String invalidColumnId, String domain) {

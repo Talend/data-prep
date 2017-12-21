@@ -12,7 +12,8 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import java.util.ArrayList;
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -122,7 +123,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public List<String> getActionScope() {
-        return new ArrayList<>();
+        return emptyList();
     }
 
     /**

@@ -134,11 +134,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public List<String> getActionScope() {
-        return ACTION_SCOPE;
-    }
-
-    @Override
     public boolean acceptField(ColumnMetadata column) {
         return isDictionaryType(column);
     }

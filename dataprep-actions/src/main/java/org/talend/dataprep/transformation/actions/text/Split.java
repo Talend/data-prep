@@ -44,7 +44,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Split a cell value on a separator.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Split.SPLIT_ACTION_NAME)
+@Action(Split.SPLIT_ACTION_NAME)
 public class Split extends AbstractActionMetadata implements ColumnAction {
 
     /** The action name. */

@@ -48,7 +48,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.JulianDayConverter;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DateCalendarConverter.ACTION_NAME)
+@Action(DateCalendarConverter.ACTION_NAME)
 public class DateCalendarConverter extends AbstractActionMetadata implements ColumnAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateCalendarConverter.class);

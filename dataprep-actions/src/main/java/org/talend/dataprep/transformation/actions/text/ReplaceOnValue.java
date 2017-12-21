@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Replace the content or part of a cell by a value.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
+@Action(ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
 public class ReplaceOnValue extends AbstractActionMetadata implements ColumnAction {
 
     public static final String REGEX_HELPER_KEY = "regex_helper";

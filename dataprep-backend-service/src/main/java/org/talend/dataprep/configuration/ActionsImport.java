@@ -24,6 +24,8 @@ class ActionsImport implements ImportBeanDefinitionRegistrar {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionsImport.class);
 
+    private static final String ACTION_BEAN_PREFIX = "action#";
+
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         // Create the annotation-based context
@@ -33,7 +35,7 @@ class ActionsImport implements ImportBeanDefinitionRegistrar {
         scanner.setBeanNameGenerator((definition, beanRegistry) -> {
             try {
                 final Class<?> clazz = Class.forName(definition.getBeanClassName());
-                return AnnotationUtils.findAnnotation(clazz, Action.class).value();
+                return ACTION_BEAN_PREFIX + AnnotationUtils.findAnnotation(clazz, Action.class).value();
             } catch (Exception e) {
                 // Rather unexpected, filter must have found and check the class earlier.
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

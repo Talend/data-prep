@@ -35,7 +35,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Lower case a column in a dataset row.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Normalize.ACTION_NAME)
+@Action(Normalize.ACTION_NAME)
 public class Normalize extends AbstractActionMetadata implements ColumnAction {
 
     /**

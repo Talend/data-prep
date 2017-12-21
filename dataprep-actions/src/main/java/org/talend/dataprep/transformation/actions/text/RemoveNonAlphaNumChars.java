@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveNonAlphaNumChars.ACTION_NAME)
+@Action(RemoveNonAlphaNumChars.ACTION_NAME)
 public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements ColumnAction {
 
     /**

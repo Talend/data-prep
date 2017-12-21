@@ -18,13 +18,12 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Min.MIN_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Calculate Min with a constant or an other column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MIN_NAME)
+@Action(MIN_NAME)
 public class Min extends AbstractMathOneParameterAction {
 
     protected static final String MIN_NAME = "min_numbers";

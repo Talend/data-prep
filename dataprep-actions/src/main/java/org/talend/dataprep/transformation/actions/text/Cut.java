@@ -36,7 +36,7 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Cut.CUT_ACTION_NAME)
+@Action(Cut.CUT_ACTION_NAME)
 public class Cut extends AbstractActionMetadata implements ColumnAction {
 
     /**

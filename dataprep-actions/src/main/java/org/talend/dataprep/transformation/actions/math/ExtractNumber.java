@@ -62,7 +62,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * <li>pico p 0.000000000001</li>
  * </ul>
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
+@Action(ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
 public class ExtractNumber extends AbstractActionMetadata implements ColumnAction {
 
     /** Name of the action. */

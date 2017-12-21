@@ -23,9 +23,12 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.*;
+import org.talend.dataprep.transformation.actions.common.AbstractCompareAction;
+import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.actions.common.CompareAction;
+import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CompareNumbers.ACTION_NAME)
+@Action(CompareNumbers.ACTION_NAME)
 public class CompareNumbers extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {
 
     /**

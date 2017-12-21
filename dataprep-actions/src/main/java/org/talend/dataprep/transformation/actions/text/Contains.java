@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Create a new column with Boolean result <code>true</code> if the Levenstein distance is less or equals the parameter
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Contains.ACTION_NAME)
+@Action(Contains.ACTION_NAME)
 public class Contains extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**

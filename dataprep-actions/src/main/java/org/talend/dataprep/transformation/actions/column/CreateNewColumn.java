@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * duplicate a column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CreateNewColumn.ACTION_NAME)
+@Action(CreateNewColumn.ACTION_NAME)
 public class CreateNewColumn extends AbstractActionMetadata implements ColumnAction {
 
     /**

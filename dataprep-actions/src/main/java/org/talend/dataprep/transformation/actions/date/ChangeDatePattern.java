@@ -35,7 +35,6 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -43,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Change the date pattern on a 'date' column.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeDatePattern.ACTION_NAME)
+@Action(ChangeDatePattern.ACTION_NAME)
 public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
     /** Action name. */

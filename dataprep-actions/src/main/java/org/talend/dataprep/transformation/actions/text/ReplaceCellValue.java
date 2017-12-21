@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Replace the content or part of a cell by a value.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReplaceCellValue.REPLACE_CELL_VALUE_ACTION_NAME)
+@Action(ReplaceCellValue.REPLACE_CELL_VALUE_ACTION_NAME)
 public class ReplaceCellValue extends AbstractActionMetadata implements CellAction {
 
     /** For the Serializable interface. */

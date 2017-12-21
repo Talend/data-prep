@@ -31,7 +31,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Uppercase a column in a row.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + UpperCase.UPPER_CASE_ACTION_NAME)
+@Action(UpperCase.UPPER_CASE_ACTION_NAME)
 public class UpperCase extends AbstractActionMetadata implements ColumnAction {
 
     /**

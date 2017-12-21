@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Change the type of a column <b>This action is not displayed in the UI it's here to ease recording it as a Step It's
  * available from column headers</b>
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + TypeChange.TYPE_CHANGE_ACTION_NAME)
+@Action(TypeChange.TYPE_CHANGE_ACTION_NAME)
 public class TypeChange extends AbstractActionMetadata implements ColumnAction {
 
     /**

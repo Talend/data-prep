@@ -12,6 +12,12 @@
 
 package org.talend.dataprep.transformation.actions.delete;
 
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
+
+import java.util.*;
+import java.util.function.Predicate;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -22,16 +28,10 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.util.*;
-import java.util.function.Predicate;
-
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
-
 /**
  * Delete all rows when they are empty.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteAllEmpty.DELETE_ALL_EMPTY_ACTION_NAME)
+@Action(DeleteAllEmpty.DELETE_ALL_EMPTY_ACTION_NAME)
 public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAction {
 
     /**

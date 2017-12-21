@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Create a new column with Boolean result <code>true</code> if the Levenstein distance is less or equals the parameter
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FuzzyMatching.ACTION_NAME)
+@Action(FuzzyMatching.ACTION_NAME)
 public class FuzzyMatching extends AbstractActionMetadata implements ColumnAction {
 
     /**

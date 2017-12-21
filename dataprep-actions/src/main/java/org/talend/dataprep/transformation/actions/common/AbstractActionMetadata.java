@@ -39,8 +39,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public abstract class AbstractActionMetadata implements InternalActionDefinition {
 
-    public static final String ACTION_BEAN_PREFIX = "action#"; //$NON-NLS-1$
-
     @Override
     public ActionDefinition adapt(ColumnMetadata column) {
         return this;

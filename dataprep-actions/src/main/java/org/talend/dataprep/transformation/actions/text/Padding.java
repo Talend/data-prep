@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Padding.ACTION_NAME)
+@Action(Padding.ACTION_NAME)
 public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     /**

@@ -44,7 +44,7 @@ import org.talend.dataquality.datamasking.semantic.ValueDataMasker;
 /**
  * Mask sensitive data according to the semantic category.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MaskDataByDomain.ACTION_NAME)
+@Action(MaskDataByDomain.ACTION_NAME)
 public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAction {
 
     /**

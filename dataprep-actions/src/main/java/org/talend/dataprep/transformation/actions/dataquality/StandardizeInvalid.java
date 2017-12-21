@@ -42,7 +42,7 @@ import org.talend.dataquality.semantic.model.DQCategory;
 /**
  * Find a closest valid value from a dictionary.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + StandardizeInvalid.ACTION_NAME)
+@Action(StandardizeInvalid.ACTION_NAME)
 public class StandardizeInvalid extends AbstractActionMetadata implements ColumnAction {
 
     /**

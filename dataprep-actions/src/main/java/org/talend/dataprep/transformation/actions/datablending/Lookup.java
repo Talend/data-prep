@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Lookup action used to blend a (or a part of a) dataset into another one.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Lookup.LOOKUP_ACTION_NAME)
+@Action(Lookup.LOOKUP_ACTION_NAME)
 public class Lookup extends AbstractActionMetadata implements DataSetAction {
 
     /** The action name. */

@@ -18,13 +18,12 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Pow.POW_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Calculate Pow with a constant or an other column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + POW_NAME)
+@Action(POW_NAME)
 public class Pow extends AbstractMathOneParameterAction {
 
     protected static final String POW_NAME = "pow_numbers";

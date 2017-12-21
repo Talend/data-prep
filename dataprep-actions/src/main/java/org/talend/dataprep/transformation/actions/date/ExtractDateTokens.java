@@ -31,7 +31,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -39,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Change the date pattern on a 'date' column.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractDateTokens.ACTION_NAME)
+@Action(ExtractDateTokens.ACTION_NAME)
 public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     /** Action name. */

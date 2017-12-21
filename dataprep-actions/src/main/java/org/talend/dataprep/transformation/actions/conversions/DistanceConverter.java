@@ -46,7 +46,7 @@ import org.talend.dataquality.converters.DistanceEnum;
 /**
  * Convert distance from one unit to another.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DistanceConverter.ACTION_NAME)
+@Action(DistanceConverter.ACTION_NAME)
 public class DistanceConverter extends AbstractActionMetadata implements ColumnAction {
 
     /**

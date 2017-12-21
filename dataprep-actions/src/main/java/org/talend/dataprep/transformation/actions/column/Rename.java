@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  *
  * If the column to rename does not exist or the new name is already used, nothing happen.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Rename.RENAME_ACTION_NAME)
+@Action(Rename.RENAME_ACTION_NAME)
 public class Rename extends AbstractActionMetadata implements ColumnAction {
 
     /** Action name. */

@@ -25,7 +25,7 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeLength.LENGTH_ACTION_NAME)
+@Action(ComputeLength.LENGTH_ACTION_NAME)
 public class ComputeLength extends AbstractActionMetadata implements ColumnAction {
 
     /**

@@ -101,25 +101,23 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toCut = row.get(columnId);
-        String toCutClone = toCut;
         if (toCut != null) {
             final ReplaceOnValueHelper replaceOnValueParameter = context.get(REGEX_HELPER_KEY);
-
+            String value;
             if (replaceOnValueParameter.matches(toCut)) {
                 if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
-                    toCutClone = toCut.replaceAll(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
+                    value = toCut.replaceAll(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
                 } else {
-                    toCutClone = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
+                    value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
                 }
+            } else {
+                value = toCut;
             }
-            row.set(ActionsUtils.getTargetColumnId(context), toCutClone);
+            row.set(ActionsUtils.getTargetColumnId(context), value);
         }
     }
 

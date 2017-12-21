@@ -23,8 +23,10 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import java.math.BigDecimal;
 import java.util.Locale;
 
+import static org.apache.commons.lang3.math.NumberUtils.isNumber;
 import static org.talend.dataprep.api.type.Type.NUMERIC;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.NUMBERS;
+
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveNegativeValues.ACTION_NAME)
 public class RemoveNegativeValues extends AbstractClear implements ColumnAction {
@@ -52,11 +54,12 @@ public class RemoveNegativeValues extends AbstractClear implements ColumnAction 
     @Override
     protected boolean toClear(DataSetRow dataSetRow, String columnId, ActionContext actionContext) {
         final String value = dataSetRow.get(columnId);
-        if (value.isEmpty()) {
-            return false;
+        if (isNumber(value)) {
+            BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
+            return bd.compareTo(BigDecimal.ZERO) < 0;
         }
-        BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
-        return bd.compareTo(BigDecimal.ZERO) < 0;
+        return false;
+
     }
 
 }

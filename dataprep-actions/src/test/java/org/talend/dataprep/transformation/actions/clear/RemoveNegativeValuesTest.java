@@ -121,6 +121,22 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
     }
 
     @Test
+    public void should_delete_with_string() {
+        // given
+        final DataSetRow row1 = getRow("-12", "-25");
+        final DataSetRow row2 = getRow("", "PORTUGAL");
+        final DataSetRow row3 = getRow("-5", "-15");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("", row1.get("0001"));
+        assertEquals("PORTUGAL", row2.get("0001") );
+        assertEquals("", row3.get("0001"));
+    }
+
+    @Test
     public void should_not_delete_percentage() {
         // given
         final Map<String, String> values = new HashMap<>();

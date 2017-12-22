@@ -11,6 +11,13 @@
 
 package org.talend.dataprep.transformation.actions.clear;
 
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.talend.dataprep.api.type.Type.NUMERIC;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.NUMBERS;
+
+import java.math.BigDecimal;
+import java.util.Locale;
+
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -19,13 +26,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.math.BigDecimal;
-import java.util.Locale;
-
-import static org.apache.commons.lang3.math.NumberUtils.isNumber;
-import static org.talend.dataprep.api.type.Type.NUMERIC;
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.NUMBERS;
+import org.talend.dataquality.statistics.type.TypeInferenceUtils;
 
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveNegativeValues.ACTION_NAME)
@@ -53,13 +54,21 @@ public class RemoveNegativeValues extends AbstractClear implements ColumnAction 
 
     @Override
     protected boolean toClear(DataSetRow dataSetRow, String columnId, ActionContext actionContext) {
-        final String value = dataSetRow.get(columnId);
-        if (isNumber(value)) {
-            BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
-            return bd.compareTo(BigDecimal.ZERO) < 0;
-        }
-        return false;
+        final boolean toClear;
+        final String rawValue = dataSetRow.get(columnId);
+        if (isBlank(rawValue)) {
+            toClear = false;
+        } else {
+            String value = rawValue.trim();
 
+            if(TypeInferenceUtils.isNumber(value)) {
+                BigDecimal bd = BigDecimalParser.toBigDecimal(value);
+                toClear = bd.compareTo(BigDecimal.ZERO) < 0;
+            } else {
+                toClear = false;
+            }
+        }
+        return toClear;
     }
 
 }

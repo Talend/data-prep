@@ -141,23 +141,7 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "David Bowie");
-        values.put("0001", "12%");
-        final DataSetRow row = new DataSetRow(values);
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("David Bowie", row.get("0000"));
-        assertEquals("12%", row.get("0001"));
-    }
-
-    @Test
-    public void should_delete_alt_format_1() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "-1 200");
+        values.put("0001", "-12%");
         final DataSetRow row = new DataSetRow(values);
 
         // when
@@ -169,11 +153,11 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
     }
 
     @Test
-    public void should_delete_alt_format_2() {
+    public void should_delete_alt_format_1() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "David Bowie");
-        values.put("0001", "(1 200,55)");
+        values.put("0001", "-1 200");
         final DataSetRow row = new DataSetRow(values);
 
         // when
@@ -282,48 +266,32 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
     public void should_not_delete_because_null_value() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("name", "Michael Jordan");
-        values.put("age", null);
+        values.put("0000", "Michael Jordan");
+        values.put("0001", null);
         final DataSetRow row = new DataSetRow(values);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("Michael Jordan", row.get("name"));
-        values.put("age", null);
+        assertEquals("Michael Jordan", row.get("0000"));
+        values.put("0001", null);
     }
 
     @Test
     public void should_not_delete_because_nan() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("name", "Michael Jordan");
-        values.put("age", "undefined");
+        values.put("0000", "Michael Jordan");
+        values.put("0001", "undefined");
         final DataSetRow row = new DataSetRow(values);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("Michael Jordan", row.get("name"));
-        values.put("age", "undefined");
-    }
-
-    @Test
-    public void should_delete_even_with_space_between_sign_and_value() {
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "- 6");
-        final DataSetRow row = new DataSetRow(values);
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals("David Bowie", row.get("0000"));
-        assertEquals("", row.get("0001"));
+        assertEquals("Michael Jordan", row.get("0000"));
+        values.put("0001", "undefined");
     }
 
     @Test

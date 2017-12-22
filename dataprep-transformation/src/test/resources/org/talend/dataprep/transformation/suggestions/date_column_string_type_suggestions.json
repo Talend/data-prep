@@ -749,6 +749,16 @@
         "default": "true"
       },
       {
+        "name": "MONTH_LABEL",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Name of the month",
+        "description": "Extract the name month from date (08/24/2015 -> August)",
+        "default": "true"
+      },
+      {
         "name": "WEEK_OF_YEAR",
         "type": "boolean",
         "implicit": false,
@@ -786,6 +796,16 @@
         "placeHolder": "",
         "label": "Day of the week",
         "description": "Extract the day of week, (1, 2, ... , 7)",
+        "default": "false"
+      },
+      {
+        "name": "DAY_LABEL",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Name of the day",
+        "description": "Extract the name of the day from date (08/24/2015 -> Monday)",
         "default": "false"
       },
       {

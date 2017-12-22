@@ -16,7 +16,6 @@ package org.talend.dataprep.transformation.actions.dataquality;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
@@ -64,8 +63,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
      * The selected column if it uses semantic category
      */
     private static final String COLUMN_IS_SEMANTIC_KEY = "is_semantic_category";
-
-    private static final List<String> ACTION_SCOPE = singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardizeInvalid.class);
 

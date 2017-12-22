@@ -51,6 +51,7 @@ public class Analyzers implements DisposableBean {
 
         LOGGER.info("DataQuality indexes location : '{}'", this.dataqualityIndexesLocation);
         CategoryRegistryManager.setLocalRegistryPath(this.dataqualityIndexesLocation);
+
         // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
         LOGGER.info("Analyzer service lucene index strategy set to '{}'", luceneIndexStrategy);
         if ("basic".equalsIgnoreCase(luceneIndexStrategy)) {
@@ -64,9 +65,6 @@ public class Analyzers implements DisposableBean {
         }
 
         LOGGER.info("DataQuality indexes location : '{}'", this.dataqualityIndexesLocation);
-        CategoryRegistryManager.setLocalRegistryPath(this.dataqualityIndexesLocation);
-
-
         return new AnalyzerService(new StandardDictionarySnapshotProvider());
     }
 

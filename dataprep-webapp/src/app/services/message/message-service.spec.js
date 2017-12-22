@@ -42,7 +42,7 @@ describe('Message service', () => {
             $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'error', message: ['TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE'] });
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'error', title: 'TITLE_VALUE', message: 'CONTENT_WITHOUT_ARG_VALUE' });
         }));
 
         it('should show toast on error with translate arg', inject(($rootScope, MessageService, StateService) => {
@@ -58,7 +58,7 @@ describe('Message service', () => {
             $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'error', message: ['TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value'] });
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'error', title: 'TITLE_VALUE', message: 'CONTENT_WITH_ARG_VALUE : my value' });
         }));
     });
 
@@ -75,7 +75,7 @@ describe('Message service', () => {
             $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'warning', message: ['TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE'] });
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'warning', title: 'TITLE_VALUE', message: 'CONTENT_WITHOUT_ARG_VALUE' });
         }));
 
         it('should show toast on warning with translate arg', inject(($rootScope, MessageService, StateService) => {
@@ -91,7 +91,7 @@ describe('Message service', () => {
             $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'warning', message: ['TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value'] });
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'warning', title: 'TITLE_VALUE', message: 'CONTENT_WITH_ARG_VALUE : my value' });
         }));
     });
 
@@ -108,7 +108,7 @@ describe('Message service', () => {
             $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'info', message: ['TITLE_VALUE', 'CONTENT_WITHOUT_ARG_VALUE'] });
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'info', title: 'TITLE_VALUE', message: 'CONTENT_WITHOUT_ARG_VALUE' });
         }));
 
         it('should show toast on success with translate arg', inject(($rootScope, MessageService, StateService) => {
@@ -124,7 +124,7 @@ describe('Message service', () => {
             $rootScope.$apply();
 
             //then
-            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'info', message: ['TITLE_VALUE', 'CONTENT_WITH_ARG_VALUE : my value'] });
+            expect(StateService.pushMessage).toHaveBeenCalledWith({ type: 'info', title: 'TITLE_VALUE', message: 'CONTENT_WITH_ARG_VALUE : my value' });
         }));
     });
 });

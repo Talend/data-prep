@@ -43,10 +43,8 @@ export default class MessageService {
 			.then((translations) => {
 				this.StateService.pushMessage({
 					type,
-					message: [
-						translations[title],
-						translations[content],
-					],
+					title: translations[title],
+					message: translations[content],
 				});
 			});
 	}

@@ -63,7 +63,9 @@
     "react-dom": "^15.6.2",
     "react-i18next": "^5.2.0",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#2.0.0",
-    "uuid": "3.0.1"
+    "uuid": "3.0.1",
+    "rc-slider": "8.4.1",
+    "rc-tooltip": "3.7.0"
   },
   "devDependencies": {
     "angular-mocks": "1.5.9",

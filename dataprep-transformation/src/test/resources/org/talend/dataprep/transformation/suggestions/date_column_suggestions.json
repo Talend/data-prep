@@ -844,7 +844,7 @@
         "implicit": false,
         "canBeBlank": false,
         "placeHolder": "",
-        "default": "English",
+        "default": "en",
         "description": "Language for the month and day names",
         "label": "Language"
       }

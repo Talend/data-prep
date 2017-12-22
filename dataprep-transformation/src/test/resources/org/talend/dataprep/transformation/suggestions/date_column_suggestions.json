@@ -755,7 +755,7 @@
         "canBeBlank": true,
         "placeHolder": "",
         "label": "Name of the month",
-        "description": "Extract the name month from date (08/24/2015 -> August)",
+        "description": "Extract the name of the month from date (08/24/2015 -> August)",
         "default": "true"
       },
       {

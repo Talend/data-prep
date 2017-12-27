@@ -85,10 +85,10 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
         parameters.add(SelectParameter.selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
-                .item(YEARS.name(), YEARS.name()) //
-                .item(MONTHS.name(), MONTHS.name()) //
-                .item(DAYS.name(), DAYS.name()) //
-                .item(HOURS.name(), HOURS.name()) //
+                .item(YEARS.name(), YEARS.name().toLowerCase()) //
+                .item(MONTHS.name(), MONTHS.name().toLowerCase()) //
+                .item(DAYS.name(), DAYS.name().toLowerCase()) //
+                .item(HOURS.name(), HOURS.name().toLowerCase()) //
                 .defaultValue(YEARS.name()) //
                 .build(this));
 

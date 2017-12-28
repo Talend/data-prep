@@ -19,26 +19,26 @@ describe('Breadcrumb component', () => {
 	let controller;
 
 	const allBuildDetails = {
-		"application":"current version",
+		"application": "current version",
 		"services": [
 			{
 				"versionId": "2.4.0-SNAPSHOT",
-				"buildId": "3c823c0-N/A",
+				"buildId": "3c823c0",
 				"serviceName": "API"
 			},
 			{
 				"versionId": "2.4.0-SNAPSHOT",
-				"buildId": "3c823c0-N/A",
+				"buildId": "3c823c0",
 				"serviceName": "DATASET"
 			},
 			{
 				"versionId": "2.4.0-SNAPSHOT",
-				"buildId": "3c823c0-N/A",
+				"buildId": "3c823c0",
 				"serviceName": "PREPARATION"
 			},
 			{
 				"versionId": "2.4.0-SNAPSHOT",
-				"buildId": "3c823c0-N/A",
+				"buildId": "3c823c0",
 				"serviceName": "TRANSFORMATION"
 			}
 		]

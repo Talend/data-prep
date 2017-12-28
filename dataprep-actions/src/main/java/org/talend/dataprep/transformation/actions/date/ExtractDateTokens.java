@@ -245,10 +245,12 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
      */
     String getLabelDay(int numDayOfWeek, Locale locale) {
         String[] label = DateFormatSymbols.getInstance(locale).getWeekdays();
-        if (numDayOfWeek < 7) {
+        if (numDayOfWeek >= 0 && numDayOfWeek < 7) {
             return label[numDayOfWeek + 1];
-        } else {
+        } else if (numDayOfWeek == 7){
             return label[1];
+        } else {
+            return "";
         }
     }
 
@@ -260,7 +262,11 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
      */
     String getLabelMonth(int numMonth, Locale locale) {
         String[] label = DateFormatSymbols.getInstance(locale).getMonths();
-        return label[numMonth - 1];
+        if (numMonth >= 1 && numMonth <= 12) {
+            return label[numMonth - 1];
+        } else {
+            return "";
+        }
     }
 
     @Override

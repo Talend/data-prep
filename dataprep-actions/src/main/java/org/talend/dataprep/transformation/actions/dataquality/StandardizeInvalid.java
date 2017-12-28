@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.dataquality;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
@@ -71,6 +72,11 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     @Override
     public String getName() {
         return ACTION_NAME;
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(INVALID.getDisplayName());
     }
 
     @Override

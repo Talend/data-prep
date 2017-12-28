@@ -31,7 +31,8 @@ describe('Breadcrumb component', () => {
 				"buildId": "3c823c0-N/A",
 				"serviceName": "DATASET"
 			},
-			{"versionId": "2.4.0-SNAPSHOT",
+			{
+				"versionId": "2.4.0-SNAPSHOT",
 				"buildId": "3c823c0-N/A",
 				"serviceName": "PREPARATION"
 			},

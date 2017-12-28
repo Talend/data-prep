@@ -273,10 +273,11 @@
   "_comment": "Recipe",
   "FILTERS_APPLIED": "Filters applied",
   "ENABLE_DISABLE_STEP": "Enable or disable step",
-  "ENABLE_DISABLE_STEPS": "Enable or disable all steps",
   "REMOVE_STEP": "Remove step",
   "MOVE_UP": "Move up",
   "MOVE_DOWN": "Move down",
+  "ENABLE_STEP": "Enable all steps until this one",
+  "DISABLE_STEP": "Disable this step and the following ones",
 
   "_comment": "Statistics",
   "COUNT": "Count",

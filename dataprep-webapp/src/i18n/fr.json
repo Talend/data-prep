@@ -269,10 +269,11 @@
   "_comment": "Recette",
   "FILTERS_APPLIED": "Filtres appliqués",
   "ENABLE_DISABLE_STEP": "Activer ou désactiver l'étape",
-  "ENABLE_DISABLE_STEPS": "Activer ou désactiver toutes les étapes",
   "REMOVE_STEP": "Supprimer l'étape",
   "MOVE_UP": "Déplacer vers le haut",
   "MOVE_DOWN": "Déplacer vers le bas",
+  "ENABLE_STEP": "Activer toutes les étapes jusqu'à celle-ci",
+  "DISABLE_STEP": "Désactiver cette étape et les suivantes",
 
   "_comment": "Statistics",
   "COUNT": "Total",

@@ -301,6 +301,22 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         assertEquals(1, action.getQuarter(1));
     }
 
+    @Test
+    public void test_getLabelDay() {
+        Locale locale = Locale.US;
+        assertThat(action.getLabelDay(1, Locale.US), is("Monday"));
+        assertThat(action.getLabelDay(3, Locale.US), is("Wednesday"));
+        assertThat(action.getLabelDay(7, Locale.US), is("Sunday"));
+    }
+
+    @Test
+    public void test_getLabelMonth() {
+        Locale locale = Locale.US;
+        assertThat(action.getLabelMonth(1, Locale.US), is("January"));
+        assertThat(action.getLabelMonth(3, Locale.US), is("March"));
+        assertThat(action.getLabelMonth(7, Locale.US), is("July"));
+    }
+
     private ColumnMetadata createMetadata(String id) {
         return createMetadata(id, Type.STRING);
     }

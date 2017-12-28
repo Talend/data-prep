@@ -756,7 +756,7 @@
         "placeHolder": "",
         "label": "Name of the month",
         "description": "Extract the name of the month from date (08/24/2015 -> August)",
-        "default": "true"
+        "default": "false"
       },
       {
         "name": "WEEK_OF_YEAR",

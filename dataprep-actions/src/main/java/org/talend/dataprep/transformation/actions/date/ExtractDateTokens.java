@@ -96,13 +96,13 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     private static final String LANGUAGE = "LANGUAGE";
 
-    private static String LOCALE;
+    private static String LOCALE = "LOCALE";
 
     /** True constant value. */
-    private static final String TRUE = "true";
+    private static final String TRUE = Boolean.toString(true);
 
     /** False constant value. */
-    private static final String FALSE = "false";
+    private static final String FALSE = Boolean.toString(false);
 
     private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
@@ -132,7 +132,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         parameters.add(parameter(locale).setName(YEAR).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
         parameters.add(parameter(locale).setName(QUARTER).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters.add(parameter(locale).setName(MONTH).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(MONTH_LABEL).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
+        parameters.add(parameter(locale).setName(MONTH_LABEL).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
         parameters.add(parameter(locale).setName(DAY).setType(BOOLEAN).setDefaultValue(TRUE).build(this));

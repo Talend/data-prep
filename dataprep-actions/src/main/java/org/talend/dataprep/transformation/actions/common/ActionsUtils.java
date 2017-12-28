@@ -47,7 +47,7 @@ public class ActionsUtils {
     public static Parameter getColumnCreationParameter(Locale locale, boolean createNewColumnDefault) {
         return Parameter.parameter(locale).setName(CREATE_NEW_COLUMN)
                 .setType(BOOLEAN)
-                .setDefaultValue(Boolean.toString(createNewColumnDefault))
+                .setDefaultValue(createNewColumnDefault)
                 .setCanBeBlank(false)
                 .setImplicit(false)
                 .build(null);

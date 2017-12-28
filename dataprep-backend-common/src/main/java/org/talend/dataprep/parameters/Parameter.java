@@ -241,6 +241,11 @@ public class Parameter implements Serializable {
             return this;
         }
 
+        public ParameterBuilder setDefaultValue(Boolean defaultValue) {
+            this.defaultValue = defaultValue.toString();
+            return this;
+        }
+
         public ParameterBuilder setImplicit(boolean implicit) {
             this.implicit = implicit;
             return this;

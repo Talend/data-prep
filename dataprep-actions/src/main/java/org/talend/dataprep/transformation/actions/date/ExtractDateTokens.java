@@ -101,10 +101,10 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     private static String LOCALE = "LOCALE";
 
     /** True constant value. */
-    private static final String TRUE = Boolean.TRUE.toString();
+    private static final Boolean TRUE = Boolean.TRUE;
 
     /** False constant value. */
-    private static final String FALSE = Boolean.FALSE.toString();
+    private static final Boolean FALSE = Boolean.FALSE;
 
     private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //

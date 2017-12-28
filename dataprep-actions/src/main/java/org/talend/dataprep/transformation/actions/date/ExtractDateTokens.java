@@ -94,15 +94,17 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Week of year constant value. */
     private static final String WEEK_OF_YEAR = "WEEK_OF_YEAR";
 
+    /** Language name parameter */
     private static final String LANGUAGE = "LANGUAGE";
 
+    /** Key for the locale value in context */
     private static String LOCALE = "LOCALE";
 
     /** True constant value. */
-    private static final String TRUE = Boolean.toString(true);
+    private static final String TRUE = Boolean.TRUE.toString();
 
     /** False constant value. */
-    private static final String FALSE = Boolean.toString(false);
+    private static final String FALSE = Boolean.FALSE.toString();
 
     private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //

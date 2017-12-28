@@ -181,8 +181,8 @@ public class RemoteResourceGetterTest {
 
         // Then
         assertNotNull(result);
-        assertNull(result.getDictionary());
-        assertNull(result.getKeyword());
+        assertTrue(result.getDictionary().getDocumentList().isEmpty());
+        assertTrue(result.getKeyword().getDocumentList().isEmpty());
     }
 
     @Test

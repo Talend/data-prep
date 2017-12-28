@@ -17,9 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
+import org.talend.dataquality.semantic.snapshot.BroadcastDictionarySnapshotProvider;
 
 public class DictionaryResource implements FunctionResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DictionaryResource.class);
 
     private final TdqCategories tdqCategories;
 
@@ -27,30 +29,14 @@ public class DictionaryResource implements FunctionResource {
         this.tdqCategories = tdqCategories;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DictionaryResource.class);
-
     @Override
     public void register() {
         // Init Dictionaries
         if (tdqCategories != null) {
             LOGGER.info("registering dictionary resources into AnalyzerService...");
-            CategoryRecognizerBuilder builder = CategoryRecognizerBuilder.newBuilder().lucene();
-            if (tdqCategories.getDictionary() != null) {
-                builder = builder.ddDirectory(tdqCategories.getDictionary().asDirectory());
-            }
-            if (tdqCategories.getCustomDictionary() != null) {
-                builder = builder.ddCustomDirectory(tdqCategories.getCustomDictionary().asDirectory());
-            }
-            if (tdqCategories.getKeyword() != null) {
-                builder = builder.kwDirectory(tdqCategories.getKeyword().asDirectory());
-            }
-            if (tdqCategories.getRegex() != null) {
-                builder = builder.regexClassifier(tdqCategories.getRegex().getRegexClassifier());
-            }
-            if (tdqCategories.getCategoryMetadata() != null){
-                builder = builder.metadata(tdqCategories.getCategoryMetadata().getMetadata());
-            }
-            Providers.get(AnalyzerService.class).setCategoryRecognizerBuilder(builder);
+            final AnalyzerService analyzerService = Providers.get(AnalyzerService.class);
+            analyzerService
+                    .setDictionarySnapshotProvider(new BroadcastDictionarySnapshotProvider(tdqCategories.asDictionarySnapshot()));
         }
     }
 }

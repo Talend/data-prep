@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
 public class StandalonePreparationFactoryTest {
@@ -40,7 +39,7 @@ public class StandalonePreparationFactoryTest {
 
     private StandalonePreparationFactory factory = new StandalonePreparationFactory();
 
-    private static DictionaryResource dictionaryResource = new DictionaryResource(TdqCategoriesFactory.createEmptyTdqCategories());
+    private static DictionaryResource dictionaryResource = new DictionaryResource(TdqCategoriesFactory.createFullTdqCategories());
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidJSON() throws Exception {
@@ -101,7 +100,7 @@ public class StandalonePreparationFactoryTest {
         assertEquals("string string", record.get(0));
 
         // When
-       final IndexedRecord result = function.apply(record);
+        final IndexedRecord result = function.apply(record);
 
         // Then
         assertSerializable(function);
@@ -322,8 +321,12 @@ public class StandalonePreparationFactoryTest {
         try (final InputStream dataSetStream = DefaultActionParserTest.class
                 .getResourceAsStream("delete_invalid_country_preparation.json")) {
             StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
+
+            // When
             function = recipeFunctionFactory.create(dataSetStream);
         }
+
+        // Then
         assertNotNull(function);
         assertEquals("Taboulistan", record1.get(2));
         assertEquals("France", record2.get(2));
@@ -562,7 +565,8 @@ public class StandalonePreparationFactoryTest {
 
         // Then
         assertSerializable(function);
-        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that previously existed, but ok.
+        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that previously
+                                                           // existed, but ok.
         assertEquals(2, apply.getSchema().getFields().size());
         assertNotNull(apply.getSchema().getField("a1"));
         assertNotNull(apply.getSchema().getField("a1_1"));

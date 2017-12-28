@@ -100,12 +100,6 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Key for the locale value in context */
     private static String LOCALE = "LOCALE";
 
-    /** True constant value. */
-    private static final Boolean TRUE = Boolean.TRUE;
-
-    /** False constant value. */
-    private static final Boolean FALSE = Boolean.FALSE;
-
     private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
             new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
@@ -131,20 +125,20 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(parameter(locale).setName(YEAR).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(QUARTER).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(MONTH).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(MONTH_LABEL).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(DAY).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(DAY_OF_WEEK).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(DAY_LABEL).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(HOUR_12).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(AM_PM).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(HOUR_24).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(MINUTE).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(SECOND).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(YEAR).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(QUARTER).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(MONTH).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(MONTH_LABEL).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(DAY).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_WEEK).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(DAY_LABEL).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(HOUR_12).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(AM_PM).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(HOUR_24).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(MINUTE).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(SECOND).setType(BOOLEAN).setDefaultValue(false).build(this));
 
         List<Locale> locales = Stream
                 .of(Locale.CHINESE, Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, //

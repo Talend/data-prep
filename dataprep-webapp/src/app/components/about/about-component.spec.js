@@ -120,10 +120,6 @@ describe('Breadcrumb component', () => {
 			// given
 			createElement();
 
-			// when
-			// controller.version = 'current version';
-			// scope.$digest();
-
 			// then
 			expect(element.find('#version').text().trim()).toBe('VERSION: current version');
 		});

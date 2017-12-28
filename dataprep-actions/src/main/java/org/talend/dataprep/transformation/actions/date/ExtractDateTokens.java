@@ -250,7 +250,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         } else if (numDayOfWeek == 7){
             return label[1];
         } else {
-            return "";
+            return StringUtils.EMPTY;
         }
     }
 
@@ -265,7 +265,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         if (numMonth >= 1 && numMonth <= 12) {
             return label[numMonth - 1];
         } else {
-            return "";
+            return StringUtils.EMPTY;
         }
     }
 

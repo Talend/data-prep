@@ -27,7 +27,7 @@
         <icon id="about-dataprep-logo" name="'talend-tdp-colored'"></icon>
 
         <div class="version-copyrights">
-            <div id="version">{{"VERSION" | translate}}: {{$ctrl.version}}</div>
+            <div id="version">{{"VERSION" | translate}}: {{$ctrl.state.home.about.builds.application}}</div>
             <div id="copyrights">{{$ctrl.copyRights}}</div>
         </div>
 
@@ -40,10 +40,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="buildDetail in $ctrl.state.home.about.builds track by $index">
-                    <td>{{buildDetail.serviceName}}</td>
-                    <td>{{buildDetail.buildId}}</td>
-                    <td>{{buildDetail.versionId}}</td>
+                <tr ng-repeat="buildServiceDetail in $ctrl.state.home.about.builds.services track by $index">
+                    <td>{{buildServiceDetail.serviceName}}</td>
+                    <td>{{buildServiceDetail.buildId}}</td>
+                    <td>{{buildServiceDetail.versionId}}</td>
                 </tr>
             </tbody>
         </table>

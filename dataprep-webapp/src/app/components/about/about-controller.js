@@ -11,10 +11,9 @@
 
  ============================================================================*/
 export default class AboutCtrl {
-	constructor(state, version, copyRights, AboutService) {
+	constructor(state, copyRights, AboutService) {
 		'ngInject';
 		this.state = state;
-		this.version = version;
 		this.copyRights = copyRights;
 		this.showBuildDetails = false;
 		AboutService.loadBuilds();

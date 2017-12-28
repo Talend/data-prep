@@ -18,28 +18,30 @@ describe('Breadcrumb component', () => {
 	let stateMock;
 	let controller;
 
-	const allBuildDetails = [
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "API"
-		},
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "DATASET"
-		},
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "PREPARATION"
-		},
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "TRANSFORMATION"
-		}
-	];
+	const allBuildDetails = {
+		"application":"current version",
+		"services": [
+			{
+				"versionId": "2.4.0-SNAPSHOT",
+				"buildId": "3c823c0-N/A",
+				"serviceName": "API"
+			},
+			{
+				"versionId": "2.4.0-SNAPSHOT",
+				"buildId": "3c823c0-N/A",
+				"serviceName": "DATASET"
+			},
+			{"versionId": "2.4.0-SNAPSHOT",
+				"buildId": "3c823c0-N/A",
+				"serviceName": "PREPARATION"
+			},
+			{
+				"versionId": "2.4.0-SNAPSHOT",
+				"buildId": "3c823c0-N/A",
+				"serviceName": "TRANSFORMATION"
+			}
+		]
+	};
 
 	beforeEach(angular.mock.module('data-prep.about', ($provide) => {
 		stateMock = {
@@ -119,8 +121,8 @@ describe('Breadcrumb component', () => {
 			createElement();
 
 			// when
-			controller.version = 'current version';
-			scope.$digest();
+			// controller.version = 'current version';
+			// scope.$digest();
 
 			// then
 			expect(element.find('#version').text().trim()).toBe('VERSION: current version');
@@ -177,10 +179,10 @@ describe('Breadcrumb component', () => {
 				expect(element.find('table thead th').eq(1).text().trim()).toBe('BUILD ID');
 				expect(element.find('table thead th').eq(2).text().trim()).toBe('VERSION ID');
 
-				expect(element.find('table tbody tr').length).toBe(allBuildDetails.length);
-				expect(element.find('table tbody tr td').eq(0).text().trim()).toBe(allBuildDetails[0].serviceName);
-				expect(element.find('table tbody tr td').eq(1).text().trim()).toBe(allBuildDetails[0].buildId);
-				expect(element.find('table tbody tr td').eq(2).text().trim()).toBe(allBuildDetails[0].versionId);
+				expect(element.find('table tbody tr').length).toBe(allBuildDetails.services.length);
+				expect(element.find('table tbody tr td').eq(0).text().trim()).toBe(allBuildDetails.services[0].serviceName);
+				expect(element.find('table tbody tr td').eq(1).text().trim()).toBe(allBuildDetails.services[0].buildId);
+				expect(element.find('table tbody tr td').eq(2).text().trim()).toBe(allBuildDetails.services[0].versionId);
 			});
 
 			it('should render less button', () => {

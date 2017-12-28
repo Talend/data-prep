@@ -16,9 +16,8 @@ package org.talend.dataprep.api.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.info.Version;
+import org.talend.dataprep.info.GlobalVersion;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
@@ -36,10 +35,10 @@ public class VersionServiceAPITest extends ApiServiceTestBase {
 
         Assert.assertEquals(200, response.getStatusCode());
 
-        Version[] versions = objectMapper.readValue(response.asString(), new TypeReference<Version[]>() {
-        });
+        GlobalVersion globalVersion = objectMapper.readValue(response.asString(), GlobalVersion.class);
 
-        Assert.assertEquals(4, versions.length);
+        Assert.assertEquals(4, globalVersion.getServices().length);
+        Assert.assertEquals("GLOBAL_VERSION", globalVersion.getApplication());
     }
 
     @Test
@@ -53,12 +52,11 @@ public class VersionServiceAPITest extends ApiServiceTestBase {
                 .when() //
                 .get("/api/version");
 
-        Version[] versions = objectMapper.readValue(response.asString(), new TypeReference<Version[]>() {
-        });
+        GlobalVersion globalVersion = objectMapper.readValue(response.asString(), GlobalVersion.class);
 
-        Version[] versions2 = objectMapper.readValue(response2.asString(), new TypeReference<Version[]>() {
-        });
+        GlobalVersion globalVersion2 = objectMapper.readValue(response.asString(), GlobalVersion.class);
 
-        Assert.assertArrayEquals(versions, versions2);
+        Assert.assertArrayEquals(globalVersion.getServices(), globalVersion2.getServices());
+        Assert.assertEquals(globalVersion.getApplication(), globalVersion2.getApplication());
     }
 }

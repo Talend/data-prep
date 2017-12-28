@@ -12,9 +12,11 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.dataquality;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
 
 import java.util.*;
 
@@ -42,7 +44,7 @@ import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 public class StandardizeInvalidTest extends AbstractMetadataBaseTest<StandardizeInvalid> {
 
     private final String MATCH_THRESHOLD_PARAMETER = "match_threshold";
-
+    
     private final String fixedName = "David Bowie";
 
     private final String columnId0 = "0000";
@@ -188,8 +190,8 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
     }
 
     @Test
-    public void should_action_Scope() {
-        assertTrue(action.getActionScope().isEmpty());
+    public void testActionScope() throws Exception {
+        assertThat(action.getActionScope(), hasItem("invalid"));
     }
 
     private DataSetRow createRow(Map<String, String> inputValues, String invalidColumnId, String domain) {

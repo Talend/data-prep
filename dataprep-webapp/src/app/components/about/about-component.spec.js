@@ -19,7 +19,7 @@ describe('Breadcrumb component', () => {
 	let controller;
 
 	const allBuildDetails = {
-		"application": "current version",
+		"displayVersion": "current version",
 		"services": [
 			{
 				"versionId": "2.4.0-SNAPSHOT",

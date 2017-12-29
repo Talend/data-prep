@@ -26,7 +26,7 @@ import org.talend.dataprep.api.service.command.info.VersionCommand;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.info.GlobalVersion;
+import org.talend.dataprep.info.BuildDetails;
 import org.talend.dataprep.info.Version;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -54,7 +54,7 @@ public class VersionServiceAPI extends APIService {
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
 
-    @Value("${application.version}")
+    @Value("${dataprep.display.version}")
     protected String applicationVersion;
 
     /**
@@ -67,7 +67,7 @@ public class VersionServiceAPI extends APIService {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @PublicAPI
-    public GlobalVersion allVersions() {
+    public BuildDetails allVersions() {
         final Version[] versions = new Version[4];
 
         final Version apiVersion = versionService.version();
@@ -77,7 +77,7 @@ public class VersionServiceAPI extends APIService {
         versions[2] = callVersionService(preparationServiceUrl, "PREPARATION");
         versions[3] = callVersionService(transformationServiceUrl, "TRANSFORMATION");
 
-        return new GlobalVersion(applicationVersion, versions);
+        return new BuildDetails(applicationVersion, versions);
     }
 
     /**

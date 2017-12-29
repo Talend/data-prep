@@ -13,27 +13,27 @@
 
 package org.talend.dataprep.info;
 
-public class GlobalVersion {
+public class BuildDetails {
 
-    private String application;
+    private String displayVersion;
 
     private Version[] services;
 
-    public GlobalVersion() {
+    public BuildDetails() {
         // needed for the json de/serialization
     }
 
-    public GlobalVersion(String application, Version[] services) {
-        this.application = application;
+    public BuildDetails(String displayVersion, Version[] services) {
+        this.displayVersion = displayVersion;
         this.services = services;
     }
 
-    public String getApplication() {
-        return application;
+    public String getDisplayVersion() {
+        return displayVersion;
     }
 
-    public void setApplication(String application) {
-        this.application = application;
+    public void setDisplayVersion(String displayVersion) {
+        this.displayVersion = displayVersion;
     }
 
     public Version[] getServices() {

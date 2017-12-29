@@ -173,8 +173,8 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         expectedValues.put("0003", "2017");
         expectedValues.put("0004", "12");
         expectedValues.put("0005", "December");
-        expectedValues.put("0008", "Sunday");
-        expectedValues.put("0006", "0");
+        expectedValues.put("0006", "Sunday");
+        expectedValues.put("0008", "0");
         expectedValues.put("0007", "0");
         expectedValues.put("0002", "tata");
 

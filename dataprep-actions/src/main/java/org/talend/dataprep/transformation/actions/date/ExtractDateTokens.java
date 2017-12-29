@@ -105,16 +105,16 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH_LABEL, ChronoField.MONTH_OF_YEAR), //
+            new DateFieldMappingBean(WEEK_OF_YEAR, ChronoField.ALIGNED_WEEK_OF_YEAR), //
+            new DateFieldMappingBean(DAY_OF_YEAR, ChronoField.DAY_OF_YEAR), //
             new DateFieldMappingBean(DAY, ChronoField.DAY_OF_MONTH), //
+            new DateFieldMappingBean(DAY_OF_WEEK, ChronoField.DAY_OF_WEEK), //
+            new DateFieldMappingBean(DAY_LABEL, ChronoField.DAY_OF_WEEK), //
             new DateFieldMappingBean(HOUR_12, ChronoField.HOUR_OF_AMPM), //
             new DateFieldMappingBean(AM_PM, ChronoField.AMPM_OF_DAY), //
             new DateFieldMappingBean(HOUR_24, ChronoField.HOUR_OF_DAY), //
             new DateFieldMappingBean(MINUTE, ChronoField.MINUTE_OF_HOUR), //
             new DateFieldMappingBean(SECOND, ChronoField.SECOND_OF_MINUTE), //
-            new DateFieldMappingBean(DAY_OF_WEEK, ChronoField.DAY_OF_WEEK), //
-            new DateFieldMappingBean(DAY_LABEL, ChronoField.DAY_OF_WEEK), //
-            new DateFieldMappingBean(DAY_OF_YEAR, ChronoField.DAY_OF_YEAR), //
-            new DateFieldMappingBean(WEEK_OF_YEAR, ChronoField.ALIGNED_WEEK_OF_YEAR), //
     };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractDateTokens.class);

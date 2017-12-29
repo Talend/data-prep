@@ -46,7 +46,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Extract tokens from a String cell value based on regex matching groups.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractStringTokens.EXTRACT_STRING_TOKENS_ACTION_NAME)
+@Action(ExtractStringTokens.EXTRACT_STRING_TOKENS_ACTION_NAME)
 public class ExtractStringTokens extends AbstractActionMetadata implements ColumnAction {
 
     /** The action name. */

@@ -37,12 +37,11 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeTimeSince.TIME_SINCE_ACTION_NAME)
+@Action(ComputeTimeSince.TIME_SINCE_ACTION_NAME)
 public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
     /**
@@ -103,6 +102,8 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 .item(ChronoUnit.MONTHS.name(), "months") //
                 .item(ChronoUnit.DAYS.name(), "days") //
                 .item(ChronoUnit.HOURS.name(), "hours") //
+                .item(ChronoUnit.MINUTES.name(), "minutes") //
+                .item(ChronoUnit.SECONDS.name(), "seconds") //
                 .defaultValue(ChronoUnit.HOURS.name()) //
                 .build(this));
 

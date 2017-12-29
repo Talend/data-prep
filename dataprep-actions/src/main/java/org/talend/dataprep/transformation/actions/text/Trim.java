@@ -37,7 +37,7 @@ import org.talend.dataquality.converters.StringTrimmer;
 /**
  * Trim leading and trailing characters.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Trim.TRIM_ACTION_NAME)
+@Action(Trim.TRIM_ACTION_NAME)
 public class Trim extends AbstractActionMetadata implements ColumnAction {
 
     /**

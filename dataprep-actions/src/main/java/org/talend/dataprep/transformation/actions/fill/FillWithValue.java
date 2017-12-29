@@ -15,16 +15,15 @@ package org.talend.dataprep.transformation.actions.fill;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
+import java.util.Locale;
+
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 
-import java.util.Locale;
-
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillWithValue.ACTION_NAME)
+@Action(FillWithValue.ACTION_NAME)
 public class FillWithValue extends AbstractFillWith implements ColumnAction {
 
     public static final String ACTION_NAME = "fill_with_value";

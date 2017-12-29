@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Swap columns values
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Swap.SWAP_COLUMN_ACTION_NAME)
+@Action(Swap.SWAP_COLUMN_ACTION_NAME)
 public class Swap extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**

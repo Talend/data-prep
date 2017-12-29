@@ -34,7 +34,6 @@ import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.math.AbstractMathNoParameterAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.units.TemperatureImpl;
@@ -42,7 +41,7 @@ import org.talend.dataprep.units.TemperatureImpl;
 /**
  * Abstract class for conversions from Fahrenheit to Celsius and vice versa.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ACTION_NAME)
+@Action(ACTION_NAME)
 public class TemperaturesConverter extends AbstractMathNoParameterAction {
 
     public static final String ACTION_NAME = "temperatures_converter";

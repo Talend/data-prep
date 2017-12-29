@@ -46,7 +46,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * This action reorder columns. The column will be move to the selected column. All other columns will be moved as well.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReorderColumn.REORDER_ACTION_NAME)
+@Action(ReorderColumn.REORDER_ACTION_NAME)
 public class ReorderColumn extends AbstractActionMetadata implements DataSetAction {
 
     /**

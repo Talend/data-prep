@@ -39,10 +39,10 @@ import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.Metadata;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
-import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-import org.talend.dataquality.semantic.index.ClassPathDirectory;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
+import org.talend.dataquality.semantic.snapshot.DictionarySnapshot;
+import org.talend.dataquality.semantic.snapshot.DictionarySnapshotProvider;
+import org.talend.dataquality.semantic.snapshot.StandardDictionarySnapshotProvider;
 import org.talend.dataquality.semantic.statistics.SemanticAnalyzer;
 import org.talend.dataquality.semantic.statistics.SemanticQualityAnalyzer;
 import org.talend.dataquality.semantic.statistics.SemanticType;
@@ -83,53 +83,20 @@ public class AnalyzerService {
 
     private final Set<Analyzer> openedAnalyzers = new HashSet<>();
 
-    private final String indexesLocation;
-
-    private CategoryRecognizerBuilder builder;
+    private DictionarySnapshotProvider dictionarySnapshotProvider;
 
     public AnalyzerService() {
-        this(CategoryRecognizerBuilder.newBuilder().lucene());
+        this(new StandardDictionarySnapshotProvider());
     }
 
-    public AnalyzerService(CategoryRecognizerBuilder builder) {
-        this(System.getProperty("java.io.tmpdir") + "/tdp/org.talend.dataquality.semantic", //
-                "singleton", //
-                builder);
-    }
-
-    public AnalyzerService(String indexesLocation, String indexStrategy, CategoryRecognizerBuilder builder) {
-        this.indexesLocation = indexesLocation;
-        LOGGER.info("DataQuality indexes location : '{}'", this.indexesLocation);
-        CategoryRegistryManager.setLocalRegistryPath(this.indexesLocation);
-        // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
-        LOGGER.info("Analyzer service lucene index strategy set to '{}'", indexStrategy);
-        if ("basic".equalsIgnoreCase(indexStrategy)) {
-            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
-        } else if ("singleton".equalsIgnoreCase(indexStrategy)) {
-            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
-        } else {
-            // Default
-            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", indexStrategy);
-            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
-        }
+    public AnalyzerService(DictionarySnapshotProvider dictionarySnapshotProvider) {
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
-        this.builder = builder;
+        this.dictionarySnapshotProvider = dictionarySnapshotProvider;
         this.dateParser = new DateParser(this);
     }
 
-    /**
-     * Setter for categoryRecognizerBuilder
-     * @param categoryRecognizerBuilder the categoryRecognizerBuilder instance
-     */
-    public void setCategoryRecognizerBuilder(CategoryRecognizerBuilder categoryRecognizerBuilder) {
-        this.builder = categoryRecognizerBuilder;
-    }
-
-    /**
-     * @return The file path where DQ dictionaries are.
-     */
-    public String getIndexesLocation() {
-        return indexesLocation;
+    public void setDictionarySnapshotProvider(DictionarySnapshotProvider provider) {
+        this.dictionarySnapshotProvider = provider;
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
@@ -232,12 +199,14 @@ public class AnalyzerService {
                 .collect(Collectors.toList());
         final String[] domains = domainList.toArray(new String[domainList.size()]);
 
+        DictionarySnapshot dictionarySnapshot = dictionarySnapshotProvider.get();
+
         // Build all analyzers
         List<Analyzer> analyzers = new ArrayList<>();
         for (Analysis setting : settings) {
             switch (setting) {
                 case SEMANTIC:
-                    final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(builder);
+                    final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(dictionarySnapshot);
                     semanticAnalyzer.setLimit(Integer.MAX_VALUE);
                     semanticAnalyzer.setMetadata(Metadata.HEADER_NAME, extractColumnNames(columns));
                     analyzers.add(semanticAnalyzer);
@@ -251,7 +220,7 @@ public class AnalyzerService {
                     columns.forEach(
                             c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
                     analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
-                            new SemanticQualityAnalyzer(builder, domains, false), true)); // NOSONAR
+                            new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), true)); // NOSONAR
                     break;
                 case CARDINALITY:
                     analyzers.add(new CardinalityAnalyzer());

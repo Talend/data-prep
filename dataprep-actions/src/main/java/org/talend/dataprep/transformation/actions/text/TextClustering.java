@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + TextClustering.TEXT_CLUSTERING)
+@Action(TextClustering.TEXT_CLUSTERING)
 public class TextClustering extends AbstractActionMetadata implements ColumnAction {
 
     /**

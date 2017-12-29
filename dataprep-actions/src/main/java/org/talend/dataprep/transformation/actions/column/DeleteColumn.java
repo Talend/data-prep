@@ -30,7 +30,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Deletes a column from a dataset. This action is available from column headers</b>
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteColumn.DELETE_COLUMN_ACTION_NAME)
+@Action(DeleteColumn.DELETE_COLUMN_ACTION_NAME)
 public class DeleteColumn extends AbstractActionMetadata implements ColumnAction {
 
     /**

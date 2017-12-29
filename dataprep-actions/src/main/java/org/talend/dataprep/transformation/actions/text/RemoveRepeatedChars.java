@@ -40,7 +40,7 @@ import org.talend.dataquality.converters.DuplicateCharEraser;
 /**
  * Remove consecutive repeated characters for a Text.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveRepeatedChars.ACTION_NAME)
+@Action(RemoveRepeatedChars.ACTION_NAME)
 public class RemoveRepeatedChars extends AbstractActionMetadata implements ColumnAction {
 
     /** Action name. */

@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DurationConverter.ACTION_NAME)
+@Action(DurationConverter.ACTION_NAME)
 public class DurationConverter extends AbstractActionMetadata implements ColumnAction {
 
     /**

@@ -35,7 +35,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Split a cell value on a separator.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractUrlTokens.EXTRACT_URL_TOKENS_ACTION_NAME)
+@Action(ExtractUrlTokens.EXTRACT_URL_TOKENS_ACTION_NAME)
 public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAction {
 
     /**

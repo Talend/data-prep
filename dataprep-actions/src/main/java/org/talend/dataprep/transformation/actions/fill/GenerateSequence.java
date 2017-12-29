@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Generate a sequence on a column based on start value and step value.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + GenerateSequence.ACTION_NAME)
+@Action(GenerateSequence.ACTION_NAME)
 public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "generate_a_sequence";

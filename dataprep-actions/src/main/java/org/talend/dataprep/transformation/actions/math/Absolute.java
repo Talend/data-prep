@@ -37,7 +37,7 @@ import org.talend.dataprep.util.NumericHelper;
 /**
  * This will compute the absolute value for numerical columns.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Absolute.ABSOLUTE_ACTION_NAME)
+@Action(Absolute.ABSOLUTE_ACTION_NAME)
 public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ABSOLUTE_ACTION_NAME = "absolute"; //$NON-NLS-1$

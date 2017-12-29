@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Keep only one occurrence of duplicated rows.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Deduplicate.DEDUPLICATION_ACTION_NAME)
+@Action(Deduplicate.DEDUPLICATION_ACTION_NAME)
 public class Deduplicate extends AbstractActionMetadata implements DataSetAction {
 
     /**

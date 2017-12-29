@@ -773,7 +773,7 @@ public class TransformationService extends BaseTransformationService {
         return outputStream -> {
             // Serialize it to output
             LOG.debug("Returning DQ dictionaries");
-            TdqCategories result = TdqCategoriesFactory.createTdqCategories();
+            TdqCategories result = TdqCategoriesFactory.createFullTdqCategories();
             try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(outputStream))) {
                 oos.writeObject(result);
             }

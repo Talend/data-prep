@@ -36,7 +36,7 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Cut.CUT_ACTION_NAME)
+@Action(Cut.CUT_ACTION_NAME)
 public class Cut extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -101,25 +101,23 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toCut = row.get(columnId);
         if (toCut != null) {
             final ReplaceOnValueHelper replaceOnValueParameter = context.get(REGEX_HELPER_KEY);
-
+            String value;
             if (replaceOnValueParameter.matches(toCut)) {
                 if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
-                    String value = toCut.replaceAll(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
-                    row.set(ActionsUtils.getTargetColumnId(context), value);
+                    value = toCut.replaceAll(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
                 } else {
-                    String value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
-                    row.set(ActionsUtils.getTargetColumnId(context), value);
+                    value = toCut.replace(replaceOnValueParameter.getToken(), ""); //$NON-NLS-1$
                 }
+            } else {
+                value = toCut;
             }
+            row.set(ActionsUtils.getTargetColumnId(context), value);
         }
     }
 

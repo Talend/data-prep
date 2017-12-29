@@ -35,7 +35,6 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -43,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Change the date pattern on a 'date' column.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeDatePattern.ACTION_NAME)
+@Action(ChangeDatePattern.ACTION_NAME)
 public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
     /** Action name. */
@@ -68,6 +67,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     private static final String FROM_DATE_PATTERNS = "from_date_patterns";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
+    protected static final String NEW_COLUMN_SUFFIX = "_format_changed";
 
     @Override
     public String getName() {
@@ -96,7 +97,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);

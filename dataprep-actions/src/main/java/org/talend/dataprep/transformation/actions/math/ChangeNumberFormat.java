@@ -47,7 +47,7 @@ import org.talend.dataprep.util.NumericHelper;
 /**
  * Change the pattern on a 'number' column.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeNumberFormat.ACTION_NAME)
+@Action(ChangeNumberFormat.ACTION_NAME)
 public class ChangeNumberFormat extends AbstractActionMetadata implements ColumnAction {
 
     /** Action name. */

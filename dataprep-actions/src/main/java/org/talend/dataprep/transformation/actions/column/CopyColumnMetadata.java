@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * duplicate a column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CopyColumnMetadata.COPY_ACTION_NAME)
+@Action(CopyColumnMetadata.COPY_ACTION_NAME)
 public class CopyColumnMetadata extends AbstractActionMetadata implements ColumnAction {
 
     /**

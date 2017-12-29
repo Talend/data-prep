@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Concat.CONCAT_ACTION_NAME)
+@Action(Concat.CONCAT_ACTION_NAME)
 public class Concat extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**

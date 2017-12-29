@@ -16,7 +16,7 @@ package org.talend.dataprep.transformation.actions.dataquality;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.INVALID;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
@@ -42,7 +42,7 @@ import org.talend.dataquality.semantic.model.DQCategory;
 /**
  * Find a closest valid value from a dictionary.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + StandardizeInvalid.ACTION_NAME)
+@Action(StandardizeInvalid.ACTION_NAME)
 public class StandardizeInvalid extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -65,8 +65,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
      */
     private static final String COLUMN_IS_SEMANTIC_KEY = "is_semantic_category";
 
-    private static final List<String> ACTION_SCOPE = singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
-
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardizeInvalid.class);
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
@@ -74,6 +72,11 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     @Override
     public String getName() {
         return ACTION_NAME;
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(INVALID.getDisplayName());
     }
 
     @Override
@@ -131,11 +134,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.DATA_CLEANSING.getDisplayName(locale);
-    }
-
-    @Override
-    public List<String> getActionScope() {
-        return ACTION_SCOPE;
     }
 
     @Override

@@ -17,13 +17,12 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Exponential.EXPONENTIAL_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Create a new column with Exponential
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + EXPONENTIAL_NAME)
+@Action(EXPONENTIAL_NAME)
 public class Exponential extends AbstractMathNoParameterAction {
 
     protected static final String EXPONENTIAL_NAME = "exponential_numbers";

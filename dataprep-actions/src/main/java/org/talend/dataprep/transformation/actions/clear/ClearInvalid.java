@@ -21,14 +21,13 @@ import java.util.*;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Clear cell when value is invalid.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ClearInvalid.ACTION_NAME)
+@Action(ClearInvalid.ACTION_NAME)
 public class ClearInvalid extends AbstractClear implements ColumnAction {
 
     /** the action name. */

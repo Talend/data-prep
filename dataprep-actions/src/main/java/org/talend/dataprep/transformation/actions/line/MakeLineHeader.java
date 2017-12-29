@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * <li>Delete this row</li>
  * </ul>
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MakeLineHeader.ACTION_NAME)
+@Action(MakeLineHeader.ACTION_NAME)
 public class MakeLineHeader extends AbstractActionMetadata implements RowAction {
 
     public static final String ACTION_NAME = "make_line_header";

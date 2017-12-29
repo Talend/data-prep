@@ -48,7 +48,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.JulianDayConverter;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DateCalendarConverter.ACTION_NAME)
+@Action(DateCalendarConverter.ACTION_NAME)
 public class DateCalendarConverter extends AbstractActionMetadata implements ColumnAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateCalendarConverter.class);
@@ -86,6 +86,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     private static Map<String,org.talend.dataquality.converters.DateCalendarConverter> dateCalendarConverterMap =null;
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
+    protected static final String NEW_COLUMN_SUFFIX = "_converted_calendar";
 
     /**
      * if it converts from Chronology
@@ -162,7 +164,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
         if (actionContext.getActionStatus() == OK) {
             dateCalendarConverterMap = new HashMap<>();

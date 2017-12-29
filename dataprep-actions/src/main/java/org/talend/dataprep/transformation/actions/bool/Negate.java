@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  *
  * @see Negate
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Negate.ACTION_NAME)
+@Action(Negate.ACTION_NAME)
 public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "negate";

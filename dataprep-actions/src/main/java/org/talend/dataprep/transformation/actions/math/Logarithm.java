@@ -18,13 +18,12 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Logarithm.LOGARITHM_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Create a new column with Logarithm
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + LOGARITHM_NAME)
+@Action(LOGARITHM_NAME)
 public class Logarithm extends AbstractMathNoParameterAction {
 
     protected static final String LOGARITHM_NAME = "logarithm_numbers";

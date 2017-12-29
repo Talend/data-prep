@@ -15,14 +15,13 @@ package org.talend.dataprep.transformation.actions.math;
 import java.math.RoundingMode;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 /**
  * Round towards zero. Never increments the digit prior to a discarded fraction (i.e. truncates)
  *
  * @see RoundingMode#DOWN
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveFractionalPart.ACTION_NAME)
+@Action(RemoveFractionalPart.ACTION_NAME)
 public class RemoveFractionalPart extends AbstractRound {
 
     /** The action name. */

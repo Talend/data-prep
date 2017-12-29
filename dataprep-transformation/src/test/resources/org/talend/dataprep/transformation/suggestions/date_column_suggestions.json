@@ -605,6 +605,14 @@
             {
               "value": "HOURS",
               "label": "Hours"
+            },
+            {
+              "value": "MINUTES",
+              "label": "Minutes"
+            },
+            {
+              "value": "SECONDS",
+              "label": "Seconds"
             }
           ],
           "multiple": false

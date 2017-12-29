@@ -45,7 +45,7 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 /**
  * Format a validated phone number to a specified format.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FormatPhoneNumber.ACTION_NAME)
+@Action(FormatPhoneNumber.ACTION_NAME)
 public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnAction {
 
     /**

@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Split a cell value on a separator.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractEmailDomain.EXTRACT_DOMAIN_ACTION_NAME)
+@Action(ExtractEmailDomain.EXTRACT_DOMAIN_ACTION_NAME)
 public class ExtractEmailDomain extends AbstractActionMetadata implements ColumnAction {
 
     /**

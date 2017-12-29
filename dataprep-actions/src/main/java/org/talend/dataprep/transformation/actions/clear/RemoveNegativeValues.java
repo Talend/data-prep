@@ -7,34 +7,34 @@
 // You should have received a copy of the agreement
 // along with this program; if not, write to Talend SA
 // 9 rue Pages 92150 Suresnes, France
-//
 // ============================================================================
 
-package org.talend.dataprep.transformation.actions.math;
+package org.talend.dataprep.transformation.actions.clear;
 
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.talend.dataprep.api.type.Type.NUMERIC;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.NUMBERS;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.actions.delete.AbstractDelete;
+import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.util.NumericHelper;
+import org.talend.dataquality.statistics.type.TypeInferenceUtils;
 
-/**
- * Delete row on a given value.
- */
-@Action(DeleteNegativeValues.ACTION_NAME)
-public class DeleteNegativeValues extends AbstractDelete {
+
+@Action(RemoveNegativeValues.ACTION_NAME)
+public class RemoveNegativeValues extends AbstractClear implements ColumnAction {
 
     /**
      * The action name.
      */
-    public static final String ACTION_NAME = "delete_negative_values"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "remove_negative_values";
 
     @Override
     public String getName() {
@@ -42,24 +42,24 @@ public class DeleteNegativeValues extends AbstractDelete {
     }
 
     @Override
+    public String getCategory(Locale locale) {
+        return NUMBERS.getDisplayName(locale);
+    }
+
+    @Override
     public boolean acceptField(ColumnMetadata column) {
         return NUMERIC.isAssignableFrom(Type.get(column.getType()));
     }
 
-    /**
-     * @see AbstractDelete#toDelete(DataSetRow, String, ActionContext)
-     */
     @Override
-    public boolean toDelete(DataSetRow dataSetRow, String columnId, ActionContext context) {
-        final String value = dataSetRow.get(columnId);
-        if (value == null) {
+    protected boolean toClear(DataSetRow dataSetRow, String columnId, ActionContext actionContext) {
+        final String rawValue = dataSetRow.get(columnId);
+        if (isBlank(rawValue) || !TypeInferenceUtils.isNumber(rawValue.trim())) {
             return false;
+        } else {
+            BigDecimal bd = BigDecimalParser.toBigDecimal(rawValue);
+            return bd.compareTo(BigDecimal.ZERO) < 0;
         }
-        if (!NumericHelper.isBigDecimal(value)) {
-            return false;
-        }
-        BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
-        return bd.compareTo(BigDecimal.ZERO) < 0;
     }
 
 }

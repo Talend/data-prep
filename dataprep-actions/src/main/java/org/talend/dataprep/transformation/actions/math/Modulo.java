@@ -20,10 +20,9 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Modulo.MODULO_NAME)
+@Action(Modulo.MODULO_NAME)
 public class Modulo extends AbstractMathOneParameterAction {
 
     protected static final String MODULO_NAME = "modulo";

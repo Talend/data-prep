@@ -21,8 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
+import org.talend.dataquality.semantic.snapshot.StandardDictionarySnapshotProvider;
 
 @Configuration
 public class Analyzers implements DisposableBean {
@@ -47,9 +48,24 @@ public class Analyzers implements DisposableBean {
     @Bean
     public AnalyzerService analyzerService() {
         LOGGER.info("Data Quality strategy is {} and located in {}", luceneIndexStrategy, dataqualityIndexesLocation);
-        return new AnalyzerService(dataqualityIndexesLocation, //
-                luceneIndexStrategy, //
-                CategoryRecognizerBuilder.newBuilder().lucene());
+
+        LOGGER.info("DataQuality indexes location : '{}'", this.dataqualityIndexesLocation);
+        CategoryRegistryManager.setLocalRegistryPath(this.dataqualityIndexesLocation);
+
+        // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
+        LOGGER.info("Analyzer service lucene index strategy set to '{}'", luceneIndexStrategy);
+        if ("basic".equalsIgnoreCase(luceneIndexStrategy)) {
+            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
+        } else if ("singleton".equalsIgnoreCase(luceneIndexStrategy)) {
+            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
+        } else {
+            // Default
+            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", luceneIndexStrategy);
+            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
+        }
+
+        LOGGER.info("DataQuality indexes location : '{}'", this.dataqualityIndexesLocation);
+        return new AnalyzerService(new StandardDictionarySnapshotProvider());
     }
 
     @Override

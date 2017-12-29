@@ -48,7 +48,7 @@ import org.talend.dataprep.util.NumericHelper;
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + NumericOperations.ACTION_NAME)
+@Action(NumericOperations.ACTION_NAME)
 public class NumericOperations extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**

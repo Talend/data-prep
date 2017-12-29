@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <ul>
  * <li>Id ({@link #getId()})</li>
  * <li>Label ({@link #getLabel()})</li>
- * <li>Frequency percentage this type is matched ({@link #getFrequency()} ()})</li>
+ * <li>Frequency percentage this type is matched ({@link #getScore()} ()})</li>
  * </ul>
  *
  */
@@ -32,26 +32,21 @@ public class SemanticDomain implements Serializable {
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty("id")
     private String id;
 
-    @JsonProperty("label")
     private String label;
 
     @JsonProperty("frequency")
-    private float frequency;
+    private float score;
 
-    /**
-     * Default empty constructor.
-     */
     public SemanticDomain() {
         // empty default constructor
     }
 
-    public SemanticDomain(String id, String label, float frequency) {
+    public SemanticDomain(String id, String label, float score) {
         this.id = id;
         this.label = label;
-        this.frequency = frequency;
+        this.score = score;
     }
 
     public String getId() {
@@ -70,17 +65,17 @@ public class SemanticDomain implements Serializable {
         this.label = label;
     }
 
-    public float getFrequency() {
-        return frequency;
+    public float getScore() {
+        return score;
     }
 
-    public void setFrequency(float frequency) {
-        this.frequency = frequency;
+    public void setScore(float score) {
+        this.score = score;
     }
 
     @Override
     public String toString() {
-        return "SemanticDomain{" + "id='" + id + '\'' + ", label='" + label + '\'' + ", frequency=" + frequency + '}';
+        return "SemanticDomain{" + "id='" + id + '\'' + ", label='" + label + '\'' + ", score=" + score + '}';
     }
 
     @Override
@@ -92,13 +87,13 @@ public class SemanticDomain implements Serializable {
             return false;
         }
         SemanticDomain that = (SemanticDomain) o;
-        return Objects.equals(frequency, that.frequency) //
+        return Objects.equals(score, that.score) //
                 && Objects.equals(id, that.id) //
                 && Objects.equals(label, that.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, label, frequency);
+        return Objects.hash(id, label, score);
     }
 }

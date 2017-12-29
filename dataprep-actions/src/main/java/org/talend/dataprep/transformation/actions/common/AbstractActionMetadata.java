@@ -12,7 +12,8 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import java.util.ArrayList;
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -38,8 +39,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * derive from it but it is not an obligation.
  */
 public abstract class AbstractActionMetadata implements InternalActionDefinition {
-
-    public static final String ACTION_BEAN_PREFIX = "action#"; //$NON-NLS-1$
 
     @Override
     public ActionDefinition adapt(ColumnMetadata column) {
@@ -122,7 +121,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public List<String> getActionScope() {
-        return new ArrayList<>();
+        return emptyList();
     }
 
     /**

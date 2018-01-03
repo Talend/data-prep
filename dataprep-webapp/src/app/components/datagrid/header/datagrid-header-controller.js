@@ -10,6 +10,12 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import {
+	INVALID_RECORDS,
+	EMPTY_RECORDS,
+	INVALID_EMPTY_RECORDS,
+	VALID_RECORDS,
+} from '../../../services/filter/adapter/filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -37,6 +43,11 @@ export default function DatagridHeaderCtrl($scope, state,
 	vm.filterManagerService = FilterManagerService;
 	vm.PlaygroundService = PlaygroundService;
 	vm.state = state;
+
+	this.VALID_RECORDS = VALID_RECORDS;
+	this.INVALID_RECORDS = INVALID_RECORDS;
+	this.EMPTY_RECORDS = EMPTY_RECORDS;
+	this.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
 
 	/**
 	 * @ngdoc property

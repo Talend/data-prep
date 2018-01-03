@@ -16,6 +16,7 @@ import _ from 'lodash';
 export const CONTAINS = 'contains';
 export const EXACT = 'exact';
 export const INVALID_RECORDS = 'invalid_records';
+export const INVALID_EMPTY_RECORDS = 'invalid_empty_records';
 export const EMPTY_RECORDS = 'empty_records';
 export const VALID_RECORDS = 'valid_records';
 export const INSIDE_RANGE = 'inside_range';

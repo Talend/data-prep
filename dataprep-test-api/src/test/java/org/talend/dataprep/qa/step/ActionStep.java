@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.config.FeatureContext;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
 import com.jayway.restassured.response.Response;
@@ -94,9 +93,8 @@ public class ActionStep extends DataPrepStep {
 
     @Then("^I update the first step like \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
     public void updateStep(String stepName, String prepName, DataTable dataTable) throws IOException {
-        String suffixedPrepName = suffixName(prepName);
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        String prepId = context.getPreparationId(suffixedPrepName);
+        String prepId = context.getPreparationId(suffixName(prepName));
         Action storedAction = context.getAction(stepName);
         Assert.assertTrue(storedAction != null);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
@@ -110,8 +108,7 @@ public class ActionStep extends DataPrepStep {
 
     @And("^I move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void successToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
-        String suffixedPrepName = FeatureContext.suffixName(prepName);
-        moveStep(stepName, parentStepName, suffixedPrepName).then().statusCode(200);
+        moveStep(stepName, parentStepName, suffixName(prepName)).then().statusCode(200);
     }
 
     @Then("^I fail to move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")

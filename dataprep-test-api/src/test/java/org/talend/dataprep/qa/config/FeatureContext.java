@@ -14,13 +14,7 @@
 package org.talend.dataprep.qa.config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -41,7 +35,7 @@ public class FeatureContext {
     public static final String FULL_RUN_PREFIX = "fullrun-";
 
     /**
-     * Suffix used to differentiate non deleted TDP items between various IT runs.
+     * Suffix used to differentiate persisted TDP items during parallel IT runs.
      */
     private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
@@ -73,7 +67,7 @@ public class FeatureContext {
 
     /**
      * Add a suffix to a name depending of the execution instance.
-     * 
+     *
      * @param name the to suffix.
      * @return the suffixed name.
      */

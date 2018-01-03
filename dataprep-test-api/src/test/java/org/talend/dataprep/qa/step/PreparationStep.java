@@ -77,12 +77,11 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^I move the preparation \"(.*)\" with the following parameters :$")
     public void movePreparation(String preparationName, DataTable dataTable) throws IOException {
-        String suffixedPreparationName = suffixName(preparationName);
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<Folder> folders = folderUtil.listFolders();
         Folder originFolder = folderUtil.extractFolder(params.get(ORIGIN), folders);
         Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
-        String prepId = context.getPreparationId(suffixedPreparationName);
+        String prepId = context.getPreparationId(suffixName(preparationName));
         Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,
                 suffixName(params.get(NEW_PREPARATION_NAME)));
         response.then().statusCode(200);
@@ -90,12 +89,13 @@ public class PreparationStep extends DataPrepStep {
 
     @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
     public void checkExistPrep(String preparationName, String folder) throws IOException {
-        String prepId = context.getPreparationId(suffixName(preparationName));
+        String suffixedPreparationName = suffixName(preparationName);
+        String prepId = context.getPreparationId(suffixedPreparationName);
         FolderContent folderContent = folderUtil.listPreparation(folder);
 
         long nb = folderContent.preparations.stream() //
                 .filter(p -> p.id.equals(prepId) //
-                        && p.name.equals(suffixName(preparationName))) //
+                        && p.name.equals(suffixedPreparationName)) //
                 .count();
         Assert.assertEquals(1, nb);
     }
@@ -103,8 +103,7 @@ public class PreparationStep extends DataPrepStep {
     @Then("^I check that the content of preparation \"(.*)\" equals \"(.*)\" file which have \"(.*)\" as delimiter$")
     public void iCheckThatTheContentOfPreparationEqualsFile(String preparationName, String fileName, String delimiter)
             throws Throwable {
-        String suffixedPreparationName = suffixName(preparationName);
-        String prepId = context.getPreparationId(suffixedPreparationName);
+        String prepId = context.getPreparationId(suffixName(preparationName));
         Response response = api.getPreparationContent(prepId, "head", "HEAD");
         response.then().statusCode(200);
 

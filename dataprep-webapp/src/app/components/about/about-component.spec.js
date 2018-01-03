@@ -176,10 +176,16 @@ describe('Breadcrumb component', () => {
 				expect(element.find('table thead th').eq(1).text().trim()).toBe('BUILD ID');
 				expect(element.find('table thead th').eq(2).text().trim()).toBe('VERSION ID');
 
-				expect(element.find('table tbody tr').length).toBe(allBuildDetails.services.length);
-				expect(element.find('table tbody tr td').eq(0).text().trim()).toBe(allBuildDetails.services[0].serviceName);
-				expect(element.find('table tbody tr td').eq(1).text().trim()).toBe(allBuildDetails.services[0].buildId);
-				expect(element.find('table tbody tr td').eq(2).text().trim()).toBe(allBuildDetails.services[0].versionId);
+
+				const services = allBuildDetails.services;
+				const elem = element.find('table tbody tr');
+				for (let i = 0; i < services.length; i++) {
+					expect(elem.eq(i).find('td').eq(0).text().trim()).toBe(services[i].serviceName);
+					expect(elem.eq(i).find('td').eq(1).text().trim()).toBe(services[i].buildId);
+					expect(elem.eq(i).find('td').eq(2).text().trim()).toBe(services[i].versionId);
+				}
+				expect(elem.length).toBe(services.length);
+
 			});
 
 			it('should render less button', () => {

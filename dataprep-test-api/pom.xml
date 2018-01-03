@@ -86,6 +86,10 @@
             <artifactId>cucumber-spring</artifactId>
             <version>${cucumber.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
 
         <!--JUnit-->
         <dependency>

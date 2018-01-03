@@ -8,12 +8,13 @@ Feature: Exporting preparation on XLSX format
       | actionName      | format_phone_number     |
       | regionCode      | FR                      |
       | formatType      | international           |
+      | mode            | constant_mode           |
       | columnName      | phoneNumber             |
-      | columnId        | 0003                    |
+      | columnId        | 0002                    |
       | preparationName | phoneNumber_preparation |
     When I export the preparation with parameters :
-      | exportType           | XLSX                    |
-      | preparationName      | phoneNumber_preparation |
-      | dataSetName          | phoneNumber_dataset     |
-      | fileName             | phoneNumber_result.xlsx |
-    Then I check that "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file
+      | exportType           | XLSX                         |
+      | preparationName      | phoneNumber_preparation      |
+      | dataSetName          | phoneNumber_dataset          |
+      | fileName             | phoneNumber_result.xlsx      |
+    Then I check that XLSX "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file

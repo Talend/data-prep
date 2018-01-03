@@ -9,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.qa.step.export.ExportSampleStep;
 import org.talend.dataprep.qa.step.export.ExportSampleStepCSV;
+import org.talend.dataprep.qa.step.export.ExportSampleStepXLSX;
 
 @Component
 public class ExportParamAnalyzer {
 
     @Autowired
     private ExportSampleStepCSV exportSampleStepCSV;
+
+    @Autowired
+    private ExportSampleStepXLSX exportSampleStepXLSX;
 
     @Nullable
     public ExportType detectExportType(@NotNull Map<String, String> params) {
@@ -28,6 +32,9 @@ public class ExportParamAnalyzer {
         switch (exportType) {
         case CSV:
             ret = exportSampleStepCSV;
+            break;
+        case XLSX:
+            ret = exportSampleStepXLSX;
             break;
         case HDFS:
             break;

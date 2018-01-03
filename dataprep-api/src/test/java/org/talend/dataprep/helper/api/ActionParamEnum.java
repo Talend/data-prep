@@ -23,6 +23,7 @@ public enum ActionParamEnum {
     MANUAL_SEPARATOR_REGEX("manualSeparatorRegex", "manual_separator_regex"),
     FILTER("filter", "filter"),
     REGION_CODE("regionCode","region_code"),
+    MODE("mode","mode"),
     FORMAT_TYPE("formatType","format_type");
 
     private String name;

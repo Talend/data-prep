@@ -44,10 +44,10 @@ export default function DatagridHeaderCtrl($scope, state,
 	vm.PlaygroundService = PlaygroundService;
 	vm.state = state;
 
-	this.VALID_RECORDS = VALID_RECORDS;
-	this.INVALID_RECORDS = INVALID_RECORDS;
-	this.EMPTY_RECORDS = EMPTY_RECORDS;
-	this.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
+	vm.VALID_RECORDS = VALID_RECORDS;
+	vm.INVALID_RECORDS = INVALID_RECORDS;
+	vm.EMPTY_RECORDS = EMPTY_RECORDS;
+	vm.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
 
 	/**
 	 * @ngdoc property

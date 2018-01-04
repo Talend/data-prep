@@ -32,6 +32,11 @@ export const QUALITY = 'quality';
 export default function FilterAdapterService($translate) {
 	'ngInject';
 
+	let EMPTY_RECORDS_VALUES;
+	let INVALID_EMPTY_RECORDS_VALUES;
+	let INVALID_RECORDS_VALUES;
+	let VALID_RECORDS_VALUES;
+
 	return {
 		createFilter,
 		toTree,
@@ -56,6 +61,23 @@ export default function FilterAdapterService($translate) {
 	 * @returns {Object} instance of the Filter
 	 */
 	function createFilter(type, colId, colName, editable, args, filterFn, removeFilterFn) {
+		INVALID_RECORDS_VALUES = [{
+			label: $translate.instant('INVALID_RECORDS_LABEL'),
+		}];
+
+		INVALID_EMPTY_RECORDS_VALUES = [{
+			label: $translate.instant('INVALID_EMPTY_RECORDS_LABEL'),
+		}];
+
+		EMPTY_RECORDS_VALUES = [{
+			label: $translate.instant('EMPTY_RECORDS_LABEL'),
+			isEmpty: true,
+		}];
+
+		VALID_RECORDS_VALUES = [{
+			label: $translate.instant('VALID_RECORDS_LABEL'),
+		}];
+
 		const filter = {
 			type,
 			colId,
@@ -81,23 +103,6 @@ export default function FilterAdapterService($translate) {
 	 * @returns {Object} The filter value
 	 */
 	function getFilterValueGetter() {
-		const INVALID_RECORDS_VALUES = [{
-			label: $translate.instant('INVALID_RECORDS_LABEL'),
-		}];
-
-		const INVALID_EMPTY_RECORDS_VALUES = [{
-			label: $translate.instant('INVALID_EMPTY_RECORDS_LABEL'),
-		}];
-
-		const EMPTY_RECORDS_VALUES = [{
-			label: $translate.instant('EMPTY_RECORDS_LABEL'),
-			isEmpty: true,
-		}];
-
-		const VALID_RECORDS_VALUES = [{
-			label: $translate.instant('VALID_RECORDS_LABEL'),
-		}];
-
 		switch (this.type) {
 		case CONTAINS:
 			return this.args.phrase;

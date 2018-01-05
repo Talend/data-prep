@@ -69,6 +69,7 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.tql.model.Expression;
+import org.talend.tql.parser.Tql;
 
 @Service
 public class PreparationService {
@@ -592,8 +593,7 @@ public class PreparationService {
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
             // just make sure the step does exist
-            final Step step = preparationRepository.get(stepId, Step.class);
-            if (step != null) {
+            if (preparationRepository.exist(Step.class, Tql.parse("id='" + stepId + "'"))) {
                 preparation.setSteps(preparationUtils.listSteps(stepId, preparationRepository));
                 preparation.setHeadId(stepId);
             } else {

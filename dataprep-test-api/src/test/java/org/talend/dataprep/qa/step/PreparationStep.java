@@ -1,18 +1,11 @@
 package org.talend.dataprep.qa.step;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -20,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
-import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
 import com.jayway.restassured.response.Response;
@@ -43,7 +35,9 @@ public class PreparationStep extends DataPrepStep {
 
     public static final String NEW_PREPARATION_NAME = "newPreparationName";
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationStep.class);
 
     @Given("^I create a preparation with name \"(.*)\", based on \"(.*)\" dataset$")
@@ -54,13 +48,9 @@ public class PreparationStep extends DataPrepStep {
         if (StringUtils.isBlank(datasetId)) {
             fail("could not find dataset id from name '" + datasetName + "' in the context");
         }
-        String preparationId = api
-                .createPreparation(datasetId, preparationName, homeFolder)
-                .then() //
+        String preparationId = api.createPreparation(datasetId, preparationName, homeFolder).then() //
                 .statusCode(200) //
-                .extract()
-                .body()
-                .asString();
+                .extract().body().asString();
 
         context.storePreparationRef(preparationId, preparationName);
     }
@@ -91,51 +81,10 @@ public class PreparationStep extends DataPrepStep {
         String prepId = context.getPreparationId(preparationName);
         FolderContent folderContent = folderUtil.listPreparation(folder);
 
-        long nb = folderContent.preparations
-                .stream() //
+        long nb = folderContent.preparations.stream() //
                 .filter(p -> p.id.equals(prepId) //
                         && p.name.equals(preparationName)) //
                 .count();
         Assert.assertEquals(1, nb);
-    }
-
-    @Then("^I check that the content of preparation \"(.*)\" equals \"(.*)\" file which have \"(.*)\" as delimiter$")
-    public void iCheckThatTheContentOfPreparationEqualsFile(String preparationName, String fileName, String delimiter)
-            throws Throwable {
-        String prepId = context.getPreparationId(preparationName);
-        Response response = api.getPreparationContent(prepId, "head", "HEAD");
-        response.then().statusCode(200);
-
-        String content = IOUtils.toString(response.getBody().asInputStream(), UTF_8);
-        PreparationContent pCont = objectMapper.readValue(content, PreparationContent.class);
-
-        CSVParser csvData =
-                CSVParser.parse(this.getClass().getResource(fileName), Charset.defaultCharset(), CSVFormat.RFC4180.withHeader());
-
-        // we check that all data are similaire
-        int index = 0;
-        for (CSVRecord csvRecord : csvData.getRecords()) {
-
-            // we split the csv on the delimiter
-            String[] splitCSVLine = csvRecord.get(0).split(delimiter);
-
-            // we get the same index data on the preparation content
-            LinkedHashMap<String, String> preparationData = (LinkedHashMap<String, String>) pCont.records.get(index);
-            Object[] preparationDataAsArray = preparationData.values().toArray();
-
-            // we check that csv column and prepartion column are the same (minus 1 for the tdpId)
-            Assert.assertEquals(splitCSVLine.length, preparationData.size() - 1);
-
-            // we check that both column on each line are similar
-            for (int indexCol = 0; indexCol < splitCSVLine.length; indexCol++) {
-                Assert.assertEquals(splitCSVLine[indexCol], preparationDataAsArray[indexCol]);
-            }
-
-            index++;
-        }
-
-        // we check number of record. We remove 1 for the header
-        Assert.assertEquals(csvData.getRecordNumber() - 1, pCont.records.size());
-
     }
 }

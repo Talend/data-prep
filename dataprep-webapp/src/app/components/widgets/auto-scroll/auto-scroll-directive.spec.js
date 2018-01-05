@@ -52,10 +52,12 @@ describe('Auto-scroll directive', () => {
 
 	beforeEach(() => {
 		jasmine.clock().install();
+		viewport.set(1366, 768);
 	});
 
 	afterEach(() => {
 		jasmine.clock().uninstall();
+		viewport.reset();
 		scope.$destroy();
 		element.remove();
 	});

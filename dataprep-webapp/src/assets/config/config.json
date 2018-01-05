@@ -3,6 +3,6 @@
 	"serverSignUrl": "http://10.42.10.99:8888",
 	"serverKeepAliveUrl": "",
 	"enableDebug": false,
-	"version": "2.3.0-BETA",
-	"copyRights": "© 2017 Talend. All Rights Reserved"
+  "version": "2.3.0-BETA",
+	"copyRights": "© 2018 Talend. All Rights Reserved"
 }

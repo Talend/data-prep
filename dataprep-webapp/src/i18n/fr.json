@@ -134,6 +134,7 @@
   "TOOGLE_ALL_FILTERS": "Activer/désactiver tous les filtres",
   "DISPLAY_ROWS_INVALID_VALUES": "Afficher les lignes ayant des valeurs invalides",
   "DISPLAY_ROWS_EMPTY_VALUES": "Afficher les lignes ayant des valeurs vides",
+  "DISPLAY_ROWS_VALID_VALUES": "Afficher les lignes ayant des valeurs valides",
   "DISPLAY_ROWS_INVALID_EMPTY_VALUES": "Afficher les lignes ayant des valeurs invalides ou vides",
   "FILTER_TITLE": "Filtres",
   "FILTERS": "Filtres",

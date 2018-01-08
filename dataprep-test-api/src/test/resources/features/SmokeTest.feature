@@ -53,7 +53,7 @@ Feature: Perform an OS Smoke Test
     Given I fail to move the first step like "deleteDate" after the first step like "stepUp" on the preparation "10L3C_preparation"
 
   Scenario: Export and check the exported file
-    # escape and enclosure characters shoud be given because they can be empty
+    # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 10L3C_preparation |
@@ -79,7 +79,7 @@ Feature: Perform an OS Smoke Test
 
   @CleanAfter
   Scenario: Export and check the exported file
-    # escape and enclosure characters shoud be given because they can be empty
+    # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 10L3C_preparation |

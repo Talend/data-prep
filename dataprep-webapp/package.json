@@ -26,10 +26,10 @@
     "stats": "webpack --config config/webpack.config.dev.js --profile -j > stats.json"
   },
   "dependencies": {
-    "@talend/bootstrap-theme": "0.137.0",
-    "@talend/icons": "0.137.0",
-    "@talend/react-components": "0.137.0",
-    "@talend/react-forms": "0.137.0",
+    "@talend/bootstrap-theme": "0.138.0",
+    "@talend/icons": "0.138.0",
+    "@talend/react-components": "0.138.0",
+    "@talend/react-forms": "0.138.0",
     "X-SlickGrid": "git+https://github.com/ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf",
     "angular": "1.5.9",
     "angular-animate": "1.5.9",
@@ -56,6 +56,8 @@
     "ng-file-upload": "2.2.2",
     "ng-sortable": "1.3.6",
     "ngreact": "^0.5.0",
+    "rc-slider": "8.4.1",
+    "rc-tooltip": "3.7.0",
     "react": "^15.6.2",
     "react-autowhatever": "7.0.0",
     "react-bootstrap": "0.31.0",
@@ -63,9 +65,7 @@
     "react-dom": "^15.6.2",
     "react-i18next": "^5.2.0",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#2.0.0",
-    "uuid": "3.0.1",
-    "rc-slider": "8.4.1",
-    "rc-tooltip": "3.7.0"
+    "uuid": "3.0.1"
   },
   "devDependencies": {
     "angular-mocks": "1.5.9",
@@ -105,6 +105,7 @@
     "karma-jasmine": "^1.1.0",
     "karma-junit-reporter": "^1.2.0",
     "karma-phantomjs-launcher": "^1.0.2",
+    "karma-viewport": "^0.4.2",
     "karma-webpack": "^2.0.2",
     "keycode": "2.1.9",
     "ng-annotate-loader": "^0.2.0",

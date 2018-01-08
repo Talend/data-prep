@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -16,6 +16,7 @@ import _ from 'lodash';
 export const CONTAINS = 'contains';
 export const EXACT = 'exact';
 export const INVALID_RECORDS = 'invalid_records';
+export const INVALID_EMPTY_RECORDS = 'invalid_empty_records';
 export const EMPTY_RECORDS = 'empty_records';
 export const VALID_RECORDS = 'valid_records';
 export const INSIDE_RANGE = 'inside_range';
@@ -31,34 +32,12 @@ export const QUALITY = 'quality';
 export default function FilterAdapterService($translate) {
 	'ngInject';
 
-	const EMPTY_RECORDS_LABEL = $translate.instant('EMPTY_RECORDS_LABEL');
-	const INVALID_RECORDS_LABEL = $translate.instant('INVALID_RECORDS_LABEL');
-	const VALID_RECORDS_LABEL = $translate.instant('VALID_RECORDS_LABEL');
-	const INVALID_EMPTY_RECORDS_LABEL = $translate.instant('INVALID_EMPTY_RECORDS_LABEL');
-
-	const INVALID_RECORDS_VALUES = [{
-		label: INVALID_RECORDS_LABEL,
-	}];
-
-	const INVALID_EMPTY_RECORDS_VALUES = [{
-		label: INVALID_EMPTY_RECORDS_LABEL,
-	}];
-
-	const EMPTY_RECORDS_VALUES = [{
-		label: EMPTY_RECORDS_LABEL,
-		isEmpty: true,
-	}];
-
-	const VALID_RECORDS_VALUES = [{
-		label: VALID_RECORDS_LABEL,
-	}];
+	let EMPTY_RECORDS_VALUES;
+	let INVALID_EMPTY_RECORDS_VALUES;
+	let INVALID_RECORDS_VALUES;
+	let VALID_RECORDS_VALUES;
 
 	return {
-		EMPTY_RECORDS_LABEL,
-		INVALID_RECORDS_LABEL,
-		VALID_RECORDS_LABEL,
-		INVALID_EMPTY_RECORDS_LABEL,
-
 		createFilter,
 		toTree,
 		fromTree,
@@ -82,6 +61,23 @@ export default function FilterAdapterService($translate) {
 	 * @returns {Object} instance of the Filter
 	 */
 	function createFilter(type, colId, colName, editable, args, filterFn, removeFilterFn) {
+		INVALID_RECORDS_VALUES = [{
+			label: $translate.instant('INVALID_RECORDS_LABEL'),
+		}];
+
+		INVALID_EMPTY_RECORDS_VALUES = [{
+			label: $translate.instant('INVALID_EMPTY_RECORDS_LABEL'),
+		}];
+
+		EMPTY_RECORDS_VALUES = [{
+			label: $translate.instant('EMPTY_RECORDS_LABEL'),
+			isEmpty: true,
+		}];
+
+		VALID_RECORDS_VALUES = [{
+			label: $translate.instant('VALID_RECORDS_LABEL'),
+		}];
+
 		const filter = {
 			type,
 			colId,

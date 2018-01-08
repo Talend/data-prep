@@ -9,6 +9,7 @@ public enum ExportType {
     CSV("CSV"), //
     EXCEL("EXCEL"), //
     TABLEAU("TABLEAU"), //
+    XLSX("XLSX"), //
     HDFS("HDFS"); //
 
     private String name;

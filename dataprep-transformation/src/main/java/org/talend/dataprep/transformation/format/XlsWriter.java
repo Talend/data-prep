@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
@@ -122,6 +123,8 @@ public class XlsWriter extends AbstractTransformerWriter {
                                 try {
                                     if (NumericHelper.isBigDecimal(val)) {
                                         cell.setCellValue(BigDecimalParser.toBigDecimal(val).doubleValue());
+                                    } else {
+                                        cell.setCellValue(val);
                                     }
                                 } catch (NumberFormatException e) {
                                     LOGGER.trace("Skip NumberFormatException and use string for value '{}' row '{}' column '{}'", //

@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "columns": [
+      {
+        "id": "0",
+        "name": "id",
+        "type": "integer"
+      },
+      {
+        "id": "1",
+        "name": "firstname",
+        "type": "string"
+      },
+      {
+        "id": "2",
+        "name": "lastname",
+        "type": "string"
+      },
+      {
+        "id": "3",
+        "name": "age",
+        "type": "integer"
+      },
+      {
+        "id": "4",
+        "name": "date-of-birth",
+        "type": "date"
+      },
+      {
+        "id": "5",
+        "name": "alive",
+        "type": "boolean"
+      },
+      {
+        "id": "6",
+        "name": "city",
+        "type": "string"
+      },
+      {
+        "id": "7",
+        "name": "phone-number",
+        "type": "float"
+      }
+    ]
+  },
+  "records": [
+    {
+      "0": "1",
+      "1": "Clark",
+      "2": "Kent",
+      "3": "42",
+      "4": "10/09/1940",
+      "5": "false",
+      "6": "Smallville",
+      "7": ""
+    },
+    {
+      "0": "2",
+      "1": "Bruce",
+      "2": "Wayne",
+      "3": "50",
+      "4": "01/01/1947",
+      "5": "true",
+      "6": "Gotham city",
+      "7": "null"
+    },
+    {
+      "0": "3",
+      "1": "Barry",
+      "2": "Allen",
+      "3": "67",
+      "4": "01/02/1948",
+      "5": "true",
+      "6": "Central city",
+      "7": "+33 6 89 46 55 34"
+    },
+    {
+      "0": "4",
+      "1": "Alan",
+      "2": "Scott",
+      "3": "72",
+      "4": "01/03/1949",
+      "5": "true",
+      "6": "Coast city",
+      "7": "33689465534"
+    },
+    {
+      "0": "5",
+      "1": "Oliver",
+      "2": "Queen",
+      "3": "81",
+      "4": "01/04/1950",
+      "5": "true",
+      "6": "Star city",
+      "7": "+33689465534"
+    },
+    {
+      "0": "6",
+      "1": "Ray",
+      "2": "Palmer",
+      "3": "93",
+      "4": "01/05/1951",
+      "5": "true",
+      "6": "Star city",
+      "7": "+33-6-89-46-55-34"
+    }
+  ]
+}
+

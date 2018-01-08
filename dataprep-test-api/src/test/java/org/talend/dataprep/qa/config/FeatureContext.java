@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,13 +14,7 @@
 package org.talend.dataprep.qa.config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -39,6 +33,11 @@ public class FeatureContext {
      * Prefix used to build storage key, for fullrun references.
      */
     public static final String FULL_RUN_PREFIX = "fullrun-";
+
+    /**
+     * Suffix used to differentiate persisted TDP items during parallel IT runs.
+     */
+    private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
     private Map<String, String> datasetIdByName = new HashMap<>();
 
@@ -65,6 +64,16 @@ public class FeatureContext {
      * All object store on a feature execution.
      */
     private Map<String, Object> featureContext = new HashMap<>();
+
+    /**
+     * Add a suffix to a name depending of the execution instance.
+     *
+     * @param name the to suffix.
+     * @return the suffixed name.
+     */
+    public static String suffixName(String name) {
+        return name + TI_SUFFIX_UID;
+    }
 
     /**
      * Store a new dataset reference. In order to delete it later.

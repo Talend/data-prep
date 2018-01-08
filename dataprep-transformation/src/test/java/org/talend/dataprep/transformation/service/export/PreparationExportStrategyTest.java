@@ -1,6 +1,6 @@
 package org.talend.dataprep.transformation.service.export;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyVararg;
@@ -126,6 +126,24 @@ public class PreparationExportStrategyTest {
                 .thenReturn(new ByteArrayInputStream(preparationAsString.toString().getBytes()));
         when(applicationContext.getBean(eq(PreparationDetailsGet.class), eq(preparationId), eq(stepId)))
                 .thenReturn(preparationDetailsGet);
+    }
+
+    @Test
+    public void shouldNotAcceptParameters() {
+        // Then
+        assertFalse(strategy.accept(null));
+    }
+
+    @Test
+    public void shouldAcceptParameters() {
+        // Then
+        final ExportParameters parameters = new ExportParameters();
+        parameters.setContent(null);
+        parameters.setFrom(null);
+        parameters.setFrom(ExportParameters.SourceType.HEAD);
+        parameters.setPreparationId("prep-1234");
+        parameters.setDatasetId("");
+        assertTrue(strategy.accept(parameters));
     }
 
     @Test

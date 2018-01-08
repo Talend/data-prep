@@ -86,17 +86,6 @@ public class PreparationExportStrategyTest {
 
         when(formatRegistrationService.getByName(eq("JSON"))).thenReturn(new JsonFormat());
 
-        final Preparation preparation1 = new Preparation();
-        preparation1.setId("prep-1234");
-        preparation1.setHeadId("step-1234");
-
-        final Preparation preparation2 = new Preparation();
-        preparation2.setId("prep-1234");
-        preparation2.setHeadId("head");
-
-        configurePreparation(preparation1, "prep-1234", "step-1234");
-        configurePreparation(preparation2, "prep-1234", "head");
-
         final DataSetGetMetadata dataSetGetMetadata = mock(DataSetGetMetadata.class);
         when(applicationContext.getBean(eq(DataSetGetMetadata.class), anyVararg())).thenReturn(dataSetGetMetadata);
 
@@ -147,6 +136,11 @@ public class PreparationExportStrategyTest {
         parameters.setPreparationId("prep-1234");
         parameters.setStepId("step-1234");
 
+        final Preparation preparation = new Preparation();
+        preparation.setId("prep-1234");
+        preparation.setHeadId("step-1234");
+        configurePreparation(preparation, "prep-1234", "step-1234");
+
         // When
         final StreamingResponseBody body = strategy.execute(parameters);
         body.writeTo(new NullOutputStream());
@@ -165,6 +159,11 @@ public class PreparationExportStrategyTest {
         parameters.setExportType("JSON");
         parameters.setPreparationId("prep-1234");
         parameters.setStepId("head");
+
+        final Preparation preparation = new Preparation();
+        preparation.setId("prep-1234");
+        preparation.setHeadId("head");
+        configurePreparation(preparation, "prep-1234", "head");
 
         // When
         final StreamingResponseBody body = strategy.execute(parameters);

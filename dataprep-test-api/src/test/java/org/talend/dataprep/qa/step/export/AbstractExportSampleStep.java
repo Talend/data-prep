@@ -1,15 +1,5 @@
 package org.talend.dataprep.qa.step.export;
 
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
-import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +8,25 @@ import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportUtil;
 import org.talend.dataprep.qa.util.export.MandatoryParameters;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
+import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
+
 /**
  * CSV Exporter.
  */
 public abstract class AbstractExportSampleStep extends DataPrepStep implements ExportSampleStep {
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractExportSampleStep.class);
 
     @Autowired

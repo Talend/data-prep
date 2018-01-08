@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -20,9 +20,9 @@
             <sc-dropdown-content class="grid-header-menu">
                 <span class="grid-header-menu-title" translate-once="FILTER_TITLE"></span>
                 <ul>
-                    <li><a translate-once-title="DISPLAY_ROWS_INVALID_VALUES" translate-once="DISPLAY_ROWS_INVALID_VALUES" ng-click="$ctrl.createFilter($ctrl.INVALID_RECORDS)"></a></li>
-                    <li><a translate-once-title="DISPLAY_ROWS_EMPTY_VALUES" translate-once="DISPLAY_ROWS_EMPTY_VALUES" ng-click="$ctrl.createFilter($ctrl.EMPTY_RECORDS)"></a></li>
-                    <li><a translate-once-title="DISPLAY_ROWS_INVALID_EMPTY_VALUES" translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES" ng-click="$ctrl.createFilter($ctrl.INVALID_EMPTY_RECORDS)"></a></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_INVALID_VALUES" translate-once="DISPLAY_ROWS_INVALID_VALUES" ng-click="$ctrl.FilterManagerService.createQualityFilter($ctrl.INVALID_RECORDS)"></a></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_EMPTY_VALUES" translate-once="DISPLAY_ROWS_EMPTY_VALUES" ng-click="$ctrl.FilterManagerService.createQualityFilter($ctrl.EMPTY_RECORDS)"></a></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_INVALID_EMPTY_VALUES" translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES" ng-click="$ctrl.FilterManagerService.createQualityFilter($ctrl.INVALID_EMPTY_RECORDS)"></a></li>
                 </ul>
             </sc-dropdown-content>
         </sc-dropdown>

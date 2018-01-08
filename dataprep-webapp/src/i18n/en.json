@@ -137,6 +137,7 @@
   "TOOGLE_ALL_FILTERS": "Enable/disable all filters",
   "DISPLAY_ROWS_INVALID_VALUES": "Display rows with invalid values",
   "DISPLAY_ROWS_EMPTY_VALUES": "Display rows with empty values",
+  "DISPLAY_ROWS_VALID_VALUES": "Display rows with valid values",
   "DISPLAY_ROWS_INVALID_EMPTY_VALUES": "Display rows with invalid or empty values",
   "FILTER_TITLE": "Filter",
   "FILTERS": "Filters",

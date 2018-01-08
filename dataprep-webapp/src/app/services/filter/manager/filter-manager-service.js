@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,6 +12,13 @@
  ============================================================================*/
 
 import d3 from 'd3';
+import {
+	INVALID_RECORDS,
+	EMPTY_RECORDS,
+	INVALID_EMPTY_RECORDS,
+	VALID_RECORDS,
+	QUALITY,
+} from '../../../services/filter/adapter/filter-adapter-service';
 
 const RANGE_SEPARATOR = ' .. ';
 
@@ -36,6 +43,7 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 		removeAllFilters,
 		removeFilter,
 		toggleFilters,
+		createQualityFilter,
 	};
 	return service;
 
@@ -182,5 +190,25 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 		StatisticsService.updateFilteredStatistics();
 		PlaygroundService.updateDatagrid();
 		_saveFilters();
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name createQualityFilter
+	 * @param {string} type filter type
+	 * @methodOf data-prep.services.filter-manager.service:FilterManagerService
+	 * @description create a quality filter (valid, invalid, empty...)
+	 */
+	function createQualityFilter(type, column) {
+		switch (type) {
+		case VALID_RECORDS:
+		case INVALID_RECORDS:
+		case EMPTY_RECORDS:
+			this.addFilterAndDigest(type, column && column.id, column && column.name);
+			break;
+		case INVALID_EMPTY_RECORDS:
+			this.addFilterAndDigest(QUALITY, column && column.id, column && column.name, { invalid: true, empty: true });
+			break;
+		}
 	}
 }

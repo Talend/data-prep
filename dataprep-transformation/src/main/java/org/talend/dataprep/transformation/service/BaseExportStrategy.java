@@ -190,6 +190,9 @@ public abstract class BaseExportStrategy {
      * @return the preparation out of its id.
      */
     protected PreparationMessage getPreparation(String preparationId, String stepId) {
+        if ("origin".equals(stepId)) {
+            stepId = Step.ROOT_STEP.id();
+        }
         final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
                 preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {

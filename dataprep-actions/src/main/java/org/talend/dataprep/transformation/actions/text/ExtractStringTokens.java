@@ -164,7 +164,7 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
 
         for (int i = 0; i < limit; i++) {
             additionalColumns.add(
-                    ActionsUtils.additionalColumn().withKey("" + Integer.toString(i)).withName(context.getColumnName() + APPENDIX + (i + 1)));
+                    ActionsUtils.additionalColumn().withKey(Integer.toString(i)).withName(context.getColumnName() + APPENDIX + (i + 1)));
         }
 
         return additionalColumns;

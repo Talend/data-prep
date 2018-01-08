@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
@@ -83,7 +83,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final String formatName = parameters.getExportType();
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationMessage preparation = getPreparation(preparationId, stepId);
         final String dataSetId = preparation.getDataSetId();
         final ExportFormat format = getFormat(parameters.getExportType());
 
@@ -128,7 +128,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                             .sourceType(parameters.getFrom())
                             .format(format.getName()) //
                             .actions(actions) //
-                            .preparation(getPreparation(preparationId)) //
+                            .preparation(preparation) //
                             .stepId(version) //
                             .volume(Configuration.Volume.SMALL) //
                             .output(tee) //

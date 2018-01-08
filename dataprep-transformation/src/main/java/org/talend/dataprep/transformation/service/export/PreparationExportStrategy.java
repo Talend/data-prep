@@ -42,6 +42,7 @@ import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
@@ -150,5 +151,9 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 securityProxy.releaseIdentity(); // Release identity in case of error.
             }
         }
+    }
+
+    void setMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 }

@@ -761,7 +761,7 @@ public class TransformationService extends BaseTransformationService {
         return formatRegistrationService
                 .getExternalFormats() //
                 .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
-                //.filter(ExportFormat::isEnabled) //
+                .filter(ExportFormat::isEnabled) //
                 .filter(f -> f.isCompatible(metadata)) //
                 .map(f -> beanConversionService.convert(f, ExportFormatMessage.class));
     }

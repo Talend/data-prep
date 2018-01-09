@@ -39,8 +39,8 @@ describe('Actions list controller', () => {
     beforeEach(inject(($q, PlaygroundService, TransformationService, EarlyPreviewService, StateService) => {
         spyOn(PlaygroundService, 'completeParamsAndAppend').and.returnValue($q.when());
         spyOn(TransformationService, 'initDynamicParameters').and.returnValue($q.when());
-        spyOn(StateService, 'setPreviewDisabled');
-        spyOn(EarlyPreviewService, 'cancelPendingPreview').and.returnValue();
+        spyOn(StateService, 'setTransformationInProgress');
+        spyOn(EarlyPreviewService, 'cancelEarlyPreview').and.returnValue();
         spyOn(EarlyPreviewService, 'earlyPreview').and.returnValue();
     }));
 
@@ -131,8 +131,8 @@ describe('Actions list controller', () => {
             closure(params);
 
             //then
-            expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
-            expect(EarlyPreviewService.cancelPendingPreview).toHaveBeenCalled();
+            expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(true);
+            expect(EarlyPreviewService.cancelEarlyPreview).toHaveBeenCalled();
         }));
 
         it('should re-enable early preview after 500ms', inject( ($timeout, StateService) => {
@@ -148,30 +148,11 @@ describe('Actions list controller', () => {
             closure(params);
             scope.$digest();
 
-            expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
+            expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(true);
             $timeout.flush(500);
 
             //then
-            expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(false);
-        }));
-        it('should update transformationInProgress', inject(($timeout) => {
-            //given
-            const transformation = { name: 'tolowercase' };
-            const params = { param: 'value' };
-            const ctrl = createController();
-            ctrl.scope = 'column';
-            ctrl.showDynamicModal = true;
-
-            //when
-            const closure = ctrl.transform(transformation);
-            closure(params);
-            scope.$digest();
-
-            expect(ctrl.transformationInProgress).toEqual(true);
-            $timeout.flush(500);
-
-            //then
-            expect(ctrl.transformationInProgress).toEqual(false);
+            expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(false);
         }));
     });
 

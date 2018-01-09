@@ -1,0 +1,25 @@
+{
+  "mimeType": "application/vnd.ms-excel",
+  "extension": ".xlsx",
+  "id": "XLSX",
+  "needParameters": true,
+  "defaultExport": true,
+  "enabled": true,
+  "disableReason": "",
+  "title": "Export to XLSX",
+  "parameters": [
+    {
+      "class": "org.talend.dataprep.parameters.Parameter",
+      "name": "fileName",
+      "type": "string",
+      "implicit": false,
+      "canBeBlank": false,
+      "placeHolder": "",
+      "label": "Filename",
+      "description": "Name of the generated export file",
+      "default": ""
+    }
+  ],
+  "supportSampling": true,
+  "name": "Local XLSX file"
+}

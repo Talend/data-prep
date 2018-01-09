@@ -65,5 +65,8 @@ public class GlobalStep extends DataPrepStep {
 
         // cleaning all features context object
         context.clearObject();
+
+        // cleaning all export parameters
+        context.clearPreparationExportFormat();
     }
 }

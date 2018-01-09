@@ -35,6 +35,11 @@ public class FeatureContext {
      */
     public static final String FULL_RUN_PREFIX = "fullrun-";
 
+    /**
+     * Suffix used to differentiate persisted TDP items during parallel IT runs.
+     */
+    private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
+
     private Map<String, String> datasetIdByName = new HashMap<>();
 
     // TODO : Refactoring : various preparation can have the same name but in different folder
@@ -62,6 +67,16 @@ public class FeatureContext {
      * All object store on a feature execution.
      */
     private Map<String, Object> featureContext = new HashMap<>();
+
+    /**
+     * Add a suffix to a name depending of the execution instance.
+     *
+     * @param name the to suffix.
+     * @return the suffixed name.
+     */
+    public static String suffixName(String name) {
+        return name + TI_SUFFIX_UID;
+    }
 
     /**
      * Store a new dataset reference. In order to delete it later.

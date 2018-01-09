@@ -1,13 +1,13 @@
 package org.talend.dataprep.qa.step.export;
 
-import static java.util.Arrays.asList;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
-
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportType;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
 
 /**
  * CSV Exporter.

@@ -35,7 +35,7 @@ Feature: Perform an OS Smoke Test
   Scenario: Update date split step
     Given I update the first step like "dateSplit" on the preparation "10L3C_preparation" with the following parameters :
       | separator             | other_string |
-      | manualSeparatorString | /              |
+      | manualSeparatorString | /            |
     Then I check that a step like "dateSplit" exists in the preparation "10L3C_preparation"
     Given I move the first step like "dateSplit" after the first step like "stepUp" on the preparation "10L3C_preparation"
     # TODO : Check step ancestor
@@ -55,7 +55,7 @@ Feature: Perform an OS Smoke Test
   Scenario: Export and check the exported file
     # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
-      | exportType           | CSV              |
+      | exportType           | CSV               |
       | preparationName      | 10L3C_preparation |
       | dataSetName          | 10L3C_dataset     |
       | fileName             | acote.csv         |
@@ -81,7 +81,7 @@ Feature: Perform an OS Smoke Test
   Scenario: Export and check the exported file
     # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
-      | exportType           | CSV              |
+      | exportType           | CSV               |
       | preparationName      | 10L3C_preparation |
       | dataSetName          | 10L3C_dataset     |
       | fileName             | 10L3C_result.csv  |

@@ -11,4 +11,11 @@ Feature: Dataset cache features
       | columnId        | 0001             |
       | preparationName | 8L3C_preparation |
     When I update the dataset named "8L3C_dataset" with data "/data/10L3C.csv"
-    Then I check that the content of preparation "8L3C_preparation" equals "/data/10L3C_lastname_uppercase.csv" file which have ";" as delimiter
+    When I export the preparation with parameters :
+      | exportType           | CSV              |
+      | preparationName      | 8L3C_preparation |
+      | dataSetName          | 8L3C_dataset     |
+      | fileName             | 8L3C_result.csv  |
+      | csv_escape_character | "                 |
+      | csv_enclosure_char   | "                 |
+    Then I check that "8L3C_result.csv" temporary file equals "/data/10L3C_lastname_uppercase.csv" file

@@ -6,5 +6,5 @@ Feature: Test OS the export format
     And I create a preparation with name "simpleExportPrep", based on "simpleCSVForExportFormat" dataset
     When I get the export formats for the preparation "simpleExportPrep"
     Then I received for preparation the "simpleExportPrep" the right export format list :
-      | XLSX | XLSX |
-      | CSV  | CSV  |
+      | XLSX |
+      | CSV  |

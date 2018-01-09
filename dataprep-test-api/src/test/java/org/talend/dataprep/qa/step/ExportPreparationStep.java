@@ -14,6 +14,7 @@ import org.talend.dataprep.qa.util.export.ExportType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
@@ -52,14 +53,19 @@ public class ExportPreparationStep extends DataPrepStep {
     @Then("^I received for preparation the \"(.*)\" the right export format list :$")
     public void thenIReceievedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
 
-        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        List<String> paramsList = dataTable.asList(String.class);
         ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(suffixName(preparationName));
-        Assert.assertEquals(exportFormats.length, params.size());
-        for (ExportFormatMessage exportCurrentFormat : exportFormats) {
-            final InputStream expectedJson = ExportPreparationStep.class.getResourceAsStream("export/" + exportCurrentFormat.getId() + ".json");
-            ExportFormatMessage expectedExportFormat = objectMapper.readValue(expectedJson, ExportFormatMessage.class);
-            Assert.assertNotNull(params.get(expectedExportFormat.getId()));
-            Assert.assertEquals(expectedExportFormat, exportCurrentFormat);
+        // Can't compare the collection's sizes because OS test are also executed by EE-helper
+        // Can't iterate directly on the API result for the same reason
+        // TODO : improve this part if a way to exclude some OS tests feature on EE execution context
+        for (String exportId : paramsList) {
+            for (ExportFormatMessage exportCurrentFormat : exportFormats) {
+                if (exportCurrentFormat.getId().equals(exportId)) {
+                    final InputStream expectedJson = ExportPreparationStep.class.getResourceAsStream("export/" + exportId + ".json");
+                    ExportFormatMessage expectedExportFormat = objectMapper.readValue(expectedJson, ExportFormatMessage.class);
+                    Assert.assertEquals(expectedExportFormat, exportCurrentFormat);
+                }
+            }
         }
     }
 }

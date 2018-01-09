@@ -1,9 +1,9 @@
 package org.talend.dataprep.qa.step;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.format.export.ExportFormatMessage;
@@ -12,11 +12,9 @@ import org.talend.dataprep.qa.step.export.ExportSampleStep;
 import org.talend.dataprep.qa.util.export.ExportParamAnalyzer;
 import org.talend.dataprep.qa.util.export.ExportType;
 
-import com.jayway.restassured.response.Response;
-
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Step dealing with preparation

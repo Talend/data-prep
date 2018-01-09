@@ -181,18 +181,6 @@ describe('Early Preview Service', () => {
             expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
         }));
 
-        it('should NOT cancel current early preview when it is disabled', inject(($timeout, RecipeService, EarlyPreviewService, PreviewService, StateService) => {
-            //given
-	        stateMock.playground.transformationInProgress = true;
-
-            //when
-            EarlyPreviewService.cancelEarlyPreview();
-            $timeout.flush(100);
-
-            //then
-            expect(RecipeService.cancelEarlyPreview).not.toHaveBeenCalled();
-            expect(PreviewService.cancelPreview).not.toHaveBeenCalled();
-        }));
 
         it('should trigger preview when it is enabled', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService, StateService) => {
             //given

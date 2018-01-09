@@ -114,10 +114,6 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @description Cancel any current or pending early preview
      */
 	function cancelEarlyPreview() {
-		if (state.playground.transformationInProgress) {
-			return;
-		}
-
 		cancelPendingPreview();
 	    RecipeService.cancelEarlyPreview();
 	    PreviewService.cancelPreview();

@@ -129,7 +129,7 @@ public class PreparationExportStrategyTest {
     }
 
     @Test
-    public void shouldNotAcceptParameters() {
+    public void shouldNotAcceptNullParameters() {
         // Then
         assertFalse(strategy.accept(null));
     }

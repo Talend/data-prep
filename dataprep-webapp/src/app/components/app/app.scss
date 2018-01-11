@@ -13,3 +13,7 @@
 #notifications-container .tc-notification-container {
   z-index: 1100;
 }
+
+.introjs-overlay, .introjs-helperLayer, .introjs-tooltipReferenceLayer {
+  z-index: 1090;
+}

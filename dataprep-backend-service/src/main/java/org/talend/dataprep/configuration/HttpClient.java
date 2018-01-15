@@ -20,6 +20,7 @@ import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
@@ -52,6 +53,7 @@ import org.springframework.stereotype.Component;
 public class HttpClient {
 
     /** This class' logger. */
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClient.class);
 
     /** Maximum connection pool size. */
@@ -119,6 +121,7 @@ public class HttpClient {
         return RequestConfig.custom() //
                 .setContentCompressionEnabled(true)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
+                .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
                 .build();
     }
 

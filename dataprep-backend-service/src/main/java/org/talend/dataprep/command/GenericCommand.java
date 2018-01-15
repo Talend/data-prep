@@ -224,6 +224,12 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
 
+        Header cookies = response.getFirstHeader("Set-Cookie");
+        if (cookies != null) {
+            LOGGER.warn("request {} {}: Cookie detected in responseHeaders (check security.oauth2.resource.uri settings)",
+                    request.getMethod(), request.getURI());
+        }
+
         // do we have a behavior for this status code (even an error) ?
         // if yes use it
         BiFunction<HttpRequestBase, HttpResponse, T> function = behavior.get(status);

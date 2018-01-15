@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
@@ -118,6 +119,7 @@ public class HttpClient {
         return RequestConfig.custom() //
                 .setContentCompressionEnabled(true) //
                 .setConnectionRequestTimeout(connectionRequestTimeout) //
+                .setCookieSpec(CookieSpecs.IGNORE_COOKIES) //
                 .build();
     }
 

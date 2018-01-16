@@ -102,7 +102,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 				}
 
 				PreviewService.getPreviewAddRecords(preparationId, state.playground.dataset.id, action.name, parameters)
-                    .then(() => RecipeService.earlyPreview(action, parameters));
+					.then(() => RecipeService.earlyPreview(action, parameters));
 			}, DELAY);
 		};
 	}
@@ -115,7 +115,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      */
 	function cancelEarlyPreview() {
 		cancelPendingPreview();
-	    RecipeService.cancelEarlyPreview();
-	    PreviewService.cancelPreview();
+		RecipeService.cancelEarlyPreview();
+		PreviewService.cancelPreview();
 	}
 }

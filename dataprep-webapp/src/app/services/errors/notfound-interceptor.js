@@ -24,9 +24,11 @@ export default function NotFoundInterceptor($q, $injector) {
 	return {
 		responseError: (rejection) => {
 			const $state = $injector.get('$state');
+
 			if (rejection.status === 404) {
 				$state.go(HOME_404_ROUTE);
 			}
+
 			return $q.reject(rejection);
 		},
 	};

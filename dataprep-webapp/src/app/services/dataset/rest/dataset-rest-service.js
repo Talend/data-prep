@@ -82,7 +82,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} the $upload promise
      */
 	function update(dataset, parameters) {
-		let url = RestURLs.uploadDatasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name);
+		let url = `${RestURLs.uploadDatasetUrl}/${dataset.id}?name=${encodeURIComponent(dataset.name)}`;
 		if (parameters && parameters.size) {
 			url += `&size=${parameters.size}`;
 		}
@@ -104,7 +104,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The DELETE promise
      */
 	function deleteDataset(dataset) {
-		return $http.delete(RestURLs.datasetUrl + '/' + dataset.id);
+		return $http.delete(`${RestURLs.datasetUrl}/${dataset.id}`);
 	}
 
     /**
@@ -116,7 +116,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function cloneDataset(dataset) {
-		return $http.post(RestURLs.datasetUrl + '/' + dataset.id + '/copy');
+		return $http.post(`${RestURLs.datasetUrl}/${dataset.id}/copy`);
 	}
 
     //--------------------------------------------------------------------------------------------------------------
@@ -133,10 +133,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET call promise
      */
 	function getDatasets(sortType, sortOrder, deferredAbort) {
-		let url = RestURLs.datasetUrl + '/summary';
-
+		let url = `${RestURLs.datasetUrl}/summary`
 		if (sortType) {
-			url += '?sort=' + sortType;
+			url += `?sort=${sortType}`;
 		}
 
 		if (sortOrder) {
@@ -159,7 +158,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function getDatasetByName(name) {
 		return $http.get(`${RestURLs.searchUrl}?name=${encodeURIComponent(name)}&strict=true&filter=datasets`)
-            .then(resp => resp.data.datasets && resp.data.datasets[0]);
+			.then(resp => resp.data.datasets && resp.data.datasets[0]);
 	}
 
     /**
@@ -188,7 +187,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The PUT promise
      */
 	function updateMetadata(metadata) {
-		return $http.put(RestURLs.datasetUrl + '/' + metadata.id + '/metadata', metadata);
+		return $http.put(`${RestURLs.datasetUrl}/${metadata.id}/metadata`, metadata);
 	}
 
     /**
@@ -202,8 +201,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The POST promise
      */
 	function updateColumn(datasetId, columnId, params) {
-		const url = RestURLs.datasetUrl + '/' + datasetId + '/column/' + columnId;
-		return $http.post(url, params);
+		return $http.post(`${RestURLs.datasetUrl}/${datasetId}/column/${columnId}`, params);
 	}
 
     //--------------------------------------------------------------------------------------------------------------
@@ -245,8 +243,8 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getMetadata(datasetId) {
-		const url = RestURLs.datasetUrl + '/' + datasetId + '/metadata';
-		return $http.get(url).then(response => response.data);
+		return $http.get(`${RestURLs.datasetUrl}/${datasetId}/metadata`)
+			.then(response => response.data);
 	}
 
     //--------------------------------------------------------------------------------------------------------------
@@ -263,7 +261,8 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function getSheetPreview(datasetId, sheetName) {
 		$rootScope.$emit('talend.loading.start');
-		return $http.get(RestURLs.datasetUrl + '/preview/' + datasetId + '?metadata=true' + (sheetName ? '&sheetName=' + encodeURIComponent(sheetName) : ''))
+		const sheetNameParameter = sheetName ? '&sheetName=' + encodeURIComponent(sheetName) : '';
+		return $http.get(`${RestURLs.datasetUrl}/preview/${datasetId}?metadata=true${sheetNameParameter}`)
 			.then(response => response.data)
 			.finally(() => {
 				$rootScope.$emit('talend.loading.stop');
@@ -282,7 +281,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The PUT promise
      */
 	function toggleFavorite(dataset) {
-		return $http.post(RestURLs.datasetUrl + '/favorite/' + dataset.id + '?unset=' + dataset.favorite);
+		return $http.post(`${RestURLs.datasetUrl}/favorite/${dataset.id}?unset=${dataset.favorite}`);
 	}
 
     //--------------------------------------------------------------------------------------------------------------
@@ -296,8 +295,8 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getEncodings() {
-		return $http.get(RestURLs.datasetUrl + '/encodings')
-            .then(response => response.data);
+		return $http.get(`${RestURLs.datasetUrl}/encodings`)
+			.then(response => response.data);
 	}
 
     /**
@@ -308,7 +307,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getCompatiblePreparations(datasetId) {
-		return $http.get(RestURLs.datasetUrl + '/' + datasetId + '/compatiblepreparations')
-            .then(response => response.data);
+		return $http.get(`${RestURLs.datasetUrl}/${datasetId}/compatiblepreparations`)
+			.then(response => response.data);
 	}
 }

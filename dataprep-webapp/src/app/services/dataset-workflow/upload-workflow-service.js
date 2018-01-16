@@ -42,7 +42,7 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
 	this.openDraft = function openDraft(dataset, addPreparation, preparationName) {
 		if (dataset.type === 'application/vnd.ms-excel') {
 			DatasetSheetPreviewService.loadPreview(dataset, addPreparation, preparationName)
-                .then(DatasetSheetPreviewService.display);
+				.then(DatasetSheetPreviewService.display);
 		}
 		else if (dataset.type) {
 			MessageService.error('PREVIEW_NOT_IMPLEMENTED_FOR_TYPE_TITLE', 'PREVIEW_NOT_IMPLEMENTED_FOR_TYPE_TITLE');
@@ -67,8 +67,7 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
 		else if (event && ((event.button === 0 && (event.ctrlKey || event.metaKey)) || event.button === 1)) {
 			$window.open($state.href(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id }), '_blank');
 		}
-		else {
-			$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
-		}
+
+		$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
 	};
 }

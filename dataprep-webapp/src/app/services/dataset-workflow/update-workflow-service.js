@@ -37,24 +37,24 @@ export default function UpdateWorkflowService(state, StateService, MessageServic
 		StateService.startProgress(state.progress.schemas.dataset, () => dataset.progress);
 
 		return DatasetService.update(dataset, { size: file.size })
-			.progress(function (event) {
+			.progress((event) => {
 				const progress = parseInt((100.0 * event.loaded) / event.total, 10);
 				if (dataset.progress !== progress && progress === 100) {
 					StateService.nextProgress();
 				}
 				dataset.progress = progress;
 			})
-			.then(function () {
+			.then(() => {
 				MessageService.success('DATASET_UPDATE_SUCCESS_TITLE', 'DATASET_UPDATE_SUCCESS', { dataset: dataset.name });
 
 				// Force the update currentMetadata of the dataset
 				StateService.resetPlayground();
 				DatasetService.getDatasetById(dataset.id).then(UploadWorkflowService.openDataset);
 			})
-			.catch(function () {
+			.catch(() => {
 				dataset.error = true;
 			})
-			.finally(function () {
+			.finally(() => {
 				StateService.finishUploadingDataset();
 				StateService.resetProgress();
 			});

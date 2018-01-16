@@ -67,7 +67,8 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
 		else if (event && ((event.button === 0 && (event.ctrlKey || event.metaKey)) || event.button === 1)) {
 			$window.open($state.href(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id }), '_blank');
 		}
-
-		$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
+		else {
+			$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
+		}
 	};
 }

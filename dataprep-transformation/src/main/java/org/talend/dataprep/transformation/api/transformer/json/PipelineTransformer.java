@@ -123,13 +123,11 @@ public class PipelineTransformer implements Transformer {
             @Override
             public void execute() {
                 try {
-                    LOGGER.info("Before transformation: {}", pipeline);
-
-                    System.out.println("pipeline = " + pipeline.getClass());
+                    LOGGER.debug("Before transformation: {}", pipeline);
 
                     pipeline.execute(input);
                 } finally {
-                    LOGGER.info("After transformation: {}", pipeline);
+                    LOGGER.debug("After transformation: {}", pipeline);
                 }
 
                 if (preparation != null) {

@@ -839,6 +839,9 @@ public class TransformationService extends BaseTransformationService {
         // if the preparation is not cached, let's compute it to have some cache
         if (!contentCache.has(metadataKey) || !contentCache.has(contentKey)) {
             addPreparationInCache(preparation, stepId);
+
+            // recalculate metadata
+            metadataGenerator.generateMetadataForPreparation(preparationId, version, metadataKey);
         }
 
         // run the analyzer service on the cached content

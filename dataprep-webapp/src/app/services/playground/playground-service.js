@@ -72,6 +72,8 @@ export default function PlaygroundService(
 ) {
 	'ngInject';
 
+	const self = this;
+
 	const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
 	let fetchStatsTimeout;
 	let currentLoadingItems = 0;
@@ -80,68 +82,29 @@ export default function PlaygroundService(
 		return invName + INVENTORY_SUFFIX;
 	}
 
-	const service = {
-		// events helpers
-		startLoader,
-		stopLoader,
-
-		// init/load
-		loadDataset,        // load dataset
-		loadPreparation,    // load preparation
-		initDataset,		// init dataset
-		initPreparation,	// init preparation
-		loadStep,           // load preparation step
-		updateStatistics,   // load column statistics and trigger statistics update
-		close,
-		errorGoBack,
-
-		updateDatasetDatagrid,
-		updateDatagrid,
-
-		// preparation
-		createOrUpdatePreparation,
-		updatePreparationDetails,
-		getCurrentPreparation,
-		updatePreparationDatagrid,
-
-		// steps
-		appendStep,
-		updateStep,
-		updateStepOrder,
-		removeStep,
-		copySteps,
-		editCell,
-		createAppendStepClosure,
-		completeParamsAndAppend,
-		toggleStep,
-
-		// parameters
-		changeDatasetParameters,
-	};
-	return service;
 
 	/**
 	 * Helper to emit start loader event
 	 */
-	function startLoader() {
+	this.startLoader = function () {
 		if (currentLoadingItems++ <= 0) {
 			$rootScope.$emit(EVENT_LOADING_START);
 		}
-	}
+	};
 
 	/**
 	 * Helper to emit stop loader event
 	 */
-	function stopLoader() {
+	this.stopLoader = function () {
 		if (--currentLoadingItems === 0) {
 			$rootScope.$emit(EVENT_LOADING_STOP);
 		}
-	}
+	};
 
 	// --------------------------------------------------------------------------------------------
 	// -------------------------------------------INIT/LOAD----------------------------------------
 	// --------------------------------------------------------------------------------------------
-	function reset(dataset, data, preparation, sampleType = 'HEAD') {
+	this.reset = function (dataset, data, preparation, sampleType = 'HEAD') {
 		// reset
 		StateService.resetPlayground();
 		TransformationCacheService.invalidateCache();
@@ -157,9 +120,9 @@ export default function PlaygroundService(
 		StateService.setCurrentPreparation(preparation);
 		StateService.setCurrentSampleType(sampleType);
 		FilterService.initFilters(dataset, preparation);
-		updateDatagrid();
-		updateGridSelection(dataset, preparation);
-		this.updatePreparationDetails().then(() => {
+		self.updateDatagrid();
+		self.updateGridSelection(dataset, preparation);
+		self.updatePreparationDetails().then(() => {
 			if (state.playground.recipe.current.steps.length) {
 				StateService.showRecipe();
 			}
@@ -177,7 +140,7 @@ export default function PlaygroundService(
 			ExportService.refreshTypes('datasets', dataset.id);
 			TitleService.setStrict(dataset.name);
 		}
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -187,7 +150,7 @@ export default function PlaygroundService(
 	 * @param {object} preparation The preparation to update
 	 * @description Update grid selection by using localstorage
 	 */
-	function updateGridSelection(dataset, preparation) {
+	this.updateGridSelection = function (dataset, preparation) {
 		const selectedCols = StorageService.getSelectedColumns(
 			preparation ? preparation.id : dataset.id
 		);
@@ -198,7 +161,7 @@ export default function PlaygroundService(
 				)
 			);
 		}
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -208,24 +171,24 @@ export default function PlaygroundService(
 	 * @description Initiate a new preparation from dataset.
 	 * @returns {Promise} The process promise
 	 */
-	function loadDataset(datasetid) {
-		startLoader();
+	this.loadDataset = function (datasetid) {
+		self.startLoader();
 		return DatasetService.getContent(datasetid, true)
-			.then(data => checkRecords(data))
-			.then(data => reset.call(this, data.metadata, data))
+			.then(data => self.checkRecords(data))
+			.then(data => self.reset(data.metadata, data))
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
 					OnboardingService.startTour('playground', 1500);
 				}
 			})
 			.then(() => {
-				if (shouldFetchStatistics()) {
-					fetchStatistics.call(this);
+				if (self.shouldFetchStatistics()) {
+					self.fetchStatistics();
 				}
 			})
-			.catch(errorGoBack)
-			.finally(stopLoader);
-	}
+			.catch(self.errorGoBack)
+			.finally(self.stopLoader);
+	};
 
 	/**
 	 * @ngdoc method
@@ -242,11 +205,10 @@ export default function PlaygroundService(
 	 </ul>
 	 * @returns {Promise} The process promise
 	 */
-	function loadPreparation(preparation, sampleType = 'HEAD') {
-		startLoader();
+	this.loadPreparation = function (preparation, sampleType = 'HEAD') {
+		self.startLoader();
 		return PreparationService.getContent(preparation.id, 'head', sampleType)
-			.then(data => reset.call(
-				this,
+			.then(data => self.reset(
 				state.playground.dataset ? state.playground.dataset : { id: preparation.dataSetId },
 				data,
 				preparation,
@@ -258,13 +220,13 @@ export default function PlaygroundService(
 				}
 			})
 			.then(() => {
-				if (shouldFetchStatistics()) {
-					fetchStatistics.call(this);
+				if (self.shouldFetchStatistics()) {
+					self.fetchStatistics();
 				}
 			})
-			.catch(errorGoBack)
-			.finally(stopLoader);
-	}
+			.catch(self.errorGoBack)
+			.finally(self.stopLoader);
+	};
 
 	/**
 	 * @ngdoc method
@@ -274,8 +236,8 @@ export default function PlaygroundService(
 	 * @description Load a specific step content in the current preparation, and update the recipe
 	 * @returns {Promise} The process promise
 	 */
-	function loadStep(step) {
-		startLoader();
+	this.loadStep = function (step) {
+		self.startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			step.transformation.stepId,
@@ -286,8 +248,8 @@ export default function PlaygroundService(
 				StateService.disableRecipeStepsAfter(step);
 				PreviewService.reset(false);
 			})
-			.finally(stopLoader);
-	}
+			.finally(self.stopLoader);
+	};
 
 	/**
 	 * @ngdoc method
@@ -297,7 +259,7 @@ export default function PlaygroundService(
 	 * and update the statistics in state
 	 * @returns {Promise} The process promise
 	 */
-	function getMetadata() {
+	this.getMetadata = function () {
 		if (state.playground.preparation) {
 			return PreparationService.getMetadata(state.playground.preparation.id, 'head')
 				.then((response) => {
@@ -313,12 +275,11 @@ export default function PlaygroundService(
 					if (!response.columns[0].statistics.frequencyTable.length) {
 						return $q.reject();
 					}
-
 					StateService.updateDatasetRecord(response.records);
 					return response;
 				});
 		}
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -328,11 +289,11 @@ export default function PlaygroundService(
 	 *     computation
 	 * @returns {Promise} The process promise
 	 */
-	function updateStatistics() {
-		return getMetadata()
+	this.updateStatistics = function () {
+		return self.getMetadata()
 			.then(StateService.updateDatasetStatistics)
 			.then(StatisticsService.updateStatistics);
-	}
+	};
 
 	// --------------------------------------------------------------------------------------------
 	// -------------------------------------------PREPARATION--------------------------------------
@@ -345,16 +306,16 @@ export default function PlaygroundService(
 	 * If there is no preparation yet, a new one is created, tagged as draft
 	 * @returns {Promise} The process promise
 	 */
-	function getCurrentPreparation() {
+	this.getCurrentPreparation = function () {
 		// create the preparation and taf it draft if it does not exist
 		return state.playground.preparation ?
 			$q.when(state.playground.preparation) :
-			createOrUpdatePreparation(wrapInventoryName(state.playground.dataset.name))
+			self.createOrUpdatePreparation(wrapInventoryName(state.playground.dataset.name))
 				.then((preparation) => {
 					preparation.draft = true;
 					return preparation;
 				});
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -362,7 +323,7 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description Get preparation details and update recipe
 	 */
-	function updatePreparationDetails() {
+	this.updatePreparationDetails = function () {
 		if (!state.playground.preparation) {
 			return $q.when();
 		}
@@ -379,7 +340,7 @@ export default function PlaygroundService(
 				}
 				return preparation;
 			});
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -389,19 +350,19 @@ export default function PlaygroundService(
 	 * @description Create a new preparation or change its name if it already exists. It adds a new entry in history
 	 * @returns {Promise} The process promise
 	 */
-	function createOrUpdatePreparation(name) {
+	this.createOrUpdatePreparation = function (name) {
 		const oldPreparation = state.playground.preparation;
-		let promise = performCreateOrUpdatePreparation(name);
+		let promise = self.performCreateOrUpdatePreparation(name);
 
 		if (oldPreparation) {
 			const oldName = oldPreparation.name;
 			promise = promise.then((preparation) => {
-				const undo = performCreateOrUpdatePreparation.bind(
-					service,
+				const undo = self.performCreateOrUpdatePreparation.bind(
+					self,
 					oldName
 				);
-				const redo = performCreateOrUpdatePreparation.bind(
-					service,
+				const redo = self.performCreateOrUpdatePreparation.bind(
+					self,
 					name
 				);
 				HistoryService.addAction(undo, redo);
@@ -410,7 +371,7 @@ export default function PlaygroundService(
 		}
 
 		return promise;
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -420,7 +381,7 @@ export default function PlaygroundService(
 	 * @description Create a new preparation or change its name if it already exists.
 	 * @returns {Promise} The process promise
 	 */
-	function performCreateOrUpdatePreparation(name) {
+	this.performCreateOrUpdatePreparation = function (name) {
 		let promise;
 		if (state.playground.preparation) {
 			promise = PreparationService.setName(state.playground.preparation.id, name);
@@ -439,7 +400,7 @@ export default function PlaygroundService(
 			return preparation;
 		});
 		return promise;
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -451,8 +412,8 @@ export default function PlaygroundService(
 	 * @description Move the preparation head to the specified step
 	 * @returns {promise} The process promise
 	 */
-	function setPreparationHead(preparationId, headId, columnToFocus) {
-		startLoader();
+	this.setPreparationHead = function (preparationId, headId, columnToFocus) {
+		self.startLoader();
 
 		let promise = PreparationService.setHead(preparationId, headId);
 
@@ -460,7 +421,7 @@ export default function PlaygroundService(
 		if (StepUtilsService.getLastActiveStep(state.playground.recipe) !== StepUtilsService.getLastStep(state.playground.recipe)) {
 			const lastActiveStepIndex = StepUtilsService.getActiveThresholdStepIndex(state.playground.recipe);
 			promise = promise
-				.then(() => this.updatePreparationDetails())
+				.then(() => self.updatePreparationDetails())
 				// The grid update cannot be done in parallel because the update change the steps ids
 				// We have to wait for the recipe update to complete
 				.then(() => {
@@ -469,22 +430,22 @@ export default function PlaygroundService(
 						lastActiveStepIndex,
 						true
 					);
-					return loadStep(activeStep);
+					return self.loadStep(activeStep);
 				});
 		}
 		// load the recipe and grid head in parallel
 		else {
 			promise = promise.then(() => {
-				return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid(columnToFocus)]);
+				return $q.all([self.updatePreparationDetails(), self.updatePreparationDatagrid(columnToFocus)]);
 			});
 		}
 
-		return promise.finally(stopLoader);
-	}
+		return promise.finally(self.stopLoader);
+	};
 
 	// --------------------------------------------------------------------------------------------
 	// ---------------------------------------------STEPS------------------------------------------
-	// --------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------;
 
 	/**
 	 * @ngdoc method
@@ -494,37 +455,37 @@ export default function PlaygroundService(
 	 * @description Call an execution of a transformation on the columns in the current preparation and add an entry
 	 * in actions history. It there is no preparation yet, it is created first and tagged as draft.
 	 */
-	function appendStep(actions) {
-		startLoader();
+	this.appendStep = function (actions) {
+		self.startLoader();
 		const actualSteps = state.playground.recipe.current.steps.slice();
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
-		return getCurrentPreparation()
+		return self.getCurrentPreparation()
 		// append step
 			.then((preparation) => {
 				return PreparationService.appendStep(preparation.id, actions);
 			})
 			// update recipe and datagrid
 			.then(() => {
-				return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]);
+				return $q.all([self.updatePreparationDetails(), self.updatePreparationDatagrid()]);
 			})
 			// add entry in history for undo/redo
 			.then(() => {
 				const actualHead = StepUtilsService.getLastStep(state.playground.recipe);
 				const previousStepId = previousHead && previousHead.transformation ? previousHead.transformation.stepId : state.playground.recipe.initialStep.transformation.stepId;
-				const undo = setPreparationHead.bind(service, state.playground.preparation.id, previousStepId);
-				const redo = setPreparationHead.bind(service, state.playground.preparation.id, actualHead.transformation.stepId, actions[0] && actions[0].parameters.column_id);
+				const undo = self.setPreparationHead.bind(self, state.playground.preparation.id, previousStepId);
+				const redo = self.setPreparationHead.bind(self, state.playground.preparation.id, actualHead.transformation.stepId, actions[0] && actions[0].parameters.column_id);
 				HistoryService.addAction(undo, redo);
 			})
 			// hide loading screen
 			.finally(() => {
-				stopLoader();
+				self.stopLoader();
 				const actualStepsLength = actualSteps.length;
 				if (!actualStepsLength || (actualStepsLength === 1 && actualSteps[0].preview)) {
 					StateService.showRecipe();
 				}
 			});
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -535,7 +496,7 @@ export default function PlaygroundService(
 	 * @description Call an execution of a transformation update on the provided step and add an entry in the
 	 * actions history
 	 */
-	function updateStep(step, newParams) {
+	this.updateStep = function (step, newParams) {
 		PreviewService.cancelPreview();
 		PreparationService.copyImplicitParameters(
 			newParams,
@@ -546,7 +507,7 @@ export default function PlaygroundService(
 			return $q.when();
 		}
 
-		startLoader();
+		self.startLoader();
 
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
@@ -563,7 +524,7 @@ export default function PlaygroundService(
 				step,
 				newParams
 			)
-				.then(() => this.updatePreparationDetails())
+				.then(() => self.updatePreparationDetails())
 				// get step id to load and update datagrid with it
 				.then(() => {
 					const activeStep = StepUtilsService.getStep(
@@ -571,20 +532,20 @@ export default function PlaygroundService(
 						lastActiveStepIndex,
 						true
 					);
-					return loadStep(activeStep);
+					return self.loadStep(activeStep);
 				})
 				// add entry in history for undo/redo
 				.then(() => {
 					const actualHead = StepUtilsService.getLastStep(
 						state.playground.recipe
 					).transformation.stepId;
-					const undo = setPreparationHead.bind(
-						service,
+					const undo = self.setPreparationHead.bind(
+						self,
 						state.playground.preparation.id,
 						previousHead
 					);
-					const redo = setPreparationHead.bind(
-						service,
+					const redo = self.setPreparationHead.bind(
+						self,
 						state.playground.preparation.id,
 						actualHead,
 						newParams.column_id
@@ -592,9 +553,9 @@ export default function PlaygroundService(
 					HistoryService.addAction(undo, redo);
 				})
 				// hide loading screen
-				.finally(stopLoader)
+				.finally(self.stopLoader)
 		);
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -604,7 +565,7 @@ export default function PlaygroundService(
 	 * @param {number} nextPosition New recipe step position
 	 * @description Update step order
 	 */
-	function updateStepOrder(previousPosition, nextPosition) {
+	this.updateStepOrder = function (previousPosition, nextPosition) {
 		if (previousPosition === nextPosition) {
 			return;
 		}
@@ -615,7 +576,7 @@ export default function PlaygroundService(
 			return;
 		}
 
-		startLoader();
+		self.startLoader();
 
 		// If move up or move down buttons, list is not yet updated
 		const currentStep = StepUtilsService.getStep(recipe, previousPosition);
@@ -650,31 +611,31 @@ export default function PlaygroundService(
 				// update recipe and datagrid
 				.then(() => {
 					return $q.all([
-						this.updatePreparationDetails(),
-						updatePreparationDatagrid(),
+						self.updatePreparationDetails(),
+						self.updatePreparationDatagrid(),
 					]);
 				})
 				// add entry in history for undo/redo
 				.then(() => {
 					const actualHead = StepUtilsService.getLastStep(recipe)
 						.transformation.stepId;
-					const undo = setPreparationHead.bind(
-						service,
+					const undo = self.setPreparationHead.bind(
+						self,
 						preparationId,
 						previousHead,
 						currentStep.actionParameters.parameters.column_id
 					);
-					const redo = setPreparationHead.bind(
-						service,
+					const redo = self.setPreparationHead.bind(
+						self,
 						preparationId,
 						actualHead
 					);
 					HistoryService.addAction(undo, redo);
 				})
 				// hide loading screen
-				.finally(stopLoader)
+				.finally(self.stopLoader)
 		);
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -684,8 +645,8 @@ export default function PlaygroundService(
 	 * @description Call an execution of a transformation on the column in the current preparation and add an entry
 	 * in actions history
 	 */
-	function removeStep(step) {
-		startLoader();
+	this.removeStep = function (step) {
+		self.startLoader();
 
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
@@ -700,8 +661,8 @@ export default function PlaygroundService(
 				// update recipe and datagrid
 				.then(() => {
 					return $q.all([
-						this.updatePreparationDetails(),
-						updatePreparationDatagrid(),
+						self.updatePreparationDetails(),
+						self.updatePreparationDatagrid(),
 					]);
 				})
 				// add entry in history for undo/redo
@@ -709,23 +670,23 @@ export default function PlaygroundService(
 					const actualHead = StepUtilsService.getLastStep(
 						state.playground.recipe
 					).transformation.stepId;
-					const undo = setPreparationHead.bind(
-						service,
+					const undo = self.setPreparationHead.bind(
+						self,
 						state.playground.preparation.id,
 						previousHead,
 						step.actionParameters.parameters.column_id
 					);
-					const redo = setPreparationHead.bind(
-						service,
+					const redo = self.setPreparationHead.bind(
+						self,
 						state.playground.preparation.id,
 						actualHead
 					);
 					HistoryService.addAction(undo, redo);
 				})
 				// hide loading screen
-				.finally(stopLoader)
+				.finally(self.stopLoader)
 		);
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -735,21 +696,21 @@ export default function PlaygroundService(
 	 * @description Copy preparation steps and apply them on the current preparation
 	 * @returns {Promise} The process promise
 	 */
-	function copySteps(referenceId) {
-		startLoader();
+	this.copySteps = function (referenceId) {
+		self.startLoader();
 
-		return getCurrentPreparation()
+		return self.getCurrentPreparation()
 			.then(preparation =>
 				PreparationService.copySteps(preparation.id, referenceId)
 			)
 			.then(() =>
 				$q.all([
-					this.updatePreparationDetails(),
-					updatePreparationDatagrid(),
+					self.updatePreparationDetails(),
+					self.updatePreparationDatagrid(),
 				])
 			)
-			.finally(stopLoader);
-	}
+			.finally(self.stopLoader);
+	};
 
 	/**
 	 * @ngdoc method
@@ -759,7 +720,7 @@ export default function PlaygroundService(
 	 * It take the transformation to build the closure.
 	 * The closure then takes the parameters and append the new step in the current preparation
 	 */
-	function createAppendStepClosure(action, scope) {
+	this.createAppendStepClosure = function (action, scope) {
 		return (params = params || {}) => {
 			let actions = [];
 			const line = state.playground.grid.selectedLine;
@@ -815,9 +776,9 @@ export default function PlaygroundService(
 					);
 				break;
 			}
-			return service.appendStep(actions);
+			return self.service.appendStep(actions);
 		};
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -827,9 +788,9 @@ export default function PlaygroundService(
 	 * It take the transformation to build the closure.
 	 * The closure then takes the parameters and append the new step in the current preparation
 	 */
-	function completeParamsAndAppend(action, scope, params) {
-		return service.createAppendStepClosure(action, scope)(params);
-	}
+	this.completeParamsAndAppend = function (action, scope, params) {
+		return self.service.createAppendStepClosure(action, scope)(params);
+	};
 
 	/**
 	 * @ngdoc method
@@ -842,7 +803,7 @@ export default function PlaygroundService(
 	 * of the transformation
 	 * @description Perform a cell or a column edition
 	 */
-	function editCell(rowItem, column, newValue, updateAllCellWithValue) {
+	this.editCell = function (rowItem, column, newValue, updateAllCellWithValue) {
 		let action;
 		let scope;
 		let params;
@@ -867,8 +828,8 @@ export default function PlaygroundService(
 			};
 		}
 
-		return service.completeParamsAndAppend(action, scope, params);
-	}
+		return self.service.completeParamsAndAppend(action, scope, params);
+	};
 
 	/**
 	 * @ngdoc method
@@ -881,12 +842,12 @@ export default function PlaygroundService(
 	 *     <li>step is active : deactivate it with all the following steps</li>
 	 * </ul>
 	 */
-	function toggleStep(step) {
+	this.toggleStep = function (step) {
 		const stepToLoad = step.inactive
 			? step
 			: StepUtilsService.getPreviousStep(state.playground.recipe, step);
-		service.loadStep(stepToLoad);
-	}
+		self.service.loadStep(stepToLoad);
+	};
 
 	// --------------------------------------------------------------------------------------------
 	// ---------------------------------------PARAMETERS-------------------------------------------
@@ -898,7 +859,7 @@ export default function PlaygroundService(
 	 * @param {object} params The new dataset parameters
 	 * @description Update the parameters of the dataset and reload
 	 */
-	function changeDatasetParameters(params) {
+	this.changeDatasetParameters = function (params) {
 		const dataset = state.playground.dataset;
 		const isPreparation = state.playground.preparation;
 		const lastActiveStepIndex = isPreparation
@@ -913,13 +874,13 @@ export default function PlaygroundService(
 					lastActiveStepIndex,
 					true
 				);
-				return loadStep(activeStep);
+				return self.loadStep(activeStep);
 			}
 			else {
-				this.loadDataset.call(this, dataset.id);
+				self.loadDataset(dataset.id);
 			}
 		});
-	}
+	};
 
 	// --------------------------------------------------------------------------------------------
 	// ------------------------------------------UTILS---------------------------------------------
@@ -930,7 +891,7 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description Perform an datagrid refresh with the preparation head
 	 */
-	function updatePreparationDatagrid() {
+	this.updatePreparationDatagrid = function () {
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			'head',
@@ -938,10 +899,11 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
-		});
-	}
+		})
+		.then(self.fetchStatistics);
+	};
 
-	function updateDatasetDatagrid(tql) {
+	this.updateDatasetDatagrid = function (tql) {
 		const { dataset } = state.playground;
 		if (!dataset) {
 			return;
@@ -954,31 +916,31 @@ export default function PlaygroundService(
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
 		});
-	}
+	};
 
-	function updateDatagrid() {
+	this.updateDatagrid = function () {
 		const { filter, preparation } = state.playground;
 		if (preparation && preparation.id) {
-			return updatePreparationDatagrid();
+			return self.updatePreparationDatagrid();
 		}
 		const tql =
 			filter.enabled &&
 			filter.isTQL &&
 			FilterService.stringify(filter.gridFilters);
-		return updateDatasetDatagrid(tql);
-	}
+		return self.updateDatasetDatagrid(tql);
+	};
 
 	// TODO : temporary fix because asked to.
 	// TODO : when error status during import and get dataset content is managed by backend,
 	// TODO : remove this controle and the 'data-prep.services.utils'/MessageService dependency
-	function checkRecords(data) {
+	this.checkRecords = function (data) {
 		if (!data || !data.records) {
 			MessageService.error('INVALID_DATASET_TITLE', 'INVALID_DATASET');
 			throw Error('Empty data');
 		}
 
 		return data;
-	}
+	};
 
 	//------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------STATS REFRESH-------------------------------------------
@@ -989,7 +951,7 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description Check if we have the statistics or we have to fetch them
 	 */
-	function shouldFetchStatistics() {
+	this.shouldFetchStatistics = function () {
 		const columns = state.playground.data.metadata.columns;
 
 		return (
@@ -997,7 +959,7 @@ export default function PlaygroundService(
 			!columns.length || // no columns
 			!columns[0].statistics.frequencyTable.length
 		); // no frequency table implies no async stats computed
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -1005,18 +967,18 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description Fetch the statistics. If the update fails (no statistics yet) a retry is triggered after 1s
 	 */
-	function fetchStatistics() {
+	this.fetchStatistics = function () {
 		StateService.setIsFetchingStats(true);
-		this.updateStatistics()
+		return self.updateStatistics()
 			.then(() => StateService.setIsFetchingStats(false))
 			.catch(() => {
 				fetchStatsTimeout = $timeout(
-					() => fetchStatistics.call(this),
+					() => self.fetchStatistics(),
 					1500,
 					false
 				);
 			});
-	}
+	};
 
 	//--------------------------------------------------------------------------------------------------------------
 	// ------------------------------------------------INIT----------------------------------------------------------
@@ -1026,13 +988,13 @@ export default function PlaygroundService(
 	 * @name errorGoBack
 	 * @description go back to homePage when errors occur
 	 */
-	function errorGoBack(err) {
+	this.errorGoBack = function (err) {
 		const { status } = err;
 		if ([403, 404].includes(status)) {
 			return;
 		}
 		$state.go(state.route.previous, state.route.previousOptions);
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -1040,28 +1002,28 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description open a preparation
 	 */
-	function initPreparation(prepid) {
+	this.initPreparation = function (prepid) {
 		StateService.setPreviousRoute(HOME_PREPARATIONS_ROUTE, {
 			folderId: state.inventory.folder.metadata.id,
 		});
-		if (!shouldReloadPreparation()) {
+		if (!self.shouldReloadPreparation()) {
 			return;
 		}
 
 		StateService.setIsLoadingPlayground(true);
-		startLoader();
+		self.startLoader();
 		PreparationService.getDetails(prepid)
 			.then((preparation) => {
-				this.loadPreparation.call(this, preparation);
+				self.loadPreparation(preparation);
 				return preparation;
 			})
 			.then(preparation =>
 				DatasetService.getMetadata(preparation.dataSetId)
 			)
 			.then(dataset => StateService.setCurrentDataset(dataset))
-			.catch(errorGoBack)
-			.finally(stopLoader);
-	}
+			.catch(self.errorGoBack)
+			.finally(self.stopLoader);
+	};
 
 	/**
 	 * @ngdoc method
@@ -1069,11 +1031,11 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description open a dataset
 	 */
-	function initDataset(datasetid) {
+	this.initDataset = function (datasetid) {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		StateService.setIsLoadingPlayground(true);
-		this.loadDataset.call(this, datasetid);
-	}
+		self.loadDataset(datasetid);
+	};
 
 	/**
 	 * @ngdoc method
@@ -1083,14 +1045,14 @@ export default function PlaygroundService(
 	 * - the current playground preparation is the one we want
 	 * - the route param "reload" is not set explicitly to false
 	 */
-	function shouldReloadPreparation() {
+	this.shouldReloadPreparation = function () {
 		const currentPrep = state.playground.preparation;
 		if (!currentPrep || $stateParams.prepid !== currentPrep.id) {
 			return true;
 		}
 
 		return $stateParams.reload !== false;
-	}
+	};
 
 	/**
 	 * @ngdoc method
@@ -1098,9 +1060,9 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @description Playground close callback. It reset the playground and redirect to the previous page
 	 */
-	function close() {
+	this.close = function () {
 		$timeout.cancel(fetchStatsTimeout);
 		$timeout(StateService.resetPlayground, 500, false);
 		$state.go(state.route.previous, state.route.previousOptions);
-	}
+	};
 }

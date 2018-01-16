@@ -21,7 +21,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
+import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.security.Security;
 
 /**
@@ -95,6 +97,14 @@ public class CacheKeyGenerator {
         final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
 
         return new TransformationMetadataCacheKey(preparationId, stepId, actualSourceType, actualUserId);
+    }
+
+    public InitialTransformationMetadataCacheKey generateInitialMetadataKey(final String preparationId, final String stepId,
+                                                              final SourceType sourceType) {
+        final SourceType actualSourceType = sourceType == null ? HEAD : sourceType;
+        final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
+
+        return new InitialTransformationMetadataCacheKey(preparationId, stepId, actualSourceType, actualUserId);
     }
 
     /**

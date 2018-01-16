@@ -95,6 +95,7 @@ import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+import org.talend.dataprep.transformation.util.MetadataGenerator;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
@@ -175,6 +176,9 @@ public class TransformationService extends BaseTransformationService {
     @Autowired
     private StatisticsAdapter statisticsAdapter;
 
+    @Autowired
+    private MetadataGenerator metadataGenerator;
+
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters",
             notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
@@ -201,13 +205,10 @@ public class TransformationService extends BaseTransformationService {
             // No metadata in cache, recompute it
             if (!contentCache.has(cacheKey)) {
                 try {
+
                     LOG.debug("Metadata not available for preparation '{}' at step '{}'", preparationId, headId);
-                    final ExportParameters parameters = new ExportParameters();
-                    parameters.setPreparationId(preparationId);
-                    parameters.setExportType("JSON");
-                    parameters.setStepId(headId);
-                    parameters.setFrom(HEAD);
-                    execute(parameters);
+                    metadataGenerator.generateMetadataForPreparation(preparationId, headId, cacheKey);
+
                 } catch (Exception e) {
                     throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND, e);
                 }

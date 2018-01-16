@@ -84,15 +84,18 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final String formatName = parameters.getExportType();
-        final PreparationMessage preparation = getPreparation(preparationId, stepId);
+
+        final PreparationMessage preparation = getPreparation(preparationId);
         final String dataSetId = preparation.getDataSetId();
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         boolean releasedIdentity = false;
         securityProxy.asTechnicalUser(); // Allow get dataset and get dataset metadata access whatever share status is
+
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
         final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
+
         try (InputStream datasetContent = dataSetGet.execute()) {
             try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
                 // head is not allowed as step id
@@ -129,9 +132,11 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                             .sourceType(parameters.getFrom())
                             .format(format.getName()) //
                             .actions(actions) //
-                            .preparation(preparation) //
+                            .preparation(getPreparation(preparationId)) //
                             .stepId(version) //
                             .volume(Configuration.Volume.SMALL) //
+                            .globalStatistics(false)
+                            .allowMetadataChange(false)
                             .output(tee) //
                             .limit(limit) //
                             .build();

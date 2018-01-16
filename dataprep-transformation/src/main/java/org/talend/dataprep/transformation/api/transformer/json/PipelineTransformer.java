@@ -36,6 +36,7 @@ import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
+import org.talend.dataprep.transformation.cache.InitialTransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -86,13 +87,18 @@ public class PipelineTransformer implements Transformer {
 
         final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(), configuration.output(),
                 configuration.getArguments());
+
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
+
+        final InitialTransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateInitialMetadataKey(configuration.getPreparationId(),
                 configuration.stepId(), configuration.getSourceType());
+
+        //TODO: A verifier
         final PreparationMessage preparation = configuration.getPreparation();
         final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getRowMetadata()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
+
         final Pipeline pipeline = Pipeline.Builder.builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
@@ -110,16 +116,20 @@ public class PipelineTransformer implements Transformer {
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();
 
+
         // wrap this transformer into an executable transformer
         return new ExecutableTransformer() {
 
             @Override
             public void execute() {
                 try {
-                    LOGGER.debug("Before transformation: {}", pipeline);
+                    LOGGER.info("Before transformation: {}", pipeline);
+
+                    System.out.println("pipeline = " + pipeline.getClass());
+
                     pipeline.execute(input);
                 } finally {
-                    LOGGER.debug("After transformation: {}", pipeline);
+                    LOGGER.info("After transformation: {}", pipeline);
                 }
 
                 if (preparation != null) {

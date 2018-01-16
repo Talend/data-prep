@@ -80,13 +80,13 @@ public class PreparationServiceTest extends BasePreparationTest {
         // then : : should list preparation with special character in preparation (see
         // https://jira.talendforge.org/browse/TDP-4779)
         assertThat(preparationService
-                .listAll(null, null, "foo/Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv", null, null)
+                .listAll(null, null, "foo/Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv", null, null)
                 .collect(Collectors.toList()).size(), is(1));
 
         // then : : should list preparation with special character in folder and preparation (see
         // https://jira.talendforge.org/browse/TDP-4779)
         assertThat(preparationService.listAll(null, null,
-                "Folder Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv/Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv",
+                "Folder Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv/Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv",
                 null, null).collect(Collectors.toList()).size(), is(1));
     }
 
@@ -94,8 +94,8 @@ public class PreparationServiceTest extends BasePreparationTest {
         createFolder(home.getId(), "foo");
         final Folder foo = getFolder(home.getId(), "foo");
 
-        createFolder(home.getId(), "Folder Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv");
-        final Folder specialChar = getFolder(home.getId(), "Folder Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv");
+        createFolder(home.getId(), "Folder Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv");
+        final Folder specialChar = getFolder(home.getId(), "Folder Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv");
 
         Preparation preparation = new Preparation();
         preparation.setName("prep_name_foo");
@@ -106,10 +106,10 @@ public class PreparationServiceTest extends BasePreparationTest {
         preparation.setName("prep_name_home");
         clientTest.createPreparation(preparation, home.getId());
 
-        preparation.setName("Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv");
+        preparation.setName("Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv");
         clientTest.createPreparation(preparation, foo.getId());
 
-        preparation.setName("Cr((eate E?mail A!dd\"ressrrrbb[zzzz (copie*-é'(-è_çà)+&.csv");
+        preparation.setName("Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv");
         clientTest.createPreparation(preparation, specialChar.getId());
     }
 }

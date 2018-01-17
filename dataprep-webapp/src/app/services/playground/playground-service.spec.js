@@ -156,12 +156,12 @@ describe('Playground Service', () => {
 		spyOn(RecipeService, 'refresh').and.returnValue($q.when());
 		spyOn(StateService, 'disableRecipeStepsAfter').and.returnValue();
 		spyOn(StateService, 'resetPlayground').and.returnValue();
-		spyOn(StateService, 'setCurrentData').and.returnValue();
-		spyOn(StateService, 'setCurrentDataset').and.returnValue();
-		spyOn(StateService, 'setCurrentPreparation').and.returnValue();
-		spyOn(StateService, 'setCurrentSampleType').and.returnValue();
-		spyOn(StateService, 'setPreparationName').and.returnValue();
-		spyOn(StateService, 'setNameEditionMode').and.returnValue();
+		// spyOn(StateService, 'setCurrentData').and.returnValue();
+		// spyOn(StateService, 'setCurrentDataset').and.returnValue();
+		// spyOn(StateService, 'setCurrentPreparation').and.returnValue();
+		// spyOn(StateService, 'setCurrentSampleType').and.returnValue();
+		// spyOn(StateService, 'setPreparationName').and.returnValue();
+		// spyOn(StateService, 'setNameEditionMode').and.returnValue();
 		spyOn(StateService, 'showRecipe').and.returnValue();
 		spyOn(StateService, 'hideRecipe').and.returnValue();
 		spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
@@ -407,7 +407,9 @@ describe('Playground Service', () => {
 			};
 		}));
 
-		it('should load existing preparation', inject(($rootScope, PlaygroundService) => {
+		fit('should load existing preparation', inject(($rootScope, $q, PlaygroundService, DatasetService, PreparationService) => {
+			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
+
 			// given
 			stateMock.playground.preparation = { id: '5746518486846' };
 			stateMock.playground.dataset = dataset;
@@ -491,64 +493,6 @@ describe('Playground Service', () => {
 				expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 			})
 		);
-	});
-
-	describe('fetch dataset statistics', () => {
-		beforeEach(inject((StateService, StatisticsService) => {
-			spyOn(StatisticsService, 'updateStatistics').and.returnValue();
-			spyOn(StateService, 'updateDatasetStatistics').and.returnValue();
-			spyOn(StateService, 'updateDatasetRecord').and.returnValue();
-		}));
-
-		it('should get metadata and set its statistics in state', inject(($rootScope, $q, PlaygroundService, DatasetService, StateService) => {
-			// given
-			spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
-			stateMock.playground.dataset = { id: '1324d56456b84ef154', records: 15 };
-			stateMock.playground.preparation = null;
-
-			// when
-			PlaygroundService.updateStatistics();
-			$rootScope.$digest();
-
-			// then
-			expect(DatasetService.getMetadata).toHaveBeenCalledWith('1324d56456b84ef154');
-			expect(StateService.updateDatasetStatistics).toHaveBeenCalledWith(datasetMetadata);
-			expect(StateService.updateDatasetRecord).toHaveBeenCalledWith(19);
-		}));
-
-		it('should trigger statistics update', inject(($rootScope, $q, DatasetService, PlaygroundService, StatisticsService) => {
-			// given
-			spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
-			stateMock.playground.dataset = { id: '1324d56456b84ef154' };
-			stateMock.playground.preparation = null;
-
-
-			// when
-			PlaygroundService.updateStatistics();
-			$rootScope.$digest();
-
-			// then
-			expect(StatisticsService.updateStatistics).toHaveBeenCalled();
-		}));
-
-		it('should reject promise when the statistics are not computed yet', inject(($rootScope, $q, PlaygroundService, DatasetService, StateService) => {
-			// given
-			let rejected = false;
-			spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetColumnsWithoutStatistics));
-			stateMock.playground.dataset = { id: '1324d56456b84ef154' };
-			stateMock.playground.preparation = null;
-
-			// when
-			PlaygroundService.updateStatistics()
-				.catch(() => {
-					rejected = true;
-				});
-			$rootScope.$digest();
-
-			// then
-			expect(StateService.updateDatasetStatistics).not.toHaveBeenCalled();
-			expect(rejected).toBe(true);
-		}));
 	});
 
 	describe('fetch preparation statistics', () => {
@@ -2133,7 +2077,6 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
 			})
 		);
-
 	});
 
 	describe('dataset', () => {

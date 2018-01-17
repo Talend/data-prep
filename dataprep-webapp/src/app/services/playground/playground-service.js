@@ -117,7 +117,7 @@ export default function PlaygroundService(
 	 */
 	function fetchStatistics() {
 		StateService.setIsFetchingStats(true);
-		return self.updateStatistics()
+		return updateStatistics()
 			.then(() => StateService.setIsFetchingStats(false))
 			.catch(() => {
 				fetchStatsTimeout = $timeout(
@@ -205,16 +205,15 @@ export default function PlaygroundService(
 					return response;
 				});
 		}
-		else {
-			return DatasetService.getMetadata(state.playground.dataset.id)
-				.then((response) => {
-					if (!response.columns[0].statistics.frequencyTable.length) {
-						return $q.reject();
-					}
-					StateService.updateDatasetRecord(response.records);
-					return response;
-				});
-		}
+
+		return DatasetService.getMetadata(state.playground.dataset.id)
+			.then((response) => {
+				if (!response.columns[0].statistics.frequencyTable.length) {
+					return $q.reject();
+				}
+				StateService.updateDatasetRecord(response.records);
+				return response;
+			});
 	}
 
 	/**
@@ -302,6 +301,20 @@ export default function PlaygroundService(
 		}
 
 		return $stateParams.reload !== false;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name updateStatistics
+	 * @methodOf data-prep.services.playground.service:PlaygroundService
+	 * @description Get fresh statistics, set them in current columns metadata, then trigger a new statistics
+	 *     computation
+	 * @returns {Promise} The process promise
+	 */
+	function updateStatistics() {
+		return getMetadata()
+			.then(StateService.updateDatasetStatistics)
+			.then(StatisticsService.updateStatistics);
 	}
 
 
@@ -404,20 +417,6 @@ export default function PlaygroundService(
 				PreviewService.reset(false);
 			})
 			.finally(self.stopLoader);
-	};
-
-	/**
-	 * @ngdoc method
-	 * @name updateStatistics
-	 * @methodOf data-prep.services.playground.service:PlaygroundService
-	 * @description Get fresh statistics, set them in current columns metadata, then trigger a new statistics
-	 *     computation
-	 * @returns {Promise} The process promise
-	 */
-	this.updateStatistics = function () {
-		return getMetadata()
-			.then(StateService.updateDatasetStatistics)
-			.then(StatisticsService.updateStatistics);
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -527,9 +526,20 @@ export default function PlaygroundService(
 			// add entry in history for undo/redo
 			.then(() => {
 				const actualHead = StepUtilsService.getLastStep(state.playground.recipe);
-				const previousStepId = previousHead && previousHead.transformation ? previousHead.transformation.stepId : state.playground.recipe.initialStep.transformation.stepId;
-				const undo = setPreparationHead.bind(self, state.playground.preparation.id, previousStepId);
-				const redo = setPreparationHead.bind(self, state.playground.preparation.id, actualHead.transformation.stepId, actions[0] && actions[0].parameters.column_id);
+				const previousStepId = previousHead && previousHead.transformation
+					? previousHead.transformation.stepId
+					: state.playground.recipe.initialStep.transformation.stepId;
+				const undo = setPreparationHead.bind(
+					self,
+					state.playground.preparation.id,
+					previousStepId
+				);
+				const redo = setPreparationHead.bind(
+					self,
+					state.playground.preparation.id,
+					actualHead.transformation.stepId,
+					actions[0] && actions[0].parameters.column_id
+				);
 				HistoryService.addAction(undo, redo);
 			})
 			// hide loading screen
@@ -755,9 +765,7 @@ export default function PlaygroundService(
 		self.startLoader();
 
 		return self.getCurrentPreparation()
-			.then(preparation =>
-				PreparationService.copySteps(preparation.id, referenceId)
-			)
+			.then(preparation => PreparationService.copySteps(preparation.id, referenceId))
 			.then(() =>
 				$q.all([
 					self.updatePreparationDetails(),

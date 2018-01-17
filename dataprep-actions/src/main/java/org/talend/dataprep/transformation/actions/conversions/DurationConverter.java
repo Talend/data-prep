@@ -27,6 +27,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -55,13 +57,13 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
      * Action parameters:
      */
 
-    protected static final String FROM_UNIT_PARAMETER = "from_unit";
+    private static final String FROM_UNIT_PARAMETER = "from_unit";
 
-    protected static final String TO_UNIT_PARAMETER = "to_unit";
+    private static final String TO_UNIT_PARAMETER = "to_unit";
 
-    protected static final String TARGET_PRECISION = "precision";
+    private static final String TARGET_PRECISION = "precision";
 
-    protected static final String NEW_COLUMN_SEPARATOR = "_in_";
+    private static final String NEW_COLUMN_SEPARATOR = "_in_";
 
     /**
      * Converter help class.
@@ -91,27 +93,26 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
+        List<ChronoUnit> chronoUnits = Stream
+                .of(YEARS, MONTHS, WEEKS, DAYS, HOURS, MINUTES, SECONDS, MILLIS)
+                .collect(Collectors.toList());
+
         //@formatter:off
-        SelectParameterBuilder builder = selectParameter(locale)
-                .item(YEARS.name(), YEARS.toString())
-                .item(MONTHS.name(), MONTHS.toString())
-                .item(WEEKS.name(), WEEKS.toString())
-                .item(DAYS.name(), DAYS.toString())
-                .item(HOURS.name(), HOURS.toString())
-                .item(MINUTES.name(), MINUTES.toString())
-                .item(SECONDS.name(), SECONDS.toString())
-                .item(MILLIS.name(), MILLIS.toString())
-                .canBeBlank(false);
+        SelectParameterBuilder builderFrom = selectParameter(locale)
+                .name(FROM_UNIT_PARAMETER);
+        for (ChronoUnit unit : chronoUnits) {
+            builderFrom = builderFrom.constant(unit.name(), unit.toString());
+        }
+        builderFrom = builderFrom.defaultValue(DAYS.name());
+        parameters.add(builderFrom.build(this));
 
-        parameters.add(builder
-                .name(FROM_UNIT_PARAMETER)
-                .defaultValue(DAYS.name())
-                .build(this ));
-
-        parameters.add(builder
-                .name(TO_UNIT_PARAMETER)
-                .defaultValue(HOURS.name())
-                .build(this ));
+        SelectParameterBuilder builderTo = selectParameter(locale)
+                .name(TO_UNIT_PARAMETER);
+        for (ChronoUnit unit : chronoUnits) {
+            builderTo = builderTo.constant(unit.name(), unit.toString());
+        }
+        builderTo = builderTo.defaultValue(HOURS.name());
+        parameters.add(builderTo.build(this));
 
          parameters.add(parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
 

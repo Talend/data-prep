@@ -27,6 +27,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -60,7 +62,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     private static final String TARGET_PRECISION = "precision";
 
-    protected static final String NEW_COLUMN_SEPARATOR = "_in_";
+    private static final String NEW_COLUMN_SEPARATOR = "_in_";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
@@ -72,25 +74,28 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        SelectParameterBuilder builder = selectParameter(locale)
-                .item(MILLIMETER.name(), MILLIMETER.getShortName())
-                .item(CENTIMETER.name(), CENTIMETER.getShortName())
-                .item(DECIMETER.name(), DECIMETER.getShortName())
-                .item(METER.name(), METER.getShortName())
-                .item(DEKAMETER.name(), DEKAMETER.getShortName())
-                .item(HECTOMETER.name(), HECTOMETER.getShortName())
-                .item(KILOMETER.name(), KILOMETER.getShortName())
-                .item(INCH.name(), INCH.getShortName())
-                .item(FOOT.name(), FOOT.getShortName())
-                .item(YARD.name(), YARD.getShortName())
-                .item(MILE.name(), MILE.getShortName())
-                .item(NAUTICAL_MILE.name(), NAUTICAL_MILE.getShortName())
-                .item(LIGHT_YEAR.name(), LIGHT_YEAR.getShortName())
-                .canBeBlank(false);
+        List<DistanceEnum> distanceEnums = Stream
+                .of(MILLIMETER, CENTIMETER, DECIMETER, METER, DEKAMETER, HECTOMETER, //
+                        KILOMETER, INCH, FOOT, YARD, MILE, NAUTICAL_MILE, LIGHT_YEAR)
+                .collect(Collectors.toList());
 
-        parameters.add(builder.defaultValue(MILE.name()).name(FROM_UNIT_PARAMETER).build(this));
+        SelectParameterBuilder builderFrom = selectParameter(locale)
+                .name(FROM_UNIT_PARAMETER);
+        for(DistanceEnum currentEnum : distanceEnums) {
+            builderFrom = builderFrom.constant(currentEnum.name(), currentEnum.getShortName());
+        }
+        builderFrom = builderFrom.defaultValue(MILE.name());
 
-        parameters.add(builder.defaultValue(KILOMETER.name()).name(TO_UNIT_PARAMETER).build(this));
+        parameters.add(builderFrom.build(this));
+
+        SelectParameterBuilder builderTo = selectParameter(locale)
+                .name(TO_UNIT_PARAMETER);
+        for(DistanceEnum currentEnum : distanceEnums) {
+            builderTo = builderTo.constant(currentEnum.name(), currentEnum.getShortName());
+        }
+        builderTo = builderTo.defaultValue(KILOMETER.name());
+
+        parameters.add(builderTo.build(this));
 
         parameters.add(parameter(locale).setName(TARGET_PRECISION)
                 .setType(INTEGER)

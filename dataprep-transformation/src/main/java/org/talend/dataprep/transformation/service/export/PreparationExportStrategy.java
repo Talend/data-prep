@@ -136,7 +136,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                             .stepId(version) //
                             .volume(Configuration.Volume.SMALL) //
                             .globalStatistics(false)
-                            .allowMetadataChange(false)
+                            .allowMetadataChange(true)
                             .output(tee) //
                             .limit(limit) //
                             .build();

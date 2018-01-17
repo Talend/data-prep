@@ -6,7 +6,8 @@
         "new_pattern": "MMMM / yyyy / dd",
         "scope": "column",
         "column_id": "0000",
-        "column_name": "date"
+        "column_name": "date",
+        "from_pattern_mode": ""
       }
     }
   ]

@@ -346,11 +346,6 @@ export default function PlaygroundService(
 					OnboardingService.startTour('playground', 1500);
 				}
 			})
-			.then(() => {
-				if (shouldFetchStatistics()) {
-					fetchStatistics();
-				}
-			})
 			.catch(self.errorGoBack)
 			.finally(self.stopLoader);
 	};
@@ -382,11 +377,6 @@ export default function PlaygroundService(
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
 					OnboardingService.startTour('playground', 1500);
-				}
-			})
-			.then(() => {
-				if (shouldFetchStatistics()) {
-					fetchStatistics();
 				}
 			})
 			.catch(self.errorGoBack)

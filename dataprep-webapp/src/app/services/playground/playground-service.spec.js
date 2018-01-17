@@ -2106,6 +2106,7 @@ describe('Playground Service', () => {
 
 				// when
 				PlaygroundService.loadPreparation(preparations[0]);
+
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
@@ -2133,39 +2134,6 @@ describe('Playground Service', () => {
 			})
 		);
 
-		it('should NOT fetch statistics when they are already computed',
-			inject(($q, $rootScope, PlaygroundService, PreparationService, StateService) => {
-				// given
-				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
-				stateMock.playground.preparation = preparations[0];
-
-				// when
-				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				PlaygroundService.loadPreparation(preparations[0]);
-				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [{ // stats already computed
-									value: 'toto',
-									frequency: 10,
-								}],
-							},
-						}],
-					},
-				};
-				$rootScope.$apply();
-
-				// then
-				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-			})
-		);
 	});
 
 	describe('dataset', () => {

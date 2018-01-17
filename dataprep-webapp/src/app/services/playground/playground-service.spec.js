@@ -138,7 +138,7 @@ describe('Playground Service', () => {
 
 	beforeEach(inject(($q, $state, StateService, DatasetService, RecipeService, DatagridService,
 	                   PreparationService, TransformationCacheService, ExportService,
-	                   HistoryService, PreviewService, FilterService, TitleService) => {
+	                   HistoryService, PreviewService, FilterService, TitleService, GridStateService) => {
 		stateMock.playground.preparationName = '';
 
 		spyOn($state, 'go').and.returnValue();
@@ -148,6 +148,7 @@ describe('Playground Service', () => {
 		spyOn(HistoryService, 'addAction').and.returnValue();
 		spyOn(HistoryService, 'clear').and.returnValue();
 		spyOn(ExportService, 'refreshTypes').and.returnValue();
+		spyOn(GridStateService, 'setData').and.returnValue();
 		spyOn(PreparationService, 'create').and.returnValue($q.when(preparations[0].id));
 		spyOn(PreparationService, 'getDetails').and.returnValue($q.when(preparations[0]));
 		spyOn(PreparationService, 'setHead').and.returnValue($q.when());
@@ -2159,13 +2160,12 @@ describe('Playground Service', () => {
 			})
 		);
 
-		fit('should fetch statistics when loading dataset',
-			inject(($q, $rootScope, PlaygroundService, StateService, StatisticsService, GridStateService) => {
+		it('should fetch statistics when loading dataset',
+			inject(($q, $rootScope, PlaygroundService, StateService, StatisticsService) => {
 				// given
 				stateMock.playground.dataset = datasets[0];
 
 				spyOn(StatisticsService, 'updateStatistics').and.returnValue($q.when());
-				spyOn(GridStateService, 'setData').and.returnValue();
 
 				// when
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();

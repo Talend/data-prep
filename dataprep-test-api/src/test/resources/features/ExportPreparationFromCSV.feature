@@ -1,6 +1,6 @@
-Feature: Export Preparation
+Feature: Export Preparation from CSV
 
-  Scenario: Create a preparation with one step
+  Scenario: Create a preparation with one step from a CSV
     Given I upload the dataset "/data/6L3C.csv" with name "6L3C_dataset"
     And I create a preparation with name "6L3C_preparation", based on "6L3C_dataset" dataset
     And I add a step with parameters :
@@ -10,7 +10,7 @@ Feature: Export Preparation
       | preparationName | 6L3C_preparation |
 
   Scenario: Verify transformation result
-    # escape and enclosure characters shoud be given because they can be empty
+    # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |
@@ -33,7 +33,7 @@ Feature: Export Preparation
   @CleanAfter
   Scenario: Verify transformation result with custom parameters
     When I export the preparation with parameters :
-      | exportType           | CSV              |
+      | exportType           | CSV                               |
       | csv_fields_delimiter | -                                 |
       | csv_escape_character | #                                 |
       | csv_enclosure_mode   | all_fields                        |

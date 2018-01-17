@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,23 +12,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.talend.dataprep.parameters.Parameter.parameter;
-import static org.talend.dataprep.parameters.ParameterType.INTEGER;
-import static org.talend.dataprep.parameters.ParameterType.STRING;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.SPLIT;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.slf4j.Logger;
@@ -43,37 +26,67 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.SPLIT;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 /**
  * Extract tokens from a String cell value based on regex matching groups.
  */
 @Action(ExtractStringTokens.EXTRACT_STRING_TOKENS_ACTION_NAME)
 public class ExtractStringTokens extends AbstractActionMetadata implements ColumnAction {
 
-    /** The action name. */
-    public static final String EXTRACT_STRING_TOKENS_ACTION_NAME = "extract_string_tokens"; //$NON-NLS-1$
-
-    /** The column appendix. */
-    public static final String APPENDIX = "_part_"; //$NON-NLS-1$
-
     protected static final String MODE_PARAMETER = "extract_mode";
 
-    protected static final String MULTIPLE_COLUMNS_MODE = "multiple_columns";
+    /**
+     * The action name.
+     */
+    static final String EXTRACT_STRING_TOKENS_ACTION_NAME = "extract_string_tokens"; //$NON-NLS-1$
 
-    protected static final String SINGLE_COLUMN_MODE = "single_column";
+    static final String SINGLE_COLUMN_MODE = "single_column";
 
-    /** Regex action parameter. */
-    protected static final String PARAMETER_REGEX = "regex"; //$NON-NLS-1$
+    /**
+     * Regex action parameter.
+     */
+    static final String PARAMETER_REGEX = "regex"; //$NON-NLS-1$
 
-    /** Number of items produces by the action. */
-    protected static final String LIMIT = "limit"; //$NON-NLS-1$
+    /**
+     * Number of items produces by the action.
+     */
+    static final String LIMIT = "limit"; //$NON-NLS-1$
 
-    /** Separator for single column mode. */
-    protected static final String PARAMETER_SEPARATOR = "concat_separator"; //$NON-NLS-1$
+    /**
+     * Separator for single column mode.
+     */
+    static final String PARAMETER_SEPARATOR = "concat_separator"; //$NON-NLS-1$
 
-    /** Key to put compiled pattern in action context. */
+    /**
+     * Key to put compiled pattern in action context.
+     */
     private static final String PATTERN = "pattern"; //$NON-NLS-1$
 
-    /** This class' logger. */
+    /**
+     * The column appendix.
+     */
+    private static final String APPENDIX = "_part_"; //$NON-NLS-1$
+
+    private static final String MULTIPLE_COLUMNS_MODE = "multiple_columns";
+
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractStringTokens.class);
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = true;
@@ -98,11 +111,11 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
 
         //@formatter:off
         parameters.add(selectParameter(locale)
-                        .name(MODE_PARAMETER)
-                        .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("4").build(this))
-                        .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, parameter(locale).setName(PARAMETER_SEPARATOR).setType(STRING).setDefaultValue(",").build(this))
-                        .defaultValue(MULTIPLE_COLUMNS_MODE)
-                        .build(this )
+                .name(MODE_PARAMETER)
+                .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, parameter(locale).setName(LIMIT).setType(INTEGER).setDefaultValue("4").build(this))
+                .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, parameter(locale).setName(PARAMETER_SEPARATOR).setType(STRING).setDefaultValue(",").build(this))
+                .defaultValue(MULTIPLE_COLUMNS_MODE)
+                .build(this)
         );
         //@formatter:on
 
@@ -151,7 +164,7 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
 
         for (int i = 0; i < limit; i++) {
             additionalColumns.add(
-                    ActionsUtils.additionalColumn().withKey("" + i).withName(context.getColumnName() + APPENDIX + (i + 1)));
+                    ActionsUtils.additionalColumn().withKey(Integer.toString(i)).withName(context.getColumnName() + APPENDIX + (i + 1)));
         }
 
         return additionalColumns;
@@ -186,10 +199,10 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
         if (parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE)) {
             for (int i = 0; i < newColumns.size(); i++) {
                 if (i < extractedValues.size()) {
-                    row.set(newColumns.get("" + i), extractedValues.get(i));
+                    row.set(newColumns.get("" + Integer.toString(i)), extractedValues.get(i));
                 } else {
                     // If we found less tokens than limit, we complete with empty entries
-                    row.set(newColumns.get("" + i), EMPTY);
+                    row.set(newColumns.get("" + Integer.toString(i)), EMPTY);
                 }
             }
         } else {

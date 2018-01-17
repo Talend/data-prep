@@ -157,12 +157,9 @@ describe('Early Preview Service', () => {
             expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
         }));
 
-        it('should cancel current early preview after a 100ms delay', inject(($timeout, RecipeService, EarlyPreviewService, PreviewService) => {
+        it('should cancel current early preview', inject((RecipeService, EarlyPreviewService, PreviewService) => {
             //when
             EarlyPreviewService.cancelEarlyPreview();
-            expect(RecipeService.cancelEarlyPreview).not.toHaveBeenCalled();
-            expect(PreviewService.cancelPreview).not.toHaveBeenCalled();
-            $timeout.flush(100);
 
             //then
             expect(RecipeService.cancelEarlyPreview).toHaveBeenCalled();
@@ -173,7 +170,7 @@ describe('Early Preview Service', () => {
     describe('activation', () => {
         it('should NOT trigger preview when it is disabled', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService) => {
             //given
-	        stateMock.playground.previewDisabled = true;
+	        stateMock.playground.transformationInProgress = true;
 
             //when
             EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
@@ -184,28 +181,16 @@ describe('Early Preview Service', () => {
             expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
         }));
 
-        it('should NOT cancel current early preview when it is disabled', inject(($timeout, RecipeService, EarlyPreviewService, PreviewService, StateService) => {
-            //given
-	        stateMock.playground.previewDisabled = true;
-
-            //when
-            EarlyPreviewService.cancelEarlyPreview();
-            $timeout.flush(100);
-
-            //then
-            expect(RecipeService.cancelEarlyPreview).not.toHaveBeenCalled();
-            expect(PreviewService.cancelPreview).not.toHaveBeenCalled();
-        }));
 
         it('should trigger preview when it is enabled', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService, StateService) => {
             //given
-	        stateMock.playground.previewDisabled = true;
+	        stateMock.playground.transformationInProgress = true;
             EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
             $timeout.flush(700);
             expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
 
             //when
-	        stateMock.playground.previewDisabled = false;
+	        stateMock.playground.transformationInProgress = false;
             EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
             $timeout.flush(700);
 

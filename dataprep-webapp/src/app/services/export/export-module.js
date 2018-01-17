@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -34,7 +34,7 @@ angular.module(MODULE_NAME,
 		SERVICES_UTILS_MODULE,
 		SERVICES_STATE_MODULE,
 	])
-    .service('ExportRestService', ExportRestService)
-    .service('ExportService', ExportService);
+	.service('ExportRestService', ExportRestService)
+	.service('ExportService', ExportService);
 
 export default MODULE_NAME;

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -65,5 +65,8 @@ public class GlobalStep extends DataPrepStep {
 
         // cleaning all features context object
         context.clearObject();
+
+        // cleaning all export parameters
+        context.clearPreparationExportFormat();
     }
 }

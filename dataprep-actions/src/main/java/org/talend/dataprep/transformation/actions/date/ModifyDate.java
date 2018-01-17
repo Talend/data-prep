@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,17 +11,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
-
-import static java.time.temporal.ChronoUnit.*;
-import static java.util.Collections.singletonList;
-import static org.talend.dataprep.api.dataset.row.RowMetadataUtils.getMostUsedDatePattern;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,19 +31,34 @@ import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static java.time.temporal.ChronoUnit.*;
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.dataset.row.RowMetadataUtils.getMostUsedDatePattern;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 /**
  * Change the date pattern on a 'date' column.
  */
 @Action(ModifyDate.ACTION_NAME)
 public class ModifyDate extends AbstractDate implements ColumnAction {
 
-    /** Action name. */
+    /**
+     * Action name.
+     */
     public static final String ACTION_NAME = "modify_date"; //$NON-NLS-1$
+
+    protected static final String NEW_COLUMN_SUFFIX = "_modified";
 
     /**
      * The unit of the amount to subtract.
      */
-    protected static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
+    static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModifyDate.class);
 
@@ -63,8 +67,6 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
     private static final String UNIT_CONTEXT_KEY = "time_unit"; //$NON-NLS-1$
 
     private static final String AMOUNT_CONTEXT_KEY = "amount"; //$NON-NLS-1$
-
-    protected static final String NEW_COLUMN_SUFFIX = "_modified";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
@@ -138,8 +140,9 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
 
-        final String value = row.get(columnId);
-        if (StringUtils.isBlank(value)) {
+        final String originalValue = row.get(columnId);
+        if (StringUtils.isBlank(originalValue)) {
+            row.set(ActionsUtils.getTargetColumnId(context), originalValue);
             return;
         }
 
@@ -148,34 +151,35 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
         long amount;
         switch (mode) {
-        case CONSTANT_MODE:
-            amount = context.get(AMOUNT_CONTEXT_KEY);
-            break;
-        case OTHER_COLUMN_MODE:
-            String otherColId = parameters.get(SELECTED_COLUMN_PARAMETER);
-            if (!NumericHelper.isBigDecimal(row.get(otherColId))) {
-                // In this case, do not change the original value
-                return;
-            }
-            amount = computeAmount(row.get(otherColId));
-            break;
-        default:
-            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //
-                    ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
+            case CONSTANT_MODE:
+                amount = context.get(AMOUNT_CONTEXT_KEY);
+                break;
+            case OTHER_COLUMN_MODE:
+                String otherColId = parameters.get(SELECTED_COLUMN_PARAMETER);
+                if (!NumericHelper.isBigDecimal(row.get(otherColId))) {
+                    // In this case, do not change the original value
+                    return;
+                }
+                amount = computeAmount(row.get(otherColId));
+                break;
+            default:
+                throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //
+                        ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
         }
 
         try {
             final DatePattern outputPattern = new DatePattern(context.get(PATTERN_CONTEXT_KEY));
 
-            LocalDateTime date = Providers.get().parse(value, context.getRowMetadata().getById(columnId));
+            LocalDateTime date = Providers.get().parse(originalValue, context.getRowMetadata().getById(columnId));
 
             date = date.plus(amount, context.get(UNIT_CONTEXT_KEY));
 
             row.set(ActionsUtils.getTargetColumnId(context), outputPattern.getFormatter().format(date));
 
         } catch (DateTimeException e) {
+            row.set(ActionsUtils.getTargetColumnId(context), originalValue);
             // cannot parse the date, let's leave it as is
-            LOGGER.debug("Unable to parse date {}.", value, e);
+            LOGGER.debug("Unable to parse date {}.", originalValue, e);
         }
     }
 

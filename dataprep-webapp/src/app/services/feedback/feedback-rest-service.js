@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -31,12 +31,10 @@ export default class FeedbackRestService {
      * @description Send a feedback
      */
 	sendFeedback(feedback) {
-		const request = {
+		return this.$http({
 			method: 'PUT',
 			url: this.url,
 			data: feedback,
-		};
-
-		return this.$http(request);
+		});
 	}
 }

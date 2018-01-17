@@ -248,4 +248,23 @@ public class OSIntegrationTestUtilTest {
         Assert.assertEquals(filter.range.get(LABEL), "label");
     }
 
+    @Test
+    public void getFilenameExtension_Empty() {
+        Assert.assertEquals(util.getFilenameExtension("myFile"), "myFile");
+    }
+
+    @Test
+    public void getFilenameExtension_csv1() {
+        Assert.assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+    }
+
+    @Test
+    public void getFilenameExtension_csv2() {
+        Assert.assertEquals(util.getFilenameExtension("my.file.csv"), "csv");
+    }
+
+    @Test
+    public void getFilenameExtension_xlsx() {
+        Assert.assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+    }
 }

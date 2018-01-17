@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -31,7 +31,6 @@ const DELAY = 700;
 export default function EarlyPreviewService($timeout, state, RecipeService, PreviewService) {
 	'ngInject';
 	let previewTimeout;
-	let previewCancelerTimeout;
 
 	return {
 		cancelPendingPreview,
@@ -47,7 +46,6 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      */
 	function cancelPendingPreview() {
 		$timeout.cancel(previewTimeout);
-		$timeout.cancel(previewCancelerTimeout);
 	}
 
     /**
@@ -60,7 +58,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      */
 	function earlyPreview(action, scope) {
 		return (params) => {
-			if (state.playground.previewDisabled) {
+			if (state.playground.transformationInProgress) {
 				return;
 			}
 
@@ -104,7 +102,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 				}
 
 				PreviewService.getPreviewAddRecords(preparationId, state.playground.dataset.id, action.name, parameters)
-                    .then(() => RecipeService.earlyPreview(action, parameters));
+					.then(() => RecipeService.earlyPreview(action, parameters));
 			}, DELAY);
 		};
 	}
@@ -116,15 +114,8 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @description Cancel any current or pending early preview
      */
 	function cancelEarlyPreview() {
-		if (state.playground.previewDisabled) {
-			return;
-		}
-
 		cancelPendingPreview();
-
-		previewCancelerTimeout = $timeout(() => {
-			RecipeService.cancelEarlyPreview();
-			PreviewService.cancelPreview();
-		}, 100);
+		RecipeService.cancelEarlyPreview();
+		PreviewService.cancelPreview();
 	}
 }

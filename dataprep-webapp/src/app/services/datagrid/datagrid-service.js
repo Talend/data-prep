@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -34,15 +34,16 @@ export default function DatagridService(state, StateService, ConverterService, T
 	const service = {
 		focusedColumn: null, // TODO JSO : put this in state
 
-        // grid data
+		// grid data
 		updateData, // updata data in the current dataset
 		getColumns,
 		getColumnsContaining,
 
-        // preview
+		// preview
 		execute,
 		previewDataExecutor,
 	};
+
 	return service;
 
     //------------------------------------------------------------------------------------------------------
@@ -204,21 +205,17 @@ export default function DatagridService(state, StateService, ConverterService, T
 		let cols = state.playground.data.metadata.columns;
 
 		if (excludeNumeric) {
-			cols = _.filter(cols, function (col) {
+			cols = _.filter(cols, (col) => {
 				const simplifiedType = ConverterService.simplifyType(col.type);
 				return simplifiedType !== 'integer' && simplifiedType !== 'decimal';
 			});
 		}
 
 		if (excludeBoolean) {
-			cols = _.filter(cols, function (col) {
-				return col.type !== 'boolean';
-			});
+			cols = _.filter(cols, col => col.type !== 'boolean');
 		}
 
-		return _.map(cols, function (col) {
-			return { id: col.id, name: col.name };
-		});
+		return _.map(cols, col => ({ id: col.id, name: col.name }));
 	}
 
     /**
@@ -242,8 +239,8 @@ export default function DatagridService(state, StateService, ConverterService, T
 		const data = state.playground.data.records;
 		let potentialColumns = getColumns(!canBeNumeric, !canBeBoolean);
 
-        // we loop over data while there is data and potential columns that can contains the searched term
-        // if a col value for a row contains the term, we add it to result
+		// we loop over data while there is data and potential columns that can contains the searched term
+		// if a col value for a row contains the term, we add it to result
 		let dataIndex = 0;
 		while (dataIndex < data.length && potentialColumns.length) {
 			const record = data[dataIndex];

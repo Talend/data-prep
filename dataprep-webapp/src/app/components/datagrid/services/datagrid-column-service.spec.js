@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -31,24 +31,24 @@ describe('Datagrid column service', () => {
 
 	describe('on creation', () => {
 		it('should add SlickGrid header destroy handler', inject((DatagridColumnService) => {
-			//given
+			// given
 			spyOn(gridMock.onBeforeHeaderCellDestroy, 'subscribe').and.returnValue();
 
-			//when
+			// when
 			DatagridColumnService.init(gridMock);
 
-			//then
+			// then
 			expect(gridMock.onBeforeHeaderCellDestroy.subscribe).toHaveBeenCalled();
 		}));
 
 		it('should add SlickGrid header creation handler', inject((DatagridColumnService) => {
-			//given
+			// given
 			spyOn(gridMock.onHeaderCellRendered, 'subscribe').and.returnValue();
 
-			//when
+			// when
 			DatagridColumnService.init(gridMock);
 
-			//then
+			// then
 			expect(gridMock.onHeaderCellRendered.subscribe).toHaveBeenCalled();
 		}));
 	});
@@ -72,7 +72,7 @@ describe('Datagrid column service', () => {
 					detach: () => {
 					},
 				},
-			},];
+			}];
 		const formatter = () => {
 		};
 
@@ -87,10 +87,10 @@ describe('Datagrid column service', () => {
 		}));
 
 		it('should create new preview grid columns', inject((DatagridColumnService) => {
-			//when
+			// when
 			const createdColumns = DatagridColumnService.createColumns(columnsMetadata, true, false);
 
-			//then
+			// then
 			expect(createdColumns[0].id).toEqual('tdpId');
 			expect(createdColumns[0].field).toEqual('tdpId');
 			expect(createdColumns[0].name).toEqual('');
@@ -124,11 +124,22 @@ describe('Datagrid column service', () => {
 			});
 		}));
 
+		it('should escape html to prevent XSS injection', inject((DatagridColumnService) => {
+			// when
+			columnsMetadata = [
+				{ id: '0000', name: '<h1>NAME</h1>', type: 'string' },
+			];
+			const createdColumns = DatagridColumnService.createColumns(columnsMetadata, true, false);
+
+			// then
+			expect(createdColumns[1].name).toEqual('<div class="grid-header ">   <div class="grid-header-title dropdown-button ng-binding">&lt;h1&gt;NAME&lt;/h1&gt;</div>   <div class="grid-header-type ng-binding">text</div></div><div class="quality-bar"><div class="record-unknown"></div></div>');
+		}));
+
 		it('should create new grid columns', inject((DatagridColumnService) => {
-			//when
+			// when
 			const createdColumns = DatagridColumnService.createColumns(columnsMetadata, false, false);
 
-			//then
+			// then
 			expect(createdColumns[0].id).toEqual('tdpId');
 			expect(createdColumns[0].field).toEqual('tdpId');
 			expect(createdColumns[0].name).toEqual('');
@@ -172,7 +183,8 @@ describe('Datagrid column service', () => {
 			columnDef = {
 				header: {
 					remove: () => {
-					}, detach: () => {
+					},
+					detach: () => {
 					},
 				},
 				scope: {
@@ -189,7 +201,7 @@ describe('Datagrid column service', () => {
 		}));
 
 		it('should do nothing when column is part of a preview', inject((DatagridColumnService) => {
-			//given
+			// given
 			columnDef.preview = true;
 			const columnsArgs = {
 				id: '0001',
@@ -197,18 +209,18 @@ describe('Datagrid column service', () => {
 			};
 			DatagridColumnService.renewAllColumns(true);
 
-			//when
+			// when
 			const onBeforeHeaderCellDestroy = gridMock.onBeforeHeaderCellDestroy.subscribe.calls.argsFor(0)[0];
 			onBeforeHeaderCellDestroy(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnDef.header.detach).not.toHaveBeenCalled();
 			expect(columnDef.header.remove).not.toHaveBeenCalled();
 			expect(columnDef.scope.$destroy).not.toHaveBeenCalled();
 		}));
 
 		it('should destroy header when renewAllFlag is set to true', inject((DatagridColumnService) => {
-			//given
+			// given
 			columnDef.preview = false;
 			const columnsArgs = {
 				id: '0001',
@@ -216,18 +228,18 @@ describe('Datagrid column service', () => {
 			};
 			DatagridColumnService.renewAllColumns(true);
 
-			//when
+			// when
 			const onBeforeHeaderCellDestroy = gridMock.onBeforeHeaderCellDestroy.subscribe.calls.argsFor(0)[0];
 			onBeforeHeaderCellDestroy(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnDef.header.detach).not.toHaveBeenCalled();
 			expect(columnDef.header.remove).toHaveBeenCalled();
 			expect(columnDef.scope.$destroy).toHaveBeenCalled();
 		}));
 
 		it('should detach header when renewAllFlag is set to false', inject((DatagridColumnService) => {
-			//given
+			// given
 			columnDef.preview = false;
 			const columnsArgs = {
 				id: '0001',
@@ -235,18 +247,18 @@ describe('Datagrid column service', () => {
 			};
 			DatagridColumnService.renewAllColumns(false);
 
-			//when
+			// when
 			const onBeforeHeaderCellDestroy = gridMock.onBeforeHeaderCellDestroy.subscribe.calls.argsFor(0)[0];
 			onBeforeHeaderCellDestroy(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnDef.header.detach).toHaveBeenCalled();
 			expect(columnDef.header.remove).not.toHaveBeenCalled();
 			expect(columnDef.scope.$destroy).not.toHaveBeenCalled();
 		}));
 
 		it('should NOT detach header for index column', inject((DatagridColumnService) => {
-			//given
+			// given
 			columnDef.preview = false;
 			const columnsArgs = {
 				id: 'tdpId',
@@ -254,7 +266,8 @@ describe('Datagrid column service', () => {
 					id: 'tdpId',
 					header: {
 						remove: () => {
-						}, detach: () => {
+						},
+						detach: () => {
 						},
 					},
 					scope: {
@@ -265,11 +278,11 @@ describe('Datagrid column service', () => {
 			};
 			DatagridColumnService.renewAllColumns(false);
 
-			//when
+			// when
 			const onBeforeHeaderCellDestroy = gridMock.onBeforeHeaderCellDestroy.subscribe.calls.argsFor(0)[0];
 			onBeforeHeaderCellDestroy(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnDef.header.detach).not.toHaveBeenCalled();
 		}));
 	});
@@ -280,16 +293,16 @@ describe('Datagrid column service', () => {
 
 		function saveHeader(id, scope, header) {
 			const columnsToDestroy = {
-				id: id,
-				scope: scope,
-				header: header,
+				id,
+				scope,
+				header,
 				preview: false,
 			};
 			const headerToDetach = {
 				column: columnsToDestroy,
 			};
 
-			//destroy to save header in the available headers
+			// destroy to save header in the available headers
 			const onBeforeHeaderCellDestroy = gridMock.onBeforeHeaderCellDestroy.subscribe.calls.argsFor(0)[0];
 			onBeforeHeaderCellDestroy(null, headerToDetach);
 		}
@@ -300,17 +313,17 @@ describe('Datagrid column service', () => {
 
 			DatagridColumnService.init(gridMock);
 
-			//save header in available headers list
+			// save header in available headers list
 			availableScope = {
 				$destroy: () => {
-				}
+				},
 			};
 			availableHeader = angular.element('<div id="availableHeader"></div>');
 			saveHeader('0001', availableScope, availableHeader);
 		}));
 
 		it('should attach and update available header that has the same id', inject(() => {
-			//given
+			// given
 			const columnsArgs = {
 				column: {
 					id: '0001',
@@ -319,11 +332,11 @@ describe('Datagrid column service', () => {
 				node: angular.element('<div></div>')[0],
 			};
 
-			//when
+			// when
 			const onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
 			onHeaderCellRendered(null, columnsArgs);
 
-			//then
+			// then
 			expect(availableScope.column).toBe(columnsArgs.column.tdpColMetadata);
 			expect(columnsArgs.column.header).toBe(availableHeader);
 			expect(columnsArgs.column.scope).toBe(availableScope);
@@ -332,7 +345,7 @@ describe('Datagrid column service', () => {
 		}));
 
 		it('should create and attach a new header', inject(() => {
-			//given
+			// given
 			const columnsArgs = {
 				column: {
 					id: '0002',
@@ -341,11 +354,11 @@ describe('Datagrid column service', () => {
 				node: angular.element('<div></div>')[0],
 			};
 
-			//when
+			// when
 			const onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
 			onHeaderCellRendered(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnsArgs.column.scope).toBeDefined();
 			expect(columnsArgs.column.header).toBeDefined();
 
@@ -356,7 +369,7 @@ describe('Datagrid column service', () => {
 		}));
 
 		it('should do nothing if column is from preview', inject(() => {
-			//given
+			// given
 			const columnsArgs = {
 				column: {
 					id: '0002',
@@ -366,11 +379,11 @@ describe('Datagrid column service', () => {
 				node: angular.element('<div></div>')[0],
 			};
 
-			//when
+			// when
 			const onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
 			onHeaderCellRendered(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnsArgs.column.scope).not.toBeDefined();
 			expect(columnsArgs.column.header).not.toBeDefined();
 
@@ -378,7 +391,7 @@ describe('Datagrid column service', () => {
 		}));
 
 		it('should create and attach index column header', inject(() => {
-			//given
+			// given
 			const columnsArgs = {
 				column: {
 					id: 'tdpId',
@@ -386,11 +399,11 @@ describe('Datagrid column service', () => {
 				node: angular.element('<div></div>')[0],
 			};
 
-			//when
+			// when
 			const onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
 			onHeaderCellRendered(null, columnsArgs);
 
-			//then
+			// then
 			expect(columnsArgs.column.scope).toBeDefined();
 			expect(columnsArgs.column.header).toBeDefined();
 
@@ -404,7 +417,7 @@ describe('Datagrid column service', () => {
 		}));
 
 		it('should call PlaygroundService move columns 2 steps', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000', name: 'beer' } },
 				{ id: '0001', tdpColMetadata: { id: '0001' } },
@@ -418,10 +431,10 @@ describe('Datagrid column service', () => {
 				{ id: '0003', tdpColMetadata: { id: '0003' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			const expectedParams = [{
 				action: 'reorder',
 				parameters: {
@@ -430,14 +443,14 @@ describe('Datagrid column service', () => {
 					column_id: '0000',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
-				}
+				},
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
 		}));
 
 		it('should find move columns 2 steps', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000', name: 'beer' } },
 				{ id: '0001', tdpColMetadata: { id: '0001' } },
@@ -451,10 +464,10 @@ describe('Datagrid column service', () => {
 				{ id: '0003', tdpColMetadata: { id: '0003' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			const expectedParams = [{
 				action: 'reorder',
 				parameters: {
@@ -463,14 +476,14 @@ describe('Datagrid column service', () => {
 					column_id: '0000',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
-				}
+				},
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
 		}));
 
 		it('should find move columns simple swap', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000' } },
 				{ id: '0001', tdpColMetadata: { id: '0001', name: 'beer' } },
@@ -484,10 +497,10 @@ describe('Datagrid column service', () => {
 				{ id: '0003', tdpColMetadata: { id: '0003' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			const expectedParams = [{
 				action: 'reorder',
 				parameters: {
@@ -496,14 +509,14 @@ describe('Datagrid column service', () => {
 					column_id: '0001',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
-				}
+				},
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
 		}));
 
 		it('should find move columns 3 steps', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000', name: 'beer' } },
 				{ id: '0001', tdpColMetadata: { id: '0001' } },
@@ -517,10 +530,10 @@ describe('Datagrid column service', () => {
 				{ id: '0000', tdpColMetadata: { id: '0000' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			const expectedParams = [{
 				action: 'reorder',
 				parameters: {
@@ -529,14 +542,14 @@ describe('Datagrid column service', () => {
 					column_id: '0000',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
-				}
+				},
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
 		}));
 
 		it('should find not moved', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000', name: 'beer' } },
 				{ id: '0001', tdpColMetadata: { id: '0001' } },
@@ -550,15 +563,15 @@ describe('Datagrid column service', () => {
 				{ id: '0003', tdpColMetadata: { id: '0003' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			expect(PlaygroundService.appendStep).not.toHaveBeenCalledWith();
 		}));
 
 		it('should find move columns 2 steps backward', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000' } },
 				{ id: '0001', tdpColMetadata: { id: '0001' } },
@@ -572,10 +585,10 @@ describe('Datagrid column service', () => {
 				{ id: '0003', tdpColMetadata: { id: '0003' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			const expectedParams = [{
 				action: 'reorder',
 				parameters: {
@@ -584,14 +597,14 @@ describe('Datagrid column service', () => {
 					column_id: '0002',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
-				}
+				},
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
 		}));
 
 		it('should find move columns 2 steps backward in the middle', inject((DatagridColumnService, PlaygroundService) => {
-			//given
+			// given
 			const original = [
 				{ id: '0000', tdpColMetadata: { id: '0000' } },
 				{ id: '0001', tdpColMetadata: { id: '0001' } },
@@ -607,10 +620,10 @@ describe('Datagrid column service', () => {
 				{ id: '0004', tdpColMetadata: { id: '0004' } },
 			];
 
-			//when
+			// when
 			DatagridColumnService.columnsOrderChanged(newCols, original);
 
-			//then
+			// then
 			const expectedParams = [{
 				action: 'reorder',
 				parameters: {
@@ -619,7 +632,7 @@ describe('Datagrid column service', () => {
 					column_id: '0003',
 					column_name: 'beer',
 					dataset_action_display_type: 'column',
-				}
+				},
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);

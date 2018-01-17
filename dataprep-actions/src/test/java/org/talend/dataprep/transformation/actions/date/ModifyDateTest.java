@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,23 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.MONTHS;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
-import static org.talend.dataprep.transformation.actions.date.ModifyDate.TIME_UNIT_PARAMETER;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -41,6 +24,23 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.MONTHS;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
+import static org.talend.dataprep.transformation.actions.date.ModifyDate.TIME_UNIT_PARAMETER;
 
 public class ModifyDateTest extends BaseDateTest<ModifyDate> {
 
@@ -117,23 +117,50 @@ public class ModifyDateTest extends BaseDateTest<ModifyDate> {
     @Test
     public void test_apply_in_newcolumn() throws Exception {
         // given
-        final DataSetRow row = builder() //
+        final DataSetRow row1 = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
                 .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING).name("last update")) //
                 .build();
 
+        final DataSetRow row2 = builder() //
+                .with(value("tata mouche").type(Type.STRING).name("recipe")) //
+                .with(value("  ").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("toto pouche").type(Type.STRING).name("last update")) //
+                .build();
+
+        final DataSetRow row3 = builder() //
+                .with(value("titi louche").type(Type.STRING).name("recipe")) //
+                .with(value("culbutoqué").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tutu couche").type(Type.STRING).name("last update")) //
+                .build();
+
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(row1, actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(row2, actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(row3, actionRegistry, factory.create(action, parameters));
+
 
         // then
-        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata", "04/25/2000");
-        assertEquals(expectedRow.values(), row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
+        final DataSetRow expectedRow1 = getRow("toto", "04/25/1999", "tata", "04/25/2000");
+        assertEquals(expectedRow1.values(), row1.values());
+        ColumnMetadata expected1 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
+        ColumnMetadata actual1 = row1.getRowMetadata().getById("0003");
+        assertEquals(expected1, actual1);
+
+        final DataSetRow expectedRow2 = getRow("tata mouche", "  ", "toto pouche", "  ");
+        assertEquals(expectedRow2.values(), row2.values());
+        ColumnMetadata expected2 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
+        ColumnMetadata actual2 = row2.getRowMetadata().getById("0003");
+        assertEquals(expected2, actual2);
+
+        final DataSetRow expectedRow3 = getRow("titi louche", "culbutoqué", "tutu couche", "culbutoqué");
+        assertEquals(expectedRow3.values(), row3.values());
+        ColumnMetadata expected3 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
+        ColumnMetadata actual3 = row3.getRowMetadata().getById("0003");
+        assertEquals(expected3, actual3);
     }
 
     @Test

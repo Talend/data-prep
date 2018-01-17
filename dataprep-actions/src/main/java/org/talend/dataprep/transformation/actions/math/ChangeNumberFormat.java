@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,20 +11,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.math;
-
-import static java.util.Collections.singletonList;
-import static org.talend.daikon.number.BigDecimalParser.*;
-import static org.talend.dataprep.parameters.Parameter.parameter;
-import static org.talend.dataprep.parameters.ParameterType.STRING;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -44,57 +30,75 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.util.NumericHelper;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static org.talend.daikon.number.BigDecimalParser.*;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 /**
  * Change the pattern on a 'number' column.
  */
 @Action(ChangeNumberFormat.ACTION_NAME)
 public class ChangeNumberFormat extends AbstractActionMetadata implements ColumnAction {
 
-    /** Action name. */
+    /**
+     * Action name.
+     */
     public static final String ACTION_NAME = "change_number_format"; //$NON-NLS-1$
 
-    /** Parameter to define original decimal & grouping separators. */
-    public static final String FROM_SEPARATORS = "from_separators";
+    public static final String SEPARATOR = "_separator";
+
+    protected static final String NEW_COLUMN_SUFFIX = "_formatted";
+
+    /**
+     * Parameter to define original decimal & grouping separators.
+     */
+    static final String FROM_SEPARATORS = "from_separators";
 
     /**
      * The pattern shown to the user as a list. An item in this list is the value 'custom', which allow the user to
      * manually enter his pattern.
      */
-    public static final String TARGET_PATTERN = "target_pattern"; //$NON-NLS-1$
+    static final String TARGET_PATTERN = "target_pattern"; //$NON-NLS-1$
 
     /**
      * Keys used in the values of different parameters:
      */
-    public static final String CUSTOM = "custom";
+    static final String CUSTOM = "custom";
 
-    public static final String US_SEPARATORS = "us_separators";
+    static final String US_SEPARATORS = "us_separators";
 
-    public static final String EU_SEPARATORS = "eu_separators";
+    static final String EU_SEPARATORS = "eu_separators";
 
-    public static final String CH_SEPARATORS = "ch_separators";
+    static final String CH_SEPARATORS = "ch_separators";
 
-    public static final String US_PATTERN = "us_pattern";
+    static final String US_PATTERN = "us_pattern";
 
-    public static final String EU_PATTERN = "eu_pattern";
+    static final String EU_PATTERN = "eu_pattern";
 
-    public static final String CH_PATTERN = "ch_pattern";
+    static final String CH_PATTERN = "ch_pattern";
 
-    public static final String SCIENTIFIC = "scientific";
+    static final String SCIENTIFIC = "scientific";
 
     /**
      * Constants to build parameters name by concat:
      */
-    public static final String FROM = "from";
+    static final String FROM = "from";
 
-    public static final String TARGET = "target";
+    static final String TARGET = "target";
 
-    public static final String GROUPING = "_grouping";
+    static final String GROUPING = "_grouping";
 
-    public static final String DECIMAL = "_decimal";
-
-    public static final String SEPARATOR = "_separator";
-
-    protected static final String NEW_COLUMN_SUFFIX = "_formatted";
+    static final String DECIMAL = "_decimal";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeNumberFormat.class);
 
@@ -131,7 +135,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
@@ -142,9 +146,9 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .item(US_SEPARATORS, US_SEPARATORS)
                 .item(EU_SEPARATORS, EU_SEPARATORS)
                 .item(CH_SEPARATORS, CH_SEPARATORS)
-                .item(CUSTOM, CUSTOM,  buildDecimalSeparatorParameter(FROM, locale), buildGroupingSeparatorParameter(FROM, locale))
+                .item(CUSTOM, CUSTOM, buildDecimalSeparatorParameter(FROM, locale), buildGroupingSeparatorParameter(FROM, locale))
                 .defaultValue(UNKNOWN_SEPARATORS)
-                .build(this ));
+                .build(this));
         // @formatter:on
 
         // @formatter:off
@@ -158,7 +162,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                         buildDecimalSeparatorParameter(TARGET, locale),
                         buildGroupingSeparatorParameter(TARGET, locale))
                 .defaultValue(US_PATTERN)
-                .build(this ));
+                .build(this));
         // @formatter:on
 
         return parameters;
@@ -166,7 +170,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     private Parameter buildDecimalSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + DECIMAL + SEPARATOR;
-        return  SelectParameter.selectParameter(locale) //
+        return SelectParameter.selectParameter(locale) //
                 .name(name) //
                 .item(".") //
                 .item(",") //
@@ -212,18 +216,18 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
      */
     private NumberFormat getFormat(Map<String, String> parameters) {
         switch (parameters.get(TARGET_PATTERN)) {
-        case CUSTOM:
-            return getCustomFormat(parameters);
-        case US_PATTERN:
-            return US_DECIMAL_PATTERN;
-        case EU_PATTERN:
-            return EU_DECIMAL_PATTERN;
-        case CH_PATTERN:
-            return CH_DECIMAL_PATTERN;
-        case SCIENTIFIC:
-            return US_SCIENTIFIC_DECIMAL_PATTERN;
-        default:
-            throw new IllegalArgumentException("Pattern is empty");
+            case CUSTOM:
+                return getCustomFormat(parameters);
+            case US_PATTERN:
+                return US_DECIMAL_PATTERN;
+            case EU_PATTERN:
+                return EU_DECIMAL_PATTERN;
+            case CH_PATTERN:
+                return CH_DECIMAL_PATTERN;
+            case SCIENTIFIC:
+                return US_SCIENTIFIC_DECIMAL_PATTERN;
+            default:
+                throw new IllegalArgumentException("Pattern is empty");
         }
     }
 
@@ -286,37 +290,38 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         columnMetadata.setDomainLabel("");
         columnMetadata.setDomainForced(true);
 
-        final String value = row.get(columnId);
+        final String originalValue = row.get(columnId);
         final String mode = context.getParameters().get(FROM_SEPARATORS);
-        if (StringUtils.isBlank(value) || (!NumericHelper.isBigDecimal(value) && !CUSTOM.equals(mode))) {
-            LOGGER.debug("Unable to parse {} value as Number, it is blank or not numeric", value);
+        if (StringUtils.isBlank(originalValue) || (!NumericHelper.isBigDecimal(originalValue) && !CUSTOM.equals(mode))) {
+            LOGGER.debug("Unable to parse {} value as Number, it is blank or not numeric", originalValue);
+            row.set(ActionsUtils.getTargetColumnId(context), originalValue);
             return;
         }
 
         final BigDecimal bd;
         switch (mode) {
-        case EU_SEPARATORS:
-            bd = BigDecimalParser.toBigDecimal(value, ',', '.');
-            break;
-        case CH_SEPARATORS:
-            bd = BigDecimalParser.toBigDecimal(value, '.', '\'');
-            break;
-        case CUSTOM:
-            try {
-                bd = parseCustomNumber(context, value);
+            case EU_SEPARATORS:
+                bd = BigDecimalParser.toBigDecimal(originalValue, ',', '.');
                 break;
-            } catch (Exception e) {
-                // User specified custom separators that doesn't validate value
-                LOGGER.debug("Unable to use custom separators to parse value '{}'", value);
-                return;
-            }
-        case US_SEPARATORS:
-            bd = BigDecimalParser.toBigDecimal(value, '.', ',');
-            break;
-        case UNKNOWN_SEPARATORS:
-        default:
-            bd = BigDecimalParser.toBigDecimal(value);
-            break;
+            case CH_SEPARATORS:
+                bd = BigDecimalParser.toBigDecimal(originalValue, '.', '\'');
+                break;
+            case CUSTOM:
+                try {
+                    bd = parseCustomNumber(context, originalValue);
+                    break;
+                } catch (Exception e) {
+                    // User specified custom separators that doesn't validate value
+                    LOGGER.debug("Unable to use custom separators to parse value '{}'", originalValue);
+                    return;
+                }
+            case US_SEPARATORS:
+                bd = BigDecimalParser.toBigDecimal(originalValue, '.', ',');
+                break;
+            case UNKNOWN_SEPARATORS:
+            default:
+                bd = BigDecimalParser.toBigDecimal(originalValue);
+                break;
         }
 
         String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);
@@ -327,7 +332,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
      * Parse the the given number with a custom separator.
      *
      * @param context the action context.
-     * @param number the number to parse.
+     * @param number  the number to parse.
      * @return the given number parsed as BigDecimal using the action context custome separator.
      */
     private BigDecimal parseCustomNumber(ActionContext context, String number) {

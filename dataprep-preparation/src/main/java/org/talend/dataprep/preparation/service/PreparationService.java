@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -63,11 +63,11 @@ import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
 @Service
@@ -126,9 +126,6 @@ public class PreparationService {
 
     @Autowired
     private ReorderStepsUtils reorderStepsUtils;
-
-    @Autowired
-    private ActionParser actionParser;
 
     @Autowired
     private BeanConversionService beanConversionService;
@@ -592,8 +589,10 @@ public class PreparationService {
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
             // just make sure the step does exist
-            final Step step = preparationRepository.get(stepId, Step.class);
-            if (step != null) {
+            if (Step.ROOT_STEP.id().equals(stepId)) {
+                preparation.setSteps(Collections.singletonList(Step.ROOT_STEP));
+                preparation.setHeadId(Step.ROOT_STEP.id());
+            } else if (preparationRepository.exist(Step.class, TqlBuilder.eq("id", stepId))) {
                 preparation.setSteps(preparationUtils.listSteps(stepId, preparationRepository));
                 preparation.setHeadId(stepId);
             } else {

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -146,7 +146,7 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @description submits the lookup action
 	 */
 	vm.submit = function submit() {
-		StateService.setPreviewDisabled(true);
+		StateService.setTransformationInProgress(true);
 		EarlyPreviewService.cancelPendingPreview();
 		let promise;
 		const lookupStep = state.playground.stepInEditionMode;
@@ -160,7 +160,7 @@ export default function LookupCtrl($timeout, state, StateService,
 
 		promise.then(StateService.setLookupVisibility.bind(null, false))
 			.finally(function () {
-				$timeout(() => StateService.setPreviewDisabled(false), 500, false);
+				$timeout(() => StateService.setTransformationInProgress(false), 500, false);
 			});
 	};
 

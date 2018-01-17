@@ -21,7 +21,10 @@ public enum ActionParamEnum {
     SEPARATOR("separator", "separator"),
     MANUAL_SEPARATOR_STRING("manualSeparatorString", "manual_separator_string"),
     MANUAL_SEPARATOR_REGEX("manualSeparatorRegex", "manual_separator_regex"),
-    FILTER("filter", "filter");
+    FILTER("filter", "filter"),
+    REGION_CODE("regionCode","region_code"),
+    MODE("mode","mode"),
+    FORMAT_TYPE("formatType","format_type");
 
     private String name;
 

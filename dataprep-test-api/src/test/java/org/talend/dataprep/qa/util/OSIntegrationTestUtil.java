@@ -103,4 +103,16 @@ public class OSIntegrationTestUtil {
                 .count();
         return nbAfes > 0 ? filter : null;
     }
+
+    /**
+     * Extract an extension from a filename. If no extension present, the filename is returned.
+     * 
+     * @param filename the filename.
+     * @return the filename's extension.
+     */
+    @NotNull
+    public String getFilenameExtension(@NotNull String filename) {
+        String[] tokens = filename.split("\\.");
+        return tokens[tokens.length - 1];
+    }
 }

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -37,9 +37,9 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('DatasetSheetPreviewService', DatasetSheetPreviewService)
-    .service('DatasetRestService', DatasetRestService)
-    .service('DatasetListService', DatasetListService)
-    .service('DatasetService', DatasetService);
+	.service('DatasetSheetPreviewService', DatasetSheetPreviewService)
+	.service('DatasetRestService', DatasetRestService)
+	.service('DatasetListService', DatasetListService)
+	.service('DatasetService', DatasetService);
 
 export default MODULE_NAME;

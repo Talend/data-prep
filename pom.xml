@@ -2,7 +2,7 @@
 
 <!--
   ~ ============================================================================
-  ~ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~ This source code is available under agreement available at
   ~ https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -37,6 +37,15 @@
              <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <properties>
+        <!-- Sonar -->
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+        <sonar.exclusions>**/build/**,**/node_modules/**,**/bower_components/**,**/target/**</sonar.exclusions>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.exclusions>**/itests/**</sonar.coverage.exclusions>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,12 +12,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-
-import java.util.*;
 
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -31,6 +25,12 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.util.*;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 /**
  * Test class for RemoveRepeatedChars action. Creates one consumer, and test it.
@@ -82,7 +82,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         assertEquals(6, parameters.size());
 
         final SelectParameter parameter4 = (SelectParameter) parameters.get(5);
-        assertEquals(2,parameter4.getItems().size());
+        assertEquals(2, parameter4.getItems().size());
         assertEquals("Whitespace", parameter4.getItems().get(0).getLabel());
         assertEquals("Other", parameter4.getItems().get(1).getLabel());
     }
@@ -104,6 +104,34 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         final Map<String, Object> expectedValues = new LinkedHashMap<>();
         expectedValues.put("0000", "ab   c  d");
         expectedValues.put("0003", "ab c d");
+        expectedValues.put("0001", "tagadaa");
+        expectedValues.put("0002", "May 20th 2015");
+
+        initParametersWhitespace();
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_apply_in_newcolumn_with_empty_values() {
+        // given
+        final Map<String, String> values = new LinkedHashMap<>();
+        values.put("0000", "");
+        values.put("0001", "tagadaa");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "");
+        expectedValues.put("0003", "");
         expectedValues.put("0001", "tagadaa");
         expectedValues.put("0002", "May 20th 2015");
 

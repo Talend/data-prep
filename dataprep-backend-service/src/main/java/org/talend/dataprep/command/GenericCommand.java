@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
@@ -223,6 +224,12 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         commandResponseHeaders = response.getAllHeaders();
 
         status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+
+        Header cookies = response.getFirstHeader("Set-Cookie");
+        if (cookies != null) {
+            LOGGER.warn("request {} {}: Cookie detected in responseHeaders (check security.oauth2.resource.uri settings)",
+                    request.getMethod(), request.getURI());
+        }
 
         // do we have a behavior for this status code (even an error) ?
         // if yes use it
@@ -417,7 +424,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     LOGGER.trace("Error received {}", content);
                 }
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
-                TDPException cause = conversionService.convert(exceptionDto, TDPException.class);
+                TDPException cause;
+                try {
+                    cause = conversionService.convert(exceptionDto, TDPException.class);
+                } catch (RuntimeException e) {
+                    cause = new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, null, content,
+                            "Remote service returned an unhandled error and response could not be deserialized.", ExceptionContext.build());
+                }
                 ErrorCode code = cause.getCode();
                 if (code instanceof ErrorCodeDto) {
                     ((ErrorCodeDto) code).setHttpStatus(statusCode);

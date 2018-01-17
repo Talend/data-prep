@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https:// github.com/Talend/data-prep/blob/master/LICENSE
@@ -83,7 +83,7 @@ export function StateService(RouteStateService, routeState,
 		setIsPreprationPickerVisible: PlaygroundStateService.setIsPreprationPickerVisible,
 		setSavingPreparationFolders: PlaygroundStateService.setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading: PlaygroundStateService.setIsSavingPreparationFoldersLoading,
-		setPreviewDisabled: PlaygroundStateService.setPreviewDisabled,
+		setTransformationInProgress: PlaygroundStateService.setTransformationInProgress,
 
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,

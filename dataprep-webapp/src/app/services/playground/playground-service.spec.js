@@ -2159,18 +2159,19 @@ describe('Playground Service', () => {
 			})
 		);
 
-		it('should NOT fetch statistics when they are already computed',
-			inject(($q, $rootScope, PlaygroundService, StateService) => {
+		fit('should fetch statistics when loading dataset',
+			inject(($q, $rootScope, PlaygroundService, StateService, StatisticsService, GridStateService) => {
 				// given
 				stateMock.playground.dataset = datasets[0];
 
-				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+				spyOn(StatisticsService, 'updateStatistics').and.returnValue($q.when());
+				spyOn(GridStateService, 'setData').and.returnValue();
 
 				// when
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				PlaygroundService.loadDataset(datasets[0]);
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+				expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
 
 				stateMock.playground.data = {
 					metadata: {
@@ -2189,8 +2190,8 @@ describe('Playground Service', () => {
 				$rootScope.$apply();
 
 				// then
-				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+				expect(StateService.setIsFetchingStats).toHaveBeenCalled();
+				expect(StatisticsService.updateStatistics).toHaveBeenCalled();
 			})
 		);
 	});

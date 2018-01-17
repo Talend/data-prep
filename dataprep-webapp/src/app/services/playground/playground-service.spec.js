@@ -138,7 +138,7 @@ describe('Playground Service', () => {
 
 	beforeEach(inject(($q, $state, StateService, DatasetService, RecipeService, DatagridService,
 	                   PreparationService, TransformationCacheService, ExportService,
-	                   HistoryService, PreviewService, FilterService, TitleService, GridStateService) => {
+	                   HistoryService, PreviewService, FilterService, TitleService, GridStateService, StatisticsService) => {
 		stateMock.playground.preparationName = '';
 
 		spyOn($state, 'go').and.returnValue();
@@ -161,6 +161,7 @@ describe('Playground Service', () => {
 		// spyOn(StateService, 'setCurrentDataset').and.returnValue();
 		// spyOn(StateService, 'setCurrentPreparation').and.returnValue();
 		// spyOn(StateService, 'setCurrentSampleType').and.returnValue();
+		spyOn(StatisticsService, 'updateStatistics').and.returnValue($q.when());
 		spyOn(StateService, 'setPreparationName').and.returnValue();
 		spyOn(StateService, 'setNameEditionMode').and.returnValue();
 		spyOn(StateService, 'showRecipe').and.returnValue();
@@ -2131,8 +2132,6 @@ describe('Playground Service', () => {
 			inject(($q, $rootScope, PlaygroundService, StateService, StatisticsService) => {
 				// given
 				stateMock.playground.dataset = datasets[0];
-
-				spyOn(StatisticsService, 'updateStatistics').and.returnValue($q.when());
 
 				// when
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();

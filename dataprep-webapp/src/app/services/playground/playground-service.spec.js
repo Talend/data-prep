@@ -495,58 +495,6 @@ describe('Playground Service', () => {
 		);
 	});
 
-	describe('fetch preparation statistics', () => {
-		beforeEach(inject((StateService, StatisticsService) => {
-			spyOn(StatisticsService, 'updateStatistics').and.returnValue();
-			spyOn(StateService, 'updateDatasetStatistics').and.returnValue();
-
-			stateMock.playground.preparation = { id: 'abc' };
-			stateMock.playground.dataset = { id: '1324d56456b84ef154', records: 15 };
-		}));
-
-		it('should get metadata and set its statistics in state', inject(($rootScope, $q, PlaygroundService, PreparationService, StateService) => {
-			// given
-			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
-
-			// when
-			PlaygroundService.updateStatistics();
-			$rootScope.$digest();
-
-			// then
-			expect(PreparationService.getMetadata).toHaveBeenCalledWith('abc', 'head');
-			expect(StateService.updateDatasetStatistics).toHaveBeenCalledWith(preparationMetadata.metadata);
-		}));
-
-		it('should trigger statistics update', inject(($rootScope, $q, PreparationService, PlaygroundService, StatisticsService) => {
-			// given
-			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
-
-			// when
-			PlaygroundService.updateStatistics();
-			$rootScope.$digest();
-
-			// then
-			expect(StatisticsService.updateStatistics).toHaveBeenCalled();
-		}));
-
-		it('should reject promise when the statistics are not computed yet', inject(($rootScope, $q, PlaygroundService, PreparationService, StateService) => {
-			// given
-			let rejected = false;
-			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadataWithoutStatistics.metadata));
-
-			// when
-			PlaygroundService.updateStatistics()
-				.catch(() => {
-					rejected = true;
-				});
-			$rootScope.$digest();
-
-			// then
-			expect(StateService.updateDatasetStatistics).not.toHaveBeenCalled();
-			expect(rejected).toBe(true);
-		}));
-	});
-
 	describe('preparation steps', () => {
 		let preparationHeadContent;
 		let metadata;

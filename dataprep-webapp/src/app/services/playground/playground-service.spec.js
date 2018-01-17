@@ -2084,38 +2084,6 @@ describe('Playground Service', () => {
 			expect(PlaygroundService.loadDataset).toHaveBeenCalledWith(datasetId);
 		}));
 
-		it('should fetch statistics when they are not computed yet',
-			inject(($q, $rootScope, PlaygroundService, StateService) => {
-				// given
-				stateMock.playground.dataset = datasets[0];
-
-				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
-
-				// when
-				PlaygroundService.loadDataset(datasets[0]);
-				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
-					},
-				};
-				$rootScope.$apply();
-
-				// then
-				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(true);
-				expect(PlaygroundService.updateStatistics).toHaveBeenCalled();
-				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
-			})
-		);
-
 		it('should retry statistics fetch when the previous fetch has been rejected (stats not computed yet) with a delay of 1500ms',
 			inject(($q, $rootScope, $timeout, PlaygroundService, StateService) => {
 				// given

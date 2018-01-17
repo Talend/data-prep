@@ -157,7 +157,7 @@ describe('Playground Service', () => {
 		spyOn(RecipeService, 'refresh').and.returnValue($q.when());
 		spyOn(StateService, 'disableRecipeStepsAfter').and.returnValue();
 		spyOn(StateService, 'resetPlayground').and.returnValue();
-		spyOn(StateService, 'setCurrentData').and.returnValue();
+		spyOn(StateService, 'setCurrentData').and.callThrough();
 		spyOn(StateService, 'setCurrentDataset').and.returnValue();
 		spyOn(StateService, 'setCurrentPreparation').and.returnValue();
 		spyOn(StateService, 'setCurrentSampleType').and.returnValue();
@@ -169,6 +169,10 @@ describe('Playground Service', () => {
 		spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
 		spyOn(FilterService, 'initFilters').and.returnValue();
 		spyOn(TitleService, 'setStrict').and.returnValue();
+
+		spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
+		spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
+		spyOn(PreparationService, 'getContent').and.returnValue($q.when({ metadata: { columns: [] }, records: [] }));
 	}));
 
 	describe('Empty StatisticsService', () => {
@@ -179,8 +183,10 @@ describe('Playground Service', () => {
 
 		describe('update preparation', () => {
 			it('should set new name to the preparation name',
-				inject(($rootScope, PlaygroundService, PreparationService, TitleService, StateService) => {
+				inject(($rootScope, $q, PlaygroundService, PreparationService, TitleService, StateService) => {
 					// given
+					// spyOn(PreparationService, 'getContent').and.returnValue($q.when({ metadata: { columns: [] }, records: [] }));
+
 					const name = 'My preparation';
 					const newName = 'My new preparation name';
 
@@ -377,7 +383,7 @@ describe('Playground Service', () => {
 												 PreparationService, RecipeService, StorageService, TitleService,
 												 TransformationCacheService, HistoryService, PreviewService, FilterService) => {
 				spyOn($rootScope, '$emit').and.returnValue();
-				spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
+				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
 				spyOn(StorageService, 'getSelectedColumns').and.returnValue(["0001"]);
 				spyOn(StateService, 'setGridSelection').and.returnValue();
 
@@ -416,8 +422,6 @@ describe('Playground Service', () => {
 			}));
 
 			it('should load existing preparation', inject(($rootScope, $q, PlaygroundService, DatasetService, PreparationService) => {
-				spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
-
 				// given
 				stateMock.playground.preparation = { id: '5746518486846' };
 				stateMock.playground.dataset = dataset;
@@ -534,7 +538,9 @@ describe('Playground Service', () => {
 						nbCommands: '17',
 						lastname: 'Johnson',
 					},],
+					metadata: { columns: [] }, records: [],
 				};
+
 
 				metadata = { id: 'e85afAa78556d5425bc2' };
 				stateMock.playground.dataset = metadata;
@@ -544,7 +550,7 @@ describe('Playground Service', () => {
 				spyOn(PreparationService, 'updateStep').and.returnValue($q.when());
 				spyOn(PreparationService, 'moveStep').and.returnValue($q.when());
 				spyOn(PreparationService, 'removeStep').and.returnValue($q.when());
-				spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationHeadContent));
+				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationHeadContent));
 				spyOn(StepUtilsService, 'getLastStep').and.returnValue(lastStep);
 				spyOn(StepUtilsService, 'getPreviousStep').and.callFake((recipeState, step) => {
 					return step === lastStep ? previousLastStep : previousStep;
@@ -552,7 +558,7 @@ describe('Playground Service', () => {
 			}));
 
 			describe('append', () => {
-				it('should create a preparation when there is no preparation yet', inject(($rootScope, PlaygroundService, PreparationService) => {
+				it('should create a preparation when there is no preparation yet', inject(($rootScope, $q, DatasetService, PlaygroundService, PreparationService) => {
 					// given
 					stateMock.playground.dataset = {
 						id: '76a415cf854d8654',
@@ -1635,8 +1641,8 @@ describe('Playground Service', () => {
 				stateMock.playground.preparation = { id: '35d8cf964aa81b58' };
 
 				// given : preparation content mock
-				const data = { metadata: { columns: [] }, records: [] };
-				spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
+				// const data = { metadata: { columns: [] }, records: [] };
+				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
 
 				// given : step mocks
 				const step = { transformation: { stepId: '5874de8432c543' } };
@@ -1660,7 +1666,7 @@ describe('Playground Service', () => {
 
 		describe('on step append', () => {
 			beforeEach(inject(($q, PreparationService, StepUtilsService) => {
-				spyOn(PreparationService, 'getContent').and.returnValue($q.when({ columns: [{}] }));
+				// spyOn(PreparationService, 'getContent').and.returnValue($q.when({ columns: [{}] }));
 				spyOn(PreparationService, 'appendStep').and.callFake(() => {
 					stateMock.playground.recipe.current.steps.push({});
 					return $q.when();
@@ -1802,7 +1808,7 @@ describe('Playground Service', () => {
 		describe('copy steps', () => {
 			beforeEach(inject(($rootScope, $q, PreparationService) => {
 				spyOn(PreparationService, 'copySteps').and.returnValue($q.when());
-				spyOn(PreparationService, 'getContent').and.returnValue($q.when());
+				// spyOn(PreparationService, 'getContent').and.returnValue($q.when());f
 				spyOn($rootScope, '$emit').and.returnValue($q.when());
 			}));
 
@@ -1862,8 +1868,7 @@ describe('Playground Service', () => {
 
 		describe('preparation', () => {
 			beforeEach(inject(($q, $stateParams, DatasetService, PlaygroundService, PreparationService, StateService) => {
-				spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationMetadata));
-				spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
+				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationMetadata));
 				spyOn(PlaygroundService, 'startLoader').and.returnValue();
 				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();
@@ -1994,7 +1999,6 @@ describe('Playground Service', () => {
 				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();
 				spyOn(MessageService, 'error').and.returnValue();
-				spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
 
 				// given
 				stateMock.playground.data = {

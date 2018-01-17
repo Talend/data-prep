@@ -407,7 +407,7 @@ describe('Playground Service', () => {
 			};
 		}));
 
-		fit('should load existing preparation', inject(($rootScope, $q, PlaygroundService, DatasetService, PreparationService) => {
+		it('should load existing preparation', inject(($rootScope, $q, PlaygroundService, DatasetService, PreparationService) => {
 			spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
 
 			// given

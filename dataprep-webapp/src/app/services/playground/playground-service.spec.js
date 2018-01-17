@@ -1867,7 +1867,6 @@ describe('Playground Service', () => {
 				spyOn(PlaygroundService, 'startLoader').and.returnValue();
 				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();
-				spyOn(StateService, 'setIsFetchingStats').and.returnValue();
 
 				$stateParams.reload = true;
 				stateMock.playground.preparation = null;
@@ -1994,7 +1993,6 @@ describe('Playground Service', () => {
 				spyOn(PlaygroundService, 'startLoader').and.returnValue();
 				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();
-				spyOn(StateService, 'setIsFetchingStats').and.returnValue();
 				spyOn(MessageService, 'error').and.returnValue();
 				spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasetMetadata));
 

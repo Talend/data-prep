@@ -2042,51 +2042,6 @@ describe('Playground Service', () => {
 				expect(PlaygroundService.loadDataset).toHaveBeenCalledWith(datasetId);
 			}));
 
-			it('should retry statistics fetch when the previous fetch has been rejected (stats not computed yet) with a delay of 1500ms',
-				inject(($q, $rootScope, $timeout, PlaygroundService, StateService, StatisticsService) => {
-					// given
-					let retry = 0;
-					stateMock.playground.dataset = datasets[0];
-
-					spyOn(StatisticsService, 'updateStatistics').and.callFake(() => {
-						if (retry === 0) {
-							retry++;
-							return $q.reject();
-						}
-						else {
-							return $q.when();
-						}
-					});
-
-					// when
-					PlaygroundService.loadDataset(datasets[0]);
-					expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-					expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
-
-					stateMock.playground.data = {
-						metadata: {
-							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-							name: 'customers_jso_light',
-							columns: [{
-								statistics: {
-									frequencyTable: [],       // stats not computed
-								},
-							}],
-						},
-					};
-					$rootScope.$apply();
-
-					expect(StateService.setIsFetchingStats.calls.count()).toBe(1);
-					expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(true);
-					expect(StatisticsService.updateStatistics.calls.count()).toBe(1); // first call: rejected
-					$timeout.flush(1500);
-
-					// then
-					expect(StatisticsService.updateStatistics.calls.count()).toBe(2);
-					expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
-				})
-			);
-
 			it('should fetch statistics when loading dataset',
 				inject(($q, $rootScope, PlaygroundService, StateService, StatisticsService) => {
 					// given
@@ -2136,6 +2091,41 @@ describe('Playground Service', () => {
 				}
 			});
 		}));
+
+		it('should retry statistics fetch when the previous fetch has been rejected (stats not computed yet) with a delay of 1500ms',
+			inject(($q, $rootScope, $timeout, PlaygroundService, StateService, StatisticsService) => {
+				// given
+				stateMock.playground.dataset = datasets[0];
+
+				// when
+				PlaygroundService.loadDataset(datasets[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
+
+				stateMock.playground.data = {
+					metadata: {
+						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+						name: 'customers_jso_light',
+						columns: [{
+							statistics: {
+								frequencyTable: [],       // stats not computed
+							},
+						}],
+					},
+				};
+				$rootScope.$apply();
+
+				expect(StateService.setIsFetchingStats.calls.count()).toBe(1);
+				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(true);
+				expect(StatisticsService.updateStatistics.calls.count()).toBe(1); // first call: rejected
+				$timeout.flush(1500);
+
+				// then
+				expect(StatisticsService.updateStatistics.calls.count()).toBe(2);
+				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
+			})
+		);
+
 
 		it('should retry statistics fetch when the previous fetch has been rejected (stats not computed yet) with a delay of 1500ms',
 			inject(($q, $rootScope, $timeout, PlaygroundService, PreparationService, StateService, StatisticsService) => {

@@ -33,7 +33,7 @@
     "X-SlickGrid": "git+https://github.com/ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf",
     "angular": "1.5.9",
     "angular-animate": "1.5.9",
-    "angular-mass-autocomplete": "^0.6.0",
+    "angular-mass-autocomplete": "^0.8.0",
     "angular-sanitize": "1.5.9",
     "angular-translate": "^2.10.0",
     "angular-translate-loader-static-files": "^2.10.0",

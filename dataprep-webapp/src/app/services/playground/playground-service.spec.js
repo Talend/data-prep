@@ -138,7 +138,7 @@ describe('Playground Service', () => {
 
 	beforeEach(inject(($q, $state, StateService, DatasetService, RecipeService, DatagridService,
 	                   PreparationService, TransformationCacheService, ExportService,
-	                   HistoryService, PreviewService, FilterService, TitleService, GridStateService) => {
+	                   HistoryService, PreviewService, FilterService, TitleService, GridStateService, StatisticsService) => {
 		stateMock.playground.preparationName = '';
 
 		spyOn($state, 'go').and.returnValue();
@@ -161,10 +161,11 @@ describe('Playground Service', () => {
 		// spyOn(StateService, 'setCurrentDataset').and.returnValue();
 		// spyOn(StateService, 'setCurrentPreparation').and.returnValue();
 		// spyOn(StateService, 'setCurrentSampleType').and.returnValue();
-		// spyOn(StateService, 'setPreparationName').and.returnValue();
-		// spyOn(StateService, 'setNameEditionMode').and.returnValue();
+		spyOn(StateService, 'setPreparationName').and.returnValue();
+		spyOn(StateService, 'setNameEditionMode').and.returnValue();
 		spyOn(StateService, 'showRecipe').and.returnValue();
 		spyOn(StateService, 'hideRecipe').and.returnValue();
+		spyOn(StatisticsService, 'updateStatistics').and.returnValue($q.when());
 		spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
 		spyOn(FilterService, 'initFilters').and.returnValue();
 		spyOn(TitleService, 'setStrict').and.returnValue();
@@ -189,6 +190,7 @@ describe('Playground Service', () => {
 				expect(PreparationService.create).not.toHaveBeenCalled();
 				expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
 				expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
+
 				expect(TitleService.setStrict).toHaveBeenCalledWith(preparations[0].name);
 			}
 		));
@@ -1952,15 +1954,14 @@ describe('Playground Service', () => {
 		}));
 
 		it('should fetch statistics when they are not computed yet',
-			inject(($q, $rootScope, PreparationService, PlaygroundService, StateService) => {
+			inject(($q, $rootScope, PreparationService, PlaygroundService, StateService, StatisticsService) => {
 				// given
-				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
 				stateMock.playground.preparation = preparations[0];
 
 				// when
 				PlaygroundService.loadPreparation(preparations[0]);
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
-				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+				expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
 
 				stateMock.playground.data = {
 					metadata: {
@@ -1977,7 +1978,7 @@ describe('Playground Service', () => {
 
 				// then
 				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(true);
-				expect(PlaygroundService.updateStatistics).toHaveBeenCalled();
+				expect(StatisticsService.updateStatistics).toHaveBeenCalled();
 				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
 			})
 		);
@@ -2164,8 +2165,6 @@ describe('Playground Service', () => {
 			inject(($q, $rootScope, PlaygroundService, StateService, StatisticsService) => {
 				// given
 				stateMock.playground.dataset = datasets[0];
-
-				spyOn(StatisticsService, 'updateStatistics').and.returnValue($q.when());
 
 				// when
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();

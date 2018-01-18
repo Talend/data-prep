@@ -94,6 +94,24 @@ describe('Playground Service', () => {
 		},
 	];
 
+	const data = {
+			metadata: {
+				id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+				name: 'customers_jso_light',
+				columns: [{
+					statistics: {
+						frequencyTable: [{ // stats already computed
+							value: 'toto',
+							frequency: 10,
+						}],
+					},
+				}],
+				columns: [{ id: '0001' }],
+				records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, { id: '2', firstname: 'titi' }],
+		},
+		records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, { id: '2', firstname: 'titi' }],
+	};
+
 	let stateMock;
 
 	beforeEach(angular.mock.module('data-prep.services.playground', ($provide) => {
@@ -107,7 +125,9 @@ describe('Playground Service', () => {
 					current: { steps: [] }
 				},
 				filter: {},
-				grid: {},
+				grid: {
+					columns: [],
+				},
 				sampleType: 'HEAD',
 				data: {
 					metadata: {
@@ -148,7 +168,6 @@ describe('Playground Service', () => {
 		spyOn(HistoryService, 'addAction').and.returnValue();
 		spyOn(HistoryService, 'clear').and.returnValue();
 		spyOn(ExportService, 'refreshTypes').and.returnValue();
-		spyOn(GridStateService, 'setData').and.returnValue();
 		spyOn(PreparationService, 'create').and.returnValue($q.when(preparations[0].id));
 		spyOn(PreparationService, 'getDetails').and.returnValue($q.when(preparations[0]));
 		spyOn(PreparationService, 'setHead').and.returnValue($q.when());
@@ -170,9 +189,11 @@ describe('Playground Service', () => {
 		spyOn(FilterService, 'initFilters').and.returnValue();
 		spyOn(TitleService, 'setStrict').and.returnValue();
 
+		spyOn(GridStateService, 'setData').and.returnValue();
 		spyOn(PreparationService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
 		spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(preparationMetadata.metadata));
-		spyOn(PreparationService, 'getContent').and.returnValue($q.when({ metadata: { columns: [] }, records: [] }));
+		spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
+		spyOn(StateService, 'setGridSelection').and.returnValue();
 	}));
 
 	describe('Empty StatisticsService', () => {
@@ -185,8 +206,6 @@ describe('Playground Service', () => {
 			it('should set new name to the preparation name',
 				inject(($rootScope, $q, PlaygroundService, PreparationService, TitleService, StateService) => {
 					// given
-					// spyOn(PreparationService, 'getContent').and.returnValue($q.when({ metadata: { columns: [] }, records: [] }));
-
 					const name = 'My preparation';
 					const newName = 'My new preparation name';
 
@@ -268,7 +287,7 @@ describe('Playground Service', () => {
 				assertNewPreparationInitialization = () => {
 					expect(StateService.resetPlayground).toHaveBeenCalled();
 					expect(StateService.setCurrentDataset).toHaveBeenCalledWith(datasetColumns.metadata);
-					expect(StateService.setCurrentData).toHaveBeenCalledWith(datasetColumns);
+					expect(StateService.setCurrentData).toHaveBeenCalledWith(data);
 					expect(StateService.setCurrentSampleType).toHaveBeenCalledWith('HEAD');
 					expect(StateService.setNameEditionMode).toHaveBeenCalledWith(false);
 					expect(TransformationCacheService.invalidateCache).toHaveBeenCalled();
@@ -372,10 +391,6 @@ describe('Playground Service', () => {
 				dataSetId: '1',
 				name: 'prep1',
 			};
-			const data = {
-				columns: [{ id: '0001' }],
-				records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, { id: '2', firstname: 'titi' }],
-			};
 			let assertDatasetLoadInitialized;
 			let assertDatasetLoadNotInitialized;
 
@@ -383,9 +398,7 @@ describe('Playground Service', () => {
 												 PreparationService, RecipeService, StorageService, TitleService,
 												 TransformationCacheService, HistoryService, PreviewService, FilterService) => {
 				spyOn($rootScope, '$emit').and.returnValue();
-				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
 				spyOn(StorageService, 'getSelectedColumns').and.returnValue(["0001"]);
-				spyOn(StateService, 'setGridSelection').and.returnValue();
 
 				stateMock.playground.grid.columns = data.columns;
 
@@ -550,7 +563,6 @@ describe('Playground Service', () => {
 				spyOn(PreparationService, 'updateStep').and.returnValue($q.when());
 				spyOn(PreparationService, 'moveStep').and.returnValue($q.when());
 				spyOn(PreparationService, 'removeStep').and.returnValue($q.when());
-				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationHeadContent));
 				spyOn(StepUtilsService, 'getLastStep').and.returnValue(lastStep);
 				spyOn(StepUtilsService, 'getPreviousStep').and.callFake((recipeState, step) => {
 					return step === lastStep ? previousLastStep : previousStep;
@@ -689,7 +701,7 @@ describe('Playground Service', () => {
 
 					// then
 					expect(PreparationService.getContent).toHaveBeenCalledWith('15de46846f8a46', 'head', 'HEAD');
-					expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+					expect(DatagridService.updateData).toHaveBeenCalledWith(data);
 					expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				}));
 
@@ -767,7 +779,7 @@ describe('Playground Service', () => {
 						expect(PreparationService.getContent.calls.argsFor(1)[2]).toBe('HEAD');
 						expect(DatagridService.focusedColumn).toBeFalsy();
 						expect(DatagridService.updateData.calls.count()).toBe(2);
-						expect(DatagridService.updateData.calls.argsFor(1)[0]).toBe(preparationHeadContent);
+						expect(DatagridService.updateData.calls.argsFor(1)[0]).toBe(data);
 					}));
 				});
 			});
@@ -865,7 +877,7 @@ describe('Playground Service', () => {
 
 					// then
 					expect(PreparationService.getContent).toHaveBeenCalledWith(preparation.id, lastActiveStep.transformation.stepId, 'HEAD');
-					expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+					expect(DatagridService.updateData).toHaveBeenCalledWith(data);
 					expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				}));
 
@@ -932,7 +944,7 @@ describe('Playground Service', () => {
 						expect(PreparationService.getContent.calls.argsFor(1)[0]).toBe(preparationId);
 						expect(PreparationService.getContent.calls.argsFor(1)[1]).toBe(lastActiveStep.transformation.stepId);
 						expect(DatagridService.updateData.calls.count()).toBe(2);
-						expect(DatagridService.updateData.calls.argsFor(1)[0]).toBe(preparationHeadContent);
+						expect(DatagridService.updateData.calls.argsFor(1)[0]).toBe(data);
 					}));
 				});
 			});
@@ -1074,7 +1086,7 @@ describe('Playground Service', () => {
 					// then
 					expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
 					expect(DatagridService.focusedColumn).toBeFalsy();
-					expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+					expect(DatagridService.updateData).toHaveBeenCalledWith(data);
 					expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				}));
 
@@ -1132,7 +1144,7 @@ describe('Playground Service', () => {
 
 						// then
 						expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
-						expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+						expect(DatagridService.updateData).toHaveBeenCalledWith(data);
 						expect(PreviewService.reset).toHaveBeenCalledWith(false);
 					}));
 				});
@@ -1197,7 +1209,7 @@ describe('Playground Service', () => {
 					// then
 					expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
 					expect(DatagridService.focusedColumn).toBeFalsy();
-					expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+					expect(DatagridService.updateData).toHaveBeenCalledWith(data);
 					expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				}));
 
@@ -1256,7 +1268,7 @@ describe('Playground Service', () => {
 
 						// then
 						expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
-						expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+						expect(DatagridService.updateData).toHaveBeenCalledWith(data);
 						expect(PreviewService.reset).toHaveBeenCalledWith(false);
 					}));
 				});
@@ -1586,7 +1598,7 @@ describe('Playground Service', () => {
 				assertNewPlaygroundIsInitWith = (dataset) => {
 					expect(StateService.resetPlayground).toHaveBeenCalled();
 					expect(StateService.setCurrentDataset).toHaveBeenCalledWith(datasetColumns.metadata);
-					expect(StateService.setCurrentData).toHaveBeenCalledWith(datasetColumns);
+					expect(StateService.setCurrentData).toHaveBeenCalledWith(data);
 					expect(StateService.setCurrentSampleType).toHaveBeenCalledWith('HEAD');
 					expect(TransformationCacheService.invalidateCache).toHaveBeenCalled();
 					expect(HistoryService.clear).toHaveBeenCalled();
@@ -1640,10 +1652,6 @@ describe('Playground Service', () => {
 				stateMock.playground.dataset = dataset;
 				stateMock.playground.preparation = { id: '35d8cf964aa81b58' };
 
-				// given : preparation content mock
-				// const data = { metadata: { columns: [] }, records: [] };
-				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
-
 				// given : step mocks
 				const step = { transformation: { stepId: '5874de8432c543' } };
 				spyOn(StepUtilsService, 'getActiveThresholdStepIndex').and.returnValue(5);
@@ -1666,7 +1674,6 @@ describe('Playground Service', () => {
 
 		describe('on step append', () => {
 			beforeEach(inject(($q, PreparationService, StepUtilsService) => {
-				// spyOn(PreparationService, 'getContent').and.returnValue($q.when({ columns: [{}] }));
 				spyOn(PreparationService, 'appendStep').and.callFake(() => {
 					stateMock.playground.recipe.current.steps.push({});
 					return $q.when();
@@ -1808,7 +1815,6 @@ describe('Playground Service', () => {
 		describe('copy steps', () => {
 			beforeEach(inject(($rootScope, $q, PreparationService) => {
 				spyOn(PreparationService, 'copySteps').and.returnValue($q.when());
-				// spyOn(PreparationService, 'getContent').and.returnValue($q.when());f
 				spyOn($rootScope, '$emit').and.returnValue($q.when());
 			}));
 
@@ -1868,7 +1874,6 @@ describe('Playground Service', () => {
 
 		describe('preparation', () => {
 			beforeEach(inject(($q, $stateParams, DatasetService, PlaygroundService, PreparationService, StateService) => {
-				// spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationMetadata));
 				spyOn(PlaygroundService, 'startLoader').and.returnValue();
 				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();

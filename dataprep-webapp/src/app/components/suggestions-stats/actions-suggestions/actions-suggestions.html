@@ -39,6 +39,10 @@
                               should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
                               should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
                               scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
+                <div ng-if="actionsSuggestionsCtrl.state.playground.suggestions.column.filteredTransformations.length === 0 && actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString"
+                     class="action-message">
+                    <span translate-once="NO_ACTION_AVAILABLE"></span>
+                </div>
             </form>
             <div ng-if="!actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length"
                  class="empty-panel-msg"

@@ -94,22 +94,6 @@ export default function PlaygroundService(
 		return data;
 	}
 
-	// /**
-	//  * @ngdoc method
-	//  * @name shouldFetchStatistics
-	//  * @methodOf data-prep.services.playground.service:PlaygroundService
-	//  * @description Check if we have the statistics or we have to fetch them
-	//  */
-	// function shouldFetchStatistics() {
-	// 	const columns = state.playground.data.metadata.columns;
-	//
-	// 	return (
-	// 		!columns ||
-	// 		!columns.length || // no columns
-	// 		!columns[0].statistics.frequencyTable.length
-	// 	); // no frequency table implies no async stats computed
-	// }
-
 	/**
 	 * @ngdoc method
 	 * @name fetchStatistics

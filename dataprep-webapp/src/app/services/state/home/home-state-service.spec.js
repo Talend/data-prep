@@ -94,6 +94,19 @@ describe('home state', () => {
 		);
 	});
 
+	describe('content', () => {
+		it('should set content loading flag', inject((homeState, HomeStateService) => {
+			//given
+			homeState.content.isLoading = false;
+
+			//when
+			HomeStateService.setContentLoading(true);
+
+			//then
+			expect(homeState.content.isLoading).toBe(true);
+		}));
+	});
+
 	describe('togglePreparationCreator', () => {
 		it('should toggle preparation creator', inject((homeState, HomeStateService) => {
 			//given

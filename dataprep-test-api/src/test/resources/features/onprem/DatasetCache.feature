@@ -16,6 +16,6 @@ Feature: Dataset cache features
       | preparationName      | 8L3C_preparation |
       | dataSetName          | 8L3C_dataset     |
       | fileName             | 8L3C_result.csv  |
-      | csv_escape_character | "                 |
-      | csv_enclosure_char   | "                 |
-    Then I check that "8L3C_result.csv" temporary file equals "/data/10L3C_lastname_uppercase.csv" file
+      | csv_escape_character | "                |
+      | csv_enclosure_char   | "                |
+    Then I check that "8L3C_result.csv" temporary file equals "/data/10L3C_firstname_uppercase.csv" file

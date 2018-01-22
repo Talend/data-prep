@@ -474,5 +474,12 @@
   "EMPTY_RECORDS_LABEL": "lignes avec des valeurs vides",
   "INVALID_RECORDS_LABEL": "lignes avec des valeurs invalides",
   "VALID_RECORDS_LABEL": "lignes avec des valeurs valides",
-  "INVALID_EMPTY_RECORDS_LABEL": "lignes avec des valeurs invalides ou vides"
+  "INVALID_EMPTY_RECORDS_LABEL": "lignes avec des valeurs invalides ou vides",
+
+  "LIST_SELECT_DISPLAY_MODE_TABLE": "Tableau",
+  "LIST_SELECT_DISPLAY_MODE_LARGE": "Développé",
+  "LIST_TOOLBAR_DISPLAY": "Affichage",
+  "LIST_TOOLBAR_SORT_BY": "Trier par",
+  "LIST_SELECT_SORT_BY_ORDER_DESC": "Descendant",
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant"
 }

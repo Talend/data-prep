@@ -16,14 +16,15 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeAction;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
-import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
@@ -45,7 +46,7 @@ import static org.talend.dataprep.transformation.api.action.context.ActionContex
  * Format a validated phone number to a specified format.
  */
 @Action(FormatPhoneNumber.ACTION_NAME)
-public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnAction {
+public class FormatPhoneNumber extends AbstractMultiScopeAction {
     /**
      * Action name.
      */
@@ -95,6 +96,14 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
+    public FormatPhoneNumber() {
+        this(ScopeCategory.COLUMN);
+    }
+
+    public FormatPhoneNumber(ScopeCategory scope) {
+        super(scope);
+    }
+
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
@@ -112,11 +121,10 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
+    public void apply(DataSetRow row, String columnId, String targetColumnId, ActionContext context) {
         final String possiblePhoneValue = row.get(columnId);
         if (StringUtils.isEmpty(possiblePhoneValue)) {
-            row.set(ActionsUtils.getTargetColumnId(context), possiblePhoneValue);
+            row.set(targetColumnId, possiblePhoneValue);
             return;
         }
 
@@ -124,7 +132,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
         final String formatedStr = formatIfValid(regionCode,
                 context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
-        row.set(ActionsUtils.getTargetColumnId(context), formatedStr);
+        row.set(targetColumnId, formatedStr);
     }
 
     /**
@@ -154,7 +162,9 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        if (ScopeCategory.COLUMN.equals(scope)) {
+            parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        }
         parameters.add(selectParameter(locale) //
                 .name(MODE_PARAMETER) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
@@ -228,8 +238,17 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
+    public ActionDefinition adapt(ScopeCategory scope) {
+        return new FormatPhoneNumber(scope);
+    }
+
+    @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN);
+        if (ScopeCategory.DATASET.equals(scope)) {
+            return EnumSet.of(Behavior.VALUES_ALL);
+        } else {
+            return EnumSet.of(Behavior.VALUES_COLUMN);
+        }
     }
 
 }

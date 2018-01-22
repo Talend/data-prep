@@ -75,8 +75,8 @@ describe('Side Panel container', () => {
 			scope.$digest();
 
 			// then
-			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBeFalsy();
-			expect(element.find('nav > ul > li').eq(2).hasClass('active')).toBeTruthy();
+			expect(element.find('nav > ul > li').eq(0).hasClass('active')).toBeFalsy();
+			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBeTruthy();
 		});
 	});
 

@@ -10,26 +10,6 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-
-import { HOME_404_ROUTE } from '../../index-route';
-
-/**
- * @ngdoc service
- * @name data-prep.services.errors:NotFoundInterceptor
- * @description Http Interceptor that manage 404
- */
-export default function NotFoundInterceptor($q, $injector) {
-	'ngInject';
-
-	return {
-		responseError: (rejection) => {
-			const $state = $injector.get('$state');
-
-			if (rejection.status === 404) {
-				$state.go(HOME_404_ROUTE);
-			}
-
-			return $q.reject(rejection);
-		},
-	};
+#notifications-container .tc-notification-container {
+  z-index: 1100;
 }

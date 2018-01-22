@@ -8,7 +8,7 @@ import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportType;
 
 /**
- * CSV Exporter.
+ * XSLX Exporter.
  */
 @Component
 public class ExportSampleStepXLSX extends AbstractExportSampleStep {

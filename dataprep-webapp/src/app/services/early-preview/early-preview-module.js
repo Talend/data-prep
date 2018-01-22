@@ -34,6 +34,6 @@ angular.module(MODULE_NAME,
 		SERVICES_RECIPE_MODULE,
 		SERVICES_STATE_MODULE,
 	])
-    .service('EarlyPreviewService', EarlyPreviewService);
+	.service('EarlyPreviewService', EarlyPreviewService);
 
 export default MODULE_NAME;

@@ -145,19 +145,37 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Upload a dataset into dataprep.
+     * Upload a text dataset into dataprep.
      *
      * @param filename the file to upload
      * @param datasetName the dataset basename
      * @return the response
      * @throws java.io.IOException if creation isn't possible
      */
-    public Response uploadDataset(String filename, String datasetName) throws java.io.IOException {
+    public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
+        return given() //
+                .log().all() //
+                .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
+                .baseUri(apiBaseUrl) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .queryParam("name", datasetName) //
+                .when() //
+                .post("/api/datasets");
+    }
+
+    /**
+     * Upload a binary dataset into dataprep.
+     *
+     * @param filename the file to upload
+     * @param datasetName the dataset basename
+     * @return the response
+     * @throws java.io.IOException if creation isn't possible
+     */
+    public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
-                .when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -173,7 +191,7 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/" + datasetId);

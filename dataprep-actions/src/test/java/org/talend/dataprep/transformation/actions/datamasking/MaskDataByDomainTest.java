@@ -35,7 +35,7 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-import org.talend.dataquality.datamasking.semantic.MaskableCategoryEnum;
+import org.talend.dataquality.semantic.datamasking.MaskableCategoryEnum;
 
 /**
  * Test class for MaskDataByDomain action.

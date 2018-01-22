@@ -34,7 +34,7 @@ angular.module(MODULE_NAME,
 		SERVICES_UTILS_MODULE,
 		SERVICES_STATE_MODULE,
 	])
-    .service('ExportRestService', ExportRestService)
-    .service('ExportService', ExportService);
+	.service('ExportRestService', ExportRestService)
+	.service('ExportService', ExportService);
 
 export default MODULE_NAME;

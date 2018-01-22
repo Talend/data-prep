@@ -22,7 +22,7 @@ export const playgroundState = {
 	sampleType: 'HEAD',
 	isReadOnly: false,
 	stepInEditionMode: null,
-	previewDisabled: false,
+	transformationInProgress: false,
 };
 
 export function PlaygroundStateService($translate,
@@ -63,7 +63,7 @@ export function PlaygroundStateService($translate,
 		setIsPreprationPickerVisible,
 		setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading,
-		setPreviewDisabled,
+		setTransformationInProgress,
 
 		// parameters
 		toggleDatasetParameters,
@@ -222,8 +222,8 @@ export function PlaygroundStateService($translate,
 		playgroundState.isSavingPreparationFoldersLoading = bool;
 	}
 
-	function setPreviewDisabled(bool) {
-		playgroundState.previewDisabled = bool;
+	function setTransformationInProgress(bool) {
+		playgroundState.transformationInProgress = bool;
 	}
 	//--------------------------------------------------------------------------------------------------------------
 	// -------------------------------------------------PARAMETERS---------------------------------------------------
@@ -293,7 +293,7 @@ export function PlaygroundStateService($translate,
 		playgroundState.isPreprationPickerVisible = false;
 		playgroundState.savingPreparationFolders = null;
 		playgroundState.isSavingPreparationFoldersLoading = false;
-		playgroundState.previewDisabled = false;
+		playgroundState.transformationInProgress = false;
 
 		RecipeStateService.reset();
 		FilterStateService.reset();

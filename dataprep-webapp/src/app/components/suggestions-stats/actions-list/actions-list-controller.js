@@ -30,15 +30,6 @@ export default function ActionsListCtrl($timeout, state, TransformationService,
 	vm.earlyPreview = function earlyPreview(action) {
 		return EarlyPreviewService.earlyPreview(action, vm.scope);
 	};
-
-	/**
-	 * @ngdoc property
-	 * @name transformationInProgress
-	 * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
-	 * @description Flag that indicates if a transformation is in progress
-	 */
-	vm.transformationInProgress = false;
-
 	/**
 	 * @ngdoc property
 	 * @name dynamicTransformation
@@ -153,19 +144,17 @@ export default function ActionsListCtrl($timeout, state, TransformationService,
 	 */
 	vm.transform = function transform(action) {
 		return function (params) {
-			StateService.setPreviewDisabled(true);
-			EarlyPreviewService.cancelPendingPreview();
+			EarlyPreviewService.cancelEarlyPreview();
 
-			if (!vm.transformationInProgress) {
-				vm.transformationInProgress = true;
+			if (!vm.state.playground.transformationInProgress) {
+				StateService.setTransformationInProgress(true);
 				PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
-					.then(function () {
+					.then(() => {
 						vm.showDynamicModal = false;
 					})
-					.finally(function () {
+					.finally(() => {
 						$timeout(() => {
-							StateService.setPreviewDisabled(false);
-							vm.transformationInProgress = false;
+							StateService.setTransformationInProgress(false);
 						}, 500, false);
 					});
 			}

@@ -44,7 +44,7 @@ export default class ColumnTypesService {
 		return this.ColumnTypesRestService.fetchTypes()
 			.then((primitiveTypes) => {
 				const filteredTypes = primitiveTypes
-					.filter(type => IGNORED_TYPES.indexOf(type.id) === -1);
+					.filter(type => !IGNORED_TYPES.includes(type.id));
 				this.StateService.setPrimitiveTypes(filteredTypes);
 				return filteredTypes;
 			});

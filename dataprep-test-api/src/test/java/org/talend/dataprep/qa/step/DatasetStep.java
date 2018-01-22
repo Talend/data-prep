@@ -39,9 +39,22 @@ public class DatasetStep extends DataPrepStep {
     public void givenIUploadTheDataSet(String fileName, String name) throws IOException {
         String suffixedName = suffixName(name);
         LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
-        String datasetId = api.uploadDataset(fileName, suffixedName) //
-                .then().statusCode(200) //
-                .extract().body().asString();
+        String datasetId;
+        switch (util.getFilenameExtension(fileName)) {
+        case "xls":
+        case "xlsx":
+            datasetId = api.uploadBinaryDataset(fileName, suffixedName) //
+                    .then().statusCode(200) //
+                    .extract().body().asString();
+            break;
+        case "csv":
+        default:
+            datasetId = api.uploadTextDataset(fileName, suffixedName) //
+                    .then().statusCode(200) //
+                    .extract().body().asString();
+            break;
+
+        }
         context.storeDatasetRef(datasetId, suffixedName);
     }
 

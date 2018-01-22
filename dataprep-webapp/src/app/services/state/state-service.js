@@ -83,7 +83,7 @@ export function StateService(RouteStateService, routeState,
 		setIsPreprationPickerVisible: PlaygroundStateService.setIsPreprationPickerVisible,
 		setSavingPreparationFolders: PlaygroundStateService.setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading: PlaygroundStateService.setIsSavingPreparationFoldersLoading,
-		setPreviewDisabled: PlaygroundStateService.setPreviewDisabled,
+		setTransformationInProgress: PlaygroundStateService.setTransformationInProgress,
 
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,

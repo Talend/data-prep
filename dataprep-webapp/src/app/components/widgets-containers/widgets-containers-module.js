@@ -28,6 +28,7 @@ import Progress from '@talend/react-components/lib/Progress';
 import Form from '@talend/react-forms';
 import getTranslated from '@talend/react-components/lib/TranslateWrapper';
 import Notifications from '@talend/react-components/lib/Notification';
+import SubHeaderBar from '@talend/react-components/lib/SubHeaderBar';
 import { i18n } from './../../index-module';
 
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
@@ -59,6 +60,7 @@ angular.module(MODULE_NAME,
 	)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureNotification', ['reactDirective', reactDirective => reactDirective(Notifications)])
+	.directive('pureSubHeaderBar', ['reactDirective', reactDirective => reactDirective(SubHeaderBar)])
 	.directive('pureCircularProgress', ['reactDirective', reactDirective => reactDirective(CircularProgress)])
 	.directive('pureCollapsiblePanel', ['reactDirective', reactDirective => reactDirective(CollapsiblePanel)])
 	.directive('pureList', ['reactDirective', reactDirective => reactDirective(

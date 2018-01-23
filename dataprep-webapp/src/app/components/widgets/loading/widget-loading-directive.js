@@ -33,6 +33,12 @@ export default function TalendLoading($rootScope, $timeout) {
 	return {
 		restrict: 'E',
 		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'talendLoadingCtrl',
+		scope: {
+			size: '=',
+		},
+		controller: () => {},
 		link: (scope, iElement) => {
 			let loadingTimeout;
 

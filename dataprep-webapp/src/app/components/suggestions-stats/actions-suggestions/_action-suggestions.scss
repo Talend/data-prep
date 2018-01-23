@@ -62,14 +62,9 @@ $search-actions-height: 25px;
 			}
 
 			.action-message {
-				position: absolute;
-				align-items: center;
-				justify-content: center;
-				display: flex;
-				width: 100%;
 				height: calc(100% - #{$header-tabs-height + $search-actions-height});
+				top: calc(#{$header-tabs-height + $search-actions-height});
 			}
-
 		}
 
 		.action-suggestion-tab-items {

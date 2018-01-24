@@ -26,7 +26,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
-import org.talend.dataquality.semantic.classifier.custom.UserDefinedCategory;
 import org.talend.dataquality.semantic.recognizer.CategoryFrequency;
 import org.talend.dataquality.semantic.statistics.SemanticType;
 import org.talend.dataquality.statistics.cardinality.CardinalityStatistics;
@@ -65,9 +64,20 @@ public class StatisticsUtilsTest {
         adaptColumn(stringColumn, DataTypeEnum.STRING);
 
         //then
-        // TODO Can't have "myId" as category because frequency is too low (and no way to set it).
-        assertEquals("", stringColumn.getDomain());
-        assertEquals("", stringColumn.getDomainLabel());
+        assertEquals("category 1", stringColumn.getDomain());
+        assertEquals("category 1", stringColumn.getDomainLabel());
+    }
+
+    @Test
+    public void testSemanticDomains() throws Exception {
+        //when
+        adaptColumn(stringColumn, DataTypeEnum.STRING);
+
+        //then
+        assertEquals(3, stringColumn.getSemanticDomains().size());
+        assertEquals("category 1", stringColumn.getSemanticDomains().get(0).getId());
+        assertEquals("category 2", stringColumn.getSemanticDomains().get(1).getId());
+        assertEquals("category 3", stringColumn.getSemanticDomains().get(2).getId());
     }
 
     @Test
@@ -175,8 +185,18 @@ public class StatisticsUtilsTest {
 
         // Semantic type
         SemanticType semanticType = new SemanticType();
-        semanticType.increment(new CategoryFrequency(new UserDefinedCategory("myId", "myName")), 10);
+        CategoryFrequency category1 = new CategoryFrequency("category 1", "category 1");
+        category1.setScore(99);
+        semanticType.increment(category1, 1);
         result.add(semanticType);
+
+        // Suggested types
+        CategoryFrequency category2 = new CategoryFrequency("category 2", "category 2");
+        category2.setScore(81);
+        semanticType.increment(category2, 1);
+        CategoryFrequency category3 = new CategoryFrequency("category 3", "category 3");
+        category3.setScore(50);
+        semanticType.increment(category3, 1);
 
         // Value quality
         ValueQualityStatistics valueQualityStatistics = new ValueQualityStatistics();

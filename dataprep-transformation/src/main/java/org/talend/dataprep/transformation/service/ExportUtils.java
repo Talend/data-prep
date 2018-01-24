@@ -13,8 +13,8 @@
 package org.talend.dataprep.transformation.service;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +34,12 @@ public final class ExportUtils {
     }
 
     public static void setExportHeaders(String exportName, String encoding, ExportFormat format) {
-        String responseEncoding = StringUtils.isEmpty(encoding) ? UTF_8.toString() : encoding;
+        Charset responseEncoding;
+        try {
+            responseEncoding = Charset.forName(encoding);
+        } catch (Exception e) {
+            responseEncoding = UTF_8;
+        }
 
         HttpResponseContext.contentType(format.getMimeType() + ";Charset=" + responseEncoding);
         // TDP-2925 a multi-byte file name cannot export the file correctly

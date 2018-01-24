@@ -69,9 +69,7 @@ export default class ColumnTypesService {
 
 		return this.ColumnTypesRestService.fetchDomains(inventoryType, inventoryId, colId)
 			.then((semanticDomains) => {
-				const domains = semanticDomains
-					.filter(domain => domain.id)
-					.sort((d1, d2) => d2.frequency - d1.frequency);
+				const domains = semanticDomains.filter(domain => domain.id);
 				this.StateService.setSemanticDomains(domains);
 				return domains;
 			});

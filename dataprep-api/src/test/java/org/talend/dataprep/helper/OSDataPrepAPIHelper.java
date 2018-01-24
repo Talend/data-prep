@@ -13,15 +13,13 @@
 
 package org.talend.dataprep.helper;
 
-import static com.jayway.restassured.http.ContentType.JSON;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Map;
 
@@ -37,6 +35,8 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+
+import static com.jayway.restassured.http.ContentType.JSON;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -360,10 +360,8 @@ public class OSDataPrepAPIHelper {
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
         Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
-        FileOutputStream fos = new FileOutputStream(path.toFile());
-        IOUtils.copy(input, fos);
-        fos.close();
         tempFile.deleteOnExit();
         return tempFile;
     }

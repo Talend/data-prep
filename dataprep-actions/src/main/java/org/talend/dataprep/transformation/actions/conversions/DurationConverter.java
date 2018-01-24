@@ -91,6 +91,7 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
+        //@formatter:off
         SelectParameterBuilder builder = selectParameter(locale)
                 .item(YEARS.name(), YEARS.toString())
                 .item(MONTHS.name(), MONTHS.toString())
@@ -105,10 +106,9 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
         parameters.add(builder.name(FROM_UNIT_PARAMETER).defaultValue(DAYS.name()).build(this));
 
         builder.setDescription(null).setLabel(null);
-
         parameters.add(builder.name(TO_UNIT_PARAMETER).defaultValue(HOURS.name()).build(this));
 
-         parameters.add(parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
+        parameters.add(parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
 
         //@formatter:on
         return parameters;

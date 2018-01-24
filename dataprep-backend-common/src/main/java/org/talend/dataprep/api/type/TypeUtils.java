@@ -20,7 +20,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.semantic.model.DQCategory;
-import org.talend.dataquality.semantic.statistics.SemanticType;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 
 public class TypeUtils {
@@ -65,39 +64,14 @@ public class TypeUtils {
 
     }
 
-    public static DataTypeEnum[] convert(Type[] types) {
-        DataTypeEnum[] converted = new DataTypeEnum[types.length];
-        for (int i = 0; i < types.length; i++) {
-            converted[i] = convert(types[i]);
-        }
-        return converted;
-    }
-
-    /**
-     * @param semanticType A {@link SemanticType semantic type} as returned by the DQ's
-     * {@link org.talend.dataquality.semantic.statistics.SemanticAnalyzer}.
-     * @return A display name for the semantic type's suggested category or empty string if none found.
-     */
-    public static String getDomainLabel(SemanticType semanticType) {
-        if (semanticType == null) {
-            return StringUtils.EMPTY;
-        } else {
-            return getDomainLabel(semanticType.getSuggestedCategory());
-        }
-    }
-
     /**
      * @param categoryId A category id from supported {@link SemanticCategoryEnum categories}.
      * @return A display name for the category id or empty string if none found.
      * @see SemanticCategoryEnum
      */
     public static String getDomainLabel(String categoryId) {
-        if (categoryId == null) {
-            return StringUtils.EMPTY;
-        } else {
-            final DQCategory category = CategoryRegistryManager.getInstance().getCategoryMetadataByName(categoryId);
-            return category == null ? StringUtils.EMPTY : category.getLabel();
-        }
+        final DQCategory category = CategoryRegistryManager.getInstance().getCategoryMetadataByName(categoryId);
+        return category == null ? StringUtils.EMPTY : category.getLabel();
     }
 
 }

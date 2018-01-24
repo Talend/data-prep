@@ -215,15 +215,13 @@ public class StatisticsAdapter {
 
     private SemanticDomain toSemanticDomain(CategoryFrequency categoryFrequency) {
         // Find category display name
-
         final String id = categoryFrequency.getCategoryId();
-        if (!StringUtils.isEmpty(id)) {
-            // Takes only actual semantic domains (unknown = "").
-            final String categoryDisplayName = TypeUtils.getDomainLabel(id);
-            return new SemanticDomain(id, categoryDisplayName, categoryFrequency.getScore());
-        } else {
+        if (StringUtils.isEmpty(id)) {
             return null;
         }
+        // Takes only actual semantic domains (unknown = "").
+        final String categoryDisplayName = TypeUtils.getDomainLabel(id);
+        return new SemanticDomain(id, categoryDisplayName, categoryFrequency.getScore());
     }
 
     private void injectCardinality(final ColumnMetadata column, final Analyzers.Result result) {

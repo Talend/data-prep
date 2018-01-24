@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.type;
 
@@ -22,11 +22,9 @@ import java.util.Collections;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-import org.talend.dataquality.semantic.classifier.custom.UserDefinedCategory;
 import org.talend.dataquality.semantic.recognizer.CategoryFrequency;
 import org.talend.dataquality.semantic.statistics.SemanticType;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
-
 
 public class TypeUtilsTest {
 
@@ -79,15 +77,15 @@ public class TypeUtilsTest {
 
     @Test
     public void testNullSemanticDomainType() throws Exception {
-        assertThat(TypeUtils.getDomainLabel(((SemanticType) null)), is(""));
-        assertThat(TypeUtils.getDomainLabel(((String) null)), is(""));
+        assertThat(TypeUtils.getDomainLabel((null)), is(""));
     }
 
     @Test
     public void testSemanticDomainType() throws Exception {
         final SemanticType semanticType = new SemanticType();
-        semanticType.increment(new CategoryFrequency(new UserDefinedCategory(SemanticCategoryEnum.AIRPORT.getId())), 1);
-        assertThat(TypeUtils.getDomainLabel(semanticType), is(SemanticCategoryEnum.AIRPORT.getDisplayName()));
-        assertThat(TypeUtils.getDomainLabel(SemanticCategoryEnum.AIRPORT.getId()), is(SemanticCategoryEnum.AIRPORT.getDisplayName()));
+        semanticType.increment(new CategoryFrequency(SemanticCategoryEnum.AIRPORT.getId(), SemanticCategoryEnum.AIRPORT.getId()),
+                1);
+        assertThat(TypeUtils.getDomainLabel(SemanticCategoryEnum.AIRPORT.getId()),
+                is(SemanticCategoryEnum.AIRPORT.getDisplayName()));
     }
 }

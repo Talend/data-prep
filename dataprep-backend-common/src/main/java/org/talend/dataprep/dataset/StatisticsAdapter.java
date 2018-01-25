@@ -160,8 +160,9 @@ public class StatisticsAdapter {
     private void injectSemanticTypes(final ColumnMetadata column, final Analyzers.Result result) {
         if (result.exist(SemanticType.class) && !column.isDomainForced()) {
             final SemanticType semanticType = result.get(SemanticType.class);
+            final List<CategoryFrequency> suggestedTypes = semanticType.getSuggestedCategories();
             // TDP-471: Don't pick semantic type if lower than a threshold.
-            final Optional<CategoryFrequency> bestMatch = semanticType.getSuggestedCategories().stream() //
+            final Optional<CategoryFrequency> bestMatch = suggestedTypes.stream() //
                     .filter(e -> !e.getCategoryName().isEmpty()) //
                     .findFirst();
             if (bestMatch.isPresent()) {
@@ -179,7 +180,7 @@ public class StatisticsAdapter {
                 resetDomain(column);
             }
             // Keep all suggested semantic categories in the column metadata
-            List<SemanticDomain> semanticDomains = semanticType.getSuggestedCategories().stream() //
+            List<SemanticDomain> semanticDomains = suggestedTypes.stream() //
                     .map(this::toSemanticDomain) //
                     .filter(semanticDomain -> semanticDomain != null && semanticDomain.getScore() >= 1) //
                     .limit(10) //

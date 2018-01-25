@@ -26,6 +26,13 @@ It is possible to launch a specific test by specifying it in the command line:
 ```
 $ mvn test -Prun-tests -Dcucumber.options="classpath:features/os/ExportPreparation.feature"
 ```
+
+It is also possible to launch specific tests by specifying cucumber tags:
+```
+$ mvn test -Prun-tests -Dcucumber.options="--tags @LiveDataSet"
+```
+
+By default cucumber tests call the backend api on `http://dev.data-prep.talend.lan:8888`.
 By default cucumber tests call the backend api on `http://localhost:8888`.
 You can set another url value by using the following maven parameter:
 ```

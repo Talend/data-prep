@@ -122,19 +122,14 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      */
 	function getRangeFilteredOccurrence(min, max) {
 		return _.chain(state.playground.grid.filteredOccurences)
-            .keys()
-            .filter(function (value) {
-	const numberValue = Number(value);
-	return !isNaN(numberValue) &&
-                    ((numberValue === min) || (numberValue > min && numberValue < max));
-})
-            .map(function (key) {
-	return state.playground.grid.filteredOccurences[key];
-})
-            .reduce(function (accu, value) {
-	return accu + value;
-}, 0)
-            .value();
+			.keys()
+			.filter((value) => {
+				const numberValue = Number(value);
+				return !isNaN(numberValue) && ((numberValue === min) || (numberValue > min && numberValue < max));
+			})
+			.map(key => state.playground.grid.filteredOccurences[key])
+			.reduce((accu, value) => accu + value, 0)
+			.value();
 	}
 
     /**
@@ -227,9 +222,10 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
 		const column = state.playground.grid.selectedColumns[0];
 		const statistics = column.statistics;
-		const currentRangeFilter = _.find(state.playground.filter.gridFilters, function (filter) {
-			return filter.colId === column.id && filter.type === 'inside_range';
-		});
+		const currentRangeFilter = _.find(
+			state.playground.filter.gridFilters,
+			filter => filter.colId === column.id && filter.type === 'inside_range'
+		);
 
 		let rangeLimits;
 		if (state.playground.grid.selectedColumns[0].type === 'date') {
@@ -252,16 +248,15 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		if (currentRangeFilter) {
 			const currentRangeFilterIntervals = currentRangeFilter.args.intervals;
 			const { filterMin, filterMax } = currentRangeFilterIntervals.reduce(
-                (accu, interval) => {
-	const [intervalMin, intervalMax] = interval.value;
-	return {
-		filterMin: Math.min(accu.filterMin, intervalMin),
-		filterMax: Math.max(accu.filterMax, intervalMax),
-	};
-},
-
-                { filterMin: Infinity, filterMax: -Infinity }
-            );
+				(accu, interval) => {
+					const [intervalMin, intervalMax] = interval.value;
+					return {
+						filterMin: Math.min(accu.filterMin, intervalMin),
+						filterMax: Math.max(accu.filterMax, intervalMax),
+					};
+				},
+				{ filterMin: Infinity, filterMax: -Infinity }
+			);
 
 			rangeLimits.minFilterVal = filterMin;
 			rangeLimits.maxFilterVal = filterMax;
@@ -291,7 +286,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		}
 
 		const dateRangeData = _.map(histoData.items, function (histDatum) {
-            // range are UTC dates. We convert them to local zone date, so the app date manipulation is easier.
+			// range are UTC dates. We convert them to local zone date, so the app date manipulation is easier.
 			const minDate = new Date(histDatum.range.min);
 			minDate.setTime(minDate.getTime() + (minDate.getTimezoneOffset() * 60 * 1000));
 			const maxDate = new Date(histDatum.range.max);
@@ -322,9 +317,8 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		if (dateRangeData) {
 			StateService.setStatisticsHistogram(dateRangeData);
 			return createFilteredDateRangeHistogram()
-                .then((filteredDateRangeHistogram) => {
-	StateService.setStatisticsFilteredHistogram(filteredDateRangeHistogram);
-});
+				.then(filteredDateRangeHistogram => StateService.setStatisticsFilteredHistogram(filteredDateRangeHistogram)
+			);
 		}
 	}
 
@@ -336,12 +330,13 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Use a Worker to compute the date FilteredHistogram
      */
 	function createFilteredDateRangeHistogram() {
+		StateService.setStatisticsLoading(true);
 		const parameters = {
 			rangeData: state.playground.statistics.histogram.data,
 			patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
-                .map('pattern')
-                .map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
-                .value(),
+				.map('pattern')
+				.map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
+				.value(),
 			filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null,
 		};
 
@@ -359,7 +354,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
 		dateWorker.postMessage(parameters);
 		service.dateWorker = dateWorker;
-		return defer.promise;
+		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 
     /**
@@ -609,6 +604,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Create the filtered patterns statistics
      */
 	function createFilteredPatternsFrequency() {
+		StateService.setStatisticsLoading(true);
 		const column = state.playground.grid.selectedColumns[0];
 		const parameters = {
 			columnId: column.id,
@@ -627,7 +623,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		};
 
 		service.patternWorker.postMessage(parameters);
-		return defer.promise;
+		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 
     //--------------------------------------------------------------------------------------------------------------
@@ -749,19 +745,17 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 			groupBy: [selectedColumn.id],
 		};
 
-        // add filter in parameters only if there are filters
+		// add filter in parameters only if there are filters
 		aggregationParameters = _.extend(aggregationParameters, FilterAdapterService.toTree(state.playground.filter.gridFilters));
 
 		return StatisticsRestService.getAggregations(aggregationParameters)
-            .then(function (response) {
-	const histogram = getAggregationHistogram(aggregationName, $filter('translate')(aggregationName), response);
-	histogram.aggregationColumn = column;
-	histogram.aggregation = aggregationName;
-
-	StateService.setStatisticsHistogram(histogram);
-
-	saveColumnAggregation(aggregationName, column.id);
-});
+			.then(function (response) {
+				const histogram = getAggregationHistogram(aggregationName, $filter('translate')(aggregationName), response);
+				histogram.aggregationColumn = column;
+				histogram.aggregation = aggregationName;
+				StateService.setStatisticsHistogram(histogram);
+				saveColumnAggregation(aggregationName, column.id);
+			});
 	}
 
     /**
@@ -841,10 +835,10 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 				break;
 			case 'date': {
 				const dateRangeProcess = createFilteredDateRangeHistogram()
-                        .then((histogram) => {
-	StateService.setStatisticsFilteredHistogram(histogram);
-	initRangeLimits();
-});
+						.then((histogram) => {
+							StateService.setStatisticsFilteredHistogram(histogram);
+							initRangeLimits();
+						});
 				asyncProcess.push(dateRangeProcess);
 				break;
 			}
@@ -863,11 +857,9 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 			}
 		}
 
-        // should be outside the IF(!aggregationName) statement because it does not depend on the aggregation
+		// should be outside the IF(!aggregationName) statement because it does not depend on the aggregation
 		const patternProcess = createFilteredPatternsFrequency()
-            .then((filteredPatternFrequency) => {
-	StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-});
+			.then(filteredPatternFrequency => StateService.setStatisticsFilteredPatterns(filteredPatternFrequency));
 		asyncProcess.push(patternProcess);
 
 		return $q.all(asyncProcess);

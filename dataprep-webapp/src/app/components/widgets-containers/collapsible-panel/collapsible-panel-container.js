@@ -20,7 +20,7 @@ const CollapsiblePanelContainer = {
 			content="$ctrl.adaptedItem.content"
 			on-select="$ctrl.adaptedItem.onSelect"
 			on-toggle="$ctrl.adaptedItem.onToggle"
-			selected="$ctrl.adaptedItem.selected"
+			status="$ctrl.adaptedItem.status"
 			expanded="$ctrl.adaptedItem.expanded"
 			theme="$ctrl.adaptedItem.theme"
 		>

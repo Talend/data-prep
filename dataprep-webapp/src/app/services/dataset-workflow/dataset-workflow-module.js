@@ -38,7 +38,7 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_MESSAGE_MODULE,
 	])
-    .service('UploadWorkflowService', UploadWorkflowService)
-    .service('UpdateWorkflowService', UpdateWorkflowService);
+	.service('UploadWorkflowService', UploadWorkflowService)
+	.service('UpdateWorkflowService', UpdateWorkflowService);
 
 export default MODULE_NAME;

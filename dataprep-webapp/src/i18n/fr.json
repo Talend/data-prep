@@ -155,7 +155,6 @@
   "_comment": "Add datasets",
   "IMPORT_DATASET": "Ajouter un jeu de données",
   "COLLECTING_DATA": "Collecte des données de {{datasetName}}. Patientez…",
-  "IMPORT_WAIT": "Récupération des paramètres d'import. Patientez…",
   "DATASET_NAME": "Nom du jeu de données :",
   "DATASTORE_TEST_CONNECTION": "Tester la connexion",
   "DATASTORE_CONNECTION_SUCCESSFUL": "Connexion établie",
@@ -266,6 +265,7 @@
   "ACTIONS_TAB_ROW": "Ligne",
   "ACTIONS_TAB_COLUMN": "Colonne",
   "ACTIONS_TAB_TABLE": "Table",
+  "NO_ACTION_AVAILABLE": "Aucune action disponible",
 
   "_comment": "Recette",
   "FILTERS_APPLIED": "Filtres appliqués",
@@ -317,7 +317,6 @@
   "UNKNOWN": "inconnu",
   "SELECT_COLUMN_TO_DISPLAY_STATS": "Sélectionner une colonne pour afficher ses statistiques",
   "SELECT_PATTERN_IS": "Le modèle sélectionné est :",
-  "REFRESHING_WAIT": "rafraîchissement, patientez…",
   "TOOLTIP_MATCHING_FILTER": "correspondant à votre filtre",
   "TOOLTIP_MATCHING_FULL": "dans le jeu de données complet",
   "NO_CHART": "Aucun diagramme pour la sélection",
@@ -476,5 +475,12 @@
   "EMPTY_RECORDS_LABEL": "lignes avec des valeurs vides",
   "INVALID_RECORDS_LABEL": "lignes avec des valeurs invalides",
   "VALID_RECORDS_LABEL": "lignes avec des valeurs valides",
-  "INVALID_EMPTY_RECORDS_LABEL": "lignes avec des valeurs invalides ou vides"
+  "INVALID_EMPTY_RECORDS_LABEL": "lignes avec des valeurs invalides ou vides",
+
+  "LIST_SELECT_DISPLAY_MODE_TABLE": "Tableau",
+  "LIST_SELECT_DISPLAY_MODE_LARGE": "Développé",
+  "LIST_TOOLBAR_DISPLAY": "Affichage",
+  "LIST_TOOLBAR_SORT_BY": "Trier par",
+  "LIST_SELECT_SORT_BY_ORDER_DESC": "Descendant",
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant"
 }

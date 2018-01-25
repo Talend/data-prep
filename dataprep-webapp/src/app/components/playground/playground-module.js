@@ -24,6 +24,7 @@ import PREPARATION_PICKER_MODULE from '../preparation/picker/preparation-picker-
 import RECIPE_MODULE from '../recipe/recipe-module';
 import SUGGESTION_STATS_MODULE from '../suggestions-stats/suggestions-stats-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
+import TALEND_WIDGET_CONTAINERS_MODULE from '../widgets-containers/widgets-containers-module';
 
 import SERVICES_ONBOARDING_MODULE from '../../services/onboarding/onboarding-module';
 import SERVICES_PLAYGROUND_MODULE from '../../services/playground/playground-module';
@@ -72,6 +73,7 @@ angular.module(MODULE_NAME,
 		RECIPE_MODULE,
 		SUGGESTION_STATS_MODULE,
 		TALEND_WIDGET_MODULE,
+		TALEND_WIDGET_CONTAINERS_MODULE,
 		SERVICES_ONBOARDING_MODULE,
 		SERVICES_PLAYGROUND_MODULE,
 		SERVICES_PREVIEW_MODULE,

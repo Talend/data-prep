@@ -36,6 +36,9 @@ export const homeState = {
 		isVisible: false,
 		builds: [],
 	},
+	content: {
+		isLoading: false,
+	},
 };
 
 export function HomeStateService($translate) {
@@ -46,6 +49,7 @@ export function HomeStateService($translate) {
 		setCopyMoveTree,
 		setCopyMoveTreeLoading,
 		setSidePanelDock,
+		setContentLoading,
 		toggleAbout,
 		toggleCopyMovePreparation,
 		toggleFolderCreator,
@@ -76,6 +80,10 @@ export function HomeStateService($translate) {
 
 	function setCopyMoveTreeLoading(bool) {
 		homeState.preparations.copyMove.isTreeLoading = bool;
+	}
+
+	function setContentLoading(bool) {
+		homeState.content.isLoading = bool;
 	}
 
 	function toggleFolderCreator() {

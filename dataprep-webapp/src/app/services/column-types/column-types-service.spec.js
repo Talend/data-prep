@@ -55,7 +55,7 @@ describe('Column types Service', () => {
 			inject((ColumnTypesService, ColumnTypesRestService) => {
 				// given
 				stateMock.playground.grid.primitiveTypes = primitiveTypes;
-				
+
 				//when
 				ColumnTypesService.refreshTypes();
 
@@ -149,8 +149,8 @@ describe('Column types Service', () => {
 				);
 			})
 		);
-		
-		it('should sort and set semantic domains into app state',
+
+		it('should set semantic domains into app state',
 			inject(($rootScope, StateService, ColumnTypesService) => {
 				// given
 				const colId = 'myColId';
@@ -163,14 +163,14 @@ describe('Column types Service', () => {
 				//then
 				expect(StateService.setSemanticDomains).toHaveBeenCalledWith([
 					{
-						"id": "CITY",
-						"label": "City",
-						"frequency": 99.24,
-					},
-					{
 						"id": "AIRPORT",
 						"label": "Airport",
 						"frequency": 3.03,
+					},
+					{
+						"id": "CITY",
+						"label": "City",
+						"frequency": 99.24,
 					},
 				]);
 			})

@@ -13,9 +13,9 @@ import moment from 'moment-jdateformatparser';
 function isInDateLimits(minTimestamp, maxTimestamp, patterns) {
 	return (value) => {
 		const parsedMoment = _.chain(patterns)
-            .map(pattern => moment(value, pattern, true))
-            .find(momentDate => momentDate.isValid())
-            .value();
+			.map(pattern => moment(value, pattern, true))
+			.find(momentDate => momentDate.isValid())
+			.value();
 
 		if (!parsedMoment) {
 			return false;
@@ -43,13 +43,13 @@ function dateOccurrenceWorker(parameters) {
 		const maxTimestamp = range.data.max;
 
 		range.filteredOccurrences = !filteredOccurrences ?
-            range.occurrences :
-            _.chain(filteredOccurrences)
-                .keys()
-                .filter(isInDateLimits(minTimestamp, maxTimestamp, patterns))
-                .map(key => filteredOccurrences[key])
-                .reduce((accu, value) => accu + value, 0)
-                .value();
+			range.occurrences :
+			_.chain(filteredOccurrences)
+				.keys()
+				.filter(isInDateLimits(minTimestamp, maxTimestamp, patterns))
+				.map(key => filteredOccurrences[key])
+				.reduce((accu, value) => accu + value, 0)
+				.value();
 	});
 
 	return rangeData;

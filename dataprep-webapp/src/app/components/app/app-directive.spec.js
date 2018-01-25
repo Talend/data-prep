@@ -63,7 +63,9 @@ describe('App directive', () => {
 		createElement();
 
 		//then
-		expect(element.find('talend-loading').length).toBe(1);
+		const e = element.find('talend-loading');
+		expect(e.length).toBe(1);
+		expect(e.attr('size')).toBe("'large'");
 	});
 
 	it('should hold svg icons', () => {

@@ -13,6 +13,13 @@
 
 import { HOME_DATASETS_ROUTE } from '../../index-route';
 
+const BLOCKING_ACTION_TYPES = [
+	'@@dataset/SORT',
+	'@@dataset/CLONE',
+	'@@dataset/FAVORITE',
+	'@@dataset/DATASET_FETCH',
+];
+
 export default class DatasetActionsService {
 	constructor($document, $stateParams, state, StateService, StorageService, DatasetService,
 				ImportService, UploadWorkflowService, MessageService, TalendConfirmService) {
@@ -29,25 +36,16 @@ export default class DatasetActionsService {
 		this.UploadWorkflowService = UploadWorkflowService;
 
 		this.renamingList = [];
-
-		this.blockingActionTypes = [
-			'@@dataset/SORT',
-			'@@dataset/CLONE',
-			'@@dataset/FAVORITE',
-			'@@dataset/DATASET_FETCH',
-		];
 	}
 
-
 	dispatch(action) {
-		if (this.blockingActionTypes.includes(action.type)) {
+		if (BLOCKING_ACTION_TYPES.includes(action.type)) {
 			if (this.state.inventory.isFetchingDatasets) {
 				return;
 			}
 			// all blocking action types requiring a loader
 			this.StateService.setFetchingInventoryDatasets(true);
 		}
-
 		switch (action.type) {
 		case '@@dataset/SORT':
 		case '@@dataset/FAVORITE': {

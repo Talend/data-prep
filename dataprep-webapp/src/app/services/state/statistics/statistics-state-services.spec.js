@@ -76,6 +76,17 @@ describe('Statistics state service', function () {
         expect(statisticsState.filteredPatterns).toBe(filteredPatterns);
     }));
 
+    it('should set loading flag', inject(function (statisticsState, StatisticsStateService) {
+        //given
+        expect(statisticsState.loading).toBeFalsy();
+
+        //when
+        StatisticsStateService.setLoading(true);
+
+        //then
+        expect(statisticsState.loading).toBe(true);
+    }));
+
     it('should reset all statistics', inject(function (statisticsState, StatisticsStateService) {
         //given
         statisticsState.histogram = {};
@@ -86,6 +97,7 @@ describe('Statistics state service', function () {
         statisticsState.boxPlot = {};
         statisticsState.rangeLimits = {};
         statisticsState.details = {};
+        statisticsState.loading = true;
 
         //when
         StatisticsStateService.reset();
@@ -99,5 +111,6 @@ describe('Statistics state service', function () {
         expect(statisticsState.boxPlot).toBe(null);
         expect(statisticsState.rangeLimits).toBe(null);
         expect(statisticsState.details).toBe(null);
+        expect(statisticsState.loading).toBe(false);
     }));
 });

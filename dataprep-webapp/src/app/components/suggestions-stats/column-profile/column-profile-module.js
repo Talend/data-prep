@@ -13,7 +13,6 @@
 
 import angular from 'angular';
 import COLUMN_PROFILE_OPTIONS_MODULE from '../column-profile-options/column-profile-options-module';
-import LOADER_MODULE from '../../loader/loader.module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
 import SERVICES_FILTER_MANAGER_MODULE from '../../../services/filter/manager/filter-manager-module';
@@ -29,7 +28,6 @@ const MODULE_NAME = 'data-prep.column-profile';
 angular.module(MODULE_NAME,
 	[
 		COLUMN_PROFILE_OPTIONS_MODULE,
-		LOADER_MODULE,
 		TALEND_WIDGET_MODULE,
 		SERVICES_DATASET_MODULE,
 		SERVICES_FILTER_MANAGER_MODULE,

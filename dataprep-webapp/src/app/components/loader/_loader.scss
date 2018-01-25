@@ -1,22 +1,31 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
 loader {
-	margin: auto;
+	display: block;
+	height: 100%;
+	width: 100%;
 
-	.loading-msg {
-		text-align: center;
-		background: transparent;
-		color: $pale-blue;
-		opacity: 0.8;
+	.loader-wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+	}
+}
 
-		.wait {
-			&-icon {
-				width: 16px;
-				height: 16px;
-				position: absolute;
-			}
-
-			&-text {
-				padding-left: 40px;
-			}
-		}
+talend-modal {
+	.loader-wrapper {
+		min-height: 20rem;
 	}
 }

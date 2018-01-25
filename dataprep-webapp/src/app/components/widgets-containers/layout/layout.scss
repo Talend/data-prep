@@ -28,9 +28,16 @@ $tc-layout-main-min-width: 1000px;
 		display: flex;
 		flex-direction: row;
 
-		.main {
+		.main, .content-loader {
 			flex-grow: 1;
 			height: calc(100vh - #{$tc-layout-header-height});
+		}
+
+		.content-loader {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
 		}
 
 		.sidemenu {
@@ -40,5 +47,4 @@ $tc-layout-main-min-width: 1000px;
 			background-color: $blue;
 		}
 	}
-
 }

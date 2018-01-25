@@ -198,9 +198,9 @@ angular-animate@1.5.9, angular-animate@^1.5.3:
   version "1.5.9"
   resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.5.9.tgz#c958d524f9333a48abdaefb32947c7e611f54453"
 
-angular-mass-autocomplete@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/angular-mass-autocomplete/-/angular-mass-autocomplete-0.6.0.tgz#90e7a22a21f2f697b9ed7f2a1cc8cdf629984594"
+angular-mass-autocomplete@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/angular-mass-autocomplete/-/angular-mass-autocomplete-0.8.0.tgz#6acb7bd3acb205b2078c0306e52043acbcd30351"
 
 angular-mocks@1.5.9:
   version "1.5.9"

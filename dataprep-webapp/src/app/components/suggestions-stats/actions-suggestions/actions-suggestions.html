@@ -14,10 +14,9 @@
   -->
 
 <div class="actions-suggestions">
-    <div class="loader-wrapper"
-         ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading">
-        <loader id="actions-ghost"></loader>
-    </div>
+    <loader ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
+            id="actions-ghost"
+    ></loader>
     <sc-tabs ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
              class="actions-scope"
              selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
@@ -39,6 +38,10 @@
                               should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
                               should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
                               scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
+                <div ng-if="actionsSuggestionsCtrl.state.playground.suggestions.column.filteredTransformations.length === 0 && actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString"
+                     class="empty-message action-message">
+                    <span translate-once="NO_ACTION_AVAILABLE"></span>
+                </div>
             </form>
             <div ng-if="!actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length"
                  class="empty-panel-msg"

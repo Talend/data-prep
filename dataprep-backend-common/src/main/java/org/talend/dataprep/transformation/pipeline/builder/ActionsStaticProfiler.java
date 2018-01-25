@@ -12,6 +12,8 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
@@ -29,19 +31,18 @@ class ActionsStaticProfiler {
     /**
      * Get the actions metadata by actions
      */
-    public Map<Action, ActionDefinition> getActionMetadataByAction(final List<RunnableAction> actions) {
+    private Map<Action, ActionDefinition> getActionMetadataByAction(final List<RunnableAction> actions) {
         final Map<Action, ActionDefinition> actionToMetadata = new HashMap<>(actions.size());
         for (final Action action : actions) {
-            final ActionDefinition actionMetadata = actionRegistry.get(action.getName());
+            final ActionDefinition actionMetadata = actionRegistry.get(action.getName()) //
+                    .adapt(ScopeCategory.from(action.getParameters().get(ImplicitParameters.SCOPE.getKey())));
             actionToMetadata.put(action, actionMetadata);
         }
         return actionToMetadata;
     }
 
-    public ActionsProfile profile(final List<ColumnMetadata> columns, final List<RunnableAction> actions,
-            final Map<Action, ActionDefinition> actionToMetadata) {
-        final Map<Action, ActionDefinition> metadataByAction = actionToMetadata == null ? getActionMetadataByAction(actions)
-                : actionToMetadata;
+    public ActionsProfile profile(final List<ColumnMetadata> columns, final List<RunnableAction> actions) {
+        final Map<Action, ActionDefinition> metadataByAction = getActionMetadataByAction(actions);
 
         // Compile actions
         final Set<String> originalColumns = columns.stream().map(ColumnMetadata::getId).collect(toSet());
@@ -49,10 +50,6 @@ class ActionsStaticProfiler {
         final Set<String> metadataModifiedColumns = new HashSet<>();
         int createColumnActions = 0;
 
-        for (final Action action : actions) {
-            final ActionDefinition actionMetadata = actionRegistry.get(action.getName());
-            metadataByAction.put(action, actionMetadata);
-        }
         // Analyze what columns to look at during analysis
         for (Map.Entry<Action, ActionDefinition> entry : metadataByAction.entrySet()) {
             final ActionDefinition actionMetadata = entry.getValue();
@@ -97,8 +94,6 @@ class ActionsStaticProfiler {
                 }
             }
 
-            ;
-
             if (createColumn || isCreateColumnParameterOn(action)) {
                 createColumnActions++;
             }
@@ -115,7 +110,7 @@ class ActionsStaticProfiler {
         Predicate<ColumnMetadata> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns);
 
         return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
-                filterForInvalidAnalysis);
+                filterForInvalidAnalysis, metadataByAction);
     }
 
     private static boolean isCreateColumnParameterOn(Action action) {
@@ -164,6 +159,5 @@ class ActionsStaticProfiler {
             return filterForFullAnalysis.test(columnMetadata) || metadataModifiedColumns.contains(columnMetadata.getId());
         }
     }
-
 
 }

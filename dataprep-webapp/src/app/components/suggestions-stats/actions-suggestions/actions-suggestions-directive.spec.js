@@ -13,7 +13,6 @@
 
 const i18n = {
 	COLON: ': ',
-	REFRESHING_WAIT: 'Fetching, please wait…',
 };
 
 describe('Actions suggestions-stats directive', () => {
@@ -63,6 +62,5 @@ describe('Actions suggestions-stats directive', () => {
 		//then
 		const elm = element.find('#actions-ghost');
 		expect(elm.length).toBe(1);
-		expect(elm.text().trim()).toBe(i18n.REFRESHING_WAIT);
 	}));
 });

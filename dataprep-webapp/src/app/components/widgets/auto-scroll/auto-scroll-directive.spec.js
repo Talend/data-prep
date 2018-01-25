@@ -12,7 +12,7 @@
  ============================================================================*/
 
 
-describe('Auto-scroll directive', () => {
+xdescribe('Auto-scroll directive', () => {
 	let scope;
 	let element;
 	let createElement;

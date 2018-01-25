@@ -235,7 +235,7 @@ describe('Lookup controller', () => {
 		beforeEach(inject(($q, PlaygroundService, EarlyPreviewService, StateService) => {
 			spyOn(PlaygroundService, 'completeParamsAndAppend').and.returnValue($q.when(true));
 			spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
-			spyOn(StateService, 'setPreviewDisabled');
+			spyOn(StateService, 'setTransformationInProgress');
 			spyOn(EarlyPreviewService, 'cancelPendingPreview').and.returnValue();
 		}));
 
@@ -247,7 +247,7 @@ describe('Lookup controller', () => {
 			ctrl.submit();
 
 			//then
-			expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
+			expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(true);
 			expect(EarlyPreviewService.cancelPendingPreview).toHaveBeenCalled();
 		}));
 
@@ -258,12 +258,12 @@ describe('Lookup controller', () => {
 
 				//when
 				ctrl.submit();
-				expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(true);
+				expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(true);
 				scope.$digest();
 				$timeout.flush(500);
 
 				//then
-				expect(StateService.setPreviewDisabled).toHaveBeenCalledWith(false);
+				expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(false);
 			}));
 
 		it('should add new lookup action', inject(($q, PlaygroundService) => {

@@ -11,13 +11,5 @@
 
   ============================================================================*/
 .picker-modal-content {
-  .fetching-spinner {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    padding-top: 15px;
-    .continuous-rotate {
-      display: flex;
-    }
-  }
+	height: 40vh;
 }

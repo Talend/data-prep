@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.dataset;
 
-import static java.util.Comparator.naturalOrder;
 import static org.talend.dataprep.api.type.Type.*;
 
 import java.text.DecimalFormat;
@@ -161,33 +160,27 @@ public class StatisticsAdapter {
     private void injectSemanticTypes(final ColumnMetadata column, final Analyzers.Result result) {
         if (result.exist(SemanticType.class) && !column.isDomainForced()) {
             final SemanticType semanticType = result.get(SemanticType.class);
-            final Map<CategoryFrequency, Long> foundSemanticTypes = semanticType.getCategoryToCount();
+            final List<CategoryFrequency> suggestedTypes = semanticType.getSuggestedCategories();
             // TDP-471: Don't pick semantic type if lower than a threshold.
-            final Optional<CategoryFrequency> highestCategoryFrequency = //
-                    foundSemanticTypes.keySet().stream() //
-                            .filter(e -> !e.getCategoryName().isEmpty()) //
-                            .max(naturalOrder());
-            if (highestCategoryFrequency.isPresent()) {
+            final Optional<CategoryFrequency> bestMatch = suggestedTypes.stream() //
+                    .filter(e -> !e.getCategoryName().isEmpty()) //
+                    .findFirst();
+            if (bestMatch.isPresent()) {
                 // TODO (TDP-734) Take into account limit of the semantic analyzer.
-                final float score = highestCategoryFrequency.get().getScore();
+                final float score = bestMatch.get().getScore();
                 if (score > semanticThreshold) {
-                    updateMetadataWithCategoryInfo(column, highestCategoryFrequency.get());
+                    updateMetadataWithCategoryInfo(column, bestMatch.get());
                 } else {
                     // Ensure the domain is cleared if score is lower than threshold (earlier analysis - e.g.
                     // on the first 20 lines - may be over threshold, but full scan may decide otherwise.
-                    column.setDomain(StringUtils.EMPTY);
-                    column.setDomainLabel(StringUtils.EMPTY);
-                    column.setDomainFrequency(0);
+                    resetDomain(column);
                 }
-            } else if (!StringUtils.isEmpty(column.getDomain())) {
+            } else if (StringUtils.isNotEmpty(column.getDomain())) {
                 // Column *had* a domain but seems like new analysis removed it.
-                column.setDomain(StringUtils.EMPTY);
-                column.setDomainLabel(StringUtils.EMPTY);
-                column.setDomainFrequency(0);
+                resetDomain(column);
             }
             // Keep all suggested semantic categories in the column metadata
-            List<SemanticDomain> semanticDomains = semanticType.getCategoryToCount().entrySet().stream() //
-                    .map(Map.Entry::getKey) //
+            List<SemanticDomain> semanticDomains = suggestedTypes.stream() //
                     .map(this::toSemanticDomain) //
                     .filter(semanticDomain -> semanticDomain != null && semanticDomain.getScore() >= 1) //
                     .limit(10) //
@@ -198,8 +191,7 @@ public class StatisticsAdapter {
 
     private void updateMetadataWithCategoryInfo(ColumnMetadata column, CategoryFrequency categoryFrequency) {
         final String categoryId = categoryFrequency.getCategoryId();
-        DQCategory categoryMetadataByName = CategoryRegistryManager.getInstance()
-                .getCategoryMetadataByName(categoryId);
+        DQCategory categoryMetadataByName = CategoryRegistryManager.getInstance().getCategoryMetadataByName(categoryId);
         if (categoryMetadataByName == null) {
             LOGGER.error("Could not find {} in known categories.", categoryId);
             column.setDomain(categoryId);
@@ -211,17 +203,26 @@ public class StatisticsAdapter {
         column.setDomainFrequency(categoryFrequency.getScore());
     }
 
+    /**
+     * Removes infos on domain, domain label and domain frequency for given column.
+     *
+     * @param column the column metadata to update
+     */
+    private void resetDomain(ColumnMetadata column) {
+        column.setDomain(StringUtils.EMPTY);
+        column.setDomainLabel(StringUtils.EMPTY);
+        column.setDomainFrequency(0);
+    }
+
     private SemanticDomain toSemanticDomain(CategoryFrequency categoryFrequency) {
         // Find category display name
-
         final String id = categoryFrequency.getCategoryId();
-        if (!StringUtils.isEmpty(id)) {
-            // Takes only actual semantic domains (unknown = "").
-            final String categoryDisplayName = TypeUtils.getDomainLabel(id);
-            return new SemanticDomain(id, categoryDisplayName, categoryFrequency.getScore());
-        } else {
+        if (StringUtils.isEmpty(id)) {
             return null;
         }
+        // Takes only actual semantic domains (unknown = "").
+        final String categoryDisplayName = TypeUtils.getDomainLabel(id);
+        return new SemanticDomain(id, categoryDisplayName, categoryFrequency.getScore());
     }
 
     private void injectCardinality(final ColumnMetadata column, final Analyzers.Result result) {

@@ -46,7 +46,7 @@
                                     on-submit="actionsListCtrl.transform(transfo)(params)"
                                     on-submit-hover-on="actionsListCtrl.earlyPreview(transfo)(params)"
                                     on-submit-hover-off="actionsListCtrl.cancelEarlyPreview()"
-                                    is-transformation-in-progress="actionsListCtrl.transformationInProgress"></transform-form>
+                                    is-transformation-in-progress="actionsListCtrl.state.playground.transformationInProgress"></transform-form>
                 </content>
             </sc-accordion-item>
         </li>
@@ -65,9 +65,8 @@
             <div ng-if="actionsListCtrl.showModalContent">
                 <div class="modal-subtitle">{{ actionsListCtrl.dynamicTransformation.description }}</div>
 
-                <div ng-if="actionsListCtrl.dynamicFetchInProgress">
-                    <i data-icon="c" class="icon continuous-rotate"></i>
-                </div>
+                <loader ng-if="actionsListCtrl.dynamicFetchInProgress"></loader>
+
                 <transform-form transformation="actionsListCtrl.dynamicTransformation"
                                 on-submit="actionsListCtrl.transform(actionsListCtrl.dynamicTransformation)(params)"></transform-form>
             </div>
@@ -75,8 +74,6 @@
                 <div class="modal-subtitle">{{ actionsListCtrl.emptyParamsMsg | translate }}</div>
             </div>
         </div>
-        <div ng-switch-when="true" class="loader-container">
-            <loader />
-        </div>
+        <loader ng-switch-when="true"></loader>
     </talend-modal>
 </div>

@@ -39,7 +39,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.datamasking.semantic.ValueDataMasker;
+import org.talend.dataquality.semantic.datamasking.ValueDataMasker;
 
 /**
  * Mask sensitive data according to the semantic category.

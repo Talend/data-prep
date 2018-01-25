@@ -15,7 +15,7 @@
 
 .introjs-overlay {
 	position: absolute;
-	z-index: 999999;
+	z-index: 1090;
 	background-color: $color-overlay-background;
 	opacity: 0.3;
 	background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
@@ -48,11 +48,11 @@
 .introjs-showElement,
 tr.introjs-showElement > td,
 tr.introjs-showElement > th {
-	z-index: 9999999 !important;
+	z-index: 1090 !important;
 }
 
 .introjs-disableInteraction {
-	z-index: 99999999 !important;
+	z-index: 1090 !important;
 	position: absolute;
 }
 
@@ -64,7 +64,7 @@ tr.introjs-showElement > th {
 
 .introjs-helperLayer {
 	position: absolute;
-	z-index: 9999998;
+	z-index: 1090;
 	background-color: #FFF;
 	background-color: rgba(255, 255, 255, .9);
 	border: 1px solid #777;
@@ -80,7 +80,7 @@ tr.introjs-showElement > th {
 
 .introjs-tooltipReferenceLayer {
 	position: absolute;
-	z-index: 10000000;
+	z-index: 1090;
 	background-color: transparent;
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;

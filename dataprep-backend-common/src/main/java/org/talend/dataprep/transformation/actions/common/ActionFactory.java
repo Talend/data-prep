@@ -32,6 +32,7 @@ public class ActionFactory {
 
         final Map<String, String> parametersCopy = new HashMap<>(parameters);
         final ScopeCategory scope = getScope(parametersCopy);
+        actionDefinition = actionDefinition.adapt(scope);
 
         return builder().withName(actionDefinition.getName()) //
                 .withParameters(parametersCopy) //

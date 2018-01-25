@@ -103,16 +103,12 @@ export default function DatasetSheetPreviewService(DatasetService, $timeout) {
      * @description Set new grid content
      */
 	const setGridData = function (data) {
-		const columns = _.map(data.metadata.columns, function (col) {
-			return {
-				id: col.id,
-				name: '<div class="grid-header">' +
-                '<div class="grid-header-title dropdown-button ng-binding">' + col.name + '</div>' +
-                '</div>',
-				field: col.id,
-				minWidth: 100,
-			};
-		});
+		const columns = _.map(data.metadata.columns, col => ({
+			id: col.id,
+			name: `<div class="grid-header"><div class="grid-header-title dropdown-button ng-binding">${col.name}</div></div>`,
+			field: col.id,
+			minWidth: 100,
+		}));
 
 		self.grid.setColumns(columns);
 		self.grid.setData(data.records);
@@ -136,13 +132,11 @@ export default function DatasetSheetPreviewService(DatasetService, $timeout) {
 		self.preparationName = preparationName;
 		resetGrid();
 		return DatasetService.getSheetPreview(dataset)
-            .then(function (response) {
-	self.currentMetadata = response.metadata;
-	self.selectedSheetName = response.metadata.sheetName;
-	$timeout(() => {
-		setGridData(response);
-	});
-});
+			.then((response) => {
+				self.currentMetadata = response.metadata;
+				self.selectedSheetName = response.metadata.sheetName;
+				$timeout(() => setGridData(response));
+			});
 	};
 
     /**
@@ -155,9 +149,9 @@ export default function DatasetSheetPreviewService(DatasetService, $timeout) {
 	this.loadSheet = function (sheetName) {
 		resetGrid();
 		return DatasetService.getSheetPreview(self.currentMetadata, sheetName)
-            .then(function (response) {
-	setGridData(response);
-});
+			.then((response) => {
+				setGridData(response);
+			});
 	};
 
     /**

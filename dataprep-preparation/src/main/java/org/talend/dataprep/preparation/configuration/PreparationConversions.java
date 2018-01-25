@@ -36,6 +36,8 @@ import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 /**
@@ -139,7 +141,8 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                                 source.id());
                     } else {
                         List<ActionForm> actionDefinitions = actions.stream() //
-                                .map(a -> actionRegistry.get(a.getName())) //
+                                .map(a -> actionRegistry.get(a.getName()) //
+                                .adapt(ScopeCategory.from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
                                 .map(a -> a.getActionForm(getLocale())) //
                                 .map(PreparationConversions::disallowColumnCreationChange) //
                                 .collect(Collectors.toList());

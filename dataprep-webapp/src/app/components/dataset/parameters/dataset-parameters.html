@@ -20,7 +20,7 @@
         <div class="params-row">
             <div class="form-group dataset-name-group">
                 <label for="dataset-name" translate-once="NAME"></label>
-                <span  id="dataset-name"
+                <span id="dataset-name"
                       class="param-value"
                       title="{{datasetParametersCtrl.dataset.name}}"
                       ng-bind="::datasetParametersCtrl.dataset.name">
@@ -39,32 +39,32 @@
             <div class="form-group text-enclosure-group"
                  ng-if="datasetParametersCtrl.dataset.type === 'text/csv'">
                 <label for="text-enclosure" translate-once="DATASET_PARAMETERS_TEXT_ENCLOSURE_CHARACTER"></label>
-                <input  id="text-enclosure"
-                        class="form-control small-input"
-                        type="text"
-                        ng-trim="false"
-                        ng-model="datasetParametersCtrl.parameters.textEnclosureCharacter"
-                        ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                <input id="text-enclosure"
+                       class="form-control small-input"
+                       type="text"
+                       ng-trim="false"
+                       ng-model="datasetParametersCtrl.parameters.textEnclosureCharacter"
+                       ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                 />
             </div>
         </div>
 
         <div class="params-row">
-            <div  ng-if="datasetParametersCtrl.displayNbLines"
-                  ng-switch="!!datasetParametersCtrl.dataset.limit"
-                  class="form-group line-number-group">
+            <div ng-if="datasetParametersCtrl.displayNbLines"
+                 ng-switch="!!datasetParametersCtrl.dataset.limit"
+                 class="form-group line-number-group">
                 <label for="line-number" translate-once="SIZE"></label>
-                <div  id="line-number"
-                      class="param-value"
-                      ng-switch-when="false"
-                      translate="FILE_DETAILS_LINES"
-                      translate-value-records="{{::datasetParametersCtrl.dataset.records}}">
-                 </div>
-                <div  id="line-number"
-                      class="param-value"
-                      ng-switch-when="true"
-                      translate="FILE_DETAILS_LIMIT"
-                      translate-value-records="{{::datasetParametersCtrl.dataset.limit}}">
+                <div id="line-number"
+                     class="param-value"
+                     ng-switch-when="false"
+                     translate="FILE_DETAILS_LINES"
+                     translate-value-records="{{::datasetParametersCtrl.dataset.records}}">
+                </div>
+                <div id="line-number"
+                     class="param-value"
+                     ng-switch-when="true"
+                     translate="FILE_DETAILS_LIMIT"
+                     translate-value-records="{{::datasetParametersCtrl.dataset.limit}}">
                 </div>
             </div>
 
@@ -78,12 +78,12 @@
                             ng-options="separator.value as separator.label for separator in datasetParametersCtrl.configuration.separators">
                         <option value="" translate-once="OTHER"></option>
                     </select>
-                    <input  class="form-control small-input custom-separator"
-                            ng-if="!datasetParametersCtrl.separatorIsInList()"
-                            type="text"
-                            ng-trim="false"
-                            ng-model="datasetParametersCtrl.parameters.separator"
-                            ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                    <input class="form-control small-input custom-separator"
+                           ng-if="!datasetParametersCtrl.separatorIsInList()"
+                           type="text"
+                           ng-trim="false"
+                           ng-model="datasetParametersCtrl.parameters.separator"
+                           ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                     />
                 </div>
             </div>
@@ -91,23 +91,23 @@
             <div class="form-group escape-character-group"
                  ng-if="datasetParametersCtrl.dataset.type === 'text/csv'">
                 <label for="escape-character" translate-once="DATASET_PARAMETERS_ESCAPE_CHARACTER"></label>
-                <input  id="escape-character"
-                        class="form-control small-input"
-                        type="text"
-                        ng-trim="false"
-                        ng-model="datasetParametersCtrl.parameters.escapeCharacter"
-                        ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                <input id="escape-character"
+                       class="form-control small-input"
+                       type="text"
+                       ng-trim="false"
+                       ng-model="datasetParametersCtrl.parameters.escapeCharacter"
+                       ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                 />
             </div>
         </div>
     </div>
 
     <div class="dataset-parameters-actions">
-        <talend-button-loader button-class="btn btn-primary"
-                              disable-condition="datasetParametersCtrl.processing"
-                              loading="datasetParametersCtrl.processing"
-                              loading-class="icon">
-            <span translate-once="CONFIRM"></span>
-        </talend-button-loader>
+        <action-button bs-style="'primary'"
+                       type="'submit'"
+                       disabled="datasetParametersCtrl.processing"
+                       in-progress="datasetParametersCtrl.processing"
+                       label="'{{ 'CONFIRM' | translate }}'">
+        </action-button>
     </div>
 </form>

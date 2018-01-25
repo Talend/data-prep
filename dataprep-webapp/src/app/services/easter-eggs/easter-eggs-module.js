@@ -31,6 +31,6 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('EasterEggsService', EasterEggsService);
+	.service('EasterEggsService', EasterEggsService);
 
 export default MODULE_NAME;

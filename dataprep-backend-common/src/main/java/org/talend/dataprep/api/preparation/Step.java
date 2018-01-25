@@ -125,6 +125,9 @@ public class Step extends Identifiable implements Serializable {
 
     @Override
     public void setId(String id) {
+        if (ROOT_STEP.id.equals(id)) {
+            parent = null;
+        }
         this.id = id;
     }
 

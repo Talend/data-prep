@@ -14,12 +14,13 @@
   -->
 
 <div class="stats-details">
+    <loader ng-if="statsDetailsCtrl.state.playground.statistics.loading"></loader>
     <div class="empty-panel-msg"
          ng-if="!statsDetailsCtrl.state.playground.grid.selectedColumns.length"
          translate-once="SELECT_COLUMN_TO_DISPLAY_STATS">
     </div>
 
-    <sc-tabs ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length">
+    <sc-tabs ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length && !statsDetailsCtrl.state.playground.statistics.loading">
         <sc-tabs-item class="tab-container" tab-title="{{'STATS_TAB_CHART' | translate}}" default="true">
             <div class="empty-panel-msg"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"

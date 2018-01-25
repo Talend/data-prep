@@ -52,27 +52,25 @@ const InventoryCopyMoveComponent = {
                         translate-once="CANCEL">
                 </button>
 
-                <talend-button-loader
-                        id="copy-move-move-btn"
-                        button-class="btn btn-primary modal-primary-button separated-button {{$ctrl.isActionDisabled() ? 'disabled' : ''}}"
-                        disable-condition="$ctrl.isActionDisabled()"
-                        loading="$ctrl.isMoving"
-                        loading-class="icon"
-                        ng-click="$ctrl.move()"
-                        title="{{($ctrl.isActionDisabled() ? 'WAITING_FOLDERS_TITLE' : 'MOVE_HERE_ACTION') | translate}}">
-                    <span translate-once="MOVE_HERE_ACTION"></span>
-                </talend-button-loader>
-
-                <talend-button-loader
-                        id="copy-move-copy-btn"
-                        button-class="btn btn-primary modal-primary-button {{$ctrl.isActionDisabled() ? 'disabled' : ''}}"
-                        disable-condition="$ctrl.isActionDisabled()"
-                        loading="$ctrl.isCopying"
-                        loading-class="icon"
-                        ng-click="$ctrl.copy()"
-                        title="{{($ctrl.isActionDisabled() ? 'WAITING_FOLDERS_TITLE' : 'COPY_HERE_ACTION') | translate}}">
-                    <span translate-once="COPY_HERE_ACTION"></span>
-                </talend-button-loader>
+                <action-button
+                        id="'copy-move-move-btn'"
+                        bs-style="'primary'"
+                        disabled="$ctrl.isActionDisabled()"
+                        in-progress="$ctrl.isMoving"
+                        on-click="$ctrl.move"
+                        label="'{{ 'MOVE_HERE_ACTION' | translate }}'"
+                        tooltip-label="'{{($ctrl.isActionDisabled() && 'WAITING_FOLDERS_TITLE') | translate}}'">
+				</action-button>
+                
+                <action-button
+                        id="'copy-move-copy-btn'"
+                        bs-style="'primary'"
+                        disabled="$ctrl.isActionDisabled()"
+                        in-progress="$ctrl.isCopying"
+                        on-click="$ctrl.copy"
+                    	label="'{{ 'COPY_HERE_ACTION' | translate }}'"
+                        tooltip-label="'{{($ctrl.isActionDisabled() && 'WAITING_FOLDERS_TITLE') | translate}}'">
+				</action-button>
             </div>
         </form>
     </div>`,

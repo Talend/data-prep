@@ -76,15 +76,15 @@
         <talend-slidable class="playground-suggestions"
                          visible="true"
                          side="right">
-                <sc-splitter class="suggestions-stats-content" orientation="vertical">
-                    <sc-split-first-pane id="help-suggestions" insertion-versions-panel>
-                        <actions-header></actions-header>
-                        <actions-suggestions class="suggestions-part"></actions-suggestions>
-                    </sc-split-first-pane>
-                    <sc-split-second-pane id="help-stats">
-                        <stats-details class="stats-part"></stats-details>
-                    </sc-split-second-pane>
-                </sc-splitter>
+            <sc-splitter class="suggestions-stats-content" orientation="vertical">
+                <sc-split-first-pane id="help-suggestions" insertion-versions-panel>
+                    <actions-header></actions-header>
+                    <actions-suggestions class="suggestions-part"></actions-suggestions>
+                </sc-split-first-pane>
+                <sc-split-second-pane id="help-stats">
+                    <stats-details class="stats-part"></stats-details>
+                </sc-split-second-pane>
+            </sc-splitter>
         </talend-slidable>
     </div>
 </div>
@@ -106,9 +106,9 @@
           ng-submit="playgroundCtrl.savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
         <folder-selection
-            ng-model="playgroundCtrl.destinationFolder"
-            is-loading="playgroundCtrl.state.playground.isSavingPreparationFoldersLoading"
-            tree="playgroundCtrl.state.playground.savingPreparationFolders"
+                ng-model="playgroundCtrl.destinationFolder"
+                is-loading="playgroundCtrl.state.playground.isSavingPreparationFoldersLoading"
+                tree="playgroundCtrl.state.playground.savingPreparationFolders"
         >
         </folder-selection>
 
@@ -130,27 +130,27 @@
                     translate-once="NO_THANKS">
             </button>
 
-            <talend-button-loader button-class="btn modal-primary-button btn-primary {{playgroundCtrl.isSubmitDisabled() ? 'disabled' : ''}}"
-                                  disable-condition="playgroundCtrl.isSubmitDisabled()"
-                                  loading="playgroundCtrl.isSubmitLoading()"
-                                  loading-class="icon"
-                                  title="{{(playgroundCtrl.isSubmitDisabled() ? 'WAITING_FOLDERS_TITLE' : 'SAVE_PREPARATION_TITLE') | translate}}">
-                <span translate-once="SAVE_IT"></span>
-            </talend-button-loader>
+            <action-button bs-style="'primary'"
+                           type="'submit'"
+                           disabled="playgroundCtrl.isSubmitDisabled()"
+                           in-progress="playgroundCtrl.isSubmitLoading()"
+                           label="'{{ 'SAVE_IT' | translate }}'"
+                           title="'{{(playgroundCtrl.isSubmitDisabled() ? 'WAITING_FOLDERS_TITLE' : 'SAVE_PREPARATION_TITLE') | translate}}'"
+            ></action-button>
         </div>
     </form>
 </talend-modal>
 
 <talend-modal
-            class="preparation-modal preparation-picker-modal"
-            fullscreen="false"
-            state="playgroundCtrl.state.playground.isPreprationPickerVisible"
-            close-button="true"
-            ng-if="playgroundCtrl.state.playground.isPreprationPickerVisible">
+        class="preparation-modal preparation-picker-modal"
+        fullscreen="false"
+        state="playgroundCtrl.state.playground.isPreprationPickerVisible"
+        close-button="true"
+        ng-if="playgroundCtrl.state.playground.isPreprationPickerVisible">
     <div class="modal-title" translate-once="CHOOSE_PREPARATION_TO_APPLY"></div>
 
     <preparation-picker
-        dataset="playgroundCtrl.state.playground.dataset"
-        fetch-preparations="playgroundCtrl.fetchCompatiblePreparations(datasetId)"
-        on-select="playgroundCtrl.applySteps(preparationId)"></preparation-picker>
+            dataset="playgroundCtrl.state.playground.dataset"
+            fetch-preparations="playgroundCtrl.fetchCompatiblePreparations(datasetId)"
+            on-select="playgroundCtrl.applySteps(preparationId)"></preparation-picker>
 </talend-modal>

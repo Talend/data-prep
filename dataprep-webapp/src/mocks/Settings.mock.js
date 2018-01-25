@@ -39,6 +39,32 @@ const settingsMock = {
 			help: 'headerbar:help',
 			products: 'products:menu',
 		},
+		'appheaderbar:playground': {
+			logo: {
+				name: 'Talend',
+				onClick: 'menu:home',
+			},
+			brand: {
+				label: 'Data Preparation',
+				onClick: 'menu:home',
+			},
+			search: {
+				onToggle: 'search:toggle',
+				onBlur: 'search:toggle',
+				onChange: 'search:all',
+				onSelect: {
+					preparation: 'menu:playground:preparation',
+					dataset: 'dataset:open',
+					folder: 'menu:folders',
+					documentation: 'external:documentation',
+				},
+				onKeyDown: 'search:focus',
+				debounceTimeout: 300,
+			},
+			userMenu: 'user:menu',
+			help: 'headerbar:help',
+			products: 'products:menu',
+		},
 		breadcrumb: {
 			maxItems: 5,
 			onItemClick: 'menu:folders',

@@ -55,13 +55,13 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
      * Action parameters:
      */
 
-    protected static final String FROM_UNIT_PARAMETER = "from_unit";
+    private static final String FROM_UNIT_PARAMETER = "from_unit";
 
-    protected static final String TO_UNIT_PARAMETER = "to_unit";
+    private static final String TO_UNIT_PARAMETER = "to_unit";
 
-    protected static final String TARGET_PRECISION = "precision";
+    private static final String TARGET_PRECISION = "precision";
 
-    protected static final String NEW_COLUMN_SEPARATOR = "_in_";
+    private static final String NEW_COLUMN_SEPARATOR = "_in_";
 
     /**
      * Converter help class.
@@ -103,17 +103,12 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
                 .item(MILLIS.name(), MILLIS.toString())
                 .canBeBlank(false);
 
-        parameters.add(builder
-                .name(FROM_UNIT_PARAMETER)
-                .defaultValue(DAYS.name())
-                .build(this ));
+        parameters.add(builder.name(FROM_UNIT_PARAMETER).defaultValue(DAYS.name()).build(this));
 
-        parameters.add(builder
-                .name(TO_UNIT_PARAMETER)
-                .defaultValue(HOURS.name())
-                .build(this ));
+        builder.setDescription(null).setLabel(null);
+        parameters.add(builder.name(TO_UNIT_PARAMETER).defaultValue(HOURS.name()).build(this));
 
-         parameters.add(parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
+        parameters.add(parameter(locale).setName(TARGET_PRECISION).setType(INTEGER).setDefaultValue("1").setPlaceHolder("precision").build(this));
 
         //@formatter:on
         return parameters;

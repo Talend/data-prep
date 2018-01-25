@@ -68,9 +68,7 @@
 	</div>
 
 	<div class="inventory-list" ng-class="{'disabled-import': $ctrl.importDisabled}">
-			<span ng-if="$ctrl.isFetchingDatasets" class="fetching-spinner">
-				<i data-icon="c" class="continuous-rotate icon"></i>
-			</span>
+        <loader ng-if="$ctrl.isFetchingDatasets"></loader>
 		<div ng-if="!$ctrl.isFetchingDatasets"
 			 class="inventory-item-row"
 			 ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id"

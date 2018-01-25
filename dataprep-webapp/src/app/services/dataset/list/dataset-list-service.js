@@ -82,6 +82,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 				return [];
 			})
 			.finally(() => datasetsPromise = null);
+
 		return datasetsPromise;
 	}
 
@@ -121,9 +122,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 * @returns {string} the class names
 	 */
 	function getClassName(dataset) {
-		return dataset.favorite ?
-			['list-item-favorite'] :
-			[];
+		return dataset.favorite ? ['list-item-favorite'] : [];
 	}
 
 	/**
@@ -152,9 +151,11 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			'dataset:clone',
 			'dataset:remove',
 		];
+
 		if (item.preparations && item.preparations.length > 0) {
 			actions.splice(1, 0, 'list:dataset:preparations');
 		}
+
 		return actions;
 	}
 
@@ -168,8 +169,10 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 */
 	function getDatasetIcon(item) {
 		switch (item.type) {
-		case 'text/csv': return 'talend-file-csv-o';
-		case 'application/vnd.ms-excel': return 'talend-file-xls-o';
+		case 'text/csv':
+			return 'talend-file-csv-o';
+		case 'application/vnd.ms-excel':
+			return 'talend-file-xls-o';
 		}
 
 		return 'talend-file-o';
@@ -239,7 +242,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 */
 	function deleteDataset(dataset) {
 		return DatasetRestService.delete(dataset)
-			.then(function () {
+			.then(() => {
 				StateService.removeDataset(dataset);
 			});
 	}

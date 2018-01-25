@@ -96,12 +96,12 @@
                     class="btn talend-modal-close btn-default modal-secondary-button"
                     translate-once="CANCEL"></button>
 
-            <talend-button-loader button-class="btn btn-primary"
-                                  disable-condition="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback"
-                                  loading="feedbackCtrl.isSendingFeedback"
-                                  loading-class="icon">
-                <span translate-once="OK"></span>
-            </talend-button-loader>
+            <action-button bs-style="'primary'"
+                           type="'submit'"
+                           disabled="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback"
+                           in-progress="feedbackCtrl.isSendingFeedback"
+                           label="'{{ 'OK' | translate }}'"
+            ></action-button>
         </div>
     </form>
 </talend-modal>

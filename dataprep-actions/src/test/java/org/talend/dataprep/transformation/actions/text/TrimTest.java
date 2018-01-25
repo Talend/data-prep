@@ -193,6 +193,26 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
     }
 
     @Test
+    public void TDP_2190() {
+        //given
+        final DataSetRow row = getRow("1 ", " 2", " Hey ! ");
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "1");
+        expectedValues.put("0001", "2");
+        expectedValues.put("0002", "Hey !");
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "dataset");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.STRING)));
     }

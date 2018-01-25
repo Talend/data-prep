@@ -10,26 +10,12 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import template from './layout.html';
+
 const LayoutContainer = {
 	transclude: true,
-	template: `
-		<div class="app">
-			<div class="header">
-				<app-header-bar search-toggle="$ctrl.state.search.searchToggle"
-		 						searching="$ctrl.state.search.searching"
-		 						search-input="$ctrl.state.search.searchInput"
-		 						search-results="$ctrl.state.search.searchResults"
-		 						search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
-		 						search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
-			</div>
-			<div class="content">
-				<div class="sidemenu">
-					<side-panel id="'side-panel'" active="$ctrl.$state.current.name"><side-panel/>
-				</div>
-				<ng-transclude class="main"></ng-transclude>
-			</div>
-		</div>
-	`,
+	templateUrl: template,
 	controller($state, state) {
 		'ngInject';
 		this.$state = $state;

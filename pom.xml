@@ -37,6 +37,15 @@
              <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <properties>
+        <!-- Sonar -->
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+        <sonar.exclusions>**/build/**,**/node_modules/**,**/bower_components/**,**/target/**</sonar.exclusions>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.exclusions>**/itests/**</sonar.coverage.exclusions>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>

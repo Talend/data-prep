@@ -15,9 +15,7 @@
 
 <div class="picker-modal-content">
 
-    <span ng-if="$ctrl.isFetchingPreparations" class="fetching-spinner">
-        <i data-icon="c" class="continuous-rotate icon"></i>
-    </span>
+    <loader ng-if="$ctrl.isFetchingPreparations"></loader>
 
     <span ng-if="!$ctrl.candidatePreparations.length && !$ctrl.isFetchingPreparations"
           translate-once="NO_COMPATIBLE_PREPARATIONS"

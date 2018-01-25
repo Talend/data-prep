@@ -63,7 +63,6 @@ import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
@@ -127,9 +126,6 @@ public class PreparationService {
 
     @Autowired
     private ReorderStepsUtils reorderStepsUtils;
-
-    @Autowired
-    private ActionParser actionParser;
 
     @Autowired
     private BeanConversionService beanConversionService;

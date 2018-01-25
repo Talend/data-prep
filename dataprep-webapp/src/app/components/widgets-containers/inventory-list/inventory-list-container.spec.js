@@ -189,6 +189,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = preparations;
 			scope.folders = folders;
 			scope.$digest();
@@ -225,6 +226,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = preparations;
 			scope.folders = folders;
 			scope.$digest();
@@ -307,6 +309,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = preparations;
 			scope.folders = folders;
 			scope.$digest();
@@ -438,6 +441,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = datasets;
 			scope.$digest();
 		});

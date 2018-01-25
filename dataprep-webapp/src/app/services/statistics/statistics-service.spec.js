@@ -695,6 +695,7 @@ describe('Statistics service', () => {
         spyOn(StateService, 'setStatisticsFilteredHistogram').and.returnValue();
         spyOn(StateService, 'setStatisticsBoxPlot').and.returnValue();
         spyOn(StateService, 'setStatisticsRangeLimits').and.returnValue();
+        spyOn(StateService, 'setStatisticsLoading').and.returnValue();
         spyOn(StateService, 'setStatisticsDetails').and.callFake((details) => {
             stateMock.playground.statistics.details = details;
         });
@@ -952,6 +953,7 @@ describe('Statistics service', () => {
             $rootScope.$digest();
 
             //then
+            expect(StateService.setStatisticsLoading).toHaveBeenCalledWith(true);
             expect(StateService.setStatisticsPatterns).toHaveBeenCalledWith([
                 {
                     pattern: '',
@@ -984,6 +986,7 @@ describe('Statistics service', () => {
             $rootScope.$digest();
 
             //then
+            expect(StateService.setStatisticsLoading).toHaveBeenCalledWith(true);
             expect(StateService.setStatisticsPatterns).toHaveBeenCalledWith([
                 {
                     pattern: 'd-M-yyyy',
@@ -1021,6 +1024,7 @@ describe('Statistics service', () => {
             $rootScope.$digest();
 
             //then
+            expect(StateService.setStatisticsLoading).toHaveBeenCalledWith(true);
             expect(StateService.setStatisticsPatterns).toHaveBeenCalledWith([
                 {
                     pattern: 'Aa,/',
@@ -1054,6 +1058,7 @@ describe('Statistics service', () => {
             $rootScope.$digest();
 
             //then
+            expect(StateService.setStatisticsLoading).toHaveBeenCalledWith(true);
             expect(StateService.setStatisticsPatterns).toHaveBeenCalledWith([
                 {
                     pattern: ' aaaa ',
@@ -1083,6 +1088,7 @@ describe('Statistics service', () => {
             $rootScope.$digest();
 
             //then
+            expect(StateService.setStatisticsLoading).toHaveBeenCalledWith(true);
             expect(StateService.setStatisticsPatterns).toHaveBeenCalledWith([
                 {
                     pattern: 'Aa,/',

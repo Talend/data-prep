@@ -11,155 +11,117 @@
 
  ============================================================================*/
 
+import angular from 'angular';
+
 describe('InventoryCopyMove component', () => {
-    let scope;
-    let createElement;
-    let element;
-    let controller;
+	let scope;
+	let createElement;
+	let element;
+	let controller;
 
-    beforeEach(angular.mock.module('data-prep.inventory-copy-move'));
+	beforeEach(angular.mock.module('data-prep.inventory-copy-move'));
 
-    beforeEach(inject(($rootScope, $compile) => {
-        scope = $rootScope.$new();
-        scope.item = { name: 'my item' };
-        scope.initialFolder = { path: '0-folder1/1-folder11' };
+	beforeEach(inject(($rootScope, $compile) => {
+		scope = $rootScope.$new();
+		scope.item = { name: 'my item' };
+		scope.initialFolder = { path: '0-folder1/1-folder11' };
 
-        createElement = () => {
-            element = angular.element(
-                `<inventory-copy-move
+		createElement = () => {
+			element = angular.element(
+				`<inventory-copy-move
                     initial-folder="initialFolder"
                     item="item"
-                    on-copy="copy(item, destination, name)"
-                    on-move="move(item, destination, name)"
                 ></inventory-copy-move>`
-            );
+			);
+			$compile(element)(scope);
+			scope.$digest();
 
-            $compile(element)(scope);
-            scope.$digest();
+			controller = element.controller('inventoryCopyMove');
+		};
+	}));
 
-            controller = element.controller('inventoryCopyMove');
-        };
-    }));
+	beforeEach(inject(($q, FolderService) => {
+		spyOn(FolderService, 'tree').and.returnValue($q.when({ folder: { id: '1' }, children: [] }));
+	}));
+	afterEach(() => {
+		scope.$destroy();
+		element.remove();
+	});
 
-    beforeEach(inject(($q, FolderService) => {
-        spyOn(FolderService, 'tree').and.returnValue($q.when({ folder: { id: '1' }, children: [] }));
-    }));
+	describe('render', () => {
+		it('should render copy/move elements', () => {
+			// when
+			createElement();
+			scope.$digest();
 
-    afterEach(() => {
-        scope.$destroy();
-        element.remove();
-    });
+			// then
+			expect(element.find('folder-selection').length).toBe(1);
+			expect(element.find('input#copy-move-name-input').length).toBe(1);
+			expect(element.find('button').length).toBe(3);
+		});
+	});
 
-    describe('render', () => {
-        it('should render copy/move elements', () => {
-            //when
-            createElement();
-            scope.$digest();
+	describe('form', () => {
+		it('should disable submit buttons when form is invalid', () => {
+			// given
+			createElement();
+			expect(element.find('#copy-move-cancel-btn').eq(0).attr('disabled')).toBeFalsy();
+			expect(element.find('#copy-move-copy-btn').eq(0).attr('disabled')).toBeFalsy();
+			expect(element.find('#copy-move-move-btn').eq(0).attr('disabled')).toBeFalsy();
 
-            //then
-            expect(element.find('folder-selection').length).toBe(1);
-            expect(element.find('input#copy-move-name-input').length).toBe(1);
-            expect(element.find('button').length).toBe(3);
-        });
-    });
+			// when
+			controller.newName = '';
+			scope.$digest();
 
-    describe('form', () => {
-        it('should disable submit buttons when form is invalid', () => {
-            //given
-            createElement();
-            const cancelBtn = element.find('#copy-move-cancel-btn').eq(0);
-            const copyBtn = element.find('#copy-move-copy-btn').eq(0);
-            const moveBtn = element.find('#copy-move-move-btn').eq(0);
+			// then
+			expect(controller.copyMoveForm.$invalid).toBeTruthy();
+			expect(element.find('#copy-move-cancel-btn').eq(0).attr('disabled')).toBeFalsy();
+			expect(element.find('#copy-move-copy-btn').eq(0).attr('disabled')).toBe('disabled');
+			expect(element.find('#copy-move-move-btn').eq(0).attr('disabled')).toBe('disabled');
+		});
 
-            expect(cancelBtn.attr('disabled')).toBeFalsy();
-            expect(copyBtn.find('button').attr('disabled')).toBeFalsy();
-            expect(moveBtn.find('button').attr('disabled')).toBeFalsy();
+		describe('move', () => {
+			beforeEach(() => {
+				createElement();
+			});
 
-            //when
-            controller.newName = '';
-            scope.$digest();
+			it('should disable submit buttons while moving', () => {
+				// given
+				expect(element.find('#copy-move-cancel-btn').eq(0).attr('disabled')).toBeFalsy();
+				expect(element.find('#copy-move-copy-btn').eq(0).attr('disabled')).toBeFalsy();
+				expect(element.find('#copy-move-move-btn').eq(0).attr('disabled')).toBeFalsy();
 
-            //then
-            expect(controller.copyMoveForm.$invalid).toBe(true);
-            expect(cancelBtn.attr('disabled')).toBeFalsy();
-            expect(copyBtn.find('button').attr('disabled')).toBe('disabled');
-            expect(moveBtn.find('button').attr('disabled')).toBe('disabled');
-        });
+				// when
+				controller.isMoving = true;
+				scope.$digest();
 
-        describe('move', () => {
-            beforeEach(() => {
-                createElement();
-                controller.move = jasmine.createSpy('move');
-            });
+				// then
+				expect(element.find('#copy-move-cancel-btn').eq(0).attr('disabled')).toBe('disabled');
+				expect(element.find('#copy-move-copy-btn').eq(0).attr('disabled')).toBe('disabled');
+				expect(element.find('#copy-move-move-btn').eq(0).attr('disabled')).toBe('disabled');
+			});
+		});
 
-            it('should move item on move button click', () => {
-                //given
-                const moveBtn = element.find('#copy-move-move-btn').eq(0);
+		describe('copy', () => {
+			beforeEach(() => {
+				createElement();
+			});
 
-                //when
-                moveBtn.click();
+			it('should disable submit buttons while copying', () => {
+				// given
+				expect(element.find('#copy-move-cancel-btn').eq(0).attr('disabled')).toBeFalsy();
+				expect(element.find('#copy-move-copy-btn').eq(0).attr('disabled')).toBeFalsy();
+				expect(element.find('#copy-move-move-btn').eq(0).attr('disabled')).toBeFalsy();
 
-                //then
-                expect(controller.move).toHaveBeenCalled();
-            });
+				// when
+				controller.isCopying = true;
+				scope.$digest();
 
-            it('should disable submit buttons while moving', () => {
-                //given
-                const cancelBtn = element.find('#copy-move-cancel-btn').eq(0);
-                const copyBtn = element.find('#copy-move-copy-btn').eq(0);
-                const moveBtn = element.find('#copy-move-move-btn').eq(0);
-
-                expect(cancelBtn.attr('disabled')).toBeFalsy();
-                expect(copyBtn.find('button').attr('disabled')).toBeFalsy();
-                expect(moveBtn.find('button').attr('disabled')).toBeFalsy();
-
-                //when
-                controller.isMoving = true;
-                scope.$digest();
-
-                //then
-                expect(cancelBtn.attr('disabled')).toBe('disabled');
-                expect(copyBtn.find('button').attr('disabled')).toBe('disabled');
-                expect(moveBtn.find('button').attr('disabled')).toBe('disabled');
-            });
-        });
-
-        describe('copy', () => {
-            beforeEach(() => {
-                createElement();
-                controller.copy = jasmine.createSpy('copy');
-            });
-
-            it('should copy item on copy button click', () => {
-                //given
-                const copyBtn = element.find('#copy-move-copy-btn').eq(0);
-
-                //when
-                copyBtn.click();
-
-                //then
-                expect(controller.copy).toHaveBeenCalled();
-            });
-
-            it('should disable submit buttons while copying', () => {
-                //given
-                const cancelBtn = element.find('#copy-move-cancel-btn').eq(0);
-                const copyBtn = element.find('#copy-move-copy-btn').eq(0);
-                const moveBtn = element.find('#copy-move-move-btn').eq(0);
-
-                expect(cancelBtn.attr('disabled')).toBeFalsy();
-                expect(copyBtn.find('button').attr('disabled')).toBeFalsy();
-                expect(moveBtn.find('button').attr('disabled')).toBeFalsy();
-
-                //when
-                controller.isCopying = true;
-                scope.$digest();
-
-                //then
-                expect(cancelBtn.attr('disabled')).toBe('disabled');
-                expect(copyBtn.find('button').attr('disabled')).toBe('disabled');
-                expect(moveBtn.find('button').attr('disabled')).toBe('disabled');
-            });
-        });
-    });
+				// then
+				expect(element.find('#copy-move-cancel-btn').eq(0).attr('disabled')).toBe('disabled');
+				expect(element.find('#copy-move-copy-btn').eq(0).attr('disabled')).toBe('disabled');
+				expect(element.find('#copy-move-move-btn').eq(0).attr('disabled')).toBe('disabled');
+			});
+		});
+	});
 });

@@ -84,6 +84,10 @@ public class StatisticsNodesBuilder {
         return this;
     }
 
+    public Map<Action, ActionDefinition> getActionToMetadata() {
+        return actionToMetadata;
+    }
+
     public Node buildPreStatistics() {
         // TODO remove this and fix tests
         if (analyzerService == null) {
@@ -167,8 +171,8 @@ public class StatisticsNodesBuilder {
         checkInputs();
 
         final ActionsStaticProfiler profiler = new ActionsStaticProfiler(actionRegistry);
-        actionToMetadata = profiler.getActionMetadataByAction(actions);
-        actionsProfile = profiler.profile(columns, actions, actionToMetadata);
+        actionsProfile = profiler.profile(columns, actions);
+        actionToMetadata = actionsProfile.getMetadataByAction();
     }
 
     private void checkInputs() {

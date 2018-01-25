@@ -17,4 +17,4 @@ Feature: Exporting preparation on XLSX format
       | preparationName      | phoneNumber_preparation      |
       | dataSetName          | phoneNumber_dataset          |
       | fileName             | phoneNumber_result.xlsx      |
-    Then I check that XLSX "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file
+    Then I check that "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file

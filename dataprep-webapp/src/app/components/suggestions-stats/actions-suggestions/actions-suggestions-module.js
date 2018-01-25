@@ -13,7 +13,6 @@
 
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
-import LOADER_MODULE from '../../loader/loader.module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_STATE_MODULE from '../../../services/state/state-module';
 import SERVICES_TRANSFORMATION_MODULE from '../../../services/transformation/transformation-module';
@@ -34,7 +33,6 @@ const MODULE_NAME = 'data-prep.actions-suggestions';
 angular.module(MODULE_NAME,
 	[
 		uiRouter,
-		LOADER_MODULE,
 		TALEND_WIDGET_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_TRANSFORMATION_MODULE,

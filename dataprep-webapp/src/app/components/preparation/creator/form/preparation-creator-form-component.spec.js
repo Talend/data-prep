@@ -137,41 +137,41 @@ describe('Preparation creator form component', () => {
             it('should render right panel spinner', () => {
                 //when
                 createElement();
-                expect(element.find('.fetching-spinner').length).toBe(0);
+                expect(element.find('loader').length).toBe(0);
                 controller.isFetchingDatasets = true;
                 scope.$digest();
 
                 //then
-                expect(element.find('.fetching-spinner').length).toBe(1);
+                expect(element.find('loader').length).toBe(1);
                 expect(element.find('.inventory-item-row').length).toBe(0);
             });
 
-            it('should hide right panel spinner', () => {
+            it('should hide right panel loader', () => {
                 //given
                 createElement();
                 controller.isFetchingDatasets = true;
                 scope.$digest();
-                expect(element.find('.fetching-spinner').length).toBe(1);
+                expect(element.find('loader').length).toBe(1);
 
                 controller.isFetchingDatasets = false;
                 scope.$digest();
 
                 //then
-                expect(element.find('.fetching-spinner').length).toBe(0);
+                expect(element.find('loader').length).toBe(0);
             });
 
-            it('should hide right panel spinner and show datasets', () => {
+            it('should hide right panel loader and show datasets', () => {
                 //given
                 createElement();
                 controller.isFetchingDatasets = true;
                 scope.$digest();
-                expect(element.find('.fetching-spinner').length).toBe(1);
+                expect(element.find('loader').length).toBe(1);
 
                 controller.isFetchingDatasets = false;
                 scope.$digest();
 
                 //then
-                expect(element.find('.fetching-spinner').length).toBe(0);
+                expect(element.find('loader').length).toBe(0);
                 expect(element.find('.inventory-item-row').length).toBe(2);
             });
 

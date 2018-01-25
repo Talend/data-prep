@@ -23,6 +23,7 @@ export function StatisticsStateService() {
 		setHistogramActiveLimits,
 		setPatterns,
 		setFilteredPatterns,
+		setLoading,
 
 		reset,
 	};
@@ -61,6 +62,10 @@ export function StatisticsStateService() {
 		statisticsState.filteredPatterns = filteredPatterns;
 	}
 
+	function setLoading(loading) {
+		statisticsState.loading = loading;
+	}
+
 	function reset() {
 		statisticsState.boxPlot = null;
 		statisticsState.rangeLimits = null;
@@ -70,5 +75,6 @@ export function StatisticsStateService() {
 		statisticsState.activeLimits = null;
 		statisticsState.patterns = null;
 		statisticsState.filteredPatterns = null;
+		statisticsState.loading = false;
 	}
 }

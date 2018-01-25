@@ -11,11 +11,6 @@
 
  ============================================================================*/
 
-const i18n = {
-	'REFRESHING_WAIT': 'refreshing, please wait…',
-	'CUSTOM_REFRESHING_WAIT': 'custom…',
-};
-
 describe('Loader component', () => {
 	let scope;
 	let element;
@@ -23,16 +18,11 @@ describe('Loader component', () => {
 
 	beforeEach(angular.mock.module('data-prep.loader'));
 
-	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', i18n);
-		$translateProvider.preferredLanguage('en');
-	}));
-
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);
 
 		createElement = () => {
-			const html = `<loader translate-once-key="translateOnceKey"></loader>`;
+			const html = `<loader></loader>`;
 			element = $compile(html)(scope);
 			scope.$digest();
 		};
@@ -43,28 +33,11 @@ describe('Loader component', () => {
 		element.remove();
 	});
 
-	describe('render', () => {
+	it('should render loader', () => {
+		// given
+		createElement();
 
-		it('should render loader', () => {
-			// given
-			createElement();
-
-			// then
-			expect(element.length).toBe(1);
-			expect(element.text().trim()).toBe(i18n.REFRESHING_WAIT);
-		});
-
-		it('should render another key', () => {
-			// given
-			scope.translateOnceKey = 'CUSTOM_REFRESHING_WAIT';
-			createElement();
-
-			// when
-			scope.$digest();
-
-			// then
-			expect(element.length).toBe(1);
-			expect(element.text().trim()).toBe(i18n.CUSTOM_REFRESHING_WAIT);
-		});
+		// then
+		expect(element.length).toBe(1);
 	});
 });

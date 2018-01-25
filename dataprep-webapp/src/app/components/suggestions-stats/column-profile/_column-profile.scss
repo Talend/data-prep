@@ -12,22 +12,13 @@
   ============================================================================*/
 
 .column-profile {
-	.loading-container {
-		position: relative;
-		width: 100%;
+	&,
+	> * {
 		height: 100%;
+	}
 
-		#chart-ghost-img {
-			position: absolute;
-		}
-
-		loader {
-			width: 200px;
-			position: absolute;
-			top: 100px;
-			right: 0;
-			left: 0;
-			margin: auto;
-		}
+	img {
+		position: absolute;
+		opacity: 0.25;
 	}
 }

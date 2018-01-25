@@ -37,9 +37,9 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('DatasetSheetPreviewService', DatasetSheetPreviewService)
-    .service('DatasetRestService', DatasetRestService)
-    .service('DatasetListService', DatasetListService)
-    .service('DatasetService', DatasetService);
+	.service('DatasetSheetPreviewService', DatasetSheetPreviewService)
+	.service('DatasetRestService', DatasetRestService)
+	.service('DatasetListService', DatasetListService)
+	.service('DatasetService', DatasetService);
 
 export default MODULE_NAME;

@@ -44,13 +44,12 @@
 .panels {
 	display: flex;
 	flex-direction: row;
-	min-height: 40vh;
+	height: 40vh;
 
 	.filters-left-panel {
-		width: 250px;
+		flex: 0;
 		border: 1px solid $light-gray;
 		flex-basis: 250px;
-		max-height: 45vh;
 		overflow-y: auto;
 
 		display: flex;
@@ -59,7 +58,8 @@
 	}
 
 	.inventory-list {
-		height: 40vh;
+		flex: 1;
+		display: flex;
 		overflow-y: auto;
 
 		.empty-message {

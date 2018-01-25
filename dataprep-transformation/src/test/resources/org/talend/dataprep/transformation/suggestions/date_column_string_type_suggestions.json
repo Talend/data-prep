@@ -961,7 +961,7 @@
         "canBeBlank": true,
         "placeHolder": "",
         "default": "false",
-        "description": "Defines greedy level. If checked, it will overwrite the entire cell, if not, it will only replace the part of the value that matches.",
+        "description": "Defines greedy level. If checked, it will overwrite the entire cell, if not, it will only replace the part of the value that matches",
         "label": "Overwrite entire cell"
       }
     ],

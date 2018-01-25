@@ -1,10 +1,9 @@
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -14,9 +13,12 @@ import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import com.jayway.restassured.response.Response;
+
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 
 import static org.junit.Assert.fail;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
@@ -60,7 +62,7 @@ public class PreparationStep extends DataPrepStep {
     }
 
     @Given("^A preparation with the following parameters exists :$")
-    public void checkPreparation(DataTable dataTable) throws IOException {
+    public void checkPreparation(DataTable dataTable) {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(params.get(PREPARATION_NAME)));
         PreparationDetails prepDet = getPreparationDetails(prepId);

@@ -14,8 +14,11 @@ import org.talend.dataprep.qa.util.export.ExportType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -50,22 +53,14 @@ public class ExportPreparationStep extends DataPrepStep {
         context.storePreparationExportFormat(suffixName(preparationName), parameters);
     }
 
-    @Then("^I received for preparation the \"(.*)\" the right export format list :$")
-    public void thenIReceievedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
-
-        List<String> paramsList = dataTable.asList(String.class);
+    @Then("^I received for the preparation \"(.*)\" the export formats list with:$")
+    public void thenIReceivedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
         ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(suffixName(preparationName));
-        // Can't compare the collection's sizes because OS test are also executed by EE-helper
-        // Can't iterate directly on the API result for the same reason
-        // TODO : improve this part if a way to exclude some OS tests feature on EE execution context
-        for (String exportId : paramsList) {
-            for (ExportFormatMessage exportCurrentFormat : exportFormats) {
-                if (exportCurrentFormat.getId().equals(exportId)) {
-                    final InputStream expectedJson = ExportPreparationStep.class.getResourceAsStream("export/" + exportId + ".json");
-                    ExportFormatMessage expectedExportFormat = objectMapper.readValue(expectedJson, ExportFormatMessage.class);
-                    Assert.assertEquals(expectedExportFormat, exportCurrentFormat);
-                }
-            }
-        }
+
+        List<String> exportFormatsIds = Arrays.stream(exportFormats) //
+                .map(ExportFormatMessage::getId) //
+                .collect(Collectors.toList());
+
+        Assert.assertTrue(exportFormatsIds.containsAll(dataTable.asList(String.class)));
     }
 }

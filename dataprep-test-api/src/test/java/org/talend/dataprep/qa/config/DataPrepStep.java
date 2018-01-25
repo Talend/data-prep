@@ -13,10 +13,6 @@
 
 package org.talend.dataprep.qa.config;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -60,15 +56,13 @@ public abstract class DataPrepStep {
      *
      * @param preparationId the preparation id.
      * @return the preparation details.
-     * @throws IOException
      */
-    protected PreparationDetails getPreparationDetails(String preparationId) throws IOException {
-        PreparationDetails preparationDetails = null;
+    protected PreparationDetails getPreparationDetails(String preparationId) {
         Response response = api.getPreparationDetails(preparationId);
-        response.then().statusCode(200);
-        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        preparationDetails = objectMapper.readValue(content, PreparationDetails.class);
-        return preparationDetails;
+        response.then()
+                .statusCode(200);
+
+        return response.as(PreparationDetails.class);
     }
 
 }

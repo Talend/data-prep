@@ -47,6 +47,8 @@
                  class="empty-panel-msg"
                  translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
         </sc-tabs-item>
+
+
         <sc-tabs-item tab-title="{{'ACTIONS_TAB_ROW' | translate}}">
             <div ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedLine">
                 <actions-list class="action-suggestion-tab-items"
@@ -62,8 +64,17 @@
                      translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
             </div>
         </sc-tabs-item>
+
         <sc-tabs-item tab-title="{{'ACTIONS_TAB_TABLE' | translate}}">
-            <div>
+            <form class="action-search-container">
+                <input type="search"
+                       class="form-control action-search"
+                       id="action-suggestions-search"
+                       translate-once-placeholder="FIND_FUNCTION"
+                       ng-model="actionsSuggestionsCtrl.state.playground.suggestions.dataset.searchActionString"
+                       ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                       ng-change="actionsSuggestionsCtrl.TransformationService.filter('dataset', actionsSuggestionsCtrl.state.playground.suggestions.dataset.searchActionString)"
+                       talend-search-input>
                 <actions-list class="action-suggestion-tab-items"
                               actions="actionsSuggestionsCtrl.state.playground.suggestions.dataset.filteredTransformations"
                               scope="dataset"
@@ -71,8 +82,13 @@
                               should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
                               scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom">
                 </actions-list>
-            </div>
+                <div ng-if="actionsSuggestionsCtrl.state.playground.suggestions.dataset.filteredTransformations.length === 0 && actionsSuggestionsCtrl.state.playground.suggestions.dataset.searchActionString"
+                     class="empty-message action-message">
+                    <span translate-once="NO_ACTION_AVAILABLE"></span>
+                </div>
+            </form>
         </sc-tabs-item>
+
     </sc-tabs>
     <form ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
           class="filters-actions-form">

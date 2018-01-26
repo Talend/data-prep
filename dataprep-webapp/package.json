@@ -26,10 +26,10 @@
     "stats": "webpack --config config/webpack.config.dev.js --profile -j > stats.json"
   },
   "dependencies": {
-    "@talend/bootstrap-theme": "0.148.0",
-    "@talend/icons": "0.148.0",
-    "@talend/react-components": "0.148.0",
-    "@talend/react-forms": "0.148.0",
+    "@talend/bootstrap-theme": "0.149.0",
+    "@talend/icons": "0.149.0",
+    "@talend/react-components": "0.149.0",
+    "@talend/react-forms": "0.149.0",
     "X-SlickGrid": "git+https://github.com/ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf",
     "angular": "1.5.9",
     "angular-animate": "1.5.9",

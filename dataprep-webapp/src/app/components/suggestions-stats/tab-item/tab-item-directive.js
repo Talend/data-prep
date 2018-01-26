@@ -24,6 +24,7 @@ export default function TabItem($timeout) {
 	'ngInject';
 
 	return {
+		transclude: true,
 		restrict: 'E',
 		templateUrl: template,
 		bindToController: true,
@@ -31,6 +32,9 @@ export default function TabItem($timeout) {
 		controller: 'TabItemCtrl',
 		scope: {
 			scope: '@',
+			tabTitle: '@',
+			isDefault: '@',
+			disableSearch: '@',
 		},
 		link: (scope, iElement, iAttrs, ctrl) => {
 			// Scroll the actual tab container to the bottom of the element to display

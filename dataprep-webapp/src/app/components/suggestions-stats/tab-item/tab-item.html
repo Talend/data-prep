@@ -1,10 +1,11 @@
-<sc-tabs-item tab-title="{{tabItemCtrl.getTitleKey() | translate}}" is-default="true">
+<sc-tabs-item tab-title="{{tabItemCtrl.tabTitle}}" is-default="tabItemCtrl.isDefault">
     <form class="action-search-container"
           ng-if="tabItemCtrl.shouldRender()">
         <input type="search"
                class="form-control action-search"
                id="action-suggestions-search"
                translate-once-placeholder="FIND_FUNCTION"
+               ng-if="!tabItemCtrl.disableSearch"
                ng-model="tabItemCtrl.getSuggestionsState().searchActionString"
                ng-model-options="{debounce: { default: 300, blur: 0 }}"
                ng-change="tabItemCtrl.TransformationService.filter(tabItemCtrl.scope, tabItemCtrl.getSuggestionsState().searchActionString)"
@@ -23,5 +24,6 @@
     </form>
     <div ng-if="!tabItemCtrl.shouldRender()"
          class="empty-panel-msg"
-         translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
+         translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS">
+    </div>
 </sc-tabs-item>

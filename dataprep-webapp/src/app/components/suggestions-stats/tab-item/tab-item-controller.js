@@ -76,17 +76,6 @@ export default function TabItemCtrl(state, TransformationService) {
 			find(categoryItem.transformations, action => shouldRenderSuggestion(action));
 	};
 
-	vm.getTitleKey = function () {
-		switch (vm.scope) {
-		case 'dataset':
-			return 'ACTIONS_TAB_TABLE';
-		case 'column':
-			return 'ACTIONS_TAB_COLUMN';
-		case 'line':
-			return 'ACTIONS_TAB_ROW';
-		}
-	};
-
 	vm.shouldRender = function () {
 		switch (vm.scope) {
 		case 'dataset':
@@ -99,13 +88,6 @@ export default function TabItemCtrl(state, TransformationService) {
 	};
 
 	vm.getSuggestionsState = function () {
-		switch (vm.scope) {
-		case 'dataset':
-			return vm.state.playground.suggestions.dataset;
-		case 'column':
-			return vm.state.playground.suggestions.column;
-		case 'line':
-			return vm.state.playground.suggestions.line;
-		}
+		return vm.state.playground.suggestions[vm.scope];
 	};
 }

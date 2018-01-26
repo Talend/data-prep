@@ -12,7 +12,6 @@
   ~
   ~ ============================================================================
   -->
-
 <div class="actions-suggestions">
     <loader ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
             id="actions-ghost"
@@ -21,10 +20,9 @@
              class="actions-scope"
              selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
 
-        <tab-item scope="column"></tab-item>
-        <tab-item scope="line"></tab-item>
-        <tab-item scope="dataset"></tab-item>
-
+            <tab-item scope="column" tab-title="{{'ACTIONS_TAB_ROW' | translate}}" is-default="true"></tab-item>
+            <tab-item scope="line" tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" disable-search="true"></tab-item>
+            <tab-item scope="dataset" tab-title="{{'ACTIONS_TAB_TABLE' | translate}}"></tab-item>
     </sc-tabs>
     <form ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
           class="filters-actions-form">

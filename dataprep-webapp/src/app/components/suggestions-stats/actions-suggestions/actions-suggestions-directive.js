@@ -26,5 +26,8 @@ export default function ActionsSuggestions() {
 	return {
 		restrict: 'E',
 		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'actionsSuggestionsCtrl',
+		controller: 'ActionsSuggestionsCtrl',
 	};
 }

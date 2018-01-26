@@ -11,14 +11,14 @@
 
  ============================================================================*/
 
-describe('Actions suggestions controller', () => {
+describe('Tab item controller', () => {
     'use strict';
 
     let createController;
     let scope;
     let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.actions-suggestions', ($provide) => {
+    beforeEach(angular.mock.module('data-prep.tab-item', ($provide) => {
         stateMock = {
             playground: {
                 filter: {},
@@ -33,7 +33,7 @@ describe('Actions suggestions controller', () => {
     beforeEach(inject(($rootScope, $controller) => {
         scope = $rootScope.$new();
 
-        createController = () => $controller('ActionsSuggestionsCtrl', { $scope: scope });
+        createController = () => $controller('TabItemCtrl', { $scope: scope });
     }));
 
     describe('shouldRenderAction', () => {

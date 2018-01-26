@@ -28,6 +28,10 @@ export default function ActionsSuggestions() {
 		templateUrl: template,
 		bindToController: true,
 		controllerAs: 'actionsSuggestionsCtrl',
-		controller: 'ActionsSuggestionsCtrl',
+		controller(state, TransformationService) {
+			'ngInject';
+			this.TransformationService = TransformationService;
+			this.state = state;
+		},
 	};
 }

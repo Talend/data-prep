@@ -76,6 +76,13 @@ export default function TabItemCtrl(state, TransformationService) {
 			find(categoryItem.transformations, action => shouldRenderSuggestion(action));
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name shouldRender
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
+	 * @description Determine if tab content should be rendered
+	 * @returns {boolean} True if the tab content should be rendered, False otherwise
+	 */
 	vm.shouldRender = function () {
 		switch (vm.scope) {
 		case 'dataset':
@@ -87,10 +94,24 @@ export default function TabItemCtrl(state, TransformationService) {
 		}
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name getSuggestionsState
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
+	 * @description Returns the appropriated state depending on the current scope
+	 * @returns {Object} The appropriated state
+	 */
 	vm.getSuggestionsState = function () {
 		return vm.state.playground.suggestions[vm.scope];
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name getInvalidSelectionKey
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
+	 * @description Returns the translation key to be used when the selection is not valid.
+	 * @returns {string} The translation key
+	 */
 	vm.getInvalidSelectionKey = function () {
 		return `SELECT_${vm.scope.toUpperCase()}_TO_DISPLAY_ACTIONS`;
 	};

@@ -20,26 +20,11 @@ import template from './actions-suggestions.html';
  * @restrict E
  * @usage <actions-suggestions></actions-suggestions>
  * */
-export default function ActionsSuggestions($timeout) {
+export default function ActionsSuggestions() {
 	'ngInject';
 
 	return {
 		restrict: 'E',
 		templateUrl: template,
-		bindToController: true,
-		controllerAs: 'actionsSuggestionsCtrl',
-		controller: 'ActionsSuggestionsCtrl',
-		link: (scope, iElement, iAttrs, ctrl) => {
-            // Scroll the actual tab container to the bottom of the element to display
-			ctrl.scrollToBottom = function scrollToBottom() {
-				$timeout(function () {
-					const tabContainer = iElement.find('.action-suggestion-tab-items').eq(0);
-					const elementToDisplay = tabContainer.find('sc-accordion-item > .sc-accordion.open').eq(0);
-					tabContainer.animate({
-						scrollTop: elementToDisplay.position().top,
-					}, 500);
-				}, 300, false);
-			};
-		},
 	};
 }

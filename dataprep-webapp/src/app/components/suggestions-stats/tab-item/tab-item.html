@@ -23,7 +23,7 @@
         </div>
     </form>
     <div ng-if="!tabItemCtrl.shouldRender()"
-         class="empty-panel-msg"
-         translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS">
+         class="empty-panel-msg">
+         {{tabItemCtrl.getInvalidSelectionKey() | translate}}
     </div>
 </sc-tabs-item>

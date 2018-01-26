@@ -90,4 +90,8 @@ export default function TabItemCtrl(state, TransformationService) {
 	vm.getSuggestionsState = function () {
 		return vm.state.playground.suggestions[vm.scope];
 	};
+
+	vm.getInvalidSelectionKey = function () {
+		return `SELECT_${vm.scope.toUpperCase()}_TO_DISPLAY_ACTIONS`;
+	};
 }

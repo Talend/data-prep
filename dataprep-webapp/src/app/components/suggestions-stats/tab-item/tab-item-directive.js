@@ -34,7 +34,6 @@ export default function TabItem($timeout) {
 			scope: '@',
 			tabTitle: '@',
 			isDefault: '@',
-			disableSearch: '@',
 		},
 		link: (scope, iElement, iAttrs, ctrl) => {
 			// Scroll the actual tab container to the bottom of the element to display

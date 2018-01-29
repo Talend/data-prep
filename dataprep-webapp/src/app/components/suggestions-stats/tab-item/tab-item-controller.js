@@ -88,7 +88,8 @@ export default function TabItemCtrl(state, TransformationService) {
 		case 'dataset':
 			return true;
 		case 'column':
-			return vm.state.playground.grid.selectedColumns.length > 0;
+			return vm.state.playground.grid.selectedColumns &&
+				vm.state.playground.grid.selectedColumns.length > 0;
 		case 'line':
 			return !!vm.state.playground.grid.selectedLine;
 		}

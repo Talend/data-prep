@@ -20,7 +20,7 @@ import template from './actions-suggestions.html';
  * @restrict E
  * @usage <actions-suggestions></actions-suggestions>
  * */
-export default function ActionsSuggestions() {
+export default function ActionsSuggestions(state, TransformationService) {
 	'ngInject';
 
 	return {
@@ -28,10 +28,9 @@ export default function ActionsSuggestions() {
 		templateUrl: template,
 		bindToController: true,
 		controllerAs: 'actionsSuggestionsCtrl',
-		controller(state, TransformationService) {
-			'ngInject';
-			this.TransformationService = TransformationService;
+		controller() {
 			this.state = state;
+			this.TransformationService = TransformationService;
 		},
 	};
 }

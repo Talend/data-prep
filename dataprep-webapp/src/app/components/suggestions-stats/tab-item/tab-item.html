@@ -5,7 +5,6 @@
                class="form-control action-search"
                id="action-suggestions-search"
                translate-once-placeholder="FIND_FUNCTION"
-               ng-if="!tabItemCtrl.disableSearch"
                ng-model="tabItemCtrl.getSuggestionsState().searchActionString"
                ng-model-options="{debounce: { default: 300, blur: 0 }}"
                ng-change="tabItemCtrl.TransformationService.filter(tabItemCtrl.scope, tabItemCtrl.getSuggestionsState().searchActionString)"

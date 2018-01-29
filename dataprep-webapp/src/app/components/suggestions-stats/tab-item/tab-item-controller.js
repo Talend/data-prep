@@ -18,11 +18,11 @@ const FILTERED_COLUMN = 'column_filtered';
 
 /**
  * @ngdoc controller
- * @name data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+ * @name data-prep.tab-item.controller:TabItemCtrl
  * @description Actions suggestion controller
  * @requires data-prep.services.transformation.service:TransformationService
  */
-export default function ActionsSuggestionsCtrl(state, TransformationService) {
+export default function TabItemCtrl(state, TransformationService) {
 	'ngInject';
 
 	const vm = this;
@@ -46,7 +46,7 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
 	/**
 	 * @ngdoc method
 	 * @name shouldRenderAction
-	 * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
 	 * @param {object} categoryItem The category
 	 * @param {object} action The transformation to test
 	 * @description Determine if the transformation should be rendered.
@@ -63,7 +63,7 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
 	/**
 	 * @ngdoc method
 	 * @name shouldRenderCategory
-	 * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
 	 * @param {object} categoryItem The categories with their transformations
 	 * @description Determine if the category should be rendered.
 	 * The 'suggestions' category is rendered if it has transformations to render
@@ -74,5 +74,46 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
 		// render Suggestions if one of the transformations should be rendered
 		return categoryItem.category !== SUGGESTIONS ||
 			find(categoryItem.transformations, action => shouldRenderSuggestion(action));
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name shouldRender
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
+	 * @description Determine if tab content should be rendered
+	 * @returns {boolean} True if the tab content should be rendered, False otherwise
+	 */
+	vm.shouldRender = function () {
+		switch (vm.scope) {
+		case 'dataset':
+			return true;
+		case 'column':
+			return vm.state.playground.grid.selectedColumns &&
+				vm.state.playground.grid.selectedColumns.length > 0;
+		case 'line':
+			return !!vm.state.playground.grid.selectedLine;
+		}
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name getSuggestionsState
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
+	 * @description Returns the appropriated state depending on the current scope
+	 * @returns {Object} The appropriated state
+	 */
+	vm.getSuggestionsState = function () {
+		return vm.state.playground.suggestions[vm.scope];
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name getInvalidSelectionKey
+	 * @methodOf data-prep.tab-item.controller:TabItemCtrl
+	 * @description Returns the translation key to be used when the selection is not valid.
+	 * @returns {string} The translation key
+	 */
+	vm.getInvalidSelectionKey = function () {
+		return `SELECT_${vm.scope.toUpperCase()}_TO_DISPLAY_ACTIONS`;
 	};
 }

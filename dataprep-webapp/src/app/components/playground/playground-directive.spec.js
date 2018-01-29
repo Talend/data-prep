@@ -132,6 +132,7 @@ describe('Playground directive', () => {
 					selectedLine: { '0001': '1' },
 				},
 				recipe: { current: { steps: [] } },
+				suggestions: {},
 			},
 			inventory: {
 				datasets: [],

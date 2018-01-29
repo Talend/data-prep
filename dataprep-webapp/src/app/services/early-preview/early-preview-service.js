@@ -28,7 +28,7 @@ const DELAY = 700;
  * @requires data-prep.services.recipe.service:RecipeService
  * @requires data-prep.services.playground.service:PreviewService
  */
-export default function EarlyPreviewService($timeout, state, RecipeService, PreviewService, StateService) {
+export default function EarlyPreviewService($timeout, state, RecipeService, PreviewService) {
 	'ngInject';
 	let previewTimeout;
 	let previewCancelerTimeout;

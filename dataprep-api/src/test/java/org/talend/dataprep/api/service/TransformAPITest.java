@@ -207,6 +207,7 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("dataset/dataset_TDP-402_expected.json");
+
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
 
@@ -298,8 +299,13 @@ public class TransformAPITest extends ApiServiceTestBase {
                 .get("/api/preparations/{id}/content?version=head", preparationId)
                 .asString();
 
-        final JsonNode rootNode = mapper.readTree(datasetContent);
-        final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
+        final String metadataContent = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/metadata?version=head", preparationId)
+                .asString();
+
+        final JsonNode rootNode = mapper.readTree(metadataContent);
+        final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(rootNode);
 
         assertThat(metadata.getRowMetadata().getColumns().isEmpty(), is(false));
         final ColumnMetadata column = metadata.getRowMetadata().getColumns().get(0);

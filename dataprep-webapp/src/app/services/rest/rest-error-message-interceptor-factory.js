@@ -47,7 +47,9 @@ export default function RestErrorMessageHandler($q, MessageService) {
 				return $q.reject(rejection);
 			}
 
-			if (status <= 0) {
+			// Because of CORS issue, server could return 0 status
+			// https://github.com/angular/angular.js/issues/2798
+			if (status < 0) {
 				MessageService.error('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 			}
 			else if (status === 500) {

@@ -35,7 +35,7 @@ describe('Rest message interceptor factory', () => {
 
 	it('should show alert when service is unavailable', inject(($rootScope, $http, MessageService) => {
 		//given
-		$httpBackend.expectGET('testService').respond(0);
+		$httpBackend.expectGET('testService').respond(-1);
 
 		//when
 		$http.get('testService');
@@ -44,6 +44,19 @@ describe('Rest message interceptor factory', () => {
 
 		//then
 		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
+	}));
+
+	it('should do nothing when service has missing CORS headers and status is 0', inject(($rootScope, $http, MessageService) => {
+		//given
+		$httpBackend.expectGET('testService').respond(0);
+
+		//when
+		$http.get('testService');
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).not.toHaveBeenCalled();
 	}));
 
 	it('should show toast on status 500', inject(($rootScope, $http, MessageService) => {

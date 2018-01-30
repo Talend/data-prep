@@ -621,6 +621,13 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-upgrade-common</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-transformation</artifactId>
                 <type>test-jar</type>
                 <version>${project.version}</version>

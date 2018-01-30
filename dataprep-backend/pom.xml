@@ -70,6 +70,8 @@
         <module>../dataprep-api</module>
         <module>../dataprep-maintenance</module>
         <module>../dataprep-test-api</module>
+        <module>../dataprep-upgrade-common</module>
+        <module>../dataprep-upgrade</module>
     </modules>
     <dependencyManagement>
         <dependencies>

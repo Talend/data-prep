@@ -1,0 +1,32 @@
+Division;Team;City/Area;State;Arena;Capacity;Coordinates;Founded;Joined
+Atlantic;Boston Celtics;Boston;MA;TD Garden;18,624;42.366303°N 71.062228°W;1946
+Atlantic;Brooklyn Nets;New York;NY;Barclays Center;17,732;40.68265°N 73.974689°W;1967*;1976
+Atlantic;New York Knicks;New York;NY;Madison Square Garden;19,812;40.750556°N 73.993611°W;1946
+Atlantic;Philadelphia 76ers;Philadelphia;PA;Wells Fargo Center;20,328;39.901111°N 75.171944°W;1946*;1949
+Atlantic;Toronto Raptors;Toronto;ON;Air Canada Centre;19,800;43.643333°N 79.379167°W;1995
+Central;Chicago Bulls;Chicago;IL;United Center;20,917;41.880556°N 87.674167°W;1966
+Central;Cleveland Cavaliers;Cleveland;OH;Quicken Loans Arena;20,562;41.496389°N 81.688056°W;1970
+Central;Detroit Pistons;Auburn Hills;MI;The Palace of Auburn Hills;21,231;42.696944°N 83.245556°W;1941*;1948
+Central;Indiana Pacers;Indianapolis;IN;Bankers Life Fieldhouse;18,165;39.763889°N 86.155556°W;1967;1976
+Central;Milwaukee Bucks;Milwaukee;WI;BMO Harris Bradley Center;18,717;43.043611°N 87.916944°W;1968
+Southeast;Atlanta Hawks;Atlanta;GA;Philips Arena;18,047;33.757222°N 84.396389°W;1946*;1949
+Southeast;Charlotte Hornets;Charlotte;NC;Time Warner Cable Arena;19,077;35.225°N 80.839167°W;1988*
+Southeast;Miami Heat;Miami;FL;American Airlines Arena;19,600;25.781389°N 80.188056°W;1988
+Southeast;Orlando Magic;Orlando;FL;Amway Center;18,846;28.539167°N 81.383611°W;1989
+Southeast;Washington Wizards;Washington;D.C.;Verizon Center;20,356;38.898056°N 77.020833°W;1961*
+Northwest;Denver Nuggets;Denver;CO;Pepsi Center;19,155;39.748611°N 105.0075°W;1967;1976
+Northwest;Minnesota Timberwolves;Minneapolis;MN;Target Center;19,356;44.979444°N 93.276111°W;1989
+Northwest;Oklahoma City Thunder;Oklahoma City;OK;Chesapeake Energy Arena;18,203;35.463333°N 97.515°W;1967*
+Northwest;Portland Trail Blazers;Portland;OR;Moda Center;19,441;45.531667°N 122.666667°W;1970
+Northwest;Utah Jazz;Salt Lake City;UT;Vivint Smart Home Arena;19,911;40.768333°N 111.901111°W;1974*
+Pacific;Golden State Warriors;Oakland;CA;Oracle Arena;19,596;37.750278°N 122.203056°W;1946*
+Pacific;Los Angeles Clippers;Los Angeles;CA;Staples Center;19,060;34.043056°N 118.267222°W;1970*
+Pacific;Los Angeles Lakers;Los Angeles;CA;Staples Center;18,997;34.043056°N 118.267222°W;1947*;1948
+Pacific;Phoenix Suns;Phoenix;AZ;Talking Stick Resort Arena;18,055;33.445833°N 112.071389°W;1968
+Pacific;Sacramento Kings;Sacramento;CA;Sleep Train Arena;17,317;38.649167°N 121.518056°W;1923*;1948
+Southwest;Dallas Mavericks;Dallas;TX;American Airlines Center;19,200;32.790556°N 96.810278°W;1980
+Southwest;Houston Rockets;Houston;TX;Toyota Center;18,055;29.750833°N 95.362222°W;1967*
+Southwest;Memphis Grizzlies;Memphis;TN;FedExForum;18,119;35.138333°N 90.050556°W;1995*
+Southwest;New Orleans Pelicans;New Orleans;LA;Smoothie King Center;16,867;29.948889°N 90.081944°W;2002*
+Southwest;San Antonio Spurs;San Antonio;TX;AT&T Center;18,581;29.426944°N 98.4375°W;1967*;1976
+

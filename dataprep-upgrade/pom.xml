@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+  ~  ============================================================================
+  ~
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~  ============================================================================
+  -->
+
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.talend.dataprep</groupId>
+        <artifactId>dataprep-upgrade-parent</artifactId>
+        <version>2.6.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>dataprep-upgrade</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-dataset</artifactId>
+            <classifier>lib</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-transformation</artifactId>
+            <classifier>lib</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-upgrade-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lordofthejars</groupId>
+            <artifactId>nosqlunit-mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

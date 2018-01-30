@@ -306,6 +306,11 @@
                 <version>${dataprep.core.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-upgrade-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.talend.daikon</groupId>
                 <artifactId>content-service-common</artifactId>
                 <version>${org.talend.daikon.version}</version>
@@ -641,6 +646,18 @@
                 <version>${httpclient.tests.version}</version>
                 <classifier>tests</classifier>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lordofthejars</groupId>
+                <artifactId>nosqlunit-mongodb</artifactId>
+                <version>0.10.0</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.fakemongo</groupId>
+                        <artifactId>fongo</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

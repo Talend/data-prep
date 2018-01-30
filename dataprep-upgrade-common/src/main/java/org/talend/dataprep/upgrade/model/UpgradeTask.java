@@ -27,7 +27,7 @@ public interface UpgradeTask extends Comparable<UpgradeTask> {
         /** Applied once per version per user. */
         USER,
         /** Applied once per version only. */
-        VERSION;
+        VERSION
     }
 
     /**

@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.talend.dataprep.upgrade.model.UpgradeTask;
 import org.talend.dataprep.upgrade.model.UpgradeTaskId;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
@@ -57,7 +56,7 @@ public class UpgradeServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        ReflectionTestUtils.setField(service, "tasks", tasks);
+        service.setTasks(tasks);
     }
 
     @After
@@ -78,7 +77,7 @@ public class UpgradeServiceTest {
         tasks.add(new MockUpgradeTask("50.4-PE", "fifth", 5, USER)); // 5
 
         // when
-        ReflectionTestUtils.invokeMethod(service, "sortAndCheckTasks");
+        service.sortAndCheckTasks();
 
         // then
         int i = 1;
@@ -101,7 +100,7 @@ public class UpgradeServiceTest {
         tasks.add(new MockUpgradeTask("1.3.0", "second bis", 2, USER)); // conflict
 
         // when
-        ReflectionTestUtils.invokeMethod(service, "sortAndCheckTasks");
+        service.sortAndCheckTasks();
     }
 
 

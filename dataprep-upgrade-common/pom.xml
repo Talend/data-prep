@@ -44,17 +44,8 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
@@ -63,26 +54,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
-            <scope>test</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>${spring-boot.version}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
 

@@ -50,7 +50,7 @@ public class UpgradeService {
      * Sort the tasks and make sure there is no conflict in the version / order.
      */
     @PostConstruct
-    private void sortAndCheckTasks() { // NOSONAR called by @PostConstruct annotation
+    void sortAndCheckTasks() { // NOSONAR called by @PostConstruct annotation
         Collections.sort(tasks);
 
         Map<String, List<Integer>> groupTasks = new HashMap<>();

@@ -61,13 +61,7 @@
 		flex: 1;
 		display: flex;
 		overflow-y: auto;
-
-		.empty-message {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100%;
-		}
+		position: relative;
 
 		.inventory-item-row {
 			display: flex;

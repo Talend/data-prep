@@ -70,6 +70,8 @@
         <module>../dataprep-api</module>
         <module>../dataprep-maintenance</module>
         <module>../dataprep-test-api</module>
+        <module>../dataprep-upgrade-common</module>
+        <module>../dataprep-upgrade</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -302,6 +304,11 @@
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-common</artifactId>
                 <version>${dataprep.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-upgrade-common</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.daikon</groupId>
@@ -614,6 +621,13 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-upgrade-common</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-transformation</artifactId>
                 <type>test-jar</type>
                 <version>${project.version}</version>
@@ -639,6 +653,18 @@
                 <version>${httpclient.tests.version}</version>
                 <classifier>tests</classifier>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lordofthejars</groupId>
+                <artifactId>nosqlunit-mongodb</artifactId>
+                <version>0.10.0</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.fakemongo</groupId>
+                        <artifactId>fongo</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

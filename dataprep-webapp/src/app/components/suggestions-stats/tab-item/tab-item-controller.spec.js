@@ -11,14 +11,14 @@
 
  ============================================================================*/
 
-describe('Actions suggestions controller', () => {
+describe('Tab item controller', () => {
     'use strict';
 
     let createController;
     let scope;
     let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.actions-suggestions', ($provide) => {
+    beforeEach(angular.mock.module('data-prep.tab-item', ($provide) => {
         stateMock = {
             playground: {
                 filter: {},
@@ -33,7 +33,7 @@ describe('Actions suggestions controller', () => {
     beforeEach(inject(($rootScope, $controller) => {
         scope = $rootScope.$new();
 
-        createController = () => $controller('ActionsSuggestionsCtrl', { $scope: scope });
+        createController = () => $controller('TabItemCtrl', { $scope: scope });
     }));
 
     describe('shouldRenderAction', () => {
@@ -146,45 +146,72 @@ describe('Actions suggestions controller', () => {
             expect(result).toBeTruthy();
         });
 
-        it('should render "suggestion" category when only 1 column is selected',
-            () => {
-                //given
-                stateMock.playground.filter.applyTransformationOnFilters = false;
-                stateMock.playground.grid.selectedColumns = [{}];
-                const categoryTransformations = {
-                    category: 'suggestions',
-                    transformations: [{ category: 'suggestions', actionScope: [] }],
-                };
-                const ctrl = createController();
+        it('should render "suggestion" category when only 1 column is selected', () => {
+            //given
+            stateMock.playground.filter.applyTransformationOnFilters = false;
+            stateMock.playground.grid.selectedColumns = [{}];
+            const categoryTransformations = {
+                category: 'suggestions',
+                transformations: [{ category: 'suggestions', actionScope: [] }],
+            };
+            const ctrl = createController();
 
-                //when
-                const result = ctrl.shouldRenderCategory(categoryTransformations);
+            //when
+            const result = ctrl.shouldRenderCategory(categoryTransformations);
 
-                //then
-                expect(result).toBeTruthy();
-            }
-        );
+            //then
+            expect(result).toBeTruthy();
+        });
 
-        it('should NOT render "suggestion" category on multi column selection without filter',
-            () => {
-                //given
-                stateMock.playground.filter.applyTransformationOnFilters = false;
-                stateMock.playground.grid.selectedColumns = [{}, {}];
-                const categoryTransformations = {
-                    category: 'suggestions',
-                    transformations: [
-                        { category: 'filtered', actionScope: ['column_filtered'] },
-                        { category: 'suggestions', actionScope: [] }
-                    ],
-                };
-                const ctrl = createController();
+        it('should NOT render "suggestion" category on multi column selection without filter', () => {
+            //given
+            stateMock.playground.filter.applyTransformationOnFilters = false;
+            stateMock.playground.grid.selectedColumns = [{}, {}];
+            const categoryTransformations = {
+                category: 'suggestions',
+                transformations: [
+                    { category: 'filtered', actionScope: ['column_filtered'] },
+                    { category: 'suggestions', actionScope: [] }
+                ],
+            };
+            const ctrl = createController();
 
-                //when
-                const result = ctrl.shouldRenderCategory(categoryTransformations);
+            //when
+            const result = ctrl.shouldRenderCategory(categoryTransformations);
 
-                //then
-                expect(result).toBeFalsy();
-            }
-        );
+            //then
+            expect(result).toBeFalsy();
+        });
+
+        it('should returns the appropriate invalid selection key', () => {
+            const ctrl = createController();
+
+            ctrl.scope = 'column';
+            expect(ctrl.getInvalidSelectionKey()).toBe('SELECT_COLUMN_TO_DISPLAY_ACTIONS');
+
+            ctrl.scope = 'line';
+            expect(ctrl.getInvalidSelectionKey()).toBe('SELECT_LINE_TO_DISPLAY_ACTIONS');
+        });
+
+        it('should returns the appropriate state', () => {
+            const columnState = { test: 42 };
+            const lineState = { test: 43 };
+            const datasetState = { test: 44 };
+            stateMock.playground.suggestions = {
+                column: columnState,
+                line: lineState,
+                dataset: datasetState,
+            };
+            const ctrl = createController();
+
+            ctrl.scope = 'column';
+            expect(ctrl.getSuggestionsState()).toBe(columnState);
+
+            ctrl.scope = 'line';
+            expect(ctrl.getSuggestionsState()).toBe(lineState);
+
+            ctrl.scope = 'dataset';
+            expect(ctrl.getSuggestionsState()).toBe(datasetState);
+        });
     });
 });

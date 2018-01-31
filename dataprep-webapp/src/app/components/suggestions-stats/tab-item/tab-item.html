@@ -1,0 +1,27 @@
+<sc-tabs-item tab-title="{{tabItemCtrl.tabTitle}}" is-default="tabItemCtrl.isDefault">
+    <form class="action-search-container"
+          ng-if="tabItemCtrl.shouldRender()">
+        <input type="search"
+               class="form-control action-search"
+               id="action-suggestions-search"
+               translate-once-placeholder="FIND_FUNCTION"
+               ng-model="tabItemCtrl.getSuggestionsState().searchActionString"
+               ng-model-options="{debounce: { default: 300, blur: 0 }}"
+               ng-change="tabItemCtrl.TransformationService.filter(tabItemCtrl.scope, tabItemCtrl.getSuggestionsState().searchActionString)"
+               talend-search-input>
+
+            <actions-list class="action-suggestion-tab-items"
+                      actions="tabItemCtrl.getSuggestionsState().filteredTransformations"
+                      scope="column"
+                      should-render-category="tabItemCtrl.shouldRenderCategory"
+                      should-render-action="tabItemCtrl.shouldRenderAction"
+                      scroll-to-bottom="tabItemCtrl.scrollToBottom"></actions-list>
+        <div ng-if="tabItemCtrl.getSuggestionsState().filteredTransformations.length === 0 && tabItemCtrl.getSuggestionsState().searchActionString"
+             class="empty-message action-message">
+            <span translate-once="NO_ACTION_AVAILABLE"></span>
+        </div>
+    </form>
+    <div ng-if="!tabItemCtrl.shouldRender()" class="empty-panel-msg">
+         {{tabItemCtrl.getInvalidSelectionKey() | translate}}
+    </div>
+</sc-tabs-item>

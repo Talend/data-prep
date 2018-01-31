@@ -187,22 +187,22 @@ export default class AppHeaderBarCtrl {
 		// onKeyDown
 		const onKeyDownAction = this.appSettings.actions[searchSettings.onKeyDown];
 		const onKeyDownActionDispatcher = onKeyDownAction && this.settingsActionsService.createDispatcher(onKeyDownAction);
-		this.searchOnKeyDown = (event, { focusedSectionIndex, focusedItemIndex, newFocusedSectionIndex, newFocusedItemIndex }) => {
+		this.searchOnKeyDown = (event, { highlightedItemIndex, newHighlightedItemIndex, highlightedSectionIndex, newHighlightedSectionIndex }) => {
 			switch (event.key) {
 			case 'ArrowDown':
 			case 'ArrowUp':
 				event.preventDefault();
 				onKeyDownActionDispatcher(event, {
-					focusedSectionIndex: newFocusedSectionIndex,
-					focusedItemIndex: newFocusedItemIndex,
+					focusedSectionIndex: newHighlightedSectionIndex,
+					focusedItemIndex: newHighlightedItemIndex,
 				});
 				break;
 			case 'Enter':
 				event.preventDefault();
-				if (focusedSectionIndex !== null && focusedItemIndex !== null) {
+				if (highlightedItemIndex !== null && highlightedItemIndex !== null) {
 					this.searchOnSelect(event, {
-						sectionIndex: focusedSectionIndex,
-						itemIndex: focusedItemIndex,
+						sectionIndex: highlightedSectionIndex,
+						itemIndex: highlightedItemIndex,
 					});
 				}
 				break;

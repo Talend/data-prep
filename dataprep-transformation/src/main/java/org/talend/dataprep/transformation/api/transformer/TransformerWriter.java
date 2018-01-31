@@ -95,11 +95,21 @@ public interface TransformerWriter extends AutoCloseable {
     }
 
     /**
-     * Close the data stream properly when all data is written or a stop signal is received. Not meant to cloase the OutputStream.
+     * Close the data stream properly when all data is written or a stop signal is received. Not meant to close the OutputStream.
      *
-     * @throws IOException
+     * @throws IOException if an unexpected error occurs.
      */
     default void close() throws IOException {
+        // default implementation to ease implementations development
+    }
+
+    /**
+     * Set the Header of the file after write enough lines.
+     *
+     * @param columns MetaData that contains the columns name.
+     * @throws IOException if an unexpected error occurs.
+     */
+    default void setHeader(RowMetadata columns) throws IOException {
         // default implementation to ease implementations development
     }
 

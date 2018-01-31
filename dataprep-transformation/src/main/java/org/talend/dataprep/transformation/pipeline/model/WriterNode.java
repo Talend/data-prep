@@ -24,11 +24,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.transformation.api.transformer.ConfiguredCacheWriter;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
-import org.talend.dataprep.transformation.pipeline.Monitored;
-import org.talend.dataprep.transformation.pipeline.Node;
-import org.talend.dataprep.transformation.pipeline.RuntimeNode;
-import org.talend.dataprep.transformation.pipeline.Signal;
-import org.talend.dataprep.transformation.pipeline.Visitor;
+import org.talend.dataprep.transformation.pipeline.*;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 public class WriterNode extends BasicNode implements Monitored {
@@ -41,10 +37,16 @@ public class WriterNode extends BasicNode implements Monitored {
 
     private final ContentCacheKey metadataKey;
 
+    private static final long DATASET_RECORDS_LIMIT = 10000;
+
+    private long nbRowsReceived = 0;
+
     /** Fall back raw metadata when no row (hence row metadata) is received. */
     private RowMetadata fallBackRowMetadata;
 
     private RowMetadata lastRowMetadata;
+
+    private boolean metaDataWrote = false;
 
     private boolean startRecords = false;
 
@@ -99,6 +101,10 @@ public class WriterNode extends BasicNode implements Monitored {
             if (row.shouldWrite()) {
                 writer.write(row);
                 super.receive(row, metadata);
+                if (!metaDataWrote && ++nbRowsReceived > DATASET_RECORDS_LIMIT) {
+                    writer.setHeader(lastRowMetadata);
+                    metaDataWrote = true;
+                }
             }
         } catch (IOException e) {
             LOGGER.error("Unable to write record.", e);

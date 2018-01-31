@@ -245,12 +245,6 @@ export default function PlaygroundService(
 	function loadPreparation(preparation, sampleType = 'HEAD') {
 		startLoader();
 		return PreparationService.getContent(preparation.id, 'head', sampleType)
-			.then((res) => {
-				if (res.status === 'INCOMPLETE') {
-					// loop
-				}
-				return res;
-			})
 			.then(data => reset.call(
 				this,
 				state.playground.dataset ? state.playground.dataset : { id: preparation.dataSetId },

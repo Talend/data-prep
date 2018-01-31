@@ -63,9 +63,7 @@ export default function PreparationRestService($http, RestURLs) {
      */
 	function getContent(preparationId, stepId, sampleType) {
 		const url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
-		return $http.get(url).then((res) => {
-			return res.status === 302 ? { status: 'INCOMPLETE' } : res.data;
-		});
+		return $http.get(url).then(res => res.data); 
 	}
 
 	/**

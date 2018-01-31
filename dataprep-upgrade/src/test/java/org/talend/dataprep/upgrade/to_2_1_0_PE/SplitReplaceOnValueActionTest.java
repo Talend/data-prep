@@ -65,8 +65,6 @@ public class SplitReplaceOnValueActionTest extends Base_2_1_0_PE_Test {
         // then
         final List<PreparationActions> prepActionsList = repository.list(PreparationActions.class).collect(Collectors.toList());
 
-        assertEquals(12, prepActionsList.size());
-
         int actionUpdated = 0;
         int actionNotUpdated = 0;
         for (PreparationActions prepActions : prepActionsList) {

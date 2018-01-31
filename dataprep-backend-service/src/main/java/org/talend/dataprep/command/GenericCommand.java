@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.command;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -54,6 +51,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 /**
  * Base Hystrix command request for all DataPrep commands.
@@ -375,7 +375,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      * @return the serialized actions
      */
     protected String serializeActions(final Collection<Action> stepActions) throws JsonProcessingException {
-        return "{\"actions\": " + objectMapper.writeValueAsString(stepActions) + "}";
+        return objectMapper.writer() //
+                .withRootName("actions") //
+                .writeValueAsString(stepActions);
     }
 
     // A intermediate builder for behavior definition.

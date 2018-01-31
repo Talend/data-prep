@@ -1016,7 +1016,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // create a preview of calculate time until action
         PreviewAddParameters previewAddParameters = new PreviewAddParameters();
-        previewAddParameters.setDatasetId(datasetId);
+//        previewAddParameters.setDatasetId(datasetId);
         previewAddParameters.setPreparationId(preparationId);
         previewAddParameters.setTdpIds(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
 

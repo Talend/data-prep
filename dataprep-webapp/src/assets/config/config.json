@@ -1,5 +1,5 @@
 {
-	"serverUrl": "http://localhost:8888",
+	"serverUrl": "http://10.42.10.99:8888",
 	"serverSignUrl": "http://10.42.10.99:8888",
 	"serverKeepAliveUrl": "",
 	"enableDebug": false,

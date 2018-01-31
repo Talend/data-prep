@@ -11,23 +11,16 @@
 
  ============================================================================*/
 
+import template from './folder-creator.html';
+
 /**
  * @ngdoc component
  * @name data-prep.folder-creator:folderCreator
  * @description This component renders add folder modal content
  * @usage <folder-creator></folder-creator>
  * */
-
 export default {
-	template: `
-		<talend-modal id="create-folder-modal"
-			fullscreen="false"
-			close-button="true"
-			state="$ctrl.state.home.folders.creator.isVisible"
-			ng-if="$ctrl.state.home.folders.creator.isVisible">
-			<folder-creator-form />
-		</talend-modal>
-	`,
+	templateUrl: template,
 	controller(state) {
 		'ngInject';
 		this.state = state;

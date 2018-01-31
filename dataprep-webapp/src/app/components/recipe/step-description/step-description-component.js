@@ -11,6 +11,7 @@
 
  ============================================================================*/
 
+import template from './step-description.html';
 import StepDescriptionCtrl from './step-description-controller';
 
 const StepDescription = {
@@ -19,7 +20,7 @@ const StepDescription = {
 		step: '<',
 	},
 	controller: StepDescriptionCtrl,
-	template: '<span ng-bind-html="$ctrl.stepDescription" class="step-description"></span>',
+	templateUrl: template,
 };
 
 export default StepDescription;

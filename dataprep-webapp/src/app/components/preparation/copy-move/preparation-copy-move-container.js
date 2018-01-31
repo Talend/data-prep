@@ -11,6 +11,7 @@
 
  ============================================================================*/
 
+import template from './preparation-copy-move.html';
 import PreparationCopyMoveCtrl from './preparation-copy-move-controller';
 
 /**
@@ -20,21 +21,7 @@ import PreparationCopyMoveCtrl from './preparation-copy-move-controller';
  * @restrict E
  */
 const PreparationCopyMoveContainer = {
-	template: `
-		<talend-modal fullscreen="false"
-              close-button="true"
-              ng-if="$ctrl.state.home.preparations.copyMove.isVisible"
-              state="$ctrl.state.home.preparations.copyMove.isVisible">
-		    <inventory-copy-move
-				initial-folder="$ctrl.state.inventory.homeFolder"
-				item="$ctrl.state.home.preparations.copyMove.preparation"
-				on-copy="$ctrl.copy(item, destination, name)"
-				on-move="$ctrl.move(item, destination, name)"
-				is-loading="$ctrl.state.home.preparations.copyMove.isTreeLoading"
-				tree="$ctrl.state.home.preparations.copyMove.tree">
-		    </inventory-copy-move>
-		</talend-modal>
-	`,
+	templateUrl: template,
 	controller: PreparationCopyMoveCtrl,
 };
 

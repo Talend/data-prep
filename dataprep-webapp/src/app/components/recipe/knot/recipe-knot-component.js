@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import template from './recipe-knot.html';
+
 /**
  * @ngdoc component
  * @name data-prep.recipe-knot.component:recipeKnot
@@ -44,21 +46,7 @@ const RecipeKnot = {
 		toBeSwitched: '<',
 		toggleStep: '&',
 	},
-	template: `
-    <div class="knot"
-        role="checkbox"
-        aria-checked="{{ $ctrl.inactive ? $ctrl.toBeSwitched : !$ctrl.toBeSwitched }}"
-        aria-disabled="{{ $ctrl.inactive }}"
-        aria-labelledby="{{ 'ENABLE_DISABLE_STEP' | translate }}"
-        ng-click="$ctrl.toggleStep()"
-        ng-mouseover="$ctrl.onHoverStart()"
-        ng-mouseleave="$ctrl.onHoverEnd()"
-        title="{{ $ctrl.inactive ? 'ENABLE_STEP' : 'DISABLE_STEP' | translate }}">
-            <div class="line" ng-class="{'no-line': !$ctrl.showTopLine}"></div>
-            <div ng-if="$ctrl.inactive" class="circle inactive-knot" ng-class="{'to-be-activated': $ctrl.toBeSwitched}"></div>
-            <div ng-if="!$ctrl.inactive" class="circle" ng-class="{'to-be-deactivated': $ctrl.toBeSwitched}"></div>
-            <div class="line bottom-line" ng-class="{'no-line': !$ctrl.showBottomLine}"></div>
-    <div>`,
+	templateUrl: template,
 };
 
 export default RecipeKnot;

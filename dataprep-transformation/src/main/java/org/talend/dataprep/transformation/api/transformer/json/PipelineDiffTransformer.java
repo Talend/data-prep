@@ -133,8 +133,6 @@ class PipelineDiffTransformer implements Transformer {
                 .withActions(actionParser.parse(actions)) //
                 .withInitialMetadata(rowMetadata, false) //
                 .withOutput(BasicNode::new) //
-                .withGlobalStatistics(true) //
-                .allowMetadataChange(true) //
                 .withStatisticsAdapter(adapter) //
                 .build();
     }

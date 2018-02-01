@@ -107,7 +107,7 @@ public class ActionStep extends DataPrepStep {
     }
 
     @Given("I update the first action with name \"(.*)\" on the preparation \"(.*)\" with the following parameters :")
-    public void updateStepWithSpecificAction(String actionName, String prepName, DataTable dataTable) throws IOException {
+    public void updateStepsWithSpecificAction(String actionName, String prepName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);

@@ -28,6 +28,7 @@ import static org.talend.dataprep.transformation.api.action.context.ActionContex
 import java.io.IOException;
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -156,6 +157,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
             final String columnId = parameters.get(COLUMN_ID.getKey());
             final RowMetadata lookupRowMetadata = rowMatcher.getRowMetadata();
             final RowMetadata rowMetadata = context.getRowMetadata();
+            colsToAdd = Lists.reverse(colsToAdd);
             colsToAdd.forEach(toAdd -> {
                 // create the new column
                 final String toAddColumnId = toAdd.getId();

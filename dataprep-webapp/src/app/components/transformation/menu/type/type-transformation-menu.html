@@ -26,7 +26,7 @@
                            ng-checked="$ctrl.currentDomain === semanticDomain.label"
                            ng-click="$ctrl.changeDomain(semanticDomain)"
                     />
-                    <span>{{ ::semanticDomain.label }} {{ semanticDomain.frequency }} %</span>
+                    <span>{{ ::semanticDomain.label }} {{ semanticDomain.frequency | number: 2 }} %</span>
                 </label>
             </div>
         </li>

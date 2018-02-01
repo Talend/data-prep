@@ -186,4 +186,14 @@ public class ActionStep extends DataPrepStep {
         Action parentAction = getActionsFromStoredAction(prepId, context.getAction(parentStepName)).get(0);
         return api.moveAction(prepId, action.id, parentAction.id);
     }
+
+    @Given("I remove the first action with name \"(.*)\" on the preparation \"(.*)\"")
+    public void removeActionFromPreparation(String actionName, String prepName) throws IOException {
+        String prepId = context.getPreparationId(suffixName(prepName));
+        Action foundAction = getFirstActionWithName(prepId, actionName);
+        Assert.assertTrue(foundAction != null);
+        // Remove action
+        Response response = api.deleteAction(prepId, foundAction.id);
+        response.then().statusCode(200);
+    }
 }

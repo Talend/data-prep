@@ -145,6 +145,20 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Remove an action within a preparation.
+     *
+     * @param preparationId the preparation id.
+     * @param actionId the id of the action to delete.
+     * @return the response.
+     */
+    public Response deleteAction(String preparationId, String actionId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .delete("/api/preparations/" + preparationId + "/actions/" + actionId);
+    }
+
+    /**
      * Upload a dataset into dataprep.
      *
      * @param filename the file to upload

@@ -106,6 +106,30 @@ public class ActionStep extends DataPrepStep {
         response.then().statusCode(200);
     }
 
+    @Given("I update the first action with name \"(.*)\" on the preparation \"(.*)\" with the following parameters :")
+    public void updateStepWithSpecificAction(String actionName, String prepName, DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        String prepId = context.getPreparationId(suffixName(prepName));
+        Action foundAction = getFirstActionWithName(prepId, actionName);
+        Assert.assertTrue(foundAction != null);
+        // Update action
+        Action action = new Action();
+        action.action = actionName;
+        action.id = foundAction.id;
+        action.parameters = foundAction.parameters.clone();
+        util.mapParamsToAction(params, action);
+        Response response = api.updateAction(prepId, action.id, action);
+        response.then().statusCode(200);
+    }
+
+    private Action getFirstActionWithName(String preparationId, String actionName) throws IOException {
+        PreparationDetails prepDet = getPreparationDetails(preparationId);
+        prepDet.updateActionIds();
+        return prepDet.actions.stream() //
+                .filter(action -> action.action.equals(actionName)) //
+                .findFirst().get();
+    }
+
     @And("^I move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
     public void successToMoveStep(String stepName, String parentStepName, String prepName) throws IOException {
         moveStep(stepName, parentStepName, suffixName(prepName)).then().statusCode(200);

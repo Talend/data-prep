@@ -25,6 +25,8 @@ public enum ActionParamEnum {
     REGION_CODE("regionCode","region_code"),
     MODE("mode","mode"),
     FORMAT_TYPE("formatType","format_type"),
+    OPERATOR("operator","operator"),
+    OPERAND("operand","operand"),
     CREATE_NEW_COLUMN("createNewColumn","create_new_column");
 
     private String name;

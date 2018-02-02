@@ -92,7 +92,6 @@ Feature: Perform an OS Smoke Test
     And I check that the preparation "10L3C_preparation" exists under the folder "/smoke/test"
     And I check that the preparations "10L3C_preparation_Copy" and "10L3C_preparation" have the same steps
 
-  @CleanAfter
   Scenario: Export and check the exported file
     # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
@@ -103,3 +102,8 @@ Feature: Perform an OS Smoke Test
       | csv_escape_character | "                 |
       | csv_enclosure_char   | "                 |
     Then I check that "10L3C_result.csv" temporary file equals "/data/10L3C_processed.csv" file
+
+  @CleanAfter
+  Scenario: Remove original preparation after copying the preparation
+    When I remove the preparation "10L3C_preparation"
+    Then I check that the preparation "10L3C_preparation" in the folder "/smoke/test" is removed the steps of the preparation "10L3C_preparation_Copy" still exists

@@ -19,7 +19,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
@@ -27,10 +26,13 @@ import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeActio
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -84,7 +86,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper"; //$NON-NLS-1$
 
-    private static final String US_REGION_CODE = "US";
+    protected static final String US_REGION_CODE = "US";
 
     private static final String FR_REGION_CODE = "FR";
 
@@ -234,7 +236,11 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType())) || Type.INTEGER.equals(Type.get(column.getType()));
+        List<String> semanticCategory = Stream.of(SemanticCategoryEnum.PHONE.getDisplayName(), SemanticCategoryEnum.US_PHONE.getDisplayName(), //
+                SemanticCategoryEnum.UK_PHONE.getDisplayName(), SemanticCategoryEnum.DE_PHONE.getDisplayName(), //
+                SemanticCategoryEnum.FR_PHONE.getDisplayName())
+                .collect(Collectors.toList());
+        return semanticCategory.contains(column.getType());
     }
 
     @Override

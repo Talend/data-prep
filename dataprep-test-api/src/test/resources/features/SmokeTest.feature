@@ -106,4 +106,4 @@ Feature: Perform an OS Smoke Test
   @CleanAfter
   Scenario: Remove original preparation after copying the preparation
     When I remove the preparation "10L3C_preparation"
-    Then I check that the preparation "10L3C_preparation" in the folder "/smoke/test" is removed the steps of the preparation "10L3C_preparation_Copy" still exists
+    Then I check that the preparation "10L3C_preparation" in the folder "/smoke/test" is removed and the steps of the preparation "10L3C_preparation_Copy" still exist

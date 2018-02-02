@@ -104,7 +104,7 @@ public class PreparationStep extends DataPrepStep {
         api.deletePreparation(prepId).then().statusCode(200);
     }
 
-    @Then("^I check that the preparation \"(.*)\" in the folder \"(.*)\" is removed the steps of the preparation \"(.*)\" still exists$")
+    @Then("^I check that the preparation \"(.*)\" in the folder \"(.*)\" is removed and the steps of the preparation \"(.*)\" still exist$")
     public void checkRemovePreparation(String oldPreparationName, String folder, String newPreparationName) throws IOException {
         Assert.assertEquals(0, checkPrepExistsInTheFolder(oldPreparationName, folder));
 

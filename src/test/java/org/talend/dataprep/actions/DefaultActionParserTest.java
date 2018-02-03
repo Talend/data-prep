@@ -488,8 +488,8 @@ public class DefaultActionParserTest {
         // Then
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
-        assertEquals("Sacramento", result1.get(2));
-        assertEquals("California", result1.get(3));
+        assertEquals("California", result1.get(2));
+        assertEquals("Sacramento", result1.get(3));
         assertEquals(4, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));
@@ -528,8 +528,8 @@ public class DefaultActionParserTest {
         // Then
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
-        assertEquals("SACRAMENTO", result1.get(2));
-        assertEquals("California", result1.get(3));
+        assertEquals("CALIFORNIA", result1.get(2));
+        assertEquals("Sacramento", result1.get(3));
         assertEquals(4, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));
@@ -572,8 +572,8 @@ public class DefaultActionParserTest {
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
         assertEquals("WEST", result1.get(2));
-        assertEquals("SACRAMENTO", result1.get(3));
-        assertEquals("California", result1.get(4));
+        assertEquals("CALIFORNIA", result1.get(3));
+        assertEquals("Sacramento", result1.get(4));
         assertEquals(5, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));

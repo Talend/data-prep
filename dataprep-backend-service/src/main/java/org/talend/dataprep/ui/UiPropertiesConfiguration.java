@@ -13,7 +13,6 @@
 package org.talend.dataprep.ui;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,7 +23,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @ConditionalOnProperty(prefix = "dataprep.ui.configuration.remote", name = "enabled", havingValue = "false", matchIfMissing = true)
-@ConfigurationProperties(prefix = "dataprep.ui")
+@ConfigurationProperties("dataprep.ui")
 public class UiPropertiesConfiguration implements UiConfiguration {
 
     /**
@@ -32,7 +31,7 @@ public class UiPropertiesConfiguration implements UiConfiguration {
      */
     private static final Logger LOGGER = getLogger(UiPropertiesConfiguration.class);
 
-    private Theme theme = new Theme();
+    private final Theme theme = new Theme();
 
     @PostConstruct
     public void init() {
@@ -45,7 +44,6 @@ public class UiPropertiesConfiguration implements UiConfiguration {
 
     public static class Theme {
 
-        @NotNull
         private boolean enabled;
 
         public boolean isEnabled() {
@@ -59,9 +57,5 @@ public class UiPropertiesConfiguration implements UiConfiguration {
 
     public Theme getTheme() {
         return theme;
-    }
-
-    public void setTheme(Theme theme) {
-        this.theme = theme;
     }
 }

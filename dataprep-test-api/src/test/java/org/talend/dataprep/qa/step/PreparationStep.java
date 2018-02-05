@@ -83,6 +83,30 @@ public class PreparationStep extends DataPrepStep {
         response.then().statusCode(200);
     }
 
+    @Then("^I copy the preparation \"(.*)\" with the following parameters :$")
+    public void copyPreparation(String preparationName, DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        String suffixedPreparationName = suffixName(params.get(NEW_PREPARATION_NAME));
+        List<Folder> folders = folderUtil.listFolders();
+        Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
+        String prepId = context.getPreparationId(suffixName(preparationName));
+        String newPreparationId = api.copyPreparation(prepId, destFolder.id, suffixedPreparationName)
+                .then().statusCode(200).extract().body().asString();
+
+        context.storePreparationRef(newPreparationId, suffixedPreparationName);
+    }
+
+    @And("I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")
+    public void checkPreparationsSteps(String preparation1, String preparation2) {
+        String prepId1 = context.getPreparationId(suffixName(preparation1));
+        String prepId2 = context.getPreparationId(suffixName(preparation2));
+        PreparationDetails prepDet1 = getPreparationDetails(prepId1);
+        PreparationDetails prepDet2 = getPreparationDetails(prepId2);
+
+        Assert.assertEquals(prepDet1.actions, prepDet2.actions);
+        Assert.assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
+    }
+
     @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
     public void checkExistPrep(String preparationName, String folder) throws IOException {
         String suffixedPreparationName = suffixName(preparationName);

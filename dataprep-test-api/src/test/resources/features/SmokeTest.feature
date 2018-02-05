@@ -77,6 +77,21 @@ Feature: Perform an OS Smoke Test
       | newPreparationName | 10L3C_preparation |
     Then I check that the preparation "10L3C_preparation" exists under the folder "/smoke/test"
 
+  Scenario: Copy a preparation
+    Given A preparation with the following parameters exists :
+      | preparationName | 10L3C_preparation |
+      | dataSetName     | 10L3C_dataset     |
+      | nbSteps         | 4                 |
+    And I create a folder with the following parameters :
+      | origin     | /          |
+      | folderName | smoke/test |
+    And I copy the preparation "10L3C_preparation" with the following parameters :
+      | destination        | /smoke     |
+      | newPreparationName | 10L3C_preparation_Copy |
+    Then I check that the preparation "10L3C_preparation_Copy" exists under the folder "/smoke"
+    And I check that the preparation "10L3C_preparation" exists under the folder "/smoke/test"
+    And I check that the preparations "10L3C_preparation_Copy" and "10L3C_preparation" have the same steps
+
   @CleanAfter
   Scenario: Export and check the exported file
     # escape and enclosure characters should be given because they can be empty

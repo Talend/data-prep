@@ -428,6 +428,25 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Copy a preparation from a folder to another.
+     *
+     * @param id the preparation id.
+     * @param folderDest the preparation destination folder.
+     * @param prepName the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response copyPreparation(String id, String folderDest, String prepName) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .when() //
+                .urlEncodingEnabled(false) //
+                .queryParam("newName", prepName) //
+                .queryParam("destination", folderDest) //
+                .post("/api/preparations/{id}/copy", id);
+    }
+
+    /**
      * Get the user information.
      *
      * @return the response.

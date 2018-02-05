@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import template from './widget-datetimepicker.html';
+
 /**
  * @ngdoc directive
  * @name talend.widget.directive:TalendDatetimePicker
@@ -32,12 +34,7 @@ export default function TalendDatetimePicker($timeout) {
 
 	return {
 		restrict: 'E',
-		template: `
-            <input type="text"
-                   class="datetimepicker"
-                   ng-model="ctrl.value"
-                   ng-blur="ctrl.onBlur()" />
-        `,
+		templateUrl: template,
 		scope: {
 			value: '=ngModel',
 			onSelect: '&',

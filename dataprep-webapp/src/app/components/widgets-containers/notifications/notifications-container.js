@@ -11,16 +11,12 @@
 
  ============================================================================*/
 
+import template from './notification.html';
 import NotificationsCtrl from './notifications-controller';
 
 
 const NotificationsContainer = {
-	template: `<pure-notification
-		id="$ctrl.id"
-		notifications="$ctrl.state.message.messages"
-		watch-depth="reference"
-		leaveFn="$ctrl.leaveFn"
-	/>`,
+	templateUrl: template,
 	bindings: {
 		id: '<',
 	},

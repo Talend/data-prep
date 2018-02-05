@@ -10,25 +10,14 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+
+import template from './actions-header.html';
+
 const ActionsHeader = {
-	template: `
-		<div class="actions-header" ng-switch="actionsHeaderCtrl.state.playground.grid.selectedColumns.length > 1">
-			<span class="title"
-				  title="{{actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name}}"
-				  ng-switch-when="false"
-				  ng-if="actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name">
-				{{actionsHeaderCtrl.state.playground.grid.selectedColumns[0].name}}
-			</span>
-			<span class="title"
-				  ng-switch-when="true"
-				  translate="MULTI_COLUMNS_SELECTED"
-				  translate-values="{nb: actionsHeaderCtrl.state.playground.grid.selectedColumns.length}">
-			</span>
-		</div>`,
+	templateUrl: template,
 	controllerAs: 'actionsHeaderCtrl',
 	controller(state) {
 		'ngInject';
-
 		this.state = state;
 	},
 };

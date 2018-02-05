@@ -12,6 +12,14 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.phonenumber;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +27,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
@@ -27,10 +34,8 @@ import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeActio
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -38,9 +43,18 @@ import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.COLUMN;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.CONSTANT_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.MODE_PARAMETER;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.DE_PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.FR_PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.UK_PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.US_PHONE;
 
 /**
  * Format a validated phone number to a specified format.
@@ -84,7 +98,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper"; //$NON-NLS-1$
 
-    private static final String US_REGION_CODE = "US";
+    protected static final String US_REGION_CODE = "US";
 
     private static final String FR_REGION_CODE = "FR";
 
@@ -234,7 +248,9 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType())) || Type.INTEGER.equals(Type.get(column.getType()));
+        return Stream.of(PHONE, US_PHONE, UK_PHONE, DE_PHONE, FR_PHONE) //
+                .map(SemanticCategoryEnum::getDisplayName) //
+                .anyMatch(s -> column.getType().equals(s));
     }
 
     @Override
@@ -244,11 +260,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     @Override
     public Set<Behavior> getBehavior() {
-        if (ScopeCategory.DATASET.equals(scope)) {
-            return EnumSet.of(Behavior.VALUES_ALL);
-        } else {
-            return EnumSet.of(Behavior.VALUES_COLUMN);
-        }
+        return EnumSet.of(DATASET.equals(scope) ? Behavior.VALUES_ALL : Behavior.VALUES_COLUMN);
     }
 
 }

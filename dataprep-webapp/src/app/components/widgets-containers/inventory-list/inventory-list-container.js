@@ -11,6 +11,7 @@
 
  ============================================================================*/
 
+import template from './inventory-list.html';
 import InventoryListCtrl from './inventory-list-controller';
 
 /**
@@ -18,16 +19,7 @@ import InventoryListCtrl from './inventory-list-controller';
  * @restrict E
  */
 const InventoryListContainer = {
-	template: `
-		<pure-list
-			id="$ctrl.id"
-			display-mode="$ctrl.displayMode"
-			list="$ctrl.listProps"
-			toolbar="$ctrl.toolbarProps"
-			watch-depth="reference"
-			virtualized="true"
-		/>
-	`,
+	templateUrl: template,
 	bindings: {
 		id: '<',
 		displayMode: '<',

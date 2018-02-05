@@ -29,9 +29,7 @@ public abstract class AbstractMultiScopeAction extends AbstractActionMetadata im
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-            if (checkColumnType(column)) {
-                apply(row, column.getId(), column.getId(), context);
-            }
+            apply(row, column.getId(), column.getId(), context);
         }
     }
 
@@ -43,7 +41,4 @@ public abstract class AbstractMultiScopeAction extends AbstractActionMetadata im
     /** apply will be Override by action and will contain the function */
     public abstract void apply(DataSetRow row, String columnId, String targetColumnId, ActionContext context);
 
-    public boolean checkColumnType(ColumnMetadata columnMetadata) {
-        return true;
-    }
 }

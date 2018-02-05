@@ -12,13 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.phonenumber;
 
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
-
-import java.io.IOException;
-import java.util.*;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -34,6 +27,14 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.*;
 
 public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneNumber> {
 
@@ -57,6 +58,15 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
     @Test
     public void testCategory() throws Exception {
         assertEquals(action.getCategory(Locale.US), ActionCategory.PHONE_NUMBER.getDisplayName(Locale.US));
+    }
+
+    @Test
+    public void should_accept_column() {
+        assertTrue(action.acceptField(getColumn(Type.STRING, PHONE)));
+        assertTrue(action.acceptField(getColumn(Type.STRING, US_PHONE)));
+        assertTrue(action.acceptField(getColumn(Type.STRING, UK_PHONE)));
+        assertTrue(action.acceptField(getColumn(Type.STRING, DE_PHONE)));
+        assertTrue(action.acceptField(getColumn(Type.STRING, FR_PHONE)));
     }
 
     @Test

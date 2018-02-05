@@ -1,11 +1,12 @@
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import cucumber.api.java.en.When;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -21,9 +22,7 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with preparation
@@ -92,8 +91,8 @@ public class PreparationStep extends DataPrepStep {
         List<Folder> folders = folderUtil.listFolders();
         Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
         String prepId = context.getPreparationId(suffixName(preparationName));
-        String newPreparationId = api.copyPreparation(prepId, destFolder.id, suffixedPreparationName)
-                .then().statusCode(200).extract().body().asString();
+        String newPreparationId = api.copyPreparation(prepId, destFolder.id, suffixedPreparationName).then().statusCode(200)
+                .extract().body().asString();
 
         context.storePreparationRef(newPreparationId, suffixedPreparationName);
     }
@@ -102,7 +101,7 @@ public class PreparationStep extends DataPrepStep {
     public void removePreparation(String preparationName) throws IOException {
         String prepId = context.getPreparationId(suffixName(preparationName));
         api.deletePreparation(prepId).then().statusCode(200);
-        context.removePreparationRef(prepId);
+        context.removePreparationRef(suffixName(preparationName));
     }
 
     @Then("^I check that the preparation \"(.*)\" doesn't exist in the folder \"(.*)\"$")

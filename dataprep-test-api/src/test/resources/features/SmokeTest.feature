@@ -86,7 +86,7 @@ Feature: Perform an OS Smoke Test
       | origin     | /          |
       | folderName | smoke/test |
     And I copy the preparation "10L3C_preparation" with the following parameters :
-      | destination        | /smoke     |
+      | destination        | /smoke                 |
       | newPreparationName | 10L3C_preparation_Copy |
     Then I check that the preparation "10L3C_preparation_Copy" exists under the folder "/smoke"
     And I check that the preparation "10L3C_preparation" exists under the folder "/smoke/test"
@@ -108,10 +108,10 @@ Feature: Perform an OS Smoke Test
     When I remove the preparation "10L3C_preparation"
     Then I check that the preparation "10L3C_preparation" doesn't exist in the folder "/smoke/test"
     When I export the preparation with parameters :
-      | exportType           | CSV               |
-      | preparationName      | 10L3C_preparation_Copy |
-      | dataSetName          | 10L3C_dataset     |
-      | fileName             | copied_10L3C_result.csv         |
-      | csv_escape_character | "                 |
-      | csv_enclosure_char   | "                 |
+      | exportType           | CSV                     |
+      | preparationName      | 10L3C_preparation_Copy  |
+      | dataSetName          | 10L3C_dataset           |
+      | fileName             | copied_10L3C_result.csv |
+      | csv_escape_character | "                       |
+      | csv_enclosure_char   | "                       |
     Then I check that "copied_10L3C_result.csv" temporary file equals "/data/10L3C_processed.csv" file

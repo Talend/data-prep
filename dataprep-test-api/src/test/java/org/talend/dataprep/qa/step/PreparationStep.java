@@ -102,17 +102,12 @@ public class PreparationStep extends DataPrepStep {
     public void removePreparation(String preparationName) throws IOException {
         String prepId = context.getPreparationId(suffixName(preparationName));
         api.deletePreparation(prepId).then().statusCode(200);
+        context.removePreparationRef(prepId);
     }
 
-    @Then("^I check that the preparation \"(.*)\" in the folder \"(.*)\" is removed and the steps of the preparation \"(.*)\" still exist$")
-    public void checkRemovePreparation(String oldPreparationName, String folder, String newPreparationName) throws IOException {
-        Assert.assertEquals(0, checkPrepExistsInTheFolder(oldPreparationName, folder));
-
-        String prepId = context.getPreparationId(suffixName(newPreparationName));
-        PreparationDetails prepDetail = getPreparationDetails(prepId);
-
-        List<String> copiedPrepSteps = ((PreparationDetails) context.getObject("copiedPrep")).steps;
-        Assert.assertTrue(prepDetail.steps.containsAll(copiedPrepSteps));
+    @Then("^I check that the preparation \"(.*)\" doesn't exist in the folder \"(.*)\"$")
+    public void checkPreparationNotExist(String preparationName, String folder) throws IOException {
+        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, folder));
     }
 
     @And("I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")

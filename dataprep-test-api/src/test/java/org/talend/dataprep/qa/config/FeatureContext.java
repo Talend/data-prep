@@ -99,6 +99,15 @@ public class FeatureContext {
     }
 
     /**
+     * Remove a preparation reference.
+     *
+     * @param id the preparation id.
+     */
+    public void removePreparationRef(@NotNull String id) {
+        preparationIdByName.remove(id);
+    }
+
+    /**
      * Store a temporary {@link File}.
      *
      * @param file the temporary {@link File} to store.

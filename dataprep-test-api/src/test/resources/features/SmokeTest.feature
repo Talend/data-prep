@@ -106,4 +106,12 @@ Feature: Perform an OS Smoke Test
   @CleanAfter
   Scenario: Remove original preparation after copying the preparation
     When I remove the preparation "10L3C_preparation"
-    Then I check that the preparation "10L3C_preparation" in the folder "/smoke/test" is removed and the steps of the preparation "10L3C_preparation_Copy" still exist
+    Then I check that the preparation "10L3C_preparation" doesn't exist in the folder "/smoke/test"
+    When I export the preparation with parameters :
+      | exportType           | CSV               |
+      | preparationName      | 10L3C_preparation_Copy |
+      | dataSetName          | 10L3C_dataset     |
+      | fileName             | copied_10L3C_result.csv         |
+      | csv_escape_character | "                 |
+      | csv_enclosure_char   | "                 |
+    Then I check that "copied_10L3C_result.csv" temporary file equals "/data/10L3C_processed.csv" file

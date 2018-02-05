@@ -248,9 +248,10 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
+        final String domain = column.getDomain().toUpperCase();
         return Stream.of(PHONE, US_PHONE, UK_PHONE, DE_PHONE, FR_PHONE) //
-                .map(SemanticCategoryEnum::getDisplayName) //
-                .anyMatch(s -> column.getType().equals(s));
+                .map(SemanticCategoryEnum::name) //
+                .anyMatch(domain::equals);
     }
 
     @Override

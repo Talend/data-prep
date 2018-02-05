@@ -60,13 +60,6 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
     }
 
     @Test
-    public void should_accept_column() {
-        assertTrue(action.acceptField(getColumn(Type.STRING)));
-        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
-        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
-    }
-
-    @Test
     public void should_not_accept_column() {
         assertFalse(action.acceptField(getColumn(Type.FLOAT)));
         assertFalse(action.acceptField(getColumn(Type.DATE)));
@@ -534,6 +527,24 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_not_format() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.TYPE_E164);
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, FormatPhoneNumber.US_REGION_CODE);
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", "14/07/2010");
+        values.put("0001", null);
+        DataSetRow row = new DataSetRow(values);
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "14/07/2010");
+        expectedValues.put("0001", null);
+
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
         assertEquals(expectedValues, row.values());
     }
 

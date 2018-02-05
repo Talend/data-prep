@@ -118,12 +118,12 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then (check values)
-        DataSetRow expected = ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta");
+        DataSetRow expected = ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Atlanta", "Georgia");
         Assert.assertEquals(expected, row);
 
         // and (check metadata)
-        checkMergedMetadata(row.getRowMetadata().getById("0003"), "State", "string", "US_STATE");
-        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0004"), "State", "string", "US_STATE");
     }
 
     @Test
@@ -140,14 +140,14 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then (check values)
-        DataSetRow expected = ActionMetadataTestUtils.getRow("Dallas", "TX", "Dallas Mavericks", "American Airlines Center",
-                "32.790556°N 96.810278°W");
+        DataSetRow expected = ActionMetadataTestUtils.getRow("Dallas", "TX",
+                "32.790556°N 96.810278°W", "American Airlines Center", "Dallas Mavericks");
         Assert.assertEquals(expected, row);
 
         // and (check metadata)
-        checkMergedMetadata(row.getRowMetadata().getById("0002"), "Team", "string", "");
+        checkMergedMetadata(row.getRowMetadata().getById("0002"), "Coordinates", "string", "");
         checkMergedMetadata(row.getRowMetadata().getById("0003"), "Stadium", "string", "");
-        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Coordinates", "string", "");
+        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Team", "string", "");
     }
 
     @Test
@@ -165,8 +165,8 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         Assert.assertEquals(expected, row);
 
         // and (metadata)
-        checkMergedMetadata(row.getRowMetadata().getById("0003"), "State", "string", "US_STATE");
-        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0004"), "State", "string", "US_STATE");
 
     }
 
@@ -185,8 +185,8 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         Assert.assertEquals(expected, row);
 
         // and (metadata)
-        checkMergedMetadata(row.getRowMetadata().getById("0003"), "State", "string", "US_STATE");
-        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0004"), "State", "string", "US_STATE");
     }
 
     @Test
@@ -205,11 +205,11 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
 
         // then (check values)
         DataSetRow[] expectedRows = new DataSetRow[] {
-                ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
-                ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida", "Tallahassee"),
-                ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
-                ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
-                ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
+                ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Atlanta", "Georgia"),
+                ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Tallahassee", "Florida"),
+                ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Springfield", "Illinois"),
+                ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Austin", "Texas"),
+                ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "Sacramento", "California") };
         for (int i = 0; i < rows.length; i++) {
             Assert.assertEquals(expectedRows[i], rows[i]);
         }

@@ -16,7 +16,7 @@ package org.talend.dataprep.ui;
 /**
  * UI configuration
  */
-public interface UiService {
+public interface UiConfiguration {
 
     /**
      * Should display theme

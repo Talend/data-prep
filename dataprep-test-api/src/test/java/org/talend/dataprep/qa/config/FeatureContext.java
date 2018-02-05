@@ -107,10 +107,10 @@ public class FeatureContext {
     /**
      * Remove a preparation reference.
      *
-     * @param id the preparation id.
+     * @param name the preparation name.
      */
-    public void removePreparationRef(@NotNull String id) {
-        preparationIdByName.remove(id);
+    public void removePreparationRef(@NotNull String name) {
+        preparationIdByName.remove(name);
     }
 
     /**

@@ -28,9 +28,21 @@ $tc-layout-main-min-width: 1000px;
 		display: flex;
 		flex-direction: row;
 
-		.main, .content-loader {
-			flex-grow: 1;
+		.sidemenu {
+			flex-grow: 0;
+			flex-shrink: 0;
+			background-color: $blue;
+		}
+
+		.sidemenu,
+		.main,
+		.content-loader {
 			height: calc(100vh - #{$tc-layout-header-height});
+		}
+
+		.main,
+		.content-loader {
+			flex-grow: 1;
 		}
 
 		.content-loader {
@@ -38,13 +50,6 @@ $tc-layout-main-min-width: 1000px;
 			align-items: center;
 			justify-content: center;
 			width: 100%;
-		}
-
-		.sidemenu {
-			flex-grow: 0;
-			flex-shrink: 0;
-
-			background-color: $blue;
-		}
+		}	
 	}
 }

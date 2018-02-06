@@ -35,7 +35,7 @@ describe('Rest message interceptor factory', () => {
 
 	it('should show alert when service is unavailable', inject(($rootScope, $http, MessageService) => {
 		//given
-		$httpBackend.expectGET('testService').respond(-1);
+		$httpBackend.expectGET('testService').respond(0);
 
 		//when
 		$http.get('testService');

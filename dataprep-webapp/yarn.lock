@@ -54,19 +54,19 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@talend/bootstrap-theme@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.151.0.tgz#a53e2af875e6a45901d59106309f93bd3cafbb05"
+"@talend/bootstrap-theme@0.152.0":
+  version "0.152.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.152.0.tgz#b3657c69c5ee92b420a0af3532e3c955322745a5"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.151.0.tgz#ee5381fef5e2b5828ee41f57f4170020c149ec73"
+"@talend/icons@0.152.0":
+  version "0.152.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.152.0.tgz#a2f9e5d5472405eec610dc0a764dfaac6b11e7f3"
 
-"@talend/react-components@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.151.0.tgz#15b7c00fab46689e39073aeb0f44b2e21061ad1c"
+"@talend/react-components@0.152.0":
+  version "0.152.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.152.0.tgz#4ed1037e54a6bf44ce6a40f76a24e2b36ea4f6ee"
   dependencies:
     lodash "4.17.4"
     rc-slider "8.4.1"
@@ -75,9 +75,9 @@
     react-debounce-input "3.1.0"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.151.0.tgz#8710bec6927ccaa221cfbbebfde70f300910e165"
+"@talend/react-forms@0.152.0":
+  version "0.152.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.152.0.tgz#dc8ede184682f022f1b04be5c253911cb1f48cd6"
   dependencies:
     classnames "2.2.5"
     keycode "2.1.9"

@@ -51,6 +51,19 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 	}));
 
+	it('should show alert when service is unavailable behind gateway', inject(($rootScope, $http, MessageService) => {
+		//given
+		$httpBackend.expectGET('testService').respond(504);
+
+		//when
+		$http.get('testService');
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
+	}));
+
 	it('should show notification on status 500', inject(($rootScope, $http, MessageService) => {
 		//given
 		$httpBackend.expectGET('testService').respond(500);

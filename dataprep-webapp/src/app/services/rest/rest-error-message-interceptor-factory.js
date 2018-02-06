@@ -44,9 +44,9 @@ export default function RestErrorMessageHandler($q, MessageService) {
 
 			// user cancel the request or the request should fail silently : we do not show message
 			if (config && (
-			    config.failSilently ||
-			    (config.headers && config.headers['Fail-Silently'] === true) ||
-			    (config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
+				config.failSilently ||
+				(config.headers && config.headers['Fail-Silently'] === true) ||
+				(config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
 				return $q.reject(rejection);
 			}
 

@@ -43,13 +43,14 @@ export default function RestErrorMessageHandler($q, MessageService) {
 			const { config, status } = rejection;
 
 			// user cancel the request or the request should fail silently : we do not show message
-			if (config && (config.failSilently || (config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
+			if (config && (
+			    config.failSilently ||
+			    (config.headers && config.headers['Fail-Silently'] === true) ||
+			    (config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
 				return $q.reject(rejection);
 			}
 
-			// Because of CORS issue, server could return 0 status
-			// https://github.com/angular/angular.js/issues/2798
-			if (status < 0) {
+			if (status <= 0) {
 				MessageService.error('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 			}
 			else if (status === 500) {

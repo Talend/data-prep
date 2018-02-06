@@ -46,20 +46,7 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 	}));
 
-	it('should do nothing when service has missing CORS headers and status is 0', inject(($rootScope, $http, MessageService) => {
-		//given
-		$httpBackend.expectGET('testService').respond(0);
-
-		//when
-		$http.get('testService');
-		$httpBackend.flush();
-		$rootScope.$digest();
-
-		//then
-		expect(MessageService.error).not.toHaveBeenCalled();
-	}));
-
-	it('should show toast on status 500', inject(($rootScope, $http, MessageService) => {
+	it('should show notification on status 500', inject(($rootScope, $http, MessageService) => {
 		//given
 		$httpBackend.expectGET('testService').respond(500);
 
@@ -72,12 +59,32 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 	}));
 
-	it('should not show toast when fileSilently flag is set', inject(($rootScope, $http, MessageService) => {
+	it('should not show notification when failSilently flag is set', inject(($rootScope, $http, MessageService) => {
 		//given
 		const request = {
 			method: 'POST',
 			url: 'testService',
 			failSilently: true,
+		};
+		$httpBackend.expectPOST('testService').respond(500);
+
+		//when
+		$http(request);
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).not.toHaveBeenCalled();
+	}));
+
+	it('should not show notification when Fail-Silently header is on', inject(($rootScope, $http, MessageService) => {
+		//given
+		const request = {
+			method: 'POST',
+			url: 'testService',
+			headers: {
+			    'Fail-Silently': true,
+			},
 		};
 		$httpBackend.expectPOST('testService').respond(500);
 

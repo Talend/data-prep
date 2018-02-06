@@ -17,8 +17,13 @@ describe('Rest message interceptor factory', () => {
 	let $httpBackend;
 	let httpProvider;
 
-	beforeEach(angular.mock.module('data-prep.services.rest', $httpProvider => {
+	beforeEach(angular.mock.module('data-prep.services.rest', ($httpProvider, $provide) => {
 		httpProvider = $httpProvider;
+
+		$provide.constant('RestURLs', {
+			userUrl: '://domain.com/login',
+			logoutUrl: '://domain.com/logout',
+		});
 	}));
 
 	beforeEach(inject(($injector, MessageService) => {
@@ -77,16 +82,30 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).not.toHaveBeenCalled();
 	}));
 
-	it('should not show notification when Fail-Silently header is on', inject(($rootScope, $http, MessageService) => {
+	it('should not show notification when url matches login one', inject(($rootScope, $http, MessageService) => {
+		//given
+		const request = {
+			method: 'GET',
+			url: '://domain.com/login',
+		};
+		$httpBackend.expectGET('://domain.com/login').respond(-1);
+
+		//when
+		$http(request);
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).not.toHaveBeenCalled();
+	}));
+
+	it('should not show notification when url matches logout one', inject(($rootScope, $http, MessageService) => {
 		//given
 		const request = {
 			method: 'POST',
-			url: 'testService',
-			headers: {
-			    'Fail-Silently': true,
-			},
+			url: '://domain.com/logout',
 		};
-		$httpBackend.expectPOST('testService').respond(500);
+		$httpBackend.expectPOST('://domain.com/logout').respond(-1);
 
 		//when
 		$http(request);

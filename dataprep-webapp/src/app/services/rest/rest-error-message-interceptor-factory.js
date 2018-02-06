@@ -19,8 +19,10 @@ const specialClientErrorCodes = [401, 403, 404];
  * @description Error message interceptor
  * @requires data-prep.services.utils.service:MessageService
  */
-export default function RestErrorMessageHandler($q, MessageService) {
+export default function RestErrorMessageHandler($q, MessageService, RestURLs) {
 	'ngInject';
+
+	const { userUrl, logoutUrl } = RestURLs;
 
 	/**
 	 * Dedicated pages instead of toast for certain error codes
@@ -43,14 +45,16 @@ export default function RestErrorMessageHandler($q, MessageService) {
 			const { config, status } = rejection;
 
 			// user cancel the request or the request should fail silently : we do not show message
-			if (config && (
-				config.failSilently ||
-				(config.headers && config.headers['Fail-Silently'] === true) ||
-				(config.timeout && config.timeout.$$state.value === 'user cancel'))) { // eslint-disable-line angular/no-private-call
-				return $q.reject(rejection);
+			if (config) {
+				const { failSilently, url, timeout } = config;
+				if (failSilently ||
+					(url && userUrl && logoutUrl && (url.includes(userUrl) || url.includes(logoutUrl))) ||
+					(timeout && timeout.$$state.value === 'user cancel')) { // eslint-disable-line angular/no-private-call
+					return $q.reject(rejection);
+				}
 			}
 
-			if (status <= 0) {
+			if (status <= 0 || status === 504) {
 				MessageService.error('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 			}
 			else if (status === 500) {

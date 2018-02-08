@@ -668,7 +668,7 @@
     ],
     "category": "dates",
     "docUrl": "",
-    "label": "Calculate time until",
+    "label": "Calculate time since",
     "actionScope": [],
     "dynamic": false
   },

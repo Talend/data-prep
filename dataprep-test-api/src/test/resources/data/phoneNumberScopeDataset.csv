@@ -1,0 +1,5 @@
+"ID";"FIRSTNAME";"LASTNAME";IsCustomer?;Revenue;"company_name";CreationDate;"ADDRESS";"CITY";"county";"STATE";zip;"phone1";"phone2";"EMAIL";"web";"CUST_TYPE"
+"ID-4004";"Jolene";"Ostolaza";FALSE;4447.89;"Central Die Casting Mfg Co Inc";02/04/2003;"1610 14th St Nw";"Newport News";"Newport News City";"VA";23608;"757-682-7116";"757-940-1741";"jolene@yahoo.com";"http://www.centraldiecastingmfgcoinc.com/this/is/a/path?sort=desc#anchor";"Silver"
+"ID-3815";"";"Suffield";TRUE;2945.46;"Deltam Systems Inc";14/07/2010;"3270 Dequindre Rd";"Deer Park";"Suffolk";"NY";11729;"631-258-6558";"631-295-9879";"gwenn_suffield@suffield.org";"http://www.deltamsystemsinc.com";"Standard"
+"ID-3933";"Weldon";"Acuff";FALSE;3898.31;"Advantage Martgage Company";15/04/2019;"73 W Barstow Ave";"Arlington Heights";"Cook";"IL";60004;"847-353-2156";"847-613-5866";"wacuff@gmail.com";"http://www.advantagemartgagecompany.com";"Gold"
+"ID-3877";"Judy    ";"Aquas";FALSE;8332.74;"Plantation Restaurant";11/04/2001;"8977 Connecticut Ave Nw #3";"Niles";"Berrien";"MI";49120;"269-756-7222";"269-431-9464";"jaquas@aquas.com";"http://www.plantationrestaurant.com";"Silver"

@@ -18,3 +18,22 @@ Feature: Exporting preparation on XLSX format
       | dataSetName          | phoneNumber_dataset          |
       | fileName             | phoneNumber_result.xlsx      |
     Then I check that "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file
+
+  @CleanAfter
+  Scenario: Verify phone number on dataset transformation
+    Given I upload the dataset "/data/phoneNumberScopeDataset.csv" with name "phoneNumberScopeDataset_dataset"
+    And I create a preparation with name "phoneNumberScopeDataset_preparation", based on "phoneNumberScopeDataset_dataset" dataset
+    And I add a step with parameters :
+      | actionName      | format_phone_number                   |
+      | scope           | dataset                               |
+      | regionCode      | US                                    |
+      | formatType      | international                         |
+      | mode            | constant_mode                         |
+      | preparationName | phoneNumberScopeDataset_preparation   |
+    When I export the preparation with parameters :
+      | exportType      | CSV                                   |
+      | preparationName | phoneNumberScopeDataset_preparation   |
+      | dataSetName     | phoneNumberScopeDataset_dataset       |
+      | fileName        | phoneNumberScopeDataset_result.csv    |
+    Then I check that "phoneNumberScopeDataset_result.csv" temporary file equals "/data/phoneNumberScopeDataset_formatUs.csv" file
+

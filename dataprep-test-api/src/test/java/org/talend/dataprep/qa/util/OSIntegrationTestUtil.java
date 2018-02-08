@@ -75,18 +75,8 @@ public class OSIntegrationTestUtil {
     @NotNull
     public Action mapParamsToAction(@NotNull Map<String, String> params, @NotNull Action action) {
         action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
-        params.forEach((k, v) -> {
-            ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
-            if (ape != null) {
-                if (parametersToBeSuffixed.contains(ape.getName())) {
-                    action.parameters.put(ape, suffixName(v));
-                }
-                else {
-                    action.parameters.put(ape, StringUtils.isEmpty(v) ? null : v);
-                }
-            }
-        });
-
+        params.forEach((k, v) -> ActionParamEnum.getActionParamEnum(k)
+                .ifPresent(actionParamEnum -> action.parameters.put(actionParamEnum, StringUtils.isEmpty(v) ? null : v)));
         Filter filter = mapParamsToFilter(params);
         action.parameters.put(FILTER, filter);
         action.parameters.putIfAbsent(SCOPE, "column");
@@ -103,7 +93,7 @@ public class OSIntegrationTestUtil {
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
         long nbAfes = params.keySet().stream() //
-                .map(k -> ActionFilterEnum.getActionFilterEnum(k)) //
+                .map(ActionFilterEnum::getActionFilterEnum) //
                 .filter(Objects::nonNull) //
                 .peek(afe -> {
                     String v = params.get(afe.getName());

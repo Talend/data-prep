@@ -28,6 +28,9 @@ public enum ActionParamEnum {
     FORMAT_TYPE("formatType","format_type"),
     OPERATOR("operator","operator"),
     OPERAND("operand","operand"),
+    PADDING_CHARACTER("paddingCharacter", "padding_character"),
+    TIME_UNIT("timeUnit", "time_unit"),
+    SINCE_WHEN("sinceWhen", "since_when"),
     NEW_DOMAIN_ID("new_domain_id","new_domain_id"),
     CREATE_NEW_COLUMN("createNewColumn","create_new_column");
 

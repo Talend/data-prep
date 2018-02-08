@@ -6,20 +6,18 @@ Feature: Export Preparation with created column
     And I add a step with parameters :
       | actionName        | trim                       |
       | preparationName   | best_sad_songs_prep        |
-      | scope             | column                     |
       | columnName        | Added At                   |
       | columnId          | 0008                       |
-      | padding_character | whitespace                 |
-      | create_new_column | false                      |
+      | paddingCharacter  | whitespace                 |
+      | createNewColumn   | false                      |
     And I add a step with parameters :
       | actionName        | compute_time_since         |
       | preparationName   | best_sad_songs_prep        |
-      | scope             | column                     |
       | columnName        | Added At                   |
       | columnId          | 0008                       |
-      |create_new_column  | true                       |
-      |time_unit          | HOURS                      |
-      |since_when         | now_server_side            |
+      | createNewColumn   | true                       |
+      | timeUnit          | HOURS                      |
+      | sinceWhen         | now_server_side            |
 
   @CleanAfter
   Scenario: Verify export result

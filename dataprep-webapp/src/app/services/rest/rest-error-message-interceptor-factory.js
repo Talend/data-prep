@@ -22,8 +22,6 @@ const specialClientErrorCodes = [401, 403, 404];
 export default function RestErrorMessageHandler($q, MessageService, RestURLs) {
 	'ngInject';
 
-	const { userUrl, logoutUrl } = RestURLs;
-
 	/**
 	 * Dedicated pages instead of toast for certain error codes
 	 * @param errorCode http error code to test
@@ -47,6 +45,7 @@ export default function RestErrorMessageHandler($q, MessageService, RestURLs) {
 			// user cancel the request or the request should fail silently : we do not show message
 			if (config) {
 				const { failSilently, url, timeout } = config;
+				const { userUrl, logoutUrl } = RestURLs;
 				if (failSilently ||
 					(url && userUrl && logoutUrl && (url.includes(userUrl) || url.includes(logoutUrl))) ||
 					(timeout && timeout.$$state.value === 'user cancel')) { // eslint-disable-line angular/no-private-call

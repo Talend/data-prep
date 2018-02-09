@@ -37,6 +37,15 @@ public class UpgradeTaskTest {
         // given
         when(upgradeService.needUpgrade()).thenReturn(true);
 
+        final ForAll.ForAllConditionBuilder forAllConditionBuilder = mock(ForAll.ForAllConditionBuilder.class);
+        when(forAllConditionBuilder.operational(any())).thenReturn(() -> true);
+        when(forAll.condition()).thenReturn(forAllConditionBuilder);
+
+        doAnswer((Answer<ForAll.ForAllConditionBuilder>) invocation -> {
+            ((Runnable) invocation.getArguments()[1]).run();
+            return null;
+        }).when(forAll).execute(any(), any());
+
         doAnswer((Answer<Void>) invocation -> {
             ((Runnable) invocation.getArguments()[1]).run();
             return null;
@@ -56,8 +65,17 @@ public class UpgradeTaskTest {
     }
 
     @Test
-    public void shouldNotPerformUpgrade() {
+    public void shouldNotPerformUpgrade_noUpgradeToApply() {
         // given
+        final ForAll.ForAllConditionBuilder forAllConditionBuilder = mock(ForAll.ForAllConditionBuilder.class);
+        when(forAllConditionBuilder.operational(any())).thenReturn(() -> true);
+        when(forAll.condition()).thenReturn(forAllConditionBuilder);
+
+        doAnswer((Answer<ForAll.ForAllConditionBuilder>) invocation -> {
+            ((Runnable) invocation.getArguments()[1]).run();
+            return null;
+        }).when(forAll).execute(any(), any());
+
         when(upgradeService.needUpgrade()).thenReturn(false);
 
         doAnswer((Answer<Void>) invocation -> {
@@ -72,4 +90,32 @@ public class UpgradeTaskTest {
         verify(security, times(0)).getTenantId();
         verify(upgradeService, times(0)).upgradeVersion();
     }
+
+    @Test
+    public void shouldNotPerformUpgrade_repositoryNotSuited() {
+        // given
+        final ForAll.ForAllConditionBuilder forAllConditionBuilder = mock(ForAll.ForAllConditionBuilder.class);
+        when(forAllConditionBuilder.operational(any())).thenReturn(() -> false);
+        when(forAll.condition()).thenReturn(forAllConditionBuilder);
+
+        doAnswer((Answer<ForAll.ForAllConditionBuilder>) invocation -> {
+            ((Runnable) invocation.getArguments()[1]).run();
+            return null;
+        }).when(forAll).execute(any(), any());
+
+        when(upgradeService.needUpgrade()).thenReturn(true);
+
+        doAnswer((Answer<Void>) invocation -> {
+            ((Runnable) invocation.getArguments()[1]).run();
+            return null;
+        }).when(forAll).execute(any(), any());
+
+        // when
+        upgradeTask.upgradeTask();
+
+        // then
+        verify(security, times(0)).getTenantId();
+        verify(upgradeService, times(0)).upgradeVersion();
+    }
+
 }

@@ -1,16 +1,5 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.START;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.TYPE;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
-import static org.talend.dataprep.qa.util.OSIntegrationTestUtil.ACTION_NAME;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +15,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
+
+import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.START;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.TYPE;
+import static org.talend.dataprep.qa.util.OSIntegrationTestUtil.ACTION_NAME;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.ROW_ID;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })
@@ -185,7 +184,8 @@ public class OSIntegrationTestUtilTest {
     @Test
     public void mapParamsToAction_Empty() {
         Action action = new Action();
-        Action result = util.mapParamsToAction(new HashMap<String, String>(), action);
+        Action result = new Action();
+        result.parameters = util.mapParamsToActionParameters(new HashMap<>());
         Assert.assertEquals(action, result);
     }
 
@@ -196,7 +196,8 @@ public class OSIntegrationTestUtilTest {
         map.put("key1", "value1");
         map.put("key2", "value2");
         map.put("key3", "value3");
-        Action result = util.mapParamsToAction(map, action);
+        Action result = new Action();
+        result.parameters = util.mapParamsToActionParameters(map);
         Assert.assertEquals(action, result);
     }
 
@@ -208,20 +209,10 @@ public class OSIntegrationTestUtilTest {
         map.put("key1", "value1");
         map.put("key2", "value2");
         map.put("key3", "value3");
-        Action result = util.mapParamsToAction(map, action);
+        Action result = new Action();
+        result.parameters = util.mapParamsToActionParameters(map);
         Assert.assertEquals(action, result);
         Assert.assertEquals(result.action, "testName");
-    }
-
-    @Test
-    public void mapParamsToAction_WithActionNameParam() {
-        Action action = new Action();
-        action.action = "testName";
-        Map<String, String> map = new HashMap<>();
-        map.put(ACTION_NAME, "newName");
-        Action result = util.mapParamsToAction(map, action);
-        Assert.assertEquals(action, result);
-        Assert.assertEquals(result.action, "newName");
     }
 
     @Test
@@ -230,19 +221,20 @@ public class OSIntegrationTestUtilTest {
         action.action = "testName";
         Map<String, String> map = new HashMap<>();
         map.put(ACTION_NAME, "newName");
-        map.put(COLUMN_ID.getName(), "0000");
-        map.put(COLUMN_NAME.getName(), "id");
+        map.put(COLUMN_ID.getKey(), "0000");
+        map.put("column_name", "id");
         map.put(LABEL.getName(), "label");
         map.put(START.getName(), "50000");
         map.put(TYPE.getName(), "type");
-        map.put(ROW_ID.getName(), "");
-        Action result = util.mapParamsToAction(map, action);
+        map.put(ROW_ID.getKey(), "");
+        Action result = new Action();
+        result.parameters = util.mapParamsToActionParameters(map);
         Assert.assertNotNull(result);
         Assert.assertEquals(action.action, "newName");
-        Assert.assertEquals(action.parameters.get(COLUMN_ID), "0000");
-        Assert.assertEquals(action.parameters.get(COLUMN_NAME), "id");
-        Assert.assertEquals(action.parameters.get(ROW_ID), null);
-        Filter filter = (Filter) action.parameters.get(FILTER);
+        Assert.assertEquals(action.parameters.get(COLUMN_ID.getKey()), "0000");
+        Assert.assertEquals(action.parameters.get("column_name"), "id");
+        Assert.assertEquals(action.parameters.get(ROW_ID.getKey()), null);
+        Filter filter = (Filter) action.parameters.get(FILTER.getKey());
         Assert.assertEquals(filter.range.get(START), 50000);
         Assert.assertEquals(filter.range.get(TYPE), "type");
         Assert.assertEquals(filter.range.get(LABEL), "label");

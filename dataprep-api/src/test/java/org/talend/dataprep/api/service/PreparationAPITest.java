@@ -961,7 +961,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     /**
-     * Verify a calculate time until preview after a trim step on a preparation
+     * Verify a calculate time since preview after a trim step on a preparation
      * see <a href="https://jira.talendforge.org/browse/TDP-5057">TDP-5057</a>
      */
     @Test
@@ -992,7 +992,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .map(PatternFrequency::getPattern) //
                 .anyMatch("yyyy-MM-dd"::equals));
 
-        // create a preview of calculate time until action
+        // create a preview of calculate time since action
         PreviewAddParameters previewAddParameters = new PreviewAddParameters();
         previewAddParameters.setDatasetId(datasetId);
         previewAddParameters.setPreparationId(preparationId);
@@ -1018,7 +1018,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .jsonPath();
 
         // check non empty value for the new column
-        assertEquals("new preview column should contains values according to calculate time until action", //
+        assertEquals("new preview column should contains values according to calculate time since action", //
                 0, //
                 jsonPath.getList("records.0009").stream().map(String::valueOf).filter(StringUtils::isBlank).count());
 

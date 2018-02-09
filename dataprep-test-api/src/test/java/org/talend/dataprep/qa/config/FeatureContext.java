@@ -14,7 +14,13 @@
 package org.talend.dataprep.qa.config;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -96,6 +102,15 @@ public class FeatureContext {
      */
     public void storePreparationRef(@NotNull String id, @NotNull String name) {
         preparationIdByName.put(name, id);
+    }
+
+    /**
+     * Remove a preparation reference.
+     *
+     * @param name the preparation name.
+     */
+    public void removePreparationRef(@NotNull String name) {
+        preparationIdByName.remove(name);
     }
 
     /**

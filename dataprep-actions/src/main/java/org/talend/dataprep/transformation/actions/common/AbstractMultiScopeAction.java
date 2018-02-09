@@ -29,7 +29,9 @@ public abstract class AbstractMultiScopeAction extends AbstractActionMetadata im
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
-            apply(row, column.getId(), column.getId(), context);
+            if (acceptField(column)) {
+                apply(row, column.getId(), column.getId(), context);
+            }
         }
     }
 

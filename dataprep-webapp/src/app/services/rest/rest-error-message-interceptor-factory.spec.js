@@ -17,8 +17,13 @@ describe('Rest message interceptor factory', () => {
 	let $httpBackend;
 	let httpProvider;
 
-	beforeEach(angular.mock.module('data-prep.services.rest', $httpProvider => {
+	beforeEach(angular.mock.module('data-prep.services.rest', ($httpProvider, $provide) => {
 		httpProvider = $httpProvider;
+
+		$provide.constant('RestURLs', {
+			userUrl: '://domain.com/login',
+			logoutUrl: '://domain.com/logout',
+		});
 	}));
 
 	beforeEach(inject(($injector, MessageService) => {
@@ -46,7 +51,20 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
 	}));
 
-	it('should show toast on status 500', inject(($rootScope, $http, MessageService) => {
+	it('should show alert when service is unavailable behind gateway', inject(($rootScope, $http, MessageService) => {
+		//given
+		$httpBackend.expectGET('testService').respond(504);
+
+		//when
+		$http.get('testService');
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
+	}));
+
+	it('should show notification on status 500', inject(($rootScope, $http, MessageService) => {
 		//given
 		$httpBackend.expectGET('testService').respond(500);
 
@@ -59,7 +77,7 @@ describe('Rest message interceptor factory', () => {
 		expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 	}));
 
-	it('should not show toast when fileSilently flag is set', inject(($rootScope, $http, MessageService) => {
+	it('should not show notification when failSilently flag is set', inject(($rootScope, $http, MessageService) => {
 		//given
 		const request = {
 			method: 'POST',
@@ -67,6 +85,40 @@ describe('Rest message interceptor factory', () => {
 			failSilently: true,
 		};
 		$httpBackend.expectPOST('testService').respond(500);
+
+		//when
+		$http(request);
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).not.toHaveBeenCalled();
+	}));
+
+	it('should not show notification when url matches login one', inject(($rootScope, $http, MessageService) => {
+		//given
+		const request = {
+			method: 'GET',
+			url: '://domain.com/login',
+		};
+		$httpBackend.expectGET('://domain.com/login').respond(-1);
+
+		//when
+		$http(request);
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(MessageService.error).not.toHaveBeenCalled();
+	}));
+
+	it('should not show notification when url matches logout one', inject(($rootScope, $http, MessageService) => {
+		//given
+		const request = {
+			method: 'POST',
+			url: '://domain.com/logout',
+		};
+		$httpBackend.expectPOST('://domain.com/logout').respond(-1);
 
 		//when
 		$http(request);

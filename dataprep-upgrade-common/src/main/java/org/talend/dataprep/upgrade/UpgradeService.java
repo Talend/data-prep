@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.talend.daikon.multitenant.context.TenancyContextHolder;
 import org.talend.dataprep.upgrade.model.UpgradeTask;
 import org.talend.dataprep.upgrade.model.UpgradeTaskId;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
@@ -81,15 +82,28 @@ public class UpgradeService {
      * @return <code>true</code> if all available tasks are already applied, <code>false</code> else.
      */
     public boolean needUpgrade() {
-        int appliedTasks = repository.countUpgradeTask(VERSION.name());
-        int availableTasks = (int) tasks.stream().filter(task -> Objects.equals(task.getTarget(), VERSION)).count();
-        if (appliedTasks > availableTasks) {
-            LOG.warn("It seems that more upgrade tasks have been applied than the available ones.");
-            return true;
-        } else if (appliedTasks == availableTasks) {
+        if (TenancyContextHolder.getContext().getOptionalTenant().isPresent()) {
+            LOG.info("needUpgrade for tenant : {}", TenancyContextHolder.getContext().getOptionalTenant());
+        }
+
+        try {
+            int appliedTasks = repository.countUpgradeTask(VERSION.name());
+            int availableTasks = (int) tasks.stream().filter(task -> Objects.equals(task.getTarget(), VERSION)).count();
+            tasks.stream().forEach(task -> LOG.info("Task id {}", task.getId()));
+            if (appliedTasks > availableTasks) {
+                LOG.warn("It seems that more upgrade tasks have been applied than the available ones.");
+                return true;
+            } else if (appliedTasks == availableTasks) {
+                LOG.info("no upgrade needed");
+                return false;
+            } else { // appliedTasks < availableTasks
+                LOG.info("Upgrade needed");
+                return true;
+            }
+        }
+        catch (Exception e) {
+            LOG.warn("Need upgrade failed", e);
             return false;
-        } else { // appliedTasks < availableTasks
-            return true;
         }
     }
 
@@ -119,8 +133,9 @@ public class UpgradeService {
                 LOG.debug("apply upgrade {}", taskId);
                 try {
                     task.run();
+                    LOG.debug("Upgrade successful for task {}", taskId);
                 } catch (Exception exception) {
-                    LOG.error("Failed to apply upgrade {}", taskId);
+                    LOG.error("Failed to apply upgrade {}", taskId, exception);
                     break;
                 }
                 repository.applied(targetId, taskId);

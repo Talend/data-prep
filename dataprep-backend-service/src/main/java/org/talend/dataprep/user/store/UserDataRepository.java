@@ -12,6 +12,8 @@
 //  ============================================================================
 package org.talend.dataprep.user.store;
 
+import java.util.stream.Stream;
+
 import javax.validation.constraints.NotNull;
 
 import org.talend.dataprep.api.user.UserData;
@@ -51,5 +53,7 @@ public interface UserDataRepository<U extends UserData> {
      * </p>
      */
     void clear();
+
+    <S extends U> Stream<S> list();
 
 }

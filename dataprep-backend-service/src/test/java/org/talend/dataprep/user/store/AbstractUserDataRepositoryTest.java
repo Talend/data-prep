@@ -15,7 +15,9 @@ package org.talend.dataprep.user.store;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +61,20 @@ public abstract class AbstractUserDataRepositoryTest<U extends UserData> extends
 
         final U actual = getUserRepository().get(expected.getUserId());
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void listUsers() throws JsonProcessingException {
+
+        U expected = getRandomUserData();
+        expected.addFavoriteDataset("dataset#987654");
+        expected.addFavoriteDataset("dataset#lkj-sfdgs-63563-sfgsfg'");
+
+        getUserRepository().save(expected);
+
+        List<U> users = getUserRepository().list().collect(Collectors.toList());
+        assertEquals(expected, users.get(0));
+        assertEquals(1, users.size());
     }
 
     @Test

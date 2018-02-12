@@ -35,34 +35,97 @@ public class ActionNewColumnToggleCommon {
     }
 
     private static void updateAction(Action action) {
-        Boolean newDefaultBehavior; // true/false: change needed, null mean no default behavior change
+        Boolean oldBehaviour; // true/false: change needed, null mean no default behavior change
         switch (action.getName()) {
+        case "padding":
+        case "absolute":
+        case "type_change":
+        case "change_date_pattern":
+        case "domain_change":
+        case "lowercase":
+        case "propercase":
+        case "uppercase":
+        case "clear_matching":
+        case "clear_invalid":
+        case "date_calendar_converter":
+        case "distance_converter":
+        case "duration_converter":
+        case "delete_column":
+        case "delete":
+        case "delete_on_value":
+        case "delete_empty":
+        case "delete_invalid":
+        case "delete_lines":
+        case "fill_with_value":
+        case "fill_empty_from_above":
+        case "fillemptywithdefault":
+        case "fillinvalidwithdefault":
+        case "textclustering":
+        case "change_number_format":
+        case "format_phone_number":
         case "generate_a_sequence":
-            newDefaultBehavior = TRUE;
+        case "keep_only":
+        case "make_line_header":
+        case "mask_data_by_domain":
+        case "modify_date":
+        case "negate":
+        case "remove_non_alpha_num_chars":
+        case "remove_non_num_chars":
+        case "remove_repeated_chars":
+        case "round_down":
+        case "cut":
+        case "trim":
+        case "rename_column":
+        case "reorder":
+        case "replace_cell_value":
+        case "ceil":
+        case "round_down_real":
+        case "floor":
+        case "round":
+        case "normalize":
+        case "swap_column":
+            oldBehaviour = FALSE;
             break;
         case "numeric_ops":
         case "logarithm_numbers":
+        case "compute_length":
+        case "compute_time_since":
+        case "timestamp_to_date":
+        case "compare_dates":
+        case "compare_numbers":
         case "concat":
+        case "contains":
         case "temperatures_converter":
         case "cos_numbers":
+        case "create_new_column":
+        case "copy":
         case "exponential_numbers":
+        case "extract_date_tokens":
+        case "extractemaildomain":
+        case "extract_number":
+        case "substring":
+        case "extract_string_tokens":
+        case "extract_url_tokens":
         case "lookup":
+        case "fuzzy_matching":
+        case "matches_pattern":
         case "max_numbers":
         case "min_numbers":
         case "natural_logarithm_numbers":
         case "negate_numbers":
         case "pow_numbers":
         case "sin_numbers":
+        case "split":
         case "square_root_numbers":
         case "tan_numbers":
-            newDefaultBehavior = FALSE;
+            oldBehaviour = TRUE;
             break;
         default:
             LOGGER.debug("Action {} had no default column creation ", action.getName());
-            newDefaultBehavior = null; // no change to do
+            oldBehaviour = null; // no change to do
         }
-        if (newDefaultBehavior != null) {
-            action.getParameters().put(CREATE_NEW_COLUMN, newDefaultBehavior.toString());
+        if (oldBehaviour != null) {
+            action.getParameters().put(CREATE_NEW_COLUMN, oldBehaviour.toString());
         }
     }
 }

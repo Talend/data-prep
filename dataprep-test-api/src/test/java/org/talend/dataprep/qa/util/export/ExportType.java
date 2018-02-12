@@ -10,7 +10,8 @@ public enum ExportType {
     EXCEL("EXCEL"), //
     TABLEAU("TABLEAU"), //
     XLSX("XLSX"), //
-    HDFS("HDFS"); //
+    HDFS("HDFS"), //
+    AmazonS3("AmazonS3"); //
 
     private String name;
 

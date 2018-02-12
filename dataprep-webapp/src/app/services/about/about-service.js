@@ -34,7 +34,7 @@ export default class AboutService {
 	 * @returns {Promise} The GET call promise
 	 */
 	fetchBuildDetails() {
-		return this.$http.get(this.url).then(resp => resp.data);
+		return this.$http.get(this.url, { failSilently: true }).then(resp => resp.data);
 	}
 
 	/**

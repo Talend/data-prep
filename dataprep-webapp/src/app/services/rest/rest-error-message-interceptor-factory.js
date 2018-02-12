@@ -46,7 +46,6 @@ export default function RestErrorMessageHandler($q, MessageService, RestURLs) {
 			if (config) {
 				const { failSilently, url, timeout } = config;
 				const { userUrl, logoutUrl } = RestURLs;
-				console.log(config, userUrl, logoutUrl); debugger;
 				if (failSilently ||
 					(url && userUrl && logoutUrl && (url.includes(userUrl) || url.includes(logoutUrl))) ||
 					(timeout && timeout.$$state.value === 'user cancel')) { // eslint-disable-line angular/no-private-call

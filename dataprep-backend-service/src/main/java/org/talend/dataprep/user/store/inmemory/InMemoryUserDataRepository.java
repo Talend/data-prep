@@ -14,7 +14,6 @@ package org.talend.dataprep.user.store.inmemory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -61,11 +60,6 @@ public class InMemoryUserDataRepository<U extends UserData> implements UserDataR
     @Override
     public void clear() {
         store.clear();
-    }
-
-    @Override
-    public Stream<UserData> list() {
-        return (Stream<UserData>) store.values().stream();
     }
 
 }

@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -132,12 +130,6 @@ public class FileSystemUserDataRepository implements UserDataRepository<UserData
             }
         }
         LOG.debug("user data repository cleared");
-    }
-
-    @Override
-    public Stream<UserData> list() {
-        String[] users = new File(storeLocation).list();
-        return Arrays.stream(users).map(user -> get(user));
     }
 
     /**

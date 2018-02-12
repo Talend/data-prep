@@ -30,8 +30,18 @@ public class ActionNewColumnToggleCommon {
     public static void upgradeActions(PreparationRepository preparationRepository) {
         preparationRepository
                 .list(PreparationActions.class) //
-                .peek(action -> action.getActions().forEach(ActionNewColumnToggleCommon::updateAction)) //
+                .peek(action -> action.getActions().stream() //
+                        .filter(ActionNewColumnToggleCommon::shouldAddCreateNewColumnParameter) //
+                        .forEach(ActionNewColumnToggleCommon::updateAction)) //
                 .forEach(preparationRepository::add); //
+    }
+
+    /**
+     * Only actions that does not have an explicit "create column" parameter should be passed to the update method that will add
+     * the parameter for all actions that should have it.
+     */
+    private static boolean shouldAddCreateNewColumnParameter(Action action) {
+        return !action.getParameters().containsKey(CREATE_NEW_COLUMN);
     }
 
     private static void updateAction(Action action) {

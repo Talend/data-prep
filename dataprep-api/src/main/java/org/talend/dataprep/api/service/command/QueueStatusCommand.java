@@ -56,6 +56,9 @@ public class QueueStatusCommand extends GenericCommand<AsyncExecutionMessage> {
     }
 
     private String getServiceUrl(String service) {
+        if(StringUtils.isEmpty(service)){
+            return fullRunServiceUrl;
+        }
         switch (service){
             case "dataset":
                 return datasetServiceUrl;

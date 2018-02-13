@@ -129,6 +129,20 @@ public class CommonAPI extends APIService {
         return queueStatusCommand.execute();
     }
 
+
+    /**
+     * Get the async method status
+     */
+    @RequestMapping(value = "/api/queue/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get async method status.")
+    @Timed
+    public AsyncExecutionMessage getQueue(
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
+        HystrixCommand<AsyncExecutionMessage> queueStatusCommand = getCommand(QueueStatusCommand.class, null, id);
+        return queueStatusCommand.execute();
+    }
+
+
     /**
      * Write the given error codes to the generator.
      *

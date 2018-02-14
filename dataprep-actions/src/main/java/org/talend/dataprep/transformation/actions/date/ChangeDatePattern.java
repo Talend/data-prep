@@ -105,7 +105,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX).withCopyMetadataFromId(actionContext.getColumnId())));
         }
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);
@@ -123,7 +123,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             final ColumnMetadata column = rowMetadata.getById(columnId);
             final Statistics statistics = column.getStatistics();
 
-            final ColumnMetadata targetColumn = originalRowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
+            final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
             if (!Objects.equals(targetColumn.getId(), columnId)) {
                 targetColumn.setStatistics(statistics);
             }

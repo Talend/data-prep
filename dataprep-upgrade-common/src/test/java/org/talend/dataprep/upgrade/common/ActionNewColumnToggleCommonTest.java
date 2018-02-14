@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
@@ -18,8 +19,10 @@ public class ActionNewColumnToggleCommonTest {
         final PreparationActions actions = mock(PreparationActions.class);
         final PersistentStep step = mock(PersistentStep.class);
 
+        when(step.id()).thenReturn("step-1");
         when(repository.list(eq(PreparationActions.class))).thenReturn(Stream.of(actions));
-        when(actions.id()).thenReturn("actions-1", "actions-2");
+        // Twice "action-1" to pass root preparation action filter.
+        when(actions.id()).thenReturn("actions-1", "actions-1", "actions-2");
         when(repository.list(eq(PersistentStep.class), any())).thenReturn(Stream.of(step));
 
         // when
@@ -38,8 +41,31 @@ public class ActionNewColumnToggleCommonTest {
         final PreparationActions actions = mock(PreparationActions.class);
         final PersistentStep step = mock(PersistentStep.class);
 
+        when(step.id()).thenReturn("step-1");
         when(repository.list(eq(PreparationActions.class))).thenReturn(Stream.of(actions));
-        when(actions.id()).thenReturn("actions-1"); // same id
+        // Twice "action-1" to pass root preparation action filter.
+        when(actions.id()).thenReturn("actions-1", "actions-1", "actions-1"); // same id
+        when(repository.list(eq(PersistentStep.class), any())).thenReturn(Stream.of(step));
+
+        // when
+        ActionNewColumnToggleCommon.upgradeActions(repository);
+
+        // then
+        verify(repository, times(1)).add(eq(actions));
+        verify(repository, never()).add(eq(step));
+        verify(step, never()).setContent(any());
+    }
+
+    @Test
+    public void shouldNotUpdateRootStep() {
+        // given
+        final PreparationRepository repository = mock(PreparationRepository.class);
+        final PreparationActions actions = mock(PreparationActions.class);
+        final PersistentStep step = mock(PersistentStep.class);
+
+        when(step.id()).thenReturn(Step.ROOT_STEP.id()); // Listed step is root step
+        when(repository.list(eq(PreparationActions.class))).thenReturn(Stream.of(actions));
+        when(actions.id()).thenReturn("actions-1", "actions-2");
         when(repository.list(eq(PersistentStep.class), any())).thenReturn(Stream.of(step));
 
         // when

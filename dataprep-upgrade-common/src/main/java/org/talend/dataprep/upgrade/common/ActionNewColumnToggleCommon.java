@@ -35,7 +35,7 @@ public class ActionNewColumnToggleCommon {
         preparationRepository
                 .list(PreparationActions.class) //
                 .filter(pa -> !PreparationActions.ROOT_ACTIONS.id().equals(pa.id()) && pa.getActions() != null
-                        && pa.getActions().isEmpty()) //
+                        && !pa.getActions().isEmpty()) //
                 .peek(action -> {
                     final String beforeUpdateId = action.id();
                     action.getActions().forEach(ActionNewColumnToggleCommon::updateAction);

@@ -22,17 +22,13 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.transformation.actions.column.Concat;
-import org.talend.dataprep.transformation.actions.conversions.TemperaturesConverter;
-import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.transformation.actions.fill.GenerateSequence;
-import org.talend.dataprep.transformation.actions.math.*;
 
 public class ActionNewColumnToggleCommon {
 
     private static final Logger LOGGER = getLogger(ActionNewColumnToggleCommon.class);
 
-    private ActionNewColumnToggleCommon() {}
+    private ActionNewColumnToggleCommon() {
+    }
 
     public static void upgradeActions(PreparationRepository preparationRepository) {
         preparationRepository
@@ -43,21 +39,15 @@ public class ActionNewColumnToggleCommon {
                     final String afterUpdateId = action.id();
 
                     if (!beforeUpdateId.equals(afterUpdateId)) {
-                        LOGGER.debug("Migration changed action id from '{}' to '{}', updating steps", beforeUpdateId, afterUpdateId);
-                        preparationRepository.list(Step.class, eq("content", beforeUpdateId)) //
+                        LOGGER.debug("Migration changed action id from '{}' to '{}', updating steps", beforeUpdateId,
+                                afterUpdateId);
+                        preparationRepository
+                                .list(Step.class, eq("content", beforeUpdateId)) //
                                 .peek(s -> s.setContent(afterUpdateId)) //
                                 .forEach(preparationRepository::add);
                     }
                 }) //
                 .forEach(preparationRepository::add); //
-    }
-
-    /**
-     * Only actions that does not have an explicit "create column" parameter should be passed to the update method that will add
-     * the parameter for all actions that should have it.
-     */
-    private static boolean shouldAddCreateNewColumnParameter(Action action) {
-        return !action.getParameters().containsKey(CREATE_NEW_COLUMN);
     }
 
     private static void updateAction(Action action) {

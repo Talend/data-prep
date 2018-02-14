@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(POW_NAME)
 public class Pow extends AbstractMathOneParameterAction {
 
-    protected static final String POW_NAME = "pow_numbers";
+    public static final String POW_NAME = "pow_numbers";
 
     @Override
     public String getName() {

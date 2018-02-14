@@ -25,7 +25,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(SIN_NAME)
 public class Sin extends AbstractMathNoParameterAction {
 
-    static final String SIN_NAME = "sin_numbers";
+    public static final String SIN_NAME = "sin_numbers";
 
     private static final String SIN_SUFFIX = "_sin";
 

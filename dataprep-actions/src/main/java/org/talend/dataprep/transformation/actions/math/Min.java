@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(MIN_NAME)
 public class Min extends AbstractMathOneParameterAction {
 
-    protected static final String MIN_NAME = "min_numbers";
+    public static final String MIN_NAME = "min_numbers";
 
     @Override
     public String getName() {

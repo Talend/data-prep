@@ -10,6 +10,7 @@ Feature: Export Preparation with created column
       | columnId          | 0008                       |
       | paddingCharacter  | whitespace                 |
       | createNewColumn   | false                      |
+      | rowId             |                            |
     And I add a step with parameters :
       | actionName        | compute_time_since         |
       | preparationName   | best_sad_songs_prep        |
@@ -18,7 +19,7 @@ Feature: Export Preparation with created column
       | createNewColumn   | true                       |
       | timeUnit          | HOURS                      |
       | sinceWhen         | now_server_side            |
-
+      | rowId             |                            |
   @CleanAfter
   Scenario: Verify export result
     # created column with the second step should be not empty

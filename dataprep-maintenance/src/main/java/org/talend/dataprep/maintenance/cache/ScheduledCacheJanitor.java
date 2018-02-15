@@ -41,7 +41,7 @@ public class ScheduledCacheJanitor {
     /**
      * Cleans the cache every minute.
      */
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000, initialDelay = 30 * 60 * 1000)
     public void scheduledJanitor() {
         LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
         forAll.execute(() -> janitor.janitor());

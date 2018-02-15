@@ -95,7 +95,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     private static final String WEEK_OF_YEAR = "WEEK_OF_YEAR";
 
     /** Language name parameter */
-    private static final String LANGUAGE = "LANGUAGE";
+    public static final String LANGUAGE = "LANGUAGE";
 
     /** Key for the locale value in context */
     private static String LOCALE = "LOCALE";

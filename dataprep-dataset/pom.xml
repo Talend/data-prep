@@ -30,4 +30,34 @@
         <start-class>org.talend.dataprep.dataset.Application</start-class>
     </properties>
 
+    <dependencies>
+    <!-- Added for daikon-messages poc-->
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>messages-model</artifactId>
+            <version>0.20.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>messages-model-spring-support</artifactId>
+            <version>0.20.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>1.4.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-schema</artifactId>
+            <version>1.2.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+            <version>1.2.1.RELEASE</version>
+        </dependency>
+        <!-- / Added for daikon-messages poc-->
+    </dependencies>
+
 </project>

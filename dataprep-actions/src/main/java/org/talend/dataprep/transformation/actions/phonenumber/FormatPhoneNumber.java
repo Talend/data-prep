@@ -71,6 +71,16 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
     static final String TYPE_RFC3966 = "RFC3966"; //$NON-NLS-1$
 
     /**
+     * The following types was provided previously to user selection on UI.
+     * TODO remove those constants and create an upgrade task.
+     */
+    static final String OLD_TYPE_INTERNATIONAL = "International"; //$NON-NLS-1$
+
+    static final String OLD_TYPE_NATIONAL = "National"; //$NON-NLS-1$
+
+    static final String OLD_OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
+
+    /**
      * a region code parameter
      */
     static final String REGIONS_PARAMETER_CONSTANT_MODE = "region_code"; //$NON-NLS-1$
@@ -149,8 +159,10 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         }
         switch (formatType) {
             case TYPE_INTERNATIONAL:
+            case OLD_TYPE_INTERNATIONAL:
                 return PhoneNumberHandlerBase.formatInternational(phone, regionParam);
             case TYPE_NATIONAL:
+            case OLD_TYPE_NATIONAL:
                 return PhoneNumberHandlerBase.formatNational(phone, regionParam);
             case TYPE_E164:
                 return PhoneNumberHandlerBase.formatE164(phone, regionParam);
@@ -203,10 +215,12 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         final String regionParam;
         switch (parameters.get(OtherColumnParameters.MODE_PARAMETER)) {
             case CONSTANT_MODE:
-                if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, parameters.get(REGIONS_PARAMETER_CONSTANT_MODE))) {
+                final String constantModeParameter = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
+                if (OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)
+                    || OLD_OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)) {
                     regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
                 } else {
-                    regionParam = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
+                    regionParam = constantModeParameter;
                 }
                 break;
             case OTHER_COLUMN_MODE:

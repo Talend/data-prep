@@ -5,7 +5,7 @@ import org.springframework.messaging.MessageChannel;
 
 public interface ProductEventsSink {
 
-    @Output("productEvents")
+    @Output("dataSetKafkaTest")
     MessageChannel productEvents();
 
 }

@@ -5,15 +5,15 @@ package org.talend.dataprep.dataset.service.messaging.emitter;
  */
 public class DmtMessage {
 
-    String ig;
+    String id;
     String message;
 
-    public String getIg() {
-        return ig;
+    public String getId() {
+        return id;
     }
 
-    public DmtMessage setIg(String ig) {
-        this.ig = ig;
+    public DmtMessage setId(String id) {
+        this.id = id;
         return this;
     }
 

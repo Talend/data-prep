@@ -5,8 +5,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaEventEmitter {
 
-public void sendMessage(){
+    public void sendMessage() {
+        DmtMessage message = new DmtMessage();
 
-}
+    }
 
 }

@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.test;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.http.ContentType.JSON;
@@ -39,6 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPITest;
 import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
@@ -206,6 +208,22 @@ public class APIClientTest {
                 .statusCode(is(200));
     }
 
+    /**
+     * Fetch the preparation metadata.
+     *
+     * @param preparationId id of the preparation to fetch
+     * @return the preparation details
+     * @throws IOException if a connexion or parsing error happen
+     */
+    public Preparation getPreparationDetails(String preparationId) throws IOException {
+        String json = //
+                expect() //
+                        .statusCode(200).log().ifValidationFails() //
+                        .when() //
+                        .get("/api/preparations/{id}/details", preparationId).asString();
+        return mapper.readerFor(Preparation.class).readValue(json);
+    }
+
     public Response getPreparation(String preparationId) throws IOException {
         return getPreparation(preparationId, "head", "HEAD");
     }
@@ -222,7 +240,7 @@ public class APIClientTest {
      * @throws IOException
      * @throws InterruptedException
      */
-    protected Response getPreparation(String preparationId, String version, String stepId) throws IOException {
+    public Response getPreparation(String preparationId, String version, String stepId) throws IOException {
         // when
         Response transformedResponse = given()
                 .when() //

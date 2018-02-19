@@ -113,15 +113,10 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             // register the new pattern in column's stats as the most used pattern,
             // to be able to process date action more efficiently later
             final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
-            final RowMetadata originalRowMetadata = actionContext.getRowMetadata();
-            final RowMetadata newRowMetadata = originalRowMetadata.clone();
-
+            final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final String columnId = actionContext.getColumnId();
-
-            RowMetadata rowMetadata = ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT) ?
-                    newRowMetadata : originalRowMetadata;
             final ColumnMetadata column = rowMetadata.getById(columnId);
-            final Statistics statistics = column.getStatistics();
+            final Statistics statistics = new Statistics(column.getStatistics());
 
             final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
             if (!Objects.equals(targetColumn.getId(), columnId)) {
@@ -205,7 +200,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.METADATA_CHANGE_TYPE, Behavior.NEED_STATISTICS_PATTERN);
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
     }
 
 }

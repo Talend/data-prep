@@ -153,15 +153,17 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        RowMetadata rowMetadata = context.getRowMetadata();
-        Map<String, String> parameters = context.getParameters();
-        String columnId = context.getColumnId();
+    public void applyOnColumn(DataSetRow row, ActionContext actionContext) {
+
+        Map<String, String> parameters = actionContext.getParameters();
+        String columnId = actionContext.getColumnId();
+
+        RowMetadata rowMetadata = Objects.equals(ActionsUtils.getTargetColumnId(actionContext), columnId) ? actionContext.getRowMetadata() : actionContext.getRowMetadata().clone();
 
         TemporalUnit unit = ChronoUnit.valueOf(parameters.get(TIME_UNIT_PARAMETER).toUpperCase());
         String newValue;
         try {
-            String mode = context.get(SINCE_WHEN_PARAMETER);
+            String mode = actionContext.get(SINCE_WHEN_PARAMETER);
             LocalDateTime since;
             switch (mode) {
             case OTHER_COLUMN_MODE:
@@ -172,7 +174,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             case SPECIFIC_DATE_MODE:
             case NOW_SERVER_SIDE_MODE:
             default:
-                since = context.get(SINCE_DATE_PARAMETER);
+                since = actionContext.get(SINCE_DATE_PARAMETER);
                 break;
             }
 
@@ -181,7 +183,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 newValue = StringUtils.EMPTY;
             } else {
                 String value = row.get(columnId);
-                LocalDateTime temporalAccessor = Providers.get().parse(value, context.getRowMetadata().getById(columnId));
+                LocalDateTime temporalAccessor = Providers.get().parse(value, actionContext.getRowMetadata().getById(columnId));
                 Temporal valueAsDate = LocalDateTime.from(temporalAccessor);
                 newValue = String.valueOf(unit.between(valueAsDate, since));
             }
@@ -190,7 +192,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             // Nothing to do: in this case, temporalAccessor is left null
             newValue = StringUtils.EMPTY;
         }
-        row.set(ActionsUtils.getTargetColumnId(context), newValue);
+        row.set(ActionsUtils.getTargetColumnId(actionContext), newValue);
     }
 
     @Override

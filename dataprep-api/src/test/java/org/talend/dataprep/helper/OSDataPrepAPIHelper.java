@@ -519,6 +519,20 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Get the semantic types of a column
+     *
+     * @param columnId the column id.
+     * @param datasetId the new dataset name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response getDatasetsColumnSemanticTypes(String columnId, String datasetId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/datasets/{datasetId}/columns/{columnId}/types", datasetId, columnId);
+    }
+
+    /**
      * Get the user information.
      *
      * @return the response.

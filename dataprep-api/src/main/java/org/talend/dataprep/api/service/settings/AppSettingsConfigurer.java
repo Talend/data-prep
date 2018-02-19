@@ -21,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
-import org.talend.dataprep.security.Security;
 
 import com.netflix.hystrix.HystrixCommand;
 
@@ -35,10 +34,6 @@ public abstract class AppSettingsConfigurer<T> {
     /** The spring application context. */
     @Autowired
     private ApplicationContext context;
-
-    /** To get access to the current connected user. */
-    @Autowired
-    private Security security;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AppSettingsConfigurer.class);
 
@@ -63,7 +58,7 @@ public abstract class AppSettingsConfigurer<T> {
      */
     public boolean isUserAuthorized() {
         // default is TDP users
-        return security.isTDPUser();
+        return true;
     }
 
     /**

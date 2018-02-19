@@ -23,6 +23,7 @@ import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.column.CreateNewColumnTest;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -30,6 +31,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.Collections.singletonMap;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.*;
@@ -538,5 +540,81 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
     public void should_have_expected_behavior() {
         assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+    }
+
+    @Test
+    public void should_format_old_type_international_TDP_5256() {
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        // old legacy parameters
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.OLD_TYPE_INTERNATIONAL);
+
+        // given
+        final DataSetRow row = new DataSetRow(singletonMap("0000", "+33656965822"));
+
+        final Map<String, String> expectedValues = singletonMap("0000", "+33 6 56 96 58 22");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_format_old_type_national_TDP_5256() {
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        // old legacy parameters
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.OLD_TYPE_NATIONAL);
+
+        // given
+        final DataSetRow row = new DataSetRow(singletonMap("0000", "+33656965822"));
+
+        final Map<String, String> expectedValues = singletonMap("0000", "06 56 96 58 22");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_format_old_region_code_with_old_international_type_TDP_5256() {
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(FormatPhoneNumber.MANUAL_REGION_PARAMETER_STRING, "JP");
+        // old legacy parameters
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, FormatPhoneNumber.OLD_OTHER_REGION_TO_BE_SPECIFIED);
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.OLD_TYPE_INTERNATIONAL);
+
+        // given
+        final DataSetRow row = new DataSetRow(singletonMap("0000", "757-682-7116"));
+
+        final Map<String, String> expectedValues = singletonMap("0000", "+81 7576827116");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_format_old_region_code_with_old_national_type_TDP_5256() {
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
+        parameters.put(FormatPhoneNumber.MANUAL_REGION_PARAMETER_STRING, "JP");
+        // old legacy parameters
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, FormatPhoneNumber.OLD_OTHER_REGION_TO_BE_SPECIFIED);
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.OLD_TYPE_NATIONAL);
+
+        // given
+        final DataSetRow row = new DataSetRow(singletonMap("0000", "757-682-7116"));
+
+        final Map<String, String> expectedValues = singletonMap("0000", "7576827116");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
     }
 }

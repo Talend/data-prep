@@ -27,6 +27,7 @@ public enum ActionParamEnum {
     FORMAT_TYPE("formatType","format_type"),
     OPERATOR("operator","operator"),
     OPERAND("operand","operand"),
+    NEW_DOMAIN_ID("new_domain_id","new_domain_id"),
     CREATE_NEW_COLUMN("createNewColumn","create_new_column");
 
     private String name;

@@ -12,21 +12,6 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.slf4j.Logger;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -47,17 +32,38 @@ import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.FilteredNode;
 import org.talend.dataprep.transformation.pipeline.node.LimitNode;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class Pipeline implements Node, RuntimeNode, Serializable {
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOG = getLogger(Pipeline.class);
 
-    /** For the Serialization interface. */
+    /**
+     * For the Serialization interface.
+     */
     private static final long serialVersionUID = 1L;
 
     private Node node;
 
-    /** Flag used to know if the pipeline is stopped or not. */
+    /**
+     * Flag used to know if the pipeline is stopped or not.
+     */
     private final AtomicBoolean isStopped = new AtomicBoolean();
 
     /**
@@ -84,7 +90,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
     }
 
     public void execute(DataSet dataSet) {
-        final RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata().clone();
+        RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata();
         try (Stream<DataSetRow> records = dataSet.getRecords()) {
 
             // get the lock on isFinished to make the signal(STOP) method wait for the whole pipeline to finish

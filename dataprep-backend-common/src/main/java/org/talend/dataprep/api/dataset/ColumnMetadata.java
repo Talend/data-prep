@@ -615,7 +615,6 @@ public class ColumnMetadata implements Serializable {
             this.invalid = 0;
             this.valid = 0;
             this.type = Type.get(original.getType());
-            this.statistics = new Statistics(original.getStatistics());
             this.domain = original.getDomain();
             this.domainLabel = original.getDomainLabel();
             this.semanticDomains = original.getSemanticDomains();

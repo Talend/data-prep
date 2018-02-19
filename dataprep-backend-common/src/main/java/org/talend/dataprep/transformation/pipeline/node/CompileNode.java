@@ -36,7 +36,7 @@ public class CompileNode extends BasicNode {
     public void receive(DataSetRow row, RowMetadata metadata) {
         boolean needCompile = actionContext.getActionStatus() == ActionContext.ActionStatus.NOT_EXECUTED;
         if (actionContext.getRowMetadata() == null || hashCode != metadata.hashCode()) {
-            actionContext.setRowMetadata(metadata.clone());
+            actionContext.setRowMetadata(metadata);
             hashCode = metadata.hashCode();
             needCompile = true; // Metadata changed, force re-compile
         }

@@ -201,27 +201,6 @@ public class APIClientTest {
                 .then().statusCode(is(200));
     }
 
-    /**
-     * Fetch the preparation metadata.
-     *
-     * @param preparationId id of the preparation to fetch
-     * @return the preparation details
-     * @throws IOException if a connexion or parsing error happen
-     */
-    public Preparation getPreparationDetails(String preparationId) throws IOException {
-        String json = //
-                expect() //
-                        .statusCode(200).log().ifValidationFails() //
-                        .when() //
-                        .get("/api/preparations/{id}/details", preparationId).asString();
-        return mapper.readerFor(Preparation.class).readValue(json);
-    }
-
-    private static class Data {
-        public RowMetadata metadata;
-    }
-
-
     public Response getPreparation(String preparationId) throws IOException {
         return getPreparation(preparationId, "head", "HEAD");
     }

@@ -12,38 +12,25 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.given;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.test.APIClientTest;
-import org.talend.dataprep.async.AsyncExecution;
-import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.url.UrlRuntimeUpdater;
-
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 
 /**
  * Base test for all API service unit.

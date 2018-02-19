@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.helper;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
 
 import java.io.File;
@@ -569,33 +570,38 @@ public class OSDataPrepAPIHelper {
      * @throws InterruptedException
      */
     protected AsyncExecutionMessage waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
-        boolean waitingForAsyncMethod;
-        LocalDateTime timeout = LocalDateTime.now().plusSeconds(asyncTimeOut);
+        boolean isAsyncMethodRunning = true;
+        int nbLoop = 0;
+
         AsyncExecutionMessage asyncExecutionMessage;
-        do {
-            String statusAsyncMethod = given() //
-                    .baseUri(apiBaseUrl) //
+
+        while (isAsyncMethodRunning && nbLoop < 100) {
+
+            String statusAsyncMethod = given()
                     .when() //
                     .expect()
-                    .statusCode(200) //
+                    .statusCode(200)
                     .log()
                     .ifError() //
                     .get(asyncMethodStatusUrl)
                     .asString();
 
-            asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+            asyncExecutionMessage =
+                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
-            waitingForAsyncMethod = LocalDateTime.now().isBefore(timeout) && activeAsyncStatus.contains(asyncExecutionMessage.getStatus());
+            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
+            isAsyncMethodRunning =
+                    asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(AsyncExecution.Status.NEW);
 
-            if (waitingForAsyncMethod) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(500);
-                } catch (InterruptedException e) {
-                    LOGGER.error("Cannot sleep", e);
-                    Assert.fail();
-                }
+            try {
+                TimeUnit.MILLISECONDS.sleep(50);
+            } catch (InterruptedException e) {
+                LOGGER.error("cannot sleep", e);
+                Assert.fail();
             }
-        } while (waitingForAsyncMethod);
+            nbLoop++;
+        }
+
         return asyncExecutionMessage;
     }
 }

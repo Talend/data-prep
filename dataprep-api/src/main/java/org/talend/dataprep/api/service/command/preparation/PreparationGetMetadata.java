@@ -52,9 +52,6 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
     /** The preparation version. */
     private final String version;
 
-    /** Service URL */
-    private final URI uri;
-
     /**
      * @param id the preparation id.
      * @param version the preparation version.
@@ -63,14 +60,7 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
         super(PREPARATION_GROUP);
         this.id = id;
         this.version = version;
-        URIBuilder uriBuilder = null;
-        try {
-            uriBuilder = new URIBuilder(transformationServiceUrl + "/apply/preparation/" + id + "/" + version + "/metadata");
-            uri = uriBuilder.build();
-        } catch (URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
-        execute(() -> new HttpGet(uri));
+        execute(() -> new HttpGet(transformationServiceUrl + "/apply/preparation/" + id + "/" + version + "/metadata"));
     }
 
     @PostConstruct

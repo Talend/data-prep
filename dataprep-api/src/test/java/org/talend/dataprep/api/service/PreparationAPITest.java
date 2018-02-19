@@ -46,7 +46,6 @@ import org.talend.dataprep.api.preparation.PreparationSummary;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
-import org.talend.dataprep.api.service.test.APIClientTest;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.preparation.service.UserPreparation;

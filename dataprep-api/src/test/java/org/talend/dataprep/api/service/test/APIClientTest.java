@@ -13,7 +13,8 @@
 
 package org.talend.dataprep.api.service.test;
 
-import static com.jayway.restassured.RestAssured.*;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -36,23 +37,20 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPITest;
 import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.format.CSVFormat;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
-import org.talend.dataprep.format.export.ExportFormat;
-import org.talend.dataprep.transformation.format.CSVFormat;
 
 /**
  * Test client for data-prep API.
@@ -70,11 +68,11 @@ public class APIClientTest {
         InputStream result;
         if (name == null) {
             result = when().get("/api/datasets").asInputStream();
-        }else {
+        } else {
             result = when().get("/api/datasets?name={name}", name).asInputStream();
         }
-        CollectionType resultType = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class,
-                UserDataSetMetadata.class);
+        CollectionType resultType =
+                TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, UserDataSetMetadata.class);
         return mapper.readValue(result, resultType);
     }
 
@@ -118,8 +116,7 @@ public class APIClientTest {
      * @return the preparation id.
      * @throws IOException sh*i happens.
      */
-    public String createPreparationFromFile(final String file, final String name, final String folderId)
-            throws IOException {
+    public String createPreparationFromFile(final String file, final String name, final String folderId) throws IOException {
         final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID());
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
@@ -146,7 +143,10 @@ public class APIClientTest {
 
         final Response response = request //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/api/preparations");
 
         assertThat(response.getStatusCode(), is(200));
@@ -178,8 +178,8 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then()
-                .statusCode(is(200));
+        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then().statusCode(
+                is(200));
     }
 
     /**
@@ -190,15 +190,20 @@ public class APIClientTest {
      * @param parameters action parameters
      * @throws IOException sh*t happens.
      */
-    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters) throws IOException {
+    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters)
+            throws IOException {
         org.talend.dataprep.api.preparation.Actions actions = new org.talend.dataprep.api.preparation.Actions();
         Action action = new Action();
         action.setName(actionName);
         action.setParameters(MixedContentMap.convert(parameters));
         actions.setActions(Collections.singletonList(action));
-        given().contentType(JSON.withCharset(UTF_8)).content(actions) //
-                .when().post("/api/preparations/{id}/actions", preparationId) //
-                .then().statusCode(is(200));
+        given()
+                .contentType(JSON.withCharset(UTF_8))
+                .content(actions) //
+                .when()
+                .post("/api/preparations/{id}/actions", preparationId) //
+                .then()
+                .statusCode(is(200));
     }
 
     public Response getPreparation(String preparationId) throws IOException {
@@ -248,7 +253,7 @@ public class APIClientTest {
      * @throws IOException
      * @throws InterruptedException
      */
-    protected void waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
+    public void waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
         int nbLoop = 0;
 
@@ -316,7 +321,7 @@ public class APIClientTest {
     }
 
     private Response getExportResponse(String preparationId, String datasetId, String stepId, String csvDelimiter,
-                                       String fileName, Integer expectedStatus) {
+            String fileName, Integer expectedStatus) {
         RequestSpecification exportRequest = given() //
                 .formParam("exportType", "CSV") //
                 .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,

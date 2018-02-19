@@ -74,9 +74,6 @@ public class OSDataPrepAPIHelper {
     @Value("${restassured.debug:false}")
     private boolean enableRestAssuredDebug;
 
-    @Value("${async.service.timeout:10}")
-    private int asyncTimeOut;
-
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
      *
@@ -573,7 +570,7 @@ public class OSDataPrepAPIHelper {
         boolean isAsyncMethodRunning = true;
         int nbLoop = 0;
 
-        AsyncExecutionMessage asyncExecutionMessage;
+        AsyncExecutionMessage asyncExecutionMessage = null;
 
         while (isAsyncMethodRunning && nbLoop < 100) {
 

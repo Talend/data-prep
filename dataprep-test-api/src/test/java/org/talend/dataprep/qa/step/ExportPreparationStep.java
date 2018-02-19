@@ -31,7 +31,7 @@ public class ExportPreparationStep extends DataPrepStep {
     ExportParamAnalyzer epAnalyzer;
 
     @When("^I export the preparation with parameters :$")
-    public void whenIExportThePreparationWithCustomParametersInto(DataTable dataTable) throws IOException, InterruptedException {
+    public void whenIExportThePreparationWithCustomParametersInto(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
         ExportType exportType = epAnalyzer.detectExportType(params);

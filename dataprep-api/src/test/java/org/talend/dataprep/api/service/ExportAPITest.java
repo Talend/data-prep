@@ -116,7 +116,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
-        final String export = exportDataset(datasetId, "").asString();
+        final String export = testClient.exportDataset(datasetId, "").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -128,7 +128,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String datasetId = testClient.createDataset("export/export_dataset.csv", "testHeaders");
 
         // when
-        final Response response = exportDataset(datasetId,"");
+        final Response response = testClient.exportDataset(datasetId,"");
 
         // then
         assertTrue(response.getContentType().startsWith("text/csv"));
@@ -141,7 +141,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String datasetId = testClient.createDataset("export/_UTF-8 住所.csv", "_UTF-8 住所");
 
         // when
-        final Response response = exportDataset(datasetId, "");
+        final Response response = testClient.exportDataset(datasetId, "");
 
         // then
         assertTrue(response.getContentType().startsWith("text/csv"));
@@ -166,7 +166,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final List<String> steps = preparationMessage.getSteps();
 
         // when
-        final String export = exportPreparation(preparationId, steps.get(1)).asString();
+        final String export = testClient.exportPreparation(preparationId, steps.get(1)).asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -184,7 +184,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 this.getClass().getResourceAsStream("export/expected_export_preparation_header_uppercase_firstname.csv"), UTF_8);
 
         // when
-        final String export = exportPreparation(preparationId, "").asString();
+        final String export = testClient.exportPreparation(preparationId, "").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -204,7 +204,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 UTF_8);
 
         // when
-        final String export = exportPreparation(preparationId, "").asString();
+        final String export = testClient.exportPreparation(preparationId, "").asString();
 
         // then
         assertFalse(expectedExport.isEmpty());
@@ -217,7 +217,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromDataset(datasetId, "preparation", home.getId());
 
         // when
-        Response temp = exportPreparation(preparationId, "head");
+        Response temp = testClient.exportPreparation(preparationId, "head");
 
         final String export = temp.asString();
 
@@ -237,7 +237,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
-        final String export = exportPreparation(preparationId, "head", " ").asString();
+        final String export = testClient.exportPreparation(preparationId, "head", " ").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -255,13 +255,13 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
-        final String export1 = exportPreparation(preparationId, "head").asString();
+        final String export1 = testClient.exportPreparation(preparationId, "head").asString();
 
         // then
         assertEquals(expectedSemiColonExport, export1);
 
         // when
-        final String export2 = exportPreparation(preparationId, "head", " ").asString();
+        final String export2 = testClient.exportPreparation(preparationId, "head", " ").asString();
 
         // then
         assertEquals(expectedSpaceExport, export2);
@@ -300,7 +300,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         String fileName = "beerisgoodforyou";
 
         // when
-        final Response export = exportPreparation(preparationId, "head", ";", fileName);
+        final Response export = testClient.exportPreparation(preparationId, "head", ";", fileName);
 
         // then
         String contentDispositionHeaderValue = export.getHeader("Content-Disposition");
@@ -317,7 +317,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         String fileName = "testExport.csv";
 
         // when
-        final Response export = exportPreparation(preparationId, "head");
+        final Response export = testClient.exportPreparation(preparationId, "head");
 
         // then
         String contentDispositionHeaderValue = export.getHeader("Content-Disposition");

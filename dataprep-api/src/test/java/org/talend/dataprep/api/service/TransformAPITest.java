@@ -118,7 +118,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_firstname.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass()
@@ -134,7 +134,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass()
@@ -168,7 +168,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                         .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
 
         // update cache preparation
-        getPreparation(preparationId);
+        testClient.getPreparation(preparationId);
 
         // when
         final String actualClusterParameters = given().formParam("preparationId", preparationId)
@@ -190,9 +190,8 @@ public class TransformAPITest extends ApiServiceTestBase {
         final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath()
                 .getList("steps");
 
-        final String expectedClusterParameters = IOUtils
-                .toString(this.getClass()
-                        .getResourceAsStream("transformation/expected_cluster_params_with_steps.json"), UTF_8);
+        IOUtils.toString(this.getClass()
+                .getResourceAsStream("transformation/expected_cluster_params_with_steps.json"), UTF_8);
 
         // when
         final String actualClusterParameters = given()
@@ -236,7 +235,7 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         // then
         assertEquals(200, addActionResponseCode);
-        final String actualContent = getPreparation(preparationId).asString();
+        final String actualContent = testClient.getPreparation(preparationId).asString();
         assertThat(actualContent, sameJSONAsFile(this.getClass().getResourceAsStream("bugfix/TDP-280_expected.json")));
     }
 
@@ -251,7 +250,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-402.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("dataset/dataset_TDP-402_expected.json");
@@ -269,7 +268,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1308.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("dataset/dataset_TDP-1308_expected.json");
         assertFalse(transformed.isEmpty());
@@ -284,7 +283,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/multiple_filters.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("transformation/multiple_filters_expected.json");
@@ -307,7 +306,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                         UTF_8));
 
         // then (the column is still a date without any invalid)
-        final String datasetContent = getPreparation(preparationId).asString();
+        final String datasetContent = testClient.getPreparation(preparationId).asString();
 
         final JsonNode rootNode = mapper.readTree(datasetContent);
         final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
@@ -333,7 +332,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("transformation/change_date_format_MMMM_yyyy_dd.json"), UTF_8));
 
         // then (the column is still a date without any invalid)
-        final String datasetContent = getPreparation(preparationId).asString();
+        final String datasetContent = testClient.getPreparation(preparationId).asString();
 
         final JsonNode rootNode = mapper.readTree(datasetContent);
         final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
@@ -359,7 +358,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/split_compare_numbers.json"), UTF_8));
 
         // then (the column is still a date without any invalid)
-        final String datasetContent = getPreparation(preparationId).asString();
+        final String datasetContent = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("transformation/split_compare_numbers_expected.json");
@@ -378,7 +377,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-1672.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("dataset/dataset_TDP-1672_expected.json");
@@ -396,7 +395,7 @@ public class TransformAPITest extends ApiServiceTestBase {
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), UTF_8));
 
         // when
-        final String transformed = getPreparation(preparationId).asString();
+        final String transformed = testClient.getPreparation(preparationId).asString();
 
         // then
         final InputStream expectedContent = this.getClass().getResourceAsStream("dataset/dataset_TDP-2165_expected.json");
@@ -429,7 +428,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         testClient.applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-2165.json"), UTF_8));
 
-        getPreparation(preparationId);
+        testClient.getPreparation(preparationId);
 
         final Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
         final TransformationCacheKey transformationCacheKey = cacheKeyGenerator.generateContentKey(preparation.getDataSetId(), //

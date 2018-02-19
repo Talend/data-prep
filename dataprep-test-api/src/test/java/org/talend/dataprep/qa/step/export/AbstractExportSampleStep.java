@@ -37,7 +37,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
     private ExportUtil exportUtil;
 
     @Override
-    public void exportSample(Map<String, String> params) throws IOException, InterruptedException {
+    public void exportSample(Map<String, String> params) throws IOException {
 
         // File exported
         String filename = params.get(FILENAME.getName());

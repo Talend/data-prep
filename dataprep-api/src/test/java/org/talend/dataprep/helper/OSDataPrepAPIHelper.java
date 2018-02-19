@@ -31,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -51,6 +54,8 @@ import com.jayway.restassured.specification.RequestSpecification;
  */
 @Component
 public class OSDataPrepAPIHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -189,7 +194,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log().all() //
+                .log()
+                .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .baseUri(apiBaseUrl) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
@@ -210,7 +216,8 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -289,7 +296,8 @@ public class OSDataPrepAPIHelper {
      * @param from
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from) throws IOException, InterruptedException {
+    public Response getPreparationContent(String preparationId, String version, String from)
+            throws IOException {
         Response response = given() //
                 .baseUri(getApiBaseUrl()) //
                 .queryParam("version", version) //
@@ -301,7 +309,7 @@ public class OSDataPrepAPIHelper {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = response.getHeader("Location");
 
-            waitForAsynchronousMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
             response = given() //
                     .baseUri(getApiBaseUrl()) //
@@ -358,7 +366,7 @@ public class OSDataPrepAPIHelper {
      * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeExport(Map<String, Object> parameters) throws IOException, InterruptedException {
+    public Response executeExport(Map<String, Object> parameters) throws IOException {
         Response response = given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
@@ -370,7 +378,7 @@ public class OSDataPrepAPIHelper {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = response.getHeader("Location");
 
-            waitForAsynchronousMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
             response = given() //
                     .baseUri(apiBaseUrl) //
@@ -546,27 +554,34 @@ public class OSDataPrepAPIHelper {
      * @throws IOException
      * @throws InterruptedException
      */
-    protected AsyncExecutionMessage waitForAsynchronousMethodTofinish(String asyncMethodStatusUrl)
-            throws IOException, InterruptedException {
-        boolean not_finished = true;
+    protected AsyncExecutionMessage waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
+        boolean waitingForAsyncMethod;
         LocalDateTime timeout = LocalDateTime.now().plusSeconds(asyncTimeOut);
         AsyncExecutionMessage asyncExecutionMessage;
         do {
             String statusAsyncMethod = given() //
                     .baseUri(apiBaseUrl) //
                     .when() //
-                    .expect().statusCode(200) //
-                    .log().ifError() //
-                    .get(asyncMethodStatusUrl).asString();
+                    .expect()
+                    .statusCode(200) //
+                    .log()
+                    .ifError() //
+                    .get(asyncMethodStatusUrl)
+                    .asString();
 
             asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
-            not_finished = LocalDateTime.now().isBefore(timeout) && activeAsyncStatus.contains(asyncExecutionMessage.getStatus());
+            waitingForAsyncMethod = LocalDateTime.now().isBefore(timeout) && activeAsyncStatus.contains(asyncExecutionMessage.getStatus());
 
-            if (not_finished) {
-                TimeUnit.MILLISECONDS.sleep(500);
+            if (waitingForAsyncMethod) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Cannot sleep", e);
+                    Assert.fail();
+                }
             }
-        } while (not_finished);
+        } while (waitingForAsyncMethod);
         return asyncExecutionMessage;
     }
 }

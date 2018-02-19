@@ -1,20 +1,20 @@
-//  ============================================================================
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// ============================================================================
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.cache;
 
+import static java.util.Collections.emptyMap;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -37,9 +37,9 @@ public class CacheKeyGenerator {
     /**
      * Build a cache key to identify the transformation result content
      */
-    public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, final String stepId,
-            final String format, final SourceType sourceType, final String filter) {
-        return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, Collections.emptyMap(), filter);
+    public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, //
+            final String stepId, final String format, final SourceType sourceType, final String filter) {
+        return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, emptyMap(), filter);
     }
 
     /**
@@ -57,7 +57,6 @@ public class CacheKeyGenerator {
 
         return this.generateContentKey(dataSetId, preparationId, stepId, format, sourceType, arguments, filter);
     }
-
 
     /**
      *
@@ -81,11 +80,14 @@ public class CacheKeyGenerator {
             final Map<String, String> parameters, //
             final String filter) {
 
-        final String actualParameters = parameters == null ? StringUtils.EMPTY : parameters.entrySet().stream() //
-                .sorted(Comparator.comparing(Map.Entry::getKey)) //
-                .map(Map.Entry::getValue) //
-                .reduce((s1, s2) -> s1 + s2) //
-                .orElse(StringUtils.EMPTY);
+        final String actualParameters = parameters == null ? StringUtils.EMPTY
+                : parameters
+                        .entrySet()
+                        .stream() //
+                        .sorted(Comparator.comparing(Map.Entry::getKey)) //
+                        .map(Map.Entry::getValue) //
+                        .reduce((s1, s2) -> s1 + s2) //
+                        .orElse(StringUtils.EMPTY);
         final SourceType actualSourceType = sourceType == null ? HEAD : sourceType;
         final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
 
@@ -221,7 +223,9 @@ public class CacheKeyGenerator {
         }
 
         public TransformationCacheKey build() {
-            return cacheKeyGenerator.generateContentKey(datasetId, preparationId, stepId, format, sourceType, parameters, filter);
+            return cacheKeyGenerator.generateContentKey( //
+                    datasetId, preparationId, stepId, //
+                    format, sourceType, parameters, filter);
         }
     }
 }

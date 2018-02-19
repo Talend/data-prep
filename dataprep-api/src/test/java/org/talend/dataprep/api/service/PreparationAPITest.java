@@ -788,7 +788,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json");
 
         // when
-        final String content = getPreparation(preparationId).asString();
+        final String content = testClient.getPreparation(preparationId).asString();
 
         // then
         assertThat(content, sameJSONAsFile(expected));
@@ -801,7 +801,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", preparationName, home.getId());
 
         // when
-        final String content = getPrepMetadata(preparationId).asString();
+        final String content = testClient.getPrepMetadata(preparationId).asString();
 
         // then
         final DataSetMetadata actual = mapper.readerFor(DataSetMetadata.class).readValue(content);
@@ -835,33 +835,33 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // Request preparation content at different versions (preparation has 2 steps -> Root + Upper Case).
-        assertThat(getPreparation(preparationId).asString(), sameJSONAsFile(
+        assertThat(testClient.getPreparation(preparationId).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
 
-        assertThat(getPreparation(preparationId, "head").asString(), sameJSONAsFile(
+        assertThat(testClient.getPreparation(preparationId, "head").asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
 
-        assertThat(getPreparation(preparationId, steps.get(0)).asString(),
+        assertThat(testClient.getPreparation(preparationId, steps.get(0)).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
 
-        assertThat(getPreparation(preparationId, steps.get(1)).asString(), sameJSONAsFile(
+        assertThat(testClient.getPreparation(preparationId, steps.get(1)).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
 
-        assertThat(getPreparation(preparationId, "origin").asString(),
+        assertThat(testClient.getPreparation(preparationId, "origin").asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
 
-        assertThat(getPreparation(preparationId, Step.ROOT_STEP.id()).asString(),
+        assertThat(testClient.getPreparation(preparationId, Step.ROOT_STEP.id()).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
     }
 
     @Test
-    public void shouldGetPreparationContent() throws IOException, InterruptedException {
+    public void shouldGetPreparationContent() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet",
                 home.getId());
 
         // when
-        String preparationContent = getPreparation(preparationId).asString();
+        String preparationContent = testClient.getPreparation(preparationId).asString();
 
         // then
         assertThat(preparationContent,
@@ -869,13 +869,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void shouldGetPreparationContentWhenInvalidSample() throws IOException, InterruptedException {
+    public void shouldGetPreparationContentWhenInvalidSample() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv", "testPreparationContentGet",
                 home.getId());
 
         // when
-        String preparationContent = getPreparation(preparationId).asString();
+        String preparationContent = testClient.getPreparation(preparationId).asString();
 
         // then
         ObjectMapper mapper = new ObjectMapper();
@@ -993,7 +993,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
      * see <a href="https://jira.talendforge.org/browse/TDP-5057">TDP-5057</a>
      */
     @Test
-    public void testPreparationPreviewOnPreparationWithTrimAction_TDP_5057() throws IOException, InterruptedException {
+    public void testPreparationPreviewOnPreparationWithTrimAction_TDP_5057() throws IOException {
         //Create a dataset from csv
         final String datasetId = testClient.createDataset("preview/best_sad_songs_of_all_time.csv", "testPreview");
         // Create a preparation
@@ -1011,7 +1011,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyAction(preparationId, Trim.TRIM_ACTION_NAME, trimParameters);
 
         // check column is date valid after trim action
-        InputStream inputStream = getPreparation(preparationId).asInputStream();
+        InputStream inputStream = testClient.getPreparation(preparationId).asInputStream();
         mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         RowMetadata preparationContent = mapper.readValue(inputStream, Data.class).metadata;
 
@@ -1212,7 +1212,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         copyIdParameters.put("scope", "column");
         testClient.applyAction(preparationId, "copy", copyIdParameters);
 
-        InputStream inputStream = getPreparation(preparationId).asInputStream();
+        InputStream inputStream = testClient.getPreparation(preparationId).asInputStream();
         mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         RowMetadata preparationContent = mapper.readValue(inputStream, Data.class).metadata;
 
@@ -1226,7 +1226,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
 
         // force export to update cache
-        getPreparation(preparationId);
+        testClient.getPreparation(preparationId);
 
         // when
         Map<String, String> copyFirstNameParameters = new HashMap<>();
@@ -1236,7 +1236,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyAction(preparationId, "copy", copyFirstNameParameters);
 
         // then
-        inputStream = getPreparation(preparationId).asInputStream();
+        inputStream = testClient.getPreparation(preparationId).asInputStream();
         mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         preparationContent = mapper.readValue(inputStream, Data.class).metadata;
 

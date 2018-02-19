@@ -14,7 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.talend.dataprep.api.service.command.error.ErrorList.ServiceType.*;
+import static org.talend.dataprep.command.GenericCommand.ServiceType.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * Common API that does not stand in either DataSet, Preparation nor Transform.
@@ -86,13 +86,15 @@ public class CommonAPI extends APIService {
         }
 
         // get preparation api errors
-        HystrixCommand<InputStream> preparationErrors = getCommand(ErrorList.class, GenericCommand.PREPARATION_GROUP, PREPARATION);
+        HystrixCommand<InputStream> preparationErrors =
+                getCommand(ErrorList.class, GenericCommand.PREPARATION_GROUP, PREPARATION);
         try (InputStream errorsInput = preparationErrors.execute()) {
             writeErrorsFromApi(generator, errorsInput);
         }
 
         // get transformation api errors
-        HystrixCommand<InputStream> transformationErrors = getCommand(ErrorList.class, GenericCommand.TRANSFORM_GROUP, TRANSFORMATION);
+        HystrixCommand<InputStream> transformationErrors =
+                getCommand(ErrorList.class, GenericCommand.TRANSFORM_GROUP, TRANSFORMATION);
         try (InputStream errorsInput = transformationErrors.execute()) {
             writeErrorsFromApi(generator, errorsInput);
         }
@@ -110,7 +112,8 @@ public class CommonAPI extends APIService {
     @Timed
     public Type[] listTypes() {
         LOG.debug("Listing supported types");
-        return Arrays.stream(Type.values()) //
+        return Arrays
+                .stream(Type.values()) //
                 .filter(type -> type != Type.UTC_DATETIME) //
                 .collect(Collectors.toList()) //
                 .toArray(new Type[0]);
@@ -125,10 +128,10 @@ public class CommonAPI extends APIService {
     public AsyncExecutionMessage getQueue(
             @PathVariable(value = "service") @ApiParam(name = "service", value = "service name") String service,
             @PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
-        HystrixCommand<AsyncExecutionMessage> queueStatusCommand = getCommand(QueueStatusCommand.class, service, id);
+        HystrixCommand<AsyncExecutionMessage> queueStatusCommand =
+                getCommand(QueueStatusCommand.class, GenericCommand.ServiceType.valueOf(service), id);
         return queueStatusCommand.execute();
     }
-
 
     /**
      * Get the async method status
@@ -136,12 +139,10 @@ public class CommonAPI extends APIService {
     @RequestMapping(value = "/api/queue/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get async method status.")
     @Timed
-    public AsyncExecutionMessage getQueue(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
+    public AsyncExecutionMessage getQueue(@PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
         HystrixCommand<AsyncExecutionMessage> queueStatusCommand = getCommand(QueueStatusCommand.class, null, id);
         return queueStatusCommand.execute();
     }
-
 
     /**
      * Write the given error codes to the generator.

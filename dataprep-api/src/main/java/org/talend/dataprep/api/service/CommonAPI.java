@@ -129,7 +129,7 @@ public class CommonAPI extends APIService {
             @PathVariable(value = "service") @ApiParam(name = "service", value = "service name") String service,
             @PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
         HystrixCommand<AsyncExecutionMessage> queueStatusCommand =
-                getCommand(QueueStatusCommand.class, GenericCommand.ServiceType.valueOf(service), id);
+                getCommand(QueueStatusCommand.class, GenericCommand.ServiceType.valueOf(service.toUpperCase()), id);
         return queueStatusCommand.execute();
     }
 
@@ -140,7 +140,7 @@ public class CommonAPI extends APIService {
     @ApiOperation(value = "Get async method status.")
     @Timed
     public AsyncExecutionMessage getQueue(@PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
-        HystrixCommand<AsyncExecutionMessage> queueStatusCommand = getCommand(QueueStatusCommand.class, null, id);
+        HystrixCommand<AsyncExecutionMessage> queueStatusCommand = getCommand(QueueStatusCommand.class, GenericCommand.ServiceType.FULLRUN, id);
         return queueStatusCommand.execute();
     }
 

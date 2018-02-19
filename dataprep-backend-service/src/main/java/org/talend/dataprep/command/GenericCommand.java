@@ -508,6 +508,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         case DATASET:
             return datasetServiceUrl;
         case TRANSFORMATION:
+        case TRANSFORM:
             return transformationServiceUrl;
         case PREPARATION:
             return preparationServiceUrl;
@@ -521,6 +522,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     public enum ServiceType {
         DATASET,
         TRANSFORMATION,
+        TRANSFORM,
         PREPARATION,
         FULLRUN,
 

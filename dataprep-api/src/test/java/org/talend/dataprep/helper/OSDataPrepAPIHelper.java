@@ -307,7 +307,7 @@ public class OSDataPrepAPIHelper {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = response.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinish(asyncMethodStatusUrl);
 
             response = given() //
                     .baseUri(getApiBaseUrl()) //
@@ -376,7 +376,7 @@ public class OSDataPrepAPIHelper {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = response.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinish(asyncMethodStatusUrl);
 
             response = given() //
                     .baseUri(apiBaseUrl) //
@@ -566,7 +566,7 @@ public class OSDataPrepAPIHelper {
      * @throws IOException
      * @throws InterruptedException
      */
-    protected AsyncExecutionMessage waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
+    protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
         int nbLoop = 0;
 
@@ -575,6 +575,7 @@ public class OSDataPrepAPIHelper {
         while (isAsyncMethodRunning && nbLoop < 100) {
 
             String statusAsyncMethod = given()
+                    .baseUri(apiBaseUrl) //
                     .when() //
                     .expect()
                     .statusCode(200)

@@ -78,7 +78,6 @@ public class ActionsUtils {
             String nextId = columnId; // id of the column to put the new one after, initially the current column
             for (AdditionalColumn additionalColumn : additionalColumns) {
                 ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
-                brandNewColumnBuilder.name(additionalColumn.getName());
                 if (additionalColumn.getCopyMetadataFromId() != null) {
                     ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
                     brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
@@ -86,7 +85,7 @@ public class ActionsUtils {
                 } else {
                     brandNewColumnBuilder.type(additionalColumn.getType());
                 }
-
+                brandNewColumnBuilder.name(additionalColumn.getName());
                 ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
                 rowMetadata.insertAfter(nextId, columnMetadata);
                 nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one

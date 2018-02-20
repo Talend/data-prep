@@ -79,7 +79,7 @@ public class PipelineTransformer implements Transformer {
 
     @Override
     public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
-        RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
+        final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
 
         // prepare the fallback row metadata
         RowMetadata fallBackRowMetadata = transformationRowMetadataUtils.getMatchingEmptyRowMetadata(rowMetadata);
@@ -123,9 +123,10 @@ public class PipelineTransformer implements Transformer {
                     LOGGER.debug("After transformation: {}", pipeline);
                 }
 
-
-                final UpdatedStepVisitor visitor = new UpdatedStepVisitor(preparationUpdater);
-                pipeline.accept(visitor);
+                if (preparation != null) {
+                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(preparationUpdater);
+                    pipeline.accept(visitor);
+                }
             }
 
             @Override

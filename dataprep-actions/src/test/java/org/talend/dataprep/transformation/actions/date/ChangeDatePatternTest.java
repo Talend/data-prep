@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.date;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -291,9 +292,9 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
     public void should_set_new_pattern_as_most_used_one() throws Exception {
         // given
         final DataSetRow row = builder() //
-                .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("tata").type(Type.DATE).name("last update")) //
+                .with(value("toto").type(Type.STRING).name("tips")) //
+                .with(value("04/25/1999").type(Type.DATE).name("date").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("test")) //
                 .build();
 
         // when
@@ -320,8 +321,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("tata").type(Type.DATE).name("last update")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
 

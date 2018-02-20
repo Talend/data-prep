@@ -119,9 +119,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             final Statistics statistics = new Statistics(column.getStatistics());
 
             final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
-            if (!Objects.equals(targetColumn.getId(), columnId)) {
-                targetColumn.setStatistics(statistics);
-            }
+            targetColumn.setStatistics(statistics);
 
             actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
 
@@ -200,7 +198,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.METADATA_CHANGE_TYPE, Behavior.NEED_STATISTICS_PATTERN);
     }
 
 }

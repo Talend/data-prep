@@ -90,7 +90,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
     }
 
     public void execute(DataSet dataSet) {
-        RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata();
+        final RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata().clone();
         try (Stream<DataSetRow> records = dataSet.getRecords()) {
 
             // get the lock on isFinished to make the signal(STOP) method wait for the whole pipeline to finish

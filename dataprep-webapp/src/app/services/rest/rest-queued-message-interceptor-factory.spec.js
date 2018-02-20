@@ -47,4 +47,20 @@ describe('Rest message interceptor factory', () => {
 		$httpBackend.flush();
 		$rootScope.$digest();
 	}));
+
+	it('should do nothing when response code is 200', inject(($rootScope, $http, $timeout, MessageService) => {
+		let forbidden = false;
+		$httpBackend.expectGET('test').respond(200, '', { 'Location': 'status' });
+		$httpBackend.when('status').respond(() => {
+			forbidden = true;
+			return [400, ''];
+		});
+
+
+		$http.get('test');
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		expect(forbidden).toBe(false);
+	}));
 });

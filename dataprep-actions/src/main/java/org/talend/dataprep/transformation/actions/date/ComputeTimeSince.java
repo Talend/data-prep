@@ -158,6 +158,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         Map<String, String> parameters = actionContext.getParameters();
         String columnId = actionContext.getColumnId();
 
+        // the target column is the original column we just use its metadata otherwise we clone it for the new column
         RowMetadata rowMetadata = Objects.equals(ActionsUtils.getTargetColumnId(actionContext), columnId) ? actionContext.getRowMetadata() : actionContext.getRowMetadata().clone();
 
         TemporalUnit unit = ChronoUnit.valueOf(parameters.get(TIME_UNIT_PARAMETER).toUpperCase());

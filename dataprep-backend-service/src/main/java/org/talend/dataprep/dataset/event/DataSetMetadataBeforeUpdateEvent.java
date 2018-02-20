@@ -12,13 +12,13 @@
 
 package org.talend.dataprep.dataset.event;
 
-import org.springframework.context.ApplicationEvent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.event.DaikonMessageEvent;
 
 /**
  * An event to indicate a data set metadata has been updated (and update has completed).
  */
-public class DataSetMetadataBeforeUpdateEvent extends ApplicationEvent {
+public class DataSetMetadataBeforeUpdateEvent extends DaikonMessageEvent<DataSetMetadata> {
 
     public DataSetMetadataBeforeUpdateEvent(DataSetMetadata source) {
         super(source);

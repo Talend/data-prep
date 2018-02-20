@@ -12,12 +12,12 @@
 
 package org.talend.dataprep.dataset.event;
 
-import org.springframework.context.ApplicationEvent;
+import org.talend.dataprep.event.DaikonMessageEvent;
 
 /**
  * Event sent when a DataSet was just imported (good starting point to start asynchronous analysis).
  */
-public class DataSetImportedEvent extends ApplicationEvent {
+public class DataSetImportedEvent extends DaikonMessageEvent<String> {
 
     /** For the Serialization interface. */
     private static final long serialVersionUID = 1L;

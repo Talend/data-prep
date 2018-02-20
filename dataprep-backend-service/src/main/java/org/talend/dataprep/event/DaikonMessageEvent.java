@@ -10,22 +10,20 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset.event;
+package org.talend.dataprep.event;
 
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.event.DaikonMessageEvent;
+import org.springframework.context.ApplicationEvent;
 
 /**
- * An event to indicate a data set content has been changed.
+ * All DaikonMessageEvent will automatically be send to kafka with DaikonMessage format.
+ * @param <T>
  */
-public class DataSetRawContentUpdateEvent extends DaikonMessageEvent<DataSetMetadata> {
+public class DaikonMessageEvent<T> extends ApplicationEvent {
 
-    public DataSetRawContentUpdateEvent(DataSetMetadata source) {
-        super(source);
+    public DaikonMessageEvent(T payload) {
+        super(payload);
     }
 
-    @Override
-    public DataSetMetadata getSource() {
-        return (DataSetMetadata) super.getSource();
-    }
+    //TODO TO COMPLETE
+
 }

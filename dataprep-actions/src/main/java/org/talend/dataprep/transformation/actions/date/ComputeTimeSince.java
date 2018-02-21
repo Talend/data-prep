@@ -153,30 +153,27 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext actionContext) {
-
-        Map<String, String> parameters = actionContext.getParameters();
-        String columnId = actionContext.getColumnId();
-
-        // the target column is the original column we just use its metadata otherwise we clone it for the new column
-        RowMetadata rowMetadata = Objects.equals(ActionsUtils.getTargetColumnId(actionContext), columnId) ? actionContext.getRowMetadata() : actionContext.getRowMetadata().clone();
+    public void applyOnColumn(DataSetRow row, ActionContext context) {
+        RowMetadata rowMetadata = context.getRowMetadata();
+        Map<String, String> parameters = context.getParameters();
+        String columnId = context.getColumnId();
 
         TemporalUnit unit = ChronoUnit.valueOf(parameters.get(TIME_UNIT_PARAMETER).toUpperCase());
         String newValue;
         try {
-            String mode = actionContext.get(SINCE_WHEN_PARAMETER);
+            String mode = context.get(SINCE_WHEN_PARAMETER);
             LocalDateTime since;
             switch (mode) {
-            case OTHER_COLUMN_MODE:
-                ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-                String dateToCompare = row.get(selectedColumn.getId());
-                since = Providers.get().parse(dateToCompare, selectedColumn);
-                break;
-            case SPECIFIC_DATE_MODE:
-            case NOW_SERVER_SIDE_MODE:
-            default:
-                since = actionContext.get(SINCE_DATE_PARAMETER);
-                break;
+                case OTHER_COLUMN_MODE:
+                    ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+                    String dateToCompare = row.get(selectedColumn.getId());
+                    since = Providers.get().parse(dateToCompare, selectedColumn);
+                    break;
+                case SPECIFIC_DATE_MODE:
+                case NOW_SERVER_SIDE_MODE:
+                default:
+                    since = context.get(SINCE_DATE_PARAMETER);
+                    break;
             }
 
             // parse the date
@@ -184,7 +181,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 newValue = StringUtils.EMPTY;
             } else {
                 String value = row.get(columnId);
-                LocalDateTime temporalAccessor = Providers.get().parse(value, actionContext.getRowMetadata().getById(columnId));
+                LocalDateTime temporalAccessor = Providers.get().parse(value, context.getRowMetadata().getById(columnId));
                 Temporal valueAsDate = LocalDateTime.from(temporalAccessor);
                 newValue = String.valueOf(unit.between(valueAsDate, since));
             }
@@ -193,7 +190,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             // Nothing to do: in this case, temporalAccessor is left null
             newValue = StringUtils.EMPTY;
         }
-        row.set(ActionsUtils.getTargetColumnId(actionContext), newValue);
+        row.set(ActionsUtils.getTargetColumnId(context), newValue);
     }
 
     @Override
@@ -206,21 +203,21 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
         LocalDateTime since;
         switch (mode) {
-        case SPECIFIC_DATE_MODE:
-            try {
-                since = LocalDateTime.parse(parameters.get(SPECIFIC_DATE_PARAMETER), DEFAULT_FORMATTER);
-            } catch (DateTimeException e) {
-                LOGGER.info("Error parsing input date. The front-end might have supplied a corrupted value.", e);
-                since = null;
-            }
-            break;
-        case OTHER_COLUMN_MODE:
-            since = null; // It will be computed in apply
-            break;
-        case NOW_SERVER_SIDE_MODE:
-        default:
-            since = LocalDateTime.now();
-            break;
+            case SPECIFIC_DATE_MODE:
+                try {
+                    since = LocalDateTime.parse(parameters.get(SPECIFIC_DATE_PARAMETER), DEFAULT_FORMATTER);
+                } catch (DateTimeException e) {
+                    LOGGER.info("Error parsing input date. The front-end might have supplied a corrupted value.", e);
+                    since = null;
+                }
+                break;
+            case OTHER_COLUMN_MODE:
+                since = null; // It will be computed in apply
+                break;
+            case NOW_SERVER_SIDE_MODE:
+            default:
+                since = LocalDateTime.now();
+                break;
         }
         return since;
     }

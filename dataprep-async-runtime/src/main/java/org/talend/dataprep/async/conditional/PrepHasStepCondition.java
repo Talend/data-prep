@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.async.conditional;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
 
 /**
  * Return True if a preparation has more than the initial step
@@ -44,8 +46,8 @@ public class PrepHasStepCondition implements ConditionalTest {
         // check pre-condition
         assert args != null;
         assert args.length == 2;
-        assert args[0] instanceof String;
-        assert args[1] instanceof String;
+        Validate.isInstanceOf(ContentCacheKey.class, args[0]);
+        Validate.isInstanceOf(ContentCacheKey.class, args[1]);
 
         String preparationId = (String) args[0];
         String headId = (String) args[1];

@@ -14,6 +14,7 @@ package org.talend.dataprep.async.conditional;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class PreparationCacheCondition implements ConditionalTest {
         // check pre-condition
         assert args != null;
         assert args.length == 1;
-        assert args[0] instanceof ExportParameters;
+        Validate.isInstanceOf(ExportParameters.class, args[0]);
 
         try {
             ExportParameters exportParameters =

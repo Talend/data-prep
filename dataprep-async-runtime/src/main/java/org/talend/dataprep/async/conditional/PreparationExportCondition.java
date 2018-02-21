@@ -30,8 +30,6 @@ public class PreparationExportCondition implements ConditionalTest {
         assert args.length == 1;
         assert args[0] instanceof ExportParameters;
 
-        // TODO: FILTER maybe need to be asynchrone ?
-
         return StringUtils.isNotEmpty(((ExportParameters) args[0]).getPreparationId())
                 && ((ExportParameters) args[0]).getFrom() != ExportParameters.SourceType.FILTER;
     }

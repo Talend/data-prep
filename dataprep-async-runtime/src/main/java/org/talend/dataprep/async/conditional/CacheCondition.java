@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.async.conditional;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class CacheCondition implements ConditionalTest {
         // check pre-condition
         assert args != null;
         assert args.length == 1;
-        assert args[0] instanceof ContentCacheKey;
+        Validate.isInstanceOf(ContentCacheKey.class, args[0]);
 
         ContentCacheKey cacheKey = (ContentCacheKey) args[0];
 

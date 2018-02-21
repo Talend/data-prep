@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.async.conditional;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 
 import java.io.IOException;
@@ -48,8 +50,8 @@ public class PrepMetadataCacheCondition implements ConditionalTest {
         // check pre-condition
         assert args != null;
         assert args.length == 2;
-        assert args[0] instanceof String;
-        assert args[1] instanceof String;
+        Validate.isInstanceOf(ContentCacheKey.class, args[0]);
+        Validate.isInstanceOf(ContentCacheKey.class, args[1]);
 
         try {
             String preparationId = (String) args[0];

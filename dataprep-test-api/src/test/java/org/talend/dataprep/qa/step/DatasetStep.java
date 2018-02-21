@@ -91,6 +91,6 @@ public class DatasetStep extends DataPrepStep {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 
-        assertEquals(response.body().jsonPath().getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) +"'  }").size(), 1);
+        assertEquals(1, response.body().jsonPath().getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) +"'  }").size());
     }
 }

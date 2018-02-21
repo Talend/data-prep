@@ -33,7 +33,7 @@ public class GlobalStep extends DataPrepStep {
      * This method must be called on the last scenario of each feature in order to keep the tests reentrant.
      * It also can be called on demand to clean the context for the next scenario.
      */
-    @After("@CleanAfter")
+    @After(value = "@CleanAfter", order = 1000)
     public void cleanAfter() {
         LOGGER.debug("Cleaning IT context.");
 

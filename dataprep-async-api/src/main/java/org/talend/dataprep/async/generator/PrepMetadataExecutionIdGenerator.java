@@ -13,6 +13,7 @@
 package org.talend.dataprep.async.generator;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.Validate;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.talend.dataprep.async.AnnotationUtils;
 
@@ -25,9 +26,10 @@ public class PrepMetadataExecutionIdGenerator implements ExecutionIdGenerator {
         Object[] args = AnnotationUtils.extractAsyncParameter(pjp);
 
         // check pre-condition
-        assert args.length == 2;
-        assert args[0] instanceof String;
-        assert args[1] instanceof String;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 2);
+        Validate.isInstanceOf(String.class, args[0]);
+        Validate.isInstanceOf(String.class, args[1]);
 
         return DigestUtils.sha1Hex(args[0] + "_" + args[1]);
     }

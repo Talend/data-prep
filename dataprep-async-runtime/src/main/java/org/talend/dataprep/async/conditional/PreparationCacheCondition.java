@@ -45,8 +45,8 @@ public class PreparationCacheCondition implements ConditionalTest {
     public boolean apply(Object... args) {
 
         // check pre-condition
-        assert args != null;
-        assert args.length == 1;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 1);
         Validate.isInstanceOf(ExportParameters.class, args[0]);
 
         try {

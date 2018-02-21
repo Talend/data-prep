@@ -44,8 +44,8 @@ public class PrepHasStepCondition implements ConditionalTest {
     public boolean apply(Object... args) {
 
         // check pre-condition
-        assert args != null;
-        assert args.length == 2;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 2);
         Validate.isInstanceOf(ContentCacheKey.class, args[0]);
         Validate.isInstanceOf(ContentCacheKey.class, args[1]);
 

@@ -13,6 +13,7 @@
 package org.talend.dataprep.async.conditional;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
 
@@ -26,9 +27,9 @@ public class PreparationExportCondition implements ConditionalTest {
     public boolean apply(Object... args) {
 
         // check pre-condition
-        assert args != null;
-        assert args.length == 1;
-        assert args[0] instanceof ExportParameters;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 1);
+        Validate.isInstanceOf(ExportParameters.class, args[0]);
 
         return StringUtils.isNotEmpty(((ExportParameters) args[0]).getPreparationId())
                 && ((ExportParameters) args[0]).getFrom() != ExportParameters.SourceType.FILTER;

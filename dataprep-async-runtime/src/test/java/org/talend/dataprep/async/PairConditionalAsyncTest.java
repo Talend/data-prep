@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.async;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.async.conditional.ConditionalTest;
 
@@ -21,10 +22,10 @@ public class PairConditionalAsyncTest implements ConditionalTest {
     public boolean apply(Object... args) {
 
         // check pre-condition
-        assert args != null;
 
-        assert args.length == 1;
-        assert args[0] instanceof Integer;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 1);
+        Validate.isInstanceOf(Integer.class, args[0]);
 
         Integer index = (Integer) args[0];
 

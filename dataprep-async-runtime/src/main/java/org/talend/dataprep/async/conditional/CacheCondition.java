@@ -35,8 +35,8 @@ public class CacheCondition implements ConditionalTest {
     public boolean apply(Object... args) {
 
         // check pre-condition
-        assert args != null;
-        assert args.length == 1;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 1);
         Validate.isInstanceOf(ContentCacheKey.class, args[0]);
 
         ContentCacheKey cacheKey = (ContentCacheKey) args[0];

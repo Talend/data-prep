@@ -13,6 +13,7 @@
 package org.talend.dataprep.async.result;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
@@ -25,9 +26,9 @@ public class PreparationGetContentUrlGenerator implements ResultUrlGenerator {
     public AsyncExecutionResult generateResultUrl(Object... args) {
 
         // check pre-condition
-        assert args != null;
-        assert args.length == 1;
-        assert args[0] instanceof ExportParameters;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 1);
+        Validate.isInstanceOf(ExportParameters.class, args[0]);
 
         ExportParameters param = (ExportParameters) args[0];
 

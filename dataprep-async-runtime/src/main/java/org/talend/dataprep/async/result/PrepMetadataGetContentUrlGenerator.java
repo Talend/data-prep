@@ -13,6 +13,7 @@
 package org.talend.dataprep.async.result;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.async.AsyncExecutionResult;
@@ -24,10 +25,10 @@ public class PrepMetadataGetContentUrlGenerator implements ResultUrlGenerator {
     public AsyncExecutionResult generateResultUrl(Object... args) {
 
         // check pre-condition
-        assert args != null;
-        assert args.length == 2;
-        assert args[0] instanceof String;
-        assert args[1] instanceof String;
+        Validate.notNull(args);
+        Validate.isTrue(args.length == 2);
+        Validate.isInstanceOf(String.class, args[0]);
+        Validate.isInstanceOf(String.class, args[1]);
 
         String preparationId = (String) args[0];
         String headId = (String) args[1];

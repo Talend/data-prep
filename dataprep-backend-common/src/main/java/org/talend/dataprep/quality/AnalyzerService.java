@@ -303,7 +303,7 @@ public class AnalyzerService {
      * @return the analyzers to perform for the schema.
      */
     public Analyzer<Analyzers.Result> schemaAnalysis(List<ColumnMetadata> columns) {
-        return build(columns, Analysis.SEMANTIC, Analysis.TYPE);
+        return build(columns, Analysis.SEMANTIC, Analysis.TYPE, Analysis.PATTERNS);
     }
 
     public enum Analysis {

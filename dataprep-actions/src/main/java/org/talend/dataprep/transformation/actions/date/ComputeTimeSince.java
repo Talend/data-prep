@@ -195,7 +195,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS);
+        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
     }
 
     private static LocalDateTime parseSinceDateIfConstant(Map<String, String> parameters) {

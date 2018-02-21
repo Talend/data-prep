@@ -135,7 +135,7 @@ public class StatisticsNodesBuilder {
             if (needIntermediateStatistics(nextAction)) {
                 final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                    node = NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
+                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
                 } else {
                     // 2 cases remain as this point: action needs invalid values or filter attached to action does
                     node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))

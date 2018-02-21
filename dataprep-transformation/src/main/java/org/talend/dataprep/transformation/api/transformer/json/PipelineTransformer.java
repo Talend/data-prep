@@ -90,7 +90,7 @@ public class PipelineTransformer implements Transformer {
         final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
                 configuration.stepId(), configuration.getSourceType());
         final PreparationMessage preparation = configuration.getPreparation();
-        final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getId()) //
+        final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
 

@@ -6,8 +6,7 @@
         "column_id": "0001",
         "column_name": "steps",
         "scope": "column",
-        "create_new_column_name": "New column",
-        "mode_new_column": "a_constant_mode",
+        "mode_new_column": "A constant",
         "default_value": "tagada"
       }
     }

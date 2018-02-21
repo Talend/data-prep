@@ -50,8 +50,8 @@ public class PrepMetadataCacheCondition implements ConditionalTest {
         // check pre-condition
         Validate.notNull(args);
         Validate.isTrue(args.length == 2);
-        Validate.isInstanceOf(ContentCacheKey.class, args[0]);
-        Validate.isInstanceOf(ContentCacheKey.class, args[1]);
+        Validate.isInstanceOf(String.class, args[0]);
+        Validate.isInstanceOf(String.class, args[1]);
 
         try {
             String preparationId = (String) args[0];

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.upgrade.common.ActionFormatPhoneNumber;
 
-import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 @Component
 public class FormatPhoneNumberAction extends BaseUpgradeTaskTo_2_3_0_PE {
@@ -35,6 +35,6 @@ public class FormatPhoneNumberAction extends BaseUpgradeTaskTo_2_3_0_PE {
     }
 
     @Override public target getTarget() {
-        return USER;
+        return VERSION;
     }
 }

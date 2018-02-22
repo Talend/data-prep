@@ -92,9 +92,6 @@ public class WriterNode extends BasicNode implements Monitored {
         final long start = System.currentTimeMillis();
         try {
             if (!startRecords) {
-                writer.startObject();
-                writer.fieldName("records");
-                writer.startArray();
                 startRecords = true;
             }
             lastRowMetadata = metadata;
@@ -164,22 +161,11 @@ public class WriterNode extends BasicNode implements Monitored {
         try {
             // no row received, let's switch to the fallback row metadata
             if (!startRecords) {
-                writer.startObject();
-                writer.fieldName("records");
-                writer.startArray();
                 lastRowMetadata = fallBackRowMetadata;
             }
 
-            writer.endArray(); // <- end records
-            writer.fieldName("metadata"); // <- start metadata
-            writer.startObject();
-
-            writer.fieldName("columns");
             writer.write(lastRowMetadata);
 
-            writer.endObject();
-
-            writer.endObject(); // <- end data set
             writer.flush();
         } catch (IOException e) {
             LOGGER.error("Unable to end writer.", e);

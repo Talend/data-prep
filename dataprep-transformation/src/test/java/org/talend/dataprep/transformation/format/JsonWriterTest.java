@@ -95,46 +95,4 @@ public class JsonWriterTest extends BaseFormatTest {
         assertThat(new String(outputStream.toByteArray()), is(expectedJson));
     }
 
-    @Test
-    public void startArray_should_write_json_startArray() throws IOException {
-        // when
-        writer.startArray();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), is("["));
-    }
-
-    @Test
-    public void endArray_should_write_json_endArray() throws IOException {
-        // when
-        writer.startArray();
-        writer.endArray();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), sameJSONAs("[]"));
-    }
-
-    @Test
-    public void startObject_should_write_json_startObject() throws IOException {
-        // when
-        writer.startObject();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), is("{"));
-    }
-
-    @Test
-    public void endObject_should_write_json_endObject() throws IOException {
-        // when
-        writer.startObject();
-        writer.endObject();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), sameJSONAs("{}"));
-    }
-
 }

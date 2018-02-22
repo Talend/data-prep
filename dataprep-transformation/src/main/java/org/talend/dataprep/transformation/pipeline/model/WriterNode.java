@@ -82,7 +82,6 @@ public class WriterNode extends BasicNode implements Monitored {
      */
     @Override
     public synchronized void receive(DataSetRow row, RowMetadata metadata) {
-
         // do not write this row if the writer is stopped
         if (isStopped.get()) {
             LOGGER.debug("already finished or canceled, let's skip this row");
@@ -163,7 +162,6 @@ public class WriterNode extends BasicNode implements Monitored {
             if (!startRecords) {
                 lastRowMetadata = fallBackRowMetadata;
             }
-
             writer.write(lastRowMetadata);
 
             writer.flush();

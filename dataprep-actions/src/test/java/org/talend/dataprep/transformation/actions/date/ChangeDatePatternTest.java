@@ -13,17 +13,14 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
@@ -158,32 +155,28 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
     @Test
     public void test_apply_in_newcolumn() throws Exception {
         // given
-
         final DataSetRow row1 = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("tata").type(Type.DATE).name("last update")) //
+                .with(value("04/25/1999").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("recipe")) //
                 .build();
         final DataSetRow row2 = builder() //
                 .with(value("tata").type(Type.STRING).name("recipe")) //
-                .with(value("01/22/2018").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("toto").type(Type.DATE).name("last update")) //
+                .with(value("01/22/2018").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
                 .build();
         final DataSetRow row3 = builder() //
                 .with(value("tata").type(Type.STRING).name("recipe")) //
-                .with(value("22/01/2018").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("toto").type(Type.DATE).name("last update")) //
+                .with(value("22/01/2018").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
-        final ObjectMapper mapper = new ObjectMapper();
-        Statistics statistics = mapper.readValue(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"), Statistics.class);
+
+        // then
         assertEquals(7, row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().size());
 
         // when
-        ActionTestWorkbench.test(row1, actionRegistry, factory.create(action, parameters));
-        ActionTestWorkbench.test(row2, actionRegistry, factory.create(action, parameters));
-        ActionTestWorkbench.test(row3, actionRegistry, factory.create(action, parameters));
-
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow1 = getRow("toto", "04/25/1999", "tata", "25 - Apr - 1999");
@@ -193,15 +186,20 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         assertEquals(expectedRow2.values(), row2.values());
         assertEquals(expectedRow3.values(), row3.values());
 
+        ColumnMetadata column1 = row1.getRowMetadata().getColumns().get(1);
+        ColumnMetadata column2 = row1.getRowMetadata().getColumns().get(2);
+        List<PatternFrequency> listPatternFirstColumn = column1.getStatistics().getPatternFrequencies();
+        List<PatternFrequency> listPatternSecondColumn = column2.getStatistics().getPatternFrequencies();
+
         // check that the stats on the from column are not changed
-        assertEquals(7, row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().size());
-        assertEquals("MM/dd/yyyy", row1.getRowMetadata().getColumns().get(2).getStatistics().getPatternFrequencies().get(0).getPattern());
+        assertEquals(7, listPatternFirstColumn.size());
+        assertEquals("MM/dd/yyyy", listPatternSecondColumn.get(0).getPattern());
         // check that the stats on the target column are changed, and the new target pattern is added to the known ones
-        assertEquals(8, row1.getRowMetadata().getColumns().get(2).getStatistics().getPatternFrequencies().size());
-        assertEquals("dd - MMM - yyyy", row1.getRowMetadata().getColumns().get(2).getStatistics().getPatternFrequencies().get(7).getPattern());
+        assertEquals(8, listPatternSecondColumn.size());
+        assertEquals("dd - MMM - yyyy", listPatternSecondColumn.get(7).getPattern());
         // the new added pattern should had the biggest frequency : so it is the old most used pattern count + 1
-        assertEquals(row1.getRowMetadata().getColumns().get(2).getStatistics().getPatternFrequencies().get(7).getOccurrences(),
-                row1.getRowMetadata().getColumns().get(2).getStatistics().getPatternFrequencies().get(0).getOccurrences() + 1);
+        assertEquals(listPatternSecondColumn.get(7).getOccurrences(),
+                listPatternSecondColumn.get(0).getOccurrences() + 1);
     }
 
     @Test

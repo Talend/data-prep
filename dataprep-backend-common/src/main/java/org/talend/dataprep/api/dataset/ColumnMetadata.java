@@ -577,32 +577,6 @@ public class ColumnMetadata implements Serializable {
         }
 
         /**
-         * Copy the column from the given one.
-         *
-         * @param original the column to copy.
-         * @return the builder to carry on building the column.
-         */
-        public ColumnMetadata.Builder clone(ColumnMetadata original) {
-            this.id = new String(original.getId());
-            this.name = new String(original.getName());
-            Quality originalQuality = original.getQuality();
-            this.empty = originalQuality.getEmpty();
-            this.invalid = originalQuality.getInvalid();
-            this.valid = originalQuality.getValid();
-            this.headerSize = original.getHeaderSize();
-            this.type = Type.get(original.getType());
-            this.diffFlagValue = new String(original.getDiffFlagValue());
-            this.statistics = new Statistics(original.getStatistics());
-            this.domain = new String(original.getDomain());
-            this.domainLabel = new String(original.getDomainLabel());
-            this.domainFrequency = original.getDomainFrequency();
-            this.semanticDomains = new ArrayList<>(original.getSemanticDomains());
-            this.domainForced = new Boolean(original.isDomainForced());
-            this.typeForced = new Boolean(original.isTypeForced());
-            return this;
-        }
-
-        /**
          * Copy the column metadata type (without statistics)
          *
          * @param original the original column to copy.

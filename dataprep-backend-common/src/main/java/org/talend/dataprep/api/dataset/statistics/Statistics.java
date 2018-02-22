@@ -88,11 +88,11 @@ public class Statistics implements Cloneable, Serializable {
         this.variance = original.variance;
         this.distinctCount = original.distinctCount;
         this.duplicateCount = original.duplicateCount;
-        this.dataFrequencies = new LinkedList(original.dataFrequencies);
-        this.patternFrequencies = new LinkedList(original.patternFrequencies);
-        this.quantiles = original.quantiles;
+        this.dataFrequencies = new LinkedList<>(original.dataFrequencies);
+        this.patternFrequencies = new LinkedList<>(original.patternFrequencies);
+        this.quantiles = original.quantiles == null ? new Quantiles() : new Quantiles(original.quantiles);
         this.histogram = original.histogram;
-        this.textLengthSummary = original.textLengthSummary;
+        this.textLengthSummary = original.textLengthSummary == null ? new TextLengthSummary() : new TextLengthSummary(original.textLengthSummary);
     }
 
     public long getCount() {

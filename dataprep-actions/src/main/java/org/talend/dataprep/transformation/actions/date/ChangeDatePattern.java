@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -104,22 +103,36 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+        boolean doesCreateNewColumn = ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
+
+        if (doesCreateNewColumn) {
             ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX).withCopyMetadataFromId(actionContext.getColumnId())));
         }
+
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);
 
             // register the new pattern in column's stats as the most used pattern,
             // to be able to process date action more efficiently later
             final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
+
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
+
+            // target column
+            String targetId = ActionsUtils.getTargetColumnId(actionContext);
+            final ColumnMetadata targetColumn = rowMetadata.getById(targetId);
+
+            // origin column
             final String columnId = actionContext.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
-            final Statistics statistics = new Statistics(column.getStatistics());
 
-            final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
-            targetColumn.setStatistics(statistics);
+            final Statistics statistics;
+            if (doesCreateNewColumn) {
+                statistics = new Statistics(column.getStatistics());
+                targetColumn.setStatistics(statistics);
+            } else {
+                statistics = targetColumn.getStatistics();
+            }
 
             actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
 
@@ -133,7 +146,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
             long mostUsedPatternCount = getMostUsedPatternCount(column);
             newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
-            rowMetadata.update(ActionsUtils.getTargetColumnId(actionContext), targetColumn);
+            rowMetadata.update(targetId, targetColumn);
         }
     }
 

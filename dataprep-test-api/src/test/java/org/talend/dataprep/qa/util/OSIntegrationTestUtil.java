@@ -1,9 +1,5 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +17,10 @@ import org.talend.dataprep.helper.api.ActionFilterEnum;
 import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
+
+import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
+import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -76,7 +75,15 @@ public class OSIntegrationTestUtil {
     public Action mapParamsToAction(@NotNull Map<String, String> params, @NotNull Action action) {
         action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
         params.forEach((k, v) -> ActionParamEnum.getActionParamEnum(k)
-                .ifPresent(actionParamEnum -> action.parameters.put(actionParamEnum, StringUtils.isEmpty(v) ? null : v)));
+                .ifPresent(actionParamEnum -> {
+                    Object value;
+                    if (parametersToBeSuffixed.contains(actionParamEnum.getName())) {
+                        value = suffixName(v);
+                    } else {
+                        value = StringUtils.isEmpty(v) ? null : v;
+                    }
+                    action.parameters.put(actionParamEnum, value);
+                }));
         Filter filter = mapParamsToFilter(params);
         action.parameters.put(FILTER, filter);
         action.parameters.putIfAbsent(SCOPE, "column");

@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.upgrade.common.ActionNewColumnToggleCommon;
 
-import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
-
 @Component
 public class MigrateActionsParameters extends BaseUpgradeTaskTo_2_3_0_PE {
 
@@ -29,7 +27,6 @@ public class MigrateActionsParameters extends BaseUpgradeTaskTo_2_3_0_PE {
     @Override
     public void run() {
         ActionNewColumnToggleCommon.upgradeActions(preparationRepository);
-        FormatPhoneNumberAction.upgradeActions(preparationRepository);
     }
 
     @Override

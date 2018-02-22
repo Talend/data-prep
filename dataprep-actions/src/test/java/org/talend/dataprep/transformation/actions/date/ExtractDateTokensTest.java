@@ -350,8 +350,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, action.getBehavior().size());
+        assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_PATTERN));
     }
 
 }

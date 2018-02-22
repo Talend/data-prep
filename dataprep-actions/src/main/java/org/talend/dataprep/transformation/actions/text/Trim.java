@@ -31,11 +31,9 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeAction;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
-
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.StringTrimmer;
 
@@ -95,7 +93,8 @@ public class Trim extends AbstractMultiScopeAction {
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
         return singletonList(
-                ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING));
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING)
+                        .withCopyMetadataFromId(context.getColumnId()));
     }
 
     @Override
@@ -152,9 +151,9 @@ public class Trim extends AbstractMultiScopeAction {
     @Override
     public Set<Behavior> getBehavior() {
         if (DATASET.equals(scope)) {
-            return EnumSet.of(Behavior.VALUES_ALL);
+            return EnumSet.of(Behavior.VALUES_ALL, Behavior.NEED_STATISTICS_PATTERN);
         } else {
-            return EnumSet.of(Behavior.VALUES_COLUMN);
+            return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
         }
     }
 

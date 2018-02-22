@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.upgrade.common.ActionNewColumnToggleCommon;
 
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
+
 @Component
 public class MigrateActionsParameters extends BaseUpgradeTaskTo_2_3_0_PE {
 
@@ -27,6 +29,7 @@ public class MigrateActionsParameters extends BaseUpgradeTaskTo_2_3_0_PE {
     @Override
     public void run() {
         ActionNewColumnToggleCommon.upgradeActions(preparationRepository);
+        FormatPhoneNumberAction.upgradeActions(preparationRepository);
     }
 
     @Override

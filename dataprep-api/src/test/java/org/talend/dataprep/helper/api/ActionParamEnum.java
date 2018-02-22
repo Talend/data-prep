@@ -1,6 +1,7 @@
 package org.talend.dataprep.helper.api;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,9 @@ public enum ActionParamEnum {
     FORMAT_TYPE("formatType","format_type"),
     OPERATOR("operator","operator"),
     OPERAND("operand","operand"),
+    PADDING_CHARACTER("paddingCharacter", "padding_character"),
+    TIME_UNIT("timeUnit", "time_unit"),
+    SINCE_WHEN("sinceWhen", "since_when"),
     NEW_DOMAIN_ID("new_domain_id","new_domain_id"),
     CREATE_NEW_COLUMN("createNewColumn","create_new_column");
 
@@ -43,14 +47,12 @@ public enum ActionParamEnum {
      * Get a corresponding {@link ActionParamEnum} from a {@link String}.
      *
      * @param pName the {@link ActionParamEnum#name}.
-     * @return the corresponding {@link ActionParamEnum} or <code>null</code> if there isn't.
+     * @return the corresponding {@link ActionParamEnum} or <code>Optional empty</code> if there isn't.
      */
-    @Nullable
-    public static ActionParamEnum getActionParamEnum(@NotNull String pName) {
+    public static Optional<ActionParamEnum> getActionParamEnum(@NotNull String pName) {
         return Arrays.stream(ActionParamEnum.values()) //
                 .filter(e -> e.name.equalsIgnoreCase(pName)) //
-                .findFirst() //
-                .orElse(null);
+                .findFirst();
     }
 
     public String getName() {

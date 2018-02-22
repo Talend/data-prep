@@ -69,6 +69,8 @@ import org.talend.dataquality.statistics.type.DataTypeAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 /**
  * Service in charge of analyzing dataset quality.
  */
@@ -193,11 +195,10 @@ public class AnalyzerService {
         // Column types
         DataTypeEnum[] types = TypeUtils.convert(columns);
         // Semantic domains
-        List<String> domainList = columns.stream() //
+        final String[] domains = columns.stream() //
                 .map(ColumnMetadata::getDomain) //
-                .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
-                .collect(Collectors.toList());
-        final String[] domains = domainList.toArray(new String[domainList.size()]);
+                .map(domain -> isBlank(domain) ? SemanticCategoryEnum.UNKNOWN.getId() : domain) //
+                .toArray(String[]::new);
 
         DictionarySnapshot dictionarySnapshot = dictionarySnapshotProvider.get();
 

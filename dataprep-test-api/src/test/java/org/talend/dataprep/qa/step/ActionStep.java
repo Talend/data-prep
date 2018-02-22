@@ -47,7 +47,7 @@ public class ActionStep extends DataPrepStep {
     /**
      * This class' logger.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(ActionStep.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionStep.class);
 
     @When("^I add a step with parameters :$")
     public void whenIAddAStepToAPreparation(DataTable dataTable) {

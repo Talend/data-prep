@@ -30,6 +30,8 @@ import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
 /**
  * A {@link BaseExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
  * {@link #accept(ExportParameters)} returns <code>false</code>).
@@ -42,15 +44,10 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public boolean accept(ExportParameters parameters) {
-        if (parameters == null) {
+        if (parameters == null || parameters.getContent() != null || isEmpty(parameters.getPreparationId())) {
             return false;
         }
-        if (parameters.getContent() != null) {
-            return false;
-        }
-        if (StringUtils.isEmpty(parameters.getPreparationId())) {
-            return false;
-        }
+
         try {
             final TransformationCacheKey contentKey = getCacheKey(parameters);
             return contentCache.has(contentKey);

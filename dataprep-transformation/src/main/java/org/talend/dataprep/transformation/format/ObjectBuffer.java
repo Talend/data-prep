@@ -56,10 +56,14 @@ public class ObjectBuffer<T> implements AutoCloseable {
         generator = mapper.getFactory().createGenerator(fileWriter);
     }
 
+    /** Append an object to the buffer. */
     public void appendRow(T entity) throws IOException {
         generator.writeObject(entity);
     }
 
+    /**
+     * Read all data of the ObjectBuffer, prevent any further writings.
+     */
     public Stream<T> readAll() throws IOException {
         generator.close();
         FileReader reader = new FileReader(tempFile.toFile());
@@ -68,6 +72,9 @@ public class ObjectBuffer<T> implements AutoCloseable {
         return stream(spliteratorUnknownSize(objectIterator, Spliterator.SIZED), false);
     }
 
+    /**
+     * Close the ObjectBuffer and delete underlying resources.
+     */
     public void close() throws IOException {
         generator.close();
         FilesHelper.deleteQuietly(tempFile.toFile());

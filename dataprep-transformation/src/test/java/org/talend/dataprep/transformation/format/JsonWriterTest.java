@@ -67,7 +67,7 @@ public class JsonWriterTest extends BaseFormatTest {
 
         // when
         writer.write(new RowMetadata(columns));
-        writer.flush();
+        writer.close();
 
         // then
         assertThat(new String(outputStream.toByteArray()), sameJSONAs(expectedOutput).allowingExtraUnexpectedFields());
@@ -85,14 +85,14 @@ public class JsonWriterTest extends BaseFormatTest {
         final DataSetRow row = new DataSetRow(values);
         row.setTdpId(23L);
 
-        final String expectedCsv = "{\"firstname\":\"Superman\",\"id\":\"64a5456ac148b64524ef165\",\"tdpId\":23}";
+        final String expectedJson = "{\"records\":[{\"firstname\":\"Superman\",\"id\":\"64a5456ac148b64524ef165\",\"tdpId\":23}]}";
 
         // when
         writer.write(row);
-        writer.flush();
+        writer.close();
 
         // then
-        assertThat(new String(outputStream.toByteArray()), is(expectedCsv));
+        assertThat(new String(outputStream.toByteArray()), is(expectedJson));
     }
 
     @Test

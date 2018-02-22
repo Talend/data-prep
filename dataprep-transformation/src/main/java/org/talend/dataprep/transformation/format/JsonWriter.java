@@ -148,7 +148,9 @@ public class JsonWriter implements TransformerWriter {
     @Override
     public void close() throws IOException {
         endRecordsWriting();
-        writeRowMetadataObject(bufferedRowMetadata);
+        if (bufferedRowMetadata != null) {
+            writeRowMetadataObject(bufferedRowMetadata);
+        }
         closeRootObject();
         generator.flush();
         generator.close();

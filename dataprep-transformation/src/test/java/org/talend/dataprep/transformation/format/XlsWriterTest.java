@@ -32,10 +32,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.schema.SchemaParser;
-import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriterTest;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
+import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -45,7 +47,7 @@ import com.fasterxml.jackson.core.JsonParser;
  *
  * @see XlsWriter
  */
-public class XlsWriterTest extends AbstractTransformerWriterTest {
+public class XlsWriterTest extends BaseFormatTest {
 
     @Autowired
     private TransformerFactory factory;
@@ -55,6 +57,8 @@ public class XlsWriterTest extends AbstractTransformerWriterTest {
      */
     private OutputStream outputStream;
 
+    protected TransformerWriter writer;
+
     @Before
     public void init() {
         outputStream = new ByteArrayOutputStream();
@@ -62,6 +66,18 @@ public class XlsWriterTest extends AbstractTransformerWriterTest {
         writer = (XlsWriter) context.getBean("writer#XLSX", outputStream, parameters);
     }
 
+    /**
+     * <a href="https://jira.talendforge.org/browse/TDP-3188>TDP-3188</a>
+     *
+     */
+    @Test(expected = IllegalStateException.class)
+    public void should_only_write_values_in_columns_order_TDP_3188() throws Exception {
+        final Map<String, String> values = new HashMap<>();
+        values.put("key", "value");
+        DataSetRow row = new DataSetRow(new RowMetadata(), values);
+
+        writer.write(row);
+    }
     @Test
     public void write_simple_xls_file() throws Exception {
         // given

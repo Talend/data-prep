@@ -35,8 +35,8 @@ import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
@@ -80,7 +80,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         return outputStream -> performPreparation(parameters, outputStream);
     }
 
-    private void performPreparation(final ExportParameters parameters, final OutputStream outputStream) {
+    public void performPreparation(final ExportParameters parameters, final OutputStream outputStream) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final String formatName = parameters.getExportType();
@@ -118,6 +118,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                         parameters.getArguments(), //
                         parameters.getFilter() //
                 );
+
                 LOGGER.debug("Cache key: " + key.getKey());
                 LOGGER.debug("Cache key details: " + key.toString());
 

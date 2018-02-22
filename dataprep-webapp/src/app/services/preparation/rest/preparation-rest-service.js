@@ -41,6 +41,7 @@ export default function PreparationRestService($http, RestURLs) {
 		getContent,
 		getDetails,
 		getMetadata,
+		isExportPossible,
 
         // preview
 		getPreviewDiff,
@@ -64,6 +65,22 @@ export default function PreparationRestService($http, RestURLs) {
 	function getContent(preparationId, stepId, sampleType) {
 		const url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
 		return $http.get(url).then(res => res.data);
+	}
+
+	/**
+     * @ngdoc method
+     * @name isExportPossible
+     * @methodOf data-prep.services.preparation.service:PreparationRestService
+     * @param {object} params
+     * @description Check is the preparation is ready to be exported
+     * @returns {promise} The HEAD promise
+     */
+	function isExportPossible(params) {
+		return $http({
+			method: 'HEAD',
+			url: RestURLs.exportUrl,
+			params,
+		});
 	}
 
 	/**

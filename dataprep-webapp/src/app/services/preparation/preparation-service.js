@@ -29,6 +29,7 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 		getContent: PreparationRestService.getContent,
 		getMetadata: PreparationRestService.getMetadata,
 		getDetails: PreparationRestService.getDetails,
+		isExportPossible: PreparationRestService.isExportPossible,
 
 		// preparation lifecycle
 		create,

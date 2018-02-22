@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -51,7 +52,7 @@ import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
 import org.talend.dataprep.transformation.actions.text.Trim;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -786,7 +787,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json");
 
         // when
-        final String content = when().get("/api/preparations/{id}/content", preparationId).asString();
+        final String content = testClient.getPreparation(preparationId).asString();
 
         // then
         assertThat(content, sameJSONAsFile(expected));
@@ -799,7 +800,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", preparationName, home.getId());
 
         // when
-        final String content = when().get("/api/preparations/{id}/metadata", preparationId).asString();
+        final String content = testClient.getPrepMetadata(preparationId).asString();
 
         // then
         final DataSetMetadata actual = mapper.readerFor(DataSetMetadata.class).readValue(content);
@@ -833,17 +834,22 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // Request preparation content at different versions (preparation has 2 steps -> Root + Upper Case).
-        assertThat(when().get("/api/preparations/{id}/content", preparationId).asString(), sameJSONAsFile(
+        assertThat(testClient.getPreparation(preparationId).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=head", preparationId).asString(), sameJSONAsFile(
+
+        assertThat(testClient.getPreparation(preparationId, "head").asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(0), preparationId).asString(),
+
+        assertThat(testClient.getPreparation(preparationId, steps.get(0)).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(1), preparationId).asString(), sameJSONAsFile(
+
+        assertThat(testClient.getPreparation(preparationId, steps.get(1)).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=origin", preparationId).asString(),
+
+        assertThat(testClient.getPreparation(preparationId, "origin").asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + Step.ROOT_STEP.id(), preparationId).asString(),
+
+        assertThat(testClient.getPreparation(preparationId, Step.ROOT_STEP.id()).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
     }
 
@@ -854,7 +860,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 home.getId());
 
         // when
-        String preparationContent = given().get("/api/preparations/{preparation}/content", preparationId).asString();
+        String preparationContent = testClient.getPreparation(preparationId).asString();
 
         // then
         assertThat(preparationContent,
@@ -868,8 +874,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 home.getId());
 
         // when
-        String preparationContent = given().get("/api/preparations/{preparation}/content?sample=mdljshf", preparationId)
-                .asString();
+        String preparationContent = testClient.getPreparation(preparationId).asString();
 
         // then
         ObjectMapper mapper = new ObjectMapper();
@@ -1005,7 +1010,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyAction(preparationId, Trim.TRIM_ACTION_NAME, trimParameters);
 
         // check column is date valid after trim action
-        RowMetadata preparationContent = testClient.getPreparationContent(preparationId);
+        InputStream inputStream = testClient.getPreparation(preparationId).asInputStream();
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        RowMetadata preparationContent = mapper.readValue(inputStream, Data.class).metadata;
 
         List<PatternFrequency> patternFrequencies =
                 preparationContent.getColumns().get(8).getStatistics().getPatternFrequencies();
@@ -1204,7 +1211,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         copyIdParameters.put("scope", "column");
         testClient.applyAction(preparationId, "copy", copyIdParameters);
 
-        RowMetadata preparationContent = testClient.getPreparationContent(preparationId);
+        InputStream inputStream = testClient.getPreparation(preparationId).asInputStream();
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        RowMetadata preparationContent = mapper.readValue(inputStream, Data.class).metadata;
+
         ColumnMetadata idCopyColumn = getColumnByName(preparationContent, "id_copy");
 
         Map<String, String> deleteIdCopyParameters = new HashMap<>();
@@ -1213,8 +1223,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         deleteIdCopyParameters.put("scope", "column");
         testClient.applyAction(preparationId, "delete_column", deleteIdCopyParameters);
 
+
         // force export to update cache
-        testClient.getPreparationContent(preparationId);
+        testClient.getPreparation(preparationId);
 
         // when
         Map<String, String> copyFirstNameParameters = new HashMap<>();
@@ -1224,7 +1235,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyAction(preparationId, "copy", copyFirstNameParameters);
 
         // then
-        preparationContent = testClient.getPreparationContent(preparationId);
+        inputStream = testClient.getPreparation(preparationId).asInputStream();
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        preparationContent = mapper.readValue(inputStream, Data.class).metadata;
+
         assertNotNull(preparationContent);
         ColumnMetadata firstNameColumn = getColumnByName(preparationContent, "first_name_copy");
         assertNotEquals(idCopyColumn.getId(), firstNameColumn.getId());
@@ -1235,6 +1249,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .filter(c -> columnName.equals(c.getName())).findAny();
         assertTrue(firstNameColumn.isPresent());
         return firstNameColumn.get();
+    }
+
+    private static class Data {
+        public RowMetadata metadata;
     }
 
 }

@@ -1,12 +1,12 @@
 package org.talend.dataprep.qa.step.export;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.util.export.ExportParam;
-import org.talend.dataprep.qa.util.export.ExportUtil;
-import org.talend.dataprep.qa.util.export.MandatoryParameters;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.DATASET_ID;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.EXPORT_TYPE;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILENAME;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.PREPARATION_ID;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.STEP_ID;
+import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
-import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.util.export.ExportParam;
+import org.talend.dataprep.qa.util.export.ExportUtil;
+import org.talend.dataprep.qa.util.export.MandatoryParameters;
 
 /**
  * CSV Exporter.
@@ -64,8 +68,8 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         String filename = params.get(FILENAME.getName());
 
         // TODO manage export from step ? (or from version)
-        List<String> steps =
-                api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath().getJsonObject("steps");
+        List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
+                .getJsonObject("steps");
 
         exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);
         exportUtil.feedExportParam(ret, STEP_ID, steps.get(steps.size() - 1));

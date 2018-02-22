@@ -66,7 +66,7 @@ public abstract class ApiServiceTestBase extends ServiceBaseTest {
     @Before
     public void setUp() {
         super.setUp();
-        for(UrlRuntimeUpdater urlUpdater : urlUpdaters) {
+        for (UrlRuntimeUpdater urlUpdater : urlUpdaters) {
             urlUpdater.setUp();
         }
         home = folderRepository.getHome();
@@ -85,4 +85,5 @@ public abstract class ApiServiceTestBase extends ServiceBaseTest {
         InputStream parametersInput = this.getClass().getResourceAsStream(input);
         return mapper.readValue(parametersInput, AggregationParameters.class);
     }
+
 }

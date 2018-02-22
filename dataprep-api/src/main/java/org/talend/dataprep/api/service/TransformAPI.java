@@ -133,4 +133,5 @@ public class TransformAPI extends APIService {
         HystrixCommand<InputStream> dictionaryCommand = getCommand(DictionaryCommand.class);
         return CommandHelper.toStreaming(dictionaryCommand);
     }
+
 }

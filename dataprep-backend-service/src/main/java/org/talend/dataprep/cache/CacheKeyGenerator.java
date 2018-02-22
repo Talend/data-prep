@@ -10,17 +10,18 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.transformation.cache;
+package org.talend.dataprep.cache;
 
+import static java.util.Collections.emptyMap;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
 import org.talend.dataprep.security.Security;
 
@@ -36,9 +37,25 @@ public class CacheKeyGenerator {
     /**
      * Build a cache key to identify the transformation result content
      */
-    public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, final String stepId,
-            final String format, final SourceType sourceType, final String filter) {
-        return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, Collections.emptyMap(), filter);
+    public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, //
+            final String stepId, final String format, final SourceType sourceType, final String filter) {
+        return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, emptyMap(), filter);
+    }
+
+    /**
+     * Build a cache key from ExportParameter
+     */
+    public TransformationCacheKey generateContentKey(final ExportParameters parameters) {
+
+        final String stepId = parameters.getStepId();
+        final String preparationId = parameters.getPreparationId();
+        final String format = parameters.getExportType();
+        final String dataSetId = parameters.getDatasetId();
+        final String filter = parameters.getFilter();
+        final SourceType sourceType = parameters.getFrom();
+        final Map<String, String> arguments = parameters.getArguments();
+
+        return this.generateContentKey(dataSetId, preparationId, stepId, format, sourceType, arguments, filter);
     }
 
     /**
@@ -63,11 +80,14 @@ public class CacheKeyGenerator {
             final Map<String, String> parameters, //
             final String filter) {
 
-        final String actualParameters = parameters == null ? StringUtils.EMPTY : parameters.entrySet().stream() //
-                .sorted(Comparator.comparing(Map.Entry::getKey)) //
-                .map(Map.Entry::getValue) //
-                .reduce((s1, s2) -> s1 + s2) //
-                .orElse(StringUtils.EMPTY);
+        final String actualParameters = parameters == null ? StringUtils.EMPTY
+                : parameters
+                        .entrySet()
+                        .stream() //
+                        .sorted(Comparator.comparing(Map.Entry::getKey)) //
+                        .map(Map.Entry::getValue) //
+                        .reduce((s1, s2) -> s1 + s2) //
+                        .orElse(StringUtils.EMPTY);
         final SourceType actualSourceType = sourceType == null ? HEAD : sourceType;
         final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
 
@@ -203,7 +223,9 @@ public class CacheKeyGenerator {
         }
 
         public TransformationCacheKey build() {
-            return cacheKeyGenerator.generateContentKey(datasetId, preparationId, stepId, format, sourceType, parameters, filter);
+            return cacheKeyGenerator.generateContentKey( //
+                    datasetId, preparationId, stepId, //
+                    format, sourceType, parameters, filter);
         }
     }
 }

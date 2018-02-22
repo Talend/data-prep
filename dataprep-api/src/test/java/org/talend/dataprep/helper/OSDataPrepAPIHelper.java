@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.helper;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
 
 import java.io.File;
@@ -22,17 +23,28 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.async.AsyncExecution;
+import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
@@ -43,6 +55,18 @@ import com.jayway.restassured.specification.RequestSpecification;
  */
 @Component
 public class OSDataPrepAPIHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    /** Set of normal running status for asynch execution. */
+    private static final Set<AsyncExecution.Status> activeAsyncStatus = new HashSet<>();
+
+    static {
+        activeAsyncStatus.add(AsyncExecution.Status.NEW);
+        activeAsyncStatus.add(AsyncExecution.Status.RUNNING);
+    }
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -168,7 +192,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log().all() //
+                .log()
+                .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .baseUri(apiBaseUrl) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
@@ -189,7 +214,8 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -209,7 +235,6 @@ public class OSDataPrepAPIHelper {
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/" + datasetId);
-
     }
 
     /**
@@ -269,13 +294,29 @@ public class OSDataPrepAPIHelper {
      * @param from
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from) {
-        return given() //
+    public Response getPreparationContent(String preparationId, String version, String from)
+            throws IOException {
+        Response response = given() //
                 .baseUri(getApiBaseUrl()) //
                 .queryParam("version", version) //
                 .queryParam("from", from) //
                 .when() //
                 .get("/api/preparations/" + preparationId + "/content");
+
+        if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
+            // first time we have a 202 with a Location to see asynchronous method status
+            final String asyncMethodStatusUrl = response.getHeader("Location");
+
+            waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+
+            response = given() //
+                    .baseUri(getApiBaseUrl()) //
+                    .queryParam("version", version) //
+                    .queryParam("from", from) //
+                    .when() //
+                    .get("/api/preparations/" + preparationId + "/content");
+        }
+        return response;
     }
 
     /**
@@ -323,13 +364,28 @@ public class OSDataPrepAPIHelper {
      * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeExport(Map<String, Object> parameters) {
-        return given() //
+    public Response executeExport(Map<String, Object> parameters) throws IOException {
+        Response response = given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .queryParameters(parameters) //
                 .get("/api/export");
+
+        if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
+            // first time we have a 202 with a Location to see asynchronous method status
+            final String asyncMethodStatusUrl = response.getHeader("Location");
+
+            waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+
+            response = given() //
+                    .baseUri(apiBaseUrl) //
+                    .contentType(JSON) //
+                    .when() //
+                    .queryParameters(parameters) //
+                    .get("/api/export");
+        }
+        return response;
     }
 
     /**
@@ -501,5 +557,49 @@ public class OSDataPrepAPIHelper {
                 .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/export/formats/preparations/" + preparationId);
+    }
+
+    /**
+     * Ping async method status url in order to wait the end of the execution
+     *
+     * @param asyncMethodStatusUrl the asynchronous method to ping.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
+        boolean isAsyncMethodRunning = true;
+        int nbLoop = 0;
+
+        AsyncExecutionMessage asyncExecutionMessage = null;
+
+        while (isAsyncMethodRunning && nbLoop < 100) {
+
+            String statusAsyncMethod = given()
+                    .baseUri(apiBaseUrl) //
+                    .when() //
+                    .expect()
+                    .statusCode(200)
+                    .log()
+                    .ifError() //
+                    .get(asyncMethodStatusUrl)
+                    .asString();
+
+            asyncExecutionMessage =
+                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+
+            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
+            isAsyncMethodRunning =
+                    asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(AsyncExecution.Status.NEW);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(50);
+            } catch (InterruptedException e) {
+                LOGGER.error("cannot sleep", e);
+                Assert.fail();
+            }
+            nbLoop++;
+        }
+
+        return asyncExecutionMessage;
     }
 }

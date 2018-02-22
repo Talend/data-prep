@@ -32,10 +32,10 @@ public class CORSConfiguration {
                 // Add CORS header for all path in application
                 registry.addMapping("/**") //
                         .allowedOrigins("*") //
-                        .allowedMethods("POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH") //
+                        .allowedMethods("POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH", "HEAD") //
                         .maxAge(3600) //
-                        .allowedHeaders("x-requested-with", "Content-Type", "accept", "Authorization")
-                        .exposedHeaders("Authorization")
+                        .allowedHeaders("x-requested-with", "Content-Type", "accept", "Authorization") //
+                        .exposedHeaders("Authorization", "Location") //
                         .allowCredentials(true);
             }
         };

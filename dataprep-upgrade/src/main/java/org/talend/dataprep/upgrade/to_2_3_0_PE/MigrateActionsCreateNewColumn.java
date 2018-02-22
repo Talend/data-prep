@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.upgrade.to_2_3_0_PE;
 
-import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,6 +38,6 @@ public class MigrateActionsCreateNewColumn extends BaseUpgradeTaskTo_2_3_0_PE {
 
     @Override
     public target getTarget() {
-        return USER;
+        return VERSION;
     }
 }

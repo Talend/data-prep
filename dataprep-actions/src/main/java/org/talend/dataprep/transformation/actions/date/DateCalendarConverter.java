@@ -86,19 +86,15 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     private static final String DEFAULT_OUTPUT_PATTERN = "yyyy-MM-dd G";
 
+    /** Context key whose computed value indicates if the conversion if from a chronology */
+    static final String IS_FROM_CHRONOLOGY_INTERNAL_KEY = "is_from_chronology";
+
+    /** Context key whose computed value indicates if the conversion if to a chronology */
+    static final String IS_TO_CHRONOLOGY_INTERNAL_KEY = "is_to_chronology";
+
     private static Map<String, org.talend.dataquality.converters.DateCalendarConverter> dateCalendarConverterMap = null;
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
-
-    /**
-     * if it converts from Chronology
-     */
-    private boolean isFromChronology;
-
-    /**
-     * if it converts to Chronology
-     */
-    private boolean isToChronology;
 
     @Override
     public String getName() {
@@ -171,8 +167,8 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
             dateCalendarConverterMap = new HashMap<>();
             String fromCalendarParameter = actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER);
             String toCalendarParameter = actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER);
-            isFromChronology = valueOf(fromCalendarParameter).isChronology();
-            isToChronology = valueOf(toCalendarParameter).isChronology();
+            final boolean isFromChronology = actionContext.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY, p -> valueOf(fromCalendarParameter).isChronology());
+            final boolean isToChronology = actionContext.get(IS_TO_CHRONOLOGY_INTERNAL_KEY, p -> valueOf(toCalendarParameter).isChronology());
             if (isFromChronology) {
                 AbstractChronology fromCalendarType = valueOf(fromCalendarParameter).getCalendarType();
                 Locale fromLocale = valueOf(fromCalendarParameter).getDefaultLocale();
@@ -231,7 +227,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
         try {
             String newValue = null;
-            if (isFromChronology) { //it is From Chronology
+            if (context.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY)) { //it is From Chronology
                 AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
                 Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
                 String fromPattern = parseDateFromPatterns(originalValue, context.get(FROM_DATE_PATTERNS_KEY),
@@ -257,7 +253,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
      * Create instance DateCalendarConverter only once for each pattern. It is used to covert from Chronology.
      */
     private org.talend.dataquality.converters.DateCalendarConverter getDateCalendarConverterInstance(String fromPattern, ActionContext context) {
-        if (!isFromChronology || StringUtils.isEmpty(fromPattern)) {
+        if (!(boolean) context.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY) || StringUtils.isEmpty(fromPattern)) {
             return null;
         }
         org.talend.dataquality.converters.DateCalendarConverter dateConvert = dateCalendarConverterMap.get(fromPattern);
@@ -266,7 +262,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         }
         AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
         Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
-        if (isToChronology) { //Chronology->Chronology
+        if (context.get(IS_TO_CHRONOLOGY_INTERNAL_KEY)) { //Chronology->Chronology
             dateConvert = new org.talend.dataquality.converters.DateCalendarConverter(
                     fromPattern, fromPattern, fromCalendarTypeKey, context.get(TO_CALENDAR_TYPE_KEY),
                     fromLocaleKey, context.get(TO_LOCALE_KEY));

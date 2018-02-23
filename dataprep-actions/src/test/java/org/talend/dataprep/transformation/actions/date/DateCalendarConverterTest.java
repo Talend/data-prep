@@ -22,6 +22,8 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 
 import java.io.IOException;
 import java.time.DateTimeException;
@@ -560,4 +562,31 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         testConversion("1", DateCalendarConverter.CalendarUnit.RATA_DIE, null, "1721426",
                 DateCalendarConverter.CalendarUnit.JULIAN_DAY);
     }
+
+    @Test
+    public void testCompileShouldComputeToAndFromInternalContextParameters() {
+        // Given
+        final DateCalendarConverter calendarConverter = new DateCalendarConverter();
+        final DataSetRow row = builder().with(value("toto").type(Type.STRING).name("recipe"))
+                .with(value("10/29/1996").type(Type.DATE).name("last update")
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json")))
+                .with(value("tata").type(Type.STRING).name("who")) //
+                .build();
+        final ActionContext context = new ActionContext(new TransformationContext(), row.getRowMetadata());
+        context.setActionStatus(ActionContext.ActionStatus.OK);
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(COLUMN_ID.getKey(), "0001");
+        parameters.put(FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put(TO_CALENDAR_TYPE_PARAMETER, CalendarUnit.JULIAN_DAY.name());
+        context.setParameters(parameters);
+
+        // When
+        calendarConverter.compile(context);
+
+        // Then
+        assertTrue(context.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY));
+        assertFalse(context.get(IS_TO_CHRONOLOGY_INTERNAL_KEY));
+    }
+
 }

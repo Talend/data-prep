@@ -7,7 +7,7 @@
 
 *Copyright*
  * Enable the copyright plugin
- * extract the [IDEs/intellij/copyright.tar.gz](/tooling/IDEs/intellij/copyright.tar.gz) in your .idea folder and restart IntelliJ idea
+ * extract the [IDEs/intellij/copyright.tar.gz](/tooling/IDEs/intellij/copyright.tar.gz) in your `.idea` folder and restart IntelliJ idea (or import it through the Preferences panel `Editor > Copyright > Copyright Profiles` and define it as Default project copyright)
 
 That's it, you're good to go !
 

@@ -11,19 +11,19 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
 public class ActionsUtils {
 
@@ -65,7 +65,7 @@ public class ActionsUtils {
 
     /**
      * Used by compile(ActionContext actionContext), evaluate if a new column needs to be created, if yes creates one.
-     *
+     * <p>
      * Actions that creates more than one column ('split', 'extract email parts', etc...) should manage this on their own.
      */
     public static void createNewColumn(ActionContext context, List<AdditionalColumn> additionalColumns) {
@@ -76,14 +76,17 @@ public class ActionsUtils {
             final Map<String, String> cols = new HashMap<>();
             String nextId = columnId; // id of the column to put the new one after, initially the current column
             for (AdditionalColumn additionalColumn : additionalColumns) {
-                    ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
-
-                    if (additionalColumn.getCopyMetadataFromId() != null) {
-                        ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
-                        brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
-                    }
-                    brandNewColumnBuilder.name(additionalColumn.getName()) //
-                     .type(additionalColumn.getType()); //
+                ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
+                if (additionalColumn.getCopyMetadataFromId() != null) {
+                    ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
+                    brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
+                    brandNewColumnBuilder.type(Type.get(newColumn.getType()));
+                } else {
+                    brandNewColumnBuilder.type(additionalColumn.getType());
+                }
+                if (additionalColumn.getName() != null) {
+                    brandNewColumnBuilder.name(additionalColumn.getName());
+                }
 
                 ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
                 rowMetadata.insertAfter(nextId, columnMetadata);
@@ -96,7 +99,7 @@ public class ActionsUtils {
 
     /**
      * Helper to retrieve the target column Id stored in the context.
-     *
+     * <p>
      * It can be the current column id if the function applies in place or id of the new column if the function creates one.
      * Must not be used for function that creates many columns. Use getTargetColumnIds(ActionContext context) instead in this case.
      *
@@ -125,7 +128,7 @@ public class ActionsUtils {
      * For TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
      * creates a new column.
      * This method is used by framework to evaluate if this step (action+parameters) creates a new column or is applied in place.
-     *
+     * <p>
      * For most actions, the default implementation is ok, but some actions (like 'split' that always creates new column) may
      * override it. In this case, no need to override createNewColumnParamVisible() and true.
      *
@@ -144,21 +147,29 @@ public class ActionsUtils {
 
     /**
      * Bean used to described all columns that can be created by a function.
-     *
+     * <p>
      * This will be used by createNewColumn(ActionContext context) to create all the new columns.
      */
     public static final class AdditionalColumn {
 
-        /** Key to use in parameters map. */
+        /**
+         * Key to use in parameters map.
+         */
         private String key;
 
-        /** Name of the new colum. */
+        /**
+         * Name of the new colum.
+         */
         private String name;
 
-        /** Data base type of the new column. */
+        /**
+         * Data base type of the new column.
+         */
         private Type type = Type.STRING;
 
-        /** Id of the column to copy metadata from */
+        /**
+         * Id of the column to copy metadata from
+         */
         private String copyMetadataFromId;
 
         public String getKey() {

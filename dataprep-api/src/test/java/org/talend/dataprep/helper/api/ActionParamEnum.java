@@ -14,6 +14,8 @@ public enum ActionParamEnum {
     NEW_PATTERN("newPattern", "new_pattern"),
     CUSTOM_PATTERN("customDatePattern", "custom_date_pattern"),
     COMPILED_DATE_PATTERN("compiledDatePattern", "compiled_datePattern"),
+    SINCE_WHEN_PARAMETER("sinceWhen","since_when"),
+    SPECIFIC_DATE_MODE("specificDateMode","specific_date"),
     TIME_UNIT_PARAMETER("timeUnit", "time_unit"),
     SCOPE("scope", "scope"),
     COLUMN_NAME("columnName", "column_name"),

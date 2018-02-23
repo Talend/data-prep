@@ -12,6 +12,14 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.phonenumber;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +37,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
-import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Stream;
-
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
@@ -40,10 +44,17 @@ import static org.talend.dataprep.parameters.ParameterType.COLUMN;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.CONSTANT_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.MODE_PARAMETER;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.*;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.DE_PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.FR_PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.UK_PHONE;
+import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.US_PHONE;
 
 /**
  * Format a validated phone number to a specified format.
@@ -57,33 +68,23 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     protected static final String NEW_COLUMN_SUFFIX = "_formatted";
 
-    static final String OTHER_REGION_TO_BE_SPECIFIED = "other_region";
+    public static final String OTHER_REGION_TO_BE_SPECIFIED = "other_region";
 
     /**
      * the follow 4 types is provided to user selection on UI
      */
-    static final String TYPE_INTERNATIONAL = "international"; //$NON-NLS-1$
+    public static final String TYPE_INTERNATIONAL = "international"; //$NON-NLS-1$
 
-    static final String TYPE_NATIONAL = "national"; //$NON-NLS-1$
+    public static final String TYPE_NATIONAL = "national"; //$NON-NLS-1$
 
-    static final String TYPE_E164 = "E164"; //$NON-NLS-1$
+    public static final String TYPE_E164 = "E164"; //$NON-NLS-1$
 
-    static final String TYPE_RFC3966 = "RFC3966"; //$NON-NLS-1$
-
-    /**
-     * The following types was provided previously to user selection on UI.
-     * TODO remove those constants and create an upgrade task.
-     */
-    static final String OLD_TYPE_INTERNATIONAL = "International"; //$NON-NLS-1$
-
-    static final String OLD_TYPE_NATIONAL = "National"; //$NON-NLS-1$
-
-    static final String OLD_OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
+    public static final String TYPE_RFC3966 = "RFC3966"; //$NON-NLS-1$
 
     /**
      * a region code parameter
      */
-    static final String REGIONS_PARAMETER_CONSTANT_MODE = "region_code"; //$NON-NLS-1$
+    public static final String REGIONS_PARAMETER_CONSTANT_MODE = "region_code"; //$NON-NLS-1$
 
     /**
      * a manually input parameter of region code
@@ -93,7 +94,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
     /**
      * a parameter of format type
      */
-    static final String FORMAT_TYPE_PARAMETER = "format_type"; //$NON-NLS-1$
+    public static final String FORMAT_TYPE_PARAMETER = "format_type"; //$NON-NLS-1$
 
     private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper"; //$NON-NLS-1$
 
@@ -159,10 +160,8 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         }
         switch (formatType) {
             case TYPE_INTERNATIONAL:
-            case OLD_TYPE_INTERNATIONAL:
                 return PhoneNumberHandlerBase.formatInternational(phone, regionParam);
             case TYPE_NATIONAL:
-            case OLD_TYPE_NATIONAL:
                 return PhoneNumberHandlerBase.formatNational(phone, regionParam);
             case TYPE_E164:
                 return PhoneNumberHandlerBase.formatE164(phone, regionParam);
@@ -216,8 +215,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         switch (parameters.get(OtherColumnParameters.MODE_PARAMETER)) {
             case CONSTANT_MODE:
                 final String constantModeParameter = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
-                if (OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)
-                    || OLD_OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)) {
+                if (OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)) {
                     regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
                 } else {
                     regionParam = constantModeParameter;

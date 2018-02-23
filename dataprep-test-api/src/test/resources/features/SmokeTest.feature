@@ -11,13 +11,11 @@ Feature: Perform an OS Smoke Test
     And I add a step identified by "stepUp" with parameters :
       | actionName      | uppercase         |
       | columnName      | firstname         |
-      | columnId        | 0001              |
       | preparationName | 10L3C_preparation |
     Then I check that a step like "stepUp" exists in the preparation "10L3C_preparation"
     Given I add a step identified by "changeDate" with parameters :
       | actionName      | change_date_pattern |
       | fromPatternMode | unknown_separators  |
-      | pattern         | M/d/yy              |
       | columnName      | date                |
       | columnId        | 0002                |
       | preparationName | 10L3C_preparation   |
@@ -27,7 +25,6 @@ Feature: Perform an OS Smoke Test
       | actionName      | split             |
       | limit           | 2                 |
       | separator       | ;                 |
-      | columnName      | date              |
       | columnId        | 0002              |
       | preparationName | 10L3C_preparation |
     Then I check that a step like "dateSplit" exists in the preparation "10L3C_preparation"
@@ -44,7 +41,6 @@ Feature: Perform an OS Smoke Test
     Given I add a step identified by "deleteDate" with parameters :
       | actionName      | delete_column     |
       | scope           | column            |
-      | columnName      | date              |
       | columnId        | 0002              |
       | preparationName | 10L3C_preparation |
     Then I check that a step like "deleteDate" exists in the preparation "10L3C_preparation"

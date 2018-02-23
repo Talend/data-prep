@@ -12,17 +12,6 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.api.type.Type.STRING;
-import static org.talend.dataprep.parameters.Parameter.parameter;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.util.*;
-
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -37,6 +26,21 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.StringTrimmer;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 /**
  * Trim leading and trailing characters.
  */
@@ -48,13 +52,19 @@ public class Trim extends AbstractMultiScopeAction {
      */
     public static final String TRIM_ACTION_NAME = "trim"; //$NON-NLS-1$
 
-    /** Padding Character. */
+    /**
+     * Padding Character.
+     */
     static final String PADDING_CHAR_PARAMETER = "padding_character"; //$NON-NLS-1$
 
-    /** Custom Padding Character. */
+    /**
+     * Custom Padding Character.
+     */
     static final String CUSTOM_PADDING_CHAR_PARAMETER = "custom_padding_character"; //$NON-NLS-1$
 
-    /** String Converter help class. */
+    /**
+     * String Converter help class.
+     */
     private static final String STRING_TRIMMER = "string_trimmer"; //$NON-NLS-1$
 
     /**
@@ -107,11 +117,11 @@ public class Trim extends AbstractMultiScopeAction {
         // @formatter:off
         parameters.add(selectParameter(locale)
                 .name(PADDING_CHAR_PARAMETER)
-                .item(WHITESPACE,WHITESPACE)
+                .item(WHITESPACE, WHITESPACE)
                 .item(CUSTOM, CUSTOM, parameter(locale).setName(CUSTOM_PADDING_CHAR_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(this))
                 .canBeBlank(true)
                 .defaultValue(WHITESPACE)
-                .build(this ));
+                .build(this));
         // @formatter:on
         return parameters;
     }

@@ -53,23 +53,24 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
      * Parameter to set which date to compare to. 3 modes: 'now at runtime', specific date defined by user, took from
      * another column.
      */
-    protected static final String SINCE_WHEN_PARAMETER = "since_when";
+    static final String SINCE_WHEN_PARAMETER = "since_when";
 
-    protected static final String SPECIFIC_DATE_MODE = "specific_date";
+    static final String SPECIFIC_DATE_MODE = "specific_date";
 
     /**
      * The unit in which show the period.
      */
-    protected static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
+    static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
 
-    protected static final String SPECIFIC_DATE_PARAMETER = "specific_date"; //$NON-NLS-1$
+    static final String SPECIFIC_DATE_PARAMETER = "specific_date"; //$NON-NLS-1$
 
-    protected static final String SINCE_DATE_PARAMETER = "since_date";
+    private static final String SINCE_DATE_PARAMETER = "since_date";
 
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm";
 
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
+    private static final Boolean CREATE_NEW_COLUMN_DEFAULT = true;
     /**
      * The new column prefix.
      */
@@ -88,8 +89,6 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     public String getName() {
         return TIME_SINCE_ACTION_NAME;
     }
-
-    public static final Boolean CREATE_NEW_COLUMN_DEFAULT = true;
 
     @Override
     public List<Parameter> getParameters(Locale locale) {

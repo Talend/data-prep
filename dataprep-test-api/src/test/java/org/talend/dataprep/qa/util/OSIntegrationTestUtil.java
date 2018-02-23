@@ -1,8 +1,15 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.ActionFilterEnum;
+import org.talend.dataprep.helper.api.ActionParamEnum;
+import org.talend.dataprep.helper.api.Filter;
+import org.talend.dataprep.qa.dto.Folder;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,16 +18,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionFilterEnum;
-import org.talend.dataprep.helper.api.ActionParamEnum;
-import org.talend.dataprep.helper.api.Filter;
-import org.talend.dataprep.qa.dto.Folder;
+import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
+import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -30,10 +30,12 @@ public class OSIntegrationTestUtil {
 
     public static final String ACTION_NAME = "actionName";
 
+    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id");
+
     /**
      * Split a folder in a {@link Set} folder and subfolders.
      *
-     * @param folder the folder to split.
+     * @param folder  the folder to split.
      * @param folders existing folders.
      * @return a {@link Set} of folders and subfolders.
      */
@@ -72,12 +74,16 @@ public class OSIntegrationTestUtil {
     @NotNull
     public Action mapParamsToAction(@NotNull Map<String, String> params, @NotNull Action action) {
         action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
-        params.forEach((k, v) -> {
-            ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
-            if (ape != null) {
-                action.parameters.put(ape, StringUtils.isEmpty(v) ? null : v);
-            }
-        });
+        params.forEach((k, v) -> ActionParamEnum.getActionParamEnum(k)
+                .ifPresent(actionParamEnum -> {
+                    Object value;
+                    if (parametersToBeSuffixed.contains(actionParamEnum.getName())) {
+                        value = suffixName(v);
+                    } else {
+                        value = StringUtils.isEmpty(v) ? null : v;
+                    }
+                    action.parameters.put(actionParamEnum, value);
+                }));
         Filter filter = mapParamsToFilter(params);
         action.parameters.put(FILTER, filter);
         action.parameters.putIfAbsent(SCOPE, "column");
@@ -94,7 +100,7 @@ public class OSIntegrationTestUtil {
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
         long nbAfes = params.keySet().stream() //
-                .map(k -> ActionFilterEnum.getActionFilterEnum(k)) //
+                .map(ActionFilterEnum::getActionFilterEnum) // //
                 .filter(Objects::nonNull) //
                 .peek(afe -> {
                     String v = params.get(afe.getName());
@@ -106,7 +112,7 @@ public class OSIntegrationTestUtil {
 
     /**
      * Extract an extension from a filename. If no extension present, the filename is returned.
-     * 
+     *
      * @param filename the filename.
      * @return the filename's extension.
      */

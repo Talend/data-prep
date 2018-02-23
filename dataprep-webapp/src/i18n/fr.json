@@ -422,6 +422,7 @@
   "HEADERBAR_SEARCH_SEARCHING": "Recherche en cours…",
   "HEADERBAR_SEARCH_NO_RESULT": "Aucun résultat.",
   "HEADERBAR_HELP": "Aide",
+  "HEADERBAR_APPS": "Applications",
   "LISTVIEW_NO_RESULT": "Aucun résultat.",
   "LISTVIEW_EMPTY": "Cette liste est vide.",
   "LISTVIEW_HEADER_TITLE": "Valeurs",

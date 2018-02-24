@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.upgrade.common;
 
-import static org.talend.tql.api.TqlBuilder.eq;
-
 import java.util.Locale;
 
 import org.talend.dataprep.api.preparation.Action;
@@ -27,12 +25,13 @@ public class AddLanguageToActionExtractDatePartUpgrade {
     }
 
     public static void upgradeActions(PreparationRepository preparationRepository) {
-        ParameterMigration.upgradeParameters(preparationRepository, eq("actions.action", //
-                ExtractDateTokens.ACTION_NAME), //
+        ParameterMigration.upgradeParameters(preparationRepository,
                 AddLanguageToActionExtractDatePartUpgrade::updateAction);
     }
 
     private static void updateAction(Action action) {
-        action.getParameters().put(ExtractDateTokens.LANGUAGE, Locale.getDefault().getLanguage());
+        if (ExtractDateTokens.ACTION_NAME.equals(action.getName())) {
+            action.getParameters().put(ExtractDateTokens.LANGUAGE, Locale.getDefault().getLanguage());
+        }
     }
 }

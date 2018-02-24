@@ -21,6 +21,10 @@ public final class ParameterMigration {
     private ParameterMigration() {
     }
 
+    public static void upgradeParameters(PreparationRepository repository, Consumer<Action> updater) {
+        upgradeParameters(repository, null, updater);
+    }
+
     public static void upgradeParameters(PreparationRepository repository, Expression filter,
             Consumer<Action> updater) {
         final Stream<PreparationActions> stream;

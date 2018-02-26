@@ -73,6 +73,7 @@ public class OSIntegrationTestUtil {
     @NotNull
     public Map<String, Object> mapParamsToActionParameters(@NotNull Map<String, String> params) {
         Map<String, Object> actionParameters = params.entrySet().stream() //
+                .filter(entry -> !entry.getKey().startsWith(FILTER.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (parametersToBeSuffixed.contains(e.getKey())) {
                         return suffixName(e.getValue());

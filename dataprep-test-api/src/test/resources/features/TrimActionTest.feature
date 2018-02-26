@@ -1,6 +1,6 @@
 Feature: Perform scenarios with some Trim related action
 
-  # Check date, the column type is goo after the trim action
+  # Check date, the column type is modified after the trim action
   Scenario: Calculate Date Until Now & ChangeDatePattern after a Trim change Type (TDP-4926 & TDP-5057) with column creation
     Given I upload the dataset "/data/best_sad_songs_of_all_time.csv" with name "best_sad_songs_dataset"
     Given I create a preparation with name "best_sad_songs_prep", based on "best_sad_songs_dataset" dataset

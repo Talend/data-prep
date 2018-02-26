@@ -217,7 +217,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private PreparationMessage preparation;
 
-        private Function<Step, RowMetadata> rowMetadataSupplier = s -> null;
+        private Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> null;
 
         private Long limit = null;
 
@@ -225,8 +225,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return new Builder();
         }
 
-        public Builder withStepMetadataSupplier(Function<Step, RowMetadata> rowMetadataSupplier) {
-            this.rowMetadataSupplier = rowMetadataSupplier;
+        public Builder withStepMetadataSupplier(Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
+            this.previousStepRowMetadataSupplier = previousStepRowMetadataSupplier;
             return this;
         }
 
@@ -348,7 +348,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), rowMetadataSupplier);
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), previousStepRowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {

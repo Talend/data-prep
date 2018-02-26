@@ -90,7 +90,8 @@ public class PipelineTransformer implements Transformer {
         final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
                 configuration.stepId(), configuration.getSourceType());
         final PreparationMessage preparation = configuration.getPreparation();
-        final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
+        // function that from a step gives the rowMetadata associated to the previous/parent step
+        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
 
@@ -106,7 +107,7 @@ public class PipelineTransformer implements Transformer {
                 .withFilterOut(configuration.getOutFilter()) //
                 .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata)) //
                 .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(rowMetadataSupplier) //
+                .withStepMetadataSupplier(previousStepRowMetadataSupplier) //
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();

@@ -78,6 +78,7 @@ public class ActionsUtils {
             String nextId = columnId; // id of the column to put the new one after, initially the current column
             for (AdditionalColumn additionalColumn : additionalColumns) {
                 ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
+                // it's often important to copy the original column type for the action which needs statistics
                 if (additionalColumn.getCopyMetadataFromId() != null) {
                     ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
                     brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);

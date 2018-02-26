@@ -127,6 +127,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
                 final String columnId = actionContext.getColumnId();
                 final ColumnMetadata column = rowMetadata.getById(columnId);
 
+                // if the target column is not the original column, we souldn't use the same statitics object
                 final Statistics statistics;
                 if (doesCreateNewColumn) {
                     statistics = new Statistics(column.getStatistics());

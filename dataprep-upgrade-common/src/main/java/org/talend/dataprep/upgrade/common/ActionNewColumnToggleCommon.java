@@ -28,10 +28,7 @@ public class ActionNewColumnToggleCommon {
     }
 
     public static void upgradeActions(PreparationRepository preparationRepository) {
-        ParameterMigration.upgradeParameters(preparationRepository, //
-                null, //
-                ActionNewColumnToggleCommon::updateAction //
-        );
+        ParameterMigration.upgradeParameters(preparationRepository, ActionNewColumnToggleCommon::updateAction);
     }
 
     /**

@@ -69,6 +69,10 @@ public class PreviewConfiguration extends Configuration {
             if (indexes == null) {
                 return null;
             }
+            if (indexes.isEmpty()) {
+                throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_ACTIONS,
+                        new IllegalArgumentException("Source should not be empty"));
+            }
             try {
                 final ObjectMapper mapper = new ObjectMapper(new JsonFactory());
                 final JsonNode json = mapper.readTree(indexes);

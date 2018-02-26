@@ -121,5 +121,26 @@ public class VersionServiceTest {
         assertEquals("1234-5678-91011", version.getBuildId());
     }
 
+    @Test
+    public void shouldOrderBuildVersions() throws Exception {
+        // given
+        final ManifestInfoProvider os = mock(ManifestInfoProvider.class);
+        final ManifestInfoProvider ee = mock(ManifestInfoProvider.class);
+        final ManifestInfoProvider ops = mock(ManifestInfoProvider.class);
+        when(os.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
+        when(os.getName()).thenReturn("os");
+        when(ee.getManifestInfo()).thenReturn(new ManifestInfo("v2", "5678"));
+        when(ee.getName()).thenReturn("ee");
+        when(ops.getManifestInfo()).thenReturn(new ManifestInfo("v1", "91011"));
+        when(ops.getName()).thenReturn("ops");
+        versionService.setManifestInfoProviders(asList(ee, ops, os));
+
+        // when
+        final Version version = versionService.version();
+
+        // then
+        assertEquals("v1-v2-v1", version.getVersionId());
+        assertEquals("1234-5678-91011", version.getBuildId());
+    }
 
 }

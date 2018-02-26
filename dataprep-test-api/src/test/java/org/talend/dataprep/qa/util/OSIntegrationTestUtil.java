@@ -28,8 +28,6 @@ import static org.talend.dataprep.transformation.actions.common.ImplicitParamete
 @Component
 public class OSIntegrationTestUtil {
 
-    public static final String ACTION_NAME = "actionName";
-
     List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id");
 
     /**

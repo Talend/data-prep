@@ -1,0 +1,265 @@
+Ville;Département;Region;2012-13
+Paris;Paris;Île-de-France;2240621
+Marseille;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;852516
+Lyon;Métropole de Lyon;Rhône-Alpes;496343
+Toulouse;Haute-Garonne;Midi-Pyrénées;453317
+Nice;Alpes-Maritimes;Provence-Alpes-Côte d'Azur;343629
+Nantes;Loire-Atlantique;Pays de la Loire;291604
+Strasbourg;Bas-Rhin;Alsace;274394
+Montpellier;Hérault;Languedoc-Roussillon;268456
+Bordeaux;Gironde;Aquitaine;241287
+Lille14;Nord;Nord-Pas-de-Calais;228652
+Rennes;Ille-et-Vilaine;Bretagne;209860
+Reims;Marne;Champagne-Ardenne;181893
+Le Havre;Seine-Maritime;Haute-Normandie;173142
+Saint-Étienne;Loire;Rhône-Alpes;171483
+Toulon;Var;Provence-Alpes-Côte d'Azur;164899
+Grenoble;Isère;Rhône-Alpes;158346
+Dijon;Côte-d'Or;Bourgogne;152071
+Angers;Maine-et-Loire;Pays de la Loire;149017
+Nîmes;Gard;Languedoc-Roussillon;146709
+Villeurbanne;Métropole de Lyon;Rhône-Alpes;146282
+Saint-Denis;La Réunion;La Réunion;145238
+Le Mans;Sarthe;Pays de la Loire;143599
+Clermont-Ferrand;Puy-de-Dôme;Auvergne;141569
+Aix-en-Provence;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;141148
+Brest;Finistère;Bretagne;139676
+Limoges;Haute-Vienne;Limousin;136221
+Tours;Indre-et-Loire;Centre-Val de Loire;134978
+Amiens;Somme;Picardie;132727
+Perpignan;Pyrénées-Orientales;Languedoc-Roussillon;120489
+Metz;Moselle;Lorraine;119551
+Boulogne-Billancourt;Hauts-de-Seine;Île-de-France;117126
+Besançon;Doubs;Franche-Comté;116353
+Orléans;Loiret;Centre-Val de Loire;114286
+Rouen;Seine-Maritime;Haute-Normandie;111557
+Mulhouse;Haut-Rhin;Alsace;110755
+Caen;Calvados;Basse-Normandie;108365
+Saint-Denis;Seine-Saint-Denis;Île-de-France;108274
+Nancy;Meurthe-et-Moselle;Lorraine;105067
+Argenteuil;Val-d'Oise;Île-de-France;104962
+Saint-Paul;La Réunion;La Réunion;104646
+Montreuil;Seine-Saint-Denis;Île-de-France;103520
+Roubaix;Nord;Nord-Pas-de-Calais;94536
+Tourcoing;Nord;Nord-Pas-de-Calais;92707
+Dunkerque15;Nord;Nord-Pas-de-Calais;90995
+Nanterre;Hauts-de-Seine;Île-de-France;90722
+Créteil;Val-de-Marne;Île-de-France;89845
+Avignon;Vaucluse;Provence-Alpes-Côte d'Azur;89380
+Vitry-sur-Seine;Val-de-Marne;Île-de-France;88102
+Poitiers;Vienne;Poitou-Charentes;87646
+Courbevoie;Hauts-de-Seine;Île-de-France;86854
+Fort-de-France;Martinique;Martinique;85667
+Versailles;Yvelines;Île-de-France;85424
+Colombes;Hauts-de-Seine;Île-de-France;85357
+Asnières-sur-Seine;Hauts-de-Seine;Île-de-France;83845
+Aulnay-sous-Bois;Seine-Saint-Denis;Île-de-France;81899
+Saint-Pierre;La Réunion;La Réunion;80823
+Rueil-Malmaison;Hauts-de-Seine;Île-de-France;79563
+Pau;Pyrénées-Atlantiques;Aquitaine;78506
+Aubervilliers;Seine-Saint-Denis;Île-de-France;77032
+Champigny-sur-Marne;Val-de-Marne;Île-de-France;75869
+Le Tampon;La Réunion;La Réunion;75631
+Antibes;Alpes-Maritimes;Provence-Alpes-Côte d'Azur;75568
+Saint-Maur-des-Fossés;Val-de-Marne;Île-de-France;74176
+La Rochelle;Charente-Maritime;Poitou-Charentes;74123
+Cannes;Alpes-Maritimes;Provence-Alpes-Côte d'Azur;73603
+Béziers;Hérault;Languedoc-Roussillon;72970
+Calais;Pas-de-Calais;Nord-Pas-de-Calais;72589
+Saint-Nazaire;Loire-Atlantique;Pays de la Loire;67940
+Colmar;Haut-Rhin;Alsace;67257
+Drancy;Seine-Saint-Denis;Île-de-France;67181
+Bourges;Cher;Centre-Val de Loire;66666
+Mérignac;Gironde;Aquitaine;66660
+Ajaccio;Corse-du-Sud;Corse;66245
+Issy-les-Moulineaux;Hauts-de-Seine;Île-de-France;65322
+Levallois-Perret;Hauts-de-Seine;Île-de-France;64654
+La Seyne-sur-Mer;Var;Provence-Alpes-Côte d'Azur;63902
+Quimper;Finistère;Bretagne;63360
+Noisy-le-Grand;Seine-Saint-Denis;Île-de-France;62592
+Valence;Drôme;Rhône-Alpes;62481
+Villeneuve-d'Ascq;Nord;Nord-Pas-de-Calais;62308
+Neuilly-sur-Seine;Hauts-de-Seine;Île-de-France;62021
+Antony;Hauts-de-Seine;Île-de-France;61624
+Vénissieux;Métropole de Lyon;Rhône-Alpes;61183
+Cergy;Val-d'Oise;Île-de-France;60528
+Troyes;Aube;Champagne-Ardenne;60009
+Clichy;Hauts-de-Seine;Île-de-France;59240
+Pessac;Gironde;Aquitaine;59223
+Les Abymes;Guadeloupe;Guadeloupe;58606
+Ivry-sur-Seine;Val-de-Marne;Île-de-France;58579
+Chambéry;Savoie;Rhône-Alpes;58039
+Lorient;Morbihan;Bretagne;57706
+Niort;Deux-Sèvres;Poitou-Charentes;57607
+Sarcelles;Val-d'Oise;Île-de-France;57499
+Montauban;Tarn-et-Garonne;Midi-Pyrénées;56887
+Villejuif;Val-de-Marne;Île-de-France;56504
+Saint-Quentin;Aisne;Picardie;56217
+Hyères;Var;Provence-Alpes-Côte d'Azur;55402
+Cayenne;Guyane;Guyane;55198
+Épinay-sur-Seine;Seine-Saint-Denis;Île-de-France;55140
+Saint-André;La Réunion;La Réunion;54721
+Beauvais;Oise;Picardie;54289
+Maisons-Alfort;Val-de-Marne;Île-de-France;54186
+Cholet;Maine-et-Loire;Pays de la Loire;54181
+Meaux;Seine-et-Marne;Île-de-France;53623
+Chelles;Seine-et-Marne;Île-de-France;53247
+Pantin;Seine-Saint-Denis;Île-de-France;53060
+Fontenay-sous-Bois;Val-de-Marne;Île-de-France;52998
+La Roche-sur-Yon;Vendée;Pays de la Loire;52808
+Bondy;Seine-Saint-Denis;Île-de-France;52787
+Vannes;Morbihan;Bretagne;52648
+Saint-Louis;La Réunion;La Réunion;52614
+Fréjus;Var;Provence-Alpes-Côte d'Azur;52532
+Arles;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;52439
+Clamart;Hauts-de-Seine;Île-de-France;52408
+Évry;Essonne;Île-de-France;52349
+Le Blanc-Mesnil;Seine-Saint-Denis;Île-de-France;52213
+Narbonne;Aude;Languedoc-Roussillon;51869
+Sartrouville;Yvelines;Île-de-France;51713
+Grasse;Alpes-Maritimes;Provence-Alpes-Côte d'Azur;51021
+Annecy;Haute-Savoie;Rhône-Alpes;50943
+Laval;Mayenne;Pays de la Loire;50658
+Belfort;Territoire de Belfort;Franche-Comté;50102
+Vincennes;Val-de-Marne;Île-de-France;49831
+Charleville-Mézières;Ardennes;Champagne-Ardenne;49759
+Évreux;Eure;Haute-Normandie;49634
+Sevran;Seine-Saint-Denis;Île-de-France;49442
+Albi;Tarn;Midi-Pyrénées;49231
+Montrouge;Hauts-de-Seine;Île-de-France;48909
+Bobigny;Seine-Saint-Denis;Île-de-France;48496
+Martigues;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;47624
+Saint-Ouen;Seine-Saint-Denis;Île-de-France;47499
+Brive-la-Gaillarde;Corrèze;Limousin;47411
+Suresnes;Hauts-de-Seine;Île-de-France;47263
+Carcassonne;Aude;Languedoc-Roussillon;47068
+Cagnes-sur-Mer;Alpes-Maritimes;Provence-Alpes-Côte d'Azur;46686
+Corbeil-Essonnes;Essonne;Île-de-France;46017
+Saint-Brieuc;Côtes-d'Armor;Bretagne;45936
+Blois;Loir-et-Cher;Centre-Val de Loire;45903
+Bayonne;Pyrénées-Atlantiques;Aquitaine;45855
+Aubagne;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;45243
+Châlons-en-Champagne;Marne;Champagne-Ardenne;45225
+Meudon;Hauts-de-Seine;Île-de-France;45107
+Châteauroux;Indre;Centre-Val de Loire;44960
+Saint-Malo;Ille-et-Vilaine;Bretagne;44620
+Chalon-sur-Saône;Saône-et-Loire;Bourgogne;44564
+Sète;Hérault;Languedoc-Roussillon;44558
+Puteaux;Hauts-de-Seine;Île-de-France;44514
+Alfortville;Val-de-Marne;Île-de-France;44397
+Salon-de-Provence;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;43771
+Massy;Essonne;Île-de-France;43524
+Mantes-la-Jolie;Yvelines;Île-de-France;43515
+Bastia;Haute-Corse;Corse;43479
+Vaulx-en-Velin;Métropole de Lyon;Rhône-Alpes;43394
+Saint-Herblain;Loire-Atlantique;Pays de la Loire;43287
+Le Cannet;Alpes-Maritimes;Provence-Alpes-Côte d'Azur;43115
+Valenciennes;Nord;Nord-Pas-de-Calais;42989
+Istres;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;42944
+Gennevilliers;Hauts-de-Seine;Île-de-France;42919
+Boulogne-sur-Mer;Pas-de-Calais;Nord-Pas-de-Calais;42785
+Livry-Gargan;Seine-Saint-Denis;Île-de-France;42699
+Saint-Priest;Métropole de Lyon;Rhône-Alpes;42488
+Rosny-sous-Bois;Seine-Saint-Denis;Île-de-France;42080
+Caluire-et-Cuire;Métropole de Lyon;Rhône-Alpes;42038
+Angoulême;Charente;Poitou-Charentes;42014
+Douai;Nord;Nord-Pas-de-Calais;41732
+Tarbes;Hautes-Pyrénées;Midi-Pyrénées;41664
+Wattrelos;Nord;Nord-Pas-de-Calais;41633
+Castres;Tarn;Midi-Pyrénées;41529
+Choisy-le-Roi;Val-de-Marne;Île-de-France;41507
+Talence;Gironde;Aquitaine;41358
+Thionville;Moselle;Lorraine;41325
+Arras;Pas-de-Calais;Nord-Pas-de-Calais;41239
+Alès;Gard;Languedoc-Roussillon;41031
+Garges-lès-Gonesse;Val-d'Oise;Île-de-France;41001
+Gap;Hautes-Alpes;Provence-Alpes-Côte d'Azur;40761
+Saint-Laurent-du-Maroni;Guyane;Guyane;40597
+Melun;Seine-et-Marne;Île-de-France;40503
+Bourg-en-Bresse;Ain;Rhône-Alpes;40171
+Noisy-le-Sec;Seine-Saint-Denis;Île-de-France;40161
+Compiègne;Oise;Picardie;40028
+La Courneuve;Seine-Saint-Denis;Île-de-France;39859
+Le Lamentin;Martinique;Martinique;39700
+Marcq-en-Barœul;Nord;Nord-Pas-de-Calais;39600
+Saint-Germain-en-Laye;Yvelines;Île-de-France;39476
+Rezé;Loire-Atlantique;Pays de la Loire;39377
+Bron;Métropole de Lyon;Rhône-Alpes;39232
+Anglet;Pyrénées-Atlantiques;Aquitaine;39223
+Gagny;Seine-Saint-Denis;Île-de-France;39172
+Chartres;Eure-et-Loir;Centre-Val de Loire;38889
+Bagneux;Hauts-de-Seine;Île-de-France;38398
+Saint-Martin-d'Hères;Isère;Rhône-Alpes;38105
+Montluçon;Allier;Auvergne;38072
+Pontault-Combault;Seine-et-Marne;Île-de-France;37631
+Poissy;Yvelines;Île-de-France;37597
+Draguignan;Var;Provence-Alpes-Côte d'Azur;37476
+Joué-lès-Tours;Indre-et-Loire;Centre-Val de Loire;37196
+Savigny-sur-Orge;Essonne;Île-de-France;37135
+Cherbourg-Octeville;Manche;Basse-Normandie;37121
+Saint-Joseph;La Réunion;La Réunion;37069
+Le Port;La Réunion;La Réunion;36952
+Colomiers;Haute-Garonne;Midi-Pyrénées;36699
+Saint-Martin;Saint-Martin est une COM autonome;;36622
+Villefranche-sur-Saône;Rhône;Rhône-Alpes;36241
+Stains;Seine-Saint-Denis;Île-de-France;36155
+Saint-Benoît;La Réunion;La Réunion;36025
+Échirolles;Isère;Rhône-Alpes;35826
+Villepinte;Seine-Saint-Denis;Île-de-France;35820
+Roanne;Loire;Rhône-Alpes;35799
+Montélimar;Drôme;Rhône-Alpes;35704
+Saint-Chamond;Loire;Rhône-Alpes;35564
+Nevers;Nièvre;Bourgogne;35327
+Conflans-Sainte-Honorine;Yvelines;Île-de-France;35135
+Auxerre;Yonne;Bourgogne;35096
+Sainte-Geneviève-des-Bois;Essonne;Île-de-France;35035
+Châtillon;Hauts-de-Seine;Île-de-France;34960
+Bagnolet;Seine-Saint-Denis;Île-de-France;34920
+Vitrolles;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;34843
+Thonon-les-Bains;Haute-Savoie;Rhône-Alpes;34661
+Neuilly-sur-Marne;Seine-Saint-Denis;Île-de-France;34658
+Haguenau;Bas-Rhin;Alsace;34406
+Marignane;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;34405
+Saint-Raphaël;Var;Provence-Alpes-Côte d'Azur;34115
+Tremblay-en-France;Seine-Saint-Denis;Île-de-France;34081
+La Ciotat;Bouches-du-Rhône;Provence-Alpes-Côte d'Azur;34063
+Six-Fours-les-Plages;Var;Provence-Alpes-Côte d'Azur;34057
+Creil;Oise;Picardie;33936
+Agen;Lot-et-Garonne;Aquitaine;33730
+Romans-sur-Isère;Drôme;Rhône-Alpes;33701
+Montigny-le-Bretonneux;Yvelines;Île-de-France;33680
+Le Perreux-sur-Marne;Val-de-Marne;Île-de-France;33248
+Franconville;Val-d'Oise;Île-de-France;33196
+Annemasse;Haute-Savoie;Rhône-Alpes;33166
+Villeneuve-Saint-Georges;Val-de-Marne;Île-de-France;32994
+Saint-Leu;La Réunion;La Réunion;32971
+Mâcon;Saône-et-Loire;Bourgogne;32917
+Cambrai;Nord;Nord-Pas-de-Calais;32847
+Lens;Pas-de-Calais;Nord-Pas-de-Calais;32663
+Houilles;Yvelines;Île-de-France;32399
+Épinal;Vosges;Lorraine;32387
+Châtenay-Malabry;Hauts-de-Seine;Île-de-France;32198
+Schiltigheim;Bas-Rhin;Alsace;31691
+Sainte-Marie;La Réunion;La Réunion;31596
+Liévin;Pas-de-Calais;Nord-Pas-de-Calais;31580
+Châtellerault;Vienne;Poitou-Charentes;31537
+Meyzieu;Métropole de Lyon;Rhône-Alpes;31493
+Goussainville;Val-d'Oise;Île-de-France;31255
+Viry-Châtillon;Essonne;Île-de-France;31221
+Dreux;Eure-et-Loir;Centre-Val de Loire;31195
+L'Haÿ-les-Roses;Val-de-Marne;Île-de-France;31168
+Plaisir;Yvelines;Île-de-France;31119
+Mont-de-Marsan;Landes;Aquitaine;31018
+Maubeuge;Nord;Nord-Pas-de-Calais;30994
+Nogent-sur-Marne;Val-de-Marne;Île-de-France;30884
+Les Mureaux;Yvelines;Île-de-France;30760
+Clichy-sous-Bois;Seine-Saint-Denis;Île-de-France;30720
+La Possession;La Réunion;La Réunion;30653
+Dieppe;Seine-Maritime;Haute-Normandie;30632
+Chatou;Yvelines;Île-de-France;30585
+Vandœuvre-lès-Nancy;Meurthe-et-Moselle;Lorraine;30569
+Malakoff;Hauts-de-Seine;Île-de-France;30420
+Palaiseau;Essonne;Île-de-France;30268
+Pontoise;Val-d'Oise;Île-de-France;30164
+Charenton-le-Pont;Val-de-Marne;Île-de-France;30148
+Rillieux-la-Pape;Métropole de Lyon;Rhône-Alpes;30140

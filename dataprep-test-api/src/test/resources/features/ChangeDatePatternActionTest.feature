@@ -53,6 +53,7 @@ Feature: Perform scenarios with ChangeDate related actions
     When I remove the preparation "A-customers_100_with_pb_prep"
     Then I check that the preparation "A-customers_100_with_pb_prep" doesn't exist in the folder "/smoke/test"
 
+  # this scenario is the same than the previous one but this time, the option new column is used
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (with new column)
     Given I upload the dataset "/data/A-customers_100_with_pb.csv" with name "A-customers_100_with_pb_dataset"
     # 0. dd/MM/yyyy --> (1.) ISO 8601 --> (2.) French Standard --> (3.) update action 1. to German Standard  with time

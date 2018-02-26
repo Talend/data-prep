@@ -15,13 +15,9 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
-import static org.talend.tql.api.TqlBuilder.eq;
 
 import org.slf4j.Logger;
 import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 public class ActionNewColumnToggleCommon {
@@ -32,27 +28,7 @@ public class ActionNewColumnToggleCommon {
     }
 
     public static void upgradeActions(PreparationRepository preparationRepository) {
-        preparationRepository
-                .list(PreparationActions.class) //
-                .filter(pa -> !PreparationActions.ROOT_ACTIONS.id().equals(pa.id()) && pa.getActions() != null
-                        && !pa.getActions().isEmpty()) //
-                .peek(action -> {
-                    final String beforeUpdateId = action.id();
-                    action.getActions().forEach(ActionNewColumnToggleCommon::updateAction);
-                    action.setId(null);
-                    final String afterUpdateId = action.id();
-
-                    if (!beforeUpdateId.equals(afterUpdateId)) {
-                        LOGGER.debug("Migration changed action id from '{}' to '{}', updating steps", beforeUpdateId,
-                                afterUpdateId);
-                        preparationRepository
-                                .list(PersistentStep.class, eq("contentId", beforeUpdateId)) //
-                                .filter(s -> !Step.ROOT_STEP.id().equals(s.id())) //
-                                .peek(s -> s.setContent(afterUpdateId)) //
-                                .forEach(preparationRepository::add);
-                    }
-                }) //
-                .forEach(preparationRepository::add); //
+        ParameterMigration.upgradeParameters(preparationRepository, ActionNewColumnToggleCommon::updateAction);
     }
 
     /**

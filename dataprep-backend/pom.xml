@@ -356,6 +356,11 @@
                 <version>${org.talend.daikon.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>messages-model-spring-support</artifactId>
+                <version>${org.talend.daikon.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
                 <version>1</version>

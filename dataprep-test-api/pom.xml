@@ -29,6 +29,9 @@
     <properties>
         <spring.version>4.3.7.RELEASE</spring.version>
         <cucumber.version>1.2.5</cucumber.version>
+        <!-- by default, integration tests are skipped (use dedicated profile to run them) -->
+        <includedTestClasses>!**/OSRunnerConfigurationTest.java</includedTestClasses>
+        <ignoreTestFailure>false</ignoreTestFailure>
     </properties>
 
     <!-- =================================================================================== -->
@@ -109,10 +112,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <!-- by default, integration tests are skipped (use dedicated profile to run them) -->
                 <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
-                    <!-- by default, tests are skipped (use dedicated profile to run them) -->
-                    <skipTests>true</skipTests>
+                    <includes>
+                        <include>${includedTestClasses}</include>
+                    </includes>
+                    <testFailureIgnore>${ignoreTestFailure}</testFailureIgnore>
                 </configuration>
             </plugin>
             <plugin>
@@ -151,21 +156,13 @@
     </build>
 
     <profiles>
-        <!-- this profile runs the integration tests -->
+        <!-- This profile allows to run integration tests -->
         <profile>
             <id>run-tests</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <testFailureIgnore>true</testFailureIgnore>
-                            <skipTests>false</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <includedTestClasses>**/OSRunnerConfigurationTest.java</includedTestClasses>
+                <ignoreTestFailure>true</ignoreTestFailure>
+            </properties>
         </profile>
     </profiles>
 </project>

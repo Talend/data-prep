@@ -58,7 +58,7 @@ public class FileStep extends DataPrepStep {
                     fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
                 }
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
+                    fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
             }
         }
     }

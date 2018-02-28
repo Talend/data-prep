@@ -49,18 +49,18 @@ class UpdatedStepVisitor extends Visitor {
                 final ActionContext.ActionStatus status = actionNode.getActionContext().getActionStatus();
                 final Step step = stepNode.getStep();
                 switch (status) {
-                case NOT_EXECUTED:
-                case CANCELED:
-                    LOGGER.debug("Not updating metadata for {} (action ended with status {}).", step.getId(), status);
-                    step.setRowMetadata(null);
-                    break;
-                case OK:
-                case DONE:
-                    LOGGER.debug("Keeping metadata {} (action ended with status {}).", step.getId(), status);
-                    break;
+                    case NOT_EXECUTED:
+                    case CANCELED:
+                        LOGGER.debug("Not updating metadata for {} (action ended with status {}).", step.getId(), status);
+                        step.setRowMetadata(null);
+                        break;
+                    case OK:
+                    case DONE:
+                        LOGGER.debug("Keeping metadata {} (action ended with status {}).", step.getId(), status);
+                        break;
                 }
 
-                preparationUpdater.update(step.id(), stepNode.getRowMetadata());
+                preparationUpdater.update(step.id(), actionNode.getActionContext().getRowMetadata());
             }
         });
         super.visitStepNode(stepNode);

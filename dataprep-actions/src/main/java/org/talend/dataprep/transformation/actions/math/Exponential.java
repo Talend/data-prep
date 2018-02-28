@@ -25,7 +25,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(EXPONENTIAL_NAME)
 public class Exponential extends AbstractMathNoParameterAction {
 
-    protected static final String EXPONENTIAL_NAME = "exponential_numbers";
+    public static final String EXPONENTIAL_NAME = "exponential_numbers";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {

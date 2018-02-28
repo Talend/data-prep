@@ -1,7 +1,10 @@
 package org.talend.dataprep.maintenance.upgrade;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,7 @@ public class UpgradeTaskTest {
     public void shouldPerformUpgrade() {
         // given
         when(upgradeService.needUpgrade()).thenReturn(true);
+        when(forAll.condition()).thenReturn(o -> () -> true);
 
         doAnswer((Answer<Void>) invocation -> {
             ((Runnable) invocation.getArguments()[1]).run();

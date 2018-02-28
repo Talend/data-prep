@@ -24,8 +24,8 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
@@ -43,6 +43,9 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
     @Override
     public boolean accept(ExportParameters parameters) {
         if (parameters == null) {
+            return false;
+        }
+        if (parameters.getFrom() == ExportParameters.SourceType.FILTER) {
             return false;
         }
         if (parameters.getContent() != null) {

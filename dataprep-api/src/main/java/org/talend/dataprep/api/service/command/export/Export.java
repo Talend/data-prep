@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.command.export;
 
+import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
 import java.io.InputStream;
@@ -44,6 +45,7 @@ public class Export extends GenericCommand<InputStream> {
         super(TRANSFORM_GROUP);
         execute(() -> onExecute(parameters));
         on(HttpStatus.OK).then(pipeStream());
+        on(HttpStatus.ACCEPTED).then(emptyStream());
     }
 
     /**

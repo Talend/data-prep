@@ -16,6 +16,7 @@ import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_MESSAGE_MODULE from '../message/message-module';
 
 import RestErrorMessageHandler from './rest-error-message-interceptor-factory';
+import RestQueuedMessageHandler from './rest-queued-message-interceptor-factory';
 
 const MODULE_NAME = 'data-prep.services.rest';
 
@@ -27,9 +28,11 @@ const MODULE_NAME = 'data-prep.services.rest';
  */
 angular.module(MODULE_NAME, [SERVICES_MESSAGE_MODULE, SERVICES_STATE_MODULE])
 	.factory('RestErrorMessageHandler', RestErrorMessageHandler)
+	.factory('RestQueuedMessageHandler', RestQueuedMessageHandler)
 	.config(($httpProvider) => {
 		'ngInject';
 		$httpProvider.interceptors.push('RestErrorMessageHandler');
+		$httpProvider.interceptors.push('RestQueuedMessageHandler');
 	});
 
 export default MODULE_NAME;

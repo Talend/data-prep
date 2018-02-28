@@ -27,6 +27,7 @@ export default function RestURLs() {
 	 */
 	this.register = function register(config, uris) {
 		const { serverUrl } = config;
+		this.serverUrl = serverUrl;
 		this.aggregationUrl = serverUrl + uris.apiAggregate;
 		this.datasetUrl = serverUrl + uris.apiDatasets;
 		this.uploadDatasetUrl = serverUrl + uris.apiUploadDatasets;

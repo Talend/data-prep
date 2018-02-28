@@ -30,9 +30,9 @@ public class MoveDatasetContentTest extends Base_2_1_0_PE_Test {
 
     @Before
     public void initTest() throws IOException {
-        //before each test we delete new root directory if exist
+        // before each test we delete new root directory if exist
         File newRootDirectory = new File(task.newRoot);
-        if(newRootDirectory.exists()){
+        if (newRootDirectory.exists()) {
             FileUtils.deleteDirectory(newRootDirectory);
         }
     }
@@ -59,7 +59,7 @@ public class MoveDatasetContentTest extends Base_2_1_0_PE_Test {
 
         File newRootDirectory = new File(task.newRoot);
 
-        if(!newRootDirectory.exists()){
+        if (!newRootDirectory.exists()) {
             FileUtils.forceMkdir(newRootDirectory);
             Assert.assertTrue(newRootDirectory.exists());
         }
@@ -82,7 +82,6 @@ public class MoveDatasetContentTest extends Base_2_1_0_PE_Test {
         Assert.assertTrue(task.haveToBeApply());
 
     }
-
 
     /**
      * @return the task id.

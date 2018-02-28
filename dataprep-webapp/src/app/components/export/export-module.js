@@ -15,7 +15,9 @@ import angular from 'angular';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
 import SERVICES_EXPORT_MODULE from '../../services/export/export-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
+import SERVICES_PLAYGROUND_MODULE from '../../services/playground/playground-module';
 import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
+import SERVICES_PREPARATION_MODULE from '../../services/preparation/preparation-module';
 
 import ExportCtrl from './export-controller';
 import Export from './export-directive';
@@ -25,8 +27,10 @@ const MODULE_NAME = 'data-prep.export';
 angular.module(MODULE_NAME,
 	[
 		TALEND_WIDGET_MODULE,
+		SERVICES_PREPARATION_MODULE,
 		SERVICES_EXPORT_MODULE,
 		SERVICES_STATE_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
     .controller('ExportCtrl', ExportCtrl)

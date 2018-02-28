@@ -13,31 +13,6 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.when;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static com.jayway.restassured.RestAssured.when;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
-
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.talend.dataprep.api.service.settings.AppSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
@@ -48,6 +23,18 @@ import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbS
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.ToolbarDetailsSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static com.jayway.restassured.RestAssured.when;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 
 public class AppSettingsAPITest extends ApiServiceTestBase {
 
@@ -541,13 +528,23 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final String localeFull = settings.getContext().get("locale");
-        final String country = settings.getContext().get("country");
-        final String language = settings.getContext().get("language");
+        final String localeFull = String.valueOf(settings.getContext().get("locale"));
+        final String country = String.valueOf(settings.getContext().get("country"));
+        final String language = String.valueOf(settings.getContext().get("language"));
 
         assertThat(localeFull, is(Locale.US.toLanguageTag()));
         assertThat(country, is(Locale.US.getCountry()));
         assertThat(language, is(Locale.US.getLanguage()));
     }
 
+    @Test
+    public void shouldNotEnableThemeByDefaultInContextSettings() {
+        // when
+        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
+
+        // then
+        final boolean theme = (boolean) settings.getContext().get("theme");
+
+        assertThat(theme, is(Boolean.FALSE));
+    }
 }

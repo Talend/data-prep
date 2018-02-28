@@ -678,7 +678,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Calculate elapsed time until a date, in the desired unit (year, month, day, hour)",
-    "label": "Calculate time until",
+    "label": "Calculate time since",
     "actionScope": [],
     "docUrl": ""
   },

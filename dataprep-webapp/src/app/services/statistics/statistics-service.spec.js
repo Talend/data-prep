@@ -670,7 +670,6 @@ describe('Statistics service', () => {
     };
 
     let stateMock;
-    let originalJasmineTimeout;
 
     beforeEach(angular.mock.module('data-prep.services.statistics', ($provide) => {
         stateMock = {
@@ -685,9 +684,6 @@ describe('Statistics service', () => {
     }));
 
     beforeEach(inject(($q, StateService) => {
-        originalJasmineTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
-
         spyOn(StateService, 'setStatisticsHistogramActiveLimits').and.returnValue();
         spyOn(StateService, 'setStatisticsPatterns').and.returnValue();
         spyOn(StateService, 'setStatisticsFilteredPatterns').and.returnValue();
@@ -701,12 +697,7 @@ describe('Statistics service', () => {
         });
     }));
 
-    afterEach(() => {
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalJasmineTimeout;
-    });
-
     describe('filters', () => {
-
         it('should create a function that reinit range limits when the selected column is the same', inject(function (StatisticsService, StateService) {
             //given
             const column = { id: '0000', type: 'integer', statistics: { min: 5, max: 55 } };
@@ -932,7 +923,13 @@ describe('Statistics service', () => {
                     patternFrequencyTable: [],
                 },
             }];
-            stateMock.playground.grid.filteredRecords = [{ '0001': '10-12-2015' }, { '0001': '2015-12-02' }, { '0001': 'To,/' }, { '0001': '2015-12-02' }, { '0001': '10/12-20' }];
+            stateMock.playground.grid.filteredRecords = [
+                { '0001': '10-12-2015' },
+                { '0001': '2015-12-02' },
+                { '0001': 'To,/' },
+                { '0001': '2015-12-02' },
+                { '0001': '10/12-20' },
+            ];
         }));
 
         it('should update empty pattern statistics', inject(function ($rootScope, StatisticsService, StateService) {
@@ -1135,7 +1132,8 @@ describe('Statistics service', () => {
             spyOn(StorageService, 'removeAggregation').and.returnValue();
         }));
 
-        it('should update histogram data with classical occurrence when there is no saved aggregation on the current preparation/dataset/column with filter', inject(function ($rootScope, StatisticsService, StorageService, StateService) {
+        it('should update histogram data with classical occurrence when there is no saved aggregation on the current preparation/dataset/column with filter',
+            inject(function ($rootScope, StatisticsService, StorageService, StateService) {
             //given
             stateMock.playground.grid.selectedColumns = [barChartStrCol];
             stateMock.playground.grid.filteredOccurences = { '   toto': 3, titi: 2 };
@@ -1184,7 +1182,8 @@ describe('Statistics service', () => {
             });
         }));
 
-        it('should update histogram data with classical occurrence when saved aggregation column does NOT exist anymore', inject(function ($rootScope, StatisticsService, StorageService, StateService) {
+        it('should update histogram data with classical occurrence when saved aggregation column does NOT exist anymore',
+        inject(function ($rootScope, StatisticsService, StorageService, StateService) {
             //given
             stateMock.playground.grid.selectedColumns = [barChartStrCol];
             stateMock.playground.grid.filteredOccurences = { '   toto': 3, titi: 2 };
@@ -1240,7 +1239,8 @@ describe('Statistics service', () => {
             });
         }));
 
-        it('should update histogram data from saved aggregation configuration', inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StorageService, StateService) {
+        it('should update histogram data from saved aggregation configuration',
+        inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StorageService, StateService) {
             //given
             spyOn(StatisticsRestService, 'getAggregations').and.returnValue($q.when(getAggregationsResponse));
             const savedAggregation = {
@@ -1320,7 +1320,8 @@ describe('Statistics service', () => {
             spyOn(StorageService, 'setAggregation').and.returnValue();
         }));
 
-        it('should update histogram data from REST call result and aggregation infos on dataset', inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StateService) {
+        it('should update histogram data from REST call result and aggregation infos on dataset',
+        inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StateService) {
             //given
             spyOn(StatisticsRestService, 'getAggregations').and.returnValue($q.when(getAggregationsResponse));
             stateMock.playground.preparation = null;
@@ -1356,7 +1357,8 @@ describe('Statistics service', () => {
             });
         }));
 
-        it('should update histogram data from aggregation infos on preparation', inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StateService) {
+        it('should update histogram data from aggregation infos on preparation',
+        inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StateService) {
             //given
             spyOn(StatisticsRestService, 'getAggregations').and.returnValue($q.when(getAggregationsResponse));
 
@@ -1776,7 +1778,8 @@ describe('Statistics service', () => {
                 expect(StateService.setStatisticsBoxPlot).toHaveBeenCalledWith(null);
             }));
 
-            it('should set the frequency data with formatted value when column type is "string" with filter', inject(function (StatisticsService, StateService) {
+            it('should set the frequency data with formatted value when column type is "string" with filter',
+            inject(function (StatisticsService, StateService) {
                 //given
                 stateMock.playground.grid.selectedColumns = [barChartStrCol];
                 stateMock.playground.grid.filteredOccurences = { '   toto': 3, titi: 2 };
@@ -1822,7 +1825,8 @@ describe('Statistics service', () => {
                 });
             }));
 
-            it('should set the frequency data with formatted value when column type is "string" without filter', inject(function (StatisticsService, StateService) {
+            it('should set the frequency data with formatted value when column type is "string" without filter',
+            inject(function (StatisticsService, StateService) {
                 //given
                 stateMock.playground.grid.selectedColumns = [barChartStrCol2];
                 stateMock.playground.grid.filteredOccurences = {
@@ -1926,7 +1930,8 @@ describe('Statistics service', () => {
 
         describe('process vertical chart', () => {
             describe('number', () => {
-                it('should set the range data frequency when column type is "number" with filters', inject(function ($rootScope, StatisticsService, StateService) {
+                it('should set the range data frequency when column type is "number" with filters',
+                inject(function ($rootScope, StatisticsService, StateService) {
                     //given
                     stateMock.playground.grid.selectedColumns = [barChartNumCol];
                     stateMock.playground.filter.gridFilters = [{}];
@@ -2040,7 +2045,7 @@ describe('Statistics service', () => {
                     expect(_StateService.setStatisticsHistogramActiveLimits).toHaveBeenCalledWith(null);
                 });
 
-                it('should set the range data frequency when column type is "date" with filters', (done) => {
+                xit('should set the range data frequency when column type is "date" with filters', (done) => {
                     //given
                     stateMock.playground.grid.selectedColumns = [barChartDateCol];
                     stateMock.playground.filter.gridFilters = [{}];
@@ -2140,7 +2145,7 @@ describe('Statistics service', () => {
                     setTimeout(() => _$rootScope.$digest(), 15000);
                 });
 
-                it('should set the range data frequency with no filters', (done) => {
+                xit('should set the range data frequency with no filters', (done) => {
                     //given
                     stateMock.playground.grid.selectedColumns = [barChartDateCol];
                     stateMock.playground.filter.gridFilters = [];
@@ -2773,7 +2778,7 @@ describe('Statistics service', () => {
             expect(_StateService.setStatisticsHistogramActiveLimits).toHaveBeenCalledWith([5, 10]);
         });
 
-        it('should update filtered Date column', (done) => {
+        xit('should update filtered Date column', (done) => {
             //given
             spyOn(_StorageService, 'getAggregation').and.returnValue();
             stateMock.playground.grid.selectedColumns = [barChartDateCol];
@@ -2877,7 +2882,7 @@ describe('Statistics service', () => {
             });
         });
 
-        it('should update filtered Patterns Frequency', (done) => {
+        xit('should update filtered Patterns Frequency', (done) => {
             //given
             stateMock.playground.grid.selectedColumns[0].statistics = {
                 patternFrequencyTable: [{ pattern: '', occurrences: 1 }],

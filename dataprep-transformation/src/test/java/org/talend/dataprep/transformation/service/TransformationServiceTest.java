@@ -18,6 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
@@ -43,8 +44,8 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -296,8 +297,6 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // then
         // (failed actions are ignored so the response should be 200)
         assertEquals(200, response.getStatusCode());
-        // String result = '\'' + response.asString() + '\'';
-        // System.out.println("\n\n\net voila le résultat de la transformation : " + result + "\n\n\n");
 
         // (make sure the result was not cached)
         final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
@@ -309,7 +308,6 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 "" // no filter
         );
 
-        // Thread.sleep(500L);
         Assert.assertFalse("content cache '" + key.getKey() + "' was not evicted from the cache", contentCache.has(key));
     }
 

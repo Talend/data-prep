@@ -17,8 +17,10 @@
 		height: 100%;
 	}
 
-	img {
-		position: absolute;
-		opacity: 0.25;
+	.loading-container {
+		img {
+			position: absolute;
+			opacity: 0.25;
+		}
 	}
 }

@@ -32,7 +32,7 @@ public class ContextSettings {
     /**
      * The context property value
      */
-    private String value;
+    private Object value;
 
     /**
      * Getters & Setters
@@ -45,11 +45,11 @@ public class ContextSettings {
         this.id = id;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -71,14 +71,14 @@ public class ContextSettings {
 
         private String id;
 
-        private String value;
+        private Object value;
 
         public ContextSettings.Builder id(String id) {
             this.id = id;
             return this;
         }
 
-        public ContextSettings.Builder value(final String value) {
+        public ContextSettings.Builder value(final Object value) {
             this.value = value;
             return this;
         }

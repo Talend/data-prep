@@ -45,7 +45,14 @@ describe('Settings service', () => {
 				.expectGET(RestURLs.settingsUrl)
 				.respond(200, settings);
 
-			expect(appSettings).toEqual({ views: {}, actions: {}, uris: {}, help: {}, analytics: {} });
+			expect(appSettings).toEqual({
+				actions: {},
+				analytics: {},
+				context: {},
+				help: {},
+				uris: {},
+				views: {},
+			});
 
 			// when
 			SettingsService.refreshSettings();
@@ -61,16 +68,25 @@ describe('Settings service', () => {
 
 	describe('setSettings', () => {
 		it('should merge settings', inject((appSettings, SettingsService) => {
-			expect(appSettings).toEqual({ views: {}, actions: {}, uris: {}, help: {}, analytics: {} });
+
+			expect(appSettings).toEqual({
+				actions: {},
+				analytics: {},
+				context: {},
+				help: {},
+				uris: {},
+				views: {},
+			});
 
 			const newSettings = {
+				actions: {},
+				analytics: {},
+				context: {},
+				help: {},
+				uris: {},
 				views: {
 					myCustomView: {}
 				},
-				actions: {},
-				uris: {},
-				help: {},
-				analytics: {},
 			};
 
 			// when

@@ -13,9 +13,16 @@
 
 import template from './app.html';
 
-export default function DatagridHeaderCtrl() {
+export default function AppDirective(appSettings) {
+	'ngInject';
+
 	return {
 		restrict: 'E',
 		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'appCtrl',
+		controller() {
+			this.appSettings = appSettings;
+		},
 	};
 }

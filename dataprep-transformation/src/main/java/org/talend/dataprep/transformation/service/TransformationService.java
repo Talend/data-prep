@@ -56,9 +56,17 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.async.*;
+import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
+import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
+import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
+import org.talend.dataprep.async.generator.PrepMetadataExecutionIdGenerator;
+import org.talend.dataprep.async.result.PrepMetadataGetContentUrlGenerator;
+import org.talend.dataprep.async.result.PreparationGetContentUrlGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
@@ -91,10 +99,11 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.api.transformer.configuration.PreviewConfiguration;
 import org.talend.dataprep.transformation.api.transformer.suggestion.Suggestion;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngine;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+import org.talend.dataprep.transformation.service.export.PreparationExportStrategy;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
@@ -175,21 +184,49 @@ public class TransformationService extends BaseTransformationService {
     @Autowired
     private StatisticsAdapter statisticsAdapter;
 
+    @Autowired
+    private PreparationExportStrategy preparationExportStrategy;
+
+    @Autowired
+    private ExportParametersUtil exportParametersUtil;
+
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters",
             notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
     @VolumeMetered
-    public StreamingResponseBody
-            execute(@ApiParam(value = "Preparation id to apply.") @RequestBody @Valid final ExportParameters parameters) {
-        return executeSampleExportStrategy(parameters);
+    @AsyncOperation(conditionalClass = GetPrepContentAsyncCondition.class, //
+            resultUrlGenerator = PreparationGetContentUrlGenerator.class, //
+            executionIdGeneratorClass = ExportParametersExecutionIdGenerator.class //
+    )
+    public StreamingResponseBody execute(@ApiParam(value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters) throws IOException {
+
+        ExportParameters completeParameters = parameters;
+
+        if(StringUtils.isNotEmpty(completeParameters.getPreparationId())) {
+            // we deal with preparation transformation (not dataset)
+            completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
+
+            ContentCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
+
+            if(!contentCache.has(cacheKey)) {
+                preparationExportStrategy.performPreparation(completeParameters, new NullOutputStream());
+            }
+        }
+
+        return executeSampleExportStrategy(completeParameters);
     }
 
     @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)
     @ApiOperation(value = "Run the transformation given the provided export parameters",
             notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
     @VolumeMetered
-    public DataSetMetadata executeMetadata(@PathVariable("preparationId") String preparationId,
-            @PathVariable("stepId") String stepId) {
+    @AsyncOperation(
+            conditionalClass = GetPrepMetadataAsyncCondition.class, //
+            resultUrlGenerator = PrepMetadataGetContentUrlGenerator.class, //
+            executionIdGeneratorClass = PrepMetadataExecutionIdGenerator.class
+    )
+    public DataSetMetadata executeMetadata(@PathVariable("preparationId") @AsyncParameter String preparationId,
+                                           @PathVariable("stepId") @AsyncParameter String stepId) {
 
         LOG.debug("getting preparation metadata for #{}, step {}", preparationId, stepId);
 
@@ -202,26 +239,33 @@ public class TransformationService extends BaseTransformationService {
             if (!contentCache.has(cacheKey)) {
                 try {
                     LOG.debug("Metadata not available for preparation '{}' at step '{}'", preparationId, headId);
-                    final ExportParameters parameters = new ExportParameters();
+
+                    ExportParameters parameters = new ExportParameters();
                     parameters.setPreparationId(preparationId);
                     parameters.setExportType("JSON");
                     parameters.setStepId(headId);
                     parameters.setFrom(HEAD);
-                    execute(parameters);
+
+                    // we regenerate cache
+                    parameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
+                    preparationExportStrategy.performPreparation(parameters, new NullOutputStream());
+
                 } catch (Exception e) {
                     throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND, e);
                 }
             }
 
             // Return transformation cached content (after sanity check)
-            if (!contentCache.has(cacheKey)) {
+//            if (!contentCache.has(cacheKey)) {
                 // Not expected: We've just ran a transformation, yet no metadata cached?
-                throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND);
-            }
-            try (InputStream stream = contentCache.get(cacheKey)) {
-                return mapper.readerFor(DataSetMetadata.class).readValue(stream);
-            } catch (IOException e) {
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+//                throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND);
+//            }
+            if (contentCache.has(cacheKey)) {
+                try (InputStream stream = contentCache.get(cacheKey)) {
+                    return mapper.readerFor(DataSetMetadata.class).readValue(stream);
+                } catch (IOException e) {
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                }
             }
         } else {
             LOG.debug("No step in preparation '{}', falls back to get dataset metadata (id: {})", preparationId,
@@ -229,7 +273,7 @@ public class TransformationService extends BaseTransformationService {
             DataSetGetMetadata getMetadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId());
             return getMetadata.execute();
         }
-
+        return null;
     }
 
     /**
@@ -404,8 +448,8 @@ public class TransformationService extends BaseTransformationService {
         );
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
-                final InputStream content = contentCache.get(contentKey); //
-                final JsonParser contentParser = mapper.getFactory().createParser(content)) {
+             final InputStream content = contentCache.get(contentKey); //
+             final JsonParser contentParser = mapper.getFactory().createParser(content)) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);
@@ -438,7 +482,7 @@ public class TransformationService extends BaseTransformationService {
 
         // because of dataset records streaming, the dataset content must be within an auto closeable block
         try (final InputStream dataSetContent = dataSetGet.execute(); //
-                final JsonParser parser = mapper.getFactory().createParser(dataSetContent)) {
+             final JsonParser parser = mapper.getFactory().createParser(dataSetContent)) {
 
             securityProxy.releaseIdentity();
             identityReleased = true;
@@ -842,7 +886,7 @@ public class TransformationService extends BaseTransformationService {
 
         // run the analyzer service on the cached content
         try (final InputStream metadataCache = contentCache.get(metadataKey);
-                final InputStream contentCache = this.contentCache.get(contentKey)) {
+             final InputStream contentCache = this.contentCache.get(contentKey)) {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataCache);
             final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCache);
             LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);

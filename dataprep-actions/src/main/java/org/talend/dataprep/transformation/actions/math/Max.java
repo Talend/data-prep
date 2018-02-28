@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(MAX_NAME)
 public class Max extends AbstractMathOneParameterAction {
 
-    protected static final String MAX_NAME = "max_numbers";
+    public static final String MAX_NAME = "max_numbers";
 
     @Override
     public String getName() {

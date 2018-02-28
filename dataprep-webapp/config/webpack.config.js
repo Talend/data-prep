@@ -16,6 +16,7 @@ const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' 
 
 const INDEX_TEMPLATE_PATH = path.resolve(__dirname, '../src/index.html');
 const STYLE_PATH = path.resolve(__dirname, '../src/app/index.scss');
+const STYLE_THEMED_PATH = path.resolve(__dirname, '../src/app/index.themed.scss');
 const INDEX_PATH = path.resolve(__dirname, '../src/app/index-module.js');
 const VENDOR_PATH = path.resolve(__dirname, '../src/vendor.js');
 const BUILD_PATH = path.resolve(__dirname, '../build');
@@ -87,6 +88,7 @@ function getDefaultConfig(options) {
 				react: path.join(__dirname, '../node_modules/react'),
 				i18next: path.join(__dirname, '../node_modules/i18next'),
 			},
+			symlinks: false,
 		},
 		plugins: [
 			extractCSS,
@@ -184,6 +186,7 @@ function addFilesConfig(config) {
 			VENDOR_PATH,
 		],
 		style: STYLE_PATH,
+		'style-themed': STYLE_THEMED_PATH,
 		app: INDEX_PATH,
 	};
 	config.output = {

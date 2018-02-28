@@ -1,0 +1,14 @@
+{
+  "actions": [
+    {
+      "action": "create_new_column",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "steps",
+        "scope": "column",
+        "mode_new_column": "A constant",
+        "default_value": "tagada"
+      }
+    }
+  ]
+}

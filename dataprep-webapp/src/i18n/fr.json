@@ -265,7 +265,7 @@
   "ACTIONS_TAB_ROW": "Ligne",
   "ACTIONS_TAB_COLUMN": "Colonne",
   "ACTIONS_TAB_TABLE": "Table",
-  "NO_ACTION_AVAILABLE": "Aucune action disponible",
+  "NO_ACTION_AVAILABLE": "Aucune fonction correspondant à votre recherche",
 
   "_comment": "Recette",
   "FILTERS_APPLIED": "Filtres appliqués",
@@ -422,6 +422,7 @@
   "HEADERBAR_SEARCH_SEARCHING": "Recherche en cours…",
   "HEADERBAR_SEARCH_NO_RESULT": "Aucun résultat.",
   "HEADERBAR_HELP": "Aide",
+  "HEADERBAR_APPS": "Applications",
   "LISTVIEW_NO_RESULT": "Aucun résultat.",
   "LISTVIEW_EMPTY": "Cette liste est vide.",
   "LISTVIEW_HEADER_TITLE": "Valeurs",

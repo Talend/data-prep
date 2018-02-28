@@ -116,16 +116,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"), UTF_8);
 
         // when
-        final String export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .formParam("preparationId", "") //
-                .formParam("stepId", "") //
-                .formParam("datasetId", datasetId).when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export") //
-                .asString();
+        final String export = testClient.exportDataset(datasetId, "").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -137,11 +128,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String datasetId = testClient.createDataset("export/export_dataset.csv", "testHeaders");
 
         // when
-        final Response response = given() //
-                .formParam("exportType", "CSV") //
-                .formParam("datasetId", datasetId) //
-                .when() //
-                .get("/api/export");
+        final Response response = testClient.exportDataset(datasetId,"");
 
         // then
         assertTrue(response.getContentType().startsWith("text/csv"));
@@ -154,11 +141,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String datasetId = testClient.createDataset("export/_UTF-8 住所.csv", "_UTF-8 住所");
 
         // when
-        final Response response = given() //
-                .formParam("exportType", "CSV") //
-                .formParam("datasetId", datasetId) //
-                .when() //
-                .get("/api/export");
+        final Response response = testClient.exportDataset(datasetId, "");
 
         // then
         assertTrue(response.getContentType().startsWith("text/csv"));
@@ -183,16 +166,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         final List<String> steps = preparationMessage.getSteps();
 
         // when
-        final String export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", steps.get(1)) //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export") //
-                .asString();
+        final String export = testClient.exportPreparation(preparationId, steps.get(1)).asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -210,16 +184,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 this.getClass().getResourceAsStream("export/expected_export_preparation_header_uppercase_firstname.csv"), UTF_8);
 
         // when
-        final String export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "") //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export") //
-                .asString();
+        final String export = testClient.exportPreparation(preparationId, "").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -239,14 +204,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 UTF_8);
 
         // when
-        final String export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "") //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export") //
-                .asString();
+        final String export = testClient.exportPreparation(preparationId, "").asString();
 
         // then
         assertFalse(expectedExport.isEmpty());
@@ -259,16 +217,9 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromDataset(datasetId, "preparation", home.getId());
 
         // when
-        final String export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "head") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export") //
-                .asString();
+        Response temp = testClient.exportPreparation(preparationId, "head");
+
+        final String export = temp.asString();
 
         // then
         final InputStream expectedInput = this.getClass().getResourceAsStream("export/expected_export_default_separator.csv");
@@ -286,16 +237,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
-        final String export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "head") //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export").asString();
+        final String export = testClient.exportPreparation(preparationId, "head", " ").asString();
 
         // then
         assertEquals(expectedExport, export);
@@ -313,31 +255,13 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_space_separator.csv"), UTF_8);
 
         // when
-        final String export1 = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "head") //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export").asString();
+        final String export1 = testClient.exportPreparation(preparationId, "head").asString();
 
         // then
         assertEquals(expectedSemiColonExport, export1);
 
         // when
-        final String export2 = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", " ") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
-                        CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "head") //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export").asString();
+        final String export2 = testClient.exportPreparation(preparationId, "head", " ").asString();
 
         // then
         assertEquals(expectedSpaceExport, export2);
@@ -376,15 +300,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         String fileName = "beerisgoodforyou";
 
         // when
-        final Response export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "head") //
-                .formParam(ExportFormat.PREFIX + "fileName", fileName) //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export");
+        final Response export = testClient.exportPreparation(preparationId, "head", ";", fileName);
 
         // then
         String contentDispositionHeaderValue = export.getHeader("Content-Disposition");
@@ -401,17 +317,11 @@ public class ExportAPITest extends ApiServiceTestBase {
         String fileName = "testExport.csv";
 
         // when
-        final Response export = given() //
-                .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + "csv_fields_delimiter", ";") //
-                .formParam("preparationId", preparationId) //
-                .formParam("stepId", "head") //
-                .when() //
-                .expect().statusCode(200).log().ifError() //
-                .get("/api/export");
+        final Response export = testClient.exportPreparation(preparationId, "head");
 
         // then
         String contentDispositionHeaderValue = export.getHeader("Content-Disposition");
+
         Assertions.assertThat(contentDispositionHeaderValue).contains("filename*=UTF-8''" + fileName);
 
     }

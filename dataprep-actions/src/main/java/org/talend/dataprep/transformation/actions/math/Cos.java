@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(COS_NAME)
 public class Cos extends AbstractMathNoParameterAction {
 
-    protected static final String COS_NAME = "cos_numbers";
+    public static final String COS_NAME = "cos_numbers";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {

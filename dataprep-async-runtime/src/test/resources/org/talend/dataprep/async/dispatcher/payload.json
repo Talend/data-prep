@@ -1,0 +1,37 @@
+{
+  "applicationId": "TDP",
+  "applicationService": "fullrun",
+  "applicationVersion": "1.0.0",
+  "jobDescription": "job description",
+  "environment": {
+    "key1": "value1",
+    "key2": "value2"
+  },
+  "containerDefinition": {
+    "imageName": "dataprep-ee-fullrun:1.0",
+    "httpPort": 5555,
+    "memory": 1024,
+    "memoryReservation": 512
+  },
+  "jobPayload": "{\"myField\":\"value1\",\"myInt\":0}",
+  "startAction": {
+    "httpMethod": "POST",
+    "url": "/apply/fullrun",
+    "jobPayload": "{\"myField\":\"value1\",\"myInt\":0}"
+  },
+  "stopAction": {
+    "httpMethod": "DELETE",
+    "url": "/cancel",
+    "jobPayload": null
+  },
+  "statusAction": {
+    "httpMethod": "GET",
+    "url": "/status",
+    "jobPayload": null
+  },
+  "healthAction": {
+    "httpMethod": "GET",
+    "url": "/actuator",
+    "jobPayload": null
+  }
+}

@@ -68,10 +68,4 @@ public class ErrorList extends GenericCommand<InputStream> {
         return new HttpGet(serviceUrl);
     }
 
-    public enum ServiceType {
-                             DATASET,
-                             TRANSFORMATION,
-                             PREPARATION
-    }
-
 }

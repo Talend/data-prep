@@ -20,8 +20,14 @@ describe('App directive', () => {
 	let scope;
 	let createElement;
 	let element;
+	let appSettingsMock;
 
-	beforeEach(window.module(DataPrepAppModule));
+	beforeEach(window.module(DataPrepAppModule, ($provide) => {
+		appSettingsMock = {
+			context: {},
+		};
+		$provide.constant('appSettings', appSettingsMock);
+	}));
 
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);
@@ -48,6 +54,27 @@ describe('App directive', () => {
 	afterEach(() => {
 		scope.$destroy();
 		element.remove();
+	});
+
+	describe('theme', () => {
+		it('should not enable theme', () => {
+			//when
+			appSettingsMock.context.theme = false;
+			createElement();
+
+			//then
+			expect(element.find('.t7').length).toBe(0);
+		});
+
+		it('should enable theme', () => {
+			//when
+
+			appSettingsMock.context.theme = true;
+			createElement();
+
+			//then
+			expect(element.find('.t7').length).toBe(1);
+		});
 	});
 
 	it('should hold notifications container', () => {

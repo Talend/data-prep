@@ -13,24 +13,32 @@
   ~ ============================================================================
   -->
 <div class="actions-suggestions">
-    <loader ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
+    <loader ng-if="ctrl.state.playground.suggestions.isLoading"
             id="actions-ghost"
     ></loader>
-    <sc-tabs ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
-             class="actions-scope"
-             selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
 
-            <tab-item scope="column" tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" is-default="true"></tab-item>
-            <tab-item scope="line" tab-title="{{'ACTIONS_TAB_ROW' | translate}}"></tab-item>
-            <tab-item scope="dataset" tab-title="{{'ACTIONS_TAB_TABLE' | translate}}"></tab-item>
-    </sc-tabs>
-    <form ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
+
+    <pure-tab-bar
+        items="ctrl.scopes"
+        id="'copy-move-move-btn'"
+        onSelect="ctrl.selectScope"
+    ></pure-tab-bar>
+    <div class="actions-scope">
+        <tab-item
+            ng-repeat="scope in ctrl.scopes track by $index"
+            ng-show="scope.isSelected"
+            scope="{{scope.key}}"
+            tab-title="{{scope.label}}"
+        ></tab-item>
+    </div>
+
+    <form ng-if="ctrl.state.playground.filter.gridFilters.length && ctrl.state.playground.filter.enabled"
           class="filters-actions-form">
         <span class="filters-actions-form-span" translate-once="APPLY_CHANGE_TO"></span>
         <div class="radio-inline">
             <label>
                 <input type="radio"
-                       ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters"
+                       ng-model="ctrl.state.playground.filter.applyTransformationOnFilters"
                        ng-value="false"/>
                 <span translate-once="ALL_LINES"></span>
             </label>
@@ -38,7 +46,7 @@
         <div class="radio-inline">
             <label>
                 <input type="radio"
-                       ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters"
+                       ng-model="ctrl.state.playground.filter.applyTransformationOnFilters"
                        ng-value="true"/>
                 <span translate-once="FILTERED_LINED"></span>
             </label>

@@ -18,6 +18,7 @@ import SERVICES_STATE_MODULE from '../../../services/state/state-module';
 import SERVICES_TRANSFORMATION_MODULE from '../../../services/transformation/transformation-module';
 import TAB_ITEM_MODULE from '../tab-item/tab-item-module';
 
+import ActionsSuggestionsCtrl from './actions-suggestions-controller';
 import ActionsSuggestions from './actions-suggestions-directive';
 
 const MODULE_NAME = 'data-prep.actions-suggestions';
@@ -38,6 +39,7 @@ angular.module(MODULE_NAME,
 		SERVICES_TRANSFORMATION_MODULE,
 		TAB_ITEM_MODULE,
 	])
+	.controller('ActionsSuggestionsCtrl', ActionsSuggestionsCtrl)
     .directive('actionsSuggestions', ActionsSuggestions);
 
 export default MODULE_NAME;

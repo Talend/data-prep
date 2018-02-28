@@ -68,6 +68,7 @@ $search-actions-height: 25px;
 		}
 
 		.search-input + .action-suggestion-tab-items {
+			// NC:
 			height: calc(100% - #{$header-tabs-height + $search-actions-height});
 		}
 	}

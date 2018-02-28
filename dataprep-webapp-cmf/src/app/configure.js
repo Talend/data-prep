@@ -49,6 +49,8 @@ export default {
 		registerActionCreator('help:tour', () => ({ type: 'ALERT', payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: 'ALERT', payload: 'help:feedback:open' }));
 
+		registerActionCreator('headerbar:search:start', actions.search.search);
+
 		registerActionCreator('redirect', actions.redirect);
 	},
 
@@ -57,6 +59,7 @@ export default {
 			yield all([
 				fork(sagaRouter, history, {}),
 				...sagas.help.map(call),
+				...sagas.search.map(call),
 				...sagas.preparation.map(call),
 			]);
 		}

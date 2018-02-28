@@ -1,17 +1,7 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.START;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.TYPE;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
-import static org.talend.dataprep.qa.util.OSIntegrationTestUtil.ACTION_NAME;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +16,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.START;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.TYPE;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.ROW_ID;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })
@@ -89,7 +90,7 @@ public class OSIntegrationTestUtilTest {
     @Test
     public void splitFolderTest_AFolder_AllFL() {
         Set<Folder> result = util.splitFolder(aPathF, allFList);
-        Assert.assertEquals(1, result.size());
+        assertEquals(1, result.size());
         Assert.assertTrue(result.contains(aPathF));
     }
 
@@ -102,7 +103,7 @@ public class OSIntegrationTestUtilTest {
     @Test
     public void splitFolderTest_AaFolder_AllFL() {
         Set<Folder> result = util.splitFolder(aaPathF, allFList);
-        Assert.assertEquals(2, result.size());
+        assertEquals(2, result.size());
         Assert.assertTrue(result.contains(aPathF));
         Assert.assertTrue(result.contains(aaPathF));
     }
@@ -129,8 +130,8 @@ public class OSIntegrationTestUtilTest {
         map.put(LABEL.getName(), "label");
         Filter result = util.mapParamsToFilter(map);
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.range.size(), 1);
-        Assert.assertEquals(result.range.get(LABEL), "label");
+        assertEquals(result.range.size(), 1);
+        assertEquals(result.range.get(LABEL), "label");
     }
 
     @Test
@@ -141,10 +142,10 @@ public class OSIntegrationTestUtilTest {
         map.put(TYPE.getName(), "type");
         Filter result = util.mapParamsToFilter(map);
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.range.size(), 3);
-        Assert.assertEquals(result.range.get(LABEL), "label");
-        Assert.assertEquals(result.range.get(FIELD), "field");
-        Assert.assertEquals(result.range.get(TYPE), "type");
+        assertEquals(result.range.size(), 3);
+        assertEquals(result.range.get(LABEL), "label");
+        assertEquals(result.range.get(FIELD), "field");
+        assertEquals(result.range.get(TYPE), "type");
     }
 
     @Test
@@ -153,8 +154,8 @@ public class OSIntegrationTestUtilTest {
         map.put(START.getName(), "15");
         Filter result = util.mapParamsToFilter(map);
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.range.size(), 1);
-        Assert.assertEquals(result.range.get(START), 15);
+        assertEquals(result.range.size(), 1);
+        assertEquals(result.range.get(START), 15);
     }
 
     @Test
@@ -164,9 +165,9 @@ public class OSIntegrationTestUtilTest {
         map.put(END.getName(), "60000");
         Filter result = util.mapParamsToFilter(map);
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.range.size(), 2);
-        Assert.assertEquals(result.range.get(START), 50000);
-        Assert.assertEquals(result.range.get(END), 60000);
+        assertEquals(result.range.size(), 2);
+        assertEquals(result.range.get(START), 50000);
+        assertEquals(result.range.get(END), 60000);
     }
 
     @Test
@@ -177,94 +178,68 @@ public class OSIntegrationTestUtilTest {
         map.put(START.getName(), "50000");
         Filter result = util.mapParamsToFilter(map);
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.range.size(), 2);
-        Assert.assertEquals(result.range.get(START), 50000);
-        Assert.assertEquals(result.range.get(LABEL), "label");
+        assertEquals(result.range.size(), 2);
+        assertEquals(result.range.get(START), 50000);
+        assertEquals(result.range.get(LABEL), "label");
     }
 
     @Test
     public void mapParamsToAction_Empty() {
         Action action = new Action();
-        Action result = util.mapParamsToAction(new HashMap<String, String>(), action);
-        Assert.assertEquals(action, result);
+        action.parameters = util.mapParamsToActionParameters(new HashMap<>());
+        assertEquals(null, action.id);
+        assertEquals(null, action.action);
+
+        assertEquals("column", action.parameters.get("scope"));
     }
 
     @Test
-    public void mapParamsToAction_NoKnownParam() {
-        Action action = new Action();
-        Map<String, String> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        map.put("key3", "value3");
-        Action result = util.mapParamsToAction(map, action);
-        Assert.assertEquals(action, result);
-    }
+    public void mapParametersToAction_shouldBeSuffixed() {
+        Map<String, String> parameters = Collections.singletonMap("new_domain_id", "toto");
 
-    @Test
-    public void mapParamsToAction_NoActionNameParam() {
-        Action action = new Action();
-        action.action = "testName";
-        Map<String, String> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        map.put("key3", "value3");
-        Action result = util.mapParamsToAction(map, action);
-        Assert.assertEquals(action, result);
-        Assert.assertEquals(result.action, "testName");
-    }
+        Map<String, Object> actionParameters = util.mapParamsToActionParameters(parameters);
 
-    @Test
-    public void mapParamsToAction_WithActionNameParam() {
-        Action action = new Action();
-        action.action = "testName";
-        Map<String, String> map = new HashMap<>();
-        map.put(ACTION_NAME, "newName");
-        Action result = util.mapParamsToAction(map, action);
-        Assert.assertEquals(action, result);
-        Assert.assertEquals(result.action, "newName");
+        assertNotEquals("toto", actionParameters.get("new_domain_id"));
     }
 
     @Test
     public void mapParamsToAction_FullParam() {
-        Action action = new Action();
-        action.action = "testName";
         Map<String, String> map = new HashMap<>();
-        map.put(ACTION_NAME, "newName");
-        map.put(COLUMN_ID.getName(), "0000");
-        map.put(COLUMN_NAME.getName(), "id");
+        map.put(COLUMN_ID.getKey(), "0000");
+        map.put("column_name", "id");
         map.put(LABEL.getName(), "label");
         map.put(START.getName(), "50000");
         map.put(TYPE.getName(), "type");
-        map.put(ROW_ID.getName(), "");
-        Action result = util.mapParamsToAction(map, action);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(action.action, "newName");
-        Assert.assertEquals(action.parameters.get(COLUMN_ID), "0000");
-        Assert.assertEquals(action.parameters.get(COLUMN_NAME), "id");
-        Assert.assertEquals(action.parameters.get(ROW_ID), null);
-        Filter filter = (Filter) action.parameters.get(FILTER);
-        Assert.assertEquals(filter.range.get(START), 50000);
-        Assert.assertEquals(filter.range.get(TYPE), "type");
-        Assert.assertEquals(filter.range.get(LABEL), "label");
+
+        Map<String, Object> parameters = util.mapParamsToActionParameters(map);
+
+        assertEquals("0000", parameters.get(COLUMN_ID.getKey()));
+        assertEquals("id", parameters.get("column_name"));
+        assertEquals(null, parameters.get(ROW_ID.getKey()));
+
+        Filter filter = (Filter) parameters.get(FILTER.getKey());
+        assertEquals(50000, filter.range.get(START));
+        assertEquals("type", filter.range.get(TYPE));
+        assertEquals("label", filter.range.get(LABEL));
     }
 
     @Test
     public void getFilenameExtension_Empty() {
-        Assert.assertEquals(util.getFilenameExtension("myFile"), "myFile");
+        assertEquals(util.getFilenameExtension("myFile"), "myFile");
     }
 
     @Test
     public void getFilenameExtension_csv1() {
-        Assert.assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+        assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
     }
 
     @Test
     public void getFilenameExtension_csv2() {
-        Assert.assertEquals(util.getFilenameExtension("my.file.csv"), "csv");
+        assertEquals(util.getFilenameExtension("my.file.csv"), "csv");
     }
 
     @Test
     public void getFilenameExtension_xlsx() {
-        Assert.assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+        assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
     }
 }

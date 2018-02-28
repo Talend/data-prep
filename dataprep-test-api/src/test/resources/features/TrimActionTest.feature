@@ -30,11 +30,11 @@ Feature: Perform scenarios with some Trim related action
       | create_new_column   | true               |
     Then I check that a step like "changeDate3" exists in the preparation "best_sad_songs_prep"
     Given I add a "compute_time_since" step identified by "calculUntil" on the preparation "best_sad_songs_prep" with parameters :
-      | column_id          | 0012             |
-      | time_unit          | HOURS            |
-      | create_new_column  | true             |
-      | since_when         | specific_date    |
-      | specific_date_mode | 2016-03-01 00:00 |
+      | column_id         | 0012             |
+      | time_unit         | HOURS            |
+      | create_new_column | true             |
+      | since_when        | specific_date    |
+      | specific_date     | 2016-03-01 00:00 |
     Then I check that a step like "calculUntil" exists in the preparation "best_sad_songs_prep"
     Given I update the first step like "changeDate1" on the preparation "best_sad_songs_prep" with the following parameters :
       | custom_date_pattern | dd.MM.yyyy. |
@@ -51,6 +51,6 @@ Feature: Perform scenarios with some Trim related action
     Then I check that "best_sad_songs_result.csv" temporary file equals "/data/best_sad_songs_exported.csv" file
 
   @CleanAfter
-  Scenario: Remove original preparation after copying the preparation
+  Scenario: Remove Trim Action preparation best_sad_songs_prep
     When I remove the preparation "best_sad_songs_prep"
-    Then I check that the preparation "best_sad_songs_prep" doesn't exist in the folder "/smoke/test"
+    Then I check that the preparation "best_sad_songs_prep" doesn't exist in the folder "/"

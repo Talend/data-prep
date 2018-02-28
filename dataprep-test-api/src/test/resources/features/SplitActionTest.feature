@@ -1,4 +1,4 @@
-Feature: Perform scenarios with ExtractDateToken related action
+Feature: Perform scenarios with SplitAction related action
 
   Scenario: TDP-2673 (TDP-4926/TDP-5057) related bug fix
     # Remark : the split action will change the type of one of the new column
@@ -27,6 +27,6 @@ Feature: Perform scenarios with ExtractDateToken related action
     Then I check that "Albums_Musique_prep_result.csv" temporary file equals "/data/Albums_Musique_prep_exported.csv" file
 
   @CleanAfter
-  Scenario: Remove original preparation after copying the preparation
+  Scenario: Remove SplitAction preparation Albums_Musique_prep
     When I remove the preparation "Albums_Musique_prep"
-    Then I check that the preparation "Albums_Musique_prep" doesn't exist in the folder "/smoke/test"
+    Then I check that the preparation "Albums_Musique_prep" doesn't exist in the folder "/"

@@ -45,9 +45,9 @@ Feature: Perform scenarios with ChangeDate related actions
     Then I check that "A-customers_100_with_pb_prep_result_updated.csv" temporary file equals "/data/A-customers_100_with_pb_exported.csv" file
 
   @CleanAfter
-  Scenario: Remove original preparation after copying the preparation
+  Scenario: Remove first ChangeDatePattern Action preparation A-customers_100_with_pb_prep
     When I remove the preparation "A-customers_100_with_pb_prep"
-    Then I check that the preparation "A-customers_100_with_pb_prep" doesn't exist in the folder "/smoke/test"
+    Then I check that the preparation "A-customers_100_with_pb_prep" doesn't exist in the folder "/"
 
   # this scenario is the same than the previous one but this time, the option new column is used
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (with new column)
@@ -96,6 +96,6 @@ Feature: Perform scenarios with ChangeDate related actions
     Then I check that "A-customers_100_with_pb_prep_result_updated_newCol.csv" temporary file equals "/data/A-customers_100_with_pb_updated_exported_newCol.csv" file
 
   @CleanAfter
-  Scenario: Remove original preparation after copying the preparation
+  Scenario: Remove second ChangeDatePattern Action preparation A-customers_100_with_pb_prep_newCol
     When I remove the preparation "A-customers_100_with_pb_prep_newCol"
-    Then I check that the preparation "A-customers_100_with_pb_prep_newCol" doesn't exist in the folder "/smoke/test"
+    Then I check that the preparation "A-customers_100_with_pb_prep_newCol" doesn't exist in the folder "/"

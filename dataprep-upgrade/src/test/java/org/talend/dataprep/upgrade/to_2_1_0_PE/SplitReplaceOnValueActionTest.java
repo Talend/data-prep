@@ -13,9 +13,13 @@
 
 package org.talend.dataprep.upgrade.to_2_1_0_PE;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
-import static org.talend.dataprep.upgrade.to_2_1_0_PE.SplitReplaceOnValueAction.*;
+import static org.talend.dataprep.upgrade.to_2_1_0_PE.SplitReplaceOnValueAction.CELL_VALUE;
+import static org.talend.dataprep.upgrade.to_2_1_0_PE.SplitReplaceOnValueAction.REPLACE_CELL_VALUE;
+import static org.talend.dataprep.upgrade.to_2_1_0_PE.SplitReplaceOnValueAction.REPLACE_VALUE;
 
 import java.util.List;
 import java.util.Map;
@@ -63,7 +67,8 @@ public class SplitReplaceOnValueActionTest extends Base_2_1_0_PE_Test {
         task.run();
 
         // then
-        final List<PreparationActions> prepActionsList = repository.list(PreparationActions.class).collect(Collectors.toList());
+        final List<PreparationActions> prepActionsList =
+                repository.list(PreparationActions.class).collect(Collectors.toList());
 
         int actionUpdated = 0;
         int actionNotUpdated = 0;

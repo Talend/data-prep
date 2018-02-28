@@ -418,6 +418,7 @@
   "HEADERBAR_SEARCH_SEARCHING": "検索中…",
   "HEADERBAR_SEARCH_NO_RESULT": "結果がありません",
   "HEADERBAR_HELP": "ヘルプ",
+  "HEADERBAR_APPS": "アプリケーション",
   "LISTVIEW_NO_RESULT": "結果がありません。",
   "LISTVIEW_EMPTY": "このリストは空です。",
   "LISTVIEW_HEADER_TITLE": "値",

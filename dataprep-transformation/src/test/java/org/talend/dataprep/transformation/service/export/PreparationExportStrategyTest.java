@@ -38,8 +38,8 @@ import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 import org.talend.dataprep.transformation.format.JsonFormat;
 

@@ -24,7 +24,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(NEGATE_NAME)
 public class Negate extends AbstractMathNoParameterAction {
 
-    protected static final String NEGATE_NAME = "negate_numbers";
+    public static final String NEGATE_NAME = "negate_numbers";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {

@@ -40,10 +40,7 @@ import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.*;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
-import org.talend.dataprep.api.service.api.PreviewAddParameters;
-import org.talend.dataprep.api.service.api.PreviewDiffParameters;
-import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
+import org.talend.dataprep.api.service.api.*;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.preparation.*;
 import org.talend.dataprep.api.service.command.transformation.GetPreparationColumnTypes;
@@ -270,17 +267,18 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/content", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation content by id and at a given version.", notes = "Returns the preparation content at version.")
     @Timed
-    public StreamingResponseBody getPreparation( //
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
-            @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version", value = "Version of the preparation (can be 'origin', 'head' or the version id). Defaults to 'head'.") String version,
-            @RequestParam(value = "from", defaultValue = "HEAD") @ApiParam(name = "from", value = "Where to get the data from") ExportParameters.SourceType from) {
+    public ResponseEntity<StreamingResponseBody> getPreparation( //
+         @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
+         @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version", value = "Version of the preparation (can be 'origin', 'head' or the version id). Defaults to 'head'.") String version,
+         @RequestParam(value = "from", defaultValue = "HEAD") @ApiParam(name = "from", value = "Where to get the data from") ExportParameters.SourceType from) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation content for {}/{} (pool: {} )...", preparationId, version, getConnectionStats());
         }
 
         try {
-            HystrixCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version, from);
+            GenericCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version, from);
+
             return CommandHelper.toStreaming(command);
         } finally {
             if (LOG.isDebugEnabled()) {
@@ -292,7 +290,7 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/metadata", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation metadata by id and at a given version.", notes = "Returns the preparation metadata at version.")
     @Timed
-    public DataSetMetadata getPreparationMetadata( //
+    public ResponseEntity<DataSetMetadata> getPreparationMetadata( //
                                                  @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
                                                  @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version", value = "Version of the preparation (can be 'origin', 'head' or the version id). Defaults to 'head'.") String version) {
 
@@ -301,15 +299,13 @@ public class PreparationAPI extends APIService {
         }
 
         try {
-            HystrixCommand<DataSetMetadata> command = getCommand(PreparationGetMetadata.class, preparationId, version);
-            return command.execute();
+            return getCommand(PreparationGetMetadata.class, preparationId, version).execute();
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Retrieved preparation metadata (pool: {} )...", getConnectionStats());
             }
         }
     }
-
 
     // TODO: this API should take a list of AppendStep.
     @RequestMapping(value = "/api/preparations/{id}/actions", method = POST, produces = APPLICATION_JSON_VALUE)

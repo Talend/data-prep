@@ -32,7 +32,7 @@
         <junit.version>4.12</junit.version>
         <tika.version>1.16</tika.version>
         <org.talend.daikon.version>0.20.0</org.talend.daikon.version>
-        <dataquality-libraries.version>5.0.0-SNAPSHOT</dataquality-libraries.version>
+        <dataquality-libraries.version>5.0.1-SNAPSHOT</dataquality-libraries.version>
         <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>
         <org.talend.dataquality.statistics.version>${dataquality-libraries.version}</org.talend.dataquality.statistics.version>
@@ -64,6 +64,8 @@
         <module>../dataprep-backend-service</module>
         <module>../dataprep-backend-service-parent</module>
         <module>../dataprep-actions</module>
+        <module>../dataprep-async-api</module>
+        <module>../dataprep-async-runtime</module>
         <module>../dataprep-dataset</module>
         <module>../dataprep-transformation</module>
         <module>../dataprep-preparation</module>
@@ -275,6 +277,16 @@
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-actions</artifactId>
                 <version>${dataprep.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-async-runtime</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-async-api</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>

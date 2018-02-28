@@ -12,7 +12,7 @@ public interface ExportSampleStep {
 
     /**
      * Realize a preparation sample export.
-     * 
+     *
      * @param params the step parameters
      * @throws IOException if needed
      */
@@ -20,7 +20,7 @@ public interface ExportSampleStep {
 
     /**
      * Extract all parameters needed for a sample export from a Cucumber DataTable.
-     * 
+     *
      * @param params the step parameters.
      * @return a {@link Map} of sample export specific parameters.
      */

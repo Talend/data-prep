@@ -1,5 +1,20 @@
 package org.talend.dataprep.qa.util;
 
+import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
+import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;

@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(NATURAL_LOGARITHM_NAME)
 public class NaturalLogarithm extends AbstractMathNoParameterAction {
 
-    protected static final String NATURAL_LOGARITHM_NAME = "natural_logarithm_numbers";
+    public static final String NATURAL_LOGARITHM_NAME = "natural_logarithm_numbers";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {

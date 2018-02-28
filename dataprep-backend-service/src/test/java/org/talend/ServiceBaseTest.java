@@ -24,30 +24,24 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.daikon.content.local.LocalContentServiceConfiguration;
+import org.talend.dataprep.configuration.DataPrepComponentScanConfiguration;
 import org.talend.dataprep.test.LocalizationRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
-@Import(LocalContentServiceConfiguration.class)
+@Import({ LocalContentServiceConfiguration.class, DataPrepComponentScanConfiguration.class })
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false", "content-service.store=local", "dataprep.locale:" + TEST_LOCALE })
 public abstract class ServiceBaseTest {
 
     public static final String TEST_LOCALE = "en-US";
-
-    @Configuration
-    @ComponentScan(basePackages = { "org.talend.daikon.content", "org.talend.dataprep" })
-    public static class TestComponentScan {
-    }
 
     @LocalServerPort
     protected int port;

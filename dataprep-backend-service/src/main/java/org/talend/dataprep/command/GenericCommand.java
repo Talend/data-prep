@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.command;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -52,9 +55,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
-
 /**
  * Base Hystrix command request for all DataPrep commands.
  *
@@ -73,6 +73,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Hystrix group used for transformation related commands. */
     public static final HystrixCommandGroupKey FULLRUN_GROUP = HystrixCommandGroupKey.Factory.asKey("fullrun");
+
+    /** Hystrix group used for async related commands */
+    public static final HystrixCommandGroupKey ASYNC_GROUP = HystrixCommandGroupKey.Factory.asKey("async");
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
@@ -123,27 +126,32 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     private HttpStatus status;
 
-    private static final HttpStatus[] INFO_STATUS = Stream.of(HttpStatus.values()) //
+    private static final HttpStatus[] INFO_STATUS = Stream
+            .of(HttpStatus.values()) //
             .filter(HttpStatus::is1xxInformational) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
 
-    private static final HttpStatus[] SUCCESS_STATUS = Stream.of(HttpStatus.values()) //
+    private static final HttpStatus[] SUCCESS_STATUS = Stream
+            .of(HttpStatus.values()) //
             .filter(HttpStatus::is2xxSuccessful) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
 
-    private static final HttpStatus[] REDIRECT_STATUS = Stream.of(HttpStatus.values()) //
+    private static final HttpStatus[] REDIRECT_STATUS = Stream
+            .of(HttpStatus.values()) //
             .filter(HttpStatus::is3xxRedirection) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
 
-    private static final HttpStatus[] USER_ERROR_STATUS = Stream.of(HttpStatus.values()) //
+    private static final HttpStatus[] USER_ERROR_STATUS = Stream
+            .of(HttpStatus.values()) //
             .filter(HttpStatus::is4xxClientError) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
 
-    private static final HttpStatus[] SERVER_ERROR_STATUS = Stream.of(HttpStatus.values()) //
+    private static final HttpStatus[] SERVER_ERROR_STATUS = Stream
+            .of(HttpStatus.values()) //
             .filter(HttpStatus::is5xxServerError) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
@@ -375,7 +383,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      * @return the serialized actions
      */
     protected String serializeActions(final Collection<Action> stepActions) throws JsonProcessingException {
-        return objectMapper.writer() //
+        return objectMapper
+                .writer() //
                 .withRootName("actions") //
                 .writeValueAsString(stepActions);
     }
@@ -431,7 +440,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     cause = conversionService.convert(exceptionDto, TDPException.class);
                 } catch (RuntimeException e) {
                     cause = new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, null, content,
-                            "Remote service returned an unhandled error and response could not be deserialized.", ExceptionContext.build());
+                            "Remote service returned an unhandled error and response could not be deserialized.",
+                            ExceptionContext.build());
                 }
                 ErrorCode code = cause.getCode();
                 if (code instanceof ErrorCodeDto) {
@@ -474,9 +484,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             builder.append("method:").append(req.getMethod()).append(",\n");
             if (req instanceof HttpEntityEnclosingRequestBase) {
                 try {
-                    builder.append("load:")
-                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(),
-                                    UTF_8))
+                    builder
+                            .append("load:")
+                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(), UTF_8))
                             .append(",\n");
                 } catch (IOException e) {
                     // We ignore the field
@@ -491,5 +501,30 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             builder.append("}\n}");
             return builder.toString();
         }
+    }
+
+    protected String getServiceUrl(ServiceType type) {
+        switch (type) {
+        case DATASET:
+            return datasetServiceUrl;
+        case TRANSFORMATION:
+        case TRANSFORM:
+            return transformationServiceUrl;
+        case PREPARATION:
+            return preparationServiceUrl;
+        case FULLRUN:
+            return fullRunServiceUrl;
+        default:
+            throw new IllegalArgumentException("Type '" + type + "' is not supported.");
+        }
+    }
+
+    public enum ServiceType {
+        DATASET,
+        TRANSFORMATION,
+        TRANSFORM,
+        PREPARATION,
+        FULLRUN,
+
     }
 }

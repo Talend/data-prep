@@ -25,7 +25,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(SQRT_NAME)
 public class SquareRoot extends AbstractMathNoParameterAction {
 
-    protected static final String SQRT_NAME = "square_root_numbers";
+    public static final String SQRT_NAME = "square_root_numbers";
 
     protected static final String SQRT_SUFFIX = "_square_root";
 

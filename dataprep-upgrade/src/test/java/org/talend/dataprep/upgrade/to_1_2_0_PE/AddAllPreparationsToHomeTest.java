@@ -61,7 +61,6 @@ public class AddAllPreparationsToHomeTest extends Base_1_2_0_PE_Test {
         return 3;
     }
 
-
     @Test
     public void shouldAddAllPreparationsToHome() throws Exception {
 

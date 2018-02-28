@@ -47,6 +47,7 @@ public class FeatureContext {
     private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
     private Map<String, String> datasetIdByName = new HashMap<>();
+    private Map<String, String> semanticTypeIdByName = new HashMap<>();
 
     // TODO : Refactoring : various preparation can have the same name but in different folder
     // TODO : change the data model (Map<String, List<String>> ?)
@@ -105,6 +106,16 @@ public class FeatureContext {
     }
 
     /**
+     * Store a new semantic type reference. In order to delete it later.
+     *
+     * @param id the semantic type id.
+     * @param name the semantic type name.
+     */
+    public void storeSemanticTypeRef(@NotNull String id, @NotNull String name) {
+        semanticTypeIdByName.put(name, id);
+    }
+
+    /**
      * Remove a preparation reference.
      *
      * @param name the preparation name.
@@ -153,6 +164,16 @@ public class FeatureContext {
     }
 
     /**
+     * List all created semantic type id.
+     *
+     * @return a {@link List} of all created semantic type id.
+     */
+    @NotNull
+    public List<String> getSemanticTypeIds() {
+        return new ArrayList<>(semanticTypeIdByName.values());
+    }
+
+    /**
      * Get the id of a stored dataset.
      *
      * @param datasetName the name of the searched dataset.
@@ -172,6 +193,17 @@ public class FeatureContext {
     @Nullable
     public String getPreparationId(@NotNull String preparationName) {
         return preparationIdByName.get(preparationName);
+    }
+
+    /**
+     * Get the id of a stored semantic type.
+     *
+     * @param semanticTypeName the name of the searched semantic type.
+     * @return the semanticType id.
+     */
+    @Nullable
+    public String getSemanticTypeId(@NotNull String semanticTypeName) {
+        return semanticTypeIdByName.get(semanticTypeName);
     }
 
     /**
@@ -207,6 +239,13 @@ public class FeatureContext {
      */
     public void clearPreparation() {
         preparationIdByName.clear();
+    }
+
+    /**s
+     * Clear the list of semantic types.
+     */
+    public void clearSemanticType() {
+        semanticTypeIdByName.clear();
     }
 
     /**

@@ -2,6 +2,7 @@ package org.talend.dataprep.helper.api;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Arrays;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
@@ -29,12 +30,23 @@ public enum ActionParamEnum {
     MANUAL_SEPARATOR_STRING("manualSeparatorString", "manual_separator_string"),
     MANUAL_SEPARATOR_REGEX("manualSeparatorRegex", "manual_separator_regex"),
     FILTER("filter", "filter"),
-    REGION_CODE("regionCode", "region_code"),
-    MODE("mode", "mode"),
-    FORMAT_TYPE("formatType", "format_type"),
-    OPERATOR("operator", "operator"),
-    OPERAND("operand", "operand"),
-    CREATE_NEW_COLUMN("createNewColumn", "create_new_column");
+    REGION_CODE("regionCode","region_code"),
+    MODE("mode","mode"),
+    FORMAT_TYPE("formatType","format_type"),
+    OPERATOR("operator","operator"),
+    OPERAND("operand","operand"),
+    NEW_DOMAIN_LABEL,
+    NEW_DOMAIN_FREQUENCY,
+    NEW_DOMAIN_ID,
+    SELECTED_COLUMN,
+    MODE_NEW_COLUMN,
+    CREATE_NEW_COLUMN_NAME,
+    ORIGINAL_VALUE,
+    NEW_VALUE,
+    PADDING_CHARACTER,
+    CUSTOM_PADDING_CHARACTER,
+    MATCH_THRESHOLD,
+    CREATE_NEW_COLUMN("createNewColumn","create_new_column");
 
     private String name;
 
@@ -43,6 +55,10 @@ public enum ActionParamEnum {
     ActionParamEnum(String pName, String pJsonName) {
         name = pName;
         jsonName = pJsonName;
+    }
+
+    ActionParamEnum(){
+        name = jsonName = name().toLowerCase();
     }
 
     /**

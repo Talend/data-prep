@@ -18,7 +18,7 @@ class UpgradeVersionService {
 	}
 
 	retrieveNewVersions() {
-		return this.$http.get(this.RestURLs.upgradeVersion).then(response => response.data);
+		return this.$http.get(this.RestURLs.upgradeVersion, { failSilently: true }).then(response => response.data);
 	}
 }
 

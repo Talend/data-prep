@@ -86,6 +86,10 @@
       "icon": "talend-folder",
       "label": "Add folder",
       "actionCreator": "folder:add:open"
+    },
+    "headerbar:search:start": {
+      "id": "headerbar:search:start",
+      "actionCreator": "headerbar:search:start"
     }
   },
   "props": {
@@ -113,14 +117,16 @@
         }
       },
       "search": {
+        "id": "headerbar:search",
+        "name": "Search",
         "icon": {
           "name": "talend-search",
           "title": "Toggle search input",
           "bsStyle": "link",
           "tooltipPlacement": "bottom"
         },
-        "id": "headerbar:search",
-        "onToggle": "headerbar:search:toggle"
+        "onChangeActionCreator": "headerbar:search:start",
+        "collectionId": "search"
       },
       "help": {
         "actionId": "headerbar:help"

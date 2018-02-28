@@ -36,8 +36,10 @@ public class StepListPreparationsMigrationTest extends Base_2_1_0_PE_Test {
         task.run();
 
         // then
-        List<PersistentPreparation> preparationList = preparationRepository.list(PersistentPreparation.class)
-                .sorted(Comparator.comparingInt(o -> o.getSteps().size())).collect(Collectors.toList());
+        List<PersistentPreparation> preparationList = preparationRepository
+                .list(PersistentPreparation.class)
+                .sorted(Comparator.comparingInt(o -> o.getSteps().size()))
+                .collect(Collectors.toList());
 
         assertEquals(4, preparationList.get(0).getSteps().size());
         assertEquals(8, preparationList.get(1).getSteps().size());

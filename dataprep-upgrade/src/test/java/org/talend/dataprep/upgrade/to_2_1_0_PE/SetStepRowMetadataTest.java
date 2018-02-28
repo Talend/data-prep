@@ -15,7 +15,14 @@ package org.talend.dataprep.upgrade.to_2_1_0_PE;
 
 import static org.mockito.BDDMockito.when;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +38,6 @@ import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.service.TransformationService;
 import org.talend.dataprep.upgrade.model.UpgradeTaskId;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Unit tests.
@@ -64,7 +68,8 @@ public class SetStepRowMetadataTest extends Base_2_1_0_PE_Test {
         preparations = Arrays.asList(firstPreparation, secondPreparation);
 
         // A first stream for count() (terminal operation), and a second one for the forEach()
-        when(repository.list(PersistentPreparation.class)).thenReturn(preparations.stream()) //
+        when(repository.list(PersistentPreparation.class))
+                .thenReturn(preparations.stream()) //
                 .thenReturn(preparations.stream());
     }
 

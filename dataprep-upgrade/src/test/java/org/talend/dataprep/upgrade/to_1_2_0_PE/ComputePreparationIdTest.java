@@ -57,7 +57,6 @@ public class ComputePreparationIdTest extends Base_1_2_0_PE_Test {
         return 2;
     }
 
-
     @Test
     public void shouldComputePreparationsId() throws Exception {
         // given

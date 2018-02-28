@@ -1,4 +1,5 @@
 // ============================================================================
+//
 // Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -10,39 +11,44 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.upgrade.to_2_1_0_PE;
+package org.talend.dataprep.upgrade.to_2_4_0_PE;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.stream.Stream;
+import java.util.Locale;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.preparation.store.PersistentStep;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.transformation.actions.date.ExtractDateTokens;
 import org.talend.dataprep.upgrade.model.UpgradeTaskId;
 
-public class StepRowMetadataMigrationTest extends Base_2_1_0_PE_Test {
+public class AddLanguageToActionExtractDatePartTest extends Base_2_4_0_PE_Test {
 
     @Autowired
-    private StepRowMetadataMigration task;
+    private AddLanguageToActionExtractDatePart task;
 
     @Autowired
     private PreparationRepository preparationRepository;
 
     @Test
-    public void shouldUpdateStepMetadata() {
+    public void shouldAddCreateNewColumnParameter() {
+        // given a datastore built with one preparation with 3 steps
         // when
         task.run();
 
         // then
-        final Stream<StepRowMetadata> list = preparationRepository.list(StepRowMetadata.class);
-        assertEquals(10, list.count());
-        preparationRepository.list(PersistentStep.class) //
-                .filter(s -> s.getRowMetadata() != null)
-                .forEach(s -> assertNotNull(preparationRepository.get(s.getRowMetadata(), StepRowMetadata.class)));
+        Optional<Action> extractDatePart = preparationRepository //
+                .list(PreparationActions.class) //
+                .flatMap(a -> a.getActions().stream()) //
+                .filter(a -> ExtractDateTokens.ACTION_NAME.equals(a.getName())).findAny();
+
+        assertTrue(extractDatePart.isPresent());
+        assertEquals(Locale.getDefault().getLanguage(), extractDatePart.get().getParameters().get(ExtractDateTokens.LANGUAGE));
 
     }
 
@@ -53,6 +59,7 @@ public class StepRowMetadataMigrationTest extends Base_2_1_0_PE_Test {
 
     @Override
     protected int getExpectedTaskOrder() {
-        return 5;
+        return 0;
     }
+
 }

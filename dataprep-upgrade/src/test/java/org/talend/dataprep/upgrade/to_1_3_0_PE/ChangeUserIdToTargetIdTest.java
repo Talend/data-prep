@@ -60,8 +60,8 @@ public class ChangeUserIdToTargetIdTest extends Base_1_3_0_PE_Test {
     @Test
     public void shouldRenameUpgradeUserFolders() throws Exception {
         // given
-        List<String> expected = Arrays.asList("USER-chuck norris", "USER-mr anonymous", "USER-william from arcachon",
-                "VERSION-1.3.0");
+        List<String> expected =
+                Arrays.asList("USER-chuck norris", "USER-mr anonymous", "USER-william from arcachon", "VERSION-1.3.0");
 
         // when
         task.run();

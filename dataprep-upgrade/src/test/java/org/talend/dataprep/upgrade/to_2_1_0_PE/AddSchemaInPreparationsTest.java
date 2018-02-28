@@ -44,8 +44,8 @@ public class AddSchemaInPreparationsTest extends Base_2_1_0_PE_Test {
 
     @PostConstruct
     private void postInitialize() throws IllegalAccessException {
-        fileSystemPreparationRepository = (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository,
-                "delegate", true);
+        fileSystemPreparationRepository =
+                (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository, "delegate", true);
     }
 
     @Override

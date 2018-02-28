@@ -45,10 +45,11 @@ import io.swagger.annotations.ApiOperation;
 public class VersionService {
 
     @Autowired(required = false)
-    List<ManifestInfoProvider> manifestInfoProviders;
+    private List<ManifestInfoProvider> manifestInfoProviders;
 
     /**
-     * @param manifestInfoProviders The new {@link ManifestInfoProvider providers} to use to extract build id and version id
+     * @param manifestInfoProviders The new {@link ManifestInfoProvider providers} to use to extract build id and
+     * version id
      * from.
      */
     public void setManifestInfoProviders(List<ManifestInfoProvider> manifestInfoProviders) {
@@ -58,10 +59,12 @@ public class VersionService {
     /**
      * @return A {@link Version} built following these conventions:
      * <ul>
-     * <li>Concatenation of all {@link ManifestInfo} build ids (as returned by {@link ManifestInfo#getBuildId()}), separated
+     * <li>Concatenation of all {@link ManifestInfo} build ids (as returned by {@link ManifestInfo#getBuildId()}),
+     * separated
      * by "-". Value to be returned by {@link Version#getBuildId()}.</li>
      * <li>Concatenation of all <b>unique</b>{@link ManifestInfo} versions ids (as returned by
-     * {@link ManifestInfo#getVersionId()} ()}), separated by "-" (when more than one version found). Value to be returned by {@link Version#getVersionId()}</li>
+     * {@link ManifestInfo#getVersionId()} ()}), separated by "-" (when more than one version found). Value to be
+     * returned by {@link Version#getVersionId()}</li>
      * </ul>
      */
     @RequestMapping(value = "/version", method = GET)
@@ -70,7 +73,8 @@ public class VersionService {
     @PublicAPI
     public Version version() {
         List<String> preferredOrder = asList("OS", "EE", "OPS");
-        String buildId = manifestInfoProviders.stream() //
+        String buildId = manifestInfoProviders
+                .stream() //
                 .sorted(Comparator.comparingInt(provider -> {
                     if (provider.getName() != null) {
                         return preferredOrder.indexOf(provider.getName().toUpperCase());
@@ -80,7 +84,14 @@ public class VersionService {
                 .map(ManifestInfoProvider::getManifestInfo) //
                 .map(ManifestInfo::getBuildId) //
                 .collect(Collectors.joining("-"));
-        final Optional<String> uniqueVersions = manifestInfoProviders.stream() //
+        final Optional<String> uniqueVersions = manifestInfoProviders
+                .stream() //
+                .sorted(Comparator.comparingInt(provider -> {
+                    if (provider.getName() != null) {
+                        return preferredOrder.indexOf(provider.getName().toUpperCase());
+                    }
+                    return 0;
+                })) //
                 .map(ManifestInfoProvider::getManifestInfo) //
                 .map(ManifestInfo::getVersionId) //
                 .filter(versionId -> !StringUtils.equals("N/A", versionId)) //

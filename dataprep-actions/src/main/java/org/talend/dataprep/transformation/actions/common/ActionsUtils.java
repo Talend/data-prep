@@ -76,14 +76,17 @@ public class ActionsUtils {
             final Map<String, String> cols = new HashMap<>();
             String nextId = columnId; // id of the column to put the new one after, initially the current column
             for (AdditionalColumn additionalColumn : additionalColumns) {
-                    ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
-
-                    if (additionalColumn.getCopyMetadataFromId() != null) {
-                        ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
-                        brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
-                    }
-                    brandNewColumnBuilder.name(additionalColumn.getName()) //
-                     .type(additionalColumn.getType()); //
+                ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
+                if (additionalColumn.getCopyMetadataFromId() != null) {
+                    ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
+                    brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
+                    brandNewColumnBuilder.type(Type.get(newColumn.getType()));
+                } else {
+                    brandNewColumnBuilder.type(additionalColumn.getType());
+                }
+                if (additionalColumn.getName() != null) {
+                    brandNewColumnBuilder.name(additionalColumn.getName());
+                }
 
                 ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
                 rowMetadata.insertAfter(nextId, columnMetadata);

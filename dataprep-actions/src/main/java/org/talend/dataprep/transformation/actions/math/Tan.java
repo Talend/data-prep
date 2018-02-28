@@ -25,7 +25,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 @Action(TAN_NAME)
 public class Tan extends AbstractMathNoParameterAction {
 
-    protected static final String TAN_NAME = "tan_numbers";
+    public static final String TAN_NAME = "tan_numbers";
 
     protected static final String TAN_SUFFIX = "_tan";
 

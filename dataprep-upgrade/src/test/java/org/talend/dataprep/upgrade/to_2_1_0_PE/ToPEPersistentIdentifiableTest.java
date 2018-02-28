@@ -12,7 +12,9 @@
 
 package org.talend.dataprep.upgrade.to_2_1_0_PE;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import java.util.Comparator;
@@ -63,8 +65,10 @@ public class ToPEPersistentIdentifiableTest extends Base_2_1_0_PE_Test {
 
         // then
         assertEquals(2, repository.list(PersistentPreparation.class).count());
-        List<PersistentPreparation> persistentPreparationList = repository.list(PersistentPreparation.class)
-                .sorted(Comparator.comparingInt(p1 -> p1.getSteps().size())).collect(Collectors.toList());
+        List<PersistentPreparation> persistentPreparationList = repository
+                .list(PersistentPreparation.class)
+                .sorted(Comparator.comparingInt(p1 -> p1.getSteps().size()))
+                .collect(Collectors.toList());
         persistentPreparationList.forEach(p -> {
             assertNotNull(p.getSteps());
             assertNotNull(p.getRowMetadata());
@@ -73,7 +77,6 @@ public class ToPEPersistentIdentifiableTest extends Base_2_1_0_PE_Test {
         });
         assertEquals(6, persistentPreparationList.get(0).getRowMetadata().getColumns().size());
         assertEquals(5, persistentPreparationList.get(1).getRowMetadata().getColumns().size());
-
 
         repository.list(Preparation.class).forEach(p -> {
             // make sure preparation steps are read

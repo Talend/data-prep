@@ -46,8 +46,7 @@
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
         <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
         <commons-compress.version>1.14</commons-compress.version>
-        <!-- avro version must match the one in the studio -->
-        <avro.version>1.7.7</avro.version>
+        <avro.version>1.8.1</avro.version>
         <apache.poi.version>3.15</apache.poi.version>
         <java-semver.version>0.9.0</java-semver.version>
         <commons-math3.version>3.5</commons-math3.version>

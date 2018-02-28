@@ -4,14 +4,12 @@ Feature: Exporting preparation on XLSX format
   Scenario: Verify phone number transformation
     Given I upload the dataset "/data/phoneNumber.csv" with name "phoneNumber_dataset"
     And I create a preparation with name "phoneNumber_preparation", based on "phoneNumber_dataset" dataset
-    And I add a step with parameters :
-      | actionName      | format_phone_number     |
-      | regionCode      | FR                      |
-      | formatType      | international           |
-      | mode            | constant_mode           |
-      | columnName      | phoneNumber             |
-      | columnId        | 0002                    |
-      | preparationName | phoneNumber_preparation |
+    And I add a "format_phone_number" step on the preparation "phoneNumber_preparation" with parameters :
+      | region_code      | FR                      |
+      | format_type      | international           |
+      | mode             | constant_mode           |
+      | column_name      | phoneNumber             |
+      | column_id        | 0002                    |
     When I export the preparation with parameters :
       | exportType           | XLSX                         |
       | preparationName      | phoneNumber_preparation      |
@@ -23,13 +21,11 @@ Feature: Exporting preparation on XLSX format
   Scenario: Verify phone number on dataset transformation
     Given I upload the dataset "/data/phoneNumberScopeDataset.csv" with name "phoneNumberScopeDataset_dataset"
     And I create a preparation with name "phoneNumberScopeDataset_preparation", based on "phoneNumberScopeDataset_dataset" dataset
-    And I add a step with parameters :
-      | actionName      | format_phone_number                   |
+    And I add a "format_phone_number" step on the preparation "phoneNumberScopeDataset_preparation" with parameters :
       | scope           | dataset                               |
-      | regionCode      | US                                    |
-      | formatType      | international                         |
+      | region_code     | US                                    |
+      | format_type     | international                         |
       | mode            | constant_mode                         |
-      | preparationName | phoneNumberScopeDataset_preparation   |
     When I export the preparation with parameters :
       | exportType      | CSV                                   |
       | preparationName | phoneNumberScopeDataset_preparation   |

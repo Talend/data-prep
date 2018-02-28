@@ -19,7 +19,7 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 
 /**
- * This runner is used to run only OS cucumber test (do not need authentification)
+ * This runner is used to run only OS cucumber test (do not need authentication)
  */
 @RunWith(Cucumber.class) //
 @CucumberOptions(plugin = { "pretty", "html:target/cucumber", "json:target/cucumber.json" }, //

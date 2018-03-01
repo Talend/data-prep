@@ -27,7 +27,6 @@ public class OSFolderUtil implements FolderUtil {
 
     @Override
     public FolderContent listPreparation(String folderName) throws IOException {
-
         Response response = api.listPreparations(folderName);
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
@@ -39,9 +38,7 @@ public class OSFolderUtil implements FolderUtil {
         Response response = api.listFolders();
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        List<Folder> folders = objectMapper.readValue(content, new TypeReference<List<Folder>>() {
-        });
-        return folders;
+        return objectMapper.readValue(content, new TypeReference<List<Folder>>() {});
     }
 
     @Override

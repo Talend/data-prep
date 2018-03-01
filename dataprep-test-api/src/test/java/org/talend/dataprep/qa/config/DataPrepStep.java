@@ -49,7 +49,7 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Retrieve the details of a preparation from its id.

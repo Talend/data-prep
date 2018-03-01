@@ -19,7 +19,6 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -48,6 +47,11 @@ import static org.talend.dataprep.transformation.actions.date.DateCalendarConver
  * @see DateCalendarConverter
  */
 public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverter> {
+
+    // These constants are 'redefined' here because they are not meant to change.
+    private static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
+
+    private static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
 
     private Map<String, String> parameters;
 
@@ -84,7 +88,7 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER, FROM_MODE, "new_pattern",
+        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER,
                 COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
 
         // when
@@ -198,7 +202,6 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         parameters.put(COLUMN_ID.getKey().toLowerCase(), "0001");
         parameters.put(FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
         parameters.put(TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.HIJRI.name());
-        parameters.put(FROM_MODE, DateCalendarConverter.FROM_MODE_BEST_GUESS);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -513,10 +516,10 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
-        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
-        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
+        parameters.put(FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put(TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
 
-        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+        parameters.put("create_new_column", "true");
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));

@@ -62,13 +62,9 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     protected static final String NEW_COLUMN_SUFFIX = "_converted_calendar";
 
-    static final String FROM_MODE = "from_pattern_mode";
+    private static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
 
-    static final String FROM_MODE_BEST_GUESS = "unknown_separators";
-
-    static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
-
-    static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
+    private static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateCalendarConverter.class);
 

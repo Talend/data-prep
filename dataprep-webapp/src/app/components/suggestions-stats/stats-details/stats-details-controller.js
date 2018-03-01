@@ -21,7 +21,7 @@ import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
  * @requires data-prep.services.statisticsService.service:StatisticsService
  * @requires data-prep.services.statisticsService.service:StatisticsTooltipService
  */
-export default function StatsDetailsCtrl(state, FilterManagerService, StatisticsService, StatisticsTooltipService) {
+export default function StatsDetailsCtrl(state, $translate, FilterManagerService, StatisticsService, StatisticsTooltipService) {
 	'ngInject';
 
 	const vm = this;
@@ -29,6 +29,34 @@ export default function StatsDetailsCtrl(state, FilterManagerService, Statistics
 	vm.statisticsService = StatisticsService;
 	vm.statisticsTooltipService = StatisticsTooltipService;
 	vm.addPatternFilter = addPatternFilter;
+
+	vm.tabs = [
+		{
+			id: 'stats-tab-chart',
+			label: $translate.instant('STATS_TAB_CHART'),
+			key: 'stats-tab-chart',
+		},
+		{
+			id: 'stats-tab-value',
+			label: $translate.instant('STATS_TAB_VALUE'),
+			key: 'stats-tab-value',
+		},
+		{
+			id: 'stats-tab-pattern',
+			label: $translate.instant('STATS_TAB_PATTERN'),
+			key: 'stats-tab-pattern',
+		},
+		{
+			id: 'stats-tab-advanced',
+			label: $translate.instant('STATS_TAB_ADVANCED'),
+			key: 'stats-tab-advanced',
+		},
+	];
+	vm.selectedTab = vm.tabs[0].key;
+
+	vm.selectTab = function (event, item) {
+		vm.selectedTab = item.key;
+	};
 
     /**
      * @ngdoc method

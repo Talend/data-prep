@@ -17,16 +17,16 @@
             id="actions-ghost"
     ></loader>
 
-
     <pure-tab-bar
         items="ctrl.scopes"
-        id="'copy-move-move-btn'"
-        onSelect="ctrl.selectScope"
+        id="'actions-tab-bar'"
+        on-select="ctrl.selectScope"
+        selected-key="ctrl.selectedKey"
     ></pure-tab-bar>
     <div class="actions-scope">
         <tab-item
             ng-repeat="scope in ctrl.scopes track by $index"
-            ng-show="scope.isSelected"
+            ng-show="scope.key === ctrl.selectedKey"
             scope="{{scope.key}}"
             tab-title="{{scope.label}}"
         ></tab-item>

@@ -35,12 +35,9 @@ export default function ActionsSuggestionsCtrl($translate, state, Transformation
 			label: $translate.instant('ACTIONS_TAB_TABLE'),
 		},
 	];
+	vm.selectedKey = vm.scopes[0].key;
 
 	vm.selectScope = function (event, item) {
-		vm.scopes = vm.scopes.map(s => ({ ...s, isSelected: item.key === s.key }));
-	};
-
-	vm.getCurrentScope = function () {
-		return vm.scopes.find(s => s.isSelected);
+		vm.selectedKey = item.key;
 	};
 }

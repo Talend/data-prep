@@ -79,6 +79,7 @@ public class CommonActionsProvider implements AppSettingsProvider<ActionSettings
                 WindowActions.ONBOARDING_PREPARATION,
                 WindowActions.ONBOARDING_PLAYGROUND,
                 WindowActions.HEADERBAR_HELP,
+                WindowActions.HEADERBAR_HELP_FOR_NON_TDP_USERS,
                 WindowActions.PLAYGROUND_HEADERBAR_HELP
         );
         // @formatter:on

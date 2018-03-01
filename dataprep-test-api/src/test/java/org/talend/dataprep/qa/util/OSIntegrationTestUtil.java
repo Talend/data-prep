@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.util;
 
 import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
 import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ import org.talend.dataprep.qa.dto.Folder;
 public class OSIntegrationTestUtil {
 
     public static final String ACTION_NAME = "actionName";
+
+    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id");
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.
@@ -75,9 +78,15 @@ public class OSIntegrationTestUtil {
         params.forEach((k, v) -> {
             ActionParamEnum ape = ActionParamEnum.getActionParamEnum(k);
             if (ape != null) {
-                action.parameters.put(ape, StringUtils.isEmpty(v) ? null : v);
+                if (parametersToBeSuffixed.contains(ape.getName())) {
+                    action.parameters.put(ape, suffixName(v));
+                }
+                else {
+                    action.parameters.put(ape, StringUtils.isEmpty(v) ? null : v);
+                }
             }
         });
+
         Filter filter = mapParamsToFilter(params);
         action.parameters.put(FILTER, filter);
         action.parameters.putIfAbsent(SCOPE, "column");
@@ -106,7 +115,7 @@ public class OSIntegrationTestUtil {
 
     /**
      * Extract an extension from a filename. If no extension present, the filename is returned.
-     * 
+     *
      * @param filename the filename.
      * @return the filename's extension.
      */

@@ -20,6 +20,7 @@ import FEEDBACK_MODULE from '../feedback/feedback-module';
 import LOADER_MODULE from '../loader/loader.module';
 import UPGRADE_VERSION_MODULE from '../upgrade-version/upgrade-version-module';
 import WIDGET_CONTAINERS from '../widgets-containers/widgets-containers-module';
+import SETTINGS_MODULE from '../../settings/settings-module';
 
 import DataPrepApp from './app-directive';
 
@@ -33,6 +34,7 @@ angular.module(MODULE_NAME,
 		FEEDBACK_MODULE,
 		LOADER_MODULE,
 		UPGRADE_VERSION_MODULE,
+		SETTINGS_MODULE,
 		WIDGET_CONTAINERS,
 	])
 	.directive('dataprepApp', DataPrepApp);

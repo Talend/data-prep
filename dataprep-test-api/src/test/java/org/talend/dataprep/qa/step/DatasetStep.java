@@ -1,5 +1,6 @@
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.assertEquals;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import cucumber.api.java.en.Then;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -81,5 +83,14 @@ public class DatasetStep extends DataPrepStep {
         String datasetId = context.getDatasetId(suffixedDatasetName);
         Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
         response.then().statusCode(200);
+    }
+
+    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
+    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId) throws IOException {
+        String dataSetId = context.getObject("dataSetId").toString();
+        Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
+        response.then().statusCode(200);
+
+        assertEquals(response.body().jsonPath().getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) +"'  }").size(), 1);
     }
 }

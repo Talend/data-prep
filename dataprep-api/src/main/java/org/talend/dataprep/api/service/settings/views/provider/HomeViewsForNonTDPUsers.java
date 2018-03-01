@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
-import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.MODAL_ABOUT;
+import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.HEADERBAR_HELP_FOR_NON_TDP_USERS;
 
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
@@ -26,22 +26,24 @@ import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSet
 public interface HomeViewsForNonTDPUsers {
 
     ViewSettings APP_HEADER_BAR_FOR_NON_TDP_USERS = AppHeaderBarSettings.builder()
-        .id("appheaderbar")
-        .logo(
-                LinkSettings.builder()
-                .name("appheaderbar.logo")
-                .build()
-        )
-        .brand(
-                LinkSettings.builder()
-                        .label("appheaderbar.brand")
-                        .build()
-        )
-        .build();
+            .id("appheaderbar")
+            .logo(
+                    LinkSettings.builder()
+                            .name("appheaderbar.logo")
+                            .label("appheaderbar.logo.tooltip")
+                            .build()
+            )
+            .brand(
+                    LinkSettings.builder()
+                            .label("appheaderbar.brand")
+                            .build()
+            )
+            .help(HEADERBAR_HELP_FOR_NON_TDP_USERS.getId())
+            .build();
 
     ViewSettings SIDE_PANEL = SidePanelSettings.builder()
-        .id("sidepanel")
-        .onToggleDock("sidepanel:toggle")
-        .build();
+            .id("sidepanel")
+            .onToggleDock("sidepanel:toggle")
+            .build();
 }
 // @formatter:on

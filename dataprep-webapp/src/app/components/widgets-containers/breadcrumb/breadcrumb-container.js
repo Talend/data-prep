@@ -11,16 +11,11 @@
 
  ============================================================================*/
 
+import template from './breadcrumb-controller.html';
 import BreadcrumbCtrl from './breadcrumb-controller';
 
 const BreadcrumbContainer = {
-	template: `
-		<pure-breadcrumb
-			items="$ctrl.breadcrumbItems"
-			max-items="$ctrl.maxItems"
-			watch-depth="reference"
-		/>
-	`,
+	templateUrl: template,
 	controller: BreadcrumbCtrl,
 	bindings: {
 		items: '<',

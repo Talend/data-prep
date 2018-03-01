@@ -23,6 +23,8 @@ These files must be used together with the common code contained in [daikon](htt
 | [dataprep-dataset](dataprep-dataset)               | *rest service to manage datasets (import, export, sample, stats)*    |
 | [dataprep-preparation](dataprep-preparation)       | *rest service to manage preparations (create, list steps, get data)* |
 | [dataprep-transformation](dataprep-transformation) | *rest service to apply transformations (actions are here)*           |
+| [dataprep-upgrade-common](dataprep-upgrade-common) | *Support code for executing upgrades (when starting a newer version on top of a previous version.*           |
+| [dataprep-upgrade](dataprep-upgrade) | *Upgrade tasks when startting a newer version on top of a previous version*           |
 | [dataprep-webapp](dataprep-webapp)                 | *web app (AngularJS)*                                                |
 | [tooling](tooling)                                 | *IDE specific config files + some other stuff*                       |
 
@@ -56,6 +58,8 @@ The following projects don't build any back-end artifacts but provide build util
 | [dataprep-backend-common](dataprep-backend-common)         | *Common resources and classes for back-end modules (no dependency on Spring)* |
 | [dataprep-backend-service](dataprep-backend-service)         | *Common Spring related classes (shared configuration...)* |
 | [dataprep-backend-service-parent](dataprep-backend-service-parent)         | *A parent module for all back end services to ease dependency and plugin management* |
+| [dataprep-upgrade-common](dataprep-upgrade-common) | *Support code for executing upgrades (when starting a newer version on top of a previous version.*           |
+| [dataprep-upgrade](dataprep-upgrade) | *Upgrade tasks when startting a newer version on top of a previous version*           |
 
 
 ## 2. Download

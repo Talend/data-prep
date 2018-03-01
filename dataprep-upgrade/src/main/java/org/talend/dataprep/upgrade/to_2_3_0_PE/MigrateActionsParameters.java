@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2017 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,7 +11,7 @@
 
 package org.talend.dataprep.upgrade.to_2_3_0_PE;
 
-import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,6 +36,6 @@ public class MigrateActionsParameters extends BaseUpgradeTaskTo_2_3_0_PE {
 
     @Override
     public target getTarget() {
-        return USER;
+        return VERSION;
     }
 }

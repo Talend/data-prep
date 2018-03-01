@@ -10,18 +10,12 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import template from './app-header-bar.html';
 import AppHeaderBarCtrl from './app-header-bar-controller';
 
 const AppHeaderBarContainer = {
-	template: `<pure-app-header-bar
-		 	brand="$ctrl.brand"
-		 	logo="$ctrl.logo"
-		 	search="$ctrl.search"
-		 	help="$ctrl.help"
-		 	user="$ctrl.user"
-			products="$ctrl.products"
-		 	watch-depth="reference"
-		/>`,
+	templateUrl: template,
 	controller: AppHeaderBarCtrl,
 	bindings: {
 		viewKey: '<',

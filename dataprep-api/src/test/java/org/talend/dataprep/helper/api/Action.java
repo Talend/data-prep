@@ -13,9 +13,7 @@
 
 package org.talend.dataprep.helper.api;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

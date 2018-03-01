@@ -13,11 +13,13 @@
   ~ ============================================================================
   -->
 
-<notifications id="notifications-container"></notifications>
-<talend-loading size="'large'"></talend-loading>
-<easter-eggs></easter-eggs>
-<feedback></feedback>
-<upgrade-version></upgrade-version>
-<icons-provider></icons-provider>
-<about></about>
-<ui-view class="main-layout"></ui-view>
+<div ng-class="{t7: appCtrl.appSettings.context.theme}">
+	<notifications id="notifications-container"></notifications>
+	<talend-loading size="'large'"></talend-loading>
+	<easter-eggs></easter-eggs>
+	<feedback></feedback>
+	<upgrade-version></upgrade-version>
+	<icons-provider></icons-provider>
+ 	<about></about>
+	<ui-view class="main-layout"></ui-view>
+</div>

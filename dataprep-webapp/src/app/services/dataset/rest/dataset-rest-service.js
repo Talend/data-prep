@@ -295,7 +295,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getEncodings() {
-		return $http.get(`${RestURLs.datasetUrl}/encodings`)
+		return $http.get(`${RestURLs.datasetUrl}/encodings`, { failSilently: true })
 			.then(response => response.data);
 	}
 

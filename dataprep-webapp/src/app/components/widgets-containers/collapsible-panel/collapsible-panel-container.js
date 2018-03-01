@@ -11,21 +11,11 @@
 
  ============================================================================*/
 
+import template from './collapsible-panel.html';
 import CollapsiblePanelCtrl from './collapsible-panel-controller';
 
 const CollapsiblePanelContainer = {
-	template: `
-		<pure-collapsible-panel
-			header="$ctrl.adaptedItem.header"
-			content="$ctrl.adaptedItem.content"
-			on-select="$ctrl.adaptedItem.onSelect"
-			on-toggle="$ctrl.adaptedItem.onToggle"
-			status="$ctrl.adaptedItem.status"
-			expanded="$ctrl.adaptedItem.expanded"
-			theme="$ctrl.adaptedItem.theme"
-		>
-		</pure-collapsible-panel>
-	`,
+	templateUrl: template,
 	bindings: {
 		item: '<',
 	},

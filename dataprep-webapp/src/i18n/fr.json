@@ -265,7 +265,7 @@
   "ACTIONS_TAB_ROW": "Ligne",
   "ACTIONS_TAB_COLUMN": "Colonne",
   "ACTIONS_TAB_TABLE": "Table",
-  "NO_ACTION_AVAILABLE": "Aucune action disponible",
+  "NO_ACTION_AVAILABLE": "Aucune fonction correspondant à votre recherche",
 
   "_comment": "Recette",
   "FILTERS_APPLIED": "Filtres appliqués",

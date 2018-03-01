@@ -65,6 +65,14 @@ public interface WindowActions {
             .action("external:help")
             .build();
 
+    ActionSettings HEADERBAR_HELP_FOR_NON_TDP_USERS = splitDropdownBuilder()
+            .id("unauthorized:headerbar:help")
+            .name("headerbar.help")
+            .icon("talend-question-circle")
+            .type("@@headerbar/HELP")
+            .action("external:help")
+            .build();
+
     ActionSettings PLAYGROUND_HEADERBAR_HELP = splitDropdownBuilder()
             .id("playground:headerbar:help")
             .name("headerbar.help")

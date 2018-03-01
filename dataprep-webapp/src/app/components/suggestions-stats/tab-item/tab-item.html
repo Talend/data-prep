@@ -12,7 +12,7 @@
 
             <actions-list class="action-suggestion-tab-items"
                       actions="tabItemCtrl.getSuggestionsState().filteredTransformations"
-                      scope="column"
+                      scope="{{tabItemCtrl.scope}}"
                       should-render-category="tabItemCtrl.shouldRenderCategory"
                       should-render-action="tabItemCtrl.shouldRenderAction"
                       scroll-to-bottom="tabItemCtrl.scrollToBottom"></actions-list>

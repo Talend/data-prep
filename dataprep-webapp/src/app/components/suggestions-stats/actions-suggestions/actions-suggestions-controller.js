@@ -19,18 +19,14 @@ export default function ActionsSuggestionsCtrl($translate, state, Transformation
 	vm.state = state;
 	vm.scopes = [
 		{
-			id: 'actions-column-scope',
 			key: 'column',
 			label: $translate.instant('ACTIONS_TAB_COLUMN'),
-			isSelected: true,
 		},
 		{
-			id: 'actions-row-scope',
 			key: 'line',
 			label: $translate.instant('ACTIONS_TAB_ROW'),
 		},
 		{
-			id: 'actions-table-scope',
 			key: 'dataset',
 			label: $translate.instant('ACTIONS_TAB_TABLE'),
 		},

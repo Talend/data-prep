@@ -32,24 +32,20 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 
 	vm.tabs = [
 		{
-			id: 'stats-tab-chart',
-			label: $translate.instant('STATS_TAB_CHART'),
 			key: 'stats-tab-chart',
+			label: $translate.instant('STATS_TAB_CHART'),
 		},
 		{
-			id: 'stats-tab-value',
-			label: $translate.instant('STATS_TAB_VALUE'),
 			key: 'stats-tab-value',
+			label: $translate.instant('STATS_TAB_VALUE'),
 		},
 		{
-			id: 'stats-tab-pattern',
-			label: $translate.instant('STATS_TAB_PATTERN'),
 			key: 'stats-tab-pattern',
+			label: $translate.instant('STATS_TAB_PATTERN'),
 		},
 		{
-			id: 'stats-tab-advanced',
-			label: $translate.instant('STATS_TAB_ADVANCED'),
 			key: 'stats-tab-advanced',
+			label: $translate.instant('STATS_TAB_ADVANCED'),
 		},
 	];
 	vm.selectedTab = vm.tabs[0].key;

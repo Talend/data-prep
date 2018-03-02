@@ -168,6 +168,11 @@ public class WriterNode extends BasicNode implements Monitored {
         } catch (IOException e) {
             LOGGER.error("Unable to end writer.", e);
         } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LOGGER.error("unable to close writer", e);
+            }
             totalTime += System.currentTimeMillis() - start;
         }
 
@@ -177,12 +182,6 @@ public class WriterNode extends BasicNode implements Monitored {
         } catch (IOException e) {
             LOGGER.error("Unable to cache metadata for preparation #{} @ step #{}", metadataKey.getKey());
             LOGGER.debug("Unable to cache metadata due to exception.", e);
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                LOGGER.error("unable to close writer", e);
-            }
         }
     }
 

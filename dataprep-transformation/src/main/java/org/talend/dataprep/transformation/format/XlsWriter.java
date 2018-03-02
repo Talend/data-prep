@@ -62,6 +62,8 @@ public class XlsWriter implements TransformerWriter {
 
     private int rowIdx = 0;
 
+    private boolean closed = false;
+
     public XlsWriter(final OutputStream output) {
         this(output, Collections.emptyMap());
     }
@@ -158,39 +160,30 @@ public class XlsWriter implements TransformerWriter {
 
     @Override
     public void close() throws IOException {
+        if (!closed) {
+            // because workbook.write(out) close the given output (the http response), another temporary file is created to
+            // to fully flush the xlsx result and the copy the content of the file to the http response
 
-        // because workbook.write(out) close the given output (the http response), another temporary file is created to
-        // to fully flush the xlsx result and the copy the content of the file to the http response
-
-        // create a temp file
-        final File yetAnotherTempFile = File.createTempFile("xlsWriter", "-2.csv");
-        try {
-            try (final FileOutputStream fileOutputStream = new FileOutputStream(yetAnotherTempFile)) {
-                this.workbook.write(fileOutputStream);
-                this.workbook.close();
+            // create a temp file
+            final File workbookTempFile = File.createTempFile("xlsWriter", "-2.xlsx");
+            try (final FileOutputStream fileOutputStream = new FileOutputStream(workbookTempFile)) {
+                workbook.write(fileOutputStream);
+                workbook.close();
             } catch (IOException ioe) {
                 LOGGER.error("Could not write temp file with xls export", ioe);
                 throw new TDPException(UNABLE_TO_PERFORM_EXPORT, ioe);
             }
 
             // copy the content of the temp file to the http response
-            try (final FileInputStream fileInputStream = new FileInputStream(yetAnotherTempFile)) {
+            try (final FileInputStream fileInputStream = new FileInputStream(workbookTempFile)) {
                 IOUtils.copyLarge(fileInputStream, outputStream);
             } catch (IOException e) {
                 LOGGER.error("Error sending the xls export content", e);
                 throw new TDPException(UNABLE_TO_PERFORM_EXPORT, e);
             } finally {
-                FilesHelper.deleteQuietly(yetAnotherTempFile);
+                FilesHelper.deleteQuietly(workbookTempFile);
             }
-        } finally {
-            // clean up the buffer file
-            if (rowsBuffer != null) {
-                try {
-                    rowsBuffer.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Unable to delete row buffer.", e);
-                }
-            }
+            closed = true;
         }
     }
 

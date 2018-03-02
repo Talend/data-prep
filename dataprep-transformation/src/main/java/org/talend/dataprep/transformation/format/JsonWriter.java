@@ -47,8 +47,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonWriter implements TransformerWriter {
 
     private static final String METADATA_FIELD_NAME = "metadata";
+
     private static final String METADATA_COLUMNS_FIELD_NAME = "columns";
+
     private static final String RECORDS_FIELD_NAME = "records";
+
     /** The data-prep ready jackson module. */
     @Autowired
     private ObjectMapper mapper;
@@ -64,6 +67,8 @@ public class JsonWriter implements TransformerWriter {
 
     /** If receiving metadata while writing records => go to buffer and write at close. */
     private RowMetadata bufferedRowMetadata;
+
+    private boolean closed = false;
 
     /**
      * Default constructor.
@@ -147,13 +152,16 @@ public class JsonWriter implements TransformerWriter {
 
     @Override
     public void close() throws IOException {
-        endRecordsWriting();
-        if (bufferedRowMetadata != null) {
-            writeRowMetadataObject(bufferedRowMetadata);
+        if (!closed) {
+            endRecordsWriting();
+            if (bufferedRowMetadata != null) {
+                writeRowMetadataObject(bufferedRowMetadata);
+            }
+            closeRootObject();
+            generator.flush();
+            generator.close();
+            closed = true;
         }
-        closeRootObject();
-        generator.flush();
-        generator.close();
     }
 
     @Override

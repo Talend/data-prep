@@ -78,6 +78,7 @@ public class XlsWriterTest extends BaseFormatTest {
 
         writer.write(row);
     }
+
     @Test
     public void write_simple_xls_file() throws Exception {
         // given

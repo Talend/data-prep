@@ -54,19 +54,19 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@talend/bootstrap-theme@0.158.0":
-  version "0.158.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.158.0.tgz#c3f0eb110e55b78bcfaec4f5d1e8325dfae32b46"
+"@talend/bootstrap-theme@0.159.0":
+  version "0.159.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.159.0.tgz#f6a2eb93e82ebbe82fcb5f6d70fab34feeb73b66"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.158.0":
-  version "0.158.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.158.0.tgz#76b1451bd3e571b6dbb9342eb0b91d12d48c7e25"
+"@talend/icons@0.159.0":
+  version "0.159.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.159.0.tgz#98a5b6dffdfe20cb96c03910a7ce09ea179c8cbc"
 
-"@talend/react-components@0.158.0":
-  version "0.158.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.158.0.tgz#bce4b485a6055bcd7f1f92cb65ee0072e741be01"
+"@talend/react-components@0.159.0":
+  version "0.159.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.159.0.tgz#2954b5e694ccbde3b0141a2619238eab8e9355ea"
   dependencies:
     lodash "4.17.4"
     rc-slider "8.4.1"
@@ -75,9 +75,9 @@
     react-debounce-input "3.1.0"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.158.0":
-  version "0.158.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.158.0.tgz#74dfa8804d10c4fc5776fa1baf628ed4ab60adf4"
+"@talend/react-forms@0.159.0":
+  version "0.159.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.159.0.tgz#2a070aae44fa28fdc97051d3ece27ec3bc7ad283"
   dependencies:
     classnames "2.2.5"
     keycode "2.1.9"
@@ -2264,6 +2264,10 @@ dashdash@^1.12.0:
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
   dependencies:
     assert-plus "^1.0.0"
+
+date-fns@^1.29.0:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
 
 date-now@^0.1.4:
   version "0.1.4"

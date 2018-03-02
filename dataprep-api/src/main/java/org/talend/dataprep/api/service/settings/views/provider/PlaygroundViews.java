@@ -17,10 +17,10 @@ import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeader
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.LinkSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.SearchSettings;
 
-import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.DATASET_OPEN;
-import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.*;
+import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.MENU_PREPARATIONS;
 import static org.talend.dataprep.api.service.settings.actions.provider.SearchActions.*;
-import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
+import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.EXTERNAL_DOCUMENTATION;
+import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.HEADERBAR_INFORMATION_PLAYGROUND;
 
 /**
  * Playground elements configuration
@@ -28,7 +28,7 @@ import static org.talend.dataprep.api.service.settings.actions.provider.WindowAc
 // @formatter:off
 public interface PlaygroundViews {
     ViewSettings PLAYGROUND_APP_HEADER_BAR = AppHeaderBarSettings.builder()
-            .id("appheaderbar:playground")
+            .id("playground:appheaderbar")
             .brand(
                     LinkSettings.builder()
                             .label("appheaderbar.brand")
@@ -52,7 +52,8 @@ public interface PlaygroundViews {
                             .placeholder("appheaderbar.search.playground.placeholder")
                             .build()
             )
-            .help(PLAYGROUND_HEADERBAR_HELP.getId())
+            .help("external:help")
+            .information(HEADERBAR_INFORMATION_PLAYGROUND.getId())
             .build();
 }
 // @formatter:on

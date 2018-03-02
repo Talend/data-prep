@@ -28,7 +28,7 @@ import static org.talend.dataprep.api.service.settings.actions.provider.WindowAc
 // @formatter:off
 public interface PlaygroundViews {
     ViewSettings PLAYGROUND_APP_HEADER_BAR = AppHeaderBarSettings.builder()
-            .id("playground:appheaderbar")
+            .id("appheaderbar:playground")
             .brand(
                     LinkSettings.builder()
                             .label("appheaderbar.brand")

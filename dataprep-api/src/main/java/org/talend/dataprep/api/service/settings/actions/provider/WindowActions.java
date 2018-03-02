@@ -72,7 +72,7 @@ public interface WindowActions {
             .build();
 
     ActionSettings HEADERBAR_INFORMATION_PLAYGROUND = dropdownBuilder()
-            .id("playground:headerbar:information")
+            .id("headerbar:playground:information")
             .name("headerbar.information")
             .icon("talend-information")
             .staticActions(new ArrayList<>())

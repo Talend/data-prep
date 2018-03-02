@@ -290,6 +290,9 @@ export default class AppHeaderBarCtrl {
 			items: staticActions
 				.map(actionName => this.appSettings.actions[actionName])
 				.map((action) => {
+					if (!action) {
+						return null;
+					}
 					if (action.divider) {
 						return action;
 					}

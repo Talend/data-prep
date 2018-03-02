@@ -259,7 +259,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(headerbarInformation.getStaticActions().get(3), is("external:community"));
         assertThat(headerbarInformation.getStaticActions().get(4), is("modal:feedback"));
 
-        final ActionDropdownSettings playgroundHeaderbarInformation = (ActionDropdownSettings) settings.getActions().get("playground:headerbar:information");
+        final ActionDropdownSettings playgroundHeaderbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:playground:information");
         assertThat(playgroundHeaderbarInformation.getName(), is("Information"));
         assertThat(playgroundHeaderbarInformation.getIcon(), is("talend-information"));
         assertThat(playgroundHeaderbarInformation.getStaticActions().get(0), is("modal:about"));
@@ -300,7 +300,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final AppHeaderBarSettings ahb = (AppHeaderBarSettings) settings.getViews().get("playground:appheaderbar");
+        final AppHeaderBarSettings ahb = (AppHeaderBarSettings) settings.getViews().get("appheaderbar:playground");
         assertThat(ahb.getLogo().getName(), is("Talend"));
         assertThat(ahb.getLogo().getOnClick(), is("menu:preparations"));
         assertThat(ahb.getLogo().getLabel(), is("Go to home page"));

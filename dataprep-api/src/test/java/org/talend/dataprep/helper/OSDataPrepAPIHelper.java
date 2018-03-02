@@ -558,6 +558,19 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Return the list of datasets
+     * @param queryParameters
+     * @return
+     */
+    public Response getDatasets(Map<String, String> queryParameters) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .queryParameters(queryParameters)
+                .get("/api/datasets");
+    }
+
+    /**
      * Ping async method status url in order to wait the end of the execution
      *
      * @param asyncMethodStatusUrl the asynchronous method to ping.

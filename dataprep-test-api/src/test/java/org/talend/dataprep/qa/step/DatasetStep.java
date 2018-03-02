@@ -1,14 +1,10 @@
 package org.talend.dataprep.qa.step;
 
-import static org.junit.Assert.assertEquals;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import cucumber.api.java.en.Then;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -18,10 +14,15 @@ import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ResponseBody;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+
+import static org.junit.Assert.assertEquals;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with dataset.
@@ -40,24 +41,7 @@ public class DatasetStep extends DataPrepStep {
     @Given("^I upload the dataset \"(.*)\" with name \"(.*)\"$") //
     public void givenIUploadTheDataSet(String fileName, String name) throws IOException {
         String suffixedName = suffixName(name);
-        LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
-        String datasetId;
-        switch (util.getFilenameExtension(fileName)) {
-        case "xls":
-        case "xlsx":
-            datasetId = api.uploadBinaryDataset(fileName, suffixedName) //
-                    .then().statusCode(200) //
-                    .extract().body().asString();
-            break;
-        case "csv":
-        default:
-            datasetId = api.uploadTextDataset(fileName, suffixedName) //
-                    .then().statusCode(200) //
-                    .extract().body().asString();
-            break;
-
-        }
-        context.storeDatasetRef(datasetId, suffixedName);
+        createDataSet(fileName, suffixedName);
     }
 
     @Given("^A dataset with the following parameters exists :$") //
@@ -67,6 +51,7 @@ public class DatasetStep extends DataPrepStep {
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
         List<DatasetMeta> datasetMetas = objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {
+
         });
 
         Assert.assertEquals(1, //
@@ -91,6 +76,40 @@ public class DatasetStep extends DataPrepStep {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 
-        assertEquals(1, response.body().jsonPath().getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) +"'  }").size());
+        assertEquals(1, response.body()
+                .jsonPath()
+                .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
+                .size());
+    }
+
+    private void createDataSet(String fileName, String suffixedName) throws IOException {
+        LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
+        String datasetId;
+        switch (util.getFilenameExtension(fileName)) {
+        case "xls":
+        case "xlsx":
+            datasetId = api.uploadBinaryDataset(fileName, suffixedName) //
+                    .then().statusCode(200) //
+                    .extract().body().asString();
+            break;
+        case "csv":
+        default:
+            datasetId = api.uploadTextDataset(fileName, suffixedName) //
+                    .then().statusCode(200) //
+                    .extract().body().asString();
+            break;
+
+        }
+        context.storeDatasetRef(datasetId, suffixedName);
+    }
+
+    @Given("^I have a dataset with parameters:$")
+    public void iHaveADatasetWithContentAndWithParameters(DataTable dataTable) throws Throwable {
+        Map<String, String> parameters = dataTable.asMap(String.class, String.class);
+        ResponseBody responseBody = api.getDatasets(parameters).body();
+
+        assertEquals(1, responseBody.jsonPath()
+                .getList("findAll { dataset -> dataset.id == '" + parameters.get("id") + "'  }")
+                .size());
     }
 }

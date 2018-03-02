@@ -175,6 +175,7 @@ public class WriterNode extends BasicNode implements Monitored {
 
             writer.endObject(); // <- end data set
             writer.flush();
+            writer.close();
         } catch (IOException e) {
             LOGGER.error("Unable to end writer.", e);
         } finally {

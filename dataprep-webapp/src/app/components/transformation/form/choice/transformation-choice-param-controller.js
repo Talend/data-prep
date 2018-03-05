@@ -10,6 +10,7 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+import { find } from 'lodash';
 
 /**
  * @ngdoc controller
@@ -38,6 +39,9 @@ export default function TransformChoiceParamCtrl() {
 			else {
 				vm.parameter.value = vm.parameter.configuration.values[0].value;
 			}
+		}
+		else if (!find(vm.parameter.configuration.values, { value: vm.parameter.value })) { //Migration
+			vm.parameter.configuration.values.push({ value: vm.parameter.value, label: vm.parameter.value });
 		}
 	};
 

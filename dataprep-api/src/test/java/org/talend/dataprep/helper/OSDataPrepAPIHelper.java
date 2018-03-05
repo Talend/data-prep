@@ -21,9 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
@@ -58,20 +56,13 @@ public class OSDataPrepAPIHelper {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    /** Set of normal running status for asynch execution. */
-    private static final Set<AsyncExecution.Status> activeAsyncStatus = new HashSet<>();
-
-    static {
-        activeAsyncStatus.add(AsyncExecution.Status.NEW);
-        activeAsyncStatus.add(AsyncExecution.Status.RUNNING);
-    }
-
-    @Value("${backend.api.url:http://localhost:8888}")
-    private String apiBaseUrl;
-
     @Value("${restassured.debug:false}")
     private boolean enableRestAssuredDebug;
 
+    @Value("${backend.api.url:http://localhost:8888}")
+    public void setRestassuredUri(String apiBaseUrl) {
+        RestAssured.baseURI = apiBaseUrl;
+    }
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
      *
@@ -95,7 +86,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .body(new PreparationRequest(datasetID, preparationName)) //
@@ -112,9 +102,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response getPreparationDetails(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/preparations/" + preparationId + "/details");
+                .get("/api/preparations/{preparationId}/details", preparationId);
     }
 
     /**
@@ -126,11 +115,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response addAction(String preparationId, Action action) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .body(new ActionRequest(action)) //
-                .post("/api/preparations/" + preparationId + "/actions");
+                .post("/api/preparations/{preparationId}/actions", preparationId);
     }
 
     /**
@@ -143,11 +131,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response updateAction(String preparationId, String stepId, Action action) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .body(new ActionRequest(action)) //
-                .put("/api/preparations/" + preparationId + "/actions/" + stepId);
+                .put("/api/preparations/{preparationId}/actions/{stepId}", preparationId, stepId);
     }
 
     /**
@@ -160,10 +147,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response moveAction(String preparationId, String stepId, String parentStepId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
-                .post("/api/preparations/" + preparationId + "/steps/" + stepId + "/order?parentStepId=" + parentStepId);
+                .queryParam("parentStepId", parentStepId)
+                .post("/api/preparations/{preparationId}/steps/{stepId}/order", preparationId, stepId);
     }
 
     /**
@@ -175,9 +162,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response deleteAction(String preparationId, String actionId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .delete("/api/preparations/" + preparationId + "/actions/" + actionId);
+                .delete("/api/preparations/{preparationId}/actions/{actionId}", preparationId, actionId);
     }
 
     /**
@@ -193,7 +179,6 @@ public class OSDataPrepAPIHelper {
                 .log()
                 .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
-                .baseUri(apiBaseUrl) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //
                 .when() //
@@ -211,7 +196,6 @@ public class OSDataPrepAPIHelper {
     public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .baseUri(apiBaseUrl) //
                 .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
                 .when() //
                 .queryParam("name", datasetName) //
@@ -228,11 +212,10 @@ public class OSDataPrepAPIHelper {
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .baseUri(apiBaseUrl) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
-                .put("/api/datasets/" + datasetId);
+                .put("/api/datasets/{datasetId}", datasetId);
     }
 
     /**
@@ -243,7 +226,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response deleteDataset(String dataSetId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .delete("/api/datasets/" + dataSetId);
     }
@@ -255,7 +237,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listDatasetDetails() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("api/datasets/summary");
     }
@@ -267,7 +248,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listDataset() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .get("/api/datasets");
     }
 
@@ -279,9 +259,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response getPreparation(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/preparations/" + preparationId + "/details");
+                .get("/api/preparations/{preparationId}/details", preparationId);
     }
 
     /**
@@ -295,11 +274,10 @@ public class OSDataPrepAPIHelper {
     public Response getPreparationContent(String preparationId, String version, String from)
             throws IOException {
         Response response = given() //
-                .baseUri(getApiBaseUrl()) //
                 .queryParam("version", version) //
                 .queryParam("from", from) //
                 .when() //
-                .get("/api/preparations/" + preparationId + "/content");
+                .get("/api/preparations/{preparationId}/content", preparationId);
 
         if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
@@ -308,11 +286,10 @@ public class OSDataPrepAPIHelper {
             waitForAsyncMethodToFinish(asyncMethodStatusUrl);
 
             response = given() //
-                    .baseUri(getApiBaseUrl()) //
                     .queryParam("version", version) //
                     .queryParam("from", from) //
                     .when() //
-                    .get("/api/preparations/" + preparationId + "/content");
+                    .get("/api/preparations/{preparationId}/content", preparationId);
         }
         return response;
     }
@@ -324,7 +301,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listAllPreparation() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/folders/preparations");
     }
@@ -337,10 +313,9 @@ public class OSDataPrepAPIHelper {
      */
     public Response listPreparations(String folder) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
                 .when() //
-                .get("/api/folders/" + encode64(folder) + "/preparations");
+                .get("/api/folders/{folder}/preparations", encode64(folder));
     }
 
     /**
@@ -351,9 +326,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response getDataset(String datasetId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/datasets/" + datasetId);
+                .get("/api/datasets/{datasetId}", datasetId);
     }
 
     /**
@@ -364,7 +338,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response executeExport(Map<String, Object> parameters) throws IOException {
         Response response = given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .queryParameters(parameters) //
@@ -377,7 +350,6 @@ public class OSDataPrepAPIHelper {
             waitForAsyncMethodToFinish(asyncMethodStatusUrl);
 
             response = given() //
-                    .baseUri(apiBaseUrl) //
                     .contentType(JSON) //
                     .when() //
                     .queryParameters(parameters) //
@@ -403,20 +375,14 @@ public class OSDataPrepAPIHelper {
      */
     public Response deletePreparation(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .delete("/api/preparations/" + preparationId);
+                .delete("/api/preparations/{preparationId}", preparationId);
     }
 
     public Response getDataSetMetaData(String dataSetMetaDataId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/datasets/" + dataSetMetaDataId + "/metadata");
-    }
-
-    public String getApiBaseUrl() {
-        return apiBaseUrl;
+                .get("/api/datasets/{dataSetMetaDataId}/metadata", dataSetMetaDataId);
     }
 
     /**
@@ -443,10 +409,11 @@ public class OSDataPrepAPIHelper {
      */
     public Response createFolder(String parentFolderId, String folder) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
+                .queryParam("parentId", parentFolderId)
+                .queryParam("path", folder)
                 .when() //
-                .put("/api/folders?parentId=" + parentFolderId + "&path=" + folder);
+                .put("/api/folders");
     }
 
     /**
@@ -457,10 +424,9 @@ public class OSDataPrepAPIHelper {
      */
     public Response deleteFolder(String folderId) {
         return given() //
-                .baseUri(getApiBaseUrl()) //
                 .urlEncodingEnabled(false) // in case of OS call
                 .when() //
-                .delete("/api/folders/" + folderId);
+                .delete("/api/folders/{folderId}", folderId);
     }
 
     /**
@@ -470,7 +436,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listFolders() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/folders");
     }
@@ -486,13 +451,12 @@ public class OSDataPrepAPIHelper {
      */
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
+                .queryParam("folder", folderSrc)
+                .queryParam("destination", folderDest)
+                .queryParam("newName", prepName)
                 .when() //
-                .put("/api/preparations/" + prepId //
-                        + "/move?folder=" + folderSrc //
-                        + "&destination=" + folderDest //
-                        + "&newName=" + prepName);
+                .put("/api/preparations/{prepId}/move", prepId);
     }
 
     /**
@@ -505,7 +469,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response copyPreparation(String id, String folderDest, String prepName) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .urlEncodingEnabled(false) //
@@ -523,7 +486,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response getDatasetsColumnSemanticTypes(String columnId, String datasetId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/datasets/{datasetId}/columns/{columnId}/types", datasetId, columnId);
     }
@@ -535,7 +497,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response getUserInformation() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/user");
     }
@@ -552,9 +513,20 @@ public class OSDataPrepAPIHelper {
 
     public Response getExportFormats(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/export/formats/preparations/" + preparationId);
+                .get("/api/export/formats/preparations/{preparationId}", preparationId);
+    }
+
+    /**
+     * Return the list of datasets
+     * @param queryParameters
+     * @return
+     */
+    public Response getDatasets(Map<String, String> queryParameters) {
+        return given() //
+                .when() //
+                .queryParameters(queryParameters)
+                .get("/api/datasets");
     }
 
     /**
@@ -586,7 +558,6 @@ public class OSDataPrepAPIHelper {
         while (isAsyncMethodRunning && nbLoop < 100) {
 
             String statusAsyncMethod = given()
-                    .baseUri(apiBaseUrl) //
                     .when() //
                     .expect()
                     .statusCode(200)
@@ -599,8 +570,7 @@ public class OSDataPrepAPIHelper {
                     mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
             AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
-            isAsyncMethodRunning =
-                    asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(AsyncExecution.Status.NEW);
+            isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
 
             try {
                 TimeUnit.MILLISECONDS.sleep(50);

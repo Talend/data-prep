@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.step;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ResponseBody;
 
@@ -21,6 +23,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -104,12 +107,24 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Given("^I have a dataset with parameters:$")
-    public void iHaveADatasetWithContentAndWithParameters(DataTable dataTable) throws Throwable {
-        Map<String, String> parameters = dataTable.asMap(String.class, String.class);
-        ResponseBody responseBody = api.getDatasets(parameters).body();
+    public void iHaveADatasetWithParameters(DataTable dataTable) throws Throwable {
+        Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
 
-        assertEquals(1, responseBody.jsonPath()
-                .getList("findAll { dataset -> dataset.id == '" + parameters.get("id") + "'  }")
-                .size());
+        if (parameters.containsKey("name") && parameters.size() == 1) {
+            parameters.put("name", suffixName(parameters.get("name")));
+        }
+
+        ResponseBody responseBody = api.getDatasets(parameters).body();
+        JsonNode json = objectMapper.readTree(responseBody.asInputStream());
+
+        assertTrue(json.isArray());
+        assertEquals("One dataset expected with the parameters: " + parameters, 1, json.size());
+
+        JsonNode dataset = json.get(0);
+
+        parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));
+
+        context.storeDatasetRef(dataset.get("id").asText(), dataset.get("name").asText());
     }
+
 }

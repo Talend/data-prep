@@ -500,7 +500,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response getPreparationsColumnSemanticTypes(String columnId, String prepId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/preparations/{prepId}/columns/{columnId}/types", prepId, columnId);
     }

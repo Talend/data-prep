@@ -72,29 +72,32 @@ public class ActionsUtils {
         String columnId = context.getColumnId();
         RowMetadata rowMetadata = context.getRowMetadata();
 
-        context.get(TARGET_COLUMN_CONTEXT_KEY, r -> {
-            final Map<String, String> cols = new HashMap<>();
-            String nextId = columnId; // id of the column to put the new one after, initially the current column
-            for (AdditionalColumn additionalColumn : additionalColumns) {
-                ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
-                if (additionalColumn.getCopyMetadataFromId() != null) {
-                    ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
-                    brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
-                    brandNewColumnBuilder.type(Type.get(newColumn.getType()));
-                } else {
-                    brandNewColumnBuilder.type(additionalColumn.getType());
-                }
-                if (additionalColumn.getName() != null) {
-                    brandNewColumnBuilder.name(additionalColumn.getName());
-                }
+        context.evict(TARGET_COLUMN_CONTEXT_KEY);
+        context.get(TARGET_COLUMN_CONTEXT_KEY, r -> createNewColumnsImpl(context, additionalColumns, columnId, rowMetadata));
+    }
 
-                ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
-                rowMetadata.insertAfter(nextId, columnMetadata);
-                nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
-                cols.put(additionalColumn.getKey(), columnMetadata.getId());
+    private static Map<String, String> createNewColumnsImpl(ActionContext context, List<AdditionalColumn> additionalColumns, String columnId, RowMetadata rowMetadata) {
+        final Map<String, String> cols = new HashMap<>();
+        String nextId = columnId; // id of the column to put the new one after, initially the current column
+        for (AdditionalColumn additionalColumn : additionalColumns) {
+            ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
+            if (additionalColumn.getCopyMetadataFromId() != null) {
+                ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
+                brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
+                brandNewColumnBuilder.type(Type.get(newColumn.getType()));
+            } else {
+                brandNewColumnBuilder.type(additionalColumn.getType());
             }
-            return cols;
-        });
+            if (additionalColumn.getName() != null) {
+                brandNewColumnBuilder.name(additionalColumn.getName());
+            }
+
+            ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
+            rowMetadata.insertAfter(nextId, columnMetadata);
+            nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
+            cols.put(additionalColumn.getKey(), columnMetadata.getId());
+        }
+        return cols;
     }
 
     /**

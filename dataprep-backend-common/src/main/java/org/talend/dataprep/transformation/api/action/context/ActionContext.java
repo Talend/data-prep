@@ -194,6 +194,11 @@ public class ActionContext implements Serializable {
         return value;
     }
 
+    /** Remove context cached entry. */
+    public void evict(String key) {
+        getContext().remove(key);
+    }
+
     /**
      * @return the context entries.
      */

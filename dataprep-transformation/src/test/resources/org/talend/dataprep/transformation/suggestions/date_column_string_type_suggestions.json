@@ -452,43 +452,35 @@
         "configuration": {
           "values": [
             {
-              "value": "M/d/yy",
+              "value": "M/d/yyyy",
               "label": "American standard"
             },
             {
-              "value": "M/d/yy h:mm a",
+              "value": "M/d/yyyy h:mm a",
               "label": "American standard with time"
             },
             {
-              "value": "dd.MM.yy",
+              "value": "dd.MM.yyyy",
               "label": "German standard"
             },
             {
-              "value": "dd.MM.yy HH:mm",
+              "value": "dd.MM.yyyy HH:mm",
               "label": "German standard with time"
             },
             {
-              "value": "dd/MM/yy",
-              "label": "English standard"
+              "value": "dd/MM/yyyy",
+              "label": "French/British standard"
             },
             {
-              "value": "dd/MM/yy",
-              "label": "French standard"
+              "value": "dd/MM/yyyy HH:mm",
+              "label": "French/British standard with time"
             },
             {
-              "value": "dd/MM/yy HH:mm",
-              "label": "French standard with time"
-            },
-            {
-              "value": "dd/MM/yy HH:mm",
-              "label": "English with time"
-            },
-            {
-              "value": "yy/MM/dd",
+              "value": "yyyy/MM/dd",
               "label": "Japanese standard"
             },
             {
-              "value": "yy/MM/dd H:mm",
+              "value": "yyyy/MM/dd H:mm",
               "label": "Japanese standard with time"
             },
             {

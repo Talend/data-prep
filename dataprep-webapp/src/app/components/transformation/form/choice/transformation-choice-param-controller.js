@@ -40,7 +40,7 @@ export default function TransformChoiceParamCtrl() {
 				vm.parameter.value = vm.parameter.configuration.values[0].value;
 			}
 		}
-		else if (!find(vm.parameter.configuration.values, { value: vm.parameter.value })) { //Migration
+		else if (!find(vm.parameter.configuration.values, { value: vm.parameter.value })) { // Migration
 			vm.parameter.configuration.values.push({ value: vm.parameter.value, label: vm.parameter.value });
 		}
 	};

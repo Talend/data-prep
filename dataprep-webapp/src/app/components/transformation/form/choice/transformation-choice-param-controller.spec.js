@@ -111,6 +111,30 @@ describe('Transform choice params controller', () => {
         expect(ctrl.parameter.value).toEqual('index');
     });
 
+	it('should add the new value to the list', () => {
+		//given
+		parameter = {
+			name: 'mode',
+			type: 'select',
+			configuration: {
+				values: [
+					{ value: 'regex' },
+					{ value: 'index' },
+				],
+			},
+			value: 'old index',
+		};
+
+		//when
+		let ctrl = createController();
+
+		//then
+		expect(ctrl.parameter.value).toEqual('old index');
+
+		expect(ctrl.parameter.configuration.values.length).toEqual(3);
+		expect(ctrl.parameter.configuration.values[2].value).toEqual('old index');
+	});
+
     it('should return label from value', () => {
         //given
         parameter = {

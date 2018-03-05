@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -25,6 +26,7 @@ import cucumber.api.java.en.When;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
@@ -110,17 +112,36 @@ public class DatasetStep extends DataPrepStep {
     public void iHaveADatasetWithParameters(DataTable dataTable) throws Throwable {
         Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
 
+        // in case of only name parameter, we should use a suffixed dataSet name
         if (parameters.containsKey("name") && parameters.size() == 1) {
             parameters.put("name", suffixName(parameters.get("name")));
         }
 
-        ResponseBody responseBody = api.getDatasets(parameters).body();
-        JsonNode json = objectMapper.readTree(responseBody.asInputStream());
+        //wait for DataSet creation from previous step
+        JsonNode response = null;
+        boolean stop = false;
+        int nbLoop = 0;
+        while (!stop) {
+            nbLoop++;
+            if (nbLoop > 10) {
+                fail("Dataset creation is so slow");
+            }
 
-        assertTrue(json.isArray());
-        assertEquals("One dataset expected with the parameters: " + parameters, 1, json.size());
+            ResponseBody responseBody = api.getDatasets(parameters).body();
+            response = objectMapper.readTree(responseBody.asInputStream());
+            LOGGER.info("DataSet with parameters [{}]: {}", parameters, response);
 
-        JsonNode dataset = json.get(0);
+            stop = response.size() == 1;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException iexception) {
+                LOGGER.error("Interrupted sleep (not the expected behaviour...", iexception);
+                fail("cannot sleep");
+            }
+        }
+
+        assertTrue(response.isArray());
+        JsonNode dataset = response.get(0);
 
         parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));
 

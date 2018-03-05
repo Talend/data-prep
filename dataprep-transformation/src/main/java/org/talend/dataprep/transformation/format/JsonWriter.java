@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.format;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -45,6 +47,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Scope("prototype")
 @Component("writer#" + JSON)
 public class JsonWriter implements TransformerWriter {
+
+    private static final Logger LOGGER = getLogger(JsonWriter.class);
 
     private static final String METADATA_FIELD_NAME = "metadata";
 
@@ -139,6 +143,14 @@ public class JsonWriter implements TransformerWriter {
             try {
                 generator.writeObject(col);
             } catch (IOException e) {
+                try {
+                    // try to close JSon object before throwing an exception
+                    generator.writeEndArray();
+                    generator.writeEndObject();
+                    closeRootObject();
+                } catch (IOException e1) {
+                    LOGGER.debug("Could not close JSon object after columns writing error.", e1);
+                }
                 throw new TDPException(CommonErrorCodes.UNABLE_TO_WRITE_JSON, e);
             }
         });

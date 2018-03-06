@@ -12,12 +12,18 @@
 
 package org.talend.dataprep.dataset.event;
 
+import org.talend.daikon.messages.MessageTypes;
+import org.talend.daikon.messages.OperationTypes;
+import org.talend.daikon.messages.header.producer.MessageHeaderFactory;
 import org.talend.dataprep.event.DaikonMessageEvent;
+import org.talend.dataprep.event.MessageClass;
+import org.talend.dataprep.event.MessageScope;
+import org.talend.dataprep.messages.DatasetMessage;
 
 /**
  * Event sent when a DataSet was just imported (good starting point to start asynchronous analysis).
  */
-public class DataSetImportedEvent extends DaikonMessageEvent<String> {
+public class DataSetImportedEvent extends DaikonMessageEvent<String, DatasetMessage> {
 
     /** For the Serialization interface. */
     private static final long serialVersionUID = 1L;
@@ -28,7 +34,7 @@ public class DataSetImportedEvent extends DaikonMessageEvent<String> {
      * @param datasetId the imported dataset id.
      */
     public DataSetImportedEvent(String datasetId) {
-        super(datasetId);
+        super(datasetId, new MessageScope[] { MessageScope.INTERNAL_UNIQUE }, OperationTypes.CREATION);
     }
 
     /**
@@ -38,4 +44,18 @@ public class DataSetImportedEvent extends DaikonMessageEvent<String> {
         return (String) source;
     }
 
+    @Override
+    public DatasetMessage toAvroPayload(MessageHeaderFactory messageHeaderFactory) {
+        return DatasetMessage
+                .newBuilder()
+                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetCreated",
+                        OperationTypes.UPDATE))
+                .setDatasetId(this.getSource())
+                .build();
+    }
+
+    @Override
+    public MessageClass getMessageClass() {
+        return MessageClass.DATASET_MESSAGE;
+    }
 }

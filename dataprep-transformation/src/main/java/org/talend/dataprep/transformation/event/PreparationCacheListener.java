@@ -32,6 +32,11 @@ public class PreparationCacheListener {
 
     @EventListener
     public void onMetadataBeforeUpdateEvent(DataSetMetadataBeforeUpdateEvent event) {
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||-");
+        System.out.println("PreparationCacheListener.onMetadataBeforeUpdateEvent");
+        System.out.println("event = [" + event + "]");
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||-");
+
         final DataSetMetadata dataSetMetadata = event.getSource();
 
         // Evict transformation cache that uses updated dataset

@@ -39,7 +39,7 @@ public interface DatasetActions {
             .icon("talend-dataprep")
             .items("preparations")
             .dynamicAction(MENU_PLAYGROUND_PREPARATION.getId())
-            .staticAction(DATASET_OPEN.getId())
+            .staticAction(DATASET_OPEN)
             .build();
 
     ActionSettings DATASET_DISPLAY_MODE = builder()

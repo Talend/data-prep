@@ -42,11 +42,11 @@ public class HeaderbarInformationConfigurer extends AppSettingsConfigurer<Action
         return ActionDropdownSettings
                 .from((ActionDropdownSettings) actionSettings) //
                 .staticActions(Arrays.asList( //
-                        MODAL_ABOUT.getId(), //
-                        ONBOARDING_PREPARATION.getId(), //
-                        DIVIDER.getId(),
-                        externalHelpActionsProvider.getExternalCommunityAction().getId(), //
-                        MODAL_FEEDBACK.getId() //
+                        MODAL_ABOUT, //
+                        ONBOARDING_PREPARATION, //
+                        DIVIDER,
+                        externalHelpActionsProvider.getExternalCommunityAction(), //
+                        MODAL_FEEDBACK //
                 )) //
                 .build();
     }

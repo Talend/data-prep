@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.actions.api.SettingElement;
 
 import java.util.List;
 
@@ -26,13 +27,13 @@ import static java.util.Arrays.asList;
  * Default actions settings provider
  */
 @Component
-public class CommonActionsProvider implements AppSettingsProvider<ActionSettings> {
+public class CommonActionsProvider implements AppSettingsProvider<SettingElement> {
 
     @Autowired
     private ExternalHelpActionsProvider externalHelpActionsProvider;
 
     @Override
-    public List<ActionSettings> getSettings() {
+    public List<SettingElement> getSettings() {
         // @formatter:off
         return asList(
                 DatasetActions.DATASET_CLONE,

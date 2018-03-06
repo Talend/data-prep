@@ -43,11 +43,11 @@ public class HeaderbarInformationPlaygroundConfigurer extends AppSettingsConfigu
         return ActionDropdownSettings
                 .from((ActionDropdownSettings) actionSettings) //
                 .staticActions(Arrays.asList( //
-                        MODAL_ABOUT.getId(), //
-                        ONBOARDING_PLAYGROUND.getId(), //
-                        DIVIDER.getId(), //
-                        externalHelpActionsProvider.getExternalCommunityAction().getId(), //
-                        MODAL_FEEDBACK.getId() //
+                        MODAL_ABOUT, //
+                        ONBOARDING_PLAYGROUND, //
+                        DIVIDER, //
+                        externalHelpActionsProvider.getExternalCommunityAction(), //
+                        MODAL_FEEDBACK //
                 )) //
                 .build();
     }

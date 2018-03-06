@@ -62,9 +62,6 @@ public class DiffWriterNode extends BasicNode implements Monitored {
         try {
             // write start if not already started
             if (!startRecords) {
-                writer.startObject();
-                writer.fieldName("records");
-                writer.startArray();
                 startRecords = true;
             }
 
@@ -92,11 +89,6 @@ public class DiffWriterNode extends BasicNode implements Monitored {
         if ((signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) && !endMetadata) {
             final long start = System.currentTimeMillis();
             try {
-                writer.endArray(); // <- end records
-                writer.fieldName("metadata"); // <- start metadata
-                writer.startObject();
-
-                writer.fieldName("columns");
                 final RowMetadata initialMetadata = lastMetadatas[lastMetadatas.length - 1];
                 for (int i = lastMetadatas.length - 2; i >= 0; --i) {
                     initialMetadata.diff(lastMetadatas[i]);
@@ -108,12 +100,15 @@ public class DiffWriterNode extends BasicNode implements Monitored {
                 }
                 writer.write(initialMetadata);
 
-                writer.endObject();
-                writer.endObject(); // <- end data set
                 writer.flush();
             } catch (IOException e) {
-                LOGGER.error("Unable to end writer.", e);
+                LOGGER.error("Unable to write the end of the writer.", e);
             } finally {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    LOGGER.error("Unable to close writer.", e);
+                }
                 totalTime += System.currentTimeMillis() - start;
                 endMetadata = true;
             }

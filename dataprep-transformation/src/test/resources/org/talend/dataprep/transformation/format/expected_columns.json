@@ -1,46 +1,46 @@
-[
-  {
-    "name": "id",
-    "headerSize": 0,
-    "type": "string",
-    "quality": {
-      "empty": 0,
-      "invalid": 0,
-      "valid": 0
-    },
-    "id": "0001",
-    "statistics": {
-
-    },
-    "domainForced": false,
-    "typeForced": false,
-    "domain": "",
-    "domainLabel": "",
-    "domainFrequency": 0,
-    "semanticDomains": [
-
-    ]
-  },
-  {
-    "name": "firstname",
-    "headerSize": 0,
-    "type": "string",
-    "quality": {
-      "empty": 0,
-      "invalid": 0,
-      "valid": 0
-    },
-    "id": "0002",
-    "statistics": {
-
-    },
-    "domainForced": false,
-    "typeForced": false,
-    "domain": "",
-    "domainLabel": "",
-    "domainFrequency": 0,
-    "semanticDomains": [
-
+{
+  "metadata": {
+    "columns": [
+      {
+        "name": "id",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0001",
+        "statistics": {
+        },
+        "domainForced": false,
+        "typeForced": false,
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+        ]
+      },
+      {
+        "name": "firstname",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0002",
+        "statistics": {
+        },
+        "domainForced": false,
+        "typeForced": false,
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+        ]
+      }
     ]
   }
-]
+}

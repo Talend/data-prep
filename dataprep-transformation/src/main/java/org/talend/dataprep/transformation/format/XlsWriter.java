@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
@@ -33,18 +32,17 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
-import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWriter;
+import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.util.FilesHelper;
 import org.talend.dataprep.util.NumericHelper;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 @Scope("prototype")
 @Component("writer#" + XLSX)
-public class XlsWriter extends AbstractTransformerWriter {
+public class XlsWriter implements TransformerWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XlsWriter.class);
 
@@ -57,13 +55,14 @@ public class XlsWriter extends AbstractTransformerWriter {
 
     private final Sheet sheet;
 
-    // Holds a temporary buffer on disk (as CSV) of records to be written
-    private final File bufferFile;
+    // Holds a temporary buffer on disk of records to be written
+    private ObjectBuffer<String[]> rowsBuffer;
 
-    // The CSV Writer to write to buffer
-    private final au.com.bytecode.opencsv.CSVWriter recordsWriter;
+    private RowMetadata writtenMetadata;
 
     private int rowIdx = 0;
+
+    private boolean closed = false;
 
     public XlsWriter(final OutputStream output) {
         this(output, Collections.emptyMap());
@@ -76,118 +75,115 @@ public class XlsWriter extends AbstractTransformerWriter {
             this.workbook = new SXSSFWorkbook(50);
             // TODO sheet name as an option?
             this.sheet = this.workbook.createSheet("sheet1");
-            bufferFile = File.createTempFile("xlsWriter", ".csv");
-            recordsWriter = new au.com.bytecode.opencsv.CSVWriter(new FileWriter(bufferFile), BUFFER_CSV_SEPARATOR);
+            rowsBuffer = new ObjectBuffer<>(String[].class);
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_USE_EXPORT, e);
         }
     }
 
     @Override
-    protected au.com.bytecode.opencsv.CSVWriter getRecordsWriter() {
-        return recordsWriter;
+    public void write(DataSetRow row) throws IOException {
+        if (!row.values().isEmpty() && row.getRowMetadata().getColumns().isEmpty()) {
+            throw new IllegalStateException(
+                    " If a dataset row has some values it should at least have columns just before writing the result of a non json transformation.");
+        }
+        // values need to be written in the same order as the columns
+        String[] rowValues = row.order().toArray(DataSetRow.SKIP_TDP_ID);
+        if (writtenMetadata == null) {
+            rowsBuffer.appendRow(rowValues);
+        } else {
+            internalWriteRow(writtenMetadata, rowValues);
+        }
     }
 
     @Override
-    public void write(RowMetadata columns) throws IOException {
-        LOGGER.debug("write RowMetadata: {}", columns);
-        if (columns.getColumns().isEmpty()) {
-            return;
+    public void write(RowMetadata metadata) throws IOException {
+        LOGGER.debug("write RowMetadata: {}", metadata);
+        if (!metadata.getColumns().isEmpty()) {
+            writeHeader(metadata);
+            writtenMetadata = metadata;
+
+            // Empty buffer
+            rowsBuffer.readAll().forEach(row -> internalWriteRow(metadata, row));
+            rowsBuffer.close();
+            rowsBuffer = null;
         }
+    }
+
+    /** writing headers so first row. */
+    private void writeHeader(RowMetadata metadata) {
         CreationHelper createHelper = this.workbook.getCreationHelper();
-        // writing headers so first row
         Row headerRow = this.sheet.createRow(rowIdx++);
         int cellIdx = 0;
-        for (ColumnMetadata columnMetadata : columns.getColumns()) {
+        for (ColumnMetadata columnMetadata : metadata.getColumns()) {
             // TODO apply some formatting as it's an header cell?
             headerRow.createCell(cellIdx++).setCellValue(createHelper.createRichTextString(columnMetadata.getName()));
         }
-        // Empty buffer
-        recordsWriter.flush();
-        recordsWriter.close();
-        try (Reader reader = new InputStreamReader(new FileInputStream(bufferFile))) {
-            try (CSVReader bufferReader = new CSVReader(reader, BUFFER_CSV_SEPARATOR, '\"', '\0')) {
-                String[] nextRow;
-                while ((nextRow = bufferReader.readNext()) != null) {
-                    // writing data
-                    Row row = this.sheet.createRow(rowIdx++);
-                    cellIdx = 0;
-                    for (ColumnMetadata columnMetadata : columns.getColumns()) {
-                        Cell cell = row.createCell(cellIdx);
-                        String val = nextRow[cellIdx];
-                        switch (Type.get(columnMetadata.getType())) {
-                            case NUMERIC:
-                            case INTEGER:
-                            case DOUBLE:
-                            case FLOAT:
-                                try {
-                                    if (NumericHelper.isBigDecimal(val)) {
-                                        cell.setCellValue(BigDecimalParser.toBigDecimal(val).doubleValue());
-                                    } else {
-                                        cell.setCellValue(val);
-                                    }
-                                } catch (NumberFormatException e) {
-                                    LOGGER.trace("Skip NumberFormatException and use string for value '{}' row '{}' column '{}'", //
-                                            val, rowIdx - 1, cellIdx - 1);
-                                    cell.setCellValue(val);
-                                }
-                                break;
-                            case BOOLEAN:
-                                cell.setCellValue(Boolean.valueOf(val));
-                                break;
-                            // FIXME ATM we don't have any idea about the date format so this can generate exceptions
-                            // case "date":
-                            // cell.setCellValue( );
-                            default:
-                                cell.setCellValue(val);
+    }
+
+    private void internalWriteRow(RowMetadata metadata, String[] nextRow) {
+        int cellIdx;// writing data
+        Row row = this.sheet.createRow(rowIdx++);
+        cellIdx = 0;
+        for (ColumnMetadata columnMetadata : metadata.getColumns()) {
+            Cell cell = row.createCell(cellIdx);
+            String val = nextRow[cellIdx];
+            switch (Type.get(columnMetadata.getType())) {
+                case NUMERIC:
+                case INTEGER:
+                case DOUBLE:
+                case FLOAT:
+                    try {
+                        if (NumericHelper.isBigDecimal(val)) {
+                            cell.setCellValue(BigDecimalParser.toBigDecimal(val).doubleValue());
+                        } else {
+                            cell.setCellValue(val);
                         }
-                        cellIdx++;
+                    } catch (NumberFormatException e) {
+                        LOGGER.trace("Skip NumberFormatException and use string for value '{}' row '{}' column '{}'", //
+                                val, rowIdx - 1, cellIdx - 1);
+                        cell.setCellValue(val);
                     }
-                }
+                    break;
+                case BOOLEAN:
+                    cell.setCellValue(Boolean.valueOf(val));
+                    break;
+                // FIXME ATM we don't have any idea about the date format so this can generate exceptions
+                // case "date":
+                // cell.setCellValue( );
+                default:
+                    cell.setCellValue(val);
             }
+            cellIdx++;
         }
     }
 
-
-
     @Override
-    public void flush() throws IOException {
+    public void close() throws IOException {
+        if (!closed) {
+            // because workbook.write(out) close the given output (the http response), another temporary file is created to
+            // to fully flush the xlsx result and the copy the content of the file to the http response
 
-        // because workbook.write(out) close the given output (the http response), another temporary file is created to
-        // to fully flush the xlsx result and the copy the content of the file to the http response
-
-        // create a temp file
-        final File yetAnotherTempFile = File.createTempFile("xlsWriter", "-2.csv");
-        try {
-            try (final FileOutputStream fileOutputStream = new FileOutputStream(yetAnotherTempFile)) {
-                this.workbook.write(fileOutputStream);
-                this.workbook.close();
+            // create a temp file
+            final File workbookTempFile = File.createTempFile("xlsWriter", "-2.xlsx");
+            try (final FileOutputStream fileOutputStream = new FileOutputStream(workbookTempFile)) {
+                workbook.write(fileOutputStream);
+                workbook.close();
             } catch (IOException ioe) {
                 LOGGER.error("Could not write temp file with xls export", ioe);
                 throw new TDPException(UNABLE_TO_PERFORM_EXPORT, ioe);
             }
 
             // copy the content of the temp file to the http response
-            try (final FileInputStream fileInputStream = new FileInputStream(yetAnotherTempFile)) {
+            try (final FileInputStream fileInputStream = new FileInputStream(workbookTempFile)) {
                 IOUtils.copyLarge(fileInputStream, outputStream);
             } catch (IOException e) {
                 LOGGER.error("Error sending the xls export content", e);
                 throw new TDPException(UNABLE_TO_PERFORM_EXPORT, e);
+            } finally {
+                FilesHelper.deleteQuietly(workbookTempFile);
             }
-
-        } finally {
-            // clean up the buffer file
-            try {
-                FilesHelper.delete(bufferFile);
-            } catch (IOException e) {
-                LOGGER.warn("Unable to delete temporary file '{}'", bufferFile, e);
-            }
-            // clean up temp file
-            try {
-                FilesHelper.delete(yetAnotherTempFile);
-            } catch (IOException ioe) {
-                LOGGER.warn("Unable to delete temporary file '{}'", yetAnotherTempFile, ioe);
-            }
+            closed = true;
         }
     }
 

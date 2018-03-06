@@ -12,17 +12,22 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyMap;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.TransformationCacheKey;
+import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -33,23 +38,19 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataquality.semantic.broadcast.TdqCategories;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 /**
  * Integration tests on actions.
@@ -337,16 +338,16 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // then
         /*
-         * expected response array of
-         * {
-         *   "id": "CITY",
-         *   "label": "City",
-         *   "frequency": 100.0
-         * }
+         * expected response array --> first element
+         *  {
+         * "id":"FR_COMMUNE",
+         * "label":"FR Commune",
+         * "frequency":99.19429
+         *  }
          */
         assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
-        assertEquals(8, rootNode.size());
+        assertEquals(7, rootNode.size());
         for (JsonNode type : rootNode) {
             assertTrue(type.has("id"));
             assertTrue(type.has("label"));

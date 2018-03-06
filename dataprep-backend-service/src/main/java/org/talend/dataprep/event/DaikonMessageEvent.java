@@ -12,18 +12,39 @@
 
 package org.talend.dataprep.event;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.context.ApplicationEvent;
+import org.talend.daikon.messages.OperationTypes;
+import org.talend.daikon.messages.header.producer.MessageHeaderFactory;
 
 /**
  * All DaikonMessageEvent will automatically be send to kafka with DaikonMessage format.
+ *
  * @param <T>
  */
-public class DaikonMessageEvent<T> extends ApplicationEvent {
+public abstract class DaikonMessageEvent<T, S> extends ApplicationEvent {
 
-    public DaikonMessageEvent(T payload) {
+    private List<MessageScope> scopes;
+
+    private OperationTypes operationTypes;
+
+    public DaikonMessageEvent(T payload, MessageScope[] scopes, OperationTypes operationTypes) {
         super(payload);
+        this.scopes = Arrays.asList(scopes);
+        this.operationTypes = operationTypes;
     }
 
-    //TODO TO COMPLETE
+    public abstract S toAvroPayload(MessageHeaderFactory messageHeaderFactory);
 
+    public List<MessageScope> getScopes() {
+        return scopes;
+    }
+
+    public OperationTypes getOperationTypes() {
+        return operationTypes;
+    }
+
+    public abstract MessageClass getMessageClass();
 }

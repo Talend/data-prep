@@ -1,0 +1,15 @@
+{
+  "namespace": "org.talend.dataprep.messages",
+  "name": "DatasetMessage",
+  "type": "record",
+  "fields": [
+    {
+      "name": "header",
+      "type": "org.talend.daikon.messages.MessageHeader"
+    },
+    {
+      "name": "datasetId",
+      "type": "string"
+    }
+  ]
+}

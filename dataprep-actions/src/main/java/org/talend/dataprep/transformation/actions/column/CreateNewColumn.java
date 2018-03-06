@@ -13,6 +13,15 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -35,15 +44,6 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.parameters.Parameter.parameter;
-import static org.talend.dataprep.parameters.ParameterType.COLUMN;
-import static org.talend.dataprep.parameters.ParameterType.STRING;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 /**
  * duplicate a column
@@ -81,12 +81,6 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
      * Name of the new column.
      */
     public static final String NEW_COLUMN_NAME = "create_new_column_name";
-
-    public static final String OLD_CONSTANT_MODE = "A constant";
-
-    public static final String OLD_COLUMN_MODE = "Another column";
-
-    public static final String OLD_EMPTY_MODE = "Nothing, this column will be empty";
 
     public static final String DEFAULT_NAME_FOR_NEW_COLUMN = "new column";
 
@@ -161,15 +155,12 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         String newValue = "";
         switch (parameters.get(MODE_PARAMETER)) {
         case EMPTY_MODE:
-        case OLD_EMPTY_MODE:
             newValue = "";
             break;
         case CONSTANT_MODE:
-        case OLD_CONSTANT_MODE:
             newValue = parameters.get(DEFAULT_VALUE_PARAMETER);
             break;
         case COLUMN_MODE:
-        case OLD_COLUMN_MODE:
             ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             newValue = row.get(selectedColumn.getId());
             break;

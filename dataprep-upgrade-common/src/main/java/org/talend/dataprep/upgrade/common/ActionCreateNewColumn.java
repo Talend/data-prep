@@ -21,6 +21,12 @@ import org.talend.dataprep.transformation.actions.column.CreateNewColumn;
 
 public class ActionCreateNewColumn {
 
+    public static final String OLD_CONSTANT_MODE = "A constant";
+
+    public static final String OLD_COLUMN_MODE = "Another column";
+
+    public static final String OLD_EMPTY_MODE = "Nothing, this column will be empty";
+
     private ActionCreateNewColumn() {
     }
 
@@ -40,13 +46,13 @@ public class ActionCreateNewColumn {
             String mode = action.getParameters().get(CreateNewColumn.MODE_PARAMETER);
             String newMode = null;
             switch (mode) {
-            case CreateNewColumn.OLD_COLUMN_MODE:
+            case OLD_COLUMN_MODE:
                 newMode = CreateNewColumn.COLUMN_MODE;
                 break;
-            case CreateNewColumn.OLD_CONSTANT_MODE:
+            case OLD_CONSTANT_MODE:
                 newMode = CreateNewColumn.CONSTANT_MODE;
                 break;
-            case CreateNewColumn.OLD_EMPTY_MODE:
+            case OLD_EMPTY_MODE:
                 newMode = CreateNewColumn.EMPTY_MODE;
                 break;
             }

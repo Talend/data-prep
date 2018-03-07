@@ -47,7 +47,7 @@ public class JsonWriterTest extends BaseFormatTest {
     private ByteArrayOutputStream outputStream;
 
     @Before
-    public void init() throws IOException {
+    public void init() {
         outputStream = new ByteArrayOutputStream();
         writer = (JsonWriter) context.getBean("writer#JSON", outputStream);
     }

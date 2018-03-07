@@ -165,6 +165,10 @@ public class JsonWriter implements TransformerWriter {
     @Override
     public void close() throws IOException {
         if (!closed) {
+            // This ensure that we write the "records" field even if no record has been received.
+            if (!writingRecords) {
+                startRecordsWriting();
+            }
             endRecordsWriting();
             if (bufferedRowMetadata != null) {
                 writeRowMetadataObject(bufferedRowMetadata);

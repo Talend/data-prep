@@ -35,9 +35,13 @@ public class EventProcessingUtil {
      * Processing clean cache event
      * @param cacheKey the key to clean on cache
      */
-    public void processCleanCacheEvent(ContentCacheKey cacheKey) {
+    public void processCleanCacheEvent(ContentCacheKey cacheKey, Boolean isPartialKey) {
         if(cacheKey != null){
-            cache.evict(cacheKey);
+            if(isPartialKey) {
+                cache.evictMatch(cacheKey);
+            } else {
+                cache.evict(cacheKey);
+            }
             LOGGER.debug("Deleting content cache key {} because receiving CleanCacheEvent", cacheKey);
         }
     }

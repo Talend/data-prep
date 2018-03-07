@@ -10,6 +10,11 @@
     {
       "name": "cacheKey",
       "type": "string"
+    },
+    {
+      "name": "partialKey",
+      "type": "boolean",
+      "default": "false"
     }
   ]
 }

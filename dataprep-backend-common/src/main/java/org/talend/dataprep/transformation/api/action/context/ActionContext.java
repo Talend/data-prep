@@ -367,6 +367,11 @@ public class ActionContext implements Serializable {
         }
 
         @Override
+        public void evict(String key) {
+            // No op: unable to modify once immutable.
+        }
+
+        @Override
         public <T> T get(String key, Function<Map<String, String>, T> supplier) {
             return delegate.get(key, supplier);
         }

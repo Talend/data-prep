@@ -95,9 +95,7 @@ public interface TransformerWriter extends AutoCloseable {
     }
 
     /**
-     * Close the data stream properly when all data is written or a stop signal is received. Not meant to cloase the OutputStream.
-     *
-     * @throws IOException
+     * Close the data stream properly when all data is written or a stop signal is received. Not meant to close the OutputStream.
      */
     default void close() throws IOException {
         // default implementation to ease implementations development

@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.ApplicationEvent;
-import org.talend.daikon.messages.OperationTypes;
 import org.talend.daikon.messages.header.producer.MessageHeaderFactory;
 
 /**
@@ -28,22 +27,15 @@ public abstract class DaikonMessageEvent<T, S> extends ApplicationEvent {
 
     private List<MessageScope> scopes;
 
-    private OperationTypes operationTypes;
-
-    public DaikonMessageEvent(T payload, MessageScope[] scopes, OperationTypes operationTypes) {
+    public DaikonMessageEvent(T payload, MessageScope[] scopes) {
         super(payload);
         this.scopes = Arrays.asList(scopes);
-        this.operationTypes = operationTypes;
     }
 
     public abstract S toAvroPayload(MessageHeaderFactory messageHeaderFactory);
 
     public List<MessageScope> getScopes() {
         return scopes;
-    }
-
-    public OperationTypes getOperationTypes() {
-        return operationTypes;
     }
 
     public abstract MessageClass getMessageClass();

@@ -27,7 +27,7 @@ import org.talend.dataprep.messages.DatasetMessage;
 public class DataSetRawContentUpdateEvent extends DaikonMessageEvent<DataSetMetadata, DatasetMessage> {
 
     public DataSetRawContentUpdateEvent(DataSetMetadata source) {
-        super(source, new MessageScope[] { MessageScope.INTERNAL_UNIQUE }, OperationTypes.UPDATE);
+        super(source, new MessageScope[] { MessageScope.INTERNAL_UNIQUE });
     }
 
     @Override

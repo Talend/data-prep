@@ -34,7 +34,7 @@ public class DataSetImportedEvent extends DaikonMessageEvent<String, DatasetMess
      * @param datasetId the imported dataset id.
      */
     public DataSetImportedEvent(String datasetId) {
-        super(datasetId, new MessageScope[] { MessageScope.INTERNAL_UNIQUE }, OperationTypes.CREATION);
+        super(datasetId, new MessageScope[] { MessageScope.INTERNAL_UNIQUE });
     }
 
     /**
@@ -49,7 +49,7 @@ public class DataSetImportedEvent extends DaikonMessageEvent<String, DatasetMess
         return DatasetMessage
                 .newBuilder()
                 .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetCreated",
-                        OperationTypes.UPDATE))
+                        OperationTypes.CREATION))
                 .setDatasetId(this.getSource())
                 .build();
     }

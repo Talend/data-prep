@@ -1,0 +1,6 @@
+artist;album;date
+Guns N' Roses;Appetite for destruction;Hard rock;July 21, 1987
+R.E.M.;Out Of Time;Pop-rock;03/11/1991
+MIDNIGHT OIL;Diesel and dust/Rock-Pop;august 1987
+marillion;Script for a jester's tears-progressif;03/13/1983
+

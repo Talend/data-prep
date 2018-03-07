@@ -80,7 +80,6 @@ public class WriterNode extends BasicNode implements Monitored {
      */
     @Override
     public synchronized void receive(DataSetRow row, RowMetadata metadata) {
-
         // do not write this row if the writer is stopped
         if (isStopped.get()) {
             LOGGER.debug("already finished or canceled, let's skip this row");
@@ -90,9 +89,6 @@ public class WriterNode extends BasicNode implements Monitored {
         final long start = System.currentTimeMillis();
         try {
             if (!startRecords) {
-                writer.startObject();
-                writer.fieldName("records");
-                writer.startArray();
                 startRecords = true;
             }
             lastRowMetadata = metadata;
@@ -158,27 +154,20 @@ public class WriterNode extends BasicNode implements Monitored {
         try {
             // no row received, let's switch to the fallback row metadata
             if (!startRecords) {
-                writer.startObject();
-                writer.fieldName("records");
-                writer.startArray();
                 lastRowMetadata = fallBackRowMetadata;
             }
-
-            writer.endArray(); // <- end records
-            writer.fieldName("metadata"); // <- start metadata
-            writer.startObject();
-
-            writer.fieldName("columns");
             writer.write(lastRowMetadata);
 
-            writer.endObject();
-
-            writer.endObject(); // <- end data set
             writer.flush();
             writer.close();
         } catch (IOException e) {
             LOGGER.error("Unable to end writer.", e);
         } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LOGGER.error("unable to close writer", e);
+            }
             totalTime += System.currentTimeMillis() - start;
         }
 
@@ -188,12 +177,6 @@ public class WriterNode extends BasicNode implements Monitored {
         } catch (IOException e) {
             LOGGER.error("Unable to cache metadata for preparation #{} @ step #{}", metadataKey.getKey());
             LOGGER.debug("Unable to cache metadata due to exception.", e);
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                LOGGER.error("unable to close writer", e);
-            }
         }
     }
 

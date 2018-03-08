@@ -62,16 +62,15 @@ public class OSDataPrepAPIHelper {
     private boolean enableRestAssuredDebug;
 
     @Value("${backend.api.url:http://localhost:8888}")
-    public void setRestassuredUri(String apiBaseUrl) {
-        RestAssured.baseURI = apiBaseUrl;
-    }
+    private String apiBaseUrl;
+
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
      *
      * @return the request specification to use.
      */
     public RequestSpecification given() {
-        RequestSpecification given = RestAssured.given();
+        RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
         if (enableRestAssuredDebug) {
             given = given.log().all(true);
         }

@@ -364,8 +364,13 @@ public class TransformationService extends BaseTransformationService {
                         final ExportParameters exportParameters = new ExportParameters();
                         exportParameters.setPreparationId(parameters.getPreparationId());
                         exportParameters.setDatasetId(parameters.getDatasetId());
-                        if (parameters.getFilter() != null) {
-                            exportParameters.setFilter(mapper.readTree(parameters.getFilter()));
+                        final String filter = parameters.getFilter();
+                        if (filter != null) {
+                            if (filter.isEmpty()) {
+                                throw new TDPException(CommonErrorCodes.UNABLE_TO_AGGREGATE,
+                                        new IllegalArgumentException("Source should not be empty"));
+                            }
+                            exportParameters.setFilter(mapper.readTree(filter));
                         }
                         exportParameters.setExportType(JSON);
                         exportParameters.setStepId(parameters.getStepId());

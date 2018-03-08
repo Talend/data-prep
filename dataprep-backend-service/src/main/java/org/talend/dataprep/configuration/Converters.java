@@ -39,6 +39,9 @@ public class Converters {
         return new Converter<String, JsonNode>() {
             @Override
             public JsonNode convert(String source) {
+                if (source.isEmpty()) {
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, new IllegalArgumentException("Source should not be empty"));
+                }
                 ObjectMapper mapper = new ObjectMapper();
                 try {
                     return mapper.readTree(source);

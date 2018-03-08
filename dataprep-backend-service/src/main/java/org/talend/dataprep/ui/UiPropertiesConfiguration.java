@@ -15,14 +15,12 @@ package org.talend.dataprep.ui;
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
-@ConditionalOnProperty(prefix = "dataprep.ui.configuration.remote", name = "enabled", havingValue = "false", matchIfMissing = true)
 @ConfigurationProperties("dataprep.ui")
 public class UiPropertiesConfiguration implements UiConfiguration {
 

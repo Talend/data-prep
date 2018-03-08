@@ -45,6 +45,8 @@ import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 
 import static com.jayway.restassured.http.ContentType.JSON;
+import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
+import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -268,7 +270,7 @@ public class OSDataPrepAPIHelper {
      *
      * @param preparationId the preparation id.
      * @param version version of the preparation
-     * @param from
+     * @param from Where to get the data from (HEAD if no value)
      * @return the response.
      */
     public Response getPreparationContent(String preparationId, String version, String from)
@@ -519,24 +521,11 @@ public class OSDataPrepAPIHelper {
 
     /**
      * Return the list of datasets
-     * @param queryParameters
-     * @return
+     * @param queryParameters Map containing the parameter names and their values to send with the request.
+     * @return The response of the request.
      */
     public Response getDatasets(Map<String, String> queryParameters) {
         return given() //
-                .when() //
-                .queryParameters(queryParameters)
-                .get("/api/datasets");
-    }
-
-    /**
-     * Return the list of datasets
-     * @param queryParameters
-     * @return
-     */
-    public Response getDatasets(Map<String, String> queryParameters) {
-        return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .queryParameters(queryParameters)
                 .get("/api/datasets");
@@ -547,7 +536,6 @@ public class OSDataPrepAPIHelper {
      *
      * @param asyncMethodStatusUrl the asynchronous method to ping.
      * @throws IOException
-     * @throws InterruptedException
      */
     protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;

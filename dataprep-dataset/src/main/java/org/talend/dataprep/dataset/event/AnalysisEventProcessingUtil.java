@@ -10,39 +10,42 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.event;
+package org.talend.dataprep.dataset.event;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import org.talend.dataprep.dataset.service.analysis.asynchronous.BackgroundAnalysis;
+import org.talend.dataprep.security.SecurityProxy;
 
 @Component
-public class EventProcessingUtil {
+public class AnalysisEventProcessingUtil {
 
     /**
      * This class' logger.
      */
-    private static final Logger LOGGER = getLogger(EventProcessingUtil.class);
+    private static final Logger LOGGER = getLogger(AnalysisEventProcessingUtil.class);
 
     @Autowired
-    private ContentCache cache;
+    private BackgroundAnalysis backgroundAnalysis;
+
+    @Autowired
+    private SecurityProxy securityProxy;
 
     /**
-     * Processing clean cache event
-     * @param cacheKey the key to clean on cache
+     * Processing analysis event
+     * @param datasetId the id of the dataset to analyse
      */
-    public void processCleanCacheEvent(ContentCacheKey cacheKey, Boolean isPartialKey) {
-        if(cacheKey != null){
-            if(isPartialKey) {
-                cache.evictMatch(cacheKey);
-            } else {
-                cache.evict(cacheKey);
-            }
-            LOGGER.debug("Deleting content cache key {} because receiving CleanCacheEvent", cacheKey);
+    public void processAnalysisEvent(String datasetId) {
+        try {
+            securityProxy.asTechnicalUser();
+            backgroundAnalysis.analyze(datasetId);
+        } finally {
+            securityProxy.releaseIdentity();
         }
     }
 }

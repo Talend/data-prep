@@ -13,12 +13,15 @@
 
 package org.talend.dataprep.dataset.service.analysis.asynchronous;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.dataset.event.DataSetImportedEvent;
-import org.talend.dataprep.event.AsyncApplicationListener;
-import org.talend.dataprep.security.SecurityProxy;
+import org.talend.dataprep.dataset.event.AnalysisEventProcessingUtil;
+import org.talend.dataprep.dataset.event.DatasetImportedEvent;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Compute statistics analysis on the full dataset.
@@ -26,28 +29,29 @@ import org.talend.dataprep.security.SecurityProxy;
 @SuppressWarnings("InsufficientBranchCoverage")
 @Component
 @ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
-public class AsyncBackgroundAnalysis implements AsyncApplicationListener<DataSetImportedEvent> {
+//TODO a activer uniquement si pas kafka
+public class AsyncBackgroundAnalysis {
+
+    /**
+     * This class' logger.
+     */
+    private static final Logger LOGGER = getLogger(AsyncBackgroundAnalysis.class);
 
     @Autowired
-    private BackgroundAnalysis backgroundAnalysis;
+    private AnalysisEventProcessingUtil analysisEventProcessingUtil;
 
-    @Autowired
-    private SecurityProxy securityProxy;
+
 
     /**
      * Handle an application event.
      *
      * @param event the event to respond to
      */
-    @Override
-    public void onApplicationEvent(DataSetImportedEvent event) {
-        String dataSetId = event.getSource();
-
-        try {
-            securityProxy.asTechnicalUser();
-            backgroundAnalysis.analyze(dataSetId);
-        } finally {
-            securityProxy.releaseIdentity();
-        }
+    @EventListener
+    public void onEvent(DatasetImportedEvent event) {
+        LOGGER.debug("Processing spring dataset imported event: {}", event);
+        String datasetId = event.getSource();
+        analysisEventProcessingUtil.processAnalysisEvent(datasetId);
     }
+
 }

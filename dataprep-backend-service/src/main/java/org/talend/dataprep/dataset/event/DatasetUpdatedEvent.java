@@ -22,11 +22,11 @@ import org.talend.dataprep.event.MessageScope;
 import org.talend.dataprep.messages.DatasetMessage;
 
 /**
- * An event to indicate a data set metadata has been updated (and update has completed).
+ * An event to indicate a data set content has been changed.
  */
-public class DataSetMetadataBeforeUpdateEvent extends DaikonMessageEvent<DataSetMetadata, DatasetMessage> {
+public class DatasetUpdatedEvent extends DaikonMessageEvent<DataSetMetadata, DatasetMessage> {
 
-    public DataSetMetadataBeforeUpdateEvent(DataSetMetadata source) {
+    public DatasetUpdatedEvent(DataSetMetadata source) {
         super(source, new MessageScope[] { MessageScope.INTERNAL_UNIQUE });
     }
 
@@ -39,7 +39,7 @@ public class DataSetMetadataBeforeUpdateEvent extends DaikonMessageEvent<DataSet
     public DatasetMessage toAvroPayload(MessageHeaderFactory messageHeaderFactory) {
         return DatasetMessage
                 .newBuilder()
-                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetMetadataUpdated",
+                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetUpdated",
                         OperationTypes.UPDATE))
                 .setDatasetId(this.getSource().getId())
                 .build();
@@ -49,5 +49,4 @@ public class DataSetMetadataBeforeUpdateEvent extends DaikonMessageEvent<DataSet
     public MessageClass getMessageClass() {
         return MessageClass.DATASET_MESSAGE;
     }
-
 }

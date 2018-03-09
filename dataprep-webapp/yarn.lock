@@ -71,20 +71,21 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@talend/bootstrap-theme@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.151.0.tgz#a53e2af875e6a45901d59106309f93bd3cafbb05"
+"@talend/bootstrap-theme@0.164.0":
+  version "0.164.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.164.0.tgz#2b6f60fa0100395b3b16f712f4a7f015d29b08e0"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.151.0.tgz#ee5381fef5e2b5828ee41f57f4170020c149ec73"
+"@talend/icons@0.164.0":
+  version "0.164.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.164.0.tgz#f0f85652dae3593044ce404f0766fa7cdf624679"
 
-"@talend/react-components@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.151.0.tgz#15b7c00fab46689e39073aeb0f44b2e21061ad1c"
+"@talend/react-components@0.164.0":
+  version "0.164.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.164.0.tgz#7124df99a2c5713b1a8944412ae984b9a39e7af9"
   dependencies:
+    date-fns "1.27.2"
     lodash "4.17.4"
     rc-slider "8.4.1"
     rc-tooltip "3.7.0"
@@ -92,9 +93,9 @@
     react-debounce-input "3.1.0"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.151.0":
-  version "0.151.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.151.0.tgz#8710bec6927ccaa221cfbbebfde70f300910e165"
+"@talend/react-forms@0.164.0":
+  version "0.164.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.164.0.tgz#40ce88c592a6bb45e69f581600aa59375303eb2f"
   dependencies:
     classnames "2.2.5"
     keycode "2.1.9"
@@ -2281,6 +2282,14 @@ dashdash@^1.12.0:
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
   dependencies:
     assert-plus "^1.0.0"
+
+date-fns@1.27.2:
+  version "1.27.2"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.27.2.tgz#ce82f420bc028356cc661fc55c0494a56a990c9c"
+
+date-fns@^1.29.0:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
 
 date-now@^0.1.4:
   version "0.1.4"

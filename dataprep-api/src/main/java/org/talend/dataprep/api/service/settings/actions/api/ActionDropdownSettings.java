@@ -13,15 +13,18 @@
 
 package org.talend.dataprep.api.service.settings.actions.api;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.service.settings.actions.api.json.SettingElementListSerializer;
+import org.talend.dataprep.i18n.DataprepBundle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.i18n.DataprepBundle;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+
 
 /**
  * Action dropdown settings are the configuration to display a dropdown.
@@ -56,7 +59,8 @@ public class ActionDropdownSettings extends ActionSettings {
     /**
      * The statics actions ids that will be applied to the hosting model
      */
-    private List<String> staticActions;
+    @JsonSerialize(using = SettingElementListSerializer.class)
+    private List<SettingElement> staticActions;
 
     public String getItems() {
         return items;
@@ -74,11 +78,11 @@ public class ActionDropdownSettings extends ActionSettings {
         this.dynamicAction = dynamicAction;
     }
 
-    public List<String> getStaticActions() {
+    public List<SettingElement> getStaticActions() {
         return staticActions;
     }
 
-    public void setStaticActions(List<String> staticActions) {
+    public void setStaticActions(List<SettingElement> staticActions) {
         this.staticActions = staticActions;
     }
 
@@ -99,6 +103,9 @@ public class ActionDropdownSettings extends ActionSettings {
                 .items(actionSettings.getItems()) //
                 .dynamicAction(actionSettings.getDynamicAction()) //
                 .staticActions(actionSettings.getStaticActions()) //
+                // .staticActions(
+                //     actionSettings.getStaticActions().stream().map(e -> e.getId()).collect(Collectors.toList())
+                // ) //
                 .enabled(actionSettings.isEnabled());
     }
 
@@ -122,7 +129,7 @@ public class ActionDropdownSettings extends ActionSettings {
 
         private String dynamicAction;
 
-        private List<String> staticActions = new ArrayList<>();
+        private List<SettingElement> staticActions = new ArrayList<>();
 
         public Builder id(final String id) {
             this.id = id;
@@ -159,12 +166,12 @@ public class ActionDropdownSettings extends ActionSettings {
             return this;
         }
 
-        public Builder staticAction(final String staticAction) {
+        public Builder staticAction(final SettingElement staticAction) {
             this.staticActions.add(staticAction);
             return this;
         }
 
-        public Builder staticActions(final List<String> staticActions) {
+        public Builder staticActions(final List<SettingElement> staticActions) {
             if (staticActions != null) {
                 this.staticActions.addAll(staticActions);
             }
@@ -186,7 +193,12 @@ public class ActionDropdownSettings extends ActionSettings {
             action.setBsStyle(this.bsStyle);
             action.setItems(this.items);
             action.setDynamicAction(dynamicAction);
-            action.setStaticActions(staticActions.isEmpty() ? null : staticActions);
+            action.setStaticActions(
+                staticActions.isEmpty() ? null : staticActions
+                // staticActions.isEmpty() ? null : staticActions.stream().map(
+                //     a -> new ActionDropdownSettings(a)
+                // ).collect(Collectors.toList())
+            );
             action.setEnabled(this.enabled);
             return action;
         }

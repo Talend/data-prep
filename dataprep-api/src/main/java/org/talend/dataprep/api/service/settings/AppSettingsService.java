@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.actions.api.SettingElement;
 import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
 import org.talend.dataprep.api.service.settings.analytics.api.AnalyticsSettings;
 import org.talend.dataprep.api.service.settings.help.api.HelpSettings;
@@ -35,10 +36,10 @@ import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 public class AppSettingsService {
 
     @Autowired
-    private AppSettingsProvider<ActionSettings>[] actionsProviders;
+    private AppSettingsProvider<SettingElement>[] actionsProviders;
 
     @Autowired(required = false)
-    private AppSettingsConfigurer<ActionSettings>[] actionsConfigurers;
+    private AppSettingsConfigurer<SettingElement>[] actionsConfigurers;
 
     @Autowired
     private AppSettingsProvider<ViewSettings>[] viewsProviders;
@@ -70,11 +71,11 @@ public class AppSettingsService {
     @Autowired(required = false)
     private AppSettingsConfigurer<AnalyticsSettings>[] analyticsConfigurers;
 
-    public AppSettingsConfigurer<ActionSettings>[] getActionsConfigurers() {
+    public AppSettingsConfigurer<SettingElement>[] getActionsConfigurers() {
         return actionsConfigurers;
     }
 
-    public void setActionsConfigurers(AppSettingsConfigurer<ActionSettings>... actionsConfigurers) {
+    public void setActionsConfigurers(AppSettingsConfigurer<SettingElement>... actionsConfigurers) {
         this.actionsConfigurers = actionsConfigurers;
     }
 
@@ -86,9 +87,11 @@ public class AppSettingsService {
 
         // populate appSettings actions dictionary (key: actionId, value: action)
         getSettingsStream(actionsProviders, actionsConfigurers) //
-                .filter(ActionSettings::isEnabled)
-                .map(ActionSettings::translate)
-                .forEach(action -> appSettings.getActions().put(action.getId(), action));
+                .filter(SettingElement::isEnabled)
+                .map(SettingElement::translate)
+                .forEach(action -> {
+                    appSettings.getActions().put(action.getId(), action);
+                });
 
         // populate appSettings views dictionary (key: viewId, value: view)
         getSettingsStream(viewsProviders, viewsConfigurers) //

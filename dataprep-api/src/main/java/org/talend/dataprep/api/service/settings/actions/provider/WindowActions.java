@@ -14,6 +14,7 @@
 package org.talend.dataprep.api.service.settings.actions.provider;
 
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.actions.api.Divider;
 
 import java.util.ArrayList;
 
@@ -34,10 +35,7 @@ public interface WindowActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"preparation"})
             .build();
 
-    ActionSettings DIVIDER = builder()
-            .id("divider")
-            .divider(true)
-            .build();
+    Divider DIVIDER = new Divider();
 
     ActionSettings ONBOARDING_PLAYGROUND = builder()
             .id("onboarding:playground")

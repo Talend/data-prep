@@ -59,7 +59,6 @@ $search-actions-height: 25px;
 		}
 
 		.search-input + .action-suggestion-tab-items {
-			// NC:
 			height: calc(100% - #{$search-actions-height});
 		}
 	}

@@ -72,6 +72,7 @@ public class ActionsUtils {
         String columnId = context.getColumnId();
         RowMetadata rowMetadata = context.getRowMetadata();
 
+        context.evict(TARGET_COLUMN_CONTEXT_KEY);
         context.get(TARGET_COLUMN_CONTEXT_KEY, r -> {
             final Map<String, String> cols = new HashMap<>();
             String nextId = columnId; // id of the column to put the new one after, initially the current column

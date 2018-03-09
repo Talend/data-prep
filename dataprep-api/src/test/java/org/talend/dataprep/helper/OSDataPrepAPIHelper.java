@@ -529,6 +529,20 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Get the semantic types of a column
+     *
+     * @param columnId the column id.
+     * @param prepId the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response getPreparationsColumnSemanticTypes(String columnId, String prepId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/preparations/{prepId}/columns/{columnId}/types", prepId, columnId);
+    }
+
+    /**
      * Get the user information.
      *
      * @return the response.

@@ -56,7 +56,7 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const brand = element.find('.tc-header-bar > ul').eq(0).find('li').eq(1).find('.btn');
+			const brand = element.find('.tc-header-bar > ul').eq(0).find('li').eq(1).find('.btn > span');
 			expect(brand.text()).toBe('Data Preparation');
 		});
 
@@ -104,8 +104,8 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const productsToggle = element.find('#products\\:menu');
-			expect(productsToggle.text()).toBeFalsy();
+			const productsToggle = element.find('#products\\:menu > span');
+			expect(productsToggle.text()).toBe('Data Preparation');
 
 			expect(element.find('#product\\:producta').text()).toBe('Product A');
 			expect(element.find('#product\\:productb').text()).toBe('Product B');

@@ -58,12 +58,12 @@ export default class AppHeaderBarCtrl {
 			if (changes.searchToggle) {
 				const searchToggle = changes.searchToggle.currentValue;
 				if (searchToggle) {
-					searchConfiguration.onToggle = this.searchOnToggle;
+					searchConfiguration.docked = true;
 					delete searchConfiguration.value;
 					searchConfiguration.items = null;
 				}
 				else {
-					delete searchConfiguration.onToggle;
+					searchConfiguration.docked = false;
 				}
 			}
 			if (changes.searchInput) {
@@ -141,6 +141,7 @@ export default class AppHeaderBarCtrl {
 		// onToggle
 		const onToggleAction = this.appSettings.actions[searchSettings.onToggle];
 		this.searchOnToggle = onToggleAction && this.settingsActionsService.createDispatcher(onToggleAction);
+		searchSettings.docked = true;
 
 		// onBlur
 		const onBlurAction = this.appSettings.actions[searchSettings.onBlur];

@@ -15,6 +15,7 @@ package org.talend.dataprep.event;
 public enum MessageClass {
 
     DATASET_MESSAGE,
+    DQ_MESSAGE,
     PREPARATION_MESSAGE,
     CACHE_MESSAGE
 

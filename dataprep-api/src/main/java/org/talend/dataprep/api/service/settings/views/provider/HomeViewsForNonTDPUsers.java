@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
-import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.HEADERBAR_HELP_FOR_NON_TDP_USERS;
-
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.LinkSettings;
@@ -38,7 +36,7 @@ public interface HomeViewsForNonTDPUsers {
                             .label("appheaderbar.brand")
                             .build()
             )
-            .help(HEADERBAR_HELP_FOR_NON_TDP_USERS.getId())
+            .help("external:help")
             .build();
 
     ViewSettings SIDE_PANEL = SidePanelSettings.builder()

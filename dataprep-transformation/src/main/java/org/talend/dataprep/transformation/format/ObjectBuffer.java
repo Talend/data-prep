@@ -49,6 +49,8 @@ public class ObjectBuffer<T> implements AutoCloseable {
 
     private Class<T> bufferedClass;
 
+    private boolean closed = false;
+
     public ObjectBuffer(Class<T> bufferedClass) throws IOException {
         this.bufferedClass = bufferedClass;
         tempFile = Files.createTempFile("buffered-object", ".json");
@@ -56,11 +58,18 @@ public class ObjectBuffer<T> implements AutoCloseable {
         generator = mapper.getFactory().createGenerator(fileWriter);
     }
 
+    /** Append an object to the buffer. */
     public void appendRow(T entity) throws IOException {
         generator.writeObject(entity);
     }
 
+    /**
+     * Read all data of the ObjectBuffer, prevent any further writings.
+     */
     public Stream<T> readAll() throws IOException {
+        if (closed) {
+            throw new IOException("The ObjectBuffer is closed");
+        }
         generator.close();
         FileReader reader = new FileReader(tempFile.toFile());
         JsonParser parser = mapper.getFactory().createParser(reader);
@@ -68,9 +77,13 @@ public class ObjectBuffer<T> implements AutoCloseable {
         return stream(spliteratorUnknownSize(objectIterator, Spliterator.SIZED), false);
     }
 
+    /**
+     * Close the ObjectBuffer and delete underlying resources.
+     */
     public void close() throws IOException {
         generator.close();
         FilesHelper.deleteQuietly(tempFile.toFile());
+        closed = true;
     }
 
 }

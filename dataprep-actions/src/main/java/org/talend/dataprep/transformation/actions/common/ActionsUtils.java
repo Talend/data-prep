@@ -14,7 +14,6 @@ package org.talend.dataprep.transformation.actions.common;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -73,27 +72,30 @@ public class ActionsUtils {
         String columnId = context.getColumnId();
         RowMetadata rowMetadata = context.getRowMetadata();
 
-        context.get(TARGET_COLUMN_CONTEXT_KEY, r -> {
-            final Map<String, String> cols = new HashMap<>();
-            String nextId = columnId; // id of the column to put the new one after, initially the current column
-            for (AdditionalColumn additionalColumn : additionalColumns) {
-                ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
-                // it's often important to copy the original column type for the action which needs statistics
-                if (additionalColumn.getCopyMetadataFromId() != null) {
-                    ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
-                    brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
-                    brandNewColumnBuilder.type(Type.get(newColumn.getType()));
-                } else {
-                    brandNewColumnBuilder.type(additionalColumn.getType());
-                }
-                brandNewColumnBuilder.name(additionalColumn.getName());
-                ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
-                rowMetadata.insertAfter(nextId, columnMetadata);
-                nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
-                cols.put(additionalColumn.getKey(), columnMetadata.getId());
+        context.evict(TARGET_COLUMN_CONTEXT_KEY);
+        context.get(TARGET_COLUMN_CONTEXT_KEY, r -> createNewColumnsImpl(context, additionalColumns, columnId, rowMetadata));
+    }
+
+    private static Map<String, String> createNewColumnsImpl(ActionContext context, List<AdditionalColumn> additionalColumns, String columnId, RowMetadata rowMetadata) {
+        final Map<String, String> cols = new HashMap<>();
+        String nextId = columnId; // id of the column to put the new one after, initially the current column
+        for (AdditionalColumn additionalColumn : additionalColumns) {
+            ColumnMetadata.Builder brandNewColumnBuilder = ColumnMetadata.Builder.column();
+            // it's often important to copy the original column type for the action which needs statistics
+            if (additionalColumn.getCopyMetadataFromId() != null) {
+                ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
+                brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
+                brandNewColumnBuilder.type(Type.get(newColumn.getType()));
+            } else {
+                brandNewColumnBuilder.type(additionalColumn.getType());
             }
-            return cols;
-        });
+            brandNewColumnBuilder.name(additionalColumn.getName());
+            ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
+            rowMetadata.insertAfter(nextId, columnMetadata);
+            nextId = columnMetadata.getId(); // the new column to put next one after, is the fresh new one
+            cols.put(additionalColumn.getKey(), columnMetadata.getId());
+        }
+        return cols;
     }
 
     /**
@@ -151,24 +153,16 @@ public class ActionsUtils {
      */
     public static final class AdditionalColumn {
 
-        /**
-         * Key to use in parameters map.
-         */
+        /** Key to use in parameters map. */
         private String key;
 
-        /**
-         * Name of the new colum.
-         */
+        /** Name of the new colum. */
         private String name;
 
-        /**
-         * Data base type of the new column.
-         */
+        /** Data base type of the new column. */
         private Type type = Type.STRING;
 
-        /**
-         * Id of the column to copy metadata from
-         */
+        /** Id of the column to copy metadata from */
         private String copyMetadataFromId;
 
         public String getKey() {

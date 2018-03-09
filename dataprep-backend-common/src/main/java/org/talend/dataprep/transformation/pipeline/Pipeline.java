@@ -103,10 +103,9 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 // but we proceed all the rows of the stream
                 // to replace when java introduce more useful functions to stream (ex: takeWhile)
                 records //
-                        .map(row -> { //
+                        .peek(row -> { //
                             node.exec().receive(row, rowMetadata);
                             counter.addAndGet(1L);
-                            return row;
                         }) //
                         .allMatch(row -> !isStopped.get());
                 LOG.debug("{} rows sent in the pipeline", counter.get());

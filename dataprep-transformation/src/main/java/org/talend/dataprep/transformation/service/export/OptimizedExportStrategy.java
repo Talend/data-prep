@@ -14,6 +14,7 @@ package org.talend.dataprep.transformation.service.export;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,8 @@ import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a preparation (using its default data set), using any information
@@ -100,7 +103,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // Get content from previous step
-        try (JsonParser parser = mapper.getFactory().createParser(contentCache.get(transformationCacheKey))) {
+        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8))) {
             // Create dataset
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             dataSet.setMetadata(metadata);

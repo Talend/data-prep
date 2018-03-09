@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -342,7 +343,7 @@ public class TransformationService extends BaseTransformationService {
         }
 
         // apply the aggregation
-        try (JsonParser parser = mapper.getFactory().createParser(contentToAggregate)) {
+        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             return aggregationService.aggregate(parameters, dataSet);
         } catch (IOException e) {
@@ -405,7 +406,7 @@ public class TransformationService extends BaseTransformationService {
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
                 final InputStream content = contentCache.get(contentKey); //
-                final JsonParser contentParser = mapper.getFactory().createParser(content)) {
+                final JsonParser contentParser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);
@@ -438,7 +439,7 @@ public class TransformationService extends BaseTransformationService {
 
         // because of dataset records streaming, the dataset content must be within an auto closeable block
         try (final InputStream dataSetContent = dataSetGet.execute(); //
-                final JsonParser parser = mapper.getFactory().createParser(dataSetContent)) {
+                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(dataSetContent, UTF_8))) {
 
             securityProxy.releaseIdentity();
             identityReleased = true;
@@ -605,7 +606,7 @@ public class TransformationService extends BaseTransformationService {
             final ExceptionContext exceptionContext = build().put("name", action);
             throw new TDPException(TransformationErrorCodes.UNKNOWN_DYNAMIC_ACTION, exceptionContext);
         }
-        try (JsonParser parser = mapper.getFactory().createParser(content)) {
+        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             return actionType.getGenerator(context).getParameters(columnId, dataSet);
         } catch (IOException e) {
@@ -892,7 +893,7 @@ public class TransformationService extends BaseTransformationService {
         final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
         analyzer.init();
 
-        try (final JsonParser parser = mapper.getFactory().createParser(records)) {
+        try (final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(records, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             dataSet
                     .getRecords() //

@@ -12,11 +12,13 @@
 
 package org.talend.dataprep.transformation.actions.datablending;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_DS_ID;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -99,7 +101,7 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
 
         this.input = dataSetGet.execute();
         try {
-            JsonParser jsonParser = mapper.getFactory().createParser(input);
+            JsonParser jsonParser = mapper.getFactory().createParser(new InputStreamReader(input, UTF_8));
             DataSet lookup = mapper.readerFor(DataSet.class).readValue(jsonParser);
             this.lookupIterator = lookup.getRecords().iterator();
             this.emptyRow = getEmptyRow(lookup.getMetadata().getRowMetadata().getColumns());

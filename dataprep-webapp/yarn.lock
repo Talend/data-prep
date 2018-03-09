@@ -68,6 +68,7 @@
   version "0.164.0"
   resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.164.0.tgz#7124df99a2c5713b1a8944412ae984b9a39e7af9"
   dependencies:
+    date-fns "1.27.2"
     lodash "4.17.4"
     rc-slider "8.4.1"
     rc-tooltip "3.7.0"

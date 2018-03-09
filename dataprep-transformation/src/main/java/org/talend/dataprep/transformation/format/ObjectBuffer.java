@@ -1,13 +1,14 @@
-/*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
- *
- * This source code is available under agreement available at
- * https://github.com/Talend/data-prep/blob/master/LICENSE
- *
- * You should have received a copy of the agreement
- * along with this program; if not, write to Talend SA
- * 9 rue Pages 92150 Suresnes, France
- */
+// ============================================================================
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
@@ -49,6 +50,8 @@ public class ObjectBuffer<T> implements AutoCloseable {
 
     private Class<T> bufferedClass;
 
+    private boolean closed = false;
+
     public ObjectBuffer(Class<T> bufferedClass) throws IOException {
         this.bufferedClass = bufferedClass;
         tempFile = Files.createTempFile("buffered-object", ".json");
@@ -65,6 +68,9 @@ public class ObjectBuffer<T> implements AutoCloseable {
      * Read all data of the ObjectBuffer, prevent any further writings.
      */
     public Stream<T> readAll() throws IOException {
+        if (closed) {
+            throw new IOException("The ObjectBuffer is closed");
+        }
         generator.close();
         FileReader reader = new FileReader(tempFile.toFile());
         JsonParser parser = mapper.getFactory().createParser(reader);
@@ -78,6 +84,7 @@ public class ObjectBuffer<T> implements AutoCloseable {
     public void close() throws IOException {
         generator.close();
         FilesHelper.deleteQuietly(tempFile.toFile());
+        closed = true;
     }
 
 }

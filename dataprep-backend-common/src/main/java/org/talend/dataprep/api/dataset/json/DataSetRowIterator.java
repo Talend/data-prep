@@ -14,10 +14,12 @@
 package org.talend.dataprep.api.dataset.json;
 
 import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.api.dataset.row.FlagNames.TDP_ID;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
@@ -69,7 +71,7 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
      */
     public DataSetRowIterator(InputStream inputStream) {
         try {
-            this.parser = new JsonFactory().createParser(inputStream);
+            this.parser = new JsonFactory().createParser(new InputStreamReader(inputStream, UTF_8));
             this.rowMetadata = new RowMetadata();
             this.row = new DataSetRow(rowMetadata);
         } catch (IOException e) {

@@ -141,14 +141,13 @@ public class PreparationStep extends DataPrepStep {
     @And("^I check that the semantic type \"([^\"]*)\" is removed from the types list of the column \"([^\"]*)\" of the preparation \"([^\"]*)\"$")
     public void iCheckThatTheSemanticTypeIsRemoved(String semantictypeName, String columnId, String prepName) {
         String prepId = context.getPreparationId(suffixName(prepName));
-        String semantictypeId = context.getSemanticTypeId(suffixName(semantictypeName));
 
         Response response = api.getPreparationsColumnSemanticTypes(columnId, prepId);
         response.then().statusCode(200);
 
         assertEquals(0, response.body()
                 .jsonPath()
-                .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semantictypeId) + "'  }")
+                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semantictypeName) + "'  }")
                 .size());
     }
 }

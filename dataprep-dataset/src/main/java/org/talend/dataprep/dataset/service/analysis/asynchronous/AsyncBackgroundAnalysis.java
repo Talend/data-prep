@@ -13,23 +13,24 @@
 
 package org.talend.dataprep.dataset.service.analysis.asynchronous;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.dataset.event.AnalysisEventProcessingUtil;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Compute statistics analysis on the full dataset.
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 @Component
-@ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
-//TODO a activer uniquement si pas kafka
+@Conditional(AsyncBackgroundAnalysis.AsyncBackgroundAnalysisConditon.class)
 public class AsyncBackgroundAnalysis {
 
     /**
@@ -39,8 +40,6 @@ public class AsyncBackgroundAnalysis {
 
     @Autowired
     private AnalysisEventProcessingUtil analysisEventProcessingUtil;
-
-
 
     /**
      * Handle an application event.
@@ -54,4 +53,18 @@ public class AsyncBackgroundAnalysis {
         analysisEventProcessingUtil.processAnalysisEvent(datasetId);
     }
 
+    public static class AsyncBackgroundAnalysisConditon extends AllNestedConditions {
+
+        AsyncBackgroundAnalysisConditon() {
+            super(ConfigurationPhase.REGISTER_BEAN);
+        }
+
+        @ConditionalOnProperty(name = "dateprep.event.listener", havingValue = "spring")
+        static class springEventListener {
+        }
+
+        @ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
+        static class asyncAnalysis {
+        }
+    }
 }

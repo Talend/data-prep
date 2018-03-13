@@ -363,7 +363,8 @@
 		}
 
 		&-content {
-			margin: 1rem auto;
+			flex-basis: auto;
+			// margin: 1rem auto;
 		}
 	}
 }

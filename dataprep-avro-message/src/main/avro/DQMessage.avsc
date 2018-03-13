@@ -1,0 +1,19 @@
+{
+  "namespace": "org.talend.dataprep.messages",
+  "name": "DQMessage",
+  "type": "record",
+  "fields": [
+    {
+      "name": "header",
+      "type": "org.talend.daikon.messages.MessageHeader"
+    },
+    {
+      "name": "dqEvent",
+      "type": "string"
+    },
+    {
+      "name": "categories",
+      "type": {"type": "map", "values": "string"}
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "namespace": "org.talend.dataprep.messages",
+  "name": "CacheMessage",
+  "type": "record",
+  "fields": [
+    {
+      "name": "header",
+      "type": "org.talend.daikon.messages.MessageHeader"
+    },
+    {
+      "name": "cacheKey",
+      "type": "string"
+    },
+    {
+      "name": "partialKey",
+      "type": "boolean",
+      "default": "false"
+    }
+  ]
+}

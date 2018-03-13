@@ -137,6 +137,10 @@
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-actions</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-avro-message</artifactId>
+        </dependency>
         <!-- OTHER DEPENDENCIES -->
         <dependency>
             <groupId>io.projectreactor</groupId>

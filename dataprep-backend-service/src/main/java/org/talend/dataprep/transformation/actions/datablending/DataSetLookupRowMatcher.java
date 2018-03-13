@@ -79,9 +79,12 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
     /** Cache of dataset row. */
     private Map<String, DataSetRow> cache = new HashMap<>();
 
-    private final String joinOnColumn;
+    private String joinOnColumn;
 
-    private final List<LookupSelectedColumnParameter> selectedColumns;
+    private List<LookupSelectedColumnParameter> selectedColumns;
+
+    DataSetLookupRowMatcher() {
+    }
 
     /**
      * Default constructor.
@@ -92,6 +95,18 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
         this.datasetId = parameters.get(LOOKUP_DS_ID.getKey());
         joinOnColumn = parameters.get(Lookup.Parameters.LOOKUP_JOIN_ON.getKey());
         selectedColumns = Lookup.getColsToAdd(parameters);
+    }
+
+    void setJoinOnColumn(String joinOnColumn) {
+        this.joinOnColumn = joinOnColumn;
+    }
+
+    void setSelectedColumns(List<LookupSelectedColumnParameter> selectedColumns) {
+        this.selectedColumns = selectedColumns;
+    }
+
+    void setLookupIterator(Iterator<DataSetRow> lookupIterator) {
+        this.lookupIterator = lookupIterator;
     }
 
     /**
@@ -175,7 +190,7 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
 
             // if matching row is found, let's stop here
             if (StringUtils.equals(joinValue, nextRowJoinValue)) {
-                return nextRow;
+                return cache.get(nextRowJoinValue);
             }
         }
 

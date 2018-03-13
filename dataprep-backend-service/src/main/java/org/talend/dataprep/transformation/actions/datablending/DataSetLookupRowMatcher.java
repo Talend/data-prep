@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -78,6 +79,10 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
     /** Cache of dataset row. */
     private Map<String, DataSetRow> cache = new HashMap<>();
 
+    private final String joinOnColumn;
+
+    private final List<LookupSelectedColumnParameter> selectedColumns;
+
     /**
      * Default constructor.
      *
@@ -85,6 +90,8 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
      */
     public DataSetLookupRowMatcher(Map<String, String> parameters) {
         this.datasetId = parameters.get(LOOKUP_DS_ID.getKey());
+        joinOnColumn = parameters.get(Lookup.Parameters.LOOKUP_JOIN_ON.getKey());
+        selectedColumns = Lookup.getColsToAdd(parameters);
     }
 
     /**
@@ -142,13 +149,27 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
         }
 
         // if the value is not cached, let's update the cache
+        List<ColumnMetadata> filteredColumns = null;
         while (lookupIterator.hasNext()) {
             DataSetRow nextRow = lookupIterator.next();
             final String nextRowJoinValue = nextRow.get(joinOn);
 
             // update the cache no matter what so that the next joinValue may be already cached !
+            if (filteredColumns == null) {
+                final List<String> selectedColumnIds = selectedColumns
+                        .stream() //
+                        .map(LookupSelectedColumnParameter::getId) //
+                        .collect(Collectors.toList());
+                filteredColumns = nextRow
+                        .getRowMetadata() //
+                        .getColumns() //
+                        .stream() //
+                        .filter(c -> !joinOnColumn.equals(c.getId()) && selectedColumnIds.contains(c.getId())) //
+                        .collect(Collectors.toList());
+            }
+
             if (!cache.containsKey(nextRowJoinValue)) {
-                cache.put(nextRowJoinValue, nextRow.clone());
+                cache.put(nextRowJoinValue, nextRow.filter(filteredColumns).clone());
                 LOGGER.trace("row found and cached for {} -> {}", nextRowJoinValue, nextRow.values());
             }
 

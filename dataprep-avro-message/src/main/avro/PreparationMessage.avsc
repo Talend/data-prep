@@ -8,6 +8,11 @@
       "type": "org.talend.daikon.messages.MessageHeader"
     },
     {
+      "name": "operationType",
+      "type" : "org.talend.dataprep.messages.OperationTypes",
+      "default": null
+    },
+    {
       "name": "datasetId",
       "type": "string"
     },

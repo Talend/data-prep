@@ -13,12 +13,12 @@
 package org.talend.dataprep.dataset.event;
 
 import org.talend.daikon.messages.MessageTypes;
-import org.talend.daikon.messages.OperationTypes;
 import org.talend.daikon.messages.header.producer.MessageHeaderFactory;
 import org.talend.dataprep.event.DaikonMessageEvent;
 import org.talend.dataprep.event.MessageClass;
 import org.talend.dataprep.event.MessageScope;
 import org.talend.dataprep.messages.DatasetMessage;
+import org.talend.dataprep.messages.OperationTypes;
 
 /**
  * Event sent when a DataSet was just imported (good starting point to start asynchronous analysis).
@@ -48,8 +48,8 @@ public class DatasetImportedEvent extends DaikonMessageEvent<String, DatasetMess
     public DatasetMessage toAvroPayload(MessageHeaderFactory messageHeaderFactory) {
         return DatasetMessage
                 .newBuilder()
-                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetCreated",
-                        OperationTypes.CREATION))
+                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetCreated"))
+                .setOperationType(OperationTypes.CREATION)
                 .setDatasetId(this.getSource())
                 .build();
     }

@@ -13,13 +13,13 @@
 package org.talend.dataprep.dataset.event;
 
 import org.talend.daikon.messages.MessageTypes;
-import org.talend.daikon.messages.OperationTypes;
 import org.talend.daikon.messages.header.producer.MessageHeaderFactory;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.event.DaikonMessageEvent;
 import org.talend.dataprep.event.MessageClass;
 import org.talend.dataprep.event.MessageScope;
 import org.talend.dataprep.messages.DatasetMessage;
+import org.talend.dataprep.messages.OperationTypes;
 
 /**
  * An event to indicate a data set content has been changed.
@@ -39,8 +39,8 @@ public class DatasetUpdatedEvent extends DaikonMessageEvent<DataSetMetadata, Dat
     public DatasetMessage toAvroPayload(MessageHeaderFactory messageHeaderFactory) {
         return DatasetMessage
                 .newBuilder()
-                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetUpdated",
-                        OperationTypes.UPDATE))
+                .setHeader(messageHeaderFactory.createMessageHeader(MessageTypes.EVENT, "datasetUpdated"))
+                .setOperationType(OperationTypes.UPDATE)
                 .setDatasetId(this.getSource().getId())
                 .build();
     }

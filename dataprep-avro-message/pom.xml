@@ -54,6 +54,7 @@
                             <stringType>String</stringType>
                             <imports>
                                 <import>${project.basedir}/target/messages-model/MessageHeader.avsc</import>
+                                <import>${project.basedir}/src/main/avro/OperationTypes.avsc</import>
                             </imports>
                         </configuration>
                     </execution>

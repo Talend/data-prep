@@ -11,7 +11,6 @@
 
   ============================================================================*/
 $header-col-details: $navbar-height;
-$header-tabs-height: 29px;
 $search-actions-height: 25px;
 
 .actions-suggestions {
@@ -24,14 +23,6 @@ $search-actions-height: 25px;
 		flex-shrink: 1;
 		position: relative;
 		overflow: hidden;
-
-		.tabs {
-			margin-bottom: 0;
-		}
-
-		.empty-panel-msg {
-			top: $header-tabs-height;
-		}
 
 		.action-search-container {
 			box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
@@ -54,13 +45,13 @@ $search-actions-height: 25px;
 			}
 
 			.action-message {
-				height: calc(100% - #{$header-tabs-height + $search-actions-height});
-				top: calc(#{$header-tabs-height + $search-actions-height});
+				height: calc(100% - #{$search-actions-height});
+				top: $search-actions-height;
 			}
 		}
 
 		.action-suggestion-tab-items {
-			height: calc(100% - #{$header-tabs-height});
+			height: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;
 			position: absolute;
@@ -68,7 +59,7 @@ $search-actions-height: 25px;
 		}
 
 		.search-input + .action-suggestion-tab-items {
-			height: calc(100% - #{$header-tabs-height + $search-actions-height});
+			height: calc(100% - #{$search-actions-height});
 		}
 	}
 

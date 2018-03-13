@@ -20,17 +20,14 @@ import template from './actions-suggestions.html';
  * @restrict E
  * @usage <actions-suggestions></actions-suggestions>
  * */
-export default function ActionsSuggestions(state, TransformationService) {
+export default function ActionsSuggestions() {
 	'ngInject';
 
 	return {
 		restrict: 'E',
 		templateUrl: template,
 		bindToController: true,
-		controllerAs: 'actionsSuggestionsCtrl',
-		controller() {
-			this.state = state;
-			this.TransformationService = TransformationService;
-		},
+		controllerAs: 'ctrl',
+		controller: 'ActionsSuggestionsCtrl',
 	};
 }

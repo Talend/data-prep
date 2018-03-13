@@ -18,7 +18,7 @@ export default function StatsDetails() {
 		restrict: 'E',
 		templateUrl: template,
 		bindToController: true,
-		controllerAs: 'statsDetailsCtrl',
+		controllerAs: 'ctrl',
 		controller: 'StatsDetailsCtrl',
 	};
 }

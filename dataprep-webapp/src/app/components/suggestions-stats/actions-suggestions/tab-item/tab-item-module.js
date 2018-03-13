@@ -13,9 +13,9 @@
 
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
-import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
-import SERVICES_STATE_MODULE from '../../../services/state/state-module';
-import SERVICES_TRANSFORMATION_MODULE from '../../../services/transformation/transformation-module';
+import TALEND_WIDGET_MODULE from '../../../widgets/widget-module';
+import SERVICES_STATE_MODULE from '../../../../services/state/state-module';
+import SERVICES_TRANSFORMATION_MODULE from '../../../../services/transformation/transformation-module';
 
 import TabItemCtrl from './tab-item-controller';
 import TabItem from './tab-item-directive';

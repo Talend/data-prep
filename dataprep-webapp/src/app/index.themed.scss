@@ -28,6 +28,7 @@
 		@import "~@talend/react-components/lib/SubHeaderBar/InputTitleSubHeader/InputTitleSubHeader";
 		@import "~@talend/react-components/lib/VirtualizedList/CellTitle/CellTitleActions";
 		@import "~@talend/react-components/lib/VirtualizedList/RowLarge/RowLarge";
+		@import "~@talend/react-components/lib/TabBar/TabBar";
 
 		.introjs-prevbutton:hover,
 		.introjs-prevbutton:focus,
@@ -57,6 +58,10 @@
 		.vertical-barchart-cls .primaryBar rect.bar,
 		.vertical-barchart-cls .secondaryBar rect.bar {
 			fill: $brand-primary;
+		}
+
+		.tc-tab-bar .tc-tab-bar-action.active button {
+			box-shadow: 0 -2px 0 $brand-primary inset;
 		}
 	}
 

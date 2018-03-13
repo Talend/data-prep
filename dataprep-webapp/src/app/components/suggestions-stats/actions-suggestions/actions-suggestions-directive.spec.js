@@ -27,6 +27,7 @@ describe('Actions suggestions-stats directive', () => {
 		stateMock = {
 			playground: {
 				suggestions: {},
+				grid: {},
 			},
 		};
 		$provide.constant('state', stateMock);

@@ -12,31 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.phonenumber;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.category.ScopeCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeAction;
-import org.talend.dataprep.transformation.actions.common.ActionsUtils;
-import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
-
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
@@ -55,6 +30,32 @@ import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.FR
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.PHONE;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.UK_PHONE;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.US_PHONE;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeAction;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
+import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
 /**
  * Format a validated phone number to a specified format.
@@ -80,16 +81,6 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
     public static final String TYPE_E164 = "E164"; //$NON-NLS-1$
 
     public static final String TYPE_RFC3966 = "RFC3966"; //$NON-NLS-1$
-
-    /**
-     * The following types was provided previously to user selection on UI.
-     * TODO remove those constants and create an upgrade task.
-     */
-    static final String OLD_TYPE_INTERNATIONAL = "International"; //$NON-NLS-1$
-
-    static final String OLD_TYPE_NATIONAL = "National"; //$NON-NLS-1$
-
-    static final String OLD_OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
 
     /**
      * a region code parameter
@@ -170,10 +161,8 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         }
         switch (formatType) {
             case TYPE_INTERNATIONAL:
-            case OLD_TYPE_INTERNATIONAL:
                 return PhoneNumberHandlerBase.formatInternational(phone, regionParam);
             case TYPE_NATIONAL:
-            case OLD_TYPE_NATIONAL:
                 return PhoneNumberHandlerBase.formatNational(phone, regionParam);
             case TYPE_E164:
                 return PhoneNumberHandlerBase.formatE164(phone, regionParam);
@@ -227,8 +216,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         switch (parameters.get(OtherColumnParameters.MODE_PARAMETER)) {
             case CONSTANT_MODE:
                 final String constantModeParameter = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
-                if (OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)
-                    || OLD_OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)) {
+            if (OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)) {
                     regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
                 } else {
                     regionParam = constantModeParameter;

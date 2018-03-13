@@ -25,6 +25,7 @@ import SidePanel from '@talend/react-components/lib/SidePanel';
 import List from '@talend/react-components/lib/List';
 import Loader from '@talend/react-components/lib/Loader';
 import Progress from '@talend/react-components/lib/Progress';
+import TabBar from '@talend/react-components/lib/TabBar';
 import Form from '@talend/react-forms';
 import getTranslated from '@talend/react-components/lib/TranslateWrapper';
 import Notifications from '@talend/react-components/lib/Notification';
@@ -71,6 +72,7 @@ angular.module(MODULE_NAME,
 	)])
 	.directive('pureLoader', ['reactDirective', reactDirective => reactDirective(Loader)])
 	.directive('pureProgress', ['reactDirective', reactDirective => reactDirective(Progress)])
+	.directive('pureTabBar', ['reactDirective', reactDirective => reactDirective(TabBar)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('actionButton', ['reactDirective', reactDirective => reactDirective(ActionButton, [
 		'bsStyle',

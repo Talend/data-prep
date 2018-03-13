@@ -14,11 +14,15 @@
 package org.talend.dataprep.transformation.api.action.context;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 
 import java.math.BigInteger;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -47,12 +51,12 @@ public class ActionContextTest {
     }
 
     @Test
-    public void testParent() throws Exception {
+    public void testParent() {
         assertThat(context.getParent(), is(parent));
     }
 
     @Test
-    public void testColumnCreate() throws Exception {
+    public void testColumnCreate() {
         final String column = context.column("test",
                 (row) -> {
                     final ColumnMetadata c = column().name("test").type(Type.STRING).build();
@@ -64,7 +68,7 @@ public class ActionContextTest {
     }
 
     @Test
-    public void testColumnCache() throws Exception {
+    public void testColumnCache() {
         final String column = context.column("test",
                 (row) -> {
                     final ColumnMetadata c = column().name("test").type(Type.STRING).build();
@@ -84,7 +88,34 @@ public class ActionContextTest {
     }
 
     @Test
-    public void testTwiceSameColumnName() throws Exception {
+    public void testEvict() {
+        String key = "key";
+        String value = "my value";
+        AtomicBoolean valueGenerated = new AtomicBoolean(false);
+        Function<Map<String, String>, String> generationCode = m -> {
+            valueGenerated.set(true);
+            return value;
+        };
+        context.get(key, generationCode);
+
+        // Value has been generated
+        assertTrue(valueGenerated.get());
+
+        valueGenerated.set(false);
+        context.get(key, generationCode);
+
+        // Value is not generated again, cache works
+        assertFalse(valueGenerated.get());
+
+        context.evict(key);
+        context.get(key, generationCode);
+
+        // evict makes the generation work again
+        assertTrue(valueGenerated.get());
+    }
+
+    @Test
+    public void testTwiceSameColumnName() {
         final Function<RowMetadata, ColumnMetadata> creation = (row) -> {
             final ColumnMetadata c = column().name("test").type(Type.STRING).build();
             row.insertAfter("", c);
@@ -101,7 +132,7 @@ public class ActionContextTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testAsImmutable() throws Exception {
+    public void testAsImmutable() {
         testColumnCreate(); // Run test column create to get a "test" column.
         final ActionContext immutable = context.asImmutable();
         // Previously created column should still be accessible
@@ -120,7 +151,7 @@ public class ActionContextTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIllegalCreate() throws Exception {
+    public void testIllegalCreate() {
         context.column("test", (r) -> null);
     }
 

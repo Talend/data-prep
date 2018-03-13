@@ -14,12 +14,15 @@
 package org.talend.dataprep.qa;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.talend.dataprep.qa.config.BackendProperties;
 
 @Configurable
 @ComponentScan(basePackages = { "org.talend.dataprep.qa", "org.talend.dataprep.helper" })
 @PropertySource("classpath:application.properties")
+@EnableConfigurationProperties(BackendProperties.class)
 public class SpringContextConfiguration {
 
 }

@@ -125,6 +125,15 @@ public class FeatureContext {
     }
 
     /**
+     * Remove a semantic type reference.
+     *
+     * @param name the semanticType name.
+     */
+    public void removeSemanticTypeRef(@NotNull String name) {
+        semanticTypeIdByName.remove(name);
+    }
+
+    /**
      * Store a temporary {@link File}.
      *
      * @param file the temporary {@link File} to store.

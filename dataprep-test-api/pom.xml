@@ -27,32 +27,22 @@
     <artifactId>dataprep-test-api</artifactId>
 
     <properties>
+        <skipITs>false</skipITs>
         <spring.version>4.3.7.RELEASE</spring.version>
         <cucumber.version>1.2.5</cucumber.version>
-        <!-- by default, integration tests are skipped (use dedicated profile to run them) -->
-        <includedTestClasses>!**/OSRunnerConfigurationTest.java</includedTestClasses>
-        <ignoreTestFailure>false</ignoreTestFailure>
     </properties>
 
-    <!-- =================================================================================== -->
-    <!-- By default tests are skipped. If you do want to run them, use the run-tests profile -->
-    <!-- =================================================================================== -->
+    <!-- ==================================================================================================== -->
+    <!-- By default integration tests are not executed. If you do want to run them, use the run-tests profile -->
+    <!-- ==================================================================================================== -->
 
     <dependencies>
-        <!--DataPrep API module-->
         <dependency>
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-api</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-api</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
 
         <dependency>
@@ -100,69 +90,4 @@
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <!-- by default, integration tests are skipped (use dedicated profile to run them) -->
-                <configuration>
-                    <includes>
-                        <include>${includedTestClasses}</include>
-                    </includes>
-                    <testFailureIgnore>${ignoreTestFailure}</testFailureIgnore>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.masterthought</groupId>
-                <artifactId>maven-cucumber-reporting</artifactId>
-                <executions>
-                    <execution>
-                        <id>execution</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <projectName>dataprep-test-api</projectName>
-                            <outputDirectory>${project.build.directory}/site/cucumber-reports</outputDirectory>
-                            <cucumberOutput>${project.build.directory}/cucumber.json</cucumberOutput>
-                            <parallelTesting>false</parallelTesting>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
-    </build>
-
-    <profiles>
-        <!-- This profile allows to run integration tests -->
-        <profile>
-            <id>run-tests</id>
-            <properties>
-                <includedTestClasses>**/OSRunnerConfigurationTest.java</includedTestClasses>
-                <ignoreTestFailure>true</ignoreTestFailure>
-            </properties>
-        </profile>
-    </profiles>
 </project>

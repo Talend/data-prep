@@ -39,13 +39,32 @@
     </licenses>
 
     <properties>
+        <!-- By default, skip Integration Tests for every child project. Re-enable them by setting this property to false in each concerned project. -->
+        <skipITs>true</skipITs>
         <!-- Sonar -->
         <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
         <sonar.exclusions>**/build/**,**/node_modules/**,**/bower_components/**,**/target/**</sonar.exclusions>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.coverage.exclusions>**/itests/**</sonar.coverage.exclusions>
     </properties>
-
+    <profiles>
+        <!-- This profile allows to run integration tests -->
+        <profile>
+            <id>run-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.masterthought</groupId>
+                        <artifactId>maven-cucumber-reporting</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <pluginManagement>
             <plugins>
@@ -95,6 +114,23 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.21.0</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <testFailureIgnore>true</testFailureIgnore>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
@@ -102,6 +138,21 @@
                     <groupId>net.masterthought</groupId>
                     <artifactId>maven-cucumber-reporting</artifactId>
                     <version>3.10.0</version>
+                    <executions>
+                        <execution>
+                            <id>cucumber-report</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <projectName>${project.artifactId}</projectName>
+                                <outputDirectory>${project.build.directory}/site/cucumber-reports</outputDirectory>
+                                <cucumberOutput>${project.build.directory}/cucumber.json</cucumberOutput>
+                                <parallelTesting>false</parallelTesting>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -18,31 +18,31 @@ Data-prep backend service is configured in `dataprep-test-api/application.proper
 Be sure to adapt it to your own configuration before launching the integration tests._
 
 ### Maven launch
-To launch all cucumber tests, you have to call the maven `verify` phase with the `run-integration-tests` profile.
+To launch all cucumber tests, you have to call the maven `verify` phase with the `skipITs` property set to `false`.
 ```
-$ mvn verify -Prun-integration-tests
+$ mvn verify -DskipITs=false
 ```
 
-To launch cucumber tests *alone*, you can call directly the maven-failsafe-plugin dedicated goal, along with the `run-integration-tests` profile:
+To launch cucumber tests *alone*, you can call directly the maven-failsafe-plugin dedicated goal, along with the `skipITs` property set to `false`:
 ```
-mvn failsafe:integration-test -Prun-integration-tests
+mvn failsafe:integration-test -DskipITs=false
 ```
 
 It is possible to launch a specific test by specifying it in the command line:
 ```
-$ mvn verify -Prun-integration-tests -Dcucumber.options="classpath:features/ExportPreparationFromCSV.feature"
+$ mvn verify -DskipITs=false -Dcucumber.options="classpath:features/ExportPreparationFromCSV.feature"
 ```
 
 It is also possible to launch specific tests by specifying cucumber tags:
 ```
-$ mvn verify -Prun-integration-tests -Dcucumber.options="--tags @LiveDataSet"
+$ mvn verify -DskipITs=false -Dcucumber.options="--tags @LiveDataSet"
 ```
 
 By default cucumber tests call the backend api on `http://dev.data-prep.talend.lan:8888`.
 By default cucumber tests call the backend api on `http://localhost:8888`.
 You can set another url value by using the following maven parameter:
 ```
-$ mvn verify -Prun-integration-tests -Dbackend.api.url=http://dev.data-prep.talend.lan:8888
+$ mvn verify -DskipITs=false -Dbackend.api.url=http://dev.data-prep.talend.lan:8888
 ```
 Available keys are:
 * ``backend.api.url`` : to specify the global api base url
@@ -53,7 +53,7 @@ The default cucumber report will be available in the `dataprep-test-api/target/c
 The full cucumber report will be available in `dataprep-test-api/target/site/cucumber-reports`, if you run the usual command line as follow:
 
 ```
-$ mvn verify -Prun-integration-tests
+$ mvn verify -DskipITs=false
 ```
 
 

@@ -27,14 +27,14 @@
     <artifactId>dataprep-test-api</artifactId>
 
     <properties>
-        <skipITs>false</skipITs>
+        <skipITs>true</skipITs>
         <spring.version>4.3.7.RELEASE</spring.version>
         <cucumber.version>1.2.5</cucumber.version>
     </properties>
 
-    <!-- ================================================================================================================ -->
-    <!-- By default integration tests are not executed. If you do want to run them, use the run-integration-tests profile -->
-    <!-- ================================================================================================================ -->
+    <!-- ============================================================================================== -->
+    <!-- By default integration tests are not executed. If you do want to run them, use -DskipITs=false -->
+    <!-- ============================================================================================== -->
 
     <dependencies>
         <dependency>
@@ -90,4 +90,17 @@
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>net.masterthought</groupId>
+                <artifactId>maven-cucumber-reporting</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

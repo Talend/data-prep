@@ -472,7 +472,9 @@
   "PREPARATIONS_STEP_3_TITLE": "Ajouter la préparation",
   "PREPARATIONS_STEP_3_CONTENT": "Cliquer ici pour ajouter une préparation et commencer à nettoyer vos données.",
   "PREPARATIONS_STEP_4_TITLE": "Aide",
-  "PREPARATIONS_STEP_4_CONTENT": "Cliquer ici pour obtenir de l'aide (Documentation en ligne, Présentation, À propos de Data Preparation)",
+  "PREPARATIONS_STEP_4_CONTENT": "Cliquer ici pour obtenir la documentation en ligne",
+  "PREPARATIONS_STEP_5_TITLE": "Information",
+  "PREPARATIONS_STEP_5_CONTENT": "Cliquer ici pour obtenir de l'aide (Présentation, À propos de Data Preparation, Communauté, Feedback)",
 
   "EMPTY_RECORDS_LABEL": "lignes avec des valeurs vides",
   "INVALID_RECORDS_LABEL": "lignes avec des valeurs invalides",

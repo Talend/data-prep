@@ -20,15 +20,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.format.export.ExportFormatMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.dto.Folder;
+import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
+import org.talend.dataprep.qa.util.PreparationUID;
+import org.talend.dataprep.qa.util.folder.FolderUtil;
 
 /**
  * Used to share data within steps.
@@ -46,29 +50,25 @@ public class FeatureContext {
      */
     private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
-    private Map<String, String> datasetIdByName = new HashMap<>();
-    private Map<String, String> semanticTypeIdByName = new HashMap<>();
+    protected Map<String, String> datasetIdByName = new HashMap<>();
 
-    // TODO : Refactoring : various preparation can have the same name but in different folder
-    // TODO : change the data model (Map<String, List<String>> ?)
-    private Map<String, String> preparationIdByName = new HashMap<>();
+    protected Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
+
+    protected SortedSet<Folder> folders;
+
+    @Autowired
+    private FolderUtil folderUtil;
+
+    @Autowired
+    private OSIntegrationTestUtil util;
+
+    private Map<String, String> semanticTypeIdByName = new HashMap<>();
 
     private Map<String, File> tempFileByName = new HashMap<>();
 
     private Map<String, Action> actionByAlias = new HashMap<>();
 
     private Map<String, ExportFormatMessage[]> parametersByPreparationName = new HashMap<>();
-
-    private SortedSet<Folder> folders = new TreeSet<>((o1, o2) -> {
-        // reverse order : the longer string is the first one.
-        if (o1 == null && o2 == null)
-            return 0;
-        if (o1 == null)
-            return 1;
-        if (o2 == null)
-            return -1;
-        return ((Integer) o2.path.length()).compareTo(o1.path.length());
-    });
 
     /**
      * All object store on a feature execution.
@@ -83,6 +83,11 @@ public class FeatureContext {
      */
     public static String suffixName(String name) {
         return name + TI_SUFFIX_UID;
+    }
+
+    @PostConstruct
+    private void init() {
+        folders = folderUtil.getEmptyReverseSortedSet();
     }
 
     /**
@@ -101,8 +106,27 @@ public class FeatureContext {
      * @param id the preparation id.
      * @param name the preparation name.
      */
-    public void storePreparationRef(@NotNull String id, @NotNull String name) {
-        preparationIdByName.put(name, id);
+    public void storePreparationRef(@NotNull String id, @NotNull String name, @NotNull String path) {
+        preparationIdByFullName.put( //
+                new PreparationUID() //
+                        .setName(name) //
+                        .setPath(path), //
+                id);
+    }
+
+    /**
+     * Store the information about a preparation movement. In order to delete it later.
+     *
+     * @param id the preparation id.
+     * @param oldName the old preparation name.
+     * @param oldPath the old preparation path.
+     * @param newName the new preparation name.
+     * @param newPath the new preparation path.
+     */
+    public void storePreparationMove(@NotNull String id, @NotNull String oldName, @NotNull String oldPath,
+            @NotNull String newName, @NotNull String newPath) {
+        preparationIdByFullName.remove(new PreparationUID().setName(oldName).setPath(oldPath));
+        preparationIdByFullName.put(new PreparationUID().setName(newName).setPath(newPath), id);
     }
 
     /**
@@ -118,10 +142,10 @@ public class FeatureContext {
     /**
      * Remove a preparation reference.
      *
-     * @param name the preparation name.
+     * @param prepName the preparation name.
      */
-    public void removePreparationRef(@NotNull String name) {
-        preparationIdByName.remove(name);
+    public void removePreparationRef(@NotNull String prepName, @NotNull String prepPath) {
+        preparationIdByFullName.remove(new PreparationUID().setPath(prepPath).setName(prepName));
     }
 
     /**
@@ -169,7 +193,7 @@ public class FeatureContext {
      */
     @NotNull
     public List<String> getPreparationIds() {
-        return new ArrayList<>(preparationIdByName.values());
+        return new ArrayList<>(preparationIdByFullName.values());
     }
 
     /**
@@ -201,7 +225,21 @@ public class FeatureContext {
      */
     @Nullable
     public String getPreparationId(@NotNull String preparationName) {
-        return preparationIdByName.get(preparationName);
+        String path = util.extractPathFromFullName(preparationName);
+        String name = util.extractNameFromFullName(preparationName);
+        return preparationIdByFullName.get(new PreparationUID().setName(name).setPath(path));
+    }
+
+    /**
+     * Get the id of a stored preparation.
+     *
+     * @param preparationName the name of the searched preparation.
+     *
+     * @return the preparation id.
+     */
+    @Nullable
+    public String getPreparationId(@NotNull String preparationName, @NotNull String folder) {
+        return preparationIdByFullName.get(new PreparationUID().setName(preparationName).setPath(folder));
     }
 
     /**
@@ -247,10 +285,10 @@ public class FeatureContext {
      * Clear the list of preparation.
      */
     public void clearPreparation() {
-        preparationIdByName.clear();
+        preparationIdByFullName.clear();
     }
 
-    /**s
+    /**
      * Clear the list of semantic types.
      */
     public void clearSemanticType() {
@@ -288,12 +326,12 @@ public class FeatureContext {
     }
 
     /**
-     * Store a folder.
+     * Store folders in order to delete them later.
      *
-     * @param folder the folder to store.
+     * @param pFolders the folders to store.
      */
-    public void storeFolder(@NotNull Folder folder) {
-        folders.add(folder);
+    public void storeFolder(@NotNull Set<Folder> pFolders) { //
+        pFolders.forEach(f -> folders.add(f));
     }
 
     /**

@@ -29,4 +29,4 @@ Feature: Perform scenarios with SplitAction related action
   @CleanAfter
   Scenario: Remove SplitAction preparation Albums_Musique_prep
     When I remove the preparation "Albums_Musique_prep"
-    Then I check that the preparation "Albums_Musique_prep" doesn't exist in the folder "/"
+    Then I check that the preparation "/Albums_Musique_prep" doesn't exist

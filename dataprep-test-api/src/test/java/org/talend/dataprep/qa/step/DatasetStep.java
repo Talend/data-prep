@@ -1,5 +1,10 @@
 package org.talend.dataprep.qa.step;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -23,11 +28,6 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with dataset.
@@ -60,7 +60,8 @@ public class DatasetStep extends DataPrepStep {
         });
 
         Assert.assertEquals(1, //
-                datasetMetas.stream() //
+                datasetMetas
+                        .stream() //
                         .filter(d -> (suffixName(params.get(DATASET_NAME))).equals(d.name) //
                                 && params.get(NB_ROW).equals(d.records)) //
                         .count());
@@ -93,15 +94,23 @@ public class DatasetStep extends DataPrepStep {
         switch (util.getFilenameExtension(fileName)) {
         case "xls":
         case "xlsx":
-            datasetId = api.uploadBinaryDataset(fileName, suffixedName) //
-                    .then().statusCode(200) //
-                    .extract().body().asString();
+            datasetId = api
+                    .uploadBinaryDataset(fileName, suffixedName) //
+                    .then()
+                    .statusCode(200) //
+                    .extract()
+                    .body()
+                    .asString();
             break;
         case "csv":
         default:
-            datasetId = api.uploadTextDataset(fileName, suffixedName) //
-                    .then().statusCode(200) //
-                    .extract().body().asString();
+            datasetId = api
+                    .uploadTextDataset(fileName, suffixedName) //
+                    .then()
+                    .statusCode(200) //
+                    .extract()
+                    .body()
+                    .asString();
             break;
 
         }

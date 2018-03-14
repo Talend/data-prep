@@ -19,10 +19,24 @@ export function routeConfig($stateProvider, $urlRouterProvider) {
 		.state(LOADING_ROUTE, {
 			url: '/loading',
 			template: '',
+			resolve: {
+				translateReady($translate) {
+					'ngInject';
+
+					return $translate.onReady();
+				},
+			},
 		})
 		.state(HOME_ROUTE, {
 			abstract: true,
 			template: '<home></home>',
+			resolve: {
+				translateReady($translate) {
+					'ngInject';
+
+					return $translate.onReady();
+				},
+			},
 		})
 		.state(HOME_404_ROUTE, {
 			views: {
@@ -45,6 +59,13 @@ export function routeConfig($stateProvider, $urlRouterProvider) {
 			abstract: true,
 			url: '/playground',
 			template: '<playground></playground>',
+			resolve: {
+				translateReady($translate) {
+					'ngInject';
+
+					return $translate.onReady();
+				},
+			},
 		})
 		.state(PLAYGROUND_PREPARATION_ROUTE, { url: '/preparation?prepid&{reload:bool}' })
 		.state(PLAYGROUND_DATASET_ROUTE, { url: '/dataset?datasetid' });

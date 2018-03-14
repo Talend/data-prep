@@ -165,17 +165,18 @@ public class PreparationStep extends DataPrepStep {
      * @throws IOException if the folder preparation listing fails.
      */
     private boolean doesPrepExistsInFolder(String prepFullName) throws IOException {
+        boolean isPrepPresent = false;
         String suffixedPrepName = getSuffixedPrepName(prepFullName);
         String prepPath = util.extractPathFromFullName(prepFullName);
         String prepId = context.getPreparationId(suffixedPrepName, prepPath);
         FolderContent folderContent = folderUtil.listPreparation(prepPath);
-
-        boolean isPrepPresent = folderContent.preparations
-                .stream() //
-                .filter(p -> p.id.equals(prepId) //
-                        && p.name.equals(suffixedPrepName)) //
-                .count() == 1;
-
+        if (folderContent != null) {
+            isPrepPresent = folderContent.preparations
+                    .stream() //
+                    .filter(p -> p.id.equals(prepId) //
+                            && p.name.equals(suffixedPrepName)) //
+                    .count() == 1;
+        }
         return isPrepPresent;
     }
 
@@ -186,7 +187,8 @@ public class PreparationStep extends DataPrepStep {
         Response response = api.getPreparationsColumnSemanticTypes(columnId, prepId);
         response.then().statusCode(200);
 
-        assertEquals(0, response.body()
+        assertEquals(0, response
+                .body()
                 .jsonPath()
                 .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semantictypeName) + "'  }")
                 .size());

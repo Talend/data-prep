@@ -32,9 +32,9 @@
         <cucumber.version>1.2.5</cucumber.version>
     </properties>
 
-    <!-- ==================================================================================================== -->
-    <!-- By default integration tests are not executed. If you do want to run them, use the run-tests profile -->
-    <!-- ==================================================================================================== -->
+    <!-- ================================================================================================================ -->
+    <!-- By default integration tests are not executed. If you do want to run them, use the run-integration-tests profile -->
+    <!-- ================================================================================================================ -->
 
     <dependencies>
         <dependency>

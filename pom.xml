@@ -50,7 +50,7 @@
     <profiles>
         <!-- This profile allows to run integration tests -->
         <profile>
-            <id>run-tests</id>
+            <id>run-integration-tests</id>
             <build>
                 <plugins>
                     <plugin>

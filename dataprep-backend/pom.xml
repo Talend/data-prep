@@ -31,7 +31,7 @@
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <tika.version>1.16</tika.version>
-        <org.talend.daikon.version>0.20.0</org.talend.daikon.version>
+        <org.talend.daikon.version>0.22.0-SNAPSHOT</org.talend.daikon.version>
         <dataquality-libraries.version>5.0.1-SNAPSHOT</dataquality-libraries.version>
         <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>
@@ -46,8 +46,7 @@
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
         <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
         <commons-compress.version>1.14</commons-compress.version>
-        <!-- avro version must match the one in the studio -->
-        <avro.version>1.7.7</avro.version>
+        <avro.version>1.8.1</avro.version>
         <apache.poi.version>3.15</apache.poi.version>
         <java-semver.version>0.9.0</java-semver.version>
         <commons-math3.version>3.5</commons-math3.version>
@@ -65,6 +64,7 @@
         <module>../dataprep-backend-common</module>
         <module>../dataprep-backend-service</module>
         <module>../dataprep-backend-service-parent</module>
+        <module>../dataprep-avro-message</module>
         <module>../dataprep-actions</module>
         <module>../dataprep-async-api</module>
         <module>../dataprep-async-runtime</module>
@@ -272,6 +272,11 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-avro-message</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -355,6 +360,11 @@
             <dependency>
                 <groupId>org.talend.daikon</groupId>
                 <artifactId>daikon-spring-tenancy</artifactId>
+                <version>${org.talend.daikon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>messages-model-spring-support</artifactId>
                 <version>${org.talend.daikon.version}</version>
             </dependency>
             <dependency>

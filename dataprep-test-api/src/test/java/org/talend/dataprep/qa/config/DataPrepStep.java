@@ -64,5 +64,4 @@ public abstract class DataPrepStep {
 
         return response.as(PreparationDetails.class);
     }
-
 }

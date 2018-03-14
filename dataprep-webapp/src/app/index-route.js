@@ -22,6 +22,7 @@ export function routeConfig($stateProvider, $urlRouterProvider) {
 			resolve: {
 				translateReady($translate) {
 					'ngInject';
+
 					return $translate.onReady();
 				},
 			},
@@ -32,6 +33,7 @@ export function routeConfig($stateProvider, $urlRouterProvider) {
 			resolve: {
 				translateReady($translate) {
 					'ngInject';
+
 					return $translate.onReady();
 				},
 			},
@@ -60,6 +62,7 @@ export function routeConfig($stateProvider, $urlRouterProvider) {
 			resolve: {
 				translateReady($translate) {
 					'ngInject';
+
 					return $translate.onReady();
 				},
 			},

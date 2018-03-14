@@ -66,18 +66,13 @@ The following projects don't build any back-end artifacts but provide build util
 
 You can download this product from the [Talend website](http://www.talend.com/download/talend-open-studio?qt-product_tos_download_new=5&utm_medium=communityext&utm_source=github&utm_campaign=dataprep).
 
-
 ## 3. Usage and Documentation
 
 Documentation is available on [Talend Help Center](http://help.talend.com/).
 
-
-
 ## 4. Support 
 
 You can ask for help on our [Forum](http://www.talend.com/services/global-technical-support).
-
-
 
 ## 5. Contributing
 
@@ -85,17 +80,20 @@ We welcome contributions of all kinds from anyone.
 
 Using the bug tracker [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports, feature requests and submitting pull requests.
 
-
 ### Build
 - All project are maven based.
 - A parent pom builds the web-app and its dependencies.
-- Specific Maven settings are required. See instructions in [tooling](/tooling/).
 - See each module (e.g. [dataprep-dataset](/dataprep-dataset/)) for specific build instructions.
 
-
 ### IDE setup
-See the [tooling](/tooling/) folder.
 
+**Java Formatting**
+
+See formatting instructions in [tools](https://github.com/Talend/tools/tree/master/tools-java-formatter)
+
+**Copyright**
+
+Enable the Copyright plugin, extract the [IDEs/intellij/copyright.tar.gz](/tooling/IDEs/intellij/copyright.tar.gz), import it through the Preferences panel `Editor > Copyright > Copyright Profiles` and define it as Default project copyright
 
 ## 6. License
 

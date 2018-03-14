@@ -1,11 +1,19 @@
 package org.talend.dataprep.qa.util;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.START;
+import static org.talend.dataprep.helper.api.ActionFilterEnum.TYPE;
+import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
+import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
+import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
+
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,18 +23,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.Filter;
-import org.talend.dataprep.qa.dto.Folder;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.START;
-import static org.talend.dataprep.helper.api.ActionFilterEnum.TYPE;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.ROW_ID;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })
@@ -34,79 +30,6 @@ public class OSIntegrationTestUtilTest {
 
     @Autowired
     OSIntegrationTestUtil util;
-
-    Folder emptyPathF = new Folder().setPath("");
-
-    Folder aPathF = new Folder().setPath("/a");
-
-    Folder aaPathF = new Folder().setPath("/a/aa");
-
-    Folder aaaPathF = new Folder().setPath("/a/aa/aaa");
-
-    Folder abPathF = new Folder().setPath("/a/ab");
-
-    Folder rootPathF = new Folder().setPath("/");
-
-    List<Folder> emptyFList = new ArrayList<>();
-
-    List<Folder> allFList = new ArrayList<>();
-    {
-        allFList.add(aPathF);
-        allFList.add(aaPathF);
-        allFList.add(aaaPathF);
-        allFList.add(abPathF);
-    }
-
-    @Test
-    public void splitFolderTest_EmptyF_EmptyFL() {
-        Set<Folder> result = util.splitFolder(emptyPathF, emptyFList);
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void splitFolderTest_EmptyF_AllFL() {
-        Set<Folder> result = util.splitFolder(emptyPathF, allFList);
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void splitFolderTest_Root_EmptyFL() {
-        Set<Folder> result = util.splitFolder(rootPathF, emptyFList);
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void splitFolderTest_Root_AllFL() {
-        Set<Folder> result = util.splitFolder(rootPathF, allFList);
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void splitFolderTest_AFolder_EmptyFL() {
-        Set<Folder> result = util.splitFolder(aPathF, emptyFList);
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void splitFolderTest_AFolder_AllFL() {
-        Set<Folder> result = util.splitFolder(aPathF, allFList);
-        assertEquals(1, result.size());
-        Assert.assertTrue(result.contains(aPathF));
-    }
-
-    @Test
-    public void splitFolderTest_AaFolder_EmptyFL() {
-        Set<Folder> result = util.splitFolder(aaPathF, emptyFList);
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void splitFolderTest_AaFolder_AllFL() {
-        Set<Folder> result = util.splitFolder(aaPathF, allFList);
-        assertEquals(2, result.size());
-        Assert.assertTrue(result.contains(aPathF));
-        Assert.assertTrue(result.contains(aaPathF));
-    }
 
     @Test
     public void mapParamsToFilter_Empty() {
@@ -205,7 +128,7 @@ public class OSIntegrationTestUtilTest {
     @Test
     public void mapParamsToAction_FullParam() {
         Map<String, String> map = new HashMap<>();
-        map.put(COLUMN_ID.getKey(), "0000");
+        map.put(COLUMN_ID.getName(), "0000");
         map.put("column_name", "id");
         map.put(LABEL.getName(), "label");
         map.put(START.getName(), "50000");
@@ -213,11 +136,11 @@ public class OSIntegrationTestUtilTest {
 
         Map<String, Object> parameters = util.mapParamsToActionParameters(map);
 
-        assertEquals("0000", parameters.get(COLUMN_ID.getKey()));
+        assertEquals("0000", parameters.get(COLUMN_ID.getName()));
         assertEquals("id", parameters.get("column_name"));
-        assertEquals(null, parameters.get(ROW_ID.getKey()));
+        assertEquals(null, parameters.get(ROW_ID.getName()));
 
-        Filter filter = (Filter) parameters.get(FILTER.getKey());
+        Filter filter = (Filter) parameters.get(FILTER.getName());
         assertEquals(50000, filter.range.get(START));
         assertEquals("type", filter.range.get(TYPE));
         assertEquals("label", filter.range.get(LABEL));
@@ -241,5 +164,76 @@ public class OSIntegrationTestUtilTest {
     @Test
     public void getFilenameExtension_xlsx() {
         assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+    }
+
+    @Test
+    public void extractPathFromFullName_Empty() {
+        String result = util.extractPathFromFullName("");
+        Assert.assertNotNull(result);
+        assertEquals("/", result);
+    }
+
+    @Test
+    public void extractPathFromFullName_SimpleName() {
+        String result = util.extractPathFromFullName("simpleName");
+        Assert.assertNotNull(result);
+        assertEquals("/", result);
+    }
+
+    @Test
+    public void extractPathFromFullName_RootPath() {
+        String result = util.extractPathFromFullName("/simpleName");
+        Assert.assertNotNull(result);
+        assertEquals("/", result);
+    }
+
+    @Test
+    public void extractPathFromFullName_simplePath() {
+        String result = util.extractPathFromFullName("/simplePath/name");
+        Assert.assertNotNull(result);
+        assertEquals("/simplePath", result);
+    }
+
+    @Test
+    public void extractPathFromFullName_longPath() {
+        String result = util.extractPathFromFullName("/long/path/name");
+        Assert.assertNotNull(result);
+        assertEquals("/long/path", result);
+    }
+
+    @Test
+    public void extractNameFromFullName_Empty() {
+        String result = util.extractNameFromFullName("");
+        Assert.assertNotNull(result);
+        assertEquals("", result);
+    }
+
+    @Test
+    public void extractNameFromFullName_SimpleName() {
+        String result = util.extractNameFromFullName("simpleName");
+        Assert.assertNotNull(result);
+        assertEquals("simpleName", result);
+    }
+
+    // Should never append
+    @Test
+    public void extractNameFromFullName_RootPath() {
+        String result = util.extractNameFromFullName("/");
+        Assert.assertNotNull(result);
+        assertEquals("", result);
+    }
+
+    @Test
+    public void extractNameFromFullName_SimplePath() {
+        String result = util.extractNameFromFullName("/simplePath/name");
+        Assert.assertNotNull(result);
+        assertEquals("name", result);
+    }
+
+    @Test
+    public void extractNameFromFullName_longPath() {
+        String result = util.extractNameFromFullName("/long/path/name");
+        Assert.assertNotNull(result);
+        assertEquals("name", result);
     }
 }

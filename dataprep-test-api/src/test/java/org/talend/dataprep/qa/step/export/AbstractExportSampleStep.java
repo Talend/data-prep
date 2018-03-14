@@ -57,8 +57,10 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         Map<String, Object> ret = new HashMap<>();
 
         // Preparation
-        String suffixedPreparationName = suffixName(params.get(MandatoryParameters.PREPARATION_NAME.getName()));
-        String preparationId = context.getPreparationId(suffixedPreparationName);
+        String prepFullName = params.get(MandatoryParameters.PREPARATION_NAME.getName());
+        String prepPath = util.extractPathFromFullName(prepFullName);
+        String suffixedPrepName = suffixName(util.extractNameFromFullName(prepFullName));
+        String preparationId = context.getPreparationId(suffixedPrepName, prepPath);
 
         // Dataset
         String suffixedDatasetName = suffixName(params.get(DATASET_NAME.getName()));
@@ -68,8 +70,9 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         String filename = params.get(FILENAME.getName());
 
         // TODO manage export from step ? (or from version)
-        List<String> steps = api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath()
-                .getJsonObject("steps");
+        List<String> steps =
+                api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath().getJsonObject(
+                        "steps");
 
         exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);
         exportUtil.feedExportParam(ret, STEP_ID, steps.get(steps.size() - 1));

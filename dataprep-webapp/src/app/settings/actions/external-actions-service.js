@@ -19,6 +19,10 @@ export default class ExternalActionsService {
 
 	dispatch(action) {
 		switch (action.type) {
+		case '@@external/OPEN_PAGE': {
+			this.$window.location.href = `${action.payload.args[0]}?redirect=${this.$window.location.href}`;
+			break;
+		}
 		case '@@external/OPEN_WINDOW': {
 			const { method, args } = action.payload;
 			let externalActionArgs = args || [];
@@ -27,6 +31,7 @@ export default class ExternalActionsService {
 					action.payload.url,
 				];
 			}
+
 			this.$window[method](...externalActionArgs);
 			break;
 		}

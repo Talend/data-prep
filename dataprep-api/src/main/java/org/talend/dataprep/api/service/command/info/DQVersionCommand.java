@@ -15,6 +15,8 @@ package org.talend.dataprep.api.service.command.info;
 
 import static org.talend.dataprep.command.Defaults.asNull;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.http.client.methods.HttpGet;
@@ -26,17 +28,17 @@ import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.info.Version;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
 @Component
 @Scope("prototype")
-public class VersionCommand extends GenericCommand<Version> {
+public class DQVersionCommand extends GenericCommand<Map<String, Object>> {
 
     public static final HystrixCommandGroupKey VERSION_GROUP = HystrixCommandGroupKey.Factory.asKey("version");
 
-    private VersionCommand(String serviceUrl, String entryPoint) {
+    private DQVersionCommand(String serviceUrl, String entryPoint) {
         super(VERSION_GROUP);
 
         execute(() -> {
@@ -50,7 +52,8 @@ public class VersionCommand extends GenericCommand<Version> {
 
     @PostConstruct
     public void init() {
-        on(HttpStatus.OK).then(Defaults.convertResponse(objectMapper, Version.class));
+        on(HttpStatus.OK).then(Defaults.convertResponse(objectMapper, new TypeReference<Map<String, Object>>() {
+        }));
     }
 
 }

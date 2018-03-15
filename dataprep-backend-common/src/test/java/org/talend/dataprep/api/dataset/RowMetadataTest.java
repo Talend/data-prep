@@ -360,18 +360,6 @@ public class RowMetadataTest {
         value.addColumn(getColumnMetadata("third"));
 
         // when
-        value.moveAfter("0001", null);
-
-        // then
-        assertMoveAfterIncorrectInput(value);
-
-        // when
-        value.moveAfter(null, "0001");
-
-        // then
-        assertMoveAfterIncorrectInput(value);
-
-        // when
         value.moveAfter("0001", "0004");
 
         // then

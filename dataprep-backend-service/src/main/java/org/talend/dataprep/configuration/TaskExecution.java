@@ -50,7 +50,7 @@ public class TaskExecution {
      * @see Async
      * @see org.springframework.scheduling.annotation.EnableAsync
      */
-    @Bean(Async.EXECUTOR)
+    @Bean(name = Async.EXECUTOR)
     public TaskExecutor asyncTaskExecutor() {
         return new SimpleAsyncTaskExecutor();
     }

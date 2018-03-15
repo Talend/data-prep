@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * Spring listener on cache event
  */
 @Component
-@ConditionalOnProperty(name = "dateprep.event.listener", havingValue = "spring")
+@ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
 public class CleanCacheListener {
 
     /**

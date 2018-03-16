@@ -18,7 +18,9 @@
     },
     {
       "name": "categories",
-      "type": {"type": "map", "values": "string"}
+      "type": ["null",
+        {"type": "map", "values": "string"}
+      ]
     }
   ]
 }

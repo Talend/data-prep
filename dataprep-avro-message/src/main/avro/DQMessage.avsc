@@ -9,7 +9,7 @@
     },
     {
       "name": "operationType",
-      "type" : "org.talend.dataprep.messages.OperationTypes",
+      "type" : ["null", "org.talend.dataprep.messages.OperationTypes"],
       "default": null
     },
     {
@@ -20,7 +20,8 @@
       "name": "categories",
       "type": ["null",
         {"type": "map", "values": "string"}
-      ]
+      ],
+      "default": null
     }
   ]
 }

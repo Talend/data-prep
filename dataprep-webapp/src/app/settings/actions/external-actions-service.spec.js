@@ -14,12 +14,29 @@
 import angular from 'angular';
 
 describe('External actions service', () => {
-	beforeEach(angular.mock.module('app.settings.actions'));
+	const w = { location: { href: 'https://a.b/c/d?e=f&g=h' }, open: () => {} };
+
+	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
+		$provide.value('$window', w);
+	}));
 
 	describe('dispatch', () => {
+		it('should open page', inject(($window, ExternalActionsService) => {
+			const action = {
+				type: '@@external/OPEN_PAGE',
+				payload: {
+					method: 'open',
+					args: ['https://1.2/3/4']
+				}
+			};
+
+			ExternalActionsService.dispatch(action);
+
+			expect($window.location.href).toEqual('https://1.2/3/4?redirect=https://a.b/c/d');
+		}));
+
 		it('should open window', inject(($window, ExternalActionsService) => {
-			// given
-			const action = { 
+			const action = {
 				type: '@@external/OPEN_WINDOW',
 				payload: {
 					method: 'open',
@@ -27,16 +44,13 @@ describe('External actions service', () => {
 				}
 			};
 			spyOn($window, 'open').and.returnValue();
-			
-			// when
+
 			ExternalActionsService.dispatch(action);
-			
-			// then
+
 			expect($window.open).toHaveBeenCalledWith('http://www.google.fr');
 		}));
 
 		it('should open without args', inject(($window, ExternalActionsService) => {
-			// given
 			const action = {
 				type: '@@external/OPEN_WINDOW',
 				payload: {
@@ -47,10 +61,8 @@ describe('External actions service', () => {
 			};
 			spyOn($window, 'open').and.returnValue();
 
-			// when
 			ExternalActionsService.dispatch(action);
 
-			// then
 			expect($window.open).toHaveBeenCalledWith('http://www.google.fr');
 		}));
 	});

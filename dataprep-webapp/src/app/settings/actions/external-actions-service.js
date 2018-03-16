@@ -11,6 +11,9 @@
 
  ============================================================================*/
 
+const FIRST_PARAMETER = '?';
+const PARAMETERS_SEP = '?';
+
 export default class ExternalActionsService {
 	constructor($window) {
 		'ngInject';
@@ -20,7 +23,19 @@ export default class ExternalActionsService {
 	dispatch(action) {
 		switch (action.type) {
 		case '@@external/OPEN_PAGE': {
-			this.$window.location.href = `${action.payload.args[0]}?redirect=${this.$window.location.href}`;
+			const location = action.payload.args[0];
+			const href = this.$window.location.href;
+			let redirect = href;
+			let separator = FIRST_PARAMETER;
+
+			if (href.includes(FIRST_PARAMETER)) {
+				redirect = href.substring(0, href.indexOf(FIRST_PARAMETER));
+			}
+			if (location.includes(FIRST_PARAMETER)) {
+				separator = PARAMETERS_SEP;
+			}
+
+			this.$window.location.href = `${location}${separator}redirect=${redirect}`;
 			break;
 		}
 		case '@@external/OPEN_WINDOW': {

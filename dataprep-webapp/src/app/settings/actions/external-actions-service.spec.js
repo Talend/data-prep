@@ -14,10 +14,10 @@
 import angular from 'angular';
 
 describe('External actions service', () => {
-	const w = { location: { href: 'https://a.b/c/d?e=f&g=h' }, open: () => {} };
+	const windowMock = { location: { href: 'https://a.b/c/d?e=f&g=h' }, open: () => {} };
 
 	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
-		$provide.value('$window', w);
+		$provide.value('$window', windowMock);
 	}));
 
 	describe('dispatch', () => {
@@ -40,7 +40,7 @@ describe('External actions service', () => {
 				type: '@@external/OPEN_WINDOW',
 				payload: {
 					method: 'open',
-					args: ['http://www.google.fr']
+					args: ['http://www.google.fr'],
 				}
 			};
 			spyOn($window, 'open').and.returnValue();

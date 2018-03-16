@@ -11,7 +11,8 @@ public enum ExportType {
     TABLEAU("TABLEAU"), //
     XLSX("XLSX"), //
     HDFS("HDFS"), //
-    AmazonS3("AmazonS3"); //
+    AmazonS3("AmazonS3"), //
+    AmazonS3DI("AmazonS3DI"); //
 
     private String name;
 

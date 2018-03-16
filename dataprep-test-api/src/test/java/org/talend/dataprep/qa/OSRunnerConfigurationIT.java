@@ -25,6 +25,6 @@ import cucumber.api.junit.Cucumber;
 @CucumberOptions(plugin = { "pretty", "html:target/cucumber", "json:target/cucumber.json" }, //
         glue = { "classpath:org/talend/dataprep/qa/step", "classpath:org/talend/dataprep/qa/config" }, //
         features = "classpath:features") //
-public class OSRunnerConfigurationTest {
+public class OSRunnerConfigurationIT {
 
 }

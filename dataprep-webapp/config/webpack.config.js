@@ -21,7 +21,7 @@ const INDEX_PATH = path.resolve(__dirname, '../src/app/index-module.js');
 const VENDOR_PATH = path.resolve(__dirname, '../src/vendor.js');
 const BUILD_PATH = path.resolve(__dirname, '../build');
 
-const CHUNKS_ORDER = ['vendor', 'style', 'app'];
+const CHUNKS_ORDER = ['vendor', 'style', 'style-themed', 'app'];
 
 function getDefaultConfig(options) {
 	const isTestMode = options.env === 'test';

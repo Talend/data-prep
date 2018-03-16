@@ -24,18 +24,14 @@ export default class ExternalActionsService {
 		switch (action.type) {
 		case '@@external/OPEN_PAGE': {
 			const location = action.payload.args[0];
-			const href = this.$window.location.href;
-			let redirect = href;
+			const href = encodeURIComponent(this.$window.location.href);
 			let separator = FIRST_PARAMETER;
 
-			if (href.includes(FIRST_PARAMETER)) {
-				redirect = href.substring(0, href.indexOf(FIRST_PARAMETER));
-			}
 			if (location.includes(FIRST_PARAMETER)) {
 				separator = PARAMETERS_SEP;
 			}
 
-			this.$window.location.href = `${location}${separator}redirect=${redirect}`;
+			this.$window.location.href = `${location}${separator}redirect=${href}`;
 			break;
 		}
 		case '@@external/OPEN_WINDOW': {

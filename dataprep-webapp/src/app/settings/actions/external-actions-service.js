@@ -12,7 +12,7 @@
  ============================================================================*/
 
 const FIRST_PARAMETER = '?';
-const PARAMETERS_SEP = '?';
+const PARAMETERS_SEP = '&';
 
 export default class ExternalActionsService {
 	constructor($window) {

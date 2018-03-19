@@ -11,8 +11,8 @@ public enum ExportType {
     TABLEAU("TABLEAU"), //
     XLSX("XLSX"), //
     HDFS("HDFS"), //
-    AmazonS3("AmazonS3"), //
-    AmazonS3DI("AmazonS3DI"); //
+    AMAZONS3("AmazonS3"), // Export is run on TDP runtime
+    AMAZONS3DI("AmazonS3DI"); // Export is run on Hadoop Cluster runtime
 
     private String name;
 

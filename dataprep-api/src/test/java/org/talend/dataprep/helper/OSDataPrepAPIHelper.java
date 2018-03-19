@@ -102,12 +102,11 @@ public class OSDataPrepAPIHelper {
      * @return the response.
      */
     public Response addAction(String preparationId, Action action) {
-        ActionRequest actionRequest = new ActionRequest(action);
         return given() //
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
-                .body(actionRequest) //
+                .body(new ActionRequest(action)) //
                 .post("/api/preparations/" + preparationId + "/actions");
     }
 

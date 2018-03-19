@@ -13,15 +13,12 @@
 
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +26,15 @@ import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
+import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with action
@@ -54,8 +53,10 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(params.get(PREPARATION_NAME)));
         Action action = new Action();
-        util.mapParamsToAction(params, action);
-        api.addAction(prepId, action);
+        action.setActionName(params.get(ACTION_NAME));
+        action.parameters = util.mapParamsToActionParameters(params);
+        Response response = api.addAction(prepId, action);
+        response.then().statusCode(200);
     }
 
     @When("^I add a step identified by \"(.*)\" with parameters :$")
@@ -100,7 +101,7 @@ public class ActionStep extends DataPrepStep {
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
         Assert.assertTrue(actions.size() > 0);
         // update stored action parameters
-        util.mapParamsToAction(params, storedAction);
+        storedAction.parameters.putAll(util.mapParamsToActionParameters(params));
         storedAction.id = actions.get(0).id;
         Response response = api.updateAction(prepId, storedAction.id, storedAction);
         response.then().statusCode(200);
@@ -116,8 +117,9 @@ public class ActionStep extends DataPrepStep {
         Action action = new Action();
         action.action = actionName;
         action.id = foundAction.id;
-        action.parameters = foundAction.parameters.clone();
-        util.mapParamsToAction(params, action);
+        action.parameters = new HashMap<>(foundAction.parameters);
+        action.parameters.putAll(util.mapParamsToActionParameters(params));
+
         Response response = api.updateAction(prepId, action.id, action);
         response.then().statusCode(200);
     }
@@ -157,7 +159,7 @@ public class ActionStep extends DataPrepStep {
      * Recover a list of {@link Action} corresponding to a stored {@link Action} type in a given preparation.
      *
      * @param preparationId the preparation id.
-     * @param storedAction the stored {@link Action} type.
+     * @param storedAction  the stored {@link Action} type.
      * @return a {@link List} of {@link Action} that looks like the given storedAction.
      * @throws IOException
      */
@@ -174,9 +176,9 @@ public class ActionStep extends DataPrepStep {
     /**
      * Try to move a step after another step called parentStep.
      *
-     * @param stepName the step to move.
+     * @param stepName       the step to move.
      * @param parentStepName the parent step.
-     * @param prepName the preparation name.
+     * @param prepName       the preparation name.
      * @return the response.
      * @throws IOException
      */

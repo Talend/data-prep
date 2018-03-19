@@ -13,10 +13,11 @@
 
 package org.talend.dataprep.helper.api;
 
-import java.util.EnumMap;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Action In/Out representation.
@@ -30,7 +31,7 @@ public class Action {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public String id;
 
-    public EnumMap<ActionParamEnum, Object> parameters = new EnumMap<>(ActionParamEnum.class);
+    public Map<String, Object> parameters = new HashMap<>();
 
     // Generated equals() on action & parameters attributes
     @Override
@@ -53,5 +54,9 @@ public class Action {
         int result = action != null ? action.hashCode() : 0;
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
         return result;
+    }
+
+    public void setActionName(String action) {
+        this.action = action;
     }
 }

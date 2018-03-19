@@ -1,9 +1,15 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.ActionFilterEnum;
+import org.talend.dataprep.helper.api.ActionParamEnum;
+import org.talend.dataprep.helper.api.Filter;
+import org.talend.dataprep.qa.dto.Folder;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,16 +19,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionFilterEnum;
-import org.talend.dataprep.helper.api.ActionParamEnum;
-import org.talend.dataprep.helper.api.Filter;
-import org.talend.dataprep.qa.dto.Folder;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -30,7 +29,7 @@ import org.talend.dataprep.qa.dto.Folder;
 @Component
 public class OSIntegrationTestUtil {
 
-    public static final String ACTION_NAME = "actionName";
+    static final String ACTION_NAME = "actionName";
 
     private final List<String> parametersToBeSuffixed = Collections.singletonList("new_domain_id");
 
@@ -67,29 +66,30 @@ public class OSIntegrationTestUtil {
     }
 
     /**
-     * Map parameters from a Cucumber step to an {@link Action}.
+     * Map parameters from a Cucumber step to an Action parameters.
+     * <p>add default scope column</p>
      *
      * @param params the parameters to map.
-     * @param action the {@link Action} that will receive the parameters.
      * @return the given {@link Action} updated.
      */
-    @NotNull
-    public Action mapParamsToAction(@NotNull Map<String, String> params, @NotNull Action action) {
-        action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
-        params.forEach((k, v) -> ActionParamEnum.getActionParamEnum(k)
-                .ifPresent(actionParamEnum -> {
-                    Object value;
-                    if (parametersToBeSuffixed.contains(actionParamEnum.getName())) {
-                        value = suffixName(v);
-                    } else {
-                        value = StringUtils.isEmpty(v) ? null : v;
-                    }
-                    action.parameters.put(actionParamEnum, value);
-                }));
-        Filter filter = mapParamsToFilter(params);
-        action.parameters.put(FILTER, filter);
-        action.parameters.putIfAbsent(SCOPE, "column");
-        return action;
+    @Nullable
+    public Map<String, Object> mapParamsToActionParameters(@NotNull Map<String, String> params) {
+        Map<String, Object> actionParameters = new HashMap<>();
+        params.forEach((k, v) ->
+                ActionParamEnum.getActionParamEnum(k)
+                        .ifPresent(actionParamEnum -> {
+                            Object value;
+                            if (parametersToBeSuffixed.contains(actionParamEnum.getName())) {
+                                value = suffixName(v);
+                            } else {
+                                value = StringUtils.isEmpty(v) ? null : v;
+                            }
+                            actionParameters.put(actionParamEnum.getJsonName(), value);
+                        }));
+        actionParameters.put(FILTER.getKey(), mapParamsToFilter(params));
+        actionParameters.putIfAbsent(SCOPE.getKey(), "column");
+
+        return actionParameters;
     }
 
     /**
@@ -102,7 +102,7 @@ public class OSIntegrationTestUtil {
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
         long nbAfes = params.keySet().stream() //
-                .map(ActionFilterEnum::getActionFilterEnum) // //
+                .map(ActionFilterEnum::getActionFilterEnum) //
                 .filter(Objects::nonNull) //
                 .peek(afe -> {
                     String v = params.get(afe.getName());

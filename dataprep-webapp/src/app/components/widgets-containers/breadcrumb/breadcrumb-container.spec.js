@@ -98,10 +98,10 @@ describe('Breadcrumb container', () => {
 			createElement(breadcrumb);
 
 			// then
-			const parentFolder = element.find('.breadcrumb > li').eq(0);
-			expect(parentFolder.find('button').eq(0).text()).toBe('...');
+			const parentFolder = element.find('.breadcrumb > li:not(.sr-only)').eq(0);
+			expect(parentFolder.find('button').eq(0).text()).toBe('…');
 
-			const currentFolder = element.find('.breadcrumb > li').eq(2);
+			const currentFolder = element.find('.breadcrumb > li:not(.sr-only)').eq(2);
 			expect(currentFolder.find('button').eq(0).text()).toBe('CHARLES');
 		});
 

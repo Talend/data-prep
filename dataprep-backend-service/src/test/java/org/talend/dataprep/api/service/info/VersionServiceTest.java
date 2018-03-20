@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.talend.dataprep.info.ManifestInfo;
 import org.talend.dataprep.info.ManifestInfoProvider;
 import org.talend.dataprep.info.Version;
@@ -38,7 +39,7 @@ public class VersionServiceTest {
         final ManifestInfoProvider provider2 = mock(ManifestInfoProvider.class);
         when(provider1.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
         when(provider2.getManifestInfo()).thenReturn(new ManifestInfo("v1", "5678"));
-        versionService.setManifestInfoProviders(asList(provider1, provider2));
+        ReflectionTestUtils.setField(versionService, "manifestInfoProviders", asList(provider1, provider2));
 
         // when
         final Version version = versionService.version();
@@ -55,7 +56,7 @@ public class VersionServiceTest {
         final ManifestInfoProvider provider2 = mock(ManifestInfoProvider.class);
         when(provider1.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
         when(provider2.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
-        versionService.setManifestInfoProviders(asList(provider1, provider2));
+        ReflectionTestUtils.setField(versionService, "manifestInfoProviders", asList(provider1, provider2));
 
         // when
         final Version version = versionService.version();
@@ -72,7 +73,7 @@ public class VersionServiceTest {
         final ManifestInfoProvider provider2 = mock(ManifestInfoProvider.class);
         when(provider1.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
         when(provider2.getManifestInfo()).thenReturn(new ManifestInfo("v2", "1234"));
-        versionService.setManifestInfoProviders(asList(provider1, provider2));
+        ReflectionTestUtils.setField(versionService, "manifestInfoProviders", asList(provider1, provider2));
 
         // when
         final Version version = versionService.version();
@@ -89,7 +90,7 @@ public class VersionServiceTest {
         final ManifestInfoProvider provider2 = mock(ManifestInfoProvider.class);
         when(provider1.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
         when(provider2.getManifestInfo()).thenReturn(new ManifestInfo("N/A", "1234"));
-        versionService.setManifestInfoProviders(asList(provider1, provider2));
+        ReflectionTestUtils.setField(versionService, "manifestInfoProviders", asList(provider1, provider2));
 
         // when
         final Version version = versionService.version();
@@ -97,50 +98,6 @@ public class VersionServiceTest {
         // then
         assertEquals("v1", version.getVersionId());
         assertEquals("1234-1234", version.getBuildId());
-    }
-
-    @Test
-    public void shouldOrderBuildIds() throws Exception {
-        // given
-        final ManifestInfoProvider os = mock(ManifestInfoProvider.class);
-        final ManifestInfoProvider ee = mock(ManifestInfoProvider.class);
-        final ManifestInfoProvider ops = mock(ManifestInfoProvider.class);
-        when(os.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
-        when(os.getName()).thenReturn("os");
-        when(ee.getManifestInfo()).thenReturn(new ManifestInfo("v1", "5678"));
-        when(ee.getName()).thenReturn("ee");
-        when(ops.getManifestInfo()).thenReturn(new ManifestInfo("v1", "91011"));
-        when(ops.getName()).thenReturn("ops");
-        versionService.setManifestInfoProviders(asList(ee, ops, os));
-
-        // when
-        final Version version = versionService.version();
-
-        // then
-        assertEquals("v1", version.getVersionId());
-        assertEquals("1234-5678-91011", version.getBuildId());
-    }
-
-    @Test
-    public void shouldOrderBuildVersions() throws Exception {
-        // given
-        final ManifestInfoProvider os = mock(ManifestInfoProvider.class);
-        final ManifestInfoProvider ee = mock(ManifestInfoProvider.class);
-        final ManifestInfoProvider ops = mock(ManifestInfoProvider.class);
-        when(os.getManifestInfo()).thenReturn(new ManifestInfo("v1", "1234"));
-        when(os.getName()).thenReturn("os");
-        when(ee.getManifestInfo()).thenReturn(new ManifestInfo("v2", "5678"));
-        when(ee.getName()).thenReturn("ee");
-        when(ops.getManifestInfo()).thenReturn(new ManifestInfo("v1", "91011"));
-        when(ops.getName()).thenReturn("ops");
-        versionService.setManifestInfoProviders(asList(ee, ops, os));
-
-        // when
-        final Version version = versionService.version();
-
-        // then
-        assertEquals("v1-v2-v1", version.getVersionId());
-        assertEquals("1234-5678-91011", version.getBuildId());
     }
 
 }

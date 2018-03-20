@@ -27,29 +27,22 @@
     <artifactId>dataprep-test-api</artifactId>
 
     <properties>
+        <skipITs>true</skipITs>
         <spring.version>4.3.7.RELEASE</spring.version>
         <cucumber.version>1.2.5</cucumber.version>
     </properties>
 
-    <!-- =================================================================================== -->
-    <!-- By default tests are skipped. If you do want to run them, use the run-tests profile -->
-    <!-- =================================================================================== -->
+    <!-- ============================================================================================== -->
+    <!-- By default integration tests are not executed. If you do want to run them, use -DskipITs=false -->
+    <!-- ============================================================================================== -->
 
     <dependencies>
-        <!--DataPrep API module-->
         <dependency>
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-api</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-api</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
 
         <dependency>
@@ -109,73 +102,15 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
-                    <!-- by default, tests are skipped (use dedicated profile to run them) -->
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>net.masterthought</groupId>
                 <artifactId>maven-cucumber-reporting</artifactId>
-                <executions>
-                    <execution>
-                        <id>execution</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <projectName>dataprep-test-api</projectName>
-                            <outputDirectory>${project.build.directory}/site/cucumber-reports</outputDirectory>
-                            <cucumberOutput>${project.build.directory}/cucumber.json</cucumberOutput>
-                            <parallelTesting>false</parallelTesting>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
-
     </build>
-
-    <profiles>
-        <!-- this profile runs the integration tests -->
-        <profile>
-            <id>run-tests</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <testFailureIgnore>true</testFailureIgnore>
-                            <skipTests>false</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

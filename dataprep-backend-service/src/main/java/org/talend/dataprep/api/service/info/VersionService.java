@@ -12,13 +12,11 @@
 
 package org.talend.dataprep.api.service.info;
 
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +42,10 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "version", basePath = "/version", description = "versions of running application")
 public class VersionService {
 
+    private static final String UNDEFINED_VERSION_ID = "N/A";
+
     @Autowired(required = false)
     private List<ManifestInfoProvider> manifestInfoProviders;
-
-    /**
-     * @param manifestInfoProviders The new {@link ManifestInfoProvider providers} to use to extract build id and
-     * version id
-     * from.
-     */
-    public void setManifestInfoProviders(List<ManifestInfoProvider> manifestInfoProviders) {
-        this.manifestInfoProviders = manifestInfoProviders;
-    }
 
     /**
      * @return A {@link Version} built following these conventions:
@@ -72,37 +63,24 @@ public class VersionService {
     @Timed
     @PublicAPI
     public Version version() {
-        List<String> preferredOrder = asList("OS", "EE", "OPS");
         String buildId = manifestInfoProviders
                 .stream() //
-                .sorted(Comparator.comparingInt(provider -> {
-                    if (provider.getName() != null) {
-                        return preferredOrder.indexOf(provider.getName().toUpperCase());
-                    }
-                    return 0;
-                })) //
                 .map(ManifestInfoProvider::getManifestInfo) //
                 .map(ManifestInfo::getBuildId) //
-                .collect(Collectors.joining("-"));
-        final Optional<String> uniqueVersions = manifestInfoProviders
+                .collect(joining("-"));
+        final Optional<String> uniqueVersion = manifestInfoProviders
                 .stream() //
-                .sorted(Comparator.comparingInt(provider -> {
-                    if (provider.getName() != null) {
-                        return preferredOrder.indexOf(provider.getName().toUpperCase());
-                    }
-                    return 0;
-                })) //
                 .map(ManifestInfoProvider::getManifestInfo) //
                 .map(ManifestInfo::getVersionId) //
-                .filter(versionId -> !StringUtils.equals("N/A", versionId)) //
+                .filter(versionId -> !StringUtils.equals(UNDEFINED_VERSION_ID, versionId)) //
                 .reduce((s, s2) -> {
                     if (StringUtils.equals(s, s2)) {
                         return s;
                     }
                     return s + '-' + s2;
                 });
-        String versionId = uniqueVersions.orElse("N/A");
+        String serviceUnifiedVersionId = uniqueVersion.orElse(UNDEFINED_VERSION_ID);
 
-        return new Version(versionId, buildId);
+        return new Version(serviceUnifiedVersionId, buildId);
     }
 }

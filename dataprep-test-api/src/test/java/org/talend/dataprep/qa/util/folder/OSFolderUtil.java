@@ -112,7 +112,7 @@ public class OSFolderUtil implements FolderUtil {
         StringBuilder folderBuilder = new StringBuilder();
         Arrays
                 .stream(folderPaths) //
-                .filter(f -> !f.isEmpty() && !f.equals("/")) //
+                .filter(f -> !f.isEmpty() && ! "/".equals(f)) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
                         folderBuilder.append("/");

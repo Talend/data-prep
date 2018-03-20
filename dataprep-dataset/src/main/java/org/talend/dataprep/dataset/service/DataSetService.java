@@ -1248,7 +1248,7 @@ public class DataSetService extends BaseDataSetService {
      */
     private void checkDataSetName(String dataSetName) {
         if (dataSetName.contains("'")) {
-            throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME,
+            throw new TDPException(INVALID_DATASET_NAME,
                     ExceptionContext.withBuilder().put("name", dataSetName).build());
         }
     }

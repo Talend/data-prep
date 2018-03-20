@@ -38,10 +38,6 @@ public class CleanCacheListener {
     @Autowired
     private CacheEventProcessingUtil eventProcessingUtil;
 
-    public CleanCacheListener() {
-        super();
-    }
-
     /**
      * Clean the whole dataset cache.
      *

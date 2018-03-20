@@ -85,7 +85,7 @@ public class FeatureContext {
     }
 
     @PostConstruct
-    private void init() {
+    public void init() {
         folders = folderUtil.getEmptyReverseSortedSet();
     }
 

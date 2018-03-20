@@ -304,8 +304,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         // when
         final String transformed = testClient.getPreparation(preparationId).asString();
         // then
-        final InputStream expectedContent =
-                this.getClass().getResourceAsStream("dataset/dataset_TDP-1308_expected.json");
+        this.getClass().getResourceAsStream("dataset/dataset_TDP-1308_expected.json");
         assertFalse(transformed.isEmpty());
     }
 

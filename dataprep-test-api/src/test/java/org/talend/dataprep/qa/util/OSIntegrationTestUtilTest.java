@@ -32,13 +32,13 @@ public class OSIntegrationTestUtilTest {
     OSIntegrationTestUtil util;
 
     @Test
-    public void mapParamsToFilter_Empty() {
-        Filter result = util.mapParamsToFilter(new HashMap<String, String>());
+    public void mapParamsToFilterEmpty() {
+        Filter result = util.mapParamsToFilter(new HashMap<>());
         Assert.assertNull(result);
     }
 
     @Test
-    public void mapParamsToFilter_NoFilterParam() {
+    public void mapParamsToFilterNoFilterParam() {
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
         map.put("key2", "value2");
@@ -48,7 +48,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToFilter_OneStringFilterParam() {
+    public void mapParamsToFilterOneStringFilterParam() {
         Map<String, String> map = new HashMap<>();
         map.put(LABEL.getName(), "label");
         Filter result = util.mapParamsToFilter(map);
@@ -58,7 +58,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToFilter_VariousStringFilterParam() {
+    public void mapParamsToFilterVariousStringFilterParam() {
         Map<String, String> map = new HashMap<>();
         map.put(LABEL.getName(), "label");
         map.put(FIELD.getName(), "field");
@@ -72,7 +72,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToFilter_OneIntegerFilterParam() {
+    public void mapParamsToFilterOneIntegerFilterParam() {
         Map<String, String> map = new HashMap<>();
         map.put(START.getName(), "15");
         Filter result = util.mapParamsToFilter(map);
@@ -82,7 +82,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToFilter_VariousIntegerFilterParam() {
+    public void mapParamsToFilterVariousIntegerFilterParam() {
         Map<String, String> map = new HashMap<>();
         map.put(START.getName(), "50000");
         map.put(END.getName(), "60000");
@@ -94,7 +94,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToFilter_VariousMixedFilters() {
+    public void mapParamsToFilterVariousMixedFilters() {
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
         map.put(LABEL.getName(), "label");
@@ -107,7 +107,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToAction_Empty() {
+    public void mapParamsToActionEmpty() {
         Action action = new Action();
         action.parameters = util.mapParamsToActionParameters(new HashMap<>());
         assertEquals(null, action.id);
@@ -117,7 +117,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParametersToAction_shouldBeSuffixed() {
+    public void mapParametersToActionShouldBeSuffixed() {
         Map<String, String> parameters = Collections.singletonMap("new_domain_id", "toto");
 
         Map<String, Object> actionParameters = util.mapParamsToActionParameters(parameters);
@@ -126,7 +126,7 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void mapParamsToAction_FullParam() {
+    public void mapParamsToActionFullParam() {
         Map<String, String> map = new HashMap<>();
         map.put(COLUMN_ID.getName(), "0000");
         map.put("column_name", "id");
@@ -147,69 +147,69 @@ public class OSIntegrationTestUtilTest {
     }
 
     @Test
-    public void getFilenameExtension_Empty() {
+    public void getFilenameExtensionEmpty() {
         assertEquals(util.getFilenameExtension("myFile"), "myFile");
     }
 
     @Test
-    public void getFilenameExtension_csv1() {
+    public void getFilenameExtensionCsv1() {
         assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
     }
 
     @Test
-    public void getFilenameExtension_csv2() {
+    public void getFilenameExtensionCsv2() {
         assertEquals(util.getFilenameExtension("my.file.csv"), "csv");
     }
 
     @Test
-    public void getFilenameExtension_xlsx() {
+    public void getFilenameExtensionXlsx() {
         assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
     }
 
     @Test
-    public void extractPathFromFullName_Empty() {
+    public void extractPathFromFullNameEmpty() {
         String result = util.extractPathFromFullName("");
         Assert.assertNotNull(result);
         assertEquals("/", result);
     }
 
     @Test
-    public void extractPathFromFullName_SimpleName() {
+    public void extractPathFromFullNameSimpleName() {
         String result = util.extractPathFromFullName("simpleName");
         Assert.assertNotNull(result);
         assertEquals("/", result);
     }
 
     @Test
-    public void extractPathFromFullName_RootPath() {
+    public void extractPathFromFullNameRootPath() {
         String result = util.extractPathFromFullName("/simpleName");
         Assert.assertNotNull(result);
         assertEquals("/", result);
     }
 
     @Test
-    public void extractPathFromFullName_simplePath() {
+    public void extractPathFromFullNameSimplePath() {
         String result = util.extractPathFromFullName("/simplePath/name");
         Assert.assertNotNull(result);
         assertEquals("/simplePath", result);
     }
 
     @Test
-    public void extractPathFromFullName_longPath() {
+    public void extractPathFromFullNameLongPath() {
         String result = util.extractPathFromFullName("/long/path/name");
         Assert.assertNotNull(result);
         assertEquals("/long/path", result);
     }
 
     @Test
-    public void extractNameFromFullName_Empty() {
+    public void extractNameFromFullNameEmpty() {
         String result = util.extractNameFromFullName("");
         Assert.assertNotNull(result);
         assertEquals("", result);
     }
 
     @Test
-    public void extractNameFromFullName_SimpleName() {
+    public void extractNameFromFullNameSimpleName() {
         String result = util.extractNameFromFullName("simpleName");
         Assert.assertNotNull(result);
         assertEquals("simpleName", result);
@@ -217,21 +217,21 @@ public class OSIntegrationTestUtilTest {
 
     // Should never append
     @Test
-    public void extractNameFromFullName_RootPath() {
+    public void extractNameFromFullNameRootPath() {
         String result = util.extractNameFromFullName("/");
         Assert.assertNotNull(result);
         assertEquals("", result);
     }
 
     @Test
-    public void extractNameFromFullName_SimplePath() {
+    public void extractNameFromFullNameSimplePath() {
         String result = util.extractNameFromFullName("/simplePath/name");
         Assert.assertNotNull(result);
         assertEquals("name", result);
     }
 
     @Test
-    public void extractNameFromFullName_longPath() {
+    public void extractNameFromFullNameLongPath() {
         String result = util.extractNameFromFullName("/long/path/name");
         Assert.assertNotNull(result);
         assertEquals("name", result);

@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +21,27 @@ import org.talend.dataprep.qa.dto.Folder;
 @ContextConfiguration(classes = { OSFolderUtil.class, OSDataPrepAPIHelper.class })
 public class OSFolderUtilTest {
 
-    Folder emptyPathF = new Folder().setPath("");
+    private Folder emptyPathF = new Folder().setPath("");
 
-    Folder aPathF = new Folder().setPath("/a");
+    private Folder aPathF = new Folder().setPath("/a");
 
-    Folder aaPathF = new Folder().setPath("/a/aa");
+    private Folder aaPathF = new Folder().setPath("/a/aa");
 
-    Folder aaaPathF = new Folder().setPath("/a/aa/aaa");
+    private Folder aaaPathF = new Folder().setPath("/a/aa/aaa");
 
-    Folder abPathF = new Folder().setPath("/a/ab");
+    private Folder abPathF = new Folder().setPath("/a/ab");
 
-    Folder rootPathF = new Folder().setPath("/");
+    private Folder rootPathF = new Folder().setPath("/");
 
-    List<Folder> emptyFList = new ArrayList<>();
+    private List<Folder> emptyFList = new ArrayList<>();
 
-    List<Folder> allFList = new ArrayList<>();
+    private List<Folder> allFList = new ArrayList<>();
 
     @Autowired
     private OSFolderUtil folderUtil;
 
-    {
+    @Before
+    public void init(){
         allFList.add(aPathF);
         allFList.add(aaPathF);
         allFList.add(aaaPathF);
@@ -46,50 +49,50 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void splitFolderTest_EmptyF_EmptyFL() {
+    public void splitFolderTestEmptyFEmptyFL() {
         Set<Folder> result = folderUtil.splitFolder(emptyPathF, emptyFList);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test
-    public void splitFolderTest_EmptyF_AllFL() {
+    public void splitFolderTestEmptyFAllFL() {
         Set<Folder> result = folderUtil.splitFolder(emptyPathF, allFList);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test
-    public void splitFolderTest_Root_EmptyFL() {
+    public void splitFolderTestRootEmptyFL() {
         Set<Folder> result = folderUtil.splitFolder(rootPathF, emptyFList);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test
-    public void splitFolderTest_Root_AllFL() {
+    public void splitFolderTestRootAllFL() {
         Set<Folder> result = folderUtil.splitFolder(rootPathF, allFList);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test
-    public void splitFolderTest_AFolder_EmptyFL() {
+    public void splitFolderTestAFolderEmptyFL() {
         Set<Folder> result = folderUtil.splitFolder(aPathF, emptyFList);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test
-    public void splitFolderTest_AFolder_AllFL() {
+    public void splitFolderTestAFolderAllFL() {
         Set<Folder> result = folderUtil.splitFolder(aPathF, allFList);
         Assert.assertEquals(1, result.size());
         Assert.assertTrue(result.contains(aPathF));
     }
 
     @Test
-    public void splitFolderTest_AaFolder_EmptyFL() {
+    public void splitFolderTestAaFolderEmptyFL() {
         Set<Folder> result = folderUtil.splitFolder(aaPathF, emptyFList);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test
-    public void splitFolderTest_AaFolder_AllFL() {
+    public void splitFolderTestAaFolderAllFL() {
         Set<Folder> result = folderUtil.splitFolder(aaPathF, allFList);
         Assert.assertEquals(2, result.size());
         Assert.assertTrue(result.contains(aPathF));
@@ -97,7 +100,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void sortFolder_Empty() {
+    public void sortFolderEmpty() {
         Set<Folder> folders = new HashSet<>();
         SortedSet<Folder> result = folderUtil.sortFolders(folders);
         Assert.assertNotNull(result);
@@ -105,7 +108,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void sortFolder_OneFolder() {
+    public void sortFolderOneFolder() {
         Set<Folder> folders = new HashSet<>();
         folders.add(aPathF);
         SortedSet<Folder> result = folderUtil.sortFolders(folders);
@@ -115,7 +118,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void sortFolder_MultipleFolderNaturalOrderInsert() {
+    public void sortFolderMultipleFolderNaturalOrderInsert() {
         Set<Folder> folders = new HashSet<>();
         folders.add(emptyPathF);
         folders.add(rootPathF);
@@ -129,7 +132,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void sortFolder_MultipleFolderInverseOrderInsert() {
+    public void sortFolderMultipleFolderInverseOrderInsert() {
         Set<Folder> folders = new HashSet<>();
         folders.add(aaPathF);
         folders.add(aPathF);
@@ -143,7 +146,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void sortFolder_MultipleFolderChaoticOrderInsert() {
+    public void sortFolderMultipleFolderChaoticOrderInsert() {
         Set<Folder> folders = new HashSet<>();
         folders.add(emptyPathF);
         folders.add(aPathF);
@@ -157,14 +160,14 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void getEmptyReverseSortedSet_Empty() {
+    public void getEmptyReverseSortedSetEmpty() {
         SortedSet<Folder> sortedFolders = folderUtil.getEmptyReverseSortedSet();
         Assert.assertNotNull(sortedFolders);
         Assert.assertEquals(0, sortedFolders.size());
     }
 
     @Test
-    public void getEmptyReverseSortedSet_OneFolder() {
+    public void getEmptyReverseSortedSetOneFolder() {
         SortedSet<Folder> sortedFolders = folderUtil.getEmptyReverseSortedSet();
         sortedFolders.add(aPathF);
         Assert.assertNotNull(sortedFolders);
@@ -173,7 +176,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void getEmptyReverseSortedSet_MultipleFolderNaturalOrderInsert() {
+    public void getEmptyReverseSortedSetMultipleFolderNaturalOrderInsert() {
         SortedSet<Folder> sortedFolders = folderUtil.getEmptyReverseSortedSet();
         sortedFolders.add(emptyPathF);
         sortedFolders.add(rootPathF);
@@ -186,7 +189,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void getEmptyReverseSortedSet_MultipleFolderReverseOrderInsert() {
+    public void getEmptyReverseSortedSetMultipleFolderReverseOrderInsert() {
         SortedSet<Folder> sortedFolders = folderUtil.getEmptyReverseSortedSet();
         sortedFolders.add(aaPathF);
         sortedFolders.add(aPathF);
@@ -199,7 +202,7 @@ public class OSFolderUtilTest {
     }
 
     @Test
-    public void getEmptyReverseSortedSet_MultipleFolderChaoticOrderInsert() {
+    public void getEmptyReverseSortedSetMultipleFolderChaoticOrderInsert() {
         SortedSet<Folder> sortedFolders = folderUtil.getEmptyReverseSortedSet();
         sortedFolders.add(rootPathF);
         sortedFolders.add(aaPathF);

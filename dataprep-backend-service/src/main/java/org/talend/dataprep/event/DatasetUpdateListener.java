@@ -34,9 +34,6 @@ public class DatasetUpdateListener {
     @Autowired
     protected ApplicationEventPublisher publisher;
 
-    @Autowired
-    private CacheKeyGenerator generator;
-
     @EventListener
     public void onUpdate(DatasetUpdatedEvent event) {
 

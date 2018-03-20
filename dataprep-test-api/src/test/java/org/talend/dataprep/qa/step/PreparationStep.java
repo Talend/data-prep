@@ -105,7 +105,6 @@ public class PreparationStep extends DataPrepStep {
     public void copyPreparation(String prepOriginFullName, String prepDestFullName) throws IOException {
         String suffixedPrepOriginName = getSuffixedPrepName(prepOriginFullName);
         String prepOriginPath = util.extractPathFromFullName(prepOriginFullName);
-        String prepOriginId = context.getPreparationId(suffixedPrepOriginName, prepOriginPath);
         String suffixedPrepDestName = getSuffixedPrepName(prepDestFullName);
         String prepDestPath = util.extractPathFromFullName(prepDestFullName);
 
@@ -159,7 +158,7 @@ public class PreparationStep extends DataPrepStep {
 
     /**
      * Check if a preparation of a given name exist in a specified folder.
-     * 
+     *
      * @param prepFullName the seeked preparation.
      * @return <code>true</code> if the preparation is founded, <code>false</code> else.
      * @throws IOException if the folder preparation listing fails.
@@ -196,7 +195,7 @@ public class PreparationStep extends DataPrepStep {
 
     /**
      * Extract a preparation name from a full preparation name (i.e. with its path) and suffix it.
-     * 
+     *
      * @param prepFullName the preparation full name (with its dataprep path)
      * @return the suffixed preparation name.
      */

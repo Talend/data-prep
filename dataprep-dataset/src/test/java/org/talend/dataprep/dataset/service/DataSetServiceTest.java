@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
@@ -35,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -56,7 +56,6 @@ import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -96,6 +95,9 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     @Autowired
     private ContentCache cacheManager;
+
+    @Autowired
+    private ResourceResolver resolver;
 
     @MockBean
     private QuotaService quotaService;
@@ -755,29 +757,15 @@ public class DataSetServiceTest extends DataSetBaseTest {
         String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
                 .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
 
-        // get metadata
-        DataSet dataSetMetadata = mapper.readValue(RestAssured.get("/datasets/{id}/metadata", dataSetId).asInputStream(), DataSet.class);
-
-        // modify the id
-        dataSetMetadata.getMetadata().setId(dataSetIdFlawed);
-        given().contentType(JSON) //
-                .body(dataSetMetadata) //
-                .when() //
-                .put("/datasets/{id}", dataSetId);
-
         String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);
         given().body(body)
                 .when() //
-                .put("/datasets/{id}/raw", dataSetIdFlawed) //
+                .put("/datasets/{id}/raw?name={name}", dataSetIdFlawed, "toto") //
                 .then() //
                 .statusCode(OK.value());
 
         // expectations
-        // by Rest API
-        List<String> ids = from(when().get("/datasets").asString()).get("id");
-        assertThat(ids, hasItem(dataSetId));
-//        // by DataSet Repository
-//        assertQueueMessages(cleanedDataSetId);
+        assertNotNull(resolver.getResource("/store/datasets/content/dataset/" + dataSetIdFlawed));
     }
 
     @Test

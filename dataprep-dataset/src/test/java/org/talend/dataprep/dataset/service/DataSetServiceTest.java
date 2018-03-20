@@ -56,6 +56,7 @@ import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -748,26 +749,35 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void updateRawContentWithDirectoryTraversalFile_TDP_3505() throws Exception {
         // dataSetId is the filename under which the file will be stored on the server
-        String dataSetId = "foobar..\\..\\..\\a";
-        // avoid Path Traversal Issue by using basename function
-        String cleanedDataSetId = FilenameUtils.getBaseName(dataSetId);
+        String dataSetIdFlawed = "foobar..\\..\\..\\a";
 
-        DataSetMetadata dataSetMetadata = metadataBuilder.metadata().id(cleanedDataSetId).build();
-        dataSetMetadataRepository.save(dataSetMetadata);
+        // create dataset
+        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
+                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+
+        // get metadata
+        DataSet dataSetMetadata = mapper.readValue(RestAssured.get("/datasets/{id}/metadata", dataSetId).asInputStream(), DataSet.class);
+
+        // modify the id
+        dataSetMetadata.getMetadata().setId(dataSetIdFlawed);
+        given().contentType(JSON) //
+                .body(dataSetMetadata) //
+                .when() //
+                .put("/datasets/{id}", dataSetId);
 
         String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);
         given().body(body)
                 .when() //
-                .put("/datasets/{id}/raw", dataSetId) //
+                .put("/datasets/{id}/raw", dataSetIdFlawed) //
                 .then() //
                 .statusCode(OK.value());
 
         // expectations
         // by Rest API
         List<String> ids = from(when().get("/datasets").asString()).get("id");
-        assertThat(ids, hasItem(cleanedDataSetId));
-        // by DataSet Repository
-        assertQueueMessages(cleanedDataSetId);
+        assertThat(ids, hasItem(dataSetId));
+//        // by DataSet Repository
+//        assertQueueMessages(cleanedDataSetId);
     }
 
     @Test

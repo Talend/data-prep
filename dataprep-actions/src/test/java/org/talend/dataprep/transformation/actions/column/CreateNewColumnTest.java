@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,7 +14,9 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;

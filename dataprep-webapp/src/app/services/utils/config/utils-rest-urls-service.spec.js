@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -21,6 +21,7 @@ describe('REST urls service', () => {
 		RestURLs.register({ serverUrl: '' }, settings.uris);
 
 		// then
+		expect(RestURLs.serverUrl).toBe('');
 		expect(RestURLs.datasetUrl).toBe('/api/datasets');
 		expect(RestURLs.uploadDatasetUrl).toBe(RestURLs.datasetUrl);
 		expect(RestURLs.transformUrl).toBe('/api/transform');
@@ -42,6 +43,7 @@ describe('REST urls service', () => {
 		RestURLs.register({ serverUrl: 'http://10.10.10.10:8888' }, settings.uris);
 
 		// then
+		expect(RestURLs.serverUrl).toBe('http://10.10.10.10:8888');
 		expect(RestURLs.datasetUrl).toBe('http://10.10.10.10:8888/api/datasets');
 		expect(RestURLs.uploadDatasetUrl).toBe(RestURLs.datasetUrl);
 		expect(RestURLs.transformUrl).toBe('http://10.10.10.10:8888/api/transform');

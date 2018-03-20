@@ -1,18 +1,13 @@
 package org.talend.dataprep.qa.step;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -20,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
-import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
 import com.jayway.restassured.response.Response;
@@ -29,6 +23,7 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with preparation
@@ -41,37 +36,40 @@ public class PreparationStep extends DataPrepStep {
 
     public static final String DESTINATION = "destination";
 
+    /**
+     * {@link cucumber.api.DataTable} key for new preparationName value.
+     */
     public static final String NEW_PREPARATION_NAME = "newPreparationName";
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationStep.class);
 
     @Given("^I create a preparation with name \"(.*)\", based on \"(.*)\" dataset$")
     public void givenICreateAPreparation(String preparationName, String datasetName) {
-        LOGGER.debug("I create a preparation with name {}", preparationName);
+        String suffixedPreparationName = suffixName(preparationName);
+        String suffixedDatasetName = suffixName(datasetName);
+        LOGGER.info("I create a preparation with name {}", suffixedPreparationName);
         String homeFolder = api.getHomeFolder();
-        final String datasetId = context.getDatasetId(datasetName);
+        final String datasetId = context.getDatasetId(suffixedDatasetName);
         if (StringUtils.isBlank(datasetId)) {
-            fail("could not find dataset id from name '" + datasetName + "' in the context");
+            fail("could not find dataset id from name '" + suffixedDatasetName + "' in the context");
         }
-        String preparationId = api
-                .createPreparation(datasetId, preparationName, homeFolder)
-                .then() //
+        String preparationId = api.createPreparation(datasetId, suffixedPreparationName, homeFolder).then() //
                 .statusCode(200) //
-                .extract()
-                .body()
-                .asString();
+                .extract().body().asString();
 
-        context.storePreparationRef(preparationId, preparationName);
+        context.storePreparationRef(preparationId, suffixedPreparationName);
     }
 
     @Given("^A preparation with the following parameters exists :$")
-    public void checkPreparation(DataTable dataTable) throws IOException {
+    public void checkPreparation(DataTable dataTable) {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        String prepId = context.getPreparationId(params.get(PREPARATION_NAME));
+        String prepId = context.getPreparationId(suffixName(params.get(PREPARATION_NAME)));
         PreparationDetails prepDet = getPreparationDetails(prepId);
         Assert.assertNotNull(prepDet);
-        Assert.assertEquals(prepDet.dataset.dataSetName, params.get(DATASET_NAME));
+        Assert.assertEquals(prepDet.dataset.dataSetName, suffixName(params.get(DATASET_NAME)));
         Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
     }
 
@@ -81,61 +79,75 @@ public class PreparationStep extends DataPrepStep {
         List<Folder> folders = folderUtil.listFolders();
         Folder originFolder = folderUtil.extractFolder(params.get(ORIGIN), folders);
         Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
-        String prepId = context.getPreparationId(preparationName);
-        Response response = api.movePreparation(prepId, originFolder.id, destFolder.id, params.get(NEW_PREPARATION_NAME));
+        String prepId = context.getPreparationId(suffixName(preparationName));
+        Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,
+                suffixName(params.get(NEW_PREPARATION_NAME)));
         response.then().statusCode(200);
+    }
+
+    @Then("^I copy the preparation \"(.*)\" with the following parameters :$")
+    public void copyPreparation(String preparationName, DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        String suffixedPreparationName = suffixName(params.get(NEW_PREPARATION_NAME));
+        List<Folder> folders = folderUtil.listFolders();
+        Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
+        String prepId = context.getPreparationId(suffixName(preparationName));
+        String newPreparationId = api.copyPreparation(prepId, destFolder.id, suffixedPreparationName).then().statusCode(200)
+                .extract().body().asString();
+
+        context.storePreparationRef(newPreparationId, suffixedPreparationName);
+    }
+
+    @When("^I remove the preparation \"(.*)\"$")
+    public void removePreparation(String preparationName) throws IOException {
+        String prepId = context.getPreparationId(suffixName(preparationName));
+        api.deletePreparation(prepId).then().statusCode(200);
+        context.removePreparationRef(suffixName(preparationName));
+    }
+
+    @Then("^I check that the preparation \"(.*)\" doesn't exist in the folder \"(.*)\"$")
+    public void checkPreparationNotExist(String preparationName, String folder) throws IOException {
+        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, folder));
+    }
+
+    @And("I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")
+    public void checkPreparationsSteps(String preparation1, String preparation2) {
+        String prepId1 = context.getPreparationId(suffixName(preparation1));
+        String prepId2 = context.getPreparationId(suffixName(preparation2));
+        PreparationDetails prepDet1 = getPreparationDetails(prepId1);
+        PreparationDetails prepDet2 = getPreparationDetails(prepId2);
+
+        Assert.assertEquals(prepDet1.actions, prepDet2.actions);
+        Assert.assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
+        context.storeObject("copiedPrep", prepDet1);
     }
 
     @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
-    public void checkExistPrep(String preparationName, String folder) throws IOException {
-        String prepId = context.getPreparationId(preparationName);
-        FolderContent folderContent = folderUtil.listPreparation(folder);
-
-        long nb = folderContent.preparations
-                .stream() //
-                .filter(p -> p.id.equals(prepId) //
-                        && p.name.equals(preparationName)) //
-                .count();
-        Assert.assertEquals(1, nb);
+    public void checkPrepExists(String preparationName, String folder) throws IOException {
+        Assert.assertEquals(1, checkPrepExistsInTheFolder(preparationName, folder));
     }
 
-    @Then("^I check that the content of preparation \"(.*)\" equals \"(.*)\" file which have \"(.*)\" as delimiter$")
-    public void iCheckThatTheContentOfPreparationEqualsFile(String preparationName, String fileName, String delimiter)
-            throws Throwable {
-        String prepId = context.getPreparationId(preparationName);
-        Response response = api.getPreparationContent(prepId, "head", "HEAD");
+    private long checkPrepExistsInTheFolder(String preparationName, String folder) throws IOException {
+        String suffixedPreparationName = suffixName(preparationName);
+        String prepId = context.getPreparationId(suffixedPreparationName);
+        FolderContent folderContent = folderUtil.listPreparation(folder);
+
+        return folderContent.preparations.stream() //
+                .filter(p -> p.id.equals(prepId) //
+                        && p.name.equals(suffixedPreparationName)) //
+                .count();
+    }
+
+    @And("^I check that the semantic type \"([^\"]*)\" is removed from the types list of the column \"([^\"]*)\" of the preparation \"([^\"]*)\"$")
+    public void iCheckThatTheSemanticTypeIsRemoved(String semantictypeName, String columnId, String prepName) {
+        String prepId = context.getPreparationId(suffixName(prepName));
+
+        Response response = api.getPreparationsColumnSemanticTypes(columnId, prepId);
         response.then().statusCode(200);
 
-        String content = IOUtils.toString(response.getBody().asInputStream(), UTF_8);
-        PreparationContent pCont = objectMapper.readValue(content, PreparationContent.class);
-
-        CSVParser csvData =
-                CSVParser.parse(this.getClass().getResource(fileName), Charset.defaultCharset(), CSVFormat.RFC4180.withHeader());
-
-        // we check that all data are similaire
-        int index = 0;
-        for (CSVRecord csvRecord : csvData.getRecords()) {
-
-            // we split the csv on the delimiter
-            String[] splitCSVLine = csvRecord.get(0).split(delimiter);
-
-            // we get the same index data on the preparation content
-            LinkedHashMap<String, String> preparationData = (LinkedHashMap<String, String>) pCont.records.get(index);
-            Object[] preparationDataAsArray = preparationData.values().toArray();
-
-            // we check that csv column and prepartion column are the same (minus 1 for the tdpId)
-            Assert.assertEquals(splitCSVLine.length, preparationData.size() - 1);
-
-            // we check that both column on each line are similar
-            for (int indexCol = 0; indexCol < splitCSVLine.length; indexCol++) {
-                Assert.assertEquals(splitCSVLine[indexCol], preparationDataAsArray[indexCol]);
-            }
-
-            index++;
-        }
-
-        // we check number of record. We remove 1 for the header
-        Assert.assertEquals(csvData.getRecordNumber() - 1, pCont.records.size());
-
+        assertEquals(0, response.body()
+                .jsonPath()
+                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semantictypeName) + "'  }")
+                .size());
     }
 }

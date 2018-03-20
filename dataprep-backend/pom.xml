@@ -1,6 +1,6 @@
 <!--
   ~ ============================================================================
-  ~ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~ This source code is available under agreement available at
   ~ https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,21 +18,21 @@
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-parent</artifactId>
-        <version>2.4.0-SNAPSHOT</version>
+        <version>2.6.0-SNAPSHOT</version>
     </parent>
     <artifactId>dataprep-backend</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
+    <version>2.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>dataprep-backend</name>
     <properties>
-        <dataprep.core.version>2.3.1-SNAPSHOT</dataprep.core.version>
+        <dataprep.core.version>2.6.0-SNAPSHOT</dataprep.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <tika.version>1.16</tika.version>
-        <org.talend.daikon.version>0.19.0</org.talend.daikon.version>
-        <dataquality-libraries.version>4.0.1</dataquality-libraries.version>
+        <org.talend.daikon.version>0.20.0</org.talend.daikon.version>
+        <dataquality-libraries.version>5.0.1-SNAPSHOT</dataquality-libraries.version>
         <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>
         <org.talend.dataquality.statistics.version>${dataquality-libraries.version}</org.talend.dataquality.statistics.version>
@@ -51,6 +51,8 @@
         <apache.poi.version>3.15</apache.poi.version>
         <java-semver.version>0.9.0</java-semver.version>
         <commons-math3.version>3.5</commons-math3.version>
+        <!-- (CVE-2017-7525 and 15095) Override Jackson version by patched ones -->
+        <jackson.version>2.9.4</jackson.version>
         <!-- validataion and httpclients Must be compatible with what is imported by spring-boot-starter-web version -->
         <!-- Because we do not import web components in backend lib -->
         <!-- See http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#appendix-dependency-versions -->
@@ -64,12 +66,16 @@
         <module>../dataprep-backend-service</module>
         <module>../dataprep-backend-service-parent</module>
         <module>../dataprep-actions</module>
+        <module>../dataprep-async-api</module>
+        <module>../dataprep-async-runtime</module>
         <module>../dataprep-dataset</module>
         <module>../dataprep-transformation</module>
         <module>../dataprep-preparation</module>
         <module>../dataprep-api</module>
         <module>../dataprep-maintenance</module>
         <module>../dataprep-test-api</module>
+        <module>../dataprep-upgrade-common</module>
+        <module>../dataprep-upgrade</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -276,6 +282,16 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-async-runtime</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-async-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-transformation</artifactId>
                 <version>${project.version}</version>
                 <classifier>lib</classifier>
@@ -302,6 +318,11 @@
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-common</artifactId>
                 <version>${dataprep.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-upgrade-common</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.daikon</groupId>
@@ -442,6 +463,52 @@
                 <artifactId>log4j-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-afterburner</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-cbor</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.9.14-TALEND</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>1.9.14-TALEND</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -534,7 +601,7 @@
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
-                <version>2.3.0</version>
+                <version>2.7.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -614,6 +681,13 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
+                <artifactId>dataprep-upgrade-common</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-transformation</artifactId>
                 <type>test-jar</type>
                 <version>${project.version}</version>
@@ -639,6 +713,18 @@
                 <version>${httpclient.tests.version}</version>
                 <classifier>tests</classifier>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lordofthejars</groupId>
+                <artifactId>nosqlunit-mongodb</artifactId>
+                <version>0.10.0</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.fakemongo</groupId>
+                        <artifactId>fongo</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

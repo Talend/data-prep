@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -46,7 +46,7 @@ import org.talend.dataquality.converters.DistanceEnum;
 /**
  * Convert distance from one unit to another.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DistanceConverter.ACTION_NAME)
+@Action(DistanceConverter.ACTION_NAME)
 public class DistanceConverter extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -60,7 +60,7 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
     private static final String TARGET_PRECISION = "precision";
 
-    protected static final String NEW_COLUMN_SEPARATOR = "_in_";
+    private static final String NEW_COLUMN_SEPARATOR = "_in_";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
@@ -88,9 +88,11 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
                 .item(LIGHT_YEAR.name(), LIGHT_YEAR.getShortName())
                 .canBeBlank(false);
 
-        parameters.add(builder.defaultValue(MILE.name()).name(FROM_UNIT_PARAMETER).build(this));
+        parameters.add(builder.name(FROM_UNIT_PARAMETER).defaultValue(MILE.name()).build(this));
 
-        parameters.add(builder.defaultValue(KILOMETER.name()).name(TO_UNIT_PARAMETER).build(this));
+        builder.setLabel(null).setDescription(null);
+
+        parameters.add(builder.name(TO_UNIT_PARAMETER).defaultValue(KILOMETER.name()).build(this));
 
         parameters.add(parameter(locale).setName(TARGET_PRECISION)
                 .setType(INTEGER)

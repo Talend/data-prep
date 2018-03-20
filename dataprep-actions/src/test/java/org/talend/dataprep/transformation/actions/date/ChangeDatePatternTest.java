@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,17 +12,6 @@
 //  ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
-import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
-
-import java.io.IOException;
-import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -38,6 +27,28 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.setStatistics;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
 /**
  * Unit test for the ChangeDatePattern action.
@@ -88,6 +99,28 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
+
+    @Test
+    public void should_accept_column() {
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+    }
+
+    @Test
+    public void should_not_accept_column() {
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+    }
+
+    @Test
+    public void should_have_expected_behavior() {
+        assertEquals(3, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_TYPE));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_PATTERN));
+    }
+
     @Test(expected = TalendRuntimeException.class)
     public void should_check_column_id_parameter_when_dealing_with_row_metadata() {
         //given
@@ -122,9 +155,59 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
     @Test
     public void test_apply_in_newcolumn() throws Exception {
         // given
+        final DataSetRow row1 = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("recipe")) //
+                .build();
+        final DataSetRow row2 = builder() //
+                .with(value("tata").type(Type.STRING).name("recipe")) //
+                .with(value("01/22/2018").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .build();
+        final DataSetRow row3 = builder() //
+                .with(value("tata").type(Type.STRING).name("recipe")) //
+                .with(value("22/01/2018").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .build();
+        parameters.put(CREATE_NEW_COLUMN, "true");
+
+        // then
+        assertEquals(7, row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().size());
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow1 = getRow("toto", "04/25/1999", "tata", "25 - Apr - 1999");
+        final DataSetRow expectedRow2 = getRow("tata", "01/22/2018", "toto", "22 - Jan - 2018");
+        final DataSetRow expectedRow3 = getRow("tata", "22/01/2018", "toto");
+        assertEquals(expectedRow1.values(), row1.values());
+        assertEquals(expectedRow2.values(), row2.values());
+        assertEquals(expectedRow3.values(), row3.values());
+
+        ColumnMetadata column1 = row1.getRowMetadata().getColumns().get(1);
+        ColumnMetadata column2 = row1.getRowMetadata().getColumns().get(2);
+        List<PatternFrequency> listPatternFirstColumn = column1.getStatistics().getPatternFrequencies();
+        List<PatternFrequency> listPatternSecondColumn = column2.getStatistics().getPatternFrequencies();
+
+        // check that the stats on the from column are not changed
+        assertEquals(7, listPatternFirstColumn.size());
+        assertEquals("MM/dd/yyyy", listPatternSecondColumn.get(0).getPattern());
+        // check that the stats on the target column are changed, and the new target pattern is added to the known ones
+        assertEquals(8, listPatternSecondColumn.size());
+        assertEquals("dd - MMM - yyyy", listPatternSecondColumn.get(7).getPattern());
+        // the new added pattern should had the biggest frequency : so it is the old most used pattern count + 1
+        assertEquals(listPatternSecondColumn.get(7).getOccurrences(),
+                listPatternSecondColumn.get(0).getOccurrences() + 1);
+    }
+
+    @Test
+    public void test_apply_in_newcolumn_with_empty_values() throws Exception {
+        // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.DATE).name("last update")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
@@ -133,7 +216,7 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata", "25 - Apr - 1999");
+        final DataSetRow expectedRow = getRow("toto", "", "tata", "");
         assertEquals(expectedRow.values(), row.values());
     }
 
@@ -207,9 +290,9 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
     public void should_set_new_pattern_as_most_used_one() throws Exception {
         // given
         final DataSetRow row = builder() //
-                .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("tata").type(Type.DATE).name("last update")) //
+                .with(value("toto").type(Type.STRING).name("tips")) //
+                .with(value("04/25/1999").type(Type.DATE).name("date").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("test")) //
                 .build();
 
         // when
@@ -236,8 +319,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
-                .with(value("tata").type(Type.DATE).name("last update")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
 
@@ -290,6 +373,24 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         final DataSetRow expectedRow = getRow("toto", "NA", "tata");
         assertEquals(expectedRow.values(), row.values());
     }
+
+    @Test
+    public void should_process_with_no_pattern_mode() throws Exception {
+        // given
+        DataSetRow row = getRow("toto", "Apr-25-09", "tata");
+        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+
+        parameters.put(ChangeDatePattern.FROM_MODE, "test");
+        parameters.put(ChangeDatePattern.FROM_CUSTOM_PATTERN, "MMM-dd-yy");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "Apr-25-09", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
 
     /**
      * @see <a href="https://jira.talendforge.org/browse/TDP-1657">Jira TDP-1657</a>
@@ -420,25 +521,5 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         assertEquals(expectedRow.values(), row.values());
     }
 
-    @Test
-    public void should_accept_column() {
-        assertTrue(action.acceptField(getColumn(Type.DATE)));
-    }
-
-    @Test
-    public void should_not_accept_column() {
-        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptField(getColumn(Type.STRING)));
-        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
-    }
-
-    @Test
-    public void should_have_expected_behavior() {
-        assertEquals(3, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CHANGE_TYPE));
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_PATTERN));
-    }
 
 }

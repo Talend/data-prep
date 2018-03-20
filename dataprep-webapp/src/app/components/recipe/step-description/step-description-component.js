@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,6 +11,7 @@
 
  ============================================================================*/
 
+import template from './step-description.html';
 import StepDescriptionCtrl from './step-description-controller';
 
 const StepDescription = {
@@ -19,7 +20,7 @@ const StepDescription = {
 		step: '<',
 	},
 	controller: StepDescriptionCtrl,
-	template: '<span ng-bind-html="$ctrl.stepDescription" class="step-description"></span>',
+	templateUrl: template,
 };
 
 export default StepDescription;

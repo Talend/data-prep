@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -36,12 +36,11 @@ describe('Actions list controller', () => {
         };
     }));
 
-    beforeEach(inject(($q, PlaygroundService, TransformationService, EarlyPreviewService) => {
+    beforeEach(inject(($q, PlaygroundService, TransformationService, EarlyPreviewService, StateService) => {
         spyOn(PlaygroundService, 'completeParamsAndAppend').and.returnValue($q.when());
         spyOn(TransformationService, 'initDynamicParameters').and.returnValue($q.when());
-        spyOn(EarlyPreviewService, 'activatePreview').and.returnValue();
-        spyOn(EarlyPreviewService, 'deactivatePreview').and.returnValue();
-        spyOn(EarlyPreviewService, 'cancelPendingPreview').and.returnValue();
+        spyOn(StateService, 'setTransformationInProgress');
+        spyOn(EarlyPreviewService, 'cancelEarlyPreview').and.returnValue();
         spyOn(EarlyPreviewService, 'earlyPreview').and.returnValue();
     }));
 
@@ -119,7 +118,7 @@ describe('Actions list controller', () => {
             expect(PlaygroundService.completeParamsAndAppend).toHaveBeenCalledWith(transformation, 'column', undefined);
         }));
 
-        it('should cancel pending preview and disable it', inject((EarlyPreviewService) => {
+        it('should cancel pending preview and disable it', inject((EarlyPreviewService, StateService) => {
             //given
             const transformation = { name: 'tolowercase' };
             const params = { param: 'value' };
@@ -132,11 +131,11 @@ describe('Actions list controller', () => {
             closure(params);
 
             //then
-            expect(EarlyPreviewService.deactivatePreview).toHaveBeenCalled();
-            expect(EarlyPreviewService.cancelPendingPreview).toHaveBeenCalled();
+            expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(true);
+            expect(EarlyPreviewService.cancelEarlyPreview).toHaveBeenCalled();
         }));
 
-        it('should re-enable early preview after 500ms', inject( ($timeout, EarlyPreviewService) => {
+        it('should re-enable early preview after 500ms', inject( ($timeout, StateService) => {
             //given
             const transformation = { name: 'tolowercase' };
             const params = { param: 'value' };
@@ -149,30 +148,11 @@ describe('Actions list controller', () => {
             closure(params);
             scope.$digest();
 
-            expect(EarlyPreviewService.activatePreview).not.toHaveBeenCalled();
+            expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(true);
             $timeout.flush(500);
 
             //then
-            expect(EarlyPreviewService.activatePreview).toHaveBeenCalled();
-        }));
-        it('should update transformationInProgress', inject(($timeout) => {
-            //given
-            const transformation = { name: 'tolowercase' };
-            const params = { param: 'value' };
-            const ctrl = createController();
-            ctrl.scope = 'column';
-            ctrl.showDynamicModal = true;
-
-            //when
-            const closure = ctrl.transform(transformation);
-            closure(params);
-            scope.$digest();
-
-            expect(ctrl.transformationInProgress).toEqual(true);
-            $timeout.flush(500);
-
-            //then
-            expect(ctrl.transformationInProgress).toEqual(false);
+            expect(StateService.setTransformationInProgress).toHaveBeenCalledWith(false);
         }));
     });
 

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -45,7 +45,14 @@ describe('Settings service', () => {
 				.expectGET(RestURLs.settingsUrl)
 				.respond(200, settings);
 
-			expect(appSettings).toEqual({ views: {}, actions: {}, uris: {}, help: {}, analytics: {} });
+			expect(appSettings).toEqual({
+				actions: {},
+				analytics: {},
+				context: {},
+				help: {},
+				uris: {},
+				views: {},
+			});
 
 			// when
 			SettingsService.refreshSettings();
@@ -61,16 +68,25 @@ describe('Settings service', () => {
 
 	describe('setSettings', () => {
 		it('should merge settings', inject((appSettings, SettingsService) => {
-			expect(appSettings).toEqual({ views: {}, actions: {}, uris: {}, help: {}, analytics: {} });
+
+			expect(appSettings).toEqual({
+				actions: {},
+				analytics: {},
+				context: {},
+				help: {},
+				uris: {},
+				views: {},
+			});
 
 			const newSettings = {
+				actions: {},
+				analytics: {},
+				context: {},
+				help: {},
+				uris: {},
 				views: {
 					myCustomView: {}
 				},
-				actions: {},
-				uris: {},
-				help: {},
-				analytics: {},
 			};
 
 			// when

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,10 +13,6 @@
 
 package org.talend.dataprep.qa.config;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -53,22 +49,20 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Retrieve the details of a preparation from its id.
      *
      * @param preparationId the preparation id.
      * @return the preparation details.
-     * @throws IOException
      */
-    protected PreparationDetails getPreparationDetails(String preparationId) throws IOException {
-        PreparationDetails preparationDetails = null;
+    protected PreparationDetails getPreparationDetails(String preparationId) {
         Response response = api.getPreparationDetails(preparationId);
-        response.then().statusCode(200);
-        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        preparationDetails = objectMapper.readValue(content, PreparationDetails.class);
-        return preparationDetails;
+        response.then()
+                .statusCode(200);
+
+        return response.as(PreparationDetails.class);
     }
 
 }

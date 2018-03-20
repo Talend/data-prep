@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,12 +14,15 @@
 package org.talend.dataprep.qa;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.talend.dataprep.qa.config.BackendProperties;
 
 @Configurable
 @ComponentScan(basePackages = { "org.talend.dataprep.qa", "org.talend.dataprep.helper" })
 @PropertySource("classpath:application.properties")
+@EnableConfigurationProperties(BackendProperties.class)
 public class SpringContextConfiguration {
 
 }

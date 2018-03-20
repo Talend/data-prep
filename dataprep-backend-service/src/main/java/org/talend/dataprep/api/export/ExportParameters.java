@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -17,6 +17,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.async.AsyncGroupKey;
 import org.talend.dataprep.validation.OneNotBlank;
@@ -202,5 +203,9 @@ public class ExportParameters implements AsyncGroupKey {
                 ", arguments=" + arguments + //
                 ", filter=" + filter + //
                 '}';
+    }
+
+    public String generateUniqueId(){
+        return DigestUtils.sha1Hex(preparationId +"_" + stepId + "_" + datasetId + "_" + from +"_" + filter);
     }
 }

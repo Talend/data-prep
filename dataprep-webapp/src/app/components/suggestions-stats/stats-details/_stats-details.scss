@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,41 +12,68 @@
   ============================================================================*/
 
 .stats-part {
+  .stats-details, .stats-details-part {
+    @include flex-column();
+	height: 100%;
+	position: relative;
 
-  .stat-detail-tab-items {
-    height: calc(100% - 40px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: absolute;
-    width: 100%;
-  }
+    .stats-container {
+        flex-grow: 1;
+        flex-shrink: 1;
+        position: relative;
+        overflow: hidden;
 
-  .two-columns-values {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    flex-direction: row;
+        .stat-detail-tab-items {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: absolute;
+            width: 100%;
+        }
+    }
 
-    .stat-table {
-      width: auto;
-      flex-grow: 0;
-      flex-shrink: 0;
+    .stat-detail-tab-items {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
 
-      td {
-        border: 0;
-        padding: 0;
+      padding: {
+        top: 0.5em;
+        bottom: 0.5em;
       }
 
-      .stat-key {
-        text-align: right;
-      }
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
 
-      .stat-value {
-        text-align: left;
-        padding-left: 5px;
+    .two-columns-values {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-around;
 
-        font-size: 15px;
-        font-weight: bold;
+      .stat-table {
+        width: auto;
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        td {
+          border: 0;
+          padding: 0;
+        }
+
+        .stat-key {
+          text-align: right;
+        }
+
+        .stat-value {
+          text-align: left;
+          padding-left: 5px;
+
+          font-size: 15px;
+          font-weight: bold;
+        }
       }
     }
   }

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,15 +15,14 @@ package org.talend.dataprep.transformation.actions.math;
 import java.math.RoundingMode;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 /**
  * Returns the smallest (closest to negative infinity) value that is greater than or equal to the value and is equal to
  * a mathematical integer.
- * 
+ *
  * @see RoundingMode#CEILING
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundCeil.ACTION_NAME)
+@Action(RoundCeil.ACTION_NAME)
 public class RoundCeil extends AbstractRound {
 
     /** The action name. */

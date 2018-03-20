@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -617,7 +617,7 @@ describe('Import service', () => {
 
 				// then
 				expect(DatasetService.checkNameAvailability).toHaveBeenCalledWith(ImportService.datasetName);
-				expect(TalendConfirmService.confirm).toHaveBeenCalledWith(null, ['UPDATE_EXISTING_DATASET'], { dataset: 'my cool dataset' });
+				expect(TalendConfirmService.confirm).toHaveBeenCalledWith(['UPDATE_EXISTING_DATASET'], { dataset: 'my cool dataset' });
 				expect(DatasetService.create).not.toHaveBeenCalled();
 				expect(DatasetService.update).not.toHaveBeenCalled();
 			}));

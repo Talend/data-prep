@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -75,8 +75,8 @@ describe('Side Panel container', () => {
 			scope.$digest();
 
 			// then
-			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBeFalsy();
-			expect(element.find('nav > ul > li').eq(2).hasClass('active')).toBeTruthy();
+			expect(element.find('nav > ul > li').eq(0).hasClass('active')).toBeFalsy();
+			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBeTruthy();
 		});
 	});
 

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,21 +11,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.pipeline;
-
-import static org.slf4j.LoggerFactory.getLogger;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -47,17 +32,38 @@ import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.FilteredNode;
 import org.talend.dataprep.transformation.pipeline.node.LimitNode;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class Pipeline implements Node, RuntimeNode, Serializable {
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOG = getLogger(Pipeline.class);
 
-    /** For the Serialization interface. */
+    /**
+     * For the Serialization interface.
+     */
     private static final long serialVersionUID = 1L;
 
     private Node node;
 
-    /** Flag used to know if the pipeline is stopped or not. */
+    /**
+     * Flag used to know if the pipeline is stopped or not.
+     */
     private final AtomicBoolean isStopped = new AtomicBoolean();
 
     /**
@@ -97,10 +103,9 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 // but we proceed all the rows of the stream
                 // to replace when java introduce more useful functions to stream (ex: takeWhile)
                 records //
-                        .map(row -> { //
+                        .peek(row -> { //
                             node.exec().receive(row, rowMetadata);
                             counter.addAndGet(1L);
-                            return row;
                         }) //
                         .allMatch(row -> !isStopped.get());
                 LOG.debug("{} rows sent in the pipeline", counter.get());
@@ -211,7 +216,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private PreparationMessage preparation;
 
-        private Function<Step, RowMetadata> rowMetadataSupplier = s -> null;
+        private Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> null;
 
         private Long limit = null;
 
@@ -219,8 +224,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return new Builder();
         }
 
-        public Builder withStepMetadataSupplier(Function<Step, RowMetadata> rowMetadataSupplier) {
-            this.rowMetadataSupplier = rowMetadataSupplier;
+        public Builder withStepMetadataSupplier(Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
+            this.previousStepRowMetadataSupplier = previousStepRowMetadataSupplier;
             return this;
         }
 
@@ -342,7 +347,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), rowMetadataSupplier);
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), previousStepRowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {

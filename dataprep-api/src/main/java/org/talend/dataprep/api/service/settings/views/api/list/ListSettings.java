@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -152,6 +152,15 @@ public class ListSettings implements ViewSettings {
                 this.list
                         .getColumns() //
                         .forEach(mapEntry -> mapEntry.put("label", DataprepBundle.message((String) mapEntry.get("label"))));
+            }
+
+            if (Objects.nonNull(this.toolbar) && Objects.nonNull(this.toolbar.getSort())) {
+                this.toolbar.getSort()
+                        .getOptions() //
+                        .forEach(mapEntry -> mapEntry.put(
+                            "name",
+                            DataprepBundle.message((String) mapEntry.get("name"))
+                        ));
             }
 
             return this;

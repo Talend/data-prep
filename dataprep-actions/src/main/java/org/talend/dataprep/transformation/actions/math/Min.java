@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,16 +18,15 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Min.MIN_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Calculate Min with a constant or an other column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MIN_NAME)
+@Action(MIN_NAME)
 public class Min extends AbstractMathOneParameterAction {
 
-    protected static final String MIN_NAME = "min_numbers";
+    public static final String MIN_NAME = "min_numbers";
 
     @Override
     public String getName() {

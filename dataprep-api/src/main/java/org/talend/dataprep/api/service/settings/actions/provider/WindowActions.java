@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,8 +15,10 @@ package org.talend.dataprep.api.service.settings.actions.provider;
 
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 
+import java.util.ArrayList;
+
+import static org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings.dropdownBuilder;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.*;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings.splitDropdownBuilder;
 
 /**
  * Actions that triggers windows (modal, new tab, ...) settings
@@ -30,6 +32,11 @@ public interface WindowActions {
             .type("@@onboarding/START_TOUR")
             .payload(PAYLOAD_METHOD_KEY, "startTour")
             .payload(PAYLOAD_ARGS_KEY, new String[]{"preparation"})
+            .build();
+
+    ActionSettings DIVIDER = builder()
+            .id("divider")
+            .divider(true)
             .build();
 
     ActionSettings ONBOARDING_PLAYGROUND = builder()
@@ -57,20 +64,18 @@ public interface WindowActions {
             .payload(PAYLOAD_METHOD_KEY, "showFeedback")
             .build();
 
-    ActionSettings HEADERBAR_HELP = splitDropdownBuilder()
-            .id("headerbar:help")
-            .name("headerbar.help")
-            .icon("talend-question-circle")
-            .type("@@headerbar/HELP")
-            .action("external:help")
+    ActionSettings HEADERBAR_INFORMATION = dropdownBuilder()
+            .id("headerbar:information")
+            .name("headerbar.information")
+            .icon("talend-information")
+            .staticActions(new ArrayList<>())
             .build();
 
-    ActionSettings PLAYGROUND_HEADERBAR_HELP = splitDropdownBuilder()
-            .id("playground:headerbar:help")
-            .name("headerbar.help")
-            .icon("talend-question-circle")
-            .type("@@headerbar/HELP")
-            .action("external:help")
+    ActionSettings HEADERBAR_INFORMATION_PLAYGROUND = dropdownBuilder()
+            .id("headerbar:playground:information")
+            .name("headerbar.information")
+            .icon("talend-information")
+            .staticActions(new ArrayList<>())
             .build();
 
     ActionSettings EXTERNAL_DOCUMENTATION = builder()

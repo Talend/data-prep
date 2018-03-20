@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "remove_negative_values",
+      "parameters": {
+        "column_id": "0001",
+        "scope": "column"
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -41,7 +41,7 @@ public class ScheduledCacheJanitor {
     /**
      * Cleans the cache every minute.
      */
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000, initialDelay = 30 * 60 * 1000)
     public void scheduledJanitor() {
         LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
         forAll.execute(() -> janitor.janitor());

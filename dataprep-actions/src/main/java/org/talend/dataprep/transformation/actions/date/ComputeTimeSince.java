@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,18 +12,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
-
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
-import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -37,12 +25,28 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeTimeSince.TIME_SINCE_ACTION_NAME)
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
+@Action(ComputeTimeSince.TIME_SINCE_ACTION_NAME)
 public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
     /**
@@ -54,23 +58,24 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
      * Parameter to set which date to compare to. 3 modes: 'now at runtime', specific date defined by user, took from
      * another column.
      */
-    protected static final String SINCE_WHEN_PARAMETER = "since_when";
+    static final String SINCE_WHEN_PARAMETER = "since_when";
 
-    protected static final String SPECIFIC_DATE_MODE = "specific_date";
+    static final String SPECIFIC_DATE_MODE = "specific_date";
 
     /**
      * The unit in which show the period.
      */
-    protected static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
+    static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
 
-    protected static final String SPECIFIC_DATE_PARAMETER = "specific_date"; //$NON-NLS-1$
+    static final String SPECIFIC_DATE_PARAMETER = "specific_date"; //$NON-NLS-1$
 
-    protected static final String SINCE_DATE_PARAMETER = "since_date";
+    private static final String SINCE_DATE_PARAMETER = "since_date";
 
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm";
 
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
+    private static final Boolean CREATE_NEW_COLUMN_DEFAULT = true;
     /**
      * The new column prefix.
      */
@@ -90,8 +95,6 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         return TIME_SINCE_ACTION_NAME;
     }
 
-    public static final Boolean CREATE_NEW_COLUMN_DEFAULT = true;
-
     @Override
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
@@ -103,6 +106,8 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 .item(ChronoUnit.MONTHS.name(), "months") //
                 .item(ChronoUnit.DAYS.name(), "days") //
                 .item(ChronoUnit.HOURS.name(), "hours") //
+                .item(ChronoUnit.MINUTES.name(), "minutes") //
+                .item(ChronoUnit.SECONDS.name(), "seconds") //
                 .defaultValue(ChronoUnit.HOURS.name()) //
                 .build(this));
 
@@ -163,16 +168,16 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             String mode = context.get(SINCE_WHEN_PARAMETER);
             LocalDateTime since;
             switch (mode) {
-            case OTHER_COLUMN_MODE:
-                ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
-                String dateToCompare = row.get(selectedColumn.getId());
-                since = Providers.get().parse(dateToCompare, selectedColumn);
-                break;
-            case SPECIFIC_DATE_MODE:
-            case NOW_SERVER_SIDE_MODE:
-            default:
-                since = context.get(SINCE_DATE_PARAMETER);
-                break;
+                case OTHER_COLUMN_MODE:
+                    ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+                    String dateToCompare = row.get(selectedColumn.getId());
+                    since = Providers.get().parse(dateToCompare, selectedColumn);
+                    break;
+                case SPECIFIC_DATE_MODE:
+                case NOW_SERVER_SIDE_MODE:
+                default:
+                    since = context.get(SINCE_DATE_PARAMETER);
+                    break;
             }
 
             // parse the date
@@ -194,7 +199,8 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS);
+        // the action needs the Date pattern to be applied
+        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
     }
 
     private static LocalDateTime parseSinceDateIfConstant(Map<String, String> parameters) {
@@ -202,21 +208,21 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
         LocalDateTime since;
         switch (mode) {
-        case SPECIFIC_DATE_MODE:
-            try {
-                since = LocalDateTime.parse(parameters.get(SPECIFIC_DATE_PARAMETER), DEFAULT_FORMATTER);
-            } catch (DateTimeException e) {
-                LOGGER.info("Error parsing input date. The front-end might have supplied a corrupted value.", e);
-                since = null;
-            }
-            break;
-        case OTHER_COLUMN_MODE:
-            since = null; // It will be computed in apply
-            break;
-        case NOW_SERVER_SIDE_MODE:
-        default:
-            since = LocalDateTime.now();
-            break;
+            case SPECIFIC_DATE_MODE:
+                try {
+                    since = LocalDateTime.parse(parameters.get(SPECIFIC_DATE_PARAMETER), DEFAULT_FORMATTER);
+                } catch (DateTimeException e) {
+                    LOGGER.info("Error parsing input date. The front-end might have supplied a corrupted value.", e);
+                    since = null;
+                }
+                break;
+            case OTHER_COLUMN_MODE:
+                since = null; // It will be computed in apply
+                break;
+            case NOW_SERVER_SIDE_MODE:
+            default:
+                since = LocalDateTime.now();
+                break;
         }
         return since;
     }

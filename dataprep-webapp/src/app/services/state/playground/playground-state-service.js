@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -22,6 +22,7 @@ export const playgroundState = {
 	sampleType: 'HEAD',
 	isReadOnly: false,
 	stepInEditionMode: null,
+	transformationInProgress: false,
 };
 
 export function PlaygroundStateService($translate,
@@ -62,6 +63,7 @@ export function PlaygroundStateService($translate,
 		setIsPreprationPickerVisible,
 		setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading,
+		setTransformationInProgress,
 
 		// parameters
 		toggleDatasetParameters,
@@ -124,6 +126,7 @@ export function PlaygroundStateService($translate,
 		setStatisticsHistogramActiveLimits: StatisticsStateService.setHistogramActiveLimits,
 		setStatisticsPatterns: StatisticsStateService.setPatterns,
 		setStatisticsFilteredPatterns: StatisticsStateService.setFilteredPatterns,
+		setStatisticsLoading: StatisticsStateService.setLoading,
 	};
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -212,6 +215,9 @@ export function PlaygroundStateService($translate,
 		playgroundState.isSavingPreparationFoldersLoading = bool;
 	}
 
+	function setTransformationInProgress(bool) {
+		playgroundState.transformationInProgress = bool;
+	}
 	//--------------------------------------------------------------------------------------------------------------
 	// -------------------------------------------------PARAMETERS---------------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
@@ -274,6 +280,7 @@ export function PlaygroundStateService($translate,
 		playgroundState.isPreprationPickerVisible = false;
 		playgroundState.savingPreparationFolders = null;
 		playgroundState.isSavingPreparationFoldersLoading = false;
+		playgroundState.transformationInProgress = false;
 
 		RecipeStateService.reset();
 		FilterStateService.reset();

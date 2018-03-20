@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -31,6 +31,11 @@ public class ToolbarDetailsSettings {
     private ListSortSettings sort;
 
     /**
+     * Display menu settings
+     */
+    private ListDisplaySettings display;
+
+    /**
      * List of simple actions settings
      */
     private ActionsBarSettings actionBar;
@@ -39,8 +44,16 @@ public class ToolbarDetailsSettings {
         return sort;
     }
 
+    public ListDisplaySettings getDisplay() {
+        return display;
+    }
+
     public void setSort(final ListSortSettings sort) {
         this.sort = sort;
+    }
+
+    public void setDisplay(final ListDisplaySettings display) {
+        this.display = display;
     }
 
     public ActionsBarSettings getActionBar() {
@@ -56,18 +69,24 @@ public class ToolbarDetailsSettings {
     }
 
     public static Builder from(final ToolbarDetailsSettings viewSettings) {
-        return builder() //
-                .actionBar(viewSettings.getActionBar());
+        return builder().actionBar(viewSettings.getActionBar());
     }
 
     public static class Builder {
 
         private ListSortSettings sort;
 
+        private ListDisplaySettings display;
+
         private ActionsBarSettings actionBar;
 
         public Builder sort(final ListSortSettings sort) {
             this.sort = sort;
+            return this;
+        }
+
+        public Builder display(final ListDisplaySettings display) {
+            this.display = display;
             return this;
         }
 
@@ -79,6 +98,7 @@ public class ToolbarDetailsSettings {
         public ToolbarDetailsSettings build() {
             final ToolbarDetailsSettings settings = new ToolbarDetailsSettings();
             settings.setSort(this.sort);
+            settings.setDisplay(this.display);
             settings.setActionBar(this.actionBar);
             return settings;
         }

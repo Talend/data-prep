@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -64,5 +64,10 @@ describe('Home Preparation Container', () => {
 
 		//then
 		expect(element.find('inventory-list').length).toBe(1);
+	});
+
+	it('should render display mode dropdown', () => {
+		createElement();
+		expect(element.find('#preparations-list-display-mode').length).toBe(1);
 	});
 });

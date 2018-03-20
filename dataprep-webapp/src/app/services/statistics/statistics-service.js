@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -123,27 +123,22 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 	function getRangeFilteredOccurrence(min, max) {
 		return _.chain(state.playground.grid.filteredOccurences)
 			.keys()
-			.filter(function (value) {
+			.filter((value) => {
 				const numberValue = Number(value);
-				return !isNaN(numberValue) &&
-					((numberValue === min) || (numberValue > min && numberValue < max));
+				return !isNaN(numberValue) && ((numberValue === min) || (numberValue > min && numberValue < max));
 			})
-			.map(function (key) {
-				return state.playground.grid.filteredOccurences[key];
-			})
-			.reduce(function (accu, value) {
-				return accu + value;
-			}, 0)
+			.map(key => state.playground.grid.filteredOccurences[key])
+			.reduce((accu, value) => accu + value, 0)
 			.value();
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name createNumberRangeHistograms
-	 * @methodOf data-prep.services.statistics.service:StatisticsService
-	 * @return {Object} containing the original and the filtered data
-	 * @description prepares the numeric data details
-	 */
+    /**
+     * @ngdoc method
+     * @name createNumberRangeHistograms
+     * @methodOf data-prep.services.statistics.service:StatisticsService
+     * @return {Object} containing the original and the filtered data
+     * @description prepares the numeric data details
+     */
 	function createNumberRangeHistograms() {
 		const histoData = state.playground.grid.selectedColumns[0].statistics.histogram;
 		if (!histoData) {
@@ -227,9 +222,10 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
 		const column = state.playground.grid.selectedColumns[0];
 		const statistics = column.statistics;
-		const currentRangeFilter = _.find(state.playground.filter.gridFilters, function (filter) {
-			return filter.colId === column.id && filter.type === 'inside_range';
-		});
+		const currentRangeFilter = _.find(
+			state.playground.filter.gridFilters,
+			filter => filter.colId === column.id && filter.type === 'inside_range'
+		);
 
 		let rangeLimits;
 		if (state.playground.grid.selectedColumns[0].type === 'date') {
@@ -259,7 +255,6 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 						filterMax: Math.max(accu.filterMax, intervalMax),
 					};
 				},
-
 				{ filterMin: Infinity, filterMax: -Infinity }
 			);
 
@@ -322,9 +317,8 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		if (dateRangeData) {
 			StateService.setStatisticsHistogram(dateRangeData);
 			return createFilteredDateRangeHistogram()
-				.then((filteredDateRangeHistogram) => {
-					StateService.setStatisticsFilteredHistogram(filteredDateRangeHistogram);
-				});
+				.then(filteredDateRangeHistogram => StateService.setStatisticsFilteredHistogram(filteredDateRangeHistogram)
+			);
 		}
 	}
 
@@ -336,12 +330,13 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 	 * @description Use a Worker to compute the date FilteredHistogram
 	 */
 	function createFilteredDateRangeHistogram() {
+		StateService.setStatisticsLoading(true);
 		const parameters = {
 			rangeData: state.playground.statistics.histogram.data,
 			patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
-                .map('pattern')
-                .map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
-                .value(),
+				.map('pattern')
+				.map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
+				.value(),
 			filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null,
 		};
 
@@ -359,7 +354,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
 		dateWorker.postMessage(parameters);
 		service.dateWorker = dateWorker;
-		return defer.promise;
+		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -556,6 +551,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 	 * @description Create the filtered patterns statistics
 	 */
 	function createFilteredPatternsFrequency() {
+		StateService.setStatisticsLoading(true);
 		const column = state.playground.grid.selectedColumns[0];
 		const parameters = {
 			columnId: column.id,
@@ -574,7 +570,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		};
 
 		service.patternWorker.postMessage(parameters);
-		return defer.promise;
+		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -707,9 +703,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 				const histogram = getAggregationHistogram(aggregationName, $filter('translate')(aggregationName), response);
 				histogram.aggregationColumn = column;
 				histogram.aggregation = aggregationName;
-
 				StateService.setStatisticsHistogram(histogram);
-
 				saveColumnAggregation(aggregationName, column.id);
 			});
 	}
@@ -816,9 +810,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
 		// should be outside the IF(!aggregationName) statement because it does not depend on the aggregation
 		const patternProcess = createFilteredPatternsFrequency()
-			.then((filteredPatternFrequency) => {
-				StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-			});
+			.then(filteredPatternFrequency => StateService.setStatisticsFilteredPatterns(filteredPatternFrequency));
 		asyncProcess.push(patternProcess);
 
 		return $q.all(asyncProcess);

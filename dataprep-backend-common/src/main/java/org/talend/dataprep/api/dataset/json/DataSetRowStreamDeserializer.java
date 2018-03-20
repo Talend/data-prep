@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.api.dataset.json;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -29,7 +28,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 public class DataSetRowStreamDeserializer extends JsonDeserializer<Stream<DataSetRow>> {
 
     @Override
-    public Stream<DataSetRow> deserialize(JsonParser jp, DeserializationContext context) throws IOException {
+    public Stream<DataSetRow> deserialize(JsonParser jp, DeserializationContext context) {
         final List<ColumnMetadata> columns = (List<ColumnMetadata>) context
                 .getAttribute(ColumnContextDeserializer.class.getName());
         final RowMetadata rowMetadata;

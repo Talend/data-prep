@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import template from './preparation-creator.html';
+
 /**
  * @ngdoc component
  * @name data-prep.preparation-creator:preparationCreator
@@ -20,17 +22,7 @@
  * */
 
 export default {
-	template: `
-		<talend-modal id="add-preparation-modal"
-			fullscreen="false"
-			close-button="true"
-			state="$ctrl.state.home.preparations.creator.isVisible"
-			ng-if="$ctrl.state.home.preparations.creator.isVisible"
-			before-close="$ctrl.canBeClosed()"
-			disable-enter="false">
-			<preparation-creator-form />
-		</talend-modal>
-	`,
+	templateUrl: template,
 	controller(state) {
 		'ngInject';
 		this.state = state;

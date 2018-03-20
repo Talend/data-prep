@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,13 +13,15 @@
 
 package org.talend.dataprep.api.dataset.statistics;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 
 public class Quantiles implements Serializable {
 
-    /** Serialization UID. */
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("median")
@@ -30,6 +32,15 @@ public class Quantiles implements Serializable {
 
     @JsonProperty("upperQuantile")
     private double upperQuantile = Double.NaN;
+
+    Quantiles() {
+    }
+
+    Quantiles(Quantiles originalQuantiles) {
+        this.median = originalQuantiles.median;
+        this.lowerQuantile = originalQuantiles.lowerQuantile;
+        this.upperQuantile = originalQuantiles.upperQuantile;
+    }
 
     public double getMedian() {
         return median;
@@ -93,4 +104,5 @@ public class Quantiles implements Serializable {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
+
 }

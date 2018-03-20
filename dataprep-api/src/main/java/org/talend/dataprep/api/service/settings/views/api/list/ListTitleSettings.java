@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -39,6 +39,11 @@ public class ListTitleSettings {
     private String key;
 
     /**
+    * The key to access to the item persistent actions
+    */
+    private String persistentActionsKey;
+
+    /**
      * The title click action identifier
      */
     private String onClick;
@@ -53,6 +58,7 @@ public class ListTitleSettings {
      */
     private String onEditSubmit;
 
+
     public String getDisplayModeKey() {
         return displayModeKey;
     }
@@ -65,8 +71,16 @@ public class ListTitleSettings {
         return iconKey;
     }
 
+    public String getPersistentActionsKey() {
+        return persistentActionsKey;
+    }
+
     public void setIconKey(String iconKey) {
         this.iconKey = iconKey;
+    }
+
+    public void setPersistentActionsKey(String persistentActionsKey) {
+        this.persistentActionsKey = persistentActionsKey;
     }
 
     public String getKey() {
@@ -111,6 +125,8 @@ public class ListTitleSettings {
 
         private String iconKey;
 
+        private String persistentActionsKey;
+
         private String key;
 
         private String onClick;
@@ -126,6 +142,11 @@ public class ListTitleSettings {
 
         public Builder iconKey(final String iconKey) {
             this.iconKey = iconKey;
+            return this;
+        }
+
+        public Builder persistentActionsKey(final String persistentActionsKey) {
+            this.persistentActionsKey = persistentActionsKey;
             return this;
         }
 
@@ -153,6 +174,7 @@ public class ListTitleSettings {
             final ListTitleSettings settings = new ListTitleSettings();
             settings.setDisplayModeKey(this.displayModeKey);
             settings.setIconKey(this.iconKey);
+            settings.setPersistentActionsKey(this.persistentActionsKey);
             settings.setKey(this.key);
             settings.setOnClick(this.onClick);
             settings.setOnEditCancel(this.onEditCancel);

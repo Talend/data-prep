@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,16 +18,15 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Max.MAX_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Calculate Max with a constant or an other column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MAX_NAME)
+@Action(MAX_NAME)
 public class Max extends AbstractMathOneParameterAction {
 
-    protected static final String MAX_NAME = "max_numbers";
+    public static final String MAX_NAME = "max_numbers";
 
     @Override
     public String getName() {

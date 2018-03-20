@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -76,7 +76,5 @@ public class CommonViewsProviderTest {
         assertTrue(settings.contains(ListViews.FOLDERS_LIST));
         assertTrue(settings.contains(ListViews.PREPARATIONS_LIST));
         assertTrue(settings.contains(ListViews.DATASETS_LIST));
-
     }
-
 }

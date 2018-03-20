@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,22 +12,15 @@
   ============================================================================*/
 
 .column-profile {
-	.loading-container {
-		position: relative;
-		width: 100%;
+	&,
+	> * {
 		height: 100%;
+	}
 
-		#chart-ghost-img {
+	.loading-container {
+		img {
 			position: absolute;
-		}
-
-		loader {
-			width: 200px;
-			position: absolute;
-			top: 100px;
-			right: 0;
-			left: 0;
-			margin: auto;
+			opacity: 0.25;
 		}
 	}
 }

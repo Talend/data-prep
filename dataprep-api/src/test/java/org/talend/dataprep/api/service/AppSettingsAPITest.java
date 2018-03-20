@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,13 +13,16 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.when;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
+import org.junit.Test;
+import org.talend.dataprep.api.service.settings.AppSettings;
+import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
+import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
+import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
+import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
+import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
+import org.talend.dataprep.api.service.settings.views.api.list.ToolbarDetailsSettings;
+import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,24 +32,9 @@ import static com.jayway.restassured.RestAssured.when;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
-
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-import org.talend.dataprep.api.service.settings.AppSettings;
-import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
-import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
-import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
-import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
-import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
-import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
 
 public class AppSettingsAPITest extends ApiServiceTestBase {
 
@@ -262,22 +250,23 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(sidepanelToggle.getType(), is("@@sidepanel/TOGGLE"));
         assertThat(sidepanelToggle.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleHomeSidepanel"));
 
-        final ActionSplitDropdownSettings headerHelp = (ActionSplitDropdownSettings) settings.getActions().get("headerbar:help");
-        assertThat(headerHelp.getName(), is("Help"));
-        assertThat(headerHelp.getIcon(), is("talend-question-circle"));
-        assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
-        assertThat(headerHelp.getAction(), is("external:help"));
-        assertThat(headerHelp.getItems(),
-                contains("external:help", "external:community", "onboarding:preparation", "modal:about", "modal:feedback"));
+        final ActionDropdownSettings headerbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:information");
+        assertThat(headerbarInformation.getName(), is("Information"));
+        assertThat(headerbarInformation.getIcon(), is("talend-information"));
+        assertThat(headerbarInformation.getStaticActions().get(0), is("modal:about"));
+        assertThat(headerbarInformation.getStaticActions().get(1), is("onboarding:preparation"));
+        assertThat(headerbarInformation.getStaticActions().get(2), is("divider"));
+        assertThat(headerbarInformation.getStaticActions().get(3), is("external:community"));
+        assertThat(headerbarInformation.getStaticActions().get(4), is("modal:feedback"));
 
-        final ActionSplitDropdownSettings playgroundHeaderHelp =
-                (ActionSplitDropdownSettings) settings.getActions().get("playground:headerbar:help");
-        assertThat(playgroundHeaderHelp.getName(), is("Help"));
-        assertThat(playgroundHeaderHelp.getIcon(), is("talend-question-circle"));
-        assertThat(playgroundHeaderHelp.getType(), is("@@headerbar/HELP"));
-        assertThat(playgroundHeaderHelp.getAction(), is("external:help"));
-        assertThat(playgroundHeaderHelp.getItems(),
-                contains("external:help", "external:community", "onboarding:playground", "modal:about", "modal:feedback"));
+        final ActionDropdownSettings playgroundHeaderbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:playground:information");
+        assertThat(playgroundHeaderbarInformation.getName(), is("Information"));
+        assertThat(playgroundHeaderbarInformation.getIcon(), is("talend-information"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(0), is("modal:about"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(1), is("onboarding:playground"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(2), is("divider"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(3), is("external:community"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(4), is("modal:feedback"));
     }
 
     @Test
@@ -302,7 +291,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
         assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("dataset:open"));
         assertThat(ahb.getSearch().getOnSelect().get("preparation"), is("menu:playground:preparation"));
-        assertThat(ahb.getHelp(), is("headerbar:help"));
+        assertThat(ahb.getHelp(), is("external:help"));
     }
 
     @Test
@@ -324,7 +313,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnKeyDown(), is("search:focus"));
         assertThat(ahb.getSearch().getOnToggle(), is("search:toggle"));
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
-        assertThat(ahb.getHelp(), is("playground:headerbar:help"));
+        assertThat(ahb.getHelp(), is("external:help"));
     }
 
     @Test
@@ -365,6 +354,15 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
+        final ToolbarDetailsSettings toolbar = ((ListSettings) settings.getViews().get("listview:preparations")).getToolbar();
+        assertThat(toolbar.getDisplay().getDisplayModes(), contains("table", "large"));
+        assertThat(toolbar.getDisplay().getOnChange(), is("preparation:display-mode"));
+
+        final List<String> ids = mapOfStrings((toolbar.getSort().getOptions()), "id");
+        final List<String> names = mapOfStrings(toolbar.getSort().getOptions(), "name");
+        assertThat(ids, contains("name", "author", "creationDate", "lastModificationDate", "datasetName", "nbSteps"));
+        assertThat(names, contains("Name", "Author", "Created", "Modified", "Dataset", "Steps"));
+
         final ListSettings list = (ListSettings) settings.getViews().get("listview:preparations");
         assertThat(list.getDidMountActionCreator(), is("preparations:folder:fetch"));
 
@@ -389,17 +387,23 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
+        final ToolbarDetailsSettings toolbar = ((ListSettings) settings.getViews().get("listview:datasets")).getToolbar();
+        assertThat(toolbar.getDisplay().getDisplayModes(), contains("table", "large"));
+        assertThat(toolbar.getDisplay().getOnChange(), is("dataset:display-mode"));
+
+        final List<String> ids = mapOfStrings((toolbar.getSort().getOptions()), "id");
+        final List<String> names = mapOfStrings(toolbar.getSort().getOptions(), "name");
+        assertThat(ids, contains("name", "author", "creationDate", "nbRecords"));
+        assertThat(names, contains("Name", "Author", "Created", "Rows"));
+
+
         final ListSettings list = (ListSettings) settings.getViews().get("listview:datasets");
         assertThat(list.getDidMountActionCreator(), is("datasets:fetch"));
 
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
-        final List<String> types = map(list.getList().getColumns(), "type");
-        final List<Boolean> hideHeaderFlags = map(list.getList().getColumns(), "hideHeader");
-        assertThat(keys, contains("name", "statusActions", "author", "creationDate", "nbRecords"));
-        assertThat(labels, contains("Name", "Actions", "Author", "Created", "Rows"));
-        assertThat(hideHeaderFlags, contains(null, Boolean.TRUE, null, null, null));
-        assertThat(types, contains(null, "actions", null, null, null));
+        assertThat(keys, contains("name", "author", "creationDate", "nbRecords"));
+        assertThat(labels, contains("Name", "Author", "Created", "Rows"));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
         assertThat(list.getList().getTitleProps().getKey(), is("name"));
@@ -515,19 +519,33 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         return list.stream().map(col -> col.get(property)).collect(toList());
     }
 
+    private List mapOfStrings(final List<Map<String, String>> list, final String property) {
+        return list.stream().map(col -> col.get(property)).collect(toList());
+    }
+
     @Test
     public void shouldSetDefaultLocaleContextSettings() throws Exception {
         // when
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final String localeFull = settings.getContext().get("locale");
-        final String country = settings.getContext().get("country");
-        final String language = settings.getContext().get("language");
+        final String localeFull = String.valueOf(settings.getContext().get("locale"));
+        final String country = String.valueOf(settings.getContext().get("country"));
+        final String language = String.valueOf(settings.getContext().get("language"));
 
         assertThat(localeFull, is(Locale.US.toLanguageTag()));
         assertThat(country, is(Locale.US.getCountry()));
         assertThat(language, is(Locale.US.getLanguage()));
     }
 
+    @Test
+    public void shouldNotEnableThemeByDefaultInContextSettings() {
+        // when
+        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
+
+        // then
+        final boolean theme = (boolean) settings.getContext().get("theme");
+
+        assertThat(theme, is(Boolean.FALSE));
+    }
 }

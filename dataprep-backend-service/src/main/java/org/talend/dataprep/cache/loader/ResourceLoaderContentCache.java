@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -42,8 +44,14 @@ import org.talend.dataprep.metrics.VolumeMetered;
 @ConditionalOnBean(ContentServiceEnabled.class)
 public class ResourceLoaderContentCache implements ContentCache {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceLoaderContentCache.class);
+
     @Autowired
     private ResourceResolver resolver;
+
+    public ResourceLoaderContentCache() {
+        LOGGER.info("Using content cache: {}", this.getClass().getName());
+    }
 
     private DeletableResource getOrCreateResource(ContentCacheKey key, TimeToLive ttl) {
         return resolver.getResource(getLocation(key, ttl));

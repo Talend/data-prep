@@ -9,7 +9,10 @@ public enum ExportType {
     CSV("CSV"), //
     EXCEL("EXCEL"), //
     TABLEAU("TABLEAU"), //
-    HDFS("HDFS"); //
+    XLSX("XLSX"), //
+    HDFS("HDFS"), //
+    AMAZONS3("AmazonS3"), // Export is run on TDP runtime
+    AMAZONS3DI("AmazonS3DI"); // Export is run on Hadoop Cluster runtime
 
     private String name;
 

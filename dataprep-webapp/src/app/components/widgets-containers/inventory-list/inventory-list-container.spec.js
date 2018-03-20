@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -189,6 +189,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = preparations;
 			scope.folders = folders;
 			scope.$digest();
@@ -225,6 +226,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = preparations;
 			scope.folders = folders;
 			scope.$digest();
@@ -307,6 +309,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = preparations;
 			scope.folders = folders;
 			scope.$digest();
@@ -438,6 +441,7 @@ describe('Inventory list container', () => {
 
 			// when
 			createElement();
+			scope.isLoading = false;
 			scope.items = datasets;
 			scope.$digest();
 		});

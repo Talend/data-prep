@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  *
  * If the column to rename does not exist or the new name is already used, nothing happen.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Rename.RENAME_ACTION_NAME)
+@Action(Rename.RENAME_ACTION_NAME)
 public class Rename extends AbstractActionMetadata implements ColumnAction {
 
     /** Action name. */

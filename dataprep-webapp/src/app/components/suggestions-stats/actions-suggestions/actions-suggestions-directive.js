@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -20,26 +20,14 @@ import template from './actions-suggestions.html';
  * @restrict E
  * @usage <actions-suggestions></actions-suggestions>
  * */
-export default function ActionsSuggestions($timeout) {
+export default function ActionsSuggestions() {
 	'ngInject';
 
 	return {
 		restrict: 'E',
 		templateUrl: template,
 		bindToController: true,
-		controllerAs: 'actionsSuggestionsCtrl',
+		controllerAs: 'ctrl',
 		controller: 'ActionsSuggestionsCtrl',
-		link: (scope, iElement, iAttrs, ctrl) => {
-            // Scroll the actual tab container to the bottom of the element to display
-			ctrl.scrollToBottom = function scrollToBottom() {
-				$timeout(function () {
-					const tabContainer = iElement.find('.action-suggestion-tab-items').eq(0);
-					const elementToDisplay = tabContainer.find('sc-accordion-item > .sc-accordion.open').eq(0);
-					tabContainer.animate({
-						scrollTop: elementToDisplay.position().top,
-					}, 500);
-				}, 300, false);
-			};
-		},
 	};
 }

@@ -1,16 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
-import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
-import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -26,6 +15,17 @@ import org.talend.dataprep.transformation.pipeline.node.StatisticsNode;
 import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 public class StatisticsNodesBuilder {
 
@@ -84,6 +84,10 @@ public class StatisticsNodesBuilder {
         return this;
     }
 
+    public Map<Action, ActionDefinition> getActionToMetadata() {
+        return actionToMetadata;
+    }
+
     public Node buildPreStatistics() {
         // TODO remove this and fix tests
         if (analyzerService == null) {
@@ -131,7 +135,10 @@ public class StatisticsNodesBuilder {
             if (needIntermediateStatistics(nextAction)) {
                 final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                    node = NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
+                    // the type detection is needed by some actions : see bug TDP-4926
+                    // this modification needs performance analysis
+                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+                            .to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
                 } else {
                     // 2 cases remain as this point: action needs invalid values or filter attached to action does
                     node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
@@ -167,8 +174,8 @@ public class StatisticsNodesBuilder {
         checkInputs();
 
         final ActionsStaticProfiler profiler = new ActionsStaticProfiler(actionRegistry);
-        actionToMetadata = profiler.getActionMetadataByAction(actions);
-        actionsProfile = profiler.profile(columns, actions, actionToMetadata);
+        actionsProfile = profiler.profile(columns, actions);
+        actionToMetadata = actionsProfile.getMetadataByAction();
     }
 
     private void checkInputs() {

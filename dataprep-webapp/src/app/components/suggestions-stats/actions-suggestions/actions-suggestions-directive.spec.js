@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,7 +13,6 @@
 
 const i18n = {
 	COLON: ': ',
-	REFRESHING_WAIT: 'Fetching, please wait…',
 };
 
 describe('Actions suggestions-stats directive', () => {
@@ -28,6 +27,7 @@ describe('Actions suggestions-stats directive', () => {
 		stateMock = {
 			playground: {
 				suggestions: {},
+				grid: {},
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -63,6 +63,5 @@ describe('Actions suggestions-stats directive', () => {
 		//then
 		const elm = element.find('#actions-ghost');
 		expect(elm.length).toBe(1);
-		expect(elm.text().trim()).toBe(i18n.REFRESHING_WAIT);
 	}));
 });

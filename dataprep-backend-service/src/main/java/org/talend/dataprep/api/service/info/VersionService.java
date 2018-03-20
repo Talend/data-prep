@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,13 +12,11 @@
 
 package org.talend.dataprep.api.service.info;
 
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,24 +42,20 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "version", basePath = "/version", description = "versions of running application")
 public class VersionService {
 
-    @Autowired(required = false)
-    List<ManifestInfoProvider> manifestInfoProviders;
+    private static final String UNDEFINED_VERSION_ID = "N/A";
 
-    /**
-     * @param manifestInfoProviders The new {@link ManifestInfoProvider providers} to use to extract build id and version id
-     * from.
-     */
-    public void setManifestInfoProviders(List<ManifestInfoProvider> manifestInfoProviders) {
-        this.manifestInfoProviders = manifestInfoProviders;
-    }
+    @Autowired(required = false)
+    private List<ManifestInfoProvider> manifestInfoProviders;
 
     /**
      * @return A {@link Version} built following these conventions:
      * <ul>
-     * <li>Concatenation of all {@link ManifestInfo} build ids (as returned by {@link ManifestInfo#getBuildId()}), separated
+     * <li>Concatenation of all {@link ManifestInfo} build ids (as returned by {@link ManifestInfo#getBuildId()}),
+     * separated
      * by "-". Value to be returned by {@link Version#getBuildId()}.</li>
      * <li>Concatenation of all <b>unique</b>{@link ManifestInfo} versions ids (as returned by
-     * {@link ManifestInfo#getVersionId()} ()}), separated by "-" (when more than one version found). Value to be returned by {@link Version#getVersionId()}</li>
+     * {@link ManifestInfo#getVersionId()} ()}), separated by "-" (when more than one version found). Value to be
+     * returned by {@link Version#getVersionId()}</li>
      * </ul>
      */
     @RequestMapping(value = "/version", method = GET)
@@ -69,29 +63,24 @@ public class VersionService {
     @Timed
     @PublicAPI
     public Version version() {
-        List<String> preferredOrder = asList("OS", "EE", "OPS");
-        String buildId = manifestInfoProviders.stream() //
-                .sorted(Comparator.comparingInt(provider -> {
-                    if (provider.getName() != null) {
-                        return preferredOrder.indexOf(provider.getName().toUpperCase());
-                    }
-                    return 0;
-                })) //
+        String buildId = manifestInfoProviders
+                .stream() //
                 .map(ManifestInfoProvider::getManifestInfo) //
                 .map(ManifestInfo::getBuildId) //
-                .collect(Collectors.joining("-"));
-        final Optional<String> uniqueVersions = manifestInfoProviders.stream() //
+                .collect(joining("-"));
+        final Optional<String> uniqueVersion = manifestInfoProviders
+                .stream() //
                 .map(ManifestInfoProvider::getManifestInfo) //
                 .map(ManifestInfo::getVersionId) //
-                .filter(versionId -> !StringUtils.equals("N/A", versionId)) //
+                .filter(versionId -> !StringUtils.equals(UNDEFINED_VERSION_ID, versionId)) //
                 .reduce((s, s2) -> {
                     if (StringUtils.equals(s, s2)) {
                         return s;
                     }
                     return s + '-' + s2;
                 });
-        String versionId = uniqueVersions.orElse("N/A");
+        String serviceUnifiedVersionId = uniqueVersion.orElse(UNDEFINED_VERSION_ID);
 
-        return new Version(versionId, buildId);
+        return new Version(serviceUnifiedVersionId, buildId);
     }
 }

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,18 +11,22 @@
 
  ============================================================================*/
 
-const NO_OP = () => {};
+const NO_OP = () => {
+};
 const DROPDOWN_ACTION = 'dropdown';
 const SPLITDROPDOWN_ACTION = 'splitDropdown';
 const ACTION_TYPE = 'actions';
+const LOADING_TIMEOUT_VALUE = 400;
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, appSettings, SettingsActionsService, state) {
+	constructor($element, $translate, $timeout, appSettings, SettingsActionsService, state, StateService) {
 		'ngInject';
 
 		this.$element = $element;
 		this.$translate = $translate;
+		this.$timeout = $timeout;
 		this.appSettings = appSettings;
+		this.stateService = StateService;
 		this.SettingsActionsService = SettingsActionsService;
 		this.state = state;
 
@@ -39,6 +43,7 @@ export default class InventoryListCtrl {
 			const action = this.appSettings.actions[didMountActionCreator];
 			this.SettingsActionsService.dispatch(action);
 		}
+		this._setLoading(true);
 	}
 
 	$postLink() {
@@ -63,11 +68,23 @@ export default class InventoryListCtrl {
 			this.listProps = this.changeSort(this.listProps, field, isDescending);
 		}
 		if (changes.isLoading) {
-			this.listProps = {
-				...this.listProps,
-				inProgress: this.isLoading,
-			};
+			if (this.isLoading) {
+				this.loadingTimeout = this.$timeout(() => {
+					this._setLoading(true);
+				}, LOADING_TIMEOUT_VALUE);
+			}
+			else {
+				this.$timeout.cancel(this.loadingTimeout);
+				this._setLoading(false);
+			}
 		}
+	}
+
+	_setLoading(bool) {
+		this.listProps = {
+			...this.listProps,
+			inProgress: bool,
+		};
 	}
 
 	changeSort(subProps, field, isDescending) {
@@ -260,23 +277,31 @@ export default class InventoryListCtrl {
 
 	adaptItemActions(item, actions, index) {
 		const adaptedActions = this.adaptActions(actions, item);
-		adaptedActions.forEach((action) => {
-			action.id = `${this.id}-${index}-${action.id}`;
-		});
+		if (adaptedActions) {
+			adaptedActions.forEach((action) => {
+				action.id = `${this.id}-${index}-${action.id}`;
+			});
+		}
 		return adaptedActions;
 	}
 
 	adaptItemsActions(items) {
 		const actionsColumns = this.listProps.columns.filter(column => column.type === ACTION_TYPE);
+		const persistentActionsKey = this.listProps.titleProps.persistentActionsKey;
 		return items.map((item, index) => {
-			const actions = this.adaptItemActions(item, item.actions, index);
 			const adaptedItem = {
 				...item,
-				actions,
+				actions: this.adaptItemActions(item, item.actions, index),
 			};
+
+			if (persistentActionsKey) {
+				adaptedItem[persistentActionsKey] = this.adaptItemActions(item, item[persistentActionsKey], index);
+			}
+
 			actionsColumns.forEach(({ key }) => {
 				adaptedItem[key] = this.adaptItemActions(item, item[key], index);
 			});
+
 			return adaptedItem;
 		});
 	}

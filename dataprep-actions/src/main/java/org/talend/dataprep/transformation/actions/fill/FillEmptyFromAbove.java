@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * TDQ-13265 msjian : Fill empty cell from above.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillEmptyFromAbove.ACTION_NAME)
+@Action(FillEmptyFromAbove.ACTION_NAME)
 public class FillEmptyFromAbove extends AbstractActionMetadata implements ColumnAction {
 
     /** the action name. */

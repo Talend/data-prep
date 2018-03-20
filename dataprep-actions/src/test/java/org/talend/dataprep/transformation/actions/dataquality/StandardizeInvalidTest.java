@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,13 +11,6 @@
 //
 // ============================================================================
 package org.talend.dataprep.transformation.actions.dataquality;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
-
-import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -35,6 +28,12 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
+import java.util.*;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+
 /**
  * Test class for StandardizeInvalid action
  *
@@ -43,8 +42,6 @@ import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 public class StandardizeInvalidTest extends AbstractMetadataBaseTest<StandardizeInvalid> {
 
     private final String MATCH_THRESHOLD_PARAMETER = "match_threshold";
-
-    private final List<String> ACTION_SCOPE = Collections.singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
 
     private final String fixedName = "David Bowie";
 
@@ -125,14 +122,13 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
 
         final DataSetRow row = createRow(values, columnId1, "");
 
-        final Map<String, String> expectedValues = values;
-        expectedValues.put("__tdpInvalid", columnId1);
+        values.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(values, row.values());
     }
 
     @Test
@@ -145,13 +141,11 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         // set semantic domain
         final DataSetRow row = createRow(values, null, "COUNTRY");
 
-        final Map<String, String> expectedValues = values;
-
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(values, row.values());
 
     }
 
@@ -165,14 +159,13 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
 
         final DataSetRow row = createRow(values, columnId1, "FR_COMMUNE");
 
-        final Map<String, String> expectedValues = values;
-        expectedValues.put("__tdpInvalid", columnId1);
+        values.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(values, row.values());
     }
 
     @Test
@@ -185,20 +178,18 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         // set semantic domain
         final DataSetRow row = createRow(values, columnId1, "COUNTRY");
 
-        final Map<String, String> expectedValues = values;
-        expectedValues.put("__tdpInvalid", columnId1);
+        values.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(values, row.values());
     }
 
     @Test
-    public void should_action_Scope() {
-        assertTrue(action.getActionScope().size() == 1);
-        assertTrue(action.getActionScope().equals(ACTION_SCOPE));
+    public void testActionScope() throws Exception {
+        assertTrue(action.getActionScope().isEmpty());
     }
 
     private DataSetRow createRow(Map<String, String> inputValues, String invalidColumnId, String domain) {

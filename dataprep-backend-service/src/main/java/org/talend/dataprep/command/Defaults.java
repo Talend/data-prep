@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -189,7 +189,11 @@ public class Defaults {
     public static BiFunction<HttpRequestBase, HttpResponse, JsonNode> toJson(ObjectMapper mapper) {
         return (request, response) -> {
             try {
-                return mapper.readTree(response.getEntity().getContent());
+                JsonNode jsonNode = mapper.readTree(response.getEntity().getContent());
+                if (jsonNode == null) {
+                    throw new IllegalArgumentException("Source should not be empty");
+                }
+                return jsonNode;
             } catch (Exception e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             } finally {

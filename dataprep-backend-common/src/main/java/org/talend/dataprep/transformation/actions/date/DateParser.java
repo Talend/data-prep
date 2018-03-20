@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -20,8 +20,6 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -181,7 +179,9 @@ public class DateParser {
     public List<DatePattern> getPatterns(List<PatternFrequency> patternsFrequency) {
         final Set<String> distinctPatterns = new HashSet<>(patternsFrequency.size());
 
-        return patternsFrequency.stream().filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
+        return patternsFrequency
+                .stream()
+                .filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
                 .filter(patternFreqItem -> distinctPatterns.add(patternFreqItem.getPattern())) // use Set<> to detect if
                                                                                                // pattern is a duplicate
                 .map(patternFreqItem -> {
@@ -192,7 +192,9 @@ public class DateParser {
                         LOGGER.debug("Unable to parse pattern '{}'", patternFreqItem.getPattern(), e);
                         return null;
                     }
-                }).filter(Objects::nonNull) // remove non valid date patterns
-                .sorted().collect(toList());
+                })
+                .filter(Objects::nonNull) // remove non valid date patterns
+                .sorted()
+                .collect(toList());
     }
 }

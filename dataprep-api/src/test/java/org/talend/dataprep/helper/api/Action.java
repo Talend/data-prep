@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,9 +13,8 @@
 
 package org.talend.dataprep.helper.api;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,7 +31,7 @@ public class Action {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public String id;
 
-    public EnumMap<ActionParamEnum, Object> parameters = new EnumMap<>(ActionParamEnum.class);
+    public Map<String, Object> parameters = new HashMap<>();
 
     // Generated equals() on action & parameters attributes
     @Override

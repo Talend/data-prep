@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,7 +14,6 @@ package org.talend.dataprep.transformation.actions.delete;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
@@ -23,7 +22,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * With no filter, it will delete all lines!
  *
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteLines.DELETE_LINES_ACTION_NAME)
+@Action(DeleteLines.DELETE_LINES_ACTION_NAME)
 public class DeleteLines extends AbstractFilteringAction {
 
     static final String DELETE_LINES_ACTION_NAME = "delete_lines";

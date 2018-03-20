@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -44,13 +44,12 @@
 .panels {
 	display: flex;
 	flex-direction: row;
-	min-height: 40vh;
+	height: 40vh;
 
 	.filters-left-panel {
-		width: 250px;
+		flex: 0;
 		border: 1px solid $light-gray;
 		flex-basis: 250px;
-		max-height: 45vh;
 		overflow-y: auto;
 
 		display: flex;
@@ -59,15 +58,10 @@
 	}
 
 	.inventory-list {
-		height: 40vh;
+		flex: 1;
+		display: flex;
 		overflow-y: auto;
-
-		.empty-message {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100%;
-		}
+		position: relative;
 
 		.inventory-item-row {
 			display: flex;

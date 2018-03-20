@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -10,6 +10,8 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import template from './recipe-knot.html';
 
 /**
  * @ngdoc component
@@ -44,20 +46,7 @@ const RecipeKnot = {
 		toBeSwitched: '<',
 		toggleStep: '&',
 	},
-	template: `
-    <div class="knot"
-        role="checkbox"
-        aria-checked="{{ $ctrl.inactive ? $ctrl.toBeSwitched : !$ctrl.toBeSwitched }}"
-        aria-disabled="{{ $ctrl.inactive }}"
-        aria-labelledby="{{ 'ENABLE_DISABLE_STEP' | translate }}"
-        ng-click="$ctrl.toggleStep()"
-        ng-mouseover="$ctrl.onHoverStart()"
-        ng-mouseleave="$ctrl.onHoverEnd()">
-            <div class="line" ng-class="{'no-line': !$ctrl.showTopLine}"></div>
-            <div ng-if="$ctrl.inactive" class="circle inactive-knot" ng-class="{'to-be-activated': $ctrl.toBeSwitched}"></div>
-            <div ng-if="!$ctrl.inactive" class="circle" ng-class="{'to-be-deactivated': $ctrl.toBeSwitched}"></div>
-            <div class="line bottom-line" ng-class="{'no-line': !$ctrl.showBottomLine}"></div>
-    <div>`,
+	templateUrl: template,
 };
 
 export default RecipeKnot;

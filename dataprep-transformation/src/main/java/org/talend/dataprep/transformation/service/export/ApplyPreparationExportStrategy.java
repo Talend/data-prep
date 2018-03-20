@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,10 +12,12 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -35,8 +37,8 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
@@ -93,7 +95,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, fullContent, true);
 
         try (final InputStream datasetContent = dataSetGet.execute();
-                final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
 
             // release the technical user identity
             securityProxy.releaseIdentity();

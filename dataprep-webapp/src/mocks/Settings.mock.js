@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -36,7 +36,33 @@ const settingsMock = {
 				debounceTimeout: 300,
 			},
 			userMenu: 'user:menu',
-			help: 'headerbar:help',
+			help: 'external:help',
+			products: 'products:menu',
+		},
+		'appheaderbar:playground': {
+			logo: {
+				name: 'Talend',
+				onClick: 'menu:home',
+			},
+			brand: {
+				label: 'Data Preparation',
+				onClick: 'menu:home',
+			},
+			search: {
+				onToggle: 'search:toggle',
+				onBlur: 'search:toggle',
+				onChange: 'search:all',
+				onSelect: {
+					preparation: 'menu:playground:preparation',
+					dataset: 'dataset:open',
+					folder: 'menu:folders',
+					documentation: 'external:documentation',
+				},
+				onKeyDown: 'search:focus',
+				debounceTimeout: 300,
+			},
+			userMenu: 'user:menu',
+			help: 'external:help',
 			products: 'products:menu',
 		},
 		breadcrumb: {
@@ -91,6 +117,13 @@ const settingsMock = {
 					],
 					onChange: 'preparation:sort',
 				},
+				display: {
+					displayModes: [
+						'table',
+						'large',
+					],
+					onChange: 'preparation:display-mode',
+				},
 				actionBar: {
 					actions: {
 						left: ['preparation:create', 'preparation:folder:create'],
@@ -134,6 +167,13 @@ const settingsMock = {
 						{ id: 'date', name: 'Creation Date' },
 					],
 					onChange: 'dataset:sort',
+				},
+				display: {
+					displayModes: [
+						'table',
+						'large',
+					],
+					onChange: 'preparation:display-mode',
 				},
 				actionBar: {
 					actions: {
@@ -377,6 +417,10 @@ const settingsMock = {
 				args: [],
 			},
 		},
+		divider: {
+			id: 'divider',
+			divider: true,
+		},
 		'preparation:display-mode': {
 			id: 'preparation:display-mode',
 			name: 'Change preparation display mode',
@@ -514,7 +558,14 @@ const settingsMock = {
 			name: 'anonymousUser',
 			icon: 'talend-user-circle',
 			displayMode: 'dropdown',
-			staticActions: ['user:logout'],
+			staticActions: [
+				'modal:about',
+				'onboarding:preparation',
+				'divider',
+				'modal:feedback',
+				'divider',
+				'user:logout',
+			],
 		},
 		'version:toggle': {
 			displayMode: 'ActionSettings',
@@ -534,19 +585,6 @@ const settingsMock = {
 				args: 'version',
 				method: 'go',
 			},
-		},
-		'headerbar:help': {
-			displayMode: 'splitDropdown',
-			id: 'headerbar:help',
-			name: 'Help',
-			icon: 'talend-question-circle',
-			type: '@@external/HELP',
-			items: [
-				'modal:feedback',
-				'onboarding:preparation',
-				'modal:about',
-			],
-			action: 'external:help',
 		},
 		'modal:about': {
 			displayMode: 'ActionSettings',
@@ -584,6 +622,7 @@ const settingsMock = {
 		fuzzyUrl: 'HELP_FUZZY_URL',
 		exactUrl: 'HELP_EXACT_URL',
 	},
+	context: {},
 };
 
 export default settingsMock;

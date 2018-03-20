@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,6 +11,9 @@
 
  ============================================================================*/
 
+const FIRST_PARAMETER = '?';
+const PARAMETERS_SEP = '&';
+
 export default class ExternalActionsService {
 	constructor($window) {
 		'ngInject';
@@ -19,6 +22,18 @@ export default class ExternalActionsService {
 
 	dispatch(action) {
 		switch (action.type) {
+		case '@@external/OPEN_PAGE': {
+			const location = action.payload.args[0];
+			const href = encodeURIComponent(this.$window.location.href);
+			let separator = FIRST_PARAMETER;
+
+			if (location.includes(FIRST_PARAMETER)) {
+				separator = PARAMETERS_SEP;
+			}
+
+			this.$window.location.href = `${location}${separator}redirect=${href}`;
+			break;
+		}
 		case '@@external/OPEN_WINDOW': {
 			const { method, args } = action.payload;
 			let externalActionArgs = args || [];
@@ -27,6 +42,7 @@ export default class ExternalActionsService {
 					action.payload.url,
 				];
 			}
+
 			this.$window[method](...externalActionArgs);
 			break;
 		}

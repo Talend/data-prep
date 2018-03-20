@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -38,6 +38,10 @@ import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.security.Security;
+<<<<<<< HEAD
+=======
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+>>>>>>> master
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
@@ -149,7 +153,8 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                                 source.id());
                     } else {
                         List<ActionForm> actionDefinitions = actions.stream() //
-                                .map(a -> actionRegistry.get(a.getName())) //
+                                .map(a -> actionRegistry.get(a.getName()) //
+                                .adapt(ScopeCategory.from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
                                 .map(a -> a.getActionForm(getLocale())) //
                                 .map(PreparationConversions::disallowColumnCreationChange) //
                                 .collect(Collectors.toList());

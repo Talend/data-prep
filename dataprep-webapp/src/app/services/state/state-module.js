@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -32,6 +32,9 @@ import { homeState, HomeStateService } from './home/home-state-service';
 import { progressState, ProgressStateService } from './progress/progress-state-service';
 import { state, StateService } from './state-service';
 import { searchState, SearchStateService } from './search/search-state-service';
+import { messageState, MessageStateService } from './message/message-state-service';
+
+import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
 const MODULE_NAME = 'data-prep.services.state';
 
@@ -40,7 +43,7 @@ const MODULE_NAME = 'data-prep.services.state';
  * @name data-prep.services.state
  * @description This module contains the service that hold the application state
  */
-angular.module(MODULE_NAME, [])
+angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
 	.service('DatasetStateService', DatasetStateService)
 	.constant('datasetState', datasetState)
 
@@ -96,6 +99,9 @@ angular.module(MODULE_NAME, [])
 	.constant('state', state)
 
 	.service('SearchStateService', SearchStateService)
-	.constant('searchState', searchState);
+	.constant('searchState', searchState)
+
+	.service('MessageStateService', MessageStateService)
+	.constant('messageState', messageState);
 
 export default MODULE_NAME;

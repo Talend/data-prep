@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -10,6 +10,8 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import template from './widget-datetimepicker.html';
 
 /**
  * @ngdoc directive
@@ -32,12 +34,7 @@ export default function TalendDatetimePicker($timeout) {
 
 	return {
 		restrict: 'E',
-		template: `
-            <input type="text"
-                   class="datetimepicker"
-                   ng-model="ctrl.value"
-                   ng-blur="ctrl.onBlur()" />
-        `,
+		templateUrl: template,
 		scope: {
 			value: '=ngModel',
 			onSelect: '&',

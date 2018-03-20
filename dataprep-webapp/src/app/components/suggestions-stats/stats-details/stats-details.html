@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,80 +13,96 @@
   ~ ============================================================================
   -->
 
-<div class="actions-suggestions">
+<div class="stats-details">
+    <loader ng-if="ctrl.state.playground.statistics.loading"></loader>
     <div class="empty-panel-msg"
-         ng-if="!statsDetailsCtrl.state.playground.grid.selectedColumns.length"
+         ng-if="!ctrl.state.playground.grid.selectedColumns.length"
          translate-once="SELECT_COLUMN_TO_DISPLAY_STATS">
     </div>
 
-    <sc-tabs ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length">
-        <sc-tabs-item class="tab-container" tab-title="{{'STATS_TAB_CHART' | translate}}" default="true">
+    <div
+        class="stats-details-part"
+        ng-if="ctrl.state.playground.grid.selectedColumns.length && !ctrl.state.playground.statistics.loading"
+        ng-switch="ctrl.selectedTab"
+    >
+        <pure-tab-bar
+            items="ctrl.tabs"
+            id="'stats-tab-bar'"
+            on-select="ctrl.selectTab"
+            selected-key="ctrl.selectedTab"
+        ></pure-tab-bar>
+
+        <div class="stats-container" ng-switch-when="stats-tab-chart">
             <div class="empty-panel-msg"
-                 ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
+                 ng-if="ctrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_CHART"></div>
             <column-profile class="stat-detail-tab-items"
-                            ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1"></column-profile>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'STATS_TAB_VALUE' | translate}}">
+                            ng-if="ctrl.state.playground.grid.selectedColumns.length === 1"></column-profile>
+        </div>
+
+        <div class="stats-container" ng-switch-when="stats-tab-value">
             <div class="empty-panel-msg"
-                 ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
+                 ng-if="ctrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_VALUE"></div>
             <div class="stat-detail-tab-items two-columns-values"
-                 ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1">
+                 ng-if="ctrl.state.playground.grid.selectedColumns.length === 1">
                 <table class="stat-table">
-                    <tr ng-repeat="(key, val) in statsDetailsCtrl.state.playground.statistics.details.common track by $index">
+                    <tr ng-repeat="(key, val) in ctrl.state.playground.statistics.details.common track by $index">
                         <td class="stat-key">{{key | translate}}{{'COLON' | translate}}</td>
                         <td class="stat-value">{{val}}</td>
                     </tr>
                 </table>
                 <table class="stat-table">
-                    <tr ng-repeat="(key, val) in statsDetailsCtrl.state.playground.statistics.details.specific track by $index">
+                    <tr ng-repeat="(key, val) in ctrl.state.playground.statistics.details.specific track by $index">
                         <td class="stat-key">{{key | translate}}{{'COLON' | translate}}</td>
                         <td class="stat-value">{{val}}</td>
                     </tr>
                 </table>
             </div>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'STATS_TAB_PATTERN' | translate}}">
+        </div>
+
+        <div class="stats-container" ng-switch-when="stats-tab-pattern">
             <div class="empty-panel-msg"
-                 ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
+                 ng-if="ctrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_PATTERN"></div>
-            <horizontal-barchart ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1"
+            <horizontal-barchart ng-if="ctrl.state.playground.grid.selectedColumns.length === 1"
                                  class="stat-detail-tab-items"
                                  id="patternBarChart"
                                  width="300"
                                  height="400"
-                                 on-click="statsDetailsCtrl.addPatternFilter(item)"
-                                 on-ctrl-click="statsDetailsCtrl.addPatternFilter(item, 'ctrl')"
-                                 on-shift-click="statsDetailsCtrl.addPatternFilter(item, 'shift')"
+                                 on-click="ctrl.addPatternFilter(item)"
+                                 on-ctrl-click="ctrl.addPatternFilter(item, 'ctrl')"
+                                 on-shift-click="ctrl.addPatternFilter(item, 'shift')"
 
                                  key-field="formattedPattern"
                                  key-label="Occurrences"
 
-                                 primary-data="statsDetailsCtrl.state.playground.statistics.patterns"
+                                 primary-data="ctrl.state.playground.statistics.patterns"
                                  primary-value-field="occurrences"
 
-                                 secondary-data="statsDetailsCtrl.state.playground.statistics.filteredPatterns"
+                                 secondary-data="ctrl.state.playground.statistics.filteredPatterns"
                                  secondary-value-field="filteredOccurrences"
                                  secondary-bar-class="brownBar"
 
-                                 tooltip-content="statsDetailsCtrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)">
+                                 tooltip-content="ctrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)">
             </horizontal-barchart>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'STATS_TAB_ADVANCED' | translate}}">
+        </div>
+
+        <div class="stats-container" ng-switch-when="stats-tab-advanced">
             <div class="empty-panel-msg"
-                 ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
+                 ng-if="ctrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_ADVANCED_CHART"></div>
             <div class="stat-detail-tab-items"
-                 ng-switch="!!statsDetailsCtrl.state.playground.statistics.boxPlot"
-                 ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1">
+                 ng-switch="!!ctrl.state.playground.statistics.boxPlot"
+                 ng-if="ctrl.state.playground.grid.selectedColumns.length === 1">
                 <div class="empty-panel-msg" ng-switch-when="false" translate-once="NO_ADVANCED_CHART"></div>
                 <boxplot-chart ng-switch-when="true"
                                id="boxplotId"
                                width="300"
                                height="400"
-                               boxplot-data="statsDetailsCtrl.state.playground.statistics.boxPlot"></boxplot-chart>
+                               boxplot-data="ctrl.state.playground.statistics.boxPlot"></boxplot-chart>
             </div>
-        </sc-tabs-item>
-    </sc-tabs>
+        </div>
+
+    </div>
 </div>

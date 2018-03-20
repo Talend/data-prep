@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -19,13 +19,11 @@ const filters = [
 		imageUrl: '/assets/images/inventory/recent-datasets.png',
 		title: 'RECENT_DATASETS',
 		description: 'RECENT_DATASETS_DESCRIPTION',
-		getParametersMap: (name) => {
-			return {
-				sort: 'lastModificationDate',
-				limit: true,
-				name,
-			};
-		},
+		getParametersMap: name => ({
+			sort: 'lastModificationDate',
+			limit: true,
+			name,
+		}),
 	},
 	{
 		id: 'FAVORITE',
@@ -33,12 +31,10 @@ const filters = [
 		icon: 'f',
 		title: 'FAVORITE_DATASETS',
 		description: 'FAVORITE_DATASETS_DESCRIPTION',
-		getParametersMap: (name) => {
-			return {
-				favorite: true,
-				name,
-			};
-		},
+		getParametersMap: name => ({
+			favorite: true,
+			name,
+		}),
 	},
 	{
 		id: 'ALL',
@@ -46,11 +42,9 @@ const filters = [
 		imageUrl: '/assets/images/inventory/all-datasets.png',
 		title: 'ALL_DATASETS',
 		description: 'ALL_DATASETS_DESCRIPTION',
-		getParametersMap: (name) => {
-			return {
-				name,
-			};
-		},
+		getParametersMap: name => ({
+			name,
+		}),
 	},
 ];
 
@@ -198,11 +192,10 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		if (DatasetListService.hasDatasetsPromise()) {
 			return DatasetListService.getDatasetsPromise();
 		}
-		else {
-			return state.inventory.datasets.content !== null ?
-				$q.when(state.inventory.datasets.content) :
-				DatasetListService.refreshDatasets();
-		}
+
+		return state.inventory.datasets.content !== null ?
+			$q.when(state.inventory.datasets.content) :
+			DatasetListService.refreshDatasets();
 	}
 
 	/**
@@ -242,11 +235,8 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	 * @returns {promise} The dataset
 	 */
 	function getDatasetById(datasetId) {
-		return DatasetListService.getDatasetsPromise().then((datasetList) => {
-			return _.find(datasetList, (dataset) => {
-				return dataset.id === datasetId;
-			});
-		});
+		return DatasetListService.getDatasetsPromise()
+			.then(datasetList => _.find(datasetList, dataset => dataset.id === datasetId));
 	}
 
 	/**
@@ -304,7 +294,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	 */
 	function getUniqueName(name, index = 1) {
 		const cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
-		const result = cleanedName + ' (' + index + ')';
+		const result = `${cleanedName} (${index})`;
 
 		return checkNameAvailability(result)
 			.catch(() => getUniqueName(name, index + 1));
@@ -321,14 +311,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	 */
 	function checkNameAvailability(name) {
 		return DatasetRestService.getDatasetByName(name)
-			.then((dataset) => {
-				if (dataset) {
-					return $q.reject(dataset);
-				}
-				else {
-					return $q.when(name);
-				}
-			});
+			.then(dataset => (dataset ? $q.reject(dataset) : $q.when(name)));
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -452,12 +435,10 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 					compatiblePreparations = _.reject(compatiblePreparations, { id: state.playground.preparation.id });
 				}
 
-				return _.map(compatiblePreparations, (candidatePrepa) => {
-					return {
-						preparation: candidatePrepa,
-						dataset: state.inventory.datasets.content.find(dataset => dataset.id === candidatePrepa.dataSetId),
-					};
-				});
+				return _.map(compatiblePreparations, (candidate => ({
+					preparation: candidate,
+					dataset: state.inventory.datasets.content.find(dataset => dataset.id === candidate.dataSetId),
+				})));
 			});
 	}
 
@@ -477,6 +458,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		const oldName = metadata.name;
 		StateService.setDatasetName(metadata.id, name);
 		metadata.name = name;
+
 		return DatasetRestService.updateMetadata(metadata)
 			.catch((error) => {
 				StateService.setDatasetName(metadata.id, oldName);

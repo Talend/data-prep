@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,8 +12,6 @@
 // ============================================================================
 
 package org.talend.dataprep.api.service.command.preparation;
-
-import static org.talend.dataprep.command.Defaults.pipeStream;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -34,6 +32,8 @@ import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import static org.talend.dataprep.command.Defaults.pipeStream;
 
 /**
  * Base class for preview commands.
@@ -75,7 +75,7 @@ public abstract class PreviewAbstract extends GenericCommand<InputStream> {
 
         final String paramsAsJson;
         try {
-            paramsAsJson = objectMapper.writer().writeValueAsString(parameters);
+            paramsAsJson = objectMapper.writeValueAsString(parameters);
         } catch (JsonProcessingException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_PERFORM_PREVIEW, e);
         }

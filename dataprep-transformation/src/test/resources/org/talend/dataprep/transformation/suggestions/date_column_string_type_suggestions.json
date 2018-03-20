@@ -452,43 +452,35 @@
         "configuration": {
           "values": [
             {
-              "value": "M/d/yy",
+              "value": "M/d/yyyy",
               "label": "American standard"
             },
             {
-              "value": "M/d/yy h:mm a",
+              "value": "M/d/yyyy h:mm a",
               "label": "American standard with time"
             },
             {
-              "value": "dd.MM.yy",
+              "value": "dd.MM.yyyy",
               "label": "German standard"
             },
             {
-              "value": "dd.MM.yy HH:mm",
+              "value": "dd.MM.yyyy HH:mm",
               "label": "German standard with time"
             },
             {
-              "value": "dd/MM/yy",
-              "label": "English standard"
+              "value": "dd/MM/yyyy",
+              "label": "French/British standard"
             },
             {
-              "value": "dd/MM/yy",
-              "label": "French standard"
+              "value": "dd/MM/yyyy HH:mm",
+              "label": "French/British standard with time"
             },
             {
-              "value": "dd/MM/yy HH:mm",
-              "label": "French standard with time"
-            },
-            {
-              "value": "dd/MM/yy HH:mm",
-              "label": "English with time"
-            },
-            {
-              "value": "yy/MM/dd",
+              "value": "yyyy/MM/dd",
               "label": "Japanese standard"
             },
             {
-              "value": "yy/MM/dd H:mm",
+              "value": "yyyy/MM/dd H:mm",
               "label": "Japanese standard with time"
             },
             {
@@ -605,6 +597,14 @@
             {
               "value": "HOURS",
               "label": "Hours"
+            },
+            {
+              "value": "MINUTES",
+              "label": "Minutes"
+            },
+            {
+              "value": "SECONDS",
+              "label": "Seconds"
             }
           ],
           "multiple": false
@@ -670,12 +670,13 @@
     "category": "dates",
     "dynamic": false,
     "description": "Calculate elapsed time until a date, in the desired unit (year, month, day, hour)",
-    "label": "Calculate time until",
+    "label": "Calculate time since",
     "actionScope": [],
     "docUrl": ""
   },
   {
     "name": "extract_date_tokens",
+    "category": "dates",
     "parameters": [
       {
         "name": "column_id",
@@ -683,9 +684,9 @@
         "implicit": true,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "",
+        "label": "Column",
         "description": "The column to which you want to apply this action",
-        "label": "Column"
+        "default": ""
       },
       {
         "name": "row_id",
@@ -693,9 +694,9 @@
         "implicit": true,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "",
+        "label": "Row",
         "description": "The row to which you want to apply this action",
-        "label": "Row"
+        "default": ""
       },
       {
         "name": "scope",
@@ -703,9 +704,9 @@
         "implicit": true,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "",
+        "label": "Scope",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label": "Scope"
+        "default": ""
       },
       {
         "name": "filter",
@@ -713,9 +714,9 @@
         "implicit": true,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "",
+        "label": "Filter",
         "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter"
+        "default": ""
       },
       {
         "name": "YEAR",
@@ -723,9 +724,9 @@
         "implicit": false,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "true",
+        "label": "Year",
         "description": "Extract year from date (08/24/2015 -> 2015)",
-        "label": "Year"
+        "default": "true"
       },
       {
         "name": "QUARTER",
@@ -733,9 +734,9 @@
         "implicit": false,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "false",
-        "description": "Extract quarter of year from date (08/24/2015 -> 3)",
-        "label": "Quarter of the year"
+        "label": "Quarter of the year",
+        "description": "Extract quarter of the year from date (08/24/2015 -> 3)",
+        "default": "false"
       },
       {
         "name": "MONTH",
@@ -743,89 +744,19 @@
         "implicit": false,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "true",
-        "description": "Extract month of year from date (08/24/2015 -> 8)",
-        "label": "Month of the year"
+        "label": "Month of the year",
+        "description": "Extract month of the year from date (08/24/2015 -> 8)",
+        "default": "true"
       },
       {
-        "name": "DAY",
+        "name": "MONTH_LABEL",
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "true",
-        "description": "Extract day of month from date (08/24/2015 -> 24)",
-        "label": "Day of month"
-      },
-      {
-        "name": "HOUR_12",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "false",
-        "description": "Extract the hour of the day (from an AM/PM format), from 0 to 11",
-        "label": "Hour of the day (12-hour clock)"
-      },
-      {
-        "name": "AM_PM",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "false",
-        "description": "Extract the AM/PM information of the day, from 0 (AM) to 1 (PM)",
-        "label": "am (0) or pm (1)"
-      },
-      {
-        "name": "HOUR_24",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "true",
-        "description": "Extract the hour of the day, from 0 to 23",
-        "label": "Hour of the day (24-hour clock)"
-      },
-      {
-        "name": "MINUTE",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "true",
-        "description": "Extract minute from hour",
-        "label": "Minute"
-      },
-      {
-        "name": "SECOND",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "false",
-        "description": "Extract second from minute",
-        "label": "Second"
-      },
-      {
-        "name": "DAY_OF_WEEK",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "false",
-        "description": "Extract the day of week, (1, 2, ... , 7)",
-        "label": "Day of the week"
-      },
-      {
-        "name": "DAY_OF_YEAR",
-        "type": "boolean",
-        "implicit": false,
-        "canBeBlank": true,
-        "placeHolder": "",
-        "default": "false",
-        "description": "Extract the day of year. This has values from 1 to 365 in standard years and 1 to 366 in leap years",
-        "label": "Day of the year"
+        "label": "Name of the month",
+        "description": "Extract the name of the month from date (08/24/2015 -> August)",
+        "default": "false"
       },
       {
         "name": "WEEK_OF_YEAR",
@@ -833,17 +764,116 @@
         "implicit": false,
         "canBeBlank": true,
         "placeHolder": "",
-        "default": "false",
+        "label": "Week of the year",
         "description": "Extract the week number of the year",
-        "label": "Week of the year"
+        "default": "false"
+      },
+      {
+        "name": "DAY_OF_YEAR",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Day of the year",
+        "description": "Extract the day of year. This has values from 1 to 365 in standard years and 1 to 366 in leap years",
+        "default": "false"
+      },
+      {
+        "name": "DAY",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Day of the month",
+        "description": "Extract day of the month from date (08/24/2015 -> 24)",
+        "default": "true"
+      },
+      {
+        "name": "DAY_OF_WEEK",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Day of the week",
+        "description": "Extract the day of week, (1, 2, ... , 7)",
+        "default": "false"
+      },
+      {
+        "name": "DAY_LABEL",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Name of the day",
+        "description": "Extract the name of the day from date (08/24/2015 -> Monday)",
+        "default": "false"
+      },
+      {
+        "name": "HOUR_12",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Hour of the day (12-hour clock)",
+        "description": "Extract the hour of the day (from an AM/PM format), from 0 to 11",
+        "default": "false"
+      },
+      {
+        "name": "AM_PM",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "am (0) or pm (1)",
+        "description": "Extract the AM/PM information of the day, from 0 (AM) to 1 (PM)",
+        "default": "false"
+      },
+      {
+        "name": "HOUR_24",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Hour of the day (24-hour clock)",
+        "description": "Extract the hour of the day, from 0 to 23",
+        "default": "true"
+      },
+      {
+        "name": "MINUTE",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Minute",
+        "description": "Extract minute from hour",
+        "default": "true"
+      },
+      {
+        "name": "SECOND",
+        "type": "boolean",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "label": "Second",
+        "description": "Extract second from minute",
+        "default": "false"
+      },
+      {
+        "name": "LANGUAGE",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "default": "en",
+        "description": "Language for the month and day names",
+        "label": "Language"
       }
     ],
-    "category": "dates",
-    "dynamic": false,
+    "actionScope": [],
     "description": "Create columns with year, month, day, hour, minute, second, etc.",
     "label": "Extract date parts",
-    "actionScope": [],
-    "docUrl": ""
+    "docUrl": "",
+    "dynamic": false
   },
   {
     "name": "replace_on_value",
@@ -923,7 +953,7 @@
         "canBeBlank": true,
         "placeHolder": "",
         "default": "false",
-        "description": "Defines greedy level. If checked, it will overwrite the entire cell, if not, it will only replace the part of the value that matches.",
+        "description": "Defines greedy level. If checked, it will overwrite the entire cell, if not, it will only replace the part of the value that matches",
         "label": "Overwrite entire cell"
       }
     ],

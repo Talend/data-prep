@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,15 +12,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.dataquality;
-
-import static java.util.Collections.singletonList;
-import static java.util.Optional.empty;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,10 +30,18 @@ import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.model.CategoryType;
 import org.talend.dataquality.semantic.model.DQCategory;
 
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 /**
  * Find a closest valid value from a dictionary.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + StandardizeInvalid.ACTION_NAME)
+@Action(StandardizeInvalid.ACTION_NAME)
 public class StandardizeInvalid extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -64,8 +63,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
      * The selected column if it uses semantic category
      */
     private static final String COLUMN_IS_SEMANTIC_KEY = "is_semantic_category";
-
-    private static final List<String> ACTION_SCOPE = singletonList(HIDDEN_IN_ACTION_LIST.getDisplayName());
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StandardizeInvalid.class);
 
@@ -131,11 +128,6 @@ public class StandardizeInvalid extends AbstractActionMetadata implements Column
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.DATA_CLEANSING.getDisplayName(locale);
-    }
-
-    @Override
-    public List<String> getActionScope() {
-        return ACTION_SCOPE;
     }
 
     @Override

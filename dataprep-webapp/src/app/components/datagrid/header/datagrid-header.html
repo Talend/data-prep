@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -23,6 +23,11 @@
                     <transform-menu ng-if="datagridHeaderCtrl.transformations.length"
                                     column="datagridHeaderCtrl.column"
                                     menu-items="datagridHeaderCtrl.transformations"></transform-menu>
+                    <li class="divider"></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_VALID_VALUES" translate-once="DISPLAY_ROWS_VALID_VALUES" ng-click="datagridHeaderCtrl.filterManagerService.createQualityFilter(datagridHeaderCtrl.VALID_RECORDS, datagridHeaderCtrl.column)"></a></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_INVALID_VALUES" translate-once="DISPLAY_ROWS_INVALID_VALUES" ng-click="datagridHeaderCtrl.filterManagerService.createQualityFilter(datagridHeaderCtrl.INVALID_RECORDS, datagridHeaderCtrl.column)"></a></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_EMPTY_VALUES" translate-once="DISPLAY_ROWS_EMPTY_VALUES" ng-click="datagridHeaderCtrl.filterManagerService.createQualityFilter(datagridHeaderCtrl.EMPTY_RECORDS, datagridHeaderCtrl.column)"></a></li>
+                    <li><a translate-once-title="DISPLAY_ROWS_INVALID_EMPTY_VALUES" translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES" ng-click="datagridHeaderCtrl.filterManagerService.createQualityFilter(datagridHeaderCtrl.INVALID_EMPTY_RECORDS, datagridHeaderCtrl.column)"></a></li>
                 </ul>
             </sc-dropdown-content>
         </sc-dropdown>
@@ -50,7 +55,7 @@
              empty-items-has-menu="!datagridHeaderCtrl.state.playground.isReadOnly && datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells.length > 0"
              on-click="datagridHeaderCtrl.addFilter">
     <empty-menu-items>
-        <li ng-click="datagridHeaderCtrl.addFilter('empty_records')">
+        <li ng-click="datagridHeaderCtrl.addFilter(datagridHeaderCtrl.EMPTY_RECORDS)">
             <a><span translate-once="SELECT_EMPTY_RECORDS"></span><span class="filter-column-name">{{ datagridHeaderCtrl.column.name }}</span></a>
         </li>
         <li class="divider"></li>
@@ -61,7 +66,7 @@
     </empty-menu-items>
 
     <invalid-menu-items>
-        <li ng-click="datagridHeaderCtrl.addFilter('invalid_records')">
+        <li ng-click="datagridHeaderCtrl.addFilter(datagridHeaderCtrl.INVALID_RECORDS)">
             <a><span translate-once="SELECT_INVALID_RECORDS"></span><span class="filter-column-name">{{ datagridHeaderCtrl.column.name }}</span></a>
         </li>
         <li class="divider"></li>

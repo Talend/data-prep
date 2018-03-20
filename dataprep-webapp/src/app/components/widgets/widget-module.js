@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -22,7 +22,6 @@ import BOOTSTRAP_MODAL from 'angular-ui-bootstrap/src/modal/index-nocss';
 import TalendBadge from './badge/widget-badge-component';
 import ResizableInput from './resizable-input/resizable-input-directive';
 import TalendButtonDropdown from './button-dropdown/widget-button-dropdown-directive';
-import TalendButtonLoader from './button-loader/widget-button-loader-directive';
 import TalendButtonSwitch from './button-switch/widget-button-switch-directive';
 import BoxplotChart from './charts/boxplot-chart/boxplot-chart-directive';
 import HorizontalBarchart from './charts/horizontal-barchart/horizontal-barchart-directive';
@@ -69,8 +68,6 @@ angular.module(MODULE_NAME, [
     .directive('resizableInput', ResizableInput)
 
     .directive('talendButtonDropdown', TalendButtonDropdown)
-
-    .directive('talendButtonLoader', TalendButtonLoader)
 
     .directive('talendButtonSwitch', TalendButtonSwitch)
 

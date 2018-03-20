@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,10 +13,10 @@
 
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
-import LOADER_MODULE from '../../loader/loader.module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_STATE_MODULE from '../../../services/state/state-module';
 import SERVICES_TRANSFORMATION_MODULE from '../../../services/transformation/transformation-module';
+import TAB_ITEM_MODULE from './tab-item/tab-item-module';
 
 import ActionsSuggestionsCtrl from './actions-suggestions-controller';
 import ActionsSuggestions from './actions-suggestions-directive';
@@ -34,12 +34,12 @@ const MODULE_NAME = 'data-prep.actions-suggestions';
 angular.module(MODULE_NAME,
 	[
 		uiRouter,
-		LOADER_MODULE,
 		TALEND_WIDGET_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_TRANSFORMATION_MODULE,
+		TAB_ITEM_MODULE,
 	])
-    .controller('ActionsSuggestionsCtrl', ActionsSuggestionsCtrl)
+	.controller('ActionsSuggestionsCtrl', ActionsSuggestionsCtrl)
     .directive('actionsSuggestions', ActionsSuggestions);
 
 export default MODULE_NAME;

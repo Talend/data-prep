@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,6 +15,7 @@ import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import FOLDER_SELECTION from '../../folder/selection/folder-selection-module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
+import TALEND_WIDGET_CONTAINERS_MODULE from '../../widgets-containers/widgets-containers-module';
 
 import InventoryCopyMoveComponent from './inventory-copy-move-component';
 
@@ -31,6 +32,7 @@ angular.module(MODULE_NAME,
 		ngTranslate,
 		FOLDER_SELECTION,
 		TALEND_WIDGET_MODULE,
+		TALEND_WIDGET_CONTAINERS_MODULE,
 	])
     .component('inventoryCopyMove', InventoryCopyMoveComponent);
 

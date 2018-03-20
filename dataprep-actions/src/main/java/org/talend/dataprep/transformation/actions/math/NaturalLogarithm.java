@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,16 +18,15 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.NaturalLogarithm.NATURAL_LOGARITHM_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Create a new column with Natural Logarithm
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + NATURAL_LOGARITHM_NAME)
+@Action(NATURAL_LOGARITHM_NAME)
 public class NaturalLogarithm extends AbstractMathNoParameterAction {
 
-    protected static final String NATURAL_LOGARITHM_NAME = "natural_logarithm_numbers";
+    public static final String NATURAL_LOGARITHM_NAME = "natural_logarithm_numbers";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {

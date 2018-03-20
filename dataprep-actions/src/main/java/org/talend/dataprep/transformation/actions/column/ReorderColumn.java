@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -46,7 +46,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * This action reorder columns. The column will be move to the selected column. All other columns will be moved as well.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReorderColumn.REORDER_ACTION_NAME)
+@Action(ReorderColumn.REORDER_ACTION_NAME)
 public class ReorderColumn extends AbstractActionMetadata implements DataSetAction {
 
     /**

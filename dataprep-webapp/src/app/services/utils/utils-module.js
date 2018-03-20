@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,16 +13,13 @@
 
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
-import toaster from 'angularjs-toaster';
 
 import copyright from './config/utils-copyrights-service';
-import version from './config/utils-version-service';
 import TDPMoment from './moment/moment-filter';
 import RestURLs from './config/utils-rest-urls-service';
 import ConverterService from './converter/converter-service';
 import DateService from './date/date-service';
 import HelpService from './config/utils-help-service';
-import MessageService from './message/message-service';
 import StepUtilsService from './step/step-utils-service';
 import StorageService from './storage/storage-service';
 import TextFormatService from './text-format/text-format-service';
@@ -30,6 +27,7 @@ import DisableRightClick from './click/disable-right-click-directive';
 import HtmlLang from './html/htmlLang-directive';
 import TitleService from './title/title-service';
 import FilterUtilsService from './filter/filter-utils-service';
+
 
 const MODULE_NAME = 'data-prep.services.utils';
 
@@ -39,15 +37,13 @@ const MODULE_NAME = 'data-prep.services.utils';
  * @description This module contains all the utiles services
  */
 angular
-	.module(MODULE_NAME, [ngTranslate, toaster])
+	.module(MODULE_NAME, [ngTranslate])
 	.value('copyRights', copyright)
-	.value('version', version)
 	.filter('TDPMoment', TDPMoment)
 	.service('RestURLs', RestURLs)
 	.service('ConverterService', ConverterService)
 	.service('DateService', DateService)
 	.service('HelpService', HelpService)
-	.service('MessageService', MessageService)
 	.service('StepUtilsService', StepUtilsService)
 	.service('StorageService', StorageService)
 	.service('TextFormatService', TextFormatService)

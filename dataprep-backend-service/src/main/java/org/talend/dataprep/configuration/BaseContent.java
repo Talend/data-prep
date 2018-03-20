@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -41,6 +41,9 @@ public class BaseContent {
 
             @Override
             public JsonNode convert(String source) {
+                if (source.isEmpty()) {
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, new IllegalArgumentException("Source should not be empty"));
+                }
                 ObjectMapper mapper = new ObjectMapper();
                 try {
                     return mapper.readTree(source);

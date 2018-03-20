@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
@@ -156,6 +159,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                 generator.writeEndArray();
                 generator.writeEndObject();
                 generator.flush();
+                generator.close();
                 // Send stored records to next steps
                 final ObjectMapper mapper = new ObjectMapper();
                 if (rowMetadata != null && resultAnalyzer != null) {
@@ -166,7 +170,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                     resultAnalyzer.close();
                 }
                 // Continue process
-                try (JsonParser parser = mapper.getFactory().createParser(new GZIPInputStream(new FileInputStream(reservoir)))) {
+                try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(new GZIPInputStream(new FileInputStream(reservoir)), UTF_8))) {
                     final DataSet dataSet = mapper.reader(DataSet.class).readValue(parser);
                     dataSet.getRecords().forEach(r -> {
                         r.setRowMetadata(rowMetadata);

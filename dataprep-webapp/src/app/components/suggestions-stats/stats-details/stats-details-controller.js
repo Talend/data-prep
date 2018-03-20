@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -21,7 +21,7 @@ import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
  * @requires data-prep.services.statisticsService.service:StatisticsService
  * @requires data-prep.services.statisticsService.service:StatisticsTooltipService
  */
-export default function StatsDetailsCtrl(state, FilterManagerService, StatisticsService, StatisticsTooltipService) {
+export default function StatsDetailsCtrl(state, $translate, FilterManagerService, StatisticsService, StatisticsTooltipService) {
 	'ngInject';
 
 	const vm = this;
@@ -29,6 +29,30 @@ export default function StatsDetailsCtrl(state, FilterManagerService, Statistics
 	vm.statisticsService = StatisticsService;
 	vm.statisticsTooltipService = StatisticsTooltipService;
 	vm.addPatternFilter = addPatternFilter;
+
+	vm.tabs = [
+		{
+			key: 'stats-tab-chart',
+			label: $translate.instant('STATS_TAB_CHART'),
+		},
+		{
+			key: 'stats-tab-value',
+			label: $translate.instant('STATS_TAB_VALUE'),
+		},
+		{
+			key: 'stats-tab-pattern',
+			label: $translate.instant('STATS_TAB_PATTERN'),
+		},
+		{
+			key: 'stats-tab-advanced',
+			label: $translate.instant('STATS_TAB_ADVANCED'),
+		},
+	];
+	vm.selectedTab = vm.tabs[0].key;
+
+	vm.selectTab = function (event, item) {
+		vm.selectedTab = item.key;
+	};
 
     /**
      * @ngdoc method

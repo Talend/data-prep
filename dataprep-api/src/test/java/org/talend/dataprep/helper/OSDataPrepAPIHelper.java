@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,30 +13,40 @@
 
 package org.talend.dataprep.helper;
 
-import static com.jayway.restassured.http.ContentType.JSON;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.async.AsyncExecution;
+import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+
+import static com.jayway.restassured.http.ContentType.JSON;
+import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
+import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -44,11 +54,15 @@ import com.jayway.restassured.specification.RequestSpecification;
 @Component
 public class OSDataPrepAPIHelper {
 
-    @Value("${backend.api.url:http://localhost:8888}")
-    private String apiBaseUrl;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${restassured.debug:false}")
     private boolean enableRestAssuredDebug;
+
+    @Value("${backend.api.url:http://localhost:8888}")
+    private String apiBaseUrl;
 
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
@@ -56,7 +70,7 @@ public class OSDataPrepAPIHelper {
      * @return the request specification to use.
      */
     public RequestSpecification given() {
-        RequestSpecification given = RestAssured.given();
+        RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
         if (enableRestAssuredDebug) {
             given = given.log().all(true);
         }
@@ -73,7 +87,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .body(new PreparationRequest(datasetID, preparationName)) //
@@ -90,9 +103,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response getPreparationDetails(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/preparations/" + preparationId + "/details");
+                .get("/api/preparations/{preparationId}/details", preparationId);
     }
 
     /**
@@ -104,11 +116,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response addAction(String preparationId, Action action) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .body(new ActionRequest(action)) //
-                .post("/api/preparations/" + preparationId + "/actions");
+                .post("/api/preparations/{preparationId}/actions", preparationId);
     }
 
     /**
@@ -121,11 +132,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response updateAction(String preparationId, String stepId, Action action) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
                 .body(new ActionRequest(action)) //
-                .put("/api/preparations/" + preparationId + "/actions/" + stepId);
+                .put("/api/preparations/{preparationId}/actions/{stepId}", preparationId, stepId);
     }
 
     /**
@@ -138,25 +148,56 @@ public class OSDataPrepAPIHelper {
      */
     public Response moveAction(String preparationId, String stepId, String parentStepId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
-                .post("/api/preparations/" + preparationId + "/steps/" + stepId + "/order?parentStepId=" + parentStepId);
+                .queryParam("parentStepId", parentStepId)
+                .post("/api/preparations/{preparationId}/steps/{stepId}/order", preparationId, stepId);
     }
 
     /**
-     * Upload a dataset into dataprep.
+     * Remove an action within a preparation.
+     *
+     * @param preparationId the preparation id.
+     * @param actionId the id of the action to delete.
+     * @return the response.
+     */
+    public Response deleteAction(String preparationId, String actionId) {
+        return given() //
+                .when() //
+                .delete("/api/preparations/{preparationId}/actions/{actionId}", preparationId, actionId);
+    }
+
+    /**
+     * Upload a text dataset into dataprep.
      *
      * @param filename the file to upload
      * @param datasetName the dataset basename
      * @return the response
      * @throws java.io.IOException if creation isn't possible
      */
-    public Response uploadDataset(String filename, String datasetName) throws java.io.IOException {
+    public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
+        return given() //
+                .log()
+                .all() //
+                .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .queryParam("name", datasetName) //
+                .when() //
+                .post("/api/datasets");
+    }
+
+    /**
+     * Upload a binary dataset into dataprep.
+     *
+     * @param filename the file to upload
+     * @param datasetName the dataset basename
+     * @return the response
+     * @throws java.io.IOException if creation isn't possible
+     */
+    public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
                 .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
@@ -172,12 +213,10 @@ public class OSDataPrepAPIHelper {
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
-                .put("/api/datasets/" + datasetId);
-
+                .put("/api/datasets/{datasetId}", datasetId);
     }
 
     /**
@@ -188,7 +227,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response deleteDataset(String dataSetId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .delete("/api/datasets/" + dataSetId);
     }
@@ -200,7 +238,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listDatasetDetails() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("api/datasets/summary");
     }
@@ -212,7 +249,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listDataset() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .get("/api/datasets");
     }
 
@@ -224,9 +260,8 @@ public class OSDataPrepAPIHelper {
      */
     public Response getPreparation(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/preparations/" + preparationId + "/details");
+                .get("/api/preparations/{preparationId}/details", preparationId);
     }
 
     /**
@@ -234,16 +269,30 @@ public class OSDataPrepAPIHelper {
      *
      * @param preparationId the preparation id.
      * @param version version of the preparation
-     * @param from
+     * @param from Where to get the data from (HEAD if no value)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from) {
-        return given() //
-                .baseUri(getApiBaseUrl()) //
+    public Response getPreparationContent(String preparationId, String version, String from)
+            throws IOException {
+        Response response = given() //
                 .queryParam("version", version) //
                 .queryParam("from", from) //
                 .when() //
-                .get("/api/preparations/" + preparationId + "/content");
+                .get("/api/preparations/{preparationId}/content", preparationId);
+
+        if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
+            // first time we have a 202 with a Location to see asynchronous method status
+            final String asyncMethodStatusUrl = response.getHeader("Location");
+
+            waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+
+            response = given() //
+                    .queryParam("version", version) //
+                    .queryParam("from", from) //
+                    .when() //
+                    .get("/api/preparations/{preparationId}/content", preparationId);
+        }
+        return response;
     }
 
     /**
@@ -253,7 +302,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listAllPreparation() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/folders/preparations");
     }
@@ -266,10 +314,9 @@ public class OSDataPrepAPIHelper {
      */
     public Response listPreparations(String folder) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
                 .when() //
-                .get("/api/folders/" + encode64(folder) + "/preparations");
+                .get("/api/folders/{folder}/preparations", encode64(folder));
     }
 
     /**
@@ -280,24 +327,36 @@ public class OSDataPrepAPIHelper {
      */
     public Response getDataset(String datasetId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/datasets/" + datasetId);
+                .get("/api/datasets/{datasetId}", datasetId);
     }
 
     /**
      * Export the current preparation sample depending the given parameters.
-     * 
+     *
      * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeExport(Map<String, Object> parameters) {
-        return given() //
-                .baseUri(apiBaseUrl) //
+    public Response executeExport(Map<String, Object> parameters) throws IOException {
+        Response response = given() //
                 .contentType(JSON) //
                 .when() //
                 .queryParameters(parameters) //
                 .get("/api/export");
+
+        if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
+            // first time we have a 202 with a Location to see asynchronous method status
+            final String asyncMethodStatusUrl = response.getHeader("Location");
+
+            waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+
+            response = given() //
+                    .contentType(JSON) //
+                    .when() //
+                    .queryParameters(parameters) //
+                    .get("/api/export");
+        }
+        return response;
     }
 
     /**
@@ -317,20 +376,14 @@ public class OSDataPrepAPIHelper {
      */
     public Response deletePreparation(String preparationId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .delete("/api/preparations/" + preparationId);
+                .delete("/api/preparations/{preparationId}", preparationId);
     }
 
     public Response getDataSetMetaData(String dataSetMetaDataId) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
-                .get("/api/datasets/" + dataSetMetaDataId + "/metadata");
-    }
-
-    public String getApiBaseUrl() {
-        return apiBaseUrl;
+                .get("/api/datasets/{dataSetMetaDataId}/metadata", dataSetMetaDataId);
     }
 
     /**
@@ -342,10 +395,8 @@ public class OSDataPrepAPIHelper {
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
         Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
-        FileOutputStream fos = new FileOutputStream(path.toFile());
-        IOUtils.copy(input, fos);
-        fos.close();
         tempFile.deleteOnExit();
         return tempFile;
     }
@@ -359,10 +410,11 @@ public class OSDataPrepAPIHelper {
      */
     public Response createFolder(String parentFolderId, String folder) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
+                .queryParam("parentId", parentFolderId)
+                .queryParam("path", folder)
                 .when() //
-                .put("/api/folders?parentId=" + parentFolderId + "&path=" + folder);
+                .put("/api/folders");
     }
 
     /**
@@ -373,10 +425,9 @@ public class OSDataPrepAPIHelper {
      */
     public Response deleteFolder(String folderId) {
         return given() //
-                .baseUri(getApiBaseUrl()) //
                 .urlEncodingEnabled(false) // in case of OS call
                 .when() //
-                .delete("/api/folders/" + folderId);
+                .delete("/api/folders/{folderId}", folderId);
     }
 
     /**
@@ -386,7 +437,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response listFolders() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/folders");
     }
@@ -402,13 +452,56 @@ public class OSDataPrepAPIHelper {
      */
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .urlEncodingEnabled(false) //
+                .queryParam("folder", folderSrc)
+                .queryParam("destination", folderDest)
+                .queryParam("newName", prepName)
                 .when() //
-                .put("/api/preparations/" + prepId //
-                        + "/move?folder=" + folderSrc //
-                        + "&destination=" + folderDest //
-                        + "&newName=" + prepName);
+                .put("/api/preparations/{prepId}/move", prepId);
+    }
+
+    /**
+     * Copy a preparation from a folder to another.
+     *
+     * @param id the preparation id.
+     * @param folderDest the preparation destination folder.
+     * @param prepName the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response copyPreparation(String id, String folderDest, String prepName) {
+        return given() //
+                .contentType(JSON) //
+                .when() //
+                .urlEncodingEnabled(false) //
+                .queryParam("newName", prepName) //
+                .queryParam("destination", folderDest) //
+                .post("/api/preparations/{id}/copy", id);
+    }
+
+    /**
+     * Get the semantic types of a column
+     *
+     * @param columnId the column id.
+     * @param datasetId the new dataset name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response getDatasetsColumnSemanticTypes(String columnId, String datasetId) {
+        return given() //
+                .when() //
+                .get("/api/datasets/{datasetId}/columns/{columnId}/types", datasetId, columnId);
+    }
+
+    /**
+     * Get the semantic types of a column
+     *
+     * @param columnId the column id.
+     * @param prepId the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response getPreparationsColumnSemanticTypes(String columnId, String prepId) {
+        return given() //
+                .when() //
+                .get("/api/preparations/{prepId}/columns/{columnId}/types", prepId, columnId);
     }
 
     /**
@@ -418,7 +511,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response getUserInformation() {
         return given() //
-                .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/user");
     }
@@ -433,4 +525,62 @@ public class OSDataPrepAPIHelper {
         return Base64.getEncoder().encodeToString(value.getBytes());
     }
 
+    public Response getExportFormats(String preparationId) {
+        return given() //
+                .when() //
+                .get("/api/export/formats/preparations/{preparationId}", preparationId);
+    }
+
+    /**
+     * Return the list of datasets
+     * @param queryParameters Map containing the parameter names and their values to send with the request.
+     * @return The response of the request.
+     */
+    public Response getDatasets(Map<String, String> queryParameters) {
+        return given() //
+                .when() //
+                .queryParameters(queryParameters)
+                .get("/api/datasets");
+    }
+
+    /**
+     * Ping async method status url in order to wait the end of the execution
+     *
+     * @param asyncMethodStatusUrl the asynchronous method to ping.
+     * @throws IOException
+     */
+    protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
+        boolean isAsyncMethodRunning = true;
+        int nbLoop = 0;
+
+        AsyncExecutionMessage asyncExecutionMessage = null;
+
+        while (isAsyncMethodRunning && nbLoop < 100) {
+
+            String statusAsyncMethod = given()
+                    .when() //
+                    .expect()
+                    .statusCode(200)
+                    .log()
+                    .ifError() //
+                    .get(asyncMethodStatusUrl)
+                    .asString();
+
+            asyncExecutionMessage =
+                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+
+            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
+            isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(50);
+            } catch (InterruptedException e) {
+                LOGGER.error("cannot sleep", e);
+                Assert.fail();
+            }
+            nbLoop++;
+        }
+
+        return asyncExecutionMessage;
+    }
 }

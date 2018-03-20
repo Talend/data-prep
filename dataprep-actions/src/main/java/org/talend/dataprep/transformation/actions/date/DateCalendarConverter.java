@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,12 +12,24 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.talend.dataprep.api.type.Type.DATE;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.actions.date.DateCalendarConverter.CalendarUnit.*;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.actions.Providers;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
+import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataquality.converters.JulianDayConverter;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -30,28 +42,15 @@ import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionsUtils;
-import org.talend.dataprep.transformation.actions.common.ColumnAction;
-import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.converters.JulianDayConverter;
-import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.talend.dataprep.api.type.Type.DATE;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.date.DateCalendarConverter.CalendarUnit.*;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DateCalendarConverter.ACTION_NAME)
+@Action(DateCalendarConverter.ACTION_NAME)
 public class DateCalendarConverter extends AbstractActionMetadata implements ColumnAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DateCalendarConverter.class);
 
     /**
      * The action name.
@@ -61,13 +60,14 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     /**
      * Action parameters:
      */
-    protected static final String FROM_MODE = "from_pattern_mode";
 
-    protected static final String FROM_MODE_BEST_GUESS = "unknown_separators";
+    protected static final String NEW_COLUMN_SUFFIX = "_converted_calendar";
 
-    protected static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
+    private static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
 
-    protected static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
+    private static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateCalendarConverter.class);
 
     private static final String FROM_DATE_PATTERNS_KEY = "from_date_patterns_key";
 
@@ -83,19 +83,15 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
 
     private static final String DEFAULT_OUTPUT_PATTERN = "yyyy-MM-dd G";
 
-    private static Map<String,org.talend.dataquality.converters.DateCalendarConverter> dateCalendarConverterMap =null;
+    /** Context key whose computed value indicates if the conversion if from a chronology */
+    static final String IS_FROM_CHRONOLOGY_INTERNAL_KEY = "is_from_chronology";
+
+    /** Context key whose computed value indicates if the conversion if to a chronology */
+    static final String IS_TO_CHRONOLOGY_INTERNAL_KEY = "is_to_chronology";
+
+    private static Map<String, org.talend.dataquality.converters.DateCalendarConverter> dateCalendarConverterMap = null;
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
-
-    /**
-     * if it converts from Chronology
-     */
-    private boolean isFromChronology ;
-
-    /**
-     * if it converts to Chronology
-     */
-    private boolean isToChronology ;
 
     @Override
     public String getName() {
@@ -152,7 +148,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                 .item(RATA_DIE.name(), RATA_DIE.toString(), toJulianDayOrISOParameters)
                 .item(EPOCH_DAY.name(), EPOCH_DAY.toString(), toJulianDayOrISOParameters)
                 .defaultValue(ISO.name())
-                .build(this ));
+                .build(this));
         //@formatter:on
 
         return parameters;
@@ -162,21 +158,24 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ColumnMetadata targetColumn = actionContext.getRowMetadata().getById(ActionsUtils.getTargetColumnId(actionContext));
+            ColumnMetadata originalColumn = actionContext.getRowMetadata().getById(actionContext.getColumnId());
+            targetColumn.setStatistics(new Statistics(originalColumn.getStatistics()));
         }
         if (actionContext.getActionStatus() == OK) {
             dateCalendarConverterMap = new HashMap<>();
             String fromCalendarParameter = actionContext.getParameters().get(FROM_CALENDAR_TYPE_PARAMETER);
             String toCalendarParameter = actionContext.getParameters().get(TO_CALENDAR_TYPE_PARAMETER);
-            isFromChronology = valueOf(fromCalendarParameter).isChronology();
-            isToChronology = valueOf(toCalendarParameter).isChronology();
+            final boolean isFromChronology = actionContext.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY, p -> valueOf(fromCalendarParameter).isChronology());
+            final boolean isToChronology = actionContext.get(IS_TO_CHRONOLOGY_INTERNAL_KEY, p -> valueOf(toCalendarParameter).isChronology());
             if (isFromChronology) {
                 AbstractChronology fromCalendarType = valueOf(fromCalendarParameter).getCalendarType();
                 Locale fromLocale = valueOf(fromCalendarParameter).getDefaultLocale();
                 actionContext.get(FROM_CALENDAR_TYPE_KEY, p -> fromCalendarType);
                 actionContext.get(FROM_LOCALE_KEY, p -> fromLocale);
                 actionContext.get(FROM_DATE_PATTERNS_KEY, p -> compileFromDatePattern(actionContext));
-            } else {//from JulianDay,no need to input pattern and Locale
+            } else { //from JulianDay,no need to input pattern and Locale
                 TemporalField fromTemporalField = valueOf(fromCalendarParameter).getTemporalField();
                 actionContext.get(FROM_CALENDAR_TYPE_KEY, p -> fromTemporalField);
             }
@@ -186,7 +185,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
                 Locale toLocale = valueOf(toCalendarParameter).getDefaultLocale();
                 actionContext.get(TO_CALENDAR_TYPE_KEY, p -> toCalendarType);
                 actionContext.get(TO_LOCALE_KEY, p -> toLocale);
-            } else {//to JulianDay,no need to output pattern and Locale
+            } else { //to JulianDay,no need to output pattern and Locale
                 TemporalField toTemporalField = valueOf(toCalendarParameter).getTemporalField();
                 actionContext.get(TO_CALENDAR_TYPE_KEY, p -> toTemporalField);
             }
@@ -194,7 +193,7 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
             //init an instance 'JulianDayConverter' when the converter is from JulianDay
             if (!isFromChronology) {
                 JulianDayConverter julianDayConvert;
-                if (isToChronology) {//convert JulianDay to ISO Calendar and use default output pattern.
+                if (isToChronology) { //convert JulianDay to ISO Calendar and use default output pattern.
                     julianDayConvert = new JulianDayConverter(actionContext.get(FROM_CALENDAR_TYPE_KEY), actionContext.get(TO_CALENDAR_TYPE_KEY), DEFAULT_OUTPUT_PATTERN, ISO.getDefaultLocale());
                 } else {
                     julianDayConvert = new JulianDayConverter((TemporalField) actionContext.get(FROM_CALENDAR_TYPE_KEY), (TemporalField) actionContext.get(TO_CALENDAR_TYPE_KEY));
@@ -220,55 +219,56 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         // Change the date calendar
-        final String value = row.get(columnId);
-        if (StringUtils.isBlank(value)) {
+        final String originalValue = row.get(columnId);
+        if (StringUtils.isBlank(originalValue)) {
+            row.set(ActionsUtils.getTargetColumnId(context), originalValue);
             return;
         }
 
         try {
             String newValue = null;
-            if (isFromChronology) {//it is From Chronology
+            if (context.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY)) { //it is From Chronology
                 AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
                 Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
-                String fromPattern = parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS_KEY),
+                String fromPattern = parseDateFromPatterns(originalValue, context.get(FROM_DATE_PATTERNS_KEY),
                         fromCalendarTypeKey, fromLocaleKey);
-                org.talend.dataquality.converters.DateCalendarConverter dateConverter =getDateCalendarConverterInstance(fromPattern,context);
-                if(dateConverter!=null){
-                    newValue = dateConverter.convert(value);
+                org.talend.dataquality.converters.DateCalendarConverter dateConverter = getDateCalendarConverterInstance(fromPattern, context);
+                if (dateConverter != null) {
+                    newValue = dateConverter.convert(originalValue);
                 }
-            } else {//it is From JulianDay.JulianDay->Chronology OR JulianDay->JulianDay
+            } else { //it is From JulianDay.JulianDay->Chronology OR JulianDay->JulianDay
                 JulianDayConverter julianDayConvert = context.get(JULIAN_DAY_CONVERT_KEY);
-                newValue = julianDayConvert.convert(value);
+                newValue = julianDayConvert.convert(originalValue);
             }
             if (StringUtils.isNotEmpty(newValue) && StringUtils.isNotBlank(newValue)) {
                 row.set(ActionsUtils.getTargetColumnId(context), newValue);
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
-            LOGGER.debug("Unable to parse date {}.", value);
+            LOGGER.debug("Unable to parse date {}.", originalValue);
         }
     }
 
     /**
      * Create instance DateCalendarConverter only once for each pattern. It is used to covert from Chronology.
      */
-    private org.talend.dataquality.converters.DateCalendarConverter getDateCalendarConverterInstance(String fromPattern,ActionContext context) {
-        if (!isFromChronology || StringUtils.isEmpty(fromPattern)) {
+    private org.talend.dataquality.converters.DateCalendarConverter getDateCalendarConverterInstance(String fromPattern, ActionContext context) {
+        if (!(boolean) context.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY) || StringUtils.isEmpty(fromPattern)) {
             return null;
         }
-        org.talend.dataquality.converters.DateCalendarConverter dateConvert=dateCalendarConverterMap.get(fromPattern);
+        org.talend.dataquality.converters.DateCalendarConverter dateConvert = dateCalendarConverterMap.get(fromPattern);
         if (dateConvert != null) {
             return dateConvert;
         }
         AbstractChronology fromCalendarTypeKey = context.get(FROM_CALENDAR_TYPE_KEY);
         Locale fromLocaleKey = context.get(FROM_LOCALE_KEY);
-        if (isToChronology) {//Chronology->Chronology
+        if (context.get(IS_TO_CHRONOLOGY_INTERNAL_KEY)) { //Chronology->Chronology
             dateConvert = new org.talend.dataquality.converters.DateCalendarConverter(
                     fromPattern, fromPattern, fromCalendarTypeKey, context.get(TO_CALENDAR_TYPE_KEY),
                     fromLocaleKey, context.get(TO_LOCALE_KEY));
             dateCalendarConverterMap.put(fromPattern, dateConvert);
             return dateConvert;
-        } else {//Chronology->TemporalField
+        } else { //Chronology->TemporalField
             JulianDayConverter julianDayConvert = new JulianDayConverter(fromCalendarTypeKey, fromPattern, fromLocaleKey, context.get(TO_CALENDAR_TYPE_KEY));
             dateCalendarConverterMap.put(fromPattern, julianDayConvert);
             return julianDayConvert;
@@ -369,9 +369,13 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
             return temporalField;
         }
 
-        public Locale getDefaultLocale() { return defaultLocale; }
+        public Locale getDefaultLocale() {
+            return defaultLocale;
+        }
 
-        public boolean isChronology() {  return isChronology;  }
+        public boolean isChronology() {
+            return isChronology;
+        }
     }
 
 }

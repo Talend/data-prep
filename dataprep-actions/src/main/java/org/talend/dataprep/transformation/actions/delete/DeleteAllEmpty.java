@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,6 +12,12 @@
 
 package org.talend.dataprep.transformation.actions.delete;
 
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
+
+import java.util.*;
+import java.util.function.Predicate;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -22,16 +28,10 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.util.*;
-import java.util.function.Predicate;
-
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
-
 /**
  * Delete all rows when they are empty.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteAllEmpty.DELETE_ALL_EMPTY_ACTION_NAME)
+@Action(DeleteAllEmpty.DELETE_ALL_EMPTY_ACTION_NAME)
 public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAction {
 
     /**
@@ -54,11 +54,10 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter
-                .selectParameter(locale)
+        parameters.add(SelectParameter.selectParameter(locale)
                 .name(ACTION_PARAMETER)
-                .item(DELETE)
-                .item(KEEP)
+                .item(DELETE, DELETE)
+                .item(KEEP, KEEP)
                 .defaultValue(DELETE)
                 .build(this));
 

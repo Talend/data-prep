@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,15 +12,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -35,32 +26,48 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
 /**
  * Change the date pattern on a 'date' column.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeDatePattern.ACTION_NAME)
+@Action(ChangeDatePattern.ACTION_NAME)
 public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
-    /** Action name. */
+    /**
+     * Action name.
+     */
     public static final String ACTION_NAME = "change_date_pattern"; //$NON-NLS-1$
+
+    protected static final String NEW_COLUMN_SUFFIX = "_format_changed";
+
+    static final String FROM_MODE_BEST_GUESS = "unknown_separators"; //$NON-NLS-1$
 
     /**
      * Action parameters:
      */
-    protected static final String FROM_MODE = "from_pattern_mode"; //$NON-NLS-1$
+    static final String FROM_MODE = "from_pattern_mode"; //$NON-NLS-1$
 
-    protected static final String FROM_MODE_CUSTOM = "from_custom_mode"; //$NON-NLS-1$
+    static final String FROM_MODE_CUSTOM = "from_custom_mode"; //$NON-NLS-1$
 
-    protected static final String FROM_CUSTOM_PATTERN = "from_custom_pattern"; //$NON-NLS-1$
+    static final String FROM_CUSTOM_PATTERN = "from_custom_pattern"; //$NON-NLS-1$
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeDatePattern.class);
-
-    protected static final String FROM_MODE_BEST_GUESS = "unknown_separators"; //$NON-NLS-1$
 
     /**
      * Keys for action context:
@@ -68,6 +75,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     private static final String FROM_DATE_PATTERNS = "from_date_patterns";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
 
     @Override
     public String getName() {
@@ -85,7 +93,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
                 .item(FROM_MODE_BEST_GUESS, FROM_MODE_BEST_GUESS)
                 .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, Parameter.parameter(locale).setName(FROM_CUSTOM_PATTERN).setType(ParameterType.STRING).setDefaultValue(EMPTY).setCanBeBlank(false).build(this))
                 .defaultValue(FROM_MODE_BEST_GUESS)
-                .build(this ));
+                .build(this));
         // @formatter:on
 
         parameters.addAll(getParametersForDatePattern(locale));
@@ -95,38 +103,53 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn()));
+        boolean doesCreateNewColumn = ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
+
+        if (doesCreateNewColumn) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX).withCopyMetadataFromId(actionContext.getColumnId())));
         }
+
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);
 
-            // register the new pattern in column stats as most used pattern, to be able to process date action more
-            // efficiently later
-            final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
-            final RowMetadata rowMetadata = actionContext.getRowMetadata();
-            final String columnId = actionContext.getColumnId();
-            final ColumnMetadata column = rowMetadata.getById(columnId);
-            final Statistics statistics = column.getStatistics();
+            if (actionContext.getActionStatus() == OK) {
+                // register the new pattern in column's stats as the most used pattern,
+                // to be able to process date action more efficiently later
+                final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
 
-            final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
-            if (!Objects.equals(targetColumn.getId(), columnId)) {
-                targetColumn.setStatistics(statistics);
+                final RowMetadata rowMetadata = actionContext.getRowMetadata();
+
+                // target column
+                String targetId = ActionsUtils.getTargetColumnId(actionContext);
+                final ColumnMetadata targetColumn = rowMetadata.getById(targetId);
+
+                // origin column
+                final String columnId = actionContext.getColumnId();
+                final ColumnMetadata column = rowMetadata.getById(columnId);
+
+                // if the target column is not the original column, we souldn't use the same statitics object
+                final Statistics statistics;
+                if (doesCreateNewColumn) {
+                    statistics = new Statistics(column.getStatistics());
+                    targetColumn.setStatistics(statistics);
+                } else {
+                    statistics = targetColumn.getStatistics();
+                }
+
+                actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
+
+                final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
+                        .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
+                        .findFirst().orElseGet(() -> {
+                            final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
+                            statistics.getPatternFrequencies().add(newPatternFreq);
+                            return newPatternFreq;
+                        });
+
+                long mostUsedPatternCount = getMostUsedPatternCount(column);
+                newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
+                rowMetadata.update(targetId, targetColumn);
             }
-
-            actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
-
-            final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
-                    .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
-                    .findFirst().orElseGet(() -> {
-                        final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
-                        statistics.getPatternFrequencies().add(newPatternFreq);
-                        return newPatternFreq;
-                    });
-
-            long mostUsedPatternCount = getMostUsedPatternCount(column);
-            newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
-            rowMetadata.update(ActionsUtils.getTargetColumnId(actionContext), targetColumn);
         }
     }
 
@@ -135,16 +158,16 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             return emptyList();
         }
         switch (actionContext.getParameters().get(FROM_MODE)) {
-        case FROM_MODE_BEST_GUESS:
-            final RowMetadata rowMetadata = actionContext.getRowMetadata();
-            final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
-            return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
-        case FROM_MODE_CUSTOM:
-            List<DatePattern> fromPatterns = new ArrayList<>();
-            fromPatterns.add(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
-            return fromPatterns;
-        default:
-            return emptyList();
+            case FROM_MODE_BEST_GUESS:
+                final RowMetadata rowMetadata = actionContext.getRowMetadata();
+                final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
+                return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
+            case FROM_MODE_CUSTOM:
+                List<DatePattern> fromPatterns = new ArrayList<>();
+                fromPatterns.add(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
+                return fromPatterns;
+            default:
+                return emptyList();
         }
     }
 
@@ -157,19 +180,20 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
         final DatePattern newPattern = context.get(COMPILED_DATE_PATTERN);
 
         // Change the date pattern
-        final String value = row.get(columnId);
-        if (StringUtils.isBlank(value)) {
+        final String originalValue = row.get(columnId);
+        if (StringUtils.isBlank(originalValue)) {
+            row.set(ActionsUtils.getTargetColumnId(context), originalValue);
             return;
         }
         try {
-            LocalDateTime date = Providers.get().parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS));
+            LocalDateTime date = Providers.get().parseDateFromPatterns(originalValue, context.get(FROM_DATE_PATTERNS));
 
             if (date != null) {
                 row.set(ActionsUtils.getTargetColumnId(context), newPattern.getFormatter().format(date));
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
-            LOGGER.debug("Unable to parse date {}.", value, e);
+            LOGGER.debug("Unable to parse date {}.", originalValue, e);
         }
     }
 

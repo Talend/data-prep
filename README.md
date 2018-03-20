@@ -23,6 +23,8 @@ These files must be used together with the common code contained in [daikon](htt
 | [dataprep-dataset](dataprep-dataset)               | *rest service to manage datasets (import, export, sample, stats)*    |
 | [dataprep-preparation](dataprep-preparation)       | *rest service to manage preparations (create, list steps, get data)* |
 | [dataprep-transformation](dataprep-transformation) | *rest service to apply transformations (actions are here)*           |
+| [dataprep-upgrade-common](dataprep-upgrade-common) | *Support code for executing upgrades (when starting a newer version on top of a previous version.*           |
+| [dataprep-upgrade](dataprep-upgrade) | *Upgrade tasks when startting a newer version on top of a previous version*           |
 | [dataprep-webapp](dataprep-webapp)                 | *web app (AngularJS)*                                                |
 | [tooling](tooling)                                 | *IDE specific config files + some other stuff*                       |
 
@@ -56,24 +58,21 @@ The following projects don't build any back-end artifacts but provide build util
 | [dataprep-backend-common](dataprep-backend-common)         | *Common resources and classes for back-end modules (no dependency on Spring)* |
 | [dataprep-backend-service](dataprep-backend-service)         | *Common Spring related classes (shared configuration...)* |
 | [dataprep-backend-service-parent](dataprep-backend-service-parent)         | *A parent module for all back end services to ease dependency and plugin management* |
+| [dataprep-upgrade-common](dataprep-upgrade-common) | *Support code for executing upgrades (when starting a newer version on top of a previous version.*           |
+| [dataprep-upgrade](dataprep-upgrade) | *Upgrade tasks when startting a newer version on top of a previous version*           |
 
 
 ## 2. Download
 
 You can download this product from the [Talend website](http://www.talend.com/download/talend-open-studio?qt-product_tos_download_new=5&utm_medium=communityext&utm_source=github&utm_campaign=dataprep).
 
-
 ## 3. Usage and Documentation
 
 Documentation is available on [Talend Help Center](http://help.talend.com/).
 
-
-
 ## 4. Support 
 
 You can ask for help on our [Forum](http://www.talend.com/services/global-technical-support).
-
-
 
 ## 5. Contributing
 
@@ -81,17 +80,20 @@ We welcome contributions of all kinds from anyone.
 
 Using the bug tracker [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports, feature requests and submitting pull requests.
 
-
 ### Build
 - All project are maven based.
 - A parent pom builds the web-app and its dependencies.
-- Specific Maven settings are required. See instructions in [tooling](/tooling/).
 - See each module (e.g. [dataprep-dataset](/dataprep-dataset/)) for specific build instructions.
 
-
 ### IDE setup
-See the [tooling](/tooling/) folder.
 
+**Java Formatting**
+
+See formatting instructions in [tools](https://github.com/Talend/tools/tree/master/tools-java-formatter)
+
+**Copyright**
+
+Enable the Copyright plugin, extract the [IDEs/intellij/copyright.tar.gz](/tooling/IDEs/intellij/copyright.tar.gz), import it through the Preferences panel `Editor > Copyright > Copyright Profiles` and define it as Default project copyright
 
 ## 6. License
 

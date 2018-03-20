@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.actions.math;
 import java.math.RoundingMode;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 /**
  * This will compute the largest (closest to positive infinity) value that is less than or equal to the cell value and
@@ -23,7 +22,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
  *
  * @see RoundingMode#FLOOR
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundFloor.ACTION_NAME)
+@Action(RoundFloor.ACTION_NAME)
 public class RoundFloor extends AbstractRound {
 
     /**

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,10 +11,9 @@
 
  ============================================================================*/
 export default class AboutCtrl {
-	constructor(state, version, copyRights, AboutService) {
+	constructor(state, copyRights, AboutService) {
 		'ngInject';
 		this.state = state;
-		this.version = version;
 		this.copyRights = copyRights;
 		this.showBuildDetails = false;
 		AboutService.loadBuilds();

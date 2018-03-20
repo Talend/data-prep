@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,11 +13,13 @@
   ~ ============================================================================
   -->
 
-<toaster-container toaster-options="{'position-class': 'toast-top-60-width', 'body-output-type': 'trustedHtml', 'close-button': true}"></toaster-container>
-<talend-loading></talend-loading>
-<easter-eggs></easter-eggs>
-<feedback></feedback>
-<upgrade-version></upgrade-version>
-<icons-provider></icons-provider>
-<about></about>
-<ui-view class="main-layout"></ui-view>
+<div ng-class="{t7: appCtrl.appSettings.context.theme}">
+	<notifications id="notifications-container"></notifications>
+	<talend-loading size="'large'"></talend-loading>
+	<easter-eggs></easter-eggs>
+	<feedback></feedback>
+	<upgrade-version></upgrade-version>
+	<icons-provider></icons-provider>
+ 	<about></about>
+	<ui-view class="main-layout"></ui-view>
+</div>

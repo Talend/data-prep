@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -190,6 +190,9 @@ public abstract class BaseExportStrategy {
      * @return the preparation out of its id.
      */
     protected PreparationMessage getPreparation(String preparationId, String stepId) {
+        if ("origin".equals(stepId)) {
+            stepId = Step.ROOT_STEP.id();
+        }
         final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
                 preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {

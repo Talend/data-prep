@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,13 +12,84 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.StandalonePreparation;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.MixedContentMap;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.service.api.EnrichedPreparation;
+import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.preparation.service.UserPreparation;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
+import org.talend.dataprep.transformation.actions.text.Trim;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
@@ -31,40 +102,6 @@ import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.StandalonePreparation;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationSummary;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.preparation.service.UserPreparation;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -105,7 +142,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         List<UserPreparation> preparations = mapper.readerFor(UserPreparation.class)
-                .<UserPreparation> readValues(response1.asInputStream()).readAll();
+                .<UserPreparation>readValues(response1.asInputStream()).readAll();
         assertEquals(1, preparations.size());
         UserPreparation userPreparation = preparations.iterator().next();
         assertThat(userPreparation.getDataSetId(), is(tagadaId));
@@ -118,7 +155,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         List<PreparationSummary> preparationSummaries = mapper.readerFor(PreparationSummary.class)
-                .<PreparationSummary> readValues(response.asInputStream()).readAll();
+                .<PreparationSummary>readValues(response.asInputStream()).readAll();
         assertEquals(1, preparationSummaries.size());
         PreparationSummary preparationSummary = preparationSummaries.iterator().next();
         assertThat(preparationSummary.getId(), is(preparationId));
@@ -170,7 +207,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
 
         // then
-        List<String> result = mapper.readerFor(String.class).<String> readValues(shouldNotBeEmpty.asInputStream()).readAll();
+        List<String> result = mapper.readerFor(String.class).<String>readValues(shouldNotBeEmpty.asInputStream()).readAll();
         assertThat(result.get(0), is(preparationId));
 
         // when
@@ -178,7 +215,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String> getList(""), is(empty()));
+        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
     }
 
     @Test
@@ -193,14 +230,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .jsonPath();
 
         // then
-        assertThat(shouldNotBeEmpty.<String> getList("").get(0), is(preparationId));
+        assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
 
         // when
         final JsonPath shouldBeEmpty = when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName)
                 .jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String> getList(""), is(empty()));
+        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
     }
 
     @Test
@@ -355,7 +392,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     /**
-     *
      * @see <a href="https://jira.talendforge.org/browse/TDP-3965">TDP-3965</a>
      */
     @Test
@@ -762,7 +798,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json");
 
         // when
-        final String content = when().get("/api/preparations/{id}/content", preparationId).asString();
+        final String content = testClient.getPreparation(preparationId).asString();
 
         // then
         assertThat(content, sameJSONAsFile(expected));
@@ -791,7 +827,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", preparationName, home.getId());
 
         // when
-        final String content = when().get("/api/preparations/{id}/metadata", preparationId).asString();
+        final String content = testClient.getPrepMetadata(preparationId).asString();
 
         // then
         final DataSetMetadata actual = mapper.readerFor(DataSetMetadata.class).readValue(content);
@@ -825,17 +861,22 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // Request preparation content at different versions (preparation has 2 steps -> Root + Upper Case).
-        assertThat(when().get("/api/preparations/{id}/content", preparationId).asString(), sameJSONAsFile(
+        assertThat(testClient.getPreparation(preparationId).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=head", preparationId).asString(), sameJSONAsFile(
+
+        assertThat(testClient.getPreparation(preparationId, "head").asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(0), preparationId).asString(),
+
+        assertThat(testClient.getPreparation(preparationId, steps.get(0)).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + steps.get(1), preparationId).asString(), sameJSONAsFile(
+
+        assertThat(testClient.getPreparation(preparationId, steps.get(1)).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=origin", preparationId).asString(),
+
+        assertThat(testClient.getPreparation(preparationId, "origin").asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
-        assertThat(when().get("/api/preparations/{id}/content?version=" + Step.ROOT_STEP.id(), preparationId).asString(),
+
+        assertThat(testClient.getPreparation(preparationId, Step.ROOT_STEP.id()).asString(),
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
     }
 
@@ -846,7 +887,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 home.getId());
 
         // when
-        String preparationContent = given().get("/api/preparations/{preparation}/content", preparationId).asString();
+        String preparationContent = testClient.getPreparation(preparationId).asString();
 
         // then
         assertThat(preparationContent,
@@ -860,8 +901,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 home.getId());
 
         // when
-        String preparationContent = given().get("/api/preparations/{preparation}/content?sample=mdljshf", preparationId)
-                .asString();
+        String preparationContent = testClient.getPreparation(preparationId).asString();
 
         // then
         ObjectMapper mapper = new ObjectMapper();
@@ -972,6 +1012,72 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         assertThat(preview, sameJSONAsFile(expectedPreviewStream));
+    }
+
+    /**
+     * Verify a calculate time since preview after a trim step on a preparation
+     * see <a href="https://jira.talendforge.org/browse/TDP-5057">TDP-5057</a>
+     */
+    @Test
+    public void testPreparationPreviewOnPreparationWithTrimAction_TDP_5057() throws IOException {
+        //Create a dataset from csv
+        final String datasetId = testClient.createDataset("preview/best_sad_songs_of_all_time.csv", "testPreview");
+        // Create a preparation
+        String preparationId = testClient.createPreparationFromDataset(datasetId, "testPrep", home.getId());
+
+        // apply trim action on the 8nd column to make this column date valid
+        Map<String, String> trimParameters = new HashMap<>();
+        trimParameters.put("create_new_column", "false");
+        trimParameters.put("padding_character", "whitespace");
+        trimParameters.put("scope", "column");
+        trimParameters.put("column_id", "0008");
+        trimParameters.put("column_name", "Added At");
+        trimParameters.put("row_id", "null");
+
+        testClient.applyAction(preparationId, Trim.TRIM_ACTION_NAME, trimParameters);
+
+        // check column is date valid after trim action
+        InputStream inputStream = testClient.getPreparation(preparationId).asInputStream();
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        RowMetadata preparationContent = mapper.readValue(inputStream, Data.class).metadata;
+
+        List<PatternFrequency> patternFrequencies =
+                preparationContent.getColumns().get(8).getStatistics().getPatternFrequencies();
+
+        assertTrue(patternFrequencies.stream() //
+                .map(PatternFrequency::getPattern) //
+                .anyMatch("yyyy-MM-dd"::equals));
+
+        // create a preview of calculate time since action
+        PreviewAddParameters previewAddParameters = new PreviewAddParameters();
+        previewAddParameters.setDatasetId(datasetId);
+        previewAddParameters.setPreparationId(preparationId);
+        previewAddParameters.setTdpIds(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
+
+        Action calculateTimeUntilAction = new Action();
+        calculateTimeUntilAction.setName(ComputeTimeSince.TIME_SINCE_ACTION_NAME);
+        MixedContentMap actionParameters = new MixedContentMap();
+        actionParameters.put("create_new_column", "true");
+        actionParameters.put("time_unit", "HOURS");
+        actionParameters.put("since_when", "now_server_side");
+        actionParameters.put("scope", "column");
+        actionParameters.put("column_id", "0008");
+        actionParameters.put("column_name", "Added At");
+        calculateTimeUntilAction.setParameters(actionParameters);
+        previewAddParameters.setActions(Collections.singletonList(calculateTimeUntilAction));
+
+        JsonPath jsonPath = given().contentType(ContentType.JSON) //
+                .body(previewAddParameters) //
+                .expect().statusCode(200).log().ifError() //
+                .when() //
+                .post("/api/preparations/preview/add") //
+                .jsonPath();
+
+        // check non empty value for the new column
+        assertEquals("new preview column should contains values according to calculate time since action", //
+                0, //
+                jsonPath.getList("records.0009").stream().map(String::valueOf).filter(StringUtils::isBlank).count());
+
     }
 
     @Test
@@ -1132,7 +1238,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         copyIdParameters.put("scope", "column");
         testClient.applyAction(preparationId, "copy", copyIdParameters);
 
-        RowMetadata preparationContent = testClient.getPreparationContent(preparationId);
+        InputStream inputStream = testClient.getPreparation(preparationId).asInputStream();
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        RowMetadata preparationContent = mapper.readValue(inputStream, Data.class).metadata;
+
         ColumnMetadata idCopyColumn = getColumnByName(preparationContent, "id_copy");
 
         Map<String, String> deleteIdCopyParameters = new HashMap<>();
@@ -1141,8 +1250,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         deleteIdCopyParameters.put("scope", "column");
         testClient.applyAction(preparationId, "delete_column", deleteIdCopyParameters);
 
+
         // force export to update cache
-        testClient.getPreparationContent(preparationId);
+        testClient.getPreparation(preparationId);
 
         // when
         Map<String, String> copyFirstNameParameters = new HashMap<>();
@@ -1152,7 +1262,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyAction(preparationId, "copy", copyFirstNameParameters);
 
         // then
-        preparationContent = testClient.getPreparationContent(preparationId);
+        inputStream = testClient.getPreparation(preparationId).asInputStream();
+        mapper.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        preparationContent = mapper.readValue(inputStream, Data.class).metadata;
+
         assertNotNull(preparationContent);
         ColumnMetadata firstNameColumn = getColumnByName(preparationContent, "first_name_copy");
         assertNotEquals(idCopyColumn.getId(), firstNameColumn.getId());
@@ -1163,6 +1276,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .filter(c -> columnName.equals(c.getName())).findAny();
         assertTrue(firstNameColumn.isPresent());
         return firstNameColumn.get();
+    }
+
+    private static class Data {
+        public RowMetadata metadata;
     }
 
 }

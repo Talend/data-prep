@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -16,7 +16,6 @@
 <talend-modal class="feedback"
               fullscreen="false"
               close-button="true"
-              disable-enter="true"
               state="feedbackCtrl.state.feedback.visible"
               ng-if="feedbackCtrl.state.feedback.visible">
     <div class="title"
@@ -97,12 +96,12 @@
                     class="btn talend-modal-close btn-default modal-secondary-button"
                     translate-once="CANCEL"></button>
 
-            <talend-button-loader button-class="btn btn-primary"
-                                  disable-condition="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback"
-                                  loading="feedbackCtrl.isSendingFeedback"
-                                  loading-class="icon">
-                <span translate-once="OK"></span>
-            </talend-button-loader>
+            <action-button bs-style="'primary'"
+                           type="'submit'"
+                           disabled="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback"
+                           in-progress="feedbackCtrl.isSendingFeedback"
+                           label="'{{ 'OK' | translate }}'"
+            ></action-button>
         </div>
     </form>
 </talend-modal>

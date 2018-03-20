@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -193,6 +193,26 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
     }
 
     @Test
+    public void TDP_2190() {
+        //given
+        final DataSetRow row = getRow("1 ", " 2", " Hey ! ");
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "1");
+        expectedValues.put("0001", "2");
+        expectedValues.put("0002", "Hey !");
+
+        parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "dataset");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.STRING)));
     }
@@ -207,8 +227,9 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, action.getBehavior().size());
+        assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_PATTERN));
     }
 
 }

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.export.ExportFormatMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.dto.Folder;
 
@@ -40,7 +41,13 @@ public class FeatureContext {
      */
     public static final String FULL_RUN_PREFIX = "fullrun-";
 
+    /**
+     * Suffix used to differentiate persisted TDP items during parallel IT runs.
+     */
+    private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
+
     private Map<String, String> datasetIdByName = new HashMap<>();
+    private Map<String, String> semanticTypeIdByName = new HashMap<>();
 
     // TODO : Refactoring : various preparation can have the same name but in different folder
     // TODO : change the data model (Map<String, List<String>> ?)
@@ -49,6 +56,8 @@ public class FeatureContext {
     private Map<String, File> tempFileByName = new HashMap<>();
 
     private Map<String, Action> actionByAlias = new HashMap<>();
+
+    private Map<String, ExportFormatMessage[]> parametersByPreparationName = new HashMap<>();
 
     private SortedSet<Folder> folders = new TreeSet<>((o1, o2) -> {
         // reverse order : the longer string is the first one.
@@ -65,6 +74,16 @@ public class FeatureContext {
      * All object store on a feature execution.
      */
     private Map<String, Object> featureContext = new HashMap<>();
+
+    /**
+     * Add a suffix to a name depending of the execution instance.
+     *
+     * @param name the to suffix.
+     * @return the suffixed name.
+     */
+    public static String suffixName(String name) {
+        return name + TI_SUFFIX_UID;
+    }
 
     /**
      * Store a new dataset reference. In order to delete it later.
@@ -84,6 +103,34 @@ public class FeatureContext {
      */
     public void storePreparationRef(@NotNull String id, @NotNull String name) {
         preparationIdByName.put(name, id);
+    }
+
+    /**
+     * Store a new semantic type reference. In order to delete it later.
+     *
+     * @param id the semantic type id.
+     * @param name the semantic type name.
+     */
+    public void storeSemanticTypeRef(@NotNull String id, @NotNull String name) {
+        semanticTypeIdByName.put(name, id);
+    }
+
+    /**
+     * Remove a preparation reference.
+     *
+     * @param name the preparation name.
+     */
+    public void removePreparationRef(@NotNull String name) {
+        preparationIdByName.remove(name);
+    }
+
+    /**
+     * Remove a semantic type reference.
+     *
+     * @param name the semanticType name.
+     */
+    public void removeSemanticTypeRef(@NotNull String name) {
+        semanticTypeIdByName.remove(name);
     }
 
     /**
@@ -126,6 +173,16 @@ public class FeatureContext {
     }
 
     /**
+     * List all created semantic type id.
+     *
+     * @return a {@link List} of all created semantic type id.
+     */
+    @NotNull
+    public List<String> getSemanticTypeIds() {
+        return new ArrayList<>(semanticTypeIdByName.values());
+    }
+
+    /**
      * Get the id of a stored dataset.
      *
      * @param datasetName the name of the searched dataset.
@@ -145,6 +202,17 @@ public class FeatureContext {
     @Nullable
     public String getPreparationId(@NotNull String preparationName) {
         return preparationIdByName.get(preparationName);
+    }
+
+    /**
+     * Get the id of a stored semantic type.
+     *
+     * @param semanticTypeName the name of the searched semantic type.
+     * @return the semanticType id.
+     */
+    @Nullable
+    public String getSemanticTypeId(@NotNull String semanticTypeName) {
+        return semanticTypeIdByName.get(semanticTypeName);
     }
 
     /**
@@ -180,6 +248,13 @@ public class FeatureContext {
      */
     public void clearPreparation() {
         preparationIdByName.clear();
+    }
+
+    /**s
+     * Clear the list of semantic types.
+     */
+    public void clearSemanticType() {
+        semanticTypeIdByName.clear();
     }
 
     /**
@@ -234,6 +309,18 @@ public class FeatureContext {
      */
     public void clearFolders() {
         folders.clear();
+    }
+
+    public void storePreparationExportFormat(String preparationName, ExportFormatMessage[] parameters) {
+        parametersByPreparationName.put(preparationName, parameters);
+    }
+
+    public void clearPreparationExportFormat() {
+        parametersByPreparationName.clear();
+    }
+
+    public ExportFormatMessage[] getExportFormatsByPreparationName(String preparationName) {
+        return parametersByPreparationName.get(preparationName);
     }
 
 }

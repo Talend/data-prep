@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -17,6 +17,7 @@ describe('Inventory state service', () => {
 	let datasets;
 	let preparations;
 	let folders;
+	let storageSpy;
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
@@ -24,6 +25,16 @@ describe('Inventory state service', () => {
 		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
+
+	beforeEach(inject(($q,  StorageService) => {
+		storageSpy = spyOn(StorageService, 'setListsDisplayModes').and.returnValue();
+	}));
+
+	beforeEach(inject(inventoryState => {
+		inventoryState.preparationsDisplayMode = 'table';
+		inventoryState.datasetsDisplayMode = 'table';
+	}));
+
 
 	beforeEach(() => {
 		datasets = [
@@ -142,6 +153,21 @@ describe('Inventory state service', () => {
 			// then
 			expect(inventoryState.datasetToUpdate).toBe(datasetToUpdate);
 		}));
+
+		it('should set datasets list display mode and persist it if different from the actual', inject((inventoryState, InventoryStateService, StorageService) => {
+			InventoryStateService.setDatasetsDisplayMode({ mode: 'large' });
+
+			expect(inventoryState.datasetsDisplayMode).toBe('large');
+			expect(StorageService.setListsDisplayModes).toHaveBeenCalledWith({
+				datasets: 'large',
+				preparations: 'table',
+			});
+
+			storageSpy.calls.reset();
+
+			InventoryStateService.setDatasetsDisplayMode({ mode: 'large' });
+			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
+		}));
 	});
 
 	describe('preparation', () => {
@@ -179,6 +205,21 @@ describe('Inventory state service', () => {
 
 			// then
 			expect(inventoryState.folder.content.preparations[1].displayMode).toBe(undefined);
+		}));
+
+		it('should set preparations list display mode and persist it if different from actual', inject((inventoryState, InventoryStateService, StorageService) => {
+			InventoryStateService.setPreparationsDisplayMode({ mode: 'large' });
+
+			expect(inventoryState.preparationsDisplayMode).toBe('large');
+			expect(StorageService.setListsDisplayModes).toHaveBeenCalledWith({
+				preparations: 'large',
+				datasets: 'table',
+			});
+
+			storageSpy.calls.reset();
+
+			InventoryStateService.setPreparationsDisplayMode({ mode: 'large' });
+			expect(StorageService.setListsDisplayModes).not.toHaveBeenCalled();
 		}));
 	});
 

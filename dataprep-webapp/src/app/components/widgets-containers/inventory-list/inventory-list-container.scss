@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -33,8 +33,7 @@ $icon-xls-badge-color: #8ABC00;
 		&-nbSteps,
 		&-author,
 		&-creationDate,
-		&-lastModificationDate,
-		&-statusActions { flex: 1 0 120px;}
+		&-lastModificationDate { flex: 1 0 120px;}
 	}
 }
 
@@ -47,15 +46,6 @@ $icon-xls-badge-color: #8ABC00;
 .list-item-folder {
 	div > svg.tc-svg-icon {
 		fill: $icon-folder-color;
-	}
-}
-
-.list-item-favorite .tc-list-cell-statusActions {
-	button[id^="datasets-list-"][id$="dataset:favorite"] {
-		opacity: 1;
-		svg {
-			fill: $icon-favorite-color;
-		}
 	}
 }
 
@@ -74,4 +64,31 @@ $icon-xls-badge-color: #8ABC00;
 .ti-file-xls-o-badge,
 .ti-file-xlsx-o-badge {
 	fill: $icon-xls-badge-color;
+}
+
+
+// Favorite
+button[id^="datasets-list-"][id$="dataset:favorite"] {
+	opacity: 0;
+
+	&:focus {
+    	opacity: 1;
+    }
+}
+
+.tc-list-large > *:hover,
+.tc-list-table .tc-list-item:hover,
+.list-item-favorite {
+	button[id^="datasets-list-"][id$="dataset:favorite"] {
+		opacity: 1;
+		transition: opacity 0.15s ease-in;
+	}
+}
+
+.list-item-favorite {
+	button[id^="datasets-list-"][id$="dataset:favorite"] {
+		svg {
+			fill: $icon-favorite-color;
+		}
+	}
 }

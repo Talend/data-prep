@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -91,8 +91,12 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
             // read suggested actions from previous command
             ArrayNode suggestedActions;
             try {
+                String jsonInput = getInput();
+                if (jsonInput.isEmpty()) {
+                    throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, new IllegalArgumentException("Source should not be empty"));
+                }
                 suggestedActions = (ArrayNode) objectMapper.readerFor(new TypeReference<Action>() {
-                }).readTree(getInput());
+                }).readTree(jsonInput);
 
                 // list datasets from this command's response
                 List<DataSetMetadata> dataSets = objectMapper.readValue(response.getEntity().getContent(),

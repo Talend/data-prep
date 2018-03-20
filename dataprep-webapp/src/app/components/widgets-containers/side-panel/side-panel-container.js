@@ -1,6 +1,6 @@
  /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,18 +11,11 @@
 
   ============================================================================*/
 
+import template from './side-panel.html';
 import SidePanelCtrl from './side-panel-controller';
 
 const SidePanelContainer = {
-	template: `<pure-side-panel
-			id="$ctrl.id"
-			ng-if="$ctrl.appSettings.views.sidepanel.actions.length"
-		 	actions="$ctrl.actions"
-		 	toggle-icon="$ctrl.toggleIcon"
-			on-toggle-dock="$ctrl.toggle"
-			docked="$ctrl.state.home.sidePanelDocked"
-			watch-depth="reference"
-		/>`,
+	templateUrl: template,
 	bindings: {
 		id: '<',
 		active: '<',

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -37,7 +37,7 @@ import org.talend.dataprep.util.NumericHelper;
 /**
  * This will compute the absolute value for numerical columns.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Absolute.ABSOLUTE_ACTION_NAME)
+@Action(Absolute.ABSOLUTE_ACTION_NAME)
 public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ABSOLUTE_ACTION_NAME = "absolute"; //$NON-NLS-1$

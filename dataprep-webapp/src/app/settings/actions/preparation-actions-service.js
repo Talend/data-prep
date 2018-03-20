@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,6 +12,12 @@
  ============================================================================*/
 
 import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
+
+const BLOCKING_ACTION_TYPES = [
+	'@@preparation/SORT',
+	'@@preparation/FOLDER_REMOVE',
+	'@@preparation/FOLDER_FETCH',
+];
 
 export default class PreparationActionsService {
 	constructor($stateParams, state, FolderService, MessageService, PreparationService,
@@ -28,22 +34,29 @@ export default class PreparationActionsService {
 	}
 
 	dispatch(action) {
+		if (BLOCKING_ACTION_TYPES.includes(action.type)) {
+			if (this.state.inventory.isFetchingPreparations) {
+				return;
+			}
+			// all blocking action types requiring a loader
+			this.StateService.setFetchingInventoryPreparations(true);
+		}
 		switch (action.type) {
 		case '@@preparation/CREATE':
 			this.StateService[action.payload.method](action.payload);
 			break;
 		case '@@preparation/FOLDER_REMOVE':
 		case '@@preparation/SORT': {
-			this.FolderService[action.payload.method](action.payload);
+			this.FolderService[action.payload.method](action.payload)
+				.finally(() => this.StateService.setFetchingInventoryPreparations(false));
 			break;
 		}
 		case '@@preparation/FOLDER_FETCH': {
 			const folderId = this.$stateParams.folderId;
 			this.StateService.setPreviousRoute(HOME_PREPARATIONS_ROUTE, { folderId });
-			this.StateService.setFetchingInventoryPreparations(true);
 			this.FolderService
 				.init(folderId)
-				.then(() => this.StateService.setFetchingInventoryPreparations(false));
+				.finally(() => this.StateService.setFetchingInventoryPreparations(false));
 			break;
 		}
 		case '@@preparation/COPY_MOVE':
@@ -77,7 +90,6 @@ export default class PreparationActionsService {
 			const preparation = action.payload.model;
 			this.TalendConfirmService
 				.confirm(
-					{ disableEnter: true },
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: 'preparation', name: preparation.name }
 				)

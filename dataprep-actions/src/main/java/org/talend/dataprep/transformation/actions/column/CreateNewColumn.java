@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -22,7 +22,13 @@ import static org.talend.dataprep.transformation.actions.category.ActionScope.CO
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -42,7 +48,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * duplicate a column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CreateNewColumn.ACTION_NAME)
+@Action(CreateNewColumn.ACTION_NAME)
 public class CreateNewColumn extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -76,6 +82,8 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
      */
     public static final String NEW_COLUMN_NAME = "create_new_column_name";
 
+    public static final String DEFAULT_NAME_FOR_NEW_COLUMN = "new column";
+
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -102,7 +110,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
         parameters.add(parameter(locale).setName(NEW_COLUMN_NAME)
                 .setType(ParameterType.STRING)
-                .setDefaultValue("New column")
+                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN)
                 .setCanBeBlank(false)
                 .build(this));
 
@@ -163,7 +171,8 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     public List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        String columnName = context.getParameters().get(NEW_COLUMN_NAME);
+        String columnName = context.getParameters().get(NEW_COLUMN_NAME) != null ? context.getParameters().get(NEW_COLUMN_NAME)
+                : DEFAULT_NAME_FOR_NEW_COLUMN;
         return Collections.singletonList(ActionsUtils.additionalColumn().withName(columnName));
     }
 

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -68,6 +68,10 @@ public class PreviewConfiguration extends Configuration {
         private List<Long> parseIndexes(final String indexes) {
             if (indexes == null) {
                 return null;
+            }
+            if (indexes.isEmpty()) {
+                throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_ACTIONS,
+                        new IllegalArgumentException("Source should not be empty"));
             }
             try {
                 final ObjectMapper mapper = new ObjectMapper(new JsonFactory());

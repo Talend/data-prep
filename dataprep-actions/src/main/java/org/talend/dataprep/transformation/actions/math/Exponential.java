@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -17,16 +17,15 @@ import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Exponential.EXPONENTIAL_NAME;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Create a new column with Exponential
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + EXPONENTIAL_NAME)
+@Action(EXPONENTIAL_NAME)
 public class Exponential extends AbstractMathNoParameterAction {
 
-    protected static final String EXPONENTIAL_NAME = "exponential_numbers";
+    public static final String EXPONENTIAL_NAME = "exponential_numbers";
 
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {

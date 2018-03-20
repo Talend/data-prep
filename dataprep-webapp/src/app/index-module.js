@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -124,10 +124,11 @@ window.fetchConfiguration = function fetchConfiguration() {
 				}
 			})
 			// Fetch dynamic configuration
-			.run((SettingsService) => {
+			.run((SettingsService, InventoryStateService) => {
 				'ngInject';
 				// base settings
 				SettingsService.setSettings(appSettings);
+				InventoryStateService.init();
 			})
 			// Configure server api urls and refresh supported encoding
 			.run((DatasetService, HelpService, RestURLs) => {
@@ -178,7 +179,6 @@ window.fetchConfiguration = function fetchConfiguration() {
 
 		angular
 			.module(SERVICES_UTILS_MODULE)
-			.value('version', config.version)
 			.value('copyRights', config.copyRights);
 	});
 };

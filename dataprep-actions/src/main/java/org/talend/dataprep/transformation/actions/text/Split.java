@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -23,7 +23,12 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -44,7 +49,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Split a cell value on a separator.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Split.SPLIT_ACTION_NAME)
+@Action(Split.SPLIT_ACTION_NAME)
 public class Split extends AbstractActionMetadata implements ColumnAction {
 
     /** The action name. */
@@ -54,13 +59,13 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     public static final String SPLIT_APPENDIX = "_split_"; //$NON-NLS-1$
 
     /** The selected separator within the provided list. */
-    protected static final String SEPARATOR_PARAMETER = "separator"; //$NON-NLS-1$
+    public static final String SEPARATOR_PARAMETER = "separator"; //$NON-NLS-1$
 
     /** Choice of other separator as string. */
-    protected static final String OTHER_STRING = "other_string";
+    public static final String OTHER_STRING = "other_string";
 
     /** Choice of other separator as regex. */
-    protected static final String OTHER_REGEX = "other_regex";
+    public static final String OTHER_REGEX = "other_regex";
 
     /** The string separator specified by the user. Should be used only if SEPARATOR_PARAMETER value is 'other'. */
     protected static final String MANUAL_SEPARATOR_PARAMETER_STRING = "manual_separator_string"; //$NON-NLS-1$
@@ -140,8 +145,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         int limit = Integer.parseInt(context.getParameters().get(LIMIT));
 
         for (int i = 0; i < limit; i++) {
-            additionalColumns.add(
-                    ActionsUtils.additionalColumn().withKey("" + i).withName(column.getName() + SPLIT_APPENDIX + (i + 1)));
+            additionalColumns.add(ActionsUtils.additionalColumn().withKey("" + i).withName(
+                    column.getName() + SPLIT_APPENDIX + (i + 1)));
         }
 
         return additionalColumns;
@@ -177,8 +182,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
      * @return True if the separator is a regex.
      */
     private boolean isRegexMode(ActionContext context) {
-        final Map<String, String> parameters = context.getParameters();
-        return StringUtils.equals(OTHER_REGEX, parameters.get(SEPARATOR_PARAMETER));
+        final String separatorParameter = context.getParameters().get(SEPARATOR_PARAMETER);
+        return StringUtils.equals(OTHER_REGEX, separatorParameter);
     }
 
     /**
@@ -187,12 +192,13 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
      */
     private String getSeparator(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
-        if (StringUtils.equals(OTHER_STRING, parameters.get(SEPARATOR_PARAMETER))) {
+        final String separatorParameter = parameters.get(SEPARATOR_PARAMETER);
+        if (StringUtils.equals(OTHER_STRING, separatorParameter)) {
             return parameters.get(MANUAL_SEPARATOR_PARAMETER_STRING);
-        } else if (StringUtils.equals(OTHER_REGEX, parameters.get(SEPARATOR_PARAMETER))) {
+        } else if (StringUtils.equals(OTHER_REGEX, separatorParameter)) {
             return parameters.get(MANUAL_SEPARATOR_PARAMETER_REGEX);
         } else {
-            return parameters.get(SEPARATOR_PARAMETER);
+            return separatorParameter;
         }
     }
 

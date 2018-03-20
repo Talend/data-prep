@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -46,6 +46,11 @@ public class ListDetailsSettings {
     private ListSortSettings sort;
 
     /**
+     * Display configuration
+     */
+    private ListDisplaySettings display;
+
+    /**
      * Items title (main property) configuration
      */
     private ListTitleSettings titleProps;
@@ -72,6 +77,14 @@ public class ListDetailsSettings {
 
     public void setSort(ListSortSettings sort) {
         this.sort = sort;
+    }
+
+    public ListDisplaySettings getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(ListDisplaySettings display) {
+        this.display = display;
     }
 
     public ListTitleSettings getTitleProps() {
@@ -101,6 +114,8 @@ public class ListDetailsSettings {
         private ListItemsSettings itemProps;
 
         private ListSortSettings sort;
+
+        private ListDisplaySettings display;
 
         private ListTitleSettings titleProps;
 
@@ -133,6 +148,11 @@ public class ListDetailsSettings {
             return this;
         }
 
+        public Builder display(final ListDisplaySettings display) {
+            this.display = display;
+            return this;
+        }
+
         public Builder titleProps(final ListTitleSettings titleProps) {
             this.titleProps = titleProps;
             return this;
@@ -143,6 +163,7 @@ public class ListDetailsSettings {
             settings.setColumns(this.columns);
             settings.setItemProps(this.itemProps);
             settings.setSort(this.sort);
+            settings.setDisplay(this.display);
             settings.setTitleProps(this.titleProps);
             return settings;
         }

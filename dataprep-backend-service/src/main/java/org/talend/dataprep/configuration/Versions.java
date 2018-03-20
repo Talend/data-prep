@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,6 +14,7 @@ package org.talend.dataprep.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.talend.dataprep.info.ClassPathManifestInfoProvider;
 import org.talend.dataprep.info.ManifestInfo;
 import org.talend.dataprep.info.ManifestInfoProvider;
@@ -25,12 +26,9 @@ import org.talend.dataprep.info.ManifestInfoProvider;
 public class Versions {
 
     @Bean
-    public ManifestInfoProvider baseProvider() {
+    @Order(1)
+    public ManifestInfoProvider manifestInfoProvider() {
         return new ClassPathManifestInfoProvider("/dataprep-git.properties", "OS");
     }
 
-    @Bean
-    public ManifestInfoProvider opsProvider() {
-        return new ClassPathManifestInfoProvider("/dataprep-ops-git.properties", "OPS");
-    }
 }

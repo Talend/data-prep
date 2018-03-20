@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -26,6 +26,7 @@ import org.talend.dataprep.api.service.command.info.VersionCommand;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.info.BuildDetails;
 import org.talend.dataprep.info.Version;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -53,16 +54,20 @@ public class VersionServiceAPI extends APIService {
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
 
+    @Value("${dataprep.display.version}")
+    protected String applicationVersion;
+
     /**
-     * Returns all the versions of the different services (api, dataset, preparation and transformation).
+     * Returns all the versions of the different services (api, dataset, preparation and transformation) and the global application version.
      *
      * @return an array of service versions
      */
     @RequestMapping(value = "/api/version", method = GET)
-    @ApiOperation(value = "Get the version of all services (including underlying low level services)", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get the version of all services (including underlying low level services)",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @PublicAPI
-    public Version[] allVersions() {
+    public BuildDetails allVersions() {
         final Version[] versions = new Version[4];
 
         final Version apiVersion = versionService.version();
@@ -72,7 +77,7 @@ public class VersionServiceAPI extends APIService {
         versions[2] = callVersionService(preparationServiceUrl, "PREPARATION");
         versions[3] = callVersionService(transformationServiceUrl, "TRANSFORMATION");
 
-        return versions;
+        return new BuildDetails(applicationVersion, versions);
     }
 
     /**

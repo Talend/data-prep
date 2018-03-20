@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,6 +14,7 @@
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
+import TALEND_WIDGET_CONTAINERS_MODULE from '../../widgets-containers/widgets-containers-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
 import SERVICES_PLAYGROUND_MODULE from '../../../services/playground/playground-module';
 
@@ -36,6 +37,7 @@ angular.module(MODULE_NAME,
 		TALEND_WIDGET_MODULE,
 		SERVICES_DATASET_MODULE,
 		SERVICES_PLAYGROUND_MODULE,
+		TALEND_WIDGET_CONTAINERS_MODULE,
 	])
     .controller('DatasetParametersCtrl', DatasetParametersCtrl)
     .directive('datasetParameters', DatasetParameters);

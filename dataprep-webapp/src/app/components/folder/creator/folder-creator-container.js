@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,24 +11,16 @@
 
  ============================================================================*/
 
+import template from './folder-creator.html';
+
 /**
  * @ngdoc component
  * @name data-prep.folder-creator:folderCreator
  * @description This component renders add folder modal content
  * @usage <folder-creator></folder-creator>
  * */
-
 export default {
-	template: `
-		<talend-modal id="create-folder-modal"
-			fullscreen="false"
-			close-button="true"
-			state="$ctrl.state.home.folders.creator.isVisible"
-			ng-if="$ctrl.state.home.folders.creator.isVisible"
-			disable-enter="true">
-			<folder-creator-form />
-		</talend-modal>
-	`,
+	templateUrl: template,
 	controller(state) {
 		'ngInject';
 		this.state = state;

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -20,6 +20,9 @@ class InventoryCopyMoveCtrl {
 		this.isMoving = false;
 		this.newName = this.item.name;
 		this.destinationFolder = this.initialFolder;
+
+		this.copy = this.copy.bind(this);
+		this.move = this.move.bind(this);
 	}
 
 	_focusOnNameInput() {
@@ -29,6 +32,7 @@ class InventoryCopyMoveCtrl {
 	isActionDisabled() {
 		return this.isLoading || this.copyMoveForm.$invalid || this.isMoving || this.isCopying;
 	}
+
 	/**
 	 * @ngdoc method
 	 * @name copy

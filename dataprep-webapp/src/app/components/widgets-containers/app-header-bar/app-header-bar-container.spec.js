@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -56,7 +56,7 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const brand = element.find('.tc-header-bar > ul').eq(0).find('li').eq(1).find('.btn');
+			const brand = element.find('.tc-header-bar > ul').eq(0).find('li').eq(1).find('.btn > span');
 			expect(brand.text()).toBe('Data Preparation');
 		});
 
@@ -70,22 +70,22 @@ describe('App header bar container', () => {
 			expect(searchBar.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-search');
 		});
 
-		it('should create onboarding icon', () => {
+		it('should create onboarding menu item', () => {
 			// when
 			createElement();
 
 			// then
-			const onboardingIcon = element.find('#onboarding\\:preparation');
-			expect(onboardingIcon.attr('label')).toBe('Click here to discover the application');
+			const onboardingMenuItem = element.find('#onboarding\\:preparation');
+			expect(onboardingMenuItem.text()).toBe('Click here to discover the application');
 		});
 
-		it('should create feedback icon', () => {
+		it('should create feedback menu item', () => {
 			// when
 			createElement();
 
 			// then
-			const feedbackIcon = element.find('#modal\\:feedback');
-			expect(feedbackIcon.attr('label')).toBe('Send feedback to Talend');
+			const feedbackMenuItem = element.find('#modal\\:feedback');
+			expect(feedbackMenuItem.text()).toBe('Send feedback to Talend');
 		});
 
 		it('should create user menu', () => {
@@ -104,8 +104,8 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const productsToggle = element.find('#products\\:menu');
-			expect(productsToggle.text()).toBeFalsy();
+			const productsToggle = element.find('#products\\:menu > span');
+			expect(productsToggle.text()).toBe('Data Preparation');
 
 			expect(element.find('#product\\:producta').text()).toBe('Product A');
 			expect(element.find('#product\\:productb').text()).toBe('Product B');
@@ -123,8 +123,8 @@ describe('App header bar container', () => {
 			createElement();
 
 			// when
-			const onboardingIcon = element.find('#onboarding\\:preparation');
-			onboardingIcon[0].click();
+			const onboardingMenuItem = element.find('#onboarding\\:preparation');
+			onboardingMenuItem[0].click();
 
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
@@ -137,21 +137,8 @@ describe('App header bar container', () => {
 			createElement();
 
 			// when
-			const feedbackIcon = element.find('#modal\\:feedback');
-			feedbackIcon[0].click();
-
-			// then
-			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@modal/SHOW');
-		}));
-
-		it('should dispatch feedback icon click', inject((SettingsActionsService) => {
-			// given
-			createElement();
-
-			// when
-			const feedbackIcon = element.find('#modal\\:feedback');
-			feedbackIcon[0].click();
+			const feedbackMenuItem = element.find('#modal\\:feedback');
+			feedbackMenuItem[0].click();
 
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();

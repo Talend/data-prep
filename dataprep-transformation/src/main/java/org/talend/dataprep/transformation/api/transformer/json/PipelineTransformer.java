@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -11,12 +11,6 @@
 // ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.json;
-
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
-import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +29,8 @@ import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
@@ -44,6 +38,12 @@ import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
 import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
+
+import java.util.Optional;
+import java.util.function.Function;
+
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
+import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 
 @Component
 public class PipelineTransformer implements Transformer {
@@ -90,9 +90,11 @@ public class PipelineTransformer implements Transformer {
         final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
                 configuration.stepId(), configuration.getSourceType());
         final PreparationMessage preparation = configuration.getPreparation();
-        final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getRowMetadata()) //
+        // function that from a step gives the rowMetadata associated to the previous/parent step
+        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
+
         final Pipeline pipeline = Pipeline.Builder.builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
@@ -105,7 +107,7 @@ public class PipelineTransformer implements Transformer {
                 .withFilterOut(configuration.getOutFilter()) //
                 .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata)) //
                 .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(rowMetadataSupplier) //
+                .withStepMetadataSupplier(previousStepRowMetadataSupplier) //
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();

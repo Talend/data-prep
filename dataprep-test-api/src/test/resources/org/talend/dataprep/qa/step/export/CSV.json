@@ -1,0 +1,813 @@
+{
+  "mimeType": "text/csv",
+  "extension": ".csv",
+  "id": "CSV",
+  "needParameters": true,
+  "defaultExport": false,
+  "enabled": true,
+  "disableReason": "",
+  "title": "Export to CSV",
+  "parameters": [
+    {
+      "class": "org.talend.dataprep.parameters.Parameter",
+      "name": "fileName",
+      "type": "string",
+      "implicit": false,
+      "canBeBlank": false,
+      "placeHolder": "",
+      "label": "Filename",
+      "description": "Name of the generated export file",
+      "default": ""
+    },
+    {
+      "class": "org.talend.dataprep.parameters.SelectParameter",
+      "name": "csv_fields_delimiter",
+      "type": "select",
+      "implicit": false,
+      "canBeBlank": true,
+      "placeHolder": "",
+      "configuration": {
+        "values": [
+          {
+            "value": ";",
+            "label": "Semicolon"
+          },
+          {
+            "value": "\t",
+            "label": "Tab"
+          },
+          {
+            "value": " ",
+            "label": "Space"
+          },
+          {
+            "value": ",",
+            "label": "Comma"
+          },
+          {
+            "value": "|",
+            "label": "Pipe"
+          }
+        ],
+        "multiple": false
+      },
+      "label": "Field delimiter",
+      "description": "Select character to use as a delimiter",
+      "readonly": true,
+      "radio": false,
+      "default": ";"
+    },
+    {
+      "class": "org.talend.dataprep.parameters.Parameter",
+      "name": "csv_enclosure_character",
+      "type": "string",
+      "implicit": false,
+      "canBeBlank": true,
+      "placeHolder": "",
+      "label": "Text enclosure character",
+      "description": "Select a character to enclosure the text",
+      "default": "\""
+    },
+    {
+      "class": "org.talend.dataprep.parameters.Parameter",
+      "name": "csv_escape_character",
+      "type": "string",
+      "implicit": false,
+      "canBeBlank": true,
+      "placeHolder": "",
+      "label": "Escape character",
+      "description": "Select an escape character",
+      "default": "\""
+    },
+    {
+      "class": "org.talend.dataprep.parameters.SelectParameter",
+      "name": "csv_enclosure_mode",
+      "type": "select",
+      "implicit": false,
+      "canBeBlank": false,
+      "placeHolder": "",
+      "configuration": {
+        "values": [
+          {
+            "value": "all_fields",
+            "label": "All values"
+          },
+          {
+            "value": "text_only",
+            "label": "Text only"
+          }
+        ],
+        "multiple": false
+      },
+      "label": "Values to enclose",
+      "description": "Values to enclose",
+      "readonly": true,
+      "radio": true,
+      "default": "text_only"
+    },
+    {
+      "class": "org.talend.dataprep.parameters.SelectParameter",
+      "name": "csv_encoding",
+      "type": "select",
+      "implicit": false,
+      "canBeBlank": false,
+      "placeHolder": "",
+      "configuration": {
+        "values": [
+          {
+            "value": "UTF-8",
+            "label": "UTF-8"
+          },
+          {
+            "value": "UTF-16",
+            "label": "UTF-16"
+          },
+          {
+            "value": "UTF-16LE",
+            "label": "UTF-16LE"
+          },
+          {
+            "value": "windows-1252",
+            "label": "windows-1252"
+          },
+          {
+            "value": "ISO-8859-1",
+            "label": "ISO-8859-1"
+          },
+          {
+            "value": "x-MacRoman",
+            "label": "x-MacRoman"
+          },
+          {
+            "value": "Big5",
+            "label": "Big5"
+          },
+          {
+            "value": "Big5-HKSCS",
+            "label": "Big5-HKSCS"
+          },
+          {
+            "value": "CESU-8",
+            "label": "CESU-8"
+          },
+          {
+            "value": "EUC-JP",
+            "label": "EUC-JP"
+          },
+          {
+            "value": "EUC-KR",
+            "label": "EUC-KR"
+          },
+          {
+            "value": "GB18030",
+            "label": "GB18030"
+          },
+          {
+            "value": "GB2312",
+            "label": "GB2312"
+          },
+          {
+            "value": "GBK",
+            "label": "GBK"
+          },
+          {
+            "value": "IBM-Thai",
+            "label": "IBM-Thai"
+          },
+          {
+            "value": "IBM00858",
+            "label": "IBM00858"
+          },
+          {
+            "value": "IBM01140",
+            "label": "IBM01140"
+          },
+          {
+            "value": "IBM01141",
+            "label": "IBM01141"
+          },
+          {
+            "value": "IBM01142",
+            "label": "IBM01142"
+          },
+          {
+            "value": "IBM01143",
+            "label": "IBM01143"
+          },
+          {
+            "value": "IBM01144",
+            "label": "IBM01144"
+          },
+          {
+            "value": "IBM01145",
+            "label": "IBM01145"
+          },
+          {
+            "value": "IBM01146",
+            "label": "IBM01146"
+          },
+          {
+            "value": "IBM01147",
+            "label": "IBM01147"
+          },
+          {
+            "value": "IBM01148",
+            "label": "IBM01148"
+          },
+          {
+            "value": "IBM01149",
+            "label": "IBM01149"
+          },
+          {
+            "value": "IBM037",
+            "label": "IBM037"
+          },
+          {
+            "value": "IBM1026",
+            "label": "IBM1026"
+          },
+          {
+            "value": "IBM1047",
+            "label": "IBM1047"
+          },
+          {
+            "value": "IBM273",
+            "label": "IBM273"
+          },
+          {
+            "value": "IBM277",
+            "label": "IBM277"
+          },
+          {
+            "value": "IBM278",
+            "label": "IBM278"
+          },
+          {
+            "value": "IBM280",
+            "label": "IBM280"
+          },
+          {
+            "value": "IBM284",
+            "label": "IBM284"
+          },
+          {
+            "value": "IBM285",
+            "label": "IBM285"
+          },
+          {
+            "value": "IBM290",
+            "label": "IBM290"
+          },
+          {
+            "value": "IBM297",
+            "label": "IBM297"
+          },
+          {
+            "value": "IBM420",
+            "label": "IBM420"
+          },
+          {
+            "value": "IBM424",
+            "label": "IBM424"
+          },
+          {
+            "value": "IBM437",
+            "label": "IBM437"
+          },
+          {
+            "value": "IBM500",
+            "label": "IBM500"
+          },
+          {
+            "value": "IBM775",
+            "label": "IBM775"
+          },
+          {
+            "value": "IBM850",
+            "label": "IBM850"
+          },
+          {
+            "value": "IBM852",
+            "label": "IBM852"
+          },
+          {
+            "value": "IBM855",
+            "label": "IBM855"
+          },
+          {
+            "value": "IBM857",
+            "label": "IBM857"
+          },
+          {
+            "value": "IBM860",
+            "label": "IBM860"
+          },
+          {
+            "value": "IBM861",
+            "label": "IBM861"
+          },
+          {
+            "value": "IBM862",
+            "label": "IBM862"
+          },
+          {
+            "value": "IBM863",
+            "label": "IBM863"
+          },
+          {
+            "value": "IBM864",
+            "label": "IBM864"
+          },
+          {
+            "value": "IBM865",
+            "label": "IBM865"
+          },
+          {
+            "value": "IBM866",
+            "label": "IBM866"
+          },
+          {
+            "value": "IBM868",
+            "label": "IBM868"
+          },
+          {
+            "value": "IBM869",
+            "label": "IBM869"
+          },
+          {
+            "value": "IBM870",
+            "label": "IBM870"
+          },
+          {
+            "value": "IBM871",
+            "label": "IBM871"
+          },
+          {
+            "value": "IBM918",
+            "label": "IBM918"
+          },
+          {
+            "value": "ISO-2022-CN",
+            "label": "ISO-2022-CN"
+          },
+          {
+            "value": "ISO-2022-JP",
+            "label": "ISO-2022-JP"
+          },
+          {
+            "value": "ISO-2022-JP-2",
+            "label": "ISO-2022-JP-2"
+          },
+          {
+            "value": "ISO-2022-KR",
+            "label": "ISO-2022-KR"
+          },
+          {
+            "value": "ISO-8859-13",
+            "label": "ISO-8859-13"
+          },
+          {
+            "value": "ISO-8859-15",
+            "label": "ISO-8859-15"
+          },
+          {
+            "value": "ISO-8859-2",
+            "label": "ISO-8859-2"
+          },
+          {
+            "value": "ISO-8859-3",
+            "label": "ISO-8859-3"
+          },
+          {
+            "value": "ISO-8859-4",
+            "label": "ISO-8859-4"
+          },
+          {
+            "value": "ISO-8859-5",
+            "label": "ISO-8859-5"
+          },
+          {
+            "value": "ISO-8859-6",
+            "label": "ISO-8859-6"
+          },
+          {
+            "value": "ISO-8859-7",
+            "label": "ISO-8859-7"
+          },
+          {
+            "value": "ISO-8859-8",
+            "label": "ISO-8859-8"
+          },
+          {
+            "value": "ISO-8859-9",
+            "label": "ISO-8859-9"
+          },
+          {
+            "value": "JIS_X0201",
+            "label": "JIS_X0201"
+          },
+          {
+            "value": "JIS_X0212-1990",
+            "label": "JIS_X0212-1990"
+          },
+          {
+            "value": "KOI8-R",
+            "label": "KOI8-R"
+          },
+          {
+            "value": "KOI8-U",
+            "label": "KOI8-U"
+          },
+          {
+            "value": "Shift_JIS",
+            "label": "Shift_JIS"
+          },
+          {
+            "value": "TIS-620",
+            "label": "TIS-620"
+          },
+          {
+            "value": "US-ASCII",
+            "label": "US-ASCII"
+          },
+          {
+            "value": "UTF-16BE",
+            "label": "UTF-16BE"
+          },
+          {
+            "value": "UTF-32",
+            "label": "UTF-32"
+          },
+          {
+            "value": "UTF-32BE",
+            "label": "UTF-32BE"
+          },
+          {
+            "value": "UTF-32LE",
+            "label": "UTF-32LE"
+          },
+          {
+            "value": "windows-1250",
+            "label": "windows-1250"
+          },
+          {
+            "value": "windows-1251",
+            "label": "windows-1251"
+          },
+          {
+            "value": "windows-1253",
+            "label": "windows-1253"
+          },
+          {
+            "value": "windows-1254",
+            "label": "windows-1254"
+          },
+          {
+            "value": "windows-1255",
+            "label": "windows-1255"
+          },
+          {
+            "value": "windows-1256",
+            "label": "windows-1256"
+          },
+          {
+            "value": "windows-1257",
+            "label": "windows-1257"
+          },
+          {
+            "value": "windows-1258",
+            "label": "windows-1258"
+          },
+          {
+            "value": "windows-31j",
+            "label": "windows-31j"
+          },
+          {
+            "value": "x-Big5-HKSCS-2001",
+            "label": "x-Big5-HKSCS-2001"
+          },
+          {
+            "value": "x-Big5-Solaris",
+            "label": "x-Big5-Solaris"
+          },
+          {
+            "value": "x-COMPOUND_TEXT",
+            "label": "x-COMPOUND_TEXT"
+          },
+          {
+            "value": "x-euc-jp-linux",
+            "label": "x-euc-jp-linux"
+          },
+          {
+            "value": "x-EUC-TW",
+            "label": "x-EUC-TW"
+          },
+          {
+            "value": "x-eucJP-Open",
+            "label": "x-eucJP-Open"
+          },
+          {
+            "value": "x-IBM1006",
+            "label": "x-IBM1006"
+          },
+          {
+            "value": "x-IBM1025",
+            "label": "x-IBM1025"
+          },
+          {
+            "value": "x-IBM1046",
+            "label": "x-IBM1046"
+          },
+          {
+            "value": "x-IBM1097",
+            "label": "x-IBM1097"
+          },
+          {
+            "value": "x-IBM1098",
+            "label": "x-IBM1098"
+          },
+          {
+            "value": "x-IBM1112",
+            "label": "x-IBM1112"
+          },
+          {
+            "value": "x-IBM1122",
+            "label": "x-IBM1122"
+          },
+          {
+            "value": "x-IBM1123",
+            "label": "x-IBM1123"
+          },
+          {
+            "value": "x-IBM1124",
+            "label": "x-IBM1124"
+          },
+          {
+            "value": "x-IBM1166",
+            "label": "x-IBM1166"
+          },
+          {
+            "value": "x-IBM1364",
+            "label": "x-IBM1364"
+          },
+          {
+            "value": "x-IBM1381",
+            "label": "x-IBM1381"
+          },
+          {
+            "value": "x-IBM1383",
+            "label": "x-IBM1383"
+          },
+          {
+            "value": "x-IBM300",
+            "label": "x-IBM300"
+          },
+          {
+            "value": "x-IBM33722",
+            "label": "x-IBM33722"
+          },
+          {
+            "value": "x-IBM737",
+            "label": "x-IBM737"
+          },
+          {
+            "value": "x-IBM833",
+            "label": "x-IBM833"
+          },
+          {
+            "value": "x-IBM834",
+            "label": "x-IBM834"
+          },
+          {
+            "value": "x-IBM856",
+            "label": "x-IBM856"
+          },
+          {
+            "value": "x-IBM874",
+            "label": "x-IBM874"
+          },
+          {
+            "value": "x-IBM875",
+            "label": "x-IBM875"
+          },
+          {
+            "value": "x-IBM921",
+            "label": "x-IBM921"
+          },
+          {
+            "value": "x-IBM922",
+            "label": "x-IBM922"
+          },
+          {
+            "value": "x-IBM930",
+            "label": "x-IBM930"
+          },
+          {
+            "value": "x-IBM933",
+            "label": "x-IBM933"
+          },
+          {
+            "value": "x-IBM935",
+            "label": "x-IBM935"
+          },
+          {
+            "value": "x-IBM937",
+            "label": "x-IBM937"
+          },
+          {
+            "value": "x-IBM939",
+            "label": "x-IBM939"
+          },
+          {
+            "value": "x-IBM942",
+            "label": "x-IBM942"
+          },
+          {
+            "value": "x-IBM942C",
+            "label": "x-IBM942C"
+          },
+          {
+            "value": "x-IBM943",
+            "label": "x-IBM943"
+          },
+          {
+            "value": "x-IBM943C",
+            "label": "x-IBM943C"
+          },
+          {
+            "value": "x-IBM948",
+            "label": "x-IBM948"
+          },
+          {
+            "value": "x-IBM949",
+            "label": "x-IBM949"
+          },
+          {
+            "value": "x-IBM949C",
+            "label": "x-IBM949C"
+          },
+          {
+            "value": "x-IBM950",
+            "label": "x-IBM950"
+          },
+          {
+            "value": "x-IBM964",
+            "label": "x-IBM964"
+          },
+          {
+            "value": "x-IBM970",
+            "label": "x-IBM970"
+          },
+          {
+            "value": "x-ISCII91",
+            "label": "x-ISCII91"
+          },
+          {
+            "value": "x-ISO-2022-CN-CNS",
+            "label": "x-ISO-2022-CN-CNS"
+          },
+          {
+            "value": "x-ISO-2022-CN-GB",
+            "label": "x-ISO-2022-CN-GB"
+          },
+          {
+            "value": "x-iso-8859-11",
+            "label": "x-iso-8859-11"
+          },
+          {
+            "value": "x-JIS0208",
+            "label": "x-JIS0208"
+          },
+          {
+            "value": "x-JISAutoDetect",
+            "label": "x-JISAutoDetect"
+          },
+          {
+            "value": "x-Johab",
+            "label": "x-Johab"
+          },
+          {
+            "value": "x-MacArabic",
+            "label": "x-MacArabic"
+          },
+          {
+            "value": "x-MacCentralEurope",
+            "label": "x-MacCentralEurope"
+          },
+          {
+            "value": "x-MacCroatian",
+            "label": "x-MacCroatian"
+          },
+          {
+            "value": "x-MacCyrillic",
+            "label": "x-MacCyrillic"
+          },
+          {
+            "value": "x-MacDingbat",
+            "label": "x-MacDingbat"
+          },
+          {
+            "value": "x-MacGreek",
+            "label": "x-MacGreek"
+          },
+          {
+            "value": "x-MacHebrew",
+            "label": "x-MacHebrew"
+          },
+          {
+            "value": "x-MacIceland",
+            "label": "x-MacIceland"
+          },
+          {
+            "value": "x-MacRomania",
+            "label": "x-MacRomania"
+          },
+          {
+            "value": "x-MacSymbol",
+            "label": "x-MacSymbol"
+          },
+          {
+            "value": "x-MacThai",
+            "label": "x-MacThai"
+          },
+          {
+            "value": "x-MacTurkish",
+            "label": "x-MacTurkish"
+          },
+          {
+            "value": "x-MacUkraine",
+            "label": "x-MacUkraine"
+          },
+          {
+            "value": "x-MS932_0213",
+            "label": "x-MS932_0213"
+          },
+          {
+            "value": "x-MS950-HKSCS",
+            "label": "x-MS950-HKSCS"
+          },
+          {
+            "value": "x-MS950-HKSCS-XP",
+            "label": "x-MS950-HKSCS-XP"
+          },
+          {
+            "value": "x-mswin-936",
+            "label": "x-mswin-936"
+          },
+          {
+            "value": "x-PCK",
+            "label": "x-PCK"
+          },
+          {
+            "value": "x-SJIS_0213",
+            "label": "x-SJIS_0213"
+          },
+          {
+            "value": "x-UTF-16LE-BOM",
+            "label": "x-UTF-16LE-BOM"
+          },
+          {
+            "value": "X-UTF-32BE-BOM",
+            "label": "X-UTF-32BE-BOM"
+          },
+          {
+            "value": "X-UTF-32LE-BOM",
+            "label": "X-UTF-32LE-BOM"
+          },
+          {
+            "value": "x-windows-50220",
+            "label": "x-windows-50220"
+          },
+          {
+            "value": "x-windows-50221",
+            "label": "x-windows-50221"
+          },
+          {
+            "value": "x-windows-874",
+            "label": "x-windows-874"
+          },
+          {
+            "value": "x-windows-949",
+            "label": "x-windows-949"
+          },
+          {
+            "value": "x-windows-950",
+            "label": "x-windows-950"
+          },
+          {
+            "value": "x-windows-iso2022jp",
+            "label": "x-windows-iso2022jp"
+          }
+        ],
+        "multiple": false
+      },
+      "label": "Encoding",
+      "description": "Charset name for characters encoding",
+      "readonly": true,
+      "radio": false,
+      "default": "UTF-8"
+    }
+  ],
+  "supportSampling": true,
+  "name": "Local CSV file"
+}

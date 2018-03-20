@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,14 +13,16 @@
 
 package org.talend.dataprep.api.service.settings.context.provider;
 
-import static java.util.Arrays.asList;
-
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
+import org.talend.dataprep.ui.UiConfiguration;
+
+import static java.util.Arrays.asList;
 
 /**
  * Default documentation settings provider
@@ -28,24 +30,35 @@ import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
 @Component
 public class ContextProvider implements AppSettingsProvider<ContextSettings> {
 
+    private final UiConfiguration uiConfiguration;
+
+    public ContextProvider(UiConfiguration uiConfiguration) {
+        this.uiConfiguration = uiConfiguration;
+    }
+
     @Override
     public List<ContextSettings> getSettings() {
-
+        Locale locale = LocaleContextHolder.getLocale();
         return asList( //
                 ContextSettings
                         .builder() //
                         .id("locale") //
-                        .value(LocaleContextHolder.getLocale().toLanguageTag()) //
+                        .value(locale.toLanguageTag()) //
                         .build(), //
                 ContextSettings
                         .builder() //
                         .id("country") //
-                        .value(LocaleContextHolder.getLocale().getCountry()) //
+                        .value(locale.getCountry()) //
                         .build(), //
                 ContextSettings
                         .builder() //
                         .id("language") //
-                        .value(LocaleContextHolder.getLocale().getLanguage()) //
+                        .value(locale.getLanguage()) //
+                        .build(), //
+                ContextSettings
+                        .builder() //
+                        .id("theme") //
+                        .value(uiConfiguration.hasTheme()) //
                         .build() //
         );
     }

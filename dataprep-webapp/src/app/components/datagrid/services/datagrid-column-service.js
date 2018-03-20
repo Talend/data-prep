@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -46,9 +46,9 @@ export default function DatagridColumnService($rootScope, $compile, $translate,
 	let originalColumns = [];
 
 	const gridHeaderPreviewTemplate =
-		'<div class="grid-header <%= diffClass %>">' +
-		'   <div class="grid-header-title dropdown-button ng-binding"><%= name || "&nbsp;" %></div>' +
-		'   <div class="grid-header-type ng-binding"><%= simpleType %></div>' +
+		'<div class="grid-header <%- diffClass %>">' +
+		'   <div class="grid-header-title dropdown-button ng-binding"><%- name || "&nbsp;" %></div>' +
+		'   <div class="grid-header-type ng-binding"><%- simpleType %></div>' +
 		'</div>' +
 		'<div class="quality-bar"><div class="record-unknown"></div></div>';
 

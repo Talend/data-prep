@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -68,9 +68,7 @@
 	</div>
 
 	<div class="inventory-list" ng-class="{'disabled-import': $ctrl.importDisabled}">
-			<span ng-if="$ctrl.isFetchingDatasets" class="fetching-spinner">
-				<i data-icon="c" class="continuous-rotate icon"></i>
-			</span>
+        <loader ng-if="$ctrl.isFetchingDatasets"></loader>
 		<div ng-if="!$ctrl.isFetchingDatasets"
 			 class="inventory-item-row"
 			 ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id"

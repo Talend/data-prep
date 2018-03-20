@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,9 +12,11 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.TeeOutputStream;
@@ -26,7 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
@@ -35,13 +37,14 @@ import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
@@ -79,11 +82,11 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         return outputStream -> performPreparation(parameters, outputStream);
     }
 
-    private void performPreparation(final ExportParameters parameters, final OutputStream outputStream) {
+    public void performPreparation(final ExportParameters parameters, final OutputStream outputStream) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final String formatName = parameters.getExportType();
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationMessage preparation = getPreparation(preparationId, stepId);
         final String dataSetId = preparation.getDataSetId();
         final ExportFormat format = getFormat(parameters.getExportType());
 
@@ -93,7 +96,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
         final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
         try (InputStream datasetContent = dataSetGet.execute()) {
-            try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+            try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
                 // head is not allowed as step id
                 final String version = getCleanStepId(preparation, stepId);
 
@@ -117,6 +120,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                         parameters.getArguments(), //
                         parameters.getFilter() //
                 );
+
                 LOGGER.debug("Cache key: " + key.getKey());
                 LOGGER.debug("Cache key details: " + key.toString());
 
@@ -128,7 +132,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                             .sourceType(parameters.getFrom())
                             .format(format.getName()) //
                             .actions(actions) //
-                            .preparation(getPreparation(preparationId)) //
+                            .preparation(preparation) //
                             .stepId(version) //
                             .volume(Configuration.Volume.SMALL) //
                             .output(tee) //
@@ -150,5 +154,9 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 securityProxy.releaseIdentity(); // Release identity in case of error.
             }
         }
+    }
+
+    void setMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 }

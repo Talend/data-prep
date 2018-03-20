@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,72 +12,33 @@
   ~
   ~ ============================================================================
   -->
-
 <div class="actions-suggestions">
-    <div class="loader-wrapper"
-         ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading">
-        <loader id="actions-ghost"></loader>
+    <loader ng-if="ctrl.state.playground.suggestions.isLoading"
+            id="actions-ghost"
+    ></loader>
+
+    <pure-tab-bar
+        items="ctrl.scopes"
+        id="'actions-tab-bar'"
+        on-select="ctrl.selectScope"
+        selected-key="ctrl.selectedKey"
+    ></pure-tab-bar>
+    <div class="actions-scope">
+        <tab-item
+            ng-repeat="scope in ctrl.scopes track by $index"
+            ng-show="scope.key === ctrl.selectedKey"
+            scope="{{scope.key}}"
+            tab-title="{{scope.label}}"
+        ></tab-item>
     </div>
-    <sc-tabs ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
-             class="actions-scope"
-             selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" is-default="true">
-            <form class="action-search-container"
-                  ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length">
-                <input type="search"
-                       class="form-control action-search"
-                       id="action-suggestions-search"
-                       translate-once-placeholder="FIND_FUNCTION"
-                       ng-model="actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString"
-                       ng-model-options="{debounce: { default: 300, blur: 0 }}"
-                       ng-change="actionsSuggestionsCtrl.TransformationService.filter('column', actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString)"
-                       talend-search-input>
 
-                <actions-list class="action-suggestion-tab-items"
-                              actions="actionsSuggestionsCtrl.state.playground.suggestions.column.filteredTransformations"
-                              scope="column"
-                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
-                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
-                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
-            </form>
-            <div ng-if="!actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length"
-                 class="empty-panel-msg"
-                 translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_ROW' | translate}}">
-            <div ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedLine">
-                <actions-list class="action-suggestion-tab-items"
-                              actions="actionsSuggestionsCtrl.state.playground.suggestions.line.filteredTransformations"
-                              scope="line"
-                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
-                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
-                              ng-switch-when="true"
-                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
-
-                <div class="empty-panel-msg"
-                     ng-switch-when="false"
-                     translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
-            </div>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_TABLE' | translate}}">
-            <div>
-                <actions-list class="action-suggestion-tab-items"
-                              actions="actionsSuggestionsCtrl.state.playground.suggestions.dataset.filteredTransformations"
-                              scope="dataset"
-                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
-                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
-                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom">
-                </actions-list>
-            </div>
-        </sc-tabs-item>
-    </sc-tabs>
-    <form ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length && actionsSuggestionsCtrl.state.playground.filter.enabled"
+    <form ng-if="ctrl.state.playground.filter.gridFilters.length && ctrl.state.playground.filter.enabled"
           class="filters-actions-form">
         <span class="filters-actions-form-span" translate-once="APPLY_CHANGE_TO"></span>
         <div class="radio-inline">
             <label>
                 <input type="radio"
-                       ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters"
+                       ng-model="ctrl.state.playground.filter.applyTransformationOnFilters"
                        ng-value="false"/>
                 <span translate-once="ALL_LINES"></span>
             </label>
@@ -85,7 +46,7 @@
         <div class="radio-inline">
             <label>
                 <input type="radio"
-                       ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters"
+                       ng-model="ctrl.state.playground.filter.applyTransformationOnFilters"
                        ng-value="true"/>
                 <span translate-once="FILTERED_LINED"></span>
             </label>

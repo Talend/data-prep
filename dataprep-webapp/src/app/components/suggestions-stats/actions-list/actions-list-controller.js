@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -19,7 +19,8 @@
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.early-preview.service:EarlyPreviewService
  */
-export default function ActionsListCtrl($timeout, state, TransformationService, PlaygroundService, EarlyPreviewService) {
+export default function ActionsListCtrl($timeout, state, TransformationService,
+                                        PlaygroundService, EarlyPreviewService, StateService) {
 	'ngInject';
 
 	const vm = this;
@@ -29,15 +30,6 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
 	vm.earlyPreview = function earlyPreview(action) {
 		return EarlyPreviewService.earlyPreview(action, vm.scope);
 	};
-
-	/**
-	 * @ngdoc property
-	 * @name transformationInProgress
-	 * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
-	 * @description Flag that indicates if a transformation is in progress
-	 */
-	vm.transformationInProgress = false;
-
 	/**
 	 * @ngdoc property
 	 * @name dynamicTransformation
@@ -152,19 +144,17 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
 	 */
 	vm.transform = function transform(action) {
 		return function (params) {
-			EarlyPreviewService.deactivatePreview();
-			EarlyPreviewService.cancelPendingPreview();
+			EarlyPreviewService.cancelEarlyPreview();
 
-			if (!vm.transformationInProgress) {
-				vm.transformationInProgress = true;
+			if (!vm.state.playground.transformationInProgress) {
+				StateService.setTransformationInProgress(true);
 				PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
-					.then(function () {
+					.then(() => {
 						vm.showDynamicModal = false;
 					})
-					.finally(function () {
+					.finally(() => {
 						$timeout(() => {
-							EarlyPreviewService.activatePreview();
-							vm.transformationInProgress = false;
+							StateService.setTransformationInProgress(false);
 						}, 500, false);
 					});
 			}

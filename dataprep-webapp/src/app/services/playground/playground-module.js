@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -26,6 +26,7 @@ import SERVICES_RECIPE_MODULE from '../recipe/recipe-module';
 import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_STATISTICS_MODULE from '../statistics/statistics-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
+import SERVICES_MESSAGE_MODULE from '../message/message-module';
 
 import PlaygroundService from './playground-service';
 
@@ -47,6 +48,7 @@ const MODULE_NAME = 'data-prep.services.playground';
  * @requires data-prep.services.state
  * @requires data-prep.services.statistics
  * @requires data-prep.services.utils
+ * @requires data-prep.services.message
  */
 angular.module(MODULE_NAME,
 	[
@@ -64,6 +66,7 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_STATISTICS_MODULE,
 		SERVICES_UTILS_MODULE,
+		SERVICES_MESSAGE_MODULE,
 	])
     .service('PlaygroundService', PlaygroundService);
 

@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,52 +13,99 @@
 
 package org.talend.dataprep.api.service;
 
+import com.google.common.base.MoreObjects;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.info.Version;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
+import org.talend.dataprep.info.BuildDetails;
+import org.talend.dataprep.info.ManifestInfo;
+import org.talend.dataprep.info.ManifestInfoProvider;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@Import(VersionServiceAPITest.VersionTestConfiguration.class)
 public class VersionServiceAPITest extends ApiServiceTestBase {
 
-    @Autowired
-    ObjectMapper objectMapper = new ObjectMapper();
-
     @Test
-    public void shouldReturnOKWhenVersionAsked() throws Exception {
-        Response response = RestAssured.given() //
-                .when() //
-                .get("/api/version");
+    public void shouldReturnOKWhenVersionAsked() {
+        BuildDetails buildDetails =
+                expect().statusCode(200).when().get("/api/version").as(BuildDetails.class);
 
-        Assert.assertEquals(200, response.getStatusCode());
-
-        Version[] versions = objectMapper.readValue(response.asString(), new TypeReference<Version[]>() {
-        });
-
-        Assert.assertEquals(4, versions.length);
+        Assert.assertEquals(4, buildDetails.getServices().length);
+        Assert.assertEquals("GLOBAL_VERSION", buildDetails.getDisplayVersion());
     }
 
     @Test
-    public void shouldReceiveSameVersionsWhenAskedTwice() throws Exception {
-        //
-        Response response = RestAssured.given() //
-                .when() //
-                .get("/api/version");
+    public void shouldReceiveSameVersionsWhenAskedTwice() {
+        BuildDetails buildDetails = when().get("/api/version").as(BuildDetails.class);
+        BuildDetails buildDetails2 = when().get("/api/version").as(BuildDetails.class);
 
-        Response response2 = RestAssured.given() //
-                .when() //
-                .get("/api/version");
+        Assert.assertArrayEquals(buildDetails.getServices(), buildDetails2.getServices());
+        Assert.assertEquals(buildDetails.getDisplayVersion(), buildDetails2.getDisplayVersion());
+    }
 
-        Version[] versions = objectMapper.readValue(response.asString(), new TypeReference<Version[]>() {
-        });
+    @Test
+    public void shouldReceiveVersionsInCorrectOrder() {
+        BuildDetails buildDetails = when().get("/api/version").as(BuildDetails.class);
 
-        Version[] versions2 = objectMapper.readValue(response2.asString(), new TypeReference<Version[]>() {
-        });
+        assertThat(buildDetails.getServices()).isNotEmpty();
+        assertThat(buildDetails.getServices()).allMatch(v -> v.getVersionId().endsWith("-v2-id-v3-id"));
+        assertThat(buildDetails.getServices()).allMatch(v -> v.getBuildId().endsWith("-v2-buildId-v3-buildId"));
+    }
 
-        Assert.assertArrayEquals(versions, versions2);
+    @Configuration
+    public static class VersionTestConfiguration {
+
+        @Bean
+        @Order(3)
+        public ManifestInfoProvider version3ManifestProvider() {
+            return new ManifestInfoProvider() {
+                @Override
+                public String getName() {
+                    return "Version3";
+                }
+
+                @Override
+                public ManifestInfo getManifestInfo() {
+                    return new ManifestInfo("v3-id", "v3-buildId");
+                }
+
+                @Override
+                public String toString() {
+                    return MoreObjects.toStringHelper(this)
+                            .add("name", getName())
+                            .toString();
+                }
+            };
+        }
+
+        @Bean
+        @Order(2)
+        public ManifestInfoProvider version2ManifestProvider() {
+            return new ManifestInfoProvider() {
+                @Override
+                public String getName() {
+                    return "Version2";
+                }
+
+                @Override
+                public ManifestInfo getManifestInfo() {
+                    return new ManifestInfo("v2-id", "v2-buildId");
+                }
+
+                @Override
+                public String toString() {
+                    return MoreObjects.toStringHelper(this)
+                            .add("name", getName())
+                            .toString();
+                }
+            };
+        }
     }
 }

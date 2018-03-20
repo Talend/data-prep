@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.service.export;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,8 @@ import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a data set, without using a preparation.
@@ -60,7 +63,7 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
             final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, datasetId, false, true);
             final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, datasetId);
             try (InputStream datasetContent = dataSetGet.execute()) {
-                try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+                try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
                     // Create dataset
                     final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
                     dataSet.setMetadata(dataSetGetMetadata.execute());

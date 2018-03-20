@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -51,28 +51,37 @@ describe('Modal directive', () => {
 		};
 
 		createFormElement = () => {
-			const html = '<talend-modal fullscreen="fullscreen" state="state" close-button="closeButton">' +
-				'   <input type="text" id="firstInput" class="no-focus"/>' +
-				'   <input type="text" id="secondInput" />' +
-				'</talend-modal>';
+				const html = `
+					<talend-modal fullscreen="fullscreen" state="state" close-button="closeButton">
+						<input type="text" id="firstInput" class="no-focus"/>
+						<input type="text" id="secondInput" />
+					</talend-modal>
+				`;
+
 			element = $compile(html)(scope);
 			scope.$digest();
 			$timeout.flush();
 		};
 
 		createNestedElement = () => {
-			const html = '<talend-modal id="outerModal" fullscreen="fullscreen" state="state" close-button="closeButton">' +
-				'   <talend-modal id="innerModal" fullscreen="innerfullscreen" state="innerState" close-button="innerCloseButton"></talend-modal>' +
-				'</talend-modal>';
+			const html = `
+				<talend-modal id="outerModal" fullscreen="fullscreen" state="state" close-button="closeButton">
+					<talend-modal id="innerModal" fullscreen="innerfullscreen" state="innerState" close-button="innerCloseButton"></talend-modal>
+				</talend-modal>
+			`;
+
 			element = $compile(html)(scope);
 			scope.$digest();
 			$timeout.flush();
 		};
 
 		createButtonElement = () => {
-			const html = '<talend-modal fullscreen="fullscreen" state="state" close-button="closeButton" disable-enter="disableEnter">' +
-				'   <button class="modal-primary-button" ng-click="click()"/>' +
-				'</talend-modal>';
+			const html = `
+				<talend-modal fullscreen="fullscreen" state="state" close-button="closeButton">
+					<button class="modal-primary-button" ng-click="click()"/>
+				</talend-modal>
+			`;
+
 			scope.click = () => {
 				scope.primaryButtonClicked = true;
 			};
@@ -319,45 +328,6 @@ describe('Modal directive', () => {
 			throw new Error('should have thrown error because no timeout is pending');
 		}));
 
-		it('should hit primary button on ENTER keydown', inject(() => {
-			//given
-			scope.fullscreen = false;
-			scope.state = true;
-			scope.closeButton = true;
-			createButtonElement();
-
-			expect(scope.primaryButtonClicked).toBeFalsy();
-			const event = angular.element.Event('keydown');
-			event.keyCode = 13;
-
-			//when
-			element.find('.modal-inner').trigger(event);
-			scope.$digest();
-
-			//then
-			expect(scope.primaryButtonClicked).toBe(true);
-		}));
-
-		it('should not hit primary button on ENTER keydown when disable-enter attribute is true', inject(() => {
-			//given
-			scope.fullscreen = false;
-			scope.state = true;
-			scope.closeButton = true;
-			scope.disableEnter = true;
-			createButtonElement();
-
-			expect(scope.primaryButtonClicked).toBeFalsy();
-			const event = angular.element.Event('keydown');
-			event.keyCode = 13;
-
-			//when
-			element.find('.modal-inner').trigger(event);
-			scope.$digest();
-
-			//then
-			expect(scope.primaryButtonClicked).toBeFalsy();
-		}));
-
 		it('should call close callback', inject(($rootScope) => {
 			//given
 			scope.state = true;
@@ -435,38 +405,36 @@ describe('Modal directive', () => {
 
 			const body = angular.element('body');
 			body.append(element);
-			expect(document.activeElement).not.toBe(element); //eslint-disable-line angular/document-service
+			expect(document.activeElement).not.toBe(element);
 
 			//when
 			scope.state = true;
 			scope.$digest();
 
 			//then
-			expect(document.activeElement.className).toContain('modal-inner'); //eslint-disable-line angular/document-service
+			expect(document.activeElement.className).toContain('modal-inner');
 		});
 
-		it('should focus on second input on show and select the text coz first has "no-focus" class', inject(($timeout, $window) => {
+		it('should focus on second input on show and select the text coz first has "no-focus" class', inject(($window) => {
 			//given
 			scope.fullscreen = false;
 			scope.state = false;
 			scope.closeButton = false;
 			createFormElement();
 
-			const body = angular.element('body');
-			body.append(element);
+			angular.element('body').append(element);
 
 			element.find('#secondInput').val('city');
 
-			expect(document.activeElement).not.toBe(element); //eslint-disable-line angular/document-service
+			expect(document.activeElement).not.toBe(element);
 			expect($window.getSelection().toString()).toBeFalsy();
 
 			//when
 			scope.state = true;
 			scope.$digest();
-			$timeout.flush();
 
 			//then
-			const activeElement = document.activeElement; //eslint-disable-line angular/document-service
+			const activeElement = document.activeElement;
 			expect(activeElement.id).toBe('secondInput');
 			expect(activeElement.value).toBe('city');
 		}));
@@ -483,26 +451,26 @@ describe('Modal directive', () => {
 
 			const body = angular.element('body');
 			body.append(element);
-			expect(document.activeElement).not.toBe(element); //eslint-disable-line angular/document-service
+			expect(document.activeElement).not.toBe(element);
 
 			//given : show outer modal
 			scope.state = true;
 			scope.$digest();
 			const outerModal = body.find('#outerModal').eq(0).find('.modal-inner').eq(0)[0];
-			expect(document.activeElement).toBe(outerModal); //eslint-disable-line angular/document-service
+			expect(document.activeElement).toBe(outerModal);
 
 			//given : show inner modal
 			scope.innerState = true;
 			scope.$digest();
 			const innerModal = body.find('#innerModal').eq(0).find('.modal-inner').eq(0)[0];
-			expect(document.activeElement).toBe(innerModal); //eslint-disable-line angular/document-service
+			expect(document.activeElement).toBe(innerModal);
 
 			//when
 			scope.innerState = false;
 			scope.$digest();
 
 			//then
-			expect(document.activeElement).toBe(outerModal); //eslint-disable-line angular/document-service
+			expect(document.activeElement).toBe(outerModal);
 		});
 	});
 

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -66,10 +66,6 @@ import 'ng-file-upload/dist/angular-file-upload.min';
 // https://github.com/a5hik/ng-sortable
 import 'ng-sortable/dist/ng-sortable.min.css';
 import 'ng-sortable';
-
-// https://github.com/jirikavi/AngularJS-Toaster
-import 'angularjs-toaster';
-import 'angularjs-toaster/toaster.scss';
 
 // MassAutocomplete https://github.com/hakib/MassAutocomplete
 import 'angular-mass-autocomplete/massautocomplete.min';

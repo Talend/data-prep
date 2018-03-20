@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -10,6 +10,25 @@
 //
 // ============================================================================
 package org.talend.dataprep.transformation.actions.date;
+
+import org.junit.Test;
+import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.transformation.api.action.context.TransformationContext;
+
+import java.io.IOException;
+import java.time.DateTimeException;
+import java.time.chrono.AbstractChronology;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -22,30 +41,17 @@ import static org.talend.dataprep.transformation.actions.common.ImplicitParamete
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.ROW_ID;
 import static org.talend.dataprep.transformation.actions.date.DateCalendarConverter.*;
 
-import java.io.IOException;
-import java.time.DateTimeException;
-import java.time.chrono.AbstractChronology;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.junit.Test;
-import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.ActionsUtils;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
 /**
  * Test class for DateCalendarConverter action. Creates one consumer, and test it.
  *
  * @see DateCalendarConverter
  */
 public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverter> {
+
+    // These constants are 'redefined' here because they are not meant to change.
+    private static final String TO_CALENDAR_TYPE_PARAMETER = "to_calendar_type";
+
+    private static final String FROM_CALENDAR_TYPE_PARAMETER = "from_calendar_type";
 
     private Map<String, String> parameters;
 
@@ -82,7 +88,7 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER, FROM_MODE, "new_pattern",
+        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER,
                 COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
 
         // when
@@ -196,7 +202,6 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         parameters.put(COLUMN_ID.getKey().toLowerCase(), "0001");
         parameters.put(FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
         parameters.put(TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.HIJRI.name());
-        parameters.put(FROM_MODE, DateCalendarConverter.FROM_MODE_BEST_GUESS);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -416,24 +421,24 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     }
 
     @Test
-    public void testJulianDayToChronology(){
-        String ear=" AD";
-        testConversion(ModifiedJulianDay, DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY, null, IsoStr2+ear,
+    public void testJulianDayToChronology() {
+        String ear = " AD";
+        testConversion(ModifiedJulianDay, DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY, null, IsoStr2 + ear,
                 DateCalendarConverter.CalendarUnit.ISO);
     }
 
     @Test
-    public void testChronologyToJulianDay(){
+    public void testChronologyToJulianDay() {
         testConversion(IsoStr2, DateCalendarConverter.CalendarUnit.ISO, pattern, JulianDay,
                 DateCalendarConverter.CalendarUnit.JULIAN_DAY);
-        testConversion(JapaneseStr, DateCalendarConverter.CalendarUnit.JAPANESE, pattern,ModifiedJulianDay ,
+        testConversion(JapaneseStr, DateCalendarConverter.CalendarUnit.JAPANESE, pattern, ModifiedJulianDay,
                 DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
 
-        testConversion(HijrahStr, DateCalendarConverter.CalendarUnit.HIJRI, pattern,EpochDay ,
+        testConversion(HijrahStr, DateCalendarConverter.CalendarUnit.HIJRI, pattern, EpochDay,
                 DateCalendarConverter.CalendarUnit.EPOCH_DAY);
-        testConversion(MinguoStr, DateCalendarConverter.CalendarUnit.MINGUO, pattern,RataDie ,
+        testConversion(MinguoStr, DateCalendarConverter.CalendarUnit.MINGUO, pattern, RataDie,
                 DateCalendarConverter.CalendarUnit.RATA_DIE);
-        testConversion(ThaiBuddhistStr, DateCalendarConverter.CalendarUnit.THAI_BUDDHIST, pattern,JulianDay ,
+        testConversion(ThaiBuddhistStr, DateCalendarConverter.CalendarUnit.THAI_BUDDHIST, pattern, JulianDay,
                 DateCalendarConverter.CalendarUnit.JULIAN_DAY);
         testConversion("1858-11-18", DateCalendarConverter.CalendarUnit.ISO, pattern, "1",
                 DateCalendarConverter.CalendarUnit.MODIFIED_JULIAN_DAY);
@@ -502,25 +507,33 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         rowContent.put("0001", "0001-01-01");
         final DataSetRow row2 = new DataSetRow(rowContent);
 
+        // row 3
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "Michel");
+        rowContent.put("0001", "");
+        final DataSetRow row3 = new DataSetRow(rowContent);
+
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
-        parameters.put("from_calendar_type", DateCalendarConverter.CalendarUnit.ISO.name());
-        parameters.put("to_calendar_type", DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
+        parameters.put(FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put(TO_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.JULIAN_DAY.name());
 
-        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+        parameters.put("create_new_column", "true");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
         // assert that original column is unchanged:
         assertEquals("1970-01-01", row1.get("0001"));
         assertEquals("0001-01-01", row2.get("0001"));
+        assertEquals("", row3.get("0001"));
 
         // assert that new column is created:
         assertEquals("2440588", row1.get("0002"));
         assertEquals("1721426", row2.get("0002"));
+        assertEquals("", row3.get("0002"));
     }
 
     @Test
@@ -528,8 +541,9 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         testConversion("1970-01-01", DateCalendarConverter.CalendarUnit.ISO, null, "1970-01-01",
                 DateCalendarConverter.CalendarUnit.EPOCH_DAY);
     }
+
     @Test
-    public void testJulianDayToEachother(){
+    public void testJulianDayToEachother() {
         testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, RataDie,
                 DateCalendarConverter.CalendarUnit.RATA_DIE);
         testConversion(JulianDay, DateCalendarConverter.CalendarUnit.JULIAN_DAY, null, EpochDay,
@@ -551,4 +565,31 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         testConversion("1", DateCalendarConverter.CalendarUnit.RATA_DIE, null, "1721426",
                 DateCalendarConverter.CalendarUnit.JULIAN_DAY);
     }
+
+    @Test
+    public void testCompileShouldComputeToAndFromInternalContextParameters() {
+        // Given
+        final DateCalendarConverter calendarConverter = new DateCalendarConverter();
+        final DataSetRow row = builder().with(value("toto").type(Type.STRING).name("recipe"))
+                .with(value("10/29/1996").type(Type.DATE).name("last update")
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json")))
+                .with(value("tata").type(Type.STRING).name("who")) //
+                .build();
+        final ActionContext context = new ActionContext(new TransformationContext(), row.getRowMetadata());
+        context.setActionStatus(ActionContext.ActionStatus.OK);
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(COLUMN_ID.getKey(), "0001");
+        parameters.put(FROM_CALENDAR_TYPE_PARAMETER, DateCalendarConverter.CalendarUnit.ISO.name());
+        parameters.put(TO_CALENDAR_TYPE_PARAMETER, CalendarUnit.JULIAN_DAY.name());
+        context.setParameters(parameters);
+
+        // When
+        calendarConverter.compile(context);
+
+        // Then
+        assertTrue(context.get(IS_FROM_CHRONOLOGY_INTERNAL_KEY));
+        assertFalse(context.get(IS_TO_CHRONOLOGY_INTERNAL_KEY));
+    }
+
 }

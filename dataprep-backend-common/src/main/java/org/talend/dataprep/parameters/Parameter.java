@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -238,6 +238,11 @@ public class Parameter implements Serializable {
 
         public ParameterBuilder setDefaultValue(String defaultValue) {
             this.defaultValue = defaultValue;
+            return this;
+        }
+
+        public ParameterBuilder setDefaultValue(Boolean defaultValue) {
+            this.defaultValue = defaultValue.toString();
             return this;
         }
 

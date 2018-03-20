@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -10,6 +10,8 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import template from './widget-dropdown.html';
 
 /**
  * @ngdoc directive
@@ -50,7 +52,7 @@ export default function TalendDropdown($window, $timeout) {
 	return {
 		restrict: 'EA',
 		transclude: true,
-		template: '<ng-transclude class="talend-dropdown"></ng-transclude>',
+		templateUrl: template,
 		scope: {
 			closeOnSelect: '=',
 			onOpen: '&',

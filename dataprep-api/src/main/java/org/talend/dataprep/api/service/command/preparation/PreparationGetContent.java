@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -14,10 +14,15 @@
 package org.talend.dataprep.api.service.command.preparation;
 
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URI;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -81,6 +86,6 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
             }
         });
         on(HttpStatus.OK).then(pipeStream());
+        on(HttpStatus.ACCEPTED).then(emptyStream());
     }
-
 }

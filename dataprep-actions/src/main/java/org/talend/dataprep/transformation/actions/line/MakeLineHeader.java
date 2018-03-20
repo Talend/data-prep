@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * <li>Delete this row</li>
  * </ul>
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MakeLineHeader.ACTION_NAME)
+@Action(MakeLineHeader.ACTION_NAME)
 public class MakeLineHeader extends AbstractActionMetadata implements RowAction {
 
     public static final String ACTION_NAME = "make_line_header";
@@ -77,7 +77,7 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
     public List<Parameter> getParameters(Locale locale) {
         return Collections.singletonList(Parameter.parameter(locale).setName(SKIP_UNTIL)
                 .setType(BOOLEAN)
-                .setDefaultValue(Boolean.TRUE.toString())
+                .setDefaultValue(true)
                 .build(this));
     }
 

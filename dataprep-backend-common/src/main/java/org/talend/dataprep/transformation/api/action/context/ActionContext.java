@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -194,6 +194,11 @@ public class ActionContext implements Serializable {
         return value;
     }
 
+    /** Remove context cached entry. */
+    public void evict(String key) {
+        getContext().remove(key);
+    }
+
     /**
      * @return the context entries.
      */
@@ -359,6 +364,11 @@ public class ActionContext implements Serializable {
         @Override
         public <T> T get(String key) {
             return delegate.get(key);
+        }
+
+        @Override
+        public void evict(String key) {
+            // No op: unable to modify once immutable.
         }
 
         @Override

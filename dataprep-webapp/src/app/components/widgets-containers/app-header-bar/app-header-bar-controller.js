@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
 export default class AppHeaderBarCtrl {
 	constructor($element, $translate, state, appSettings, SettingsActionsService) {
 		'ngInject';
@@ -28,6 +29,7 @@ export default class AppHeaderBarCtrl {
 		this.initHelp();
 		this.initSearch();
 		this.initUserMenu();
+		this.initInformation();
 		this.initProducts();
 	}
 
@@ -56,12 +58,12 @@ export default class AppHeaderBarCtrl {
 			if (changes.searchToggle) {
 				const searchToggle = changes.searchToggle.currentValue;
 				if (searchToggle) {
-					searchConfiguration.onToggle = this.searchOnToggle;
+					searchConfiguration.docked = true;
 					delete searchConfiguration.value;
 					searchConfiguration.items = null;
 				}
 				else {
-					delete searchConfiguration.onToggle;
+					searchConfiguration.docked = false;
 				}
 			}
 			if (changes.searchInput) {
@@ -99,20 +101,13 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initHelp() {
-		const helpActionSplitDropdown = this.appSettings.actions[this.appSettings.views[this.viewKey].help];
-		const items = helpActionSplitDropdown
-			.items
-			.map(actionName => this.appSettings.actions[actionName])
-			.map(action => ({
-				id: action.id,
-				label: action.name,
-				onClick: this.settingsActionsService.createDispatcher(action),
-			}));
-
+		const settingsHelp = this.appSettings.views[this.viewKey].help;
+		const action = this.appSettings.actions[settingsHelp];
 		this.help = {
-			id: helpActionSplitDropdown.id,
-			onClick: this.settingsActionsService.createDispatcher(this.appSettings.actions[helpActionSplitDropdown.action]),
-			items,
+			id: action.id,
+			icon: action.icon,
+			label: action.name,
+			onClick: this.settingsActionsService.createDispatcher(action),
 		};
 	}
 
@@ -128,6 +123,12 @@ export default class AppHeaderBarCtrl {
 			null;
 	}
 
+	initInformation() {
+		this.information = this.appSettings.views[this.viewKey].information ?
+			this.adaptInformation() :
+			null;
+	}
+
 	initProducts() {
 		this.products = this.appSettings.views[this.viewKey].products ?
 			this.adaptProducts() :
@@ -140,6 +141,7 @@ export default class AppHeaderBarCtrl {
 		// onToggle
 		const onToggleAction = this.appSettings.actions[searchSettings.onToggle];
 		this.searchOnToggle = onToggleAction && this.settingsActionsService.createDispatcher(onToggleAction);
+		searchSettings.docked = true;
 
 		// onBlur
 		const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
@@ -164,17 +166,18 @@ export default class AppHeaderBarCtrl {
 		this.searchAvailableInventoryTypes = [];
 		const onSelectActionBy = searchSettings.onSelect;
 		const onSelectDispatcherByType = [];
-		Object.keys(onSelectActionBy).forEach((type) => {
-			const onSelectAction = this.appSettings.actions[onSelectActionBy[type]];
-			if (onSelectAction) {
-				this.searchAvailableInventoryTypes.push({
-					type,
-					iconName: onSelectAction.icon,
-					iconTitle: onSelectAction.name,
-				});
-				onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
-			}
-		});
+		Object.keys(onSelectActionBy)
+			.forEach((type) => {
+				const onSelectAction = this.appSettings.actions[onSelectActionBy[type]];
+				if (onSelectAction) {
+					this.searchAvailableInventoryTypes.push({
+						type,
+						iconName: onSelectAction.icon,
+						iconTitle: onSelectAction.name,
+					});
+					onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
+				}
+			});
 		this.searchOnSelect = (event, { sectionIndex, itemIndex }) => {
 			const selectedCategory = this.adaptedSearchResults[sectionIndex];
 			const selectedItem = selectedCategory && selectedCategory.suggestions[itemIndex];
@@ -187,22 +190,22 @@ export default class AppHeaderBarCtrl {
 		// onKeyDown
 		const onKeyDownAction = this.appSettings.actions[searchSettings.onKeyDown];
 		const onKeyDownActionDispatcher = onKeyDownAction && this.settingsActionsService.createDispatcher(onKeyDownAction);
-		this.searchOnKeyDown = (event, { focusedSectionIndex, focusedItemIndex, newFocusedSectionIndex, newFocusedItemIndex }) => {
+		this.searchOnKeyDown = (event, { highlightedItemIndex, newHighlightedItemIndex, highlightedSectionIndex, newHighlightedSectionIndex }) => {
 			switch (event.key) {
 			case 'ArrowDown':
 			case 'ArrowUp':
 				event.preventDefault();
 				onKeyDownActionDispatcher(event, {
-					focusedSectionIndex: newFocusedSectionIndex,
-					focusedItemIndex: newFocusedItemIndex,
+					focusedSectionIndex: newHighlightedSectionIndex,
+					focusedItemIndex: newHighlightedItemIndex,
 				});
 				break;
 			case 'Enter':
 				event.preventDefault();
-				if (focusedSectionIndex !== null && focusedItemIndex !== null) {
+				if (highlightedItemIndex !== null && highlightedItemIndex !== null) {
 					this.searchOnSelect(event, {
-						sectionIndex: focusedSectionIndex,
-						itemIndex: focusedItemIndex,
+						sectionIndex: highlightedSectionIndex,
+						itemIndex: highlightedItemIndex,
 					});
 				}
 				break;
@@ -267,6 +270,10 @@ export default class AppHeaderBarCtrl {
 		return this._adaptDropdown(this.appSettings.views[this.viewKey].userMenu);
 	}
 
+	adaptInformation() {
+		return this._adaptDropdown(this.appSettings.views[this.viewKey].information);
+	}
+
 	adaptProducts() {
 		return this._adaptDropdown(this.appSettings.views[this.viewKey].products, true);
 	}
@@ -283,12 +290,20 @@ export default class AppHeaderBarCtrl {
 			name,
 			items: staticActions
 				.map(actionName => this.appSettings.actions[actionName])
-				.map(action => ({
-					id: action.id,
-					icon: showIcons && action.icon,
-					label: action.name,
-					onClick: this.settingsActionsService.createDispatcher(action),
-				})),
+				.map((action) => {
+					if (!action) {
+						return null;
+					}
+					if (action.divider) {
+						return action;
+					}
+					return {
+						id: action.id,
+						icon: showIcons && action.icon,
+						label: action.name,
+						onClick: this.settingsActionsService.createDispatcher(action),
+					};
+				}),
 		};
 	}
 }

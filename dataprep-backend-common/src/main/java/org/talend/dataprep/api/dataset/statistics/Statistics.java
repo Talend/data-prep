@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,16 +13,16 @@
 
 package org.talend.dataprep.api.dataset.statistics;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
-
 @JsonRootName("statistics")
-public class Statistics implements Serializable {
+public class Statistics implements Cloneable, Serializable {
 
     /**
      * Serialization UID.
@@ -73,6 +73,27 @@ public class Statistics implements Serializable {
 
     @JsonProperty("textLengthSummary")
     private TextLengthSummary textLengthSummary = new TextLengthSummary();
+
+    public Statistics() {
+    }
+
+    public Statistics(Statistics original) {
+        this.count = original.count;
+        this.valid = original.valid;
+        this.invalid = original.invalid;
+        this.empty = original.empty;
+        this.max = original.max;
+        this.min = original.min;
+        this.mean = original.mean;
+        this.variance = original.variance;
+        this.distinctCount = original.distinctCount;
+        this.duplicateCount = original.duplicateCount;
+        this.dataFrequencies = new LinkedList<>(original.dataFrequencies);
+        this.patternFrequencies = new LinkedList<>(original.patternFrequencies);
+        this.quantiles = original.quantiles == null ? new Quantiles() : new Quantiles(original.quantiles);
+        this.histogram = original.histogram;
+        this.textLengthSummary = original.textLengthSummary == null ? new TextLengthSummary() : new TextLengthSummary(original.textLengthSummary);
+    }
 
     public long getCount() {
         return count;

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
@@ -131,12 +132,15 @@ public class RowMetadataUtils {
         if (Type.get(column.getType()) != Type.DATE) {
             return null;
         }
-        final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
-        if (!patternFrequencies.isEmpty()) {
-            patternFrequencies.sort((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()));
-            return patternFrequencies.get(0).getPattern();
+        Optional<PatternFrequency> electedPattern = column.getStatistics().getPatternFrequencies().stream()
+                .filter(p -> !StringUtils.isEmpty(p.getPattern()))
+                .sorted((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()))
+                .findFirst();
+        if (electedPattern.isPresent()) {
+            return electedPattern.get().getPattern();
+        } else {
+            return null;
         }
-        return null;
     }
 
 }

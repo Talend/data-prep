@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getTypedRow;
 
 import java.io.InputStream;
 import java.util.*;
@@ -25,6 +26,7 @@ import java.util.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -243,7 +245,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest<ExtractNumber> {
 
     private void inner_test(String from, String expected, Type expectedType) {
         // given
-        DataSetRow row = getRow(from);
+        DataSetRow row = getTypedRow(Type.DOUBLE, from);
         Assertions.assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
 
         // when

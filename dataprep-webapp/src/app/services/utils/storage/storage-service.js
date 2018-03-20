@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -23,6 +23,7 @@ const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
 const PREPARATIONS_SORT_KEY = 'org.talend.dataprep.preparations.sort';
 const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
 const SIDE_PANEL_DOCK_KEY = 'org.talend.dataprep.sidePanel.docked';
+const LISTS_DISPLAY_MODE_KEY = 'org.talend.dataprep.lists_display_mode';
 
 /**
  * @ngdoc service
@@ -394,6 +395,30 @@ export default class StorageService {
 	setPreparationsSort(field, isDescending) {
 		this.setItem(PREPARATIONS_SORT_KEY, { field, isDescending });
 	}
+
+    // --------------------------------------------------------------------------------------------
+    // ---------------------------------------------Display modes-------------------------------------
+    // --------------------------------------------------------------------------------------------
+    /**
+     * @ngdoc method
+     * @name getListsDisplayModes
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @description Get the lists display modes from localStorage
+     */
+	getListsDisplayModes() {
+		return this.getItem(LISTS_DISPLAY_MODE_KEY) || {};
+	}
+
+	/**
+     * @ngdoc method
+     * @name setListsDisplayModes
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @description Save the lists display modes in localStorage
+     */
+	setListsDisplayModes(modes) {
+		this.setItem(LISTS_DISPLAY_MODE_KEY, modes);
+	}
+
 
     // --------------------------------------------------------------------------------------------
     // ------------------------------------------Selected columns----------------------------------

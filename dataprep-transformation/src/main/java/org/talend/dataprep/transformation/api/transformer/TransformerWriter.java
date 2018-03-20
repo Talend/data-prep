@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -41,51 +41,6 @@ public interface TransformerWriter extends AutoCloseable {
     void write(DataSetRow row) throws IOException;
 
     /**
-     * Start to write an array.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void startArray() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * End to write an array.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void endArray() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * Start to write an object.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void startObject() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * End to write an object.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void endObject() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * Write a field name.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void fieldName(String columns) throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
      * Flush the current writing.
      *
      * @throws IOException if an unexpected error occurs.
@@ -95,9 +50,7 @@ public interface TransformerWriter extends AutoCloseable {
     }
 
     /**
-     * Close the data stream properly when all data is written or a stop signal is received. Not meant to cloase the OutputStream.
-     *
-     * @throws IOException
+     * Close the data stream properly when all data is written or a stop signal is received. Not meant to close the OutputStream.
      */
     default void close() throws IOException {
         // default implementation to ease implementations development

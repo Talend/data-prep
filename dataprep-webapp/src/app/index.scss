@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -60,7 +60,7 @@ $sc-dropdown-content-color: initial;
 @import "components/inventory/header/_inventory-header.scss";
 @import "components/inventory/item/_inventory-item.scss";
 @import "components/inventory/tile/_inventory-tile.scss";
-@import "components/loader/loader.scss";
+@import "components/loader/_loader.scss";
 @import "components/lookup/grid/_lookup-datagrid.scss";
 @import "components/playground/header/_playground-header.scss";
 @import "components/preparation/creator/form/_preparation-creator-form.scss";
@@ -73,7 +73,6 @@ $sc-dropdown-content-color: initial;
 @import "components/suggestions-stats/stats-details/_stats-details.scss";
 @import "components/transformation/form/_transformation-form.scss";
 @import "components/widgets/badge/_badge.scss";
-@import "components/widgets/button-loader/_button-loader.scss";
 @import "components/widgets/dropdown/_dropdown.scss";
 @import "components/widgets/editable-regex/_editable-regex.scss";
 @import "components/widgets/editable-select/_editable-select.scss";
@@ -99,4 +98,6 @@ $sc-dropdown-content-color: initial;
 @import "components/widgets/charts/vertical-barchart/vertical-barchart.scss";
 @import "components/widgets-containers/layout/layout.scss";
 @import "components/widgets-containers/inventory-list/inventory-list-container.scss";
+@import "components/widgets-containers/app-header-bar/app-header-bar-container.scss";
 @import "components/about/about.scss";
+@import "components/app/app.scss";

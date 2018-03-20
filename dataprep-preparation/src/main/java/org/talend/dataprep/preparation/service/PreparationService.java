@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -25,11 +25,11 @@ import static org.talend.dataprep.preparation.service.PreparationSearchCriterion
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 import static org.talend.tql.api.TqlBuilder.*;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -64,11 +64,11 @@ import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
 @Service
@@ -129,9 +129,6 @@ public class PreparationService {
 
     @Autowired
     private ReorderStepsUtils reorderStepsUtils;
-
-    @Autowired
-    private ActionParser actionParser;
 
     @Autowired
     private BeanConversionService beanConversionService;
@@ -222,6 +219,7 @@ public class PreparationService {
                 Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
                 filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
             }
+
             preparationStream = preparationRepository.list(Preparation.class, filter);
         }
 
@@ -296,7 +294,8 @@ public class PreparationService {
     private Expression getNameFilter(String name, boolean exactMatch) {
         LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
         final String regex;
-        final String regexMainPart = "(?i)" + name;
+        // Add case insensitive and escape special characters in name
+        final String regexMainPart = "(?i)" + Pattern.quote(name);
         if (exactMatch) {
             regex = "^" + regexMainPart + "$";
         } else {
@@ -312,7 +311,7 @@ public class PreparationService {
      * @param destination the folder path where to copy the preparation, if empty, the copy is in the same folder.
      * @return The new preparation id.
      */
-    public String copy(String preparationId, String name, String destination) throws IOException {
+    public String copy(String preparationId, String name, String destination) {
 
         LOGGER.debug("copy {} to folder {} with {} as new name");
 
@@ -420,7 +419,7 @@ public class PreparationService {
      * @param destination The new folder of the preparation.
      * @param newName The new preparation name.
      */
-    public void move(String preparationId, String folder, String destination, String newName) throws IOException {
+    public void move(String preparationId, String folder, String destination, String newName) {
         //@formatter:on
 
         LOGGER.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);
@@ -593,8 +592,10 @@ public class PreparationService {
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
             // just make sure the step does exist
-            final Step step = preparationRepository.get(stepId, Step.class);
-            if (step != null) {
+            if (Step.ROOT_STEP.id().equals(stepId)) {
+                preparation.setSteps(Collections.singletonList(Step.ROOT_STEP));
+                preparation.setHeadId(Step.ROOT_STEP.id());
+            } else if (preparationRepository.exist(Step.class, TqlBuilder.eq("id", stepId))) {
                 preparation.setSteps(preparationUtils.listSteps(stepId, preparationRepository));
                 preparation.setHeadId(stepId);
             } else {

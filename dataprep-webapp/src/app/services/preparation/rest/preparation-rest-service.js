@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -41,6 +41,7 @@ export default function PreparationRestService($http, RestURLs) {
 		getContent,
 		getDetails,
 		getMetadata,
+		isExportPossible,
 
         // preview
 		getPreviewDiff,
@@ -67,6 +68,22 @@ export default function PreparationRestService($http, RestURLs) {
 			url = url + '&filter=' + encodeURIComponent(tql);
 		}
 		return $http.get(url).then(res => res.data);
+	}
+
+	/**
+     * @ngdoc method
+     * @name isExportPossible
+     * @methodOf data-prep.services.preparation.service:PreparationRestService
+     * @param {object} params
+     * @description Check is the preparation is ready to be exported
+     * @returns {promise} The HEAD promise
+     */
+	function isExportPossible(params) {
+		return $http({
+			method: 'HEAD',
+			url: RestURLs.exportUrl,
+			params,
+		});
 	}
 
 	/**

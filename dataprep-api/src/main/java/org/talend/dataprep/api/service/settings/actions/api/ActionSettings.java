@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,20 +13,19 @@
 
 package org.talend.dataprep.api.service.settings.actions.api;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.TYPE_DROPDOWN;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.TYPE_SPLIT_DROPDOWN;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.i18n.DataprepBundle;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.i18n.DataprepBundle;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.TYPE_DROPDOWN;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.TYPE_SPLIT_DROPDOWN;
 
 /**
  * Actions settings are the configuration for a simple button.
@@ -35,8 +34,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "displayMode")
-@JsonSubTypes({ @JsonSubTypes.Type(value = ActionDropdownSettings.class, name = TYPE_DROPDOWN),
-        @JsonSubTypes.Type(value = ActionSplitDropdownSettings.class, name = TYPE_SPLIT_DROPDOWN) })
+@JsonSubTypes({@JsonSubTypes.Type(value = ActionDropdownSettings.class, name = TYPE_DROPDOWN),
+        @JsonSubTypes.Type(value = ActionSplitDropdownSettings.class, name = TYPE_SPLIT_DROPDOWN)})
 public class ActionSettings {
 
     public static final String TYPE_DROPDOWN = "dropdown";
@@ -82,6 +81,11 @@ public class ActionSettings {
      * Does the label should be hidden (icon only). The label will be in the tooltip
      */
     private Boolean hideLabel;
+
+    /**
+     * Has divider below
+     */
+    private Boolean divider;
 
     /**
      * The bootstrap style (ex: primary to apply the primary color)
@@ -144,6 +148,14 @@ public class ActionSettings {
         return hideLabel;
     }
 
+    public Boolean getDivider() {
+        return divider;
+    }
+
+    public void setDivider(Boolean divider) {
+        this.divider = divider;
+    }
+
     public void setHideLabel(Boolean hideLabel) {
         this.hideLabel = hideLabel;
     }
@@ -204,6 +216,7 @@ public class ActionSettings {
                 .type(actionSettings.getType()) //
                 .link(actionSettings.getLink()) //
                 .hideLabel(actionSettings.getHideLabel()) //
+                .divider(actionSettings.getDivider()) //
                 .bsStyle(actionSettings.getBsStyle()) //
                 .bsSize(actionSettings.getBsSize()) //
                 .payload(actionSettings.getPayload()) //
@@ -230,6 +243,8 @@ public class ActionSettings {
         private Boolean link;
 
         private Boolean hideLabel;
+
+        private Boolean divider;
 
         private String bsStyle;
 
@@ -284,6 +299,16 @@ public class ActionSettings {
             return this;
         }
 
+        public Builder divider(final Boolean divider) {
+            this.divider = divider;
+            return this;
+        }
+
+        public Builder divider() {
+            this.divider = true;
+            return this;
+        }
+
         public Builder bsStyle(final String bsStyle) {
             this.bsStyle = bsStyle;
             return this;
@@ -330,12 +355,12 @@ public class ActionSettings {
             action.setType(this.type);
             action.setLink(this.link);
             action.setHideLabel(this.hideLabel);
+            action.setDivider(this.divider);
             action.setBsStyle(this.bsStyle);
             action.setBsSize(this.bsSize);
             action.setPayload(this.payload.isEmpty() ? null : this.payload);
             action.setEnabled(this.enabled);
             return action;
         }
-
     }
 }

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,6 +12,13 @@
  ============================================================================*/
 
 import { HOME_DATASETS_ROUTE } from '../../index-route';
+
+const BLOCKING_ACTION_TYPES = [
+	'@@dataset/SORT',
+	'@@dataset/CLONE',
+	'@@dataset/FAVORITE',
+	'@@dataset/DATASET_FETCH',
+];
 
 export default class DatasetActionsService {
 	constructor($document, $stateParams, state, StateService, StorageService, DatasetService,
@@ -32,18 +39,25 @@ export default class DatasetActionsService {
 	}
 
 	dispatch(action) {
+		if (BLOCKING_ACTION_TYPES.includes(action.type)) {
+			if (this.state.inventory.isFetchingDatasets) {
+				return;
+			}
+			// all blocking action types requiring a loader
+			this.StateService.setFetchingInventoryDatasets(true);
+		}
 		switch (action.type) {
 		case '@@dataset/SORT':
 		case '@@dataset/FAVORITE': {
-			this.DatasetService[action.payload.method](action.payload);
+			this.DatasetService[action.payload.method](action.payload)
+				.finally(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		}
 		case '@@dataset/DATASET_FETCH':
 			this.StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
-			this.StateService.setFetchingInventoryDatasets(true);
 			this.DatasetService
 				.init()
-				.then(() => this.StateService.setFetchingInventoryDatasets(false));
+				.finally(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		case '@@dataset/SUBMIT_EDIT': {
 			const newName = action.payload.value;
@@ -88,7 +102,6 @@ export default class DatasetActionsService {
 			const dataset = action.payload.model;
 			this.TalendConfirmService
 				.confirm(
-					{ disableEnter: true },
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: 'dataset', name: dataset.name }
 				)
@@ -103,7 +116,8 @@ export default class DatasetActionsService {
 		case '@@dataset/CLONE': {
 			const dataset = action.payload.model;
 			this.DatasetService.clone(dataset)
-				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
+				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'))
+				.finally(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		}
 		case '@@dataset/UPDATE': {

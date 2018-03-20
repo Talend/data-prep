@@ -137,6 +137,7 @@
   "TOOGLE_ALL_FILTERS": "Enable/disable all filters",
   "DISPLAY_ROWS_INVALID_VALUES": "Display rows with invalid values",
   "DISPLAY_ROWS_EMPTY_VALUES": "Display rows with empty values",
+  "DISPLAY_ROWS_VALID_VALUES": "Display rows with valid values",
   "DISPLAY_ROWS_INVALID_EMPTY_VALUES": "Display rows with invalid or empty values",
   "FILTER_TITLE": "Filter",
   "FILTERS": "Filters",
@@ -162,7 +163,6 @@
   "_comment": "Add datasets",
   "IMPORT_DATASET": "Add dataset",
   "COLLECTING_DATA": "Collecting {{datasetName}} data. Please wait…",
-  "IMPORT_WAIT": "Fetching import parameters, please wait…",
   "DATASET_NAME": "Dataset name:",
   "PREPARATION": "Preparation",
   "DATASTORE_TEST_CONNECTION": "Test connection",
@@ -225,7 +225,7 @@
   "COPY_SUCCESS": "The dataset has been copied.",
   "MOVE_SUCCESS_TITLE": "Dataset move",
   "MOVE_SUCCESS": "The dataset has been moved.",
-  "DATASET_RENAME_SUCCESS_TITLE": "Dataset rename",
+  "DATASET_RENAME_SUCCESS_TITLE": "Dataset renamed",
   "DATASET_RENAME_SUCCESS": "The dataset has been renamed.",
   "DATASET_CURRENTLY_RENAMING_TITLE": "Dataset is already being renamed",
   "DATASET_CURRENTLY_RENAMING": "You just tried to rename this dataset, wait a few seconds for the confirmation message to perform this new rename operation.",
@@ -274,14 +274,16 @@
   "ACTIONS_TAB_ROW": "Row",
   "ACTIONS_TAB_COLUMN": "Column",
   "ACTIONS_TAB_TABLE": "Table",
+  "NO_ACTION_AVAILABLE": "No function matching your search",
 
   "_comment": "Recipe",
   "FILTERS_APPLIED": "Filters applied",
   "ENABLE_DISABLE_STEP": "Enable or disable step",
-  "ENABLE_DISABLE_STEPS": "Enable or disable all steps",
   "REMOVE_STEP": "Remove step",
   "MOVE_UP": "Move up",
   "MOVE_DOWN": "Move down",
+  "ENABLE_STEP": "Enable all steps until this one",
+  "DISABLE_STEP": "Disable this step and the following ones",
 
   "_comment": "Statistics",
   "COUNT": "Count",
@@ -324,7 +326,6 @@
   "UNKNOWN": "unknown",
   "SELECT_COLUMN_TO_DISPLAY_STATS": "Select a column to display its statistics",
   "SELECT_PATTERN_IS": "The selected pattern is:",
-  "REFRESHING_WAIT": "refreshing, please wait…",
   "TOOLTIP_MATCHING_FILTER": "matching your filter",
   "TOOLTIP_MATCHING_FULL": "in entire dataset",
   "NO_CHART": "No chart for the current selection",
@@ -431,6 +432,8 @@
   "HEADERBAR_SEARCH_SEARCHING": "Searching…",
   "HEADERBAR_SEARCH_NO_RESULT": "No result",
   "HEADERBAR_HELP": "Help",
+  "HEADERBAR_APPS": "Apps",
+  "HEADERBAR_INFO": "Information",
   "SIDEPANEL_COLLAPSE": "Collapse",
   "SIDEPANEL_EXPAND": "Expand",
 
@@ -474,5 +477,12 @@
   "EMPTY_RECORDS_LABEL": "rows with empty values",
   "INVALID_RECORDS_LABEL": "rows with invalid values",
   "VALID_RECORDS_LABEL": "rows with valid values",
-  "INVALID_EMPTY_RECORDS_LABEL": "rows with invalid or empty values"
+  "INVALID_EMPTY_RECORDS_LABEL": "rows with invalid or empty values",
+
+  "LIST_SELECT_DISPLAY_MODE_TABLE": "Table",
+  "LIST_SELECT_DISPLAY_MODE_LARGE": "Expanded",
+  "LIST_TOOLBAR_DISPLAY": "Display",
+  "LIST_TOOLBAR_SORT_BY": "Sort by",
+  "LIST_SELECT_SORT_BY_ORDER_DESC": "Descending",
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending"
 }

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,6 +15,7 @@ package org.talend.dataprep.encrypt;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.Base64;
 
@@ -25,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 /**
  * This class provides a helper class to encrypt and decrypt a given string with the
@@ -68,9 +71,9 @@ public class AESEncryption {
      *
      * @param src the specified {@link String}
      * @return the encrypted value of the specified {@link String}
-     * @throws Exception
+     * @throws GeneralSecurityException In case of security-related issues.
      */
-    public static String encrypt(final String src) throws Exception {
+    public static String encrypt(final String src) throws GeneralSecurityException {
         final Cipher c = Cipher.getInstance(ALGO);
         c.init(Cipher.ENCRYPT_MODE, secretKey);
         final byte[] encVal = c.doFinal(src.getBytes());
@@ -82,14 +85,18 @@ public class AESEncryption {
      *
      * @param src the specified {@link String}
      * @return the decrypted value of the specified {@link String}
-     * @throws Exception
+     * @throws GeneralSecurityException In case of security-related issues.
      */
-    public static String decrypt(final String src) throws Exception {
+    public static String decrypt(final String src) throws GeneralSecurityException {
         final Cipher c = Cipher.getInstance(ALGO);
         c.init(Cipher.DECRYPT_MODE, secretKey);
         final byte[] decodedValue = Base64.getDecoder().decode(src);
         final byte[] decValue = c.doFinal(decodedValue);
-        return new String(decValue, ENCODING);
+        try {
+            return new String(decValue, ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
     }
 
     /**
@@ -126,16 +133,21 @@ public class AESEncryption {
      *
      * @param rawUri the URI that may contain a password in its user info part.
      * @return the URI with its password part, if any, encrypted.
-     * @throws Exception if rawUri is not a valid URI or encryption fails.
+     * @throws GeneralSecurityException In case of security-related issues.or encryption fails.
+     * @throws TDPException if rawUri is not a valid URI.
      */
-    public static String encryptUriPassword(final String rawUri) throws Exception {
-        URI uri = new URI(rawUri);
-        UserInfo userInfo = extractCredentials(uri);
-        if (userInfo != null && userInfo.password != null) {
-            userInfo.password = encrypt(userInfo.password);
-            return setCredentials(uri, userInfo).toString();
-        } else {
-            return rawUri;
+    public static String encryptUriPassword(final String rawUri) throws GeneralSecurityException {
+        try {
+            URI uri = new URI(rawUri);
+            UserInfo userInfo = extractCredentials(uri);
+            if (userInfo != null && userInfo.password != null) {
+                userInfo.password = encrypt(userInfo.password);
+                return setCredentials(uri, userInfo).toString();
+            } else {
+                return rawUri;
+            }
+        } catch (URISyntaxException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
@@ -187,9 +199,8 @@ public class AESEncryption {
      * Generates the key used to encrypt and decrypt.
      *
      * @return the key used to encrypt and decrypt
-     * @throws Exception
      */
-    private static Key generateKey(byte[] defaultValue) throws Exception {
+    private static Key generateKey(byte[] defaultValue) {
         return new SecretKeySpec(defaultValue, ALGO);
     }
 }

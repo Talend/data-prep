@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -28,6 +28,7 @@ import static org.talend.dataprep.transformation.api.action.context.ActionContex
 import java.io.IOException;
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -49,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Lookup action used to blend a (or a part of a) dataset into another one.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Lookup.LOOKUP_ACTION_NAME)
+@Action(Lookup.LOOKUP_ACTION_NAME)
 public class Lookup extends AbstractActionMetadata implements DataSetAction {
 
     /** The action name. */
@@ -156,6 +157,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
             final String columnId = parameters.get(COLUMN_ID.getKey());
             final RowMetadata lookupRowMetadata = rowMatcher.getRowMetadata();
             final RowMetadata rowMetadata = context.getRowMetadata();
+            colsToAdd = Lists.reverse(colsToAdd);
             colsToAdd.forEach(toAdd -> {
                 // create the new column
                 final String toAddColumnId = toAdd.getId();

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -39,12 +39,12 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataquality.datamasking.semantic.ValueDataMasker;
+import org.talend.dataquality.semantic.datamasking.ValueDataMasker;
 
 /**
  * Mask sensitive data according to the semantic category.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MaskDataByDomain.ACTION_NAME)
+@Action(MaskDataByDomain.ACTION_NAME)
 public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAction {
 
     /**

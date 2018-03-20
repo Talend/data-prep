@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -121,6 +121,9 @@ describe('Export controller', () => {
 						steps: [],
 					},
 				},
+				dataset: {
+					id: 666,
+				},
 			},
 			export: {
 				exportTypes: exportTypes,
@@ -136,7 +139,7 @@ describe('Export controller', () => {
 		RestURLs.register({ serverUrl: '' }, settings.uris);
 	}));
 
-	beforeEach(inject(($rootScope, $controller, ExportService) => {
+	beforeEach(inject(($rootScope, $controller, $q, PreparationService, ExportService) => {
 		form = {
 			submit: () => {
 			},
@@ -150,6 +153,7 @@ describe('Export controller', () => {
 		};
 
 		spyOn(form, 'submit').and.returnValue();
+		spyOn(PreparationService, 'isExportPossible').and.returnValue($q.when());
 		spyOn(ExportService, 'getType').and.returnValue();
 	}));
 
@@ -370,7 +374,7 @@ describe('Export controller', () => {
 			expect(form.action).toBe(RestURLs.exportUrl);
 		}));
 
-		it('should submit form', inject(($timeout) => {
+		it('should check if content is ready to be exported submit form', inject(($timeout, PreparationService) => {
 			//given
 			const ctrl = createController();
 			ctrl.selectedType = exportTypes[0];
@@ -380,6 +384,7 @@ describe('Export controller', () => {
 			$timeout.flush();
 
 			//then
+			expect(PreparationService.isExportPossible).toHaveBeenCalled();
 			expect(form.submit).toHaveBeenCalled();
 		}));
 	});

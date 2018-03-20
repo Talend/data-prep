@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -46,7 +46,7 @@
                                     on-submit="actionsListCtrl.transform(transfo)(params)"
                                     on-submit-hover-on="actionsListCtrl.earlyPreview(transfo)(params)"
                                     on-submit-hover-off="actionsListCtrl.cancelEarlyPreview()"
-                                    is-transformation-in-progress="actionsListCtrl.transformationInProgress"></transform-form>
+                                    is-transformation-in-progress="actionsListCtrl.state.playground.transformationInProgress"></transform-form>
                 </content>
             </sc-accordion-item>
         </li>
@@ -57,21 +57,23 @@
     <talend-modal fullscreen="false"
                   state="actionsListCtrl.showDynamicModal"
                   close-button="true"
-                  ng-if="actionsListCtrl.showDynamicModal">
+                  ng-if="actionsListCtrl.showDynamicModal"
+                  ng-switch="actionsListCtrl.dynamicFetchInProgress">
 
-        <div ng-if="actionsListCtrl.showModalContent">
-            <div class="modal-title">{{ actionsListCtrl.dynamicTransformation.label }}</div>
-            <div class="modal-subtitle">{{ actionsListCtrl.dynamicTransformation.description }}</div>
+        <div class="modal-title">{{ actionsListCtrl.dynamicTransformation.label }}</div>
+        <div ng-switch-when="false">
+            <div ng-if="actionsListCtrl.showModalContent">
+                <div class="modal-subtitle">{{ actionsListCtrl.dynamicTransformation.description }}</div>
 
-            <div ng-if="actionsListCtrl.dynamicFetchInProgress">
-                <i data-icon="c" class="icon continuous-rotate"></i>
+                <loader ng-if="actionsListCtrl.dynamicFetchInProgress"></loader>
+
+                <transform-form transformation="actionsListCtrl.dynamicTransformation"
+                                on-submit="actionsListCtrl.transform(actionsListCtrl.dynamicTransformation)(params)"></transform-form>
             </div>
-            <transform-form transformation="actionsListCtrl.dynamicTransformation"
-                            on-submit="actionsListCtrl.transform(actionsListCtrl.dynamicTransformation)(params)"></transform-form>
+            <div ng-if="!actionsListCtrl.showModalContent">
+                <div class="modal-subtitle">{{ actionsListCtrl.emptyParamsMsg | translate }}</div>
+            </div>
         </div>
-        <div ng-if="!actionsListCtrl.showModalContent">
-            <div class="modal-title">{{ actionsListCtrl.dynamicTransformation.label }}</div>
-            <div class="modal-subtitle">{{ actionsListCtrl.emptyParamsMsg | translate }}</div>
-        </div>
+        <loader ng-switch-when="true"></loader>
     </talend-modal>
 </div>

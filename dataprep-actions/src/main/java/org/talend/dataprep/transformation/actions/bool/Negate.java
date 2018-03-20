@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -38,7 +38,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  *
  * @see Negate
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Negate.ACTION_NAME)
+@Action(Negate.ACTION_NAME)
 public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "negate";

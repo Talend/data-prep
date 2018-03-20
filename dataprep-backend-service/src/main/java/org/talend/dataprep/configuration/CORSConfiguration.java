@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -32,10 +32,10 @@ public class CORSConfiguration {
                 // Add CORS header for all path in application
                 registry.addMapping("/**") //
                         .allowedOrigins("*") //
-                        .allowedMethods("POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH") //
+                        .allowedMethods("POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH", "HEAD") //
                         .maxAge(3600) //
-                        .allowedHeaders("x-requested-with", "Content-Type", "accept", "Authorization")
-                        .exposedHeaders("Authorization")
+                        .allowedHeaders("x-requested-with", "Content-Type", "accept", "Authorization") //
+                        .exposedHeaders("Authorization", "Location") //
                         .allowCredentials(true);
             }
         };

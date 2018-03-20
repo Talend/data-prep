@@ -7,7 +7,7 @@ import org.springframework.context.annotation.FilterType;
  * Class uses to have a have a single ComponentScan for all DataPrep spring applications.
  */
 @ComponentScan( //
-        value = { "org.talend.dataprep", "org.talend.daikon", "org.talend.tenancy" }, //
+        value = { "org.talend.dataprep", "org.talend.daikon.content",  "org.talend.daikon.security", "org.talend.tenancy" }, //
         // Currently we have two controllers for the same entry point '/docs' one from daikon, another one from dataprep.
         // We filter the daikon one. It's a workaround before daikon documentation controller will be optional.
         excludeFilters = @ComponentScan.Filter( //

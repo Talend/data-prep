@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Delete the line which id matches TdpId in context. This id/filtering is managed by ActionMetadata.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Delete.DELETE_ACTION_NAME)
+@Action(Delete.DELETE_ACTION_NAME)
 public class Delete extends AbstractActionMetadata implements RowAction {
 
     public static final String DELETE_ACTION_NAME = "delete";

@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,7 +12,7 @@
   ~
   ~ ============================================================================
   -->
-<div class="playground-header">
+<header role="banner" class="playground-header">
     <app-header-bar view-key="'appheaderbar:playground'"
                     search-toggle="$ctrl.state.search.searchToggle"
                     searching="$ctrl.state.search.searching"
@@ -20,7 +20,7 @@
                     search-results="$ctrl.state.search.searchResults"
                     search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
                     search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
-</div>
+</header>
 <nav class="playground-sub-header navbar">
     <ul class="playground-sub-header-left nav navbar-nav">
         <li ng-switch="!!$ctrl.isReadonly">

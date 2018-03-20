@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https:// github.com/Talend/data-prep/blob/master/LICENSE
@@ -28,7 +28,8 @@ export function StateService(RouteStateService, routeState,
                              ExportStateService, exportState,
                              HomeStateService, homeState,
                              ProgressStateService, progressState,
-                             SearchStateService, searchState) {
+                             SearchStateService, searchState,
+                             MessageStateService, messageState) {
 	'ngInject';
 
 	state.route = routeState;
@@ -42,6 +43,7 @@ export function StateService(RouteStateService, routeState,
 	state.home = homeState;
 	state.search = searchState;
 	state.progress = progressState;
+	state.message = messageState;
 
 	return {
 		// route
@@ -56,6 +58,7 @@ export function StateService(RouteStateService, routeState,
 		setCopyMoveTree: HomeStateService.setCopyMoveTree,
 		setCopyMoveTreeLoading: HomeStateService.setCopyMoveTreeLoading,
 		setHomeSidePanelDock: HomeStateService.setSidePanelDock,
+		setContentLoading: HomeStateService.setContentLoading,
 		toggleHomeSidepanel: HomeStateService.toggleSidepanel,
 		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,
 		toggleFolderCreator: HomeStateService.toggleFolderCreator,
@@ -81,6 +84,7 @@ export function StateService(RouteStateService, routeState,
 		setIsPreprationPickerVisible: PlaygroundStateService.setIsPreprationPickerVisible,
 		setSavingPreparationFolders: PlaygroundStateService.setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading: PlaygroundStateService.setIsSavingPreparationFoldersLoading,
+		setTransformationInProgress: PlaygroundStateService.setTransformationInProgress,
 
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
@@ -141,6 +145,7 @@ export function StateService(RouteStateService, routeState,
 		setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
 		setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
 		setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
+		setStatisticsLoading: PlaygroundStateService.setStatisticsLoading,
 
 		// dataset
 		startUploadingDataset: DatasetStateService.startUploadingDataset,
@@ -199,5 +204,9 @@ export function StateService(RouteStateService, routeState,
 		resetProgress: ProgressStateService.reset,
 		getCurrentProgressStep: ProgressStateService.getCurrentStep,
 		addProgressSchema: ProgressStateService.addSchema,
+
+		// message
+		pushMessage: MessageStateService.push,
+		popMessage: MessageStateService.pop,
 	};
 }

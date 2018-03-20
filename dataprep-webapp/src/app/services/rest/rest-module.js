@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,9 +12,11 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_UTILS_MODULE from '../utils/utils-module';
+import SERVICES_STATE_MODULE from '../state/state-module';
+import SERVICES_MESSAGE_MODULE from '../message/message-module';
 
 import RestErrorMessageHandler from './rest-error-message-interceptor-factory';
+import RestQueuedMessageHandler from './rest-queued-message-interceptor-factory';
 
 const MODULE_NAME = 'data-prep.services.rest';
 
@@ -24,11 +26,13 @@ const MODULE_NAME = 'data-prep.services.rest';
  * @description This module contains the REST interceptor
  * @requires data-prep.services.utils
  */
-angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
+angular.module(MODULE_NAME, [SERVICES_MESSAGE_MODULE, SERVICES_STATE_MODULE])
 	.factory('RestErrorMessageHandler', RestErrorMessageHandler)
+	.factory('RestQueuedMessageHandler', RestQueuedMessageHandler)
 	.config(($httpProvider) => {
 		'ngInject';
 		$httpProvider.interceptors.push('RestErrorMessageHandler');
+		$httpProvider.interceptors.push('RestQueuedMessageHandler');
 	});
 
 export default MODULE_NAME;

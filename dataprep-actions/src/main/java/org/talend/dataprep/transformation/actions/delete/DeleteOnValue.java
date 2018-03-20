@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -32,7 +32,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -40,7 +39,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Delete row on a given value.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteOnValue.DELETE_ON_VALUE_ACTION_NAME)
+@Action(DeleteOnValue.DELETE_ON_VALUE_ACTION_NAME)
 public class DeleteOnValue extends AbstractDelete {
 
     /**

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -133,4 +133,5 @@ public class TransformAPI extends APIService {
         HystrixCommand<InputStream> dictionaryCommand = getCommand(DictionaryCommand.class);
         return CommandHelper.toStreaming(dictionaryCommand);
     }
+
 }

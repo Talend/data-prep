@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -58,6 +58,7 @@ public interface ListViews {
                                     ListTitleSettings.builder()
                                             .displayModeKey("displayMode")
                                             .iconKey("icon")
+                                            .persistentActionsKey("statusActions")
                                             .key("name")
                                             .onClick(MENU_PLAYGROUND_PREPARATION.getId())
                                             .onEditCancel(INVENTORY_CANCEL_EDIT.getId())
@@ -74,6 +75,24 @@ public interface ListViews {
                                             .action(LEFT, PREPARATION_FOLDER_CREATE.getId())
                                             .build()
                             )
+                            .display(
+                                ListDisplaySettings.builder()
+                                        .displayMode("table")
+                                        .displayMode("large")
+                                        .onChange(PREPARATION_DISPLAY_MODE.getId())
+                                        .build()
+                            )
+                            .sort(
+                                ListSortSettings.builder()
+                                    .onChange(PREPARATION_SORT.getId())
+                                    .options("name", "list.column.name")
+                                    .options("author", "list.column.author")
+                                    .options("creationDate", "list.column.created")
+                                    .options("lastModificationDate", "list.column.modified")
+                                    .options("datasetName", "list.column.dataset")
+                                    .options("nbSteps", "list.column.steps")
+                                    .build()
+                            )
                             .build()
             )
             .build();
@@ -84,7 +103,6 @@ public interface ListViews {
             .list(
                     ListDetailsSettings.builder()
                             .column("name", "list.column.name")
-                            .column("statusActions", "list.column.actions", Boolean.TRUE, "actions")
                             .column("author", "list.column.author")
                             .column("creationDate", "list.column.created")
                             .column("nbRecords", "list.column.rows")
@@ -94,6 +112,7 @@ public interface ListViews {
                                     ListTitleSettings.builder()
                                             .displayModeKey("displayMode")
                                             .iconKey("icon")
+                                            .persistentActionsKey("statusActions")
                                             .key("name")
                                             .onClick(DATASET_OPEN.getId())
                                             .onEditCancel(INVENTORY_CANCEL_EDIT.getId())
@@ -108,6 +127,22 @@ public interface ListViews {
                                     ActionsBarSettings.builder()
                                             .action(LEFT, DATASET_CREATE.getId())
                                             .build()
+                            )
+                            .display(
+                                ListDisplaySettings.builder()
+                                        .displayMode("table")
+                                        .displayMode("large")
+                                        .onChange(DATASET_DISPLAY_MODE.getId())
+                                        .build()
+                            )
+                            .sort(
+                                ListSortSettings.builder()
+                                    .onChange(DATASET_SORT.getId())
+                                    .options("name", "list.column.name")
+                                    .options("author", "list.column.author")
+                                    .options("creationDate", "list.column.created")
+                                    .options("nbRecords", "list.column.rows")
+                                    .build()
                             )
                             .build()
             )

@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -17,8 +17,7 @@
         id="about-modal"
         close-button="true"
         ng-if="$ctrl.state.home.about.isVisible"
-        state="$ctrl.state.home.about.isVisible"
-        disable-enter="true">
+        state="$ctrl.state.home.about.isVisible">
 
     <div class="modal-header">
         {{'ABOUT_HEADER' | translate}}
@@ -28,7 +27,7 @@
         <icon id="about-dataprep-logo" name="'talend-tdp-colored'"></icon>
 
         <div class="version-copyrights">
-            <div id="version">{{"VERSION" | translate}}: {{$ctrl.version}}</div>
+            <div id="version">{{"VERSION" | translate}}: {{$ctrl.state.home.about.builds.displayVersion}}</div>
             <div id="copyrights">{{$ctrl.copyRights}}</div>
         </div>
 
@@ -41,10 +40,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="buildDetail in $ctrl.state.home.about.builds track by $index">
-                    <td>{{buildDetail.serviceName}}</td>
-                    <td>{{buildDetail.buildId}}</td>
-                    <td>{{buildDetail.versionId}}</td>
+                <tr ng-repeat="buildServiceDetail in $ctrl.state.home.about.builds.services track by $index">
+                    <td>{{buildServiceDetail.serviceName}}</td>
+                    <td>{{buildServiceDetail.buildId}}</td>
+                    <td>{{buildServiceDetail.versionId}}</td>
                 </tr>
             </tbody>
         </table>

@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -382,8 +382,27 @@ describe('Storage service', () => {
 		}));
 	});
 
-	describe('selected columns', () => {
+	describe('display modes', () => {
+		const LISTS_DISPLAY_MODES_KEY = 'org.talend.dataprep.lists_display_mode';
+		const mock = {
+			datasets: 'large',
+			preparations: 'table',
+		};
 
+		it('should get lists display modes', inject(($window, StorageService) => {
+			expect(StorageService.getListsDisplayModes()).toEqual({});
+			$window.localStorage.setItem(LISTS_DISPLAY_MODES_KEY, JSON.stringify(mock));
+			const modes = StorageService.getListsDisplayModes();
+			expect(modes).toEqual(mock);
+		}));
+
+		it('should save lists display modes', inject(($window, StorageService) => {
+			StorageService.setListsDisplayModes(mock);
+			expect($window.localStorage.getItem(LISTS_DISPLAY_MODES_KEY)).toBe(JSON.stringify(mock));
+		}));
+	});
+
+	describe('selected columns', () => {
 		const SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_abcd';
 
 		it('should return the selected columns from local storage', inject(($window, StorageService) => {

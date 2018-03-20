@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,11 +15,15 @@ package org.talend.dataprep.transformation.actions.date;
 
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 
+import java.text.DateFormatSymbols;
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -30,8 +34,8 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -39,7 +43,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Change the date pattern on a 'date' column.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractDateTokens.ACTION_NAME)
+@Action(ExtractDateTokens.ACTION_NAME)
 public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     /** Action name. */
@@ -56,6 +60,9 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     /** Month constant value. */
     private static final String MONTH = "MONTH";
+
+    /** Month constant value. */
+    protected static final String MONTH_LABEL = "MONTH_LABEL";
 
     /** Day constant value. */
     private static final String DAY = "DAY";
@@ -78,31 +85,36 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** Day of week constant value. */
     private static final String DAY_OF_WEEK = "DAY_OF_WEEK";
 
+    /** Day label constant value. */
+    protected static final String DAY_LABEL = "DAY_LABEL";
+
     /** Day of year constant value. */
     private static final String DAY_OF_YEAR = "DAY_OF_YEAR";
 
     /** Week of year constant value. */
     private static final String WEEK_OF_YEAR = "WEEK_OF_YEAR";
 
-    /** True constant value. */
-    private static final String TRUE = "true";
+    /** Language name parameter */
+    public static final String LANGUAGE = "LANGUAGE";
 
-    /** False constant value. */
-    private static final String FALSE = "false";
+    /** Key for the locale value in context */
+    private static String LOCALE = "LOCALE";
 
     private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
             new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
+            new DateFieldMappingBean(MONTH_LABEL, ChronoField.MONTH_OF_YEAR), //
+            new DateFieldMappingBean(WEEK_OF_YEAR, ChronoField.ALIGNED_WEEK_OF_YEAR), //
+            new DateFieldMappingBean(DAY_OF_YEAR, ChronoField.DAY_OF_YEAR), //
             new DateFieldMappingBean(DAY, ChronoField.DAY_OF_MONTH), //
+            new DateFieldMappingBean(DAY_OF_WEEK, ChronoField.DAY_OF_WEEK), //
+            new DateFieldMappingBean(DAY_LABEL, ChronoField.DAY_OF_WEEK), //
             new DateFieldMappingBean(HOUR_12, ChronoField.HOUR_OF_AMPM), //
             new DateFieldMappingBean(AM_PM, ChronoField.AMPM_OF_DAY), //
             new DateFieldMappingBean(HOUR_24, ChronoField.HOUR_OF_DAY), //
             new DateFieldMappingBean(MINUTE, ChronoField.MINUTE_OF_HOUR), //
             new DateFieldMappingBean(SECOND, ChronoField.SECOND_OF_MINUTE), //
-            new DateFieldMappingBean(DAY_OF_WEEK, ChronoField.DAY_OF_WEEK), //
-            new DateFieldMappingBean(DAY_OF_YEAR, ChronoField.DAY_OF_YEAR), //
-            new DateFieldMappingBean(WEEK_OF_YEAR, ChronoField.ALIGNED_WEEK_OF_YEAR), //
     };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractDateTokens.class);
@@ -113,24 +125,34 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(parameter(locale).setName(YEAR).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(Parameter.parameter(locale).setName(QUARTER).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters
-                .add(parameter(locale).setName(MONTH).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(parameter(locale).setName(DAY).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(
-                parameter(locale).setName(HOUR_12).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(
-                parameter(locale).setName(AM_PM).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(
-                parameter(locale).setName(HOUR_24).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(
-                parameter(locale).setName(MINUTE).setType(BOOLEAN).setDefaultValue(TRUE).build(this));
-        parameters.add(
-                parameter(locale).setName(SECOND).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(DAY_OF_WEEK).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
-        parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(FALSE).build(this));
+        parameters.add(parameter(locale).setName(YEAR).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(QUARTER).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(MONTH).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(MONTH_LABEL).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(WEEK_OF_YEAR).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_YEAR).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(DAY).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(DAY_OF_WEEK).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(DAY_LABEL).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(HOUR_12).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(AM_PM).setType(BOOLEAN).setDefaultValue(false).build(this));
+        parameters.add(parameter(locale).setName(HOUR_24).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(MINUTE).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.add(parameter(locale).setName(SECOND).setType(BOOLEAN).setDefaultValue(false).build(this));
+
+        List<Locale> locales = Stream
+                .of(Locale.CHINESE, Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, //
+                        Locale.ITALIAN, Locale.JAPANESE, Locale.KOREAN, Locale.forLanguageTag("es")) //
+                .sorted(Comparator.comparing(o -> o.getDisplayLanguage(locale))) //
+                .collect(Collectors.toList());
+
+        SelectParameter.SelectParameterBuilder builder = selectParameter(locale).name(LANGUAGE);
+        for (Locale currentLocale : locales) {
+            builder = builder.constant(currentLocale.getLanguage(), currentLocale.getDisplayLanguage(locale));
+        }
+        builder = builder.defaultValue(Locale.ENGLISH.getLanguage());
+
+        parameters.add(builder.build(this));
         return parameters;
     }
 
@@ -146,14 +168,16 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
             for (DateFieldMappingBean date_field : DATE_FIELDS) {
                 if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
-                    additionalColumns.add(ActionsUtils.additionalColumn()
+                    additionalColumns.add(ActionsUtils
+                            .additionalColumn()
                             .withKey(date_field.key)
                             .withName(context.getColumnName() + SEPARATOR + date_field.key)
                             .withType(Type.INTEGER));
                 }
             }
-
+            Collections.reverse(additionalColumns);
             ActionsUtils.createNewColumn(context, additionalColumns);
+            context.get(LOCALE, p -> new Locale(context.getParameters().get(LANGUAGE)));
         }
     }
 
@@ -181,11 +205,21 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                 String newValue = StringUtils.EMPTY;
                 if (temporalAccessor != null && // may occurs if date can not be parsed with pattern
                         temporalAccessor.isSupported(date_field.field)) {
-                    if (QUARTER.equals(date_field.key)) {
+                    switch (date_field.key) {
+                    case QUARTER:
                         newValue = String.valueOf(getQuarter(temporalAccessor.get(date_field.field)));
-                    }
-                    else {
+                        break;
+                    case DAY_LABEL:
+                        newValue = String
+                                .valueOf(getLabelDay(temporalAccessor.get(date_field.field), context.get(LOCALE)));
+                        break;
+                    case MONTH_LABEL:
+                        newValue = String
+                                .valueOf(getLabelMonth(temporalAccessor.get(date_field.field), context.get(LOCALE)));
+                        break;
+                    default:
                         newValue = String.valueOf(temporalAccessor.get(date_field.field));
+                        break;
                     }
                 }
                 row.set(ActionsUtils.getTargetColumnIds(context).get(date_field.key), newValue);
@@ -203,9 +237,41 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         return (numMonth - 1) / 3 + 1;
     }
 
+    /**
+     * Get the day label of the week.
+     *
+     * @param numDayOfWeek the number of the month
+     * @return the day label
+     */
+    String getLabelDay(int numDayOfWeek, Locale locale) {
+        String[] label = DateFormatSymbols.getInstance(locale).getWeekdays();
+        if (numDayOfWeek >= 0 && numDayOfWeek < 7) {
+            return label[numDayOfWeek + 1];
+        } else if (numDayOfWeek == 7){
+            return label[1];
+        } else {
+            return StringUtils.EMPTY;
+        }
+    }
+
+    /**
+     * Get the month label of the year.
+     *
+     * @param numMonth the number of the month
+     * @return the month label
+     */
+    String getLabelMonth(int numMonth, Locale locale) {
+        String[] label = DateFormatSymbols.getInstance(locale).getMonths();
+        if (numMonth >= 1 && numMonth <= 12) {
+            return label[numMonth - 1];
+        } else {
+            return StringUtils.EMPTY;
+        }
+    }
+
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS);
+        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
     }
 
     private static class DateFieldMappingBean {

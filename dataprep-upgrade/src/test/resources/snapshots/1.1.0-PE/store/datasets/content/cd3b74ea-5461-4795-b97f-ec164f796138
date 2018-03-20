@@ -1,0 +1,51 @@
+Postal;State;Capital;MostPopulousCity
+AL;ALABAMA;Montgomery;Birmingham city
+AK;Alaska;Juneau;Anchorage
+AZ;Arizona;Phoenix;Phoenix
+AR;Arkansas;Little Rock;Little Rock
+CA;California;Sacramento;Los Angeles
+CO;Colorado;Denver;Denver
+CT;Connecticut;Hartford;Bridgeport
+DE;Delaware;Dover;Wilmington
+FL;Florida;Tallahassee;Jacksonville
+GA;Georgia;Atlanta;Atlanta
+HI;Hawaii;Honolulu;Honolulu
+ID;Idaho;Boise;Boise
+IL;Illinois;Springfield;Chicago
+IN;Indiana;Indianapolis;Indianapolis
+IA;Iowa;Des Moines;Des Moines
+KS;Kansas;Topeka;Wichita
+KY;Kentucky;Frankfort;Louisville
+LA;Louisiana;Baton Rouge;New Orleans *
+ME;Maine;Augusta;Portland
+MD;Maryland;Annapolis;Baltimore
+MA;Massachusetts;Boston;Boston
+MI;Michigan;Lansing;Detroit
+MN;Minnesota;Saint Paul;Minneapolis
+MS;Mississippi;Jackson;Jackson
+MO;Missouri;Jefferson City;Kansas City
+MT;Montana;Helena;Billings
+NE;Nebraska;Lincoln;Omaha
+NV;Nevada;Carson City;Las Vegas
+NH;New Hampshire;Concord;Manchester
+NJ;New Jersey;Trenton;Newark
+NM;New Mexico;Santa Fe;Albuquerque
+NY;New York;Albany;New York City
+NC;North Carolina;Raleigh;Charlotte
+ND;North Dakota;Bismarck;Fargo
+OH;Ohio;Columbus;Columbus
+OK;Oklahoma;Oklahoma City;Oklahoma City
+OR;Oregon;Salem;Portland
+PA;Pennsylvania;Harrisburg;Philadelphia
+RI;Rhode Island;Providence;Providence
+SC;South Carolina;Columbia;Columbia
+SD;South Dakota;Pierre;Sioux Falls
+TN;Tennessee;Nashville;Memphis
+TX;Texas;Austin;Houston
+UT;Utah;Salt Lake City;Salt Lake City
+VT;Vermont;Montpelier;Burlington
+VA;Virginia;Richmond;Virginia Beach
+WA;Washington;Olympia;Seattle
+WV;West Virginia;Charleston;Charleston
+WI;Wisconsin;Madison;Milwaukee
+WY;Wyoming;Cheyenne;Cheyenne

@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -12,58 +12,79 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.api.type.Type.STRING;
-import static org.talend.dataprep.parameters.Parameter.parameter;
-import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
-
-import java.util.*;
-
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.AbstractMultiScopeAction;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
-import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.converters.StringTrimmer;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 /**
  * Trim leading and trailing characters.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Trim.TRIM_ACTION_NAME)
-public class Trim extends AbstractActionMetadata implements ColumnAction {
+@Action(Trim.TRIM_ACTION_NAME)
+public class Trim extends AbstractMultiScopeAction {
 
     /**
      * The action name.
      */
     public static final String TRIM_ACTION_NAME = "trim"; //$NON-NLS-1$
 
-    /** Padding Character. */
-    public static final String PADDING_CHAR_PARAMETER = "padding_character"; //$NON-NLS-1$
+    /**
+     * Padding Character.
+     */
+    static final String PADDING_CHAR_PARAMETER = "padding_character"; //$NON-NLS-1$
 
-    /** Custom Padding Character. */
-    public static final String CUSTOM_PADDING_CHAR_PARAMETER = "custom_padding_character"; //$NON-NLS-1$
+    /**
+     * Custom Padding Character.
+     */
+    static final String CUSTOM_PADDING_CHAR_PARAMETER = "custom_padding_character"; //$NON-NLS-1$
 
-    /** String Converter help class. */
-    public static final String STRING_TRIMMER = "string_trimmer"; //$NON-NLS-1$
+    /**
+     * String Converter help class.
+     */
+    private static final String STRING_TRIMMER = "string_trimmer"; //$NON-NLS-1$
 
     /**
      * Keys used in the values of different parameters:
      */
-    public static final String CUSTOM = "custom"; //$NON-NLS-1$
+    static final String CUSTOM = "custom"; //$NON-NLS-1$
 
-    public static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
+    private static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
 
     protected static final String NEW_COLUMN_SUFFIX = "_trim";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
+    public Trim() {
+        this(COLUMN);
+    }
+
+    private Trim(ScopeCategory scope) {
+        super(scope);
+    }
 
     @Override
     public String getName() {
@@ -81,22 +102,26 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING)
+                        .withCopyMetadataFromId(context.getColumnId()));
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        if (COLUMN.equals(scope)) {
+            parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
+        }
 
         // @formatter:off
         parameters.add(selectParameter(locale)
                 .name(PADDING_CHAR_PARAMETER)
-                .item(WHITESPACE,WHITESPACE)
+                .item(WHITESPACE, WHITESPACE)
                 .item(CUSTOM, CUSTOM, parameter(locale).setName(CUSTOM_PADDING_CHAR_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(this))
                 .canBeBlank(true)
                 .defaultValue(WHITESPACE)
-                .build(this ));
+                .build(this));
         // @formatter:on
         return parameters;
     }
@@ -112,26 +137,34 @@ public class Trim extends AbstractActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
-        final String toTrim = row.get(columnId);
-        if (toTrim != null) {
-            final Map<String, String> parameters = context.getParameters();
-            final StringTrimmer stringTrimmer = context.get(STRING_TRIMMER);
-            if (CUSTOM.equals(parameters.get(PADDING_CHAR_PARAMETER))) {
-                row.set(ActionsUtils.getTargetColumnId(context), stringTrimmer.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER)));
-            } else {
-                row.set(ActionsUtils.getTargetColumnId(context), stringTrimmer.removeTrailingAndLeadingWhitespaces(toTrim));
-            }
+    public void apply(DataSetRow row, String columnId, String targetColumnId, ActionContext context) {
+        String toTrim = row.get(columnId);
+        row.set(targetColumnId, doTrim(toTrim, context));
+    }
+
+    private String doTrim(String toTrim, ActionContext context) {
+        final Map<String, String> parameters = context.getParameters();
+        final StringTrimmer stringTrimmer = context.get(STRING_TRIMMER);
+        if (CUSTOM.equals(parameters.get(PADDING_CHAR_PARAMETER))) {
+            return stringTrimmer.removeTrailingAndLeading(toTrim, parameters.get(CUSTOM_PADDING_CHAR_PARAMETER));
+        } else {
+            return stringTrimmer.removeTrailingAndLeadingWhitespaces(toTrim);
         }
     }
 
     @Override
-    public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN);
+    public ActionDefinition adapt(ScopeCategory scope) {
+        return new Trim(scope);
     }
+
+    @Override
+    public Set<Behavior> getBehavior() {
+        if (DATASET.equals(scope)) {
+            return EnumSet.of(Behavior.VALUES_ALL, Behavior.NEED_STATISTICS_PATTERN);
+        } else {
+            return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
+        }
+    }
+
 }

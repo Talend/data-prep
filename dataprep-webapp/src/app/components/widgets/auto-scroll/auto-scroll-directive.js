@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -30,7 +30,7 @@
  * @param {Number}  topDelta the delta before the mouse reaches the top of the container
  * @param {Boolean} whileDragging when true launches the periodic loop to scroll the element
  */
-export default function AutoScroll() {
+export default function AutoScroll($interval) {
 	'ngInject';
 	return {
 		restrict: 'A',
@@ -55,10 +55,10 @@ export default function AutoScroll() {
 			scope.$watch(() => scope.$eval(attrs.whileDragging), (newVal) => {
 				if (newVal) {
 					elementPositions = iElement[0].getBoundingClientRect();
-					interval = setInterval(updateScroll, 100);
+					interval = $interval(updateScroll, 100);
 				}
 				else {
-					clearInterval(interval);
+					$interval.cancel(interval);
 					interval = null;
 				}
 			});

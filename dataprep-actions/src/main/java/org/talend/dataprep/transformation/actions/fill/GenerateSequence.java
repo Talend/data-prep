@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Generate a sequence on a column based on start value and step value.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + GenerateSequence.ACTION_NAME)
+@Action(GenerateSequence.ACTION_NAME)
 public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "generate_a_sequence";

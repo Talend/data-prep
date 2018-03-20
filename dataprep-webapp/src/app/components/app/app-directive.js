@@ -1,6 +1,6 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
   This source code is available under agreement available at
   https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,9 +13,16 @@
 
 import template from './app.html';
 
-export default function DatagridHeaderCtrl() {
+export default function AppDirective(appSettings) {
+	'ngInject';
+
 	return {
 		restrict: 'E',
 		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'appCtrl',
+		controller() {
+			this.appSettings = appSettings;
+		},
 	};
 }

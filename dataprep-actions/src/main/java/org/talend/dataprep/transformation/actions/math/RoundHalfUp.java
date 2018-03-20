@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,14 +15,13 @@ package org.talend.dataprep.transformation.actions.math;
 import java.math.RoundingMode;
 
 import org.talend.dataprep.api.action.Action;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 /**
  * Returns the closest long to the argument, with ties rounding to positive infinity.
  *
  * @see RoundingMode#HALF_UP
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundHalfUp.ACTION_NAME)
+@Action(RoundHalfUp.ACTION_NAME)
 public class RoundHalfUp extends AbstractRound {
 
     /**

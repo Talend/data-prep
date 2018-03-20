@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -29,7 +29,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * A unit test action: only use to test unexpected action failures.
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FailedAction.FAILED_ACTION)
+@Action(FailedAction.FAILED_ACTION)
 public class FailedAction extends AbstractActionMetadata implements ColumnAction, CellAction, DataSetAction {
 
     public static final String FAILED_ACTION = "testfailedaction";

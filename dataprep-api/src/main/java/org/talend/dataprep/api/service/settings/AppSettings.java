@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -42,7 +42,7 @@ public class AppSettings {
     /**
      * The context settings dictionary
      */
-    private final Map<String, String> context = new HashMap<>();
+    private final Map<String, Object> context = new HashMap<>();
 
     /**
      * Getters
@@ -67,7 +67,7 @@ public class AppSettings {
         return analytics;
     }
 
-    public Map<String, String> getContext() {
+    public Map<String, Object> getContext() {
         return context;
     }
 }

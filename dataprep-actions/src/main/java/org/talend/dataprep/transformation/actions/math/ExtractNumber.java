@@ -1,5 +1,5 @@
 // ============================================================================
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -62,7 +62,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * <li>pico p 0.000000000001</li>
  * </ul>
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
+@Action(ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
 public class ExtractNumber extends AbstractActionMetadata implements ColumnAction {
 
     /** Name of the action. */

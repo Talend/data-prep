@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * duplicate a column
  */
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CopyColumnMetadata.COPY_ACTION_NAME)
+@Action(CopyColumnMetadata.COPY_ACTION_NAME)
 public class CopyColumnMetadata extends AbstractActionMetadata implements ColumnAction {
 
     /**

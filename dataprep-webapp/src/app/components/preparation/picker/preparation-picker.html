@@ -1,7 +1,7 @@
 <!--
   ~ ============================================================================
   ~
-  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
   ~
   ~  This source code is available under agreement available at
   ~  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -15,9 +15,7 @@
 
 <div class="picker-modal-content">
 
-    <span ng-if="$ctrl.isFetchingPreparations" class="fetching-spinner">
-        <i data-icon="c" class="continuous-rotate icon"></i>
-    </span>
+    <loader ng-if="$ctrl.isFetchingPreparations"></loader>
 
     <span ng-if="!$ctrl.candidatePreparations.length && !$ctrl.isFetchingPreparations"
           translate-once="NO_COMPATIBLE_PREPARATIONS"

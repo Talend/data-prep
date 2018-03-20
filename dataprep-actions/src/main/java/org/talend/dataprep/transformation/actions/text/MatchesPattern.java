@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -39,7 +39,7 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MatchesPattern.MATCHES_PATTERN_ACTION_NAME)
+@Action(MatchesPattern.MATCHES_PATTERN_ACTION_NAME)
 public class MatchesPattern extends AbstractActionMetadata implements ColumnAction {
 
     /**

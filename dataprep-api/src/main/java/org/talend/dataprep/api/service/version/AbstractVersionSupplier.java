@@ -45,7 +45,7 @@ public abstract class AbstractVersionSupplier implements VersionsSupplier {
      * @param serviceName the name of the service
      * @return the version of the called service
      */
-    Version callVersionService(String serviceUrl, String serviceName, String entryPoint) {
+    protected Version callVersionService(String serviceUrl, String serviceName, String entryPoint) {
         HystrixCommand<InputStream> versionCommand = context.getBean(VersionCommand.class, serviceUrl, entryPoint);
         try (InputStream content = versionCommand.execute()) {
             final Version version = mapper.readerFor(Version.class).readValue(content);

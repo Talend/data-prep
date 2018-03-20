@@ -8,7 +8,6 @@ import java.util.SortedSet;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ public class OSFolderUtilTest {
     private OSFolderUtil folderUtil;
 
     @Before
-    public void init(){
+    public void init() {
         allFList.add(aPathF);
         allFList.add(aaPathF);
         allFList.add(aaaPathF);

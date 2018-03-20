@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
+import org.talend.dataprep.async.progress.ExecutionProgress;
 import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -66,46 +67,36 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
             task -> task.getTime().getEndDate(), true);
 
     /** The execution group (parent) id. */
-    @JsonProperty("group")
     private String group;
 
     /** The execution id. */
-    @JsonProperty("id")
     private String id;
 
     /** The execution detailed timing (start / stop...). */
-    @JsonProperty("time")
     private Time time = new Time();
 
     /** The current execution status. */
-    @JsonProperty("status")
     private Status status = Status.NEW;
 
     /** The execution result (e.g. transformation / sampling...). */
-    @JsonProperty("result")
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private AsyncExecutionResult result;
 
     /** The execution error code when it failed. */
-    @JsonProperty("error")
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
     private ErrorCode error;
 
     /** The current execution progress. */
-    @JsonProperty("progress")
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    private Object progress;
+    private ExecutionProgress progress;
 
-    @JsonProperty("userId")
     private String userId;
 
-    @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("dispatchId")
     private String dispatchId;
 
     /**
@@ -215,12 +206,7 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         }
     }
 
-    /**
-     * @return the execution current progress (null if done).
-     */
-    @JsonProperty("progress")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
-    public Object getProgress() {
+    public ExecutionProgress getProgress() {
         switch (status) {
         case DONE:
             return null;
@@ -233,7 +219,7 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         }
     }
 
-    public void setProgress(Object progress) {
+    public void setProgress(ExecutionProgress progress) {
         this.progress = progress;
     }
 
@@ -299,9 +285,6 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         return result;
     }
 
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return "AsyncExecution{" + //

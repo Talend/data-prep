@@ -21,14 +21,23 @@ import static org.talend.dataprep.parameters.ParameterType.STRING;
 import static org.talend.dataprep.transformation.actions.Providers.get;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
-import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.*;
+import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_DS_ID;
+import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_DS_NAME;
+import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_JOIN_ON;
+import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_JOIN_ON_NAME;
+import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_SELECTED_COLS;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -46,6 +55,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 /**
  * Lookup action used to blend a (or a part of a) dataset into another one.
@@ -211,7 +221,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
      * @param parameters the action parameters.
      * @return the list of columns to merge.
      */
-    private List<LookupSelectedColumnParameter> getColsToAdd(Map<String, String> parameters) {
+    public static List<LookupSelectedColumnParameter> getColsToAdd(Map<String, String> parameters) {
         List<LookupSelectedColumnParameter> result;
         try {
             final String cols = parameters.get(LOOKUP_SELECTED_COLS.getKey());

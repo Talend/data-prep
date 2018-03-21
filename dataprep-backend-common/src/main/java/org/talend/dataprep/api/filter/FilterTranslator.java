@@ -74,7 +74,7 @@ public class FilterTranslator {
 
         @Override
         public String createContainsPredicate(JsonNode currentNode, String columnId, String value) {
-            return columnId + " contains " + value;
+            return columnId + " contains '" + value + "'";
         }
 
         @Override

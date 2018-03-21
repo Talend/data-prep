@@ -268,31 +268,19 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/content", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation content by id and at a given version.", notes = "Returns the preparation content at version.")
     @Timed
-<<<<<<< HEAD
-    public StreamingResponseBody getPreparation( //
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
-            @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version", value = "Version of the preparation (can be 'origin', 'head' or the version id). Defaults to 'head'.") String version,
-            @RequestParam(value = "from", defaultValue = "HEAD") @ApiParam(name = "from", value = "Where to get the data from") ExportParameters.SourceType from,
-            @RequestParam(value = "filter", required = false) @ApiParam(name = "filter", value = "A filter apply on the content") String filter) {
-=======
     public ResponseEntity<StreamingResponseBody> getPreparation( //
          @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
          @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version", value = "Version of the preparation (can be 'origin', 'head' or the version id). Defaults to 'head'.") String version,
-         @RequestParam(value = "from", defaultValue = "HEAD") @ApiParam(name = "from", value = "Where to get the data from") ExportParameters.SourceType from) {
->>>>>>> master
+         @RequestParam(value = "from", defaultValue = "HEAD") @ApiParam(name = "from", value = "Where to get the data from") ExportParameters.SourceType from,
+         @RequestParam(value = "filter", required = false) @ApiParam(name = "filter", value = "A filter apply on the content") String filter) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation content for {}/{} (pool: {} )...", preparationId, version, getConnectionStats());
         }
 
         try {
-<<<<<<< HEAD
-            HystrixCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version, from, filter);
+            GenericCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version, from, filter);
             HttpResponseContext.contentType(APPLICATION_JSON_VALUE);
-=======
-            GenericCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version, from);
-
->>>>>>> master
             return CommandHelper.toStreaming(command);
         } finally {
             if (LOG.isDebugEnabled()) {

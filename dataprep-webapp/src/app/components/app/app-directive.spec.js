@@ -56,27 +56,6 @@ describe('App directive', () => {
 		element.remove();
 	});
 
-	describe('theme', () => {
-		it('should not enable theme', () => {
-			//when
-			appSettingsMock.context.theme = false;
-			createElement();
-
-			//then
-			expect(element.find('.t7').length).toBe(0);
-		});
-
-		it('should enable theme', () => {
-			//when
-
-			appSettingsMock.context.theme = true;
-			createElement();
-
-			//then
-			expect(element.find('.t7').length).toBe(1);
-		});
-	});
-
 	it('should hold notifications container', () => {
 		//when
 		createElement();

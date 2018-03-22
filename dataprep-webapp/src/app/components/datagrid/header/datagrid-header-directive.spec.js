@@ -359,18 +359,6 @@ describe('Datagrid header directive', () => {
 		expect(element.find('.dropdown-menu').hasClass('show-menu')).toBeFalsy();
 	});
 
-	it('should render quality filters', () => {
-		// given
-		createElement();
-
-		// then
-		const dropdownItems = element.find('sc-dropdown li');
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_VALID_VALUES"]').length).toBe(1);
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_INVALID_VALUES"]').length).toBe(1);
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_EMPTY_VALUES"]').length).toBe(1);
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES"]').length).toBe(1);
-	});
-
 	describe('quality bar', () => {
 		it('should render quality bar', () => {
 			// when

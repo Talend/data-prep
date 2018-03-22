@@ -38,33 +38,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonRootName("execution")
 public class AsyncExecution implements Comparable<AsyncExecution> {
 
-    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncExecution.class);
-
-    @Override
-    public int compareTo(AsyncExecution o) {
-        // Ensure running executions are top of sort
-        if (this.getStatus() == Status.RUNNING) {
-            return -1;
-        }
-        if (o.getStatus() == Status.RUNNING) {
-            return 1;
-        }
-        // Normal sort
-        return Long.compare(o.getTime().getEndDate(), this.getTime().getEndDate());
-    }
-
-    /**
-     * The comparator to use to make sure the last started is first.
-     */
-    private static final Comparator<AsyncExecution> ASYNC_EXECUTION_START_DESC_ORDER = generateDateDescComparator(
-            task -> task.getTime().getStartDate(), true);
-
-    /**
-     * The comparator to use to make sure the last started is first.
-     */
-    private static final Comparator<AsyncExecution> ASYNC_EXECUTION_END_DESC_ORDER = generateDateDescComparator(
-            task -> task.getTime().getEndDate(), true);
 
     /** The execution group (parent) id. */
     private String group;
@@ -122,39 +96,12 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         this.id = id;
     }
 
-    /**
-     * The comparator to use to make sure the last started is first.
-     */
-    private static Comparator<AsyncExecution> generateDateDescComparator(final Function<AsyncExecution, Long> getDate,
-            final boolean desc) {
-        final int order = desc ? -1 : 1;
-        return (task1, task2) -> {
-            final long task1Date = getDate.apply(task1);
-            final long task2Date = getDate.apply(task2);
-            if (task1Date > task2Date) {
-                return order;
-            } else if (task1Date < task2Date) {
-                return -order;
-            } else {
-                return 0;
-            }
-        };
+    public static Comparator<AsyncExecution> reverseStartDateComparator() {
+        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getStartDate()).reversed();
     }
 
-    /**
-     * @return the comparator to use.
-     * @see AsyncExecution#ASYNC_EXECUTION_START_DESC_ORDER
-     */
-    public static Comparator<AsyncExecution> startDateDescOrder() {
-        return ASYNC_EXECUTION_START_DESC_ORDER;
-    }
-
-    /**
-     * @return the comparator to use.
-     * @see AsyncExecution#ASYNC_EXECUTION_END_DESC_ORDER
-     */
-    public static Comparator<AsyncExecution> endDateDescOrder() {
-        return ASYNC_EXECUTION_END_DESC_ORDER;
+    public static Comparator<AsyncExecution> reverseEndDateComparator() {
+        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getEndDate()).reversed();
     }
 
     /**
@@ -337,6 +284,19 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
 
     public String getDispatchId() {
         return dispatchId;
+    }
+
+    @Override
+    public int compareTo(AsyncExecution o) {
+        // Ensure running executions are top of sort
+        if (this.getStatus() == Status.RUNNING) {
+            return -1;
+        }
+        if (o.getStatus() == Status.RUNNING) {
+            return 1;
+        }
+        // Normal sort
+        return Long.compare(o.getTime().getEndDate(), this.getTime().getEndDate());
     }
 
     /**

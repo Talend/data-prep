@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -11,17 +10,13 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.ui;
+package org.talend.dataprep.event;
 
-/**
- * UI configuration
- */
-public interface UiConfiguration {
+public enum MessageClass {
 
-    /**
-     * Should display theme
-     *
-     * @return true if UI is themed
-     */
-    boolean hasTheme();
+    DATASET_MESSAGE,
+    DQ_MESSAGE,
+    PREPARATION_MESSAGE,
+    CACHE_MESSAGE
+
 }

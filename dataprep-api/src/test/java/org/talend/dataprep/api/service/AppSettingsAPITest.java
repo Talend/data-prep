@@ -537,15 +537,4 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(country, is(Locale.US.getCountry()));
         assertThat(language, is(Locale.US.getLanguage()));
     }
-
-    @Test
-    public void shouldNotEnableThemeByDefaultInContextSettings() {
-        // when
-        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
-
-        // then
-        final boolean theme = (boolean) settings.getContext().get("theme");
-
-        assertThat(theme, is(Boolean.FALSE));
-    }
 }

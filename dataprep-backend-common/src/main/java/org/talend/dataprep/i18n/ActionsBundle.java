@@ -13,7 +13,14 @@
 package org.talend.dataprep.i18n;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -267,7 +274,7 @@ public class ActionsBundle implements MessagesBundle {
                     bundle = searchedBundle;
                 }
             } catch (MissingResourceException e) {
-                LOGGER.debug("No action resource bundle found for action '{}' at '{}'", action, packageName, e);
+                LOGGER.debug("No action resource bundle found for action '{}' at '{}'", action, packageName);
             }
         }
         return bundle;
@@ -282,7 +289,7 @@ public class ActionsBundle implements MessagesBundle {
      * </ul>
      */
     private Collection<String> getBundlesFallbackList(Object action) {
-        LinkedHashSet<String> packageHierarchy = new LinkedHashSet<>();;
+        LinkedHashSet<String> packageHierarchy = new LinkedHashSet<>();
         if (Objects.nonNull(action)) {
             packageHierarchy.addAll(Arrays.asList(getPackageHierarchy(action.getClass())));
         }

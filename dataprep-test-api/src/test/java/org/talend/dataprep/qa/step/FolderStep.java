@@ -38,8 +38,7 @@ public class FolderStep extends DataPrepStep {
         String parentFolderName = params.get(ORIGIN);
         String folder = params.get(FOLDER_NAME);
 
-        List<Folder> folders = folderUtil.listFolders();
-        Folder parentFolder = folderUtil.extractFolder(parentFolderName, folders);
+        Folder parentFolder = folderUtil.searchFolder(parentFolderName);
         Assert.assertNotNull(parentFolder);
 
         Response response = api.createFolder(parentFolder.id, folder);
@@ -48,8 +47,8 @@ public class FolderStep extends DataPrepStep {
         Folder createdFolder = objectMapper.readValue(content, Folder.class);
         Assert.assertEquals(createdFolder.path, "/" + folder);
 
-        folders = folderUtil.listFolders();
-        Set<Folder> splittedFolders = util.splitFolder(createdFolder, folders);
-        splittedFolders.forEach(f -> context.storeFolder(f));
+        List<Folder> folders = folderUtil.listFolders();
+        Set<Folder> splittedFolders = folderUtil.splitFolder(createdFolder, folders);
+        context.storeFolder(splittedFolders);
     }
 }

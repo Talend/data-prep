@@ -15,17 +15,16 @@ package org.talend.dataprep.dataset.service.analysis.asynchronous;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.dataset.event.DataSetImportedEvent;
-
+import org.talend.dataprep.dataset.event.DatasetImportedEvent;
 
 /**
  * Synchronous analysis of a dataset used for unit / integration tests.
  */
 @Component
 @ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "false")
-public class SyncBackgroundAnalysis implements ApplicationListener<DataSetImportedEvent> {
+public class SyncBackgroundAnalysis {
 
     @Autowired
     private BackgroundAnalysis backgroundAnalysis;
@@ -35,8 +34,9 @@ public class SyncBackgroundAnalysis implements ApplicationListener<DataSetImport
      *
      * @param event the event to respond to
      */
-    @Override
-    public void onApplicationEvent(DataSetImportedEvent event) {
+
+    @EventListener
+    public void onEvent(DatasetImportedEvent event) {
         String dataSetId = event.getSource();
         backgroundAnalysis.analyze(dataSetId);
     }

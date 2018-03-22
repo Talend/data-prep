@@ -12,9 +12,18 @@
 
 package org.talend.dataprep.dataset.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
@@ -45,16 +54,9 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -741,6 +743,31 @@ public class DataSetServiceTest extends DataSetBaseTest {
         ids = from(when().get("/datasets").asString()).get("id");
         assertThat(ids, hasItem(dataSetId));
         assertQueueMessages(dataSetId);
+    }
+
+    @Test
+    public void updateRawContentWithDirectoryTraversalFile_TDP_3505() throws Exception {
+        // dataSetId is the filename under which the file will be stored on the server
+        String dataSetId = "foobar..\\..\\..\\a";
+        // avoid Path Traversal Issue by using basename function
+        String cleanedDataSetId = FilenameUtils.getBaseName(dataSetId);
+
+        DataSetMetadata dataSetMetadata = metadataBuilder.metadata().id(cleanedDataSetId).build();
+        dataSetMetadataRepository.save(dataSetMetadata);
+
+        String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);
+        given().body(body)
+                .when() //
+                .put("/datasets/{id}/raw", dataSetId) //
+                .then() //
+                .statusCode(OK.value());
+
+        // expectations
+        // by Rest API
+        List<String> ids = from(when().get("/datasets").asString()).get("id");
+        assertThat(ids, hasItem(cleanedDataSetId));
+        // by DataSet Repository
+        assertQueueMessages(cleanedDataSetId);
     }
 
     @Test

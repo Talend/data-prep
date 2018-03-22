@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -606,13 +607,16 @@ public class DataSetService extends BaseDataSetService {
             @RequestParam(value = "size", required = false, defaultValue = "0") @ApiParam(name = "size", value = "The size of the dataSet") long size, //
             @ApiParam(value = "content") InputStream dataSetContent) {
 
-        LOG.debug("updating dataset content #{}", dataSetId);
+        // avoid Path Traversal Attack
+        String dataSetIdBaseName = FilenameUtils.getBaseName(dataSetId);
+
+        LOG.debug("updating dataset content #{}", dataSetIdBaseName);
 
         if (name != null) {
             checkDataSetName(name);
         }
 
-        DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
+        DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetIdBaseName);
         if (currentDataSetMetadata == null && name == null) {
             throw new TDPException(INVALID_DATASET_NAME, ExceptionContext.build().put("name", name));
         }
@@ -623,9 +627,9 @@ public class DataSetService extends BaseDataSetService {
             throw new TDPException(UNSUPPORTED_CONTENT);
         }
 
-        final UpdateDataSetCacheKey cacheKey = new UpdateDataSetCacheKey(dataSetId);
+        final UpdateDataSetCacheKey cacheKey = new UpdateDataSetCacheKey(dataSetIdBaseName);
 
-        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
+        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetIdBaseName);
         try {
             lock.lock();
 
@@ -634,8 +638,8 @@ public class DataSetService extends BaseDataSetService {
                 quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
             }
 
-            final DataSetMetadataBuilder datasetBuilder = metadataBuilder.metadata().id(dataSetId);
-            final DataSetMetadata metadataForUpdate = dataSetMetadataRepository.get(dataSetId);
+            final DataSetMetadataBuilder datasetBuilder = metadataBuilder.metadata().id(dataSetIdBaseName);
+            final DataSetMetadata metadataForUpdate = dataSetMetadataRepository.get(dataSetIdBaseName);
             if (metadataForUpdate != null) {
                 datasetBuilder.copyNonContentRelated(metadataForUpdate);
                 datasetBuilder.modified(System.currentTimeMillis());
@@ -680,7 +684,7 @@ public class DataSetService extends BaseDataSetService {
             publisher.publishEvent(new DataSetRawContentUpdateEvent(dataSetMetadata));
 
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
-            LOG.warn("Dataset update {} cannot be done, new content is too big", dataSetId);
+            LOG.warn("Dataset update {} cannot be done, new content is too big", dataSetIdBaseName);
             throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put("limit", e.getMaxSize()));
         } catch (IOException e) {
             LOG.error("Error updating the dataset", e);
@@ -694,7 +698,7 @@ public class DataSetService extends BaseDataSetService {
             lock.unlock();
         }
         // Content was changed, so queue events (format analysis, content indexing for search...)
-        analyzeDataSet(dataSetId, true, emptyList());
+        analyzeDataSet(dataSetIdBaseName, true, emptyList());
     }
 
     /**

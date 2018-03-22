@@ -53,20 +53,20 @@ public class DatasetStep extends DataPrepStep {
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        Assert.assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
     }
 
     @Given("^It doesn't exist any dataset with the following parameters :$") //
     public void notExistDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        Assert.assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
     }
 
     /**
      * Count how many {@link DatasetMeta} corresponding to the specified name & row number exists in the given
      * {@link List}.
-     * 
+     *
      * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
      * @param datasetName the searched dataset name.
      * @param nbRows the searched number of row.
@@ -82,7 +82,7 @@ public class DatasetStep extends DataPrepStep {
 
     /**
      * List all accessible datasets.
-     * 
+     *
      * @return a {@link List} of {@link DatasetMeta}.
      * @throws IOException in cas of exception.
      */

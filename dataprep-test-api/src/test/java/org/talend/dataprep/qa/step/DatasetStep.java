@@ -52,19 +52,46 @@ public class DatasetStep extends DataPrepStep {
     @Given("^A dataset with the following parameters exists :$") //
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
+        List<DatasetMeta> datasetMetas = listDatasetMeta();
+        Assert.assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+    }
+
+    @Given("^It doesn't exist any dataset with the following parameters :$") //
+    public void notExistDataset(DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        List<DatasetMeta> datasetMetas = listDatasetMeta();
+        Assert.assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+    }
+
+    /**
+     * Count how many {@link DatasetMeta} corresponding to the specified name & row number exists in the given
+     * {@link List}.
+     * 
+     * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
+     * @param datasetName the searched dataset name.
+     * @param nbRows the searched number of row.
+     * @return the number of corresponding {@link DatasetMeta}.
+     */
+    private long countFilteredDatasetList(List<DatasetMeta> datasetMetas, String datasetName, String nbRows) {
+        return datasetMetas
+                .stream() //
+                .filter(d -> (suffixName(datasetName).equals(d.name)) //
+                        && nbRows.equals(d.records)) //
+                .count();
+    }
+
+    /**
+     * List all accessible datasets.
+     * 
+     * @return a {@link List} of {@link DatasetMeta}.
+     * @throws IOException in cas of exception.
+     */
+    private List<DatasetMeta> listDatasetMeta() throws IOException {
         Response response = api.listDatasetDetails();
         response.then().statusCode(200);
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        List<DatasetMeta> datasetMetas = objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {
-
+        return objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {
         });
-
-        Assert.assertEquals(1, //
-                datasetMetas
-                        .stream() //
-                        .filter(d -> (suffixName(params.get(DATASET_NAME))).equals(d.name) //
-                                && params.get(NB_ROW).equals(d.records)) //
-                        .count());
     }
 
     @When("^I update the dataset named \"(.*)\" with data \"(.*)\"$") //
@@ -95,10 +122,12 @@ public class DatasetStep extends DataPrepStep {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 
-        assertEquals(1, response.body()
-                .jsonPath()
-                .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
-                .size());
+        assertEquals(1,
+                response
+                        .body()
+                        .jsonPath()
+                        .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
+                        .size());
     }
 
     private void createDataSet(String fileName, String suffixedName) throws IOException {
@@ -139,7 +168,7 @@ public class DatasetStep extends DataPrepStep {
             parameters.put("name", suffixName(parameters.get("name")));
         }
 
-        //wait for DataSet creation from previous step
+        // wait for DataSet creation from previous step
         JsonNode response = null;
         boolean stop = false;
         int nbLoop = 0;

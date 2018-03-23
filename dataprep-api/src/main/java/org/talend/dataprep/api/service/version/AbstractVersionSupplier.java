@@ -52,7 +52,7 @@ public abstract class AbstractVersionSupplier implements VersionsSupplier {
             version.setServiceName(serviceName);
             return version;
         } catch (IOException | TDPException e) {
-            LOGGER.warn("Unable to get the version of the service {}", serviceName, e);
+            LOGGER.warn("Unable to get the version of the service {}", serviceName);
             return null;
         }
     }

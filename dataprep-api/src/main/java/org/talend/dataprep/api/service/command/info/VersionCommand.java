@@ -35,11 +35,11 @@ public class VersionCommand extends GenericCommand<InputStream> {
 
     public static final HystrixCommandGroupKey VERSION_GROUP = HystrixCommandGroupKey.Factory.asKey("version");
 
-    private VersionCommand(String serviceUrl) {
+    private VersionCommand(String serviceUrl, String entryPoint) {
         super(VERSION_GROUP);
 
         execute(() -> {
-            String url = serviceUrl + "/version";
+            String url = serviceUrl + entryPoint;
             return new HttpGet(url);
         });
         onError(e -> new TDPException(CommonErrorCodes.UNABLE_TO_GET_SERVICE_VERSION, e,

@@ -105,8 +105,7 @@ public class XlsWriter implements TransformerWriter {
 
             // Empty buffer
             rowsBuffer.readAll().forEach(row -> internalWriteRow(metadata, row));
-            rowsBuffer.close();
-            rowsBuffer = null;
+            safeCloseObjectBuffer();
         }
     }
 
@@ -161,6 +160,8 @@ public class XlsWriter implements TransformerWriter {
     @Override
     public void close() throws IOException {
         if (!closed) {
+            // first close the buffer
+            safeCloseObjectBuffer();
             // because workbook.write(out) close the given output (the http response), another temporary file is created to
             // to fully flush the xlsx result and the copy the content of the file to the http response
 
@@ -184,6 +185,13 @@ public class XlsWriter implements TransformerWriter {
                 FilesHelper.deleteQuietly(workbookTempFile);
             }
             closed = true;
+        }
+    }
+
+    private void safeCloseObjectBuffer() throws IOException {
+        if (rowsBuffer != null) {
+            rowsBuffer.close();
+            rowsBuffer = null;
         }
     }
 

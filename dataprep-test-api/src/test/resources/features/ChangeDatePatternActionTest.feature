@@ -47,7 +47,7 @@ Feature: Perform scenarios with ChangeDate related actions
   @CleanAfter
   Scenario: Remove first ChangeDatePattern Action preparation A-customers_100_with_pb_prep
     When I remove the preparation "A-customers_100_with_pb_prep"
-    Then I check that the preparation "A-customers_100_with_pb_prep" doesn't exist in the folder "/"
+    Then I check that the preparation "/A-customers_100_with_pb_prep" doesn't exist
 
   # this scenario is the same than the previous one but this time, the option new column is used
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (with new column)
@@ -98,4 +98,4 @@ Feature: Perform scenarios with ChangeDate related actions
   @CleanAfter
   Scenario: Remove second ChangeDatePattern Action preparation A-customers_100_with_pb_prep_newCol
     When I remove the preparation "A-customers_100_with_pb_prep_newCol"
-    Then I check that the preparation "A-customers_100_with_pb_prep_newCol" doesn't exist in the folder "/"
+    Then I check that the preparation "/A-customers_100_with_pb_prep_newCol" doesn't exist

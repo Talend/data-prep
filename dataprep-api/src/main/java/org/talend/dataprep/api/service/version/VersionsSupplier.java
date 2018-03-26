@@ -11,17 +11,17 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.ui;
+package org.talend.dataprep.api.service.version;
+
+import java.util.List;
+
+import org.talend.dataprep.info.Version;
 
 /**
- * UI configuration
+ * Supplier of services or component versions, like TDP API, or TDQ Semantic Types Consumer.
  */
-public interface UiConfiguration {
+public interface VersionsSupplier {
 
-    /**
-     * Should display theme
-     *
-     * @return true if UI is themed
-     */
-    boolean hasTheme();
+    List<Version> getVersions();
+
 }

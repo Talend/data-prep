@@ -53,4 +53,4 @@ Feature: Perform scenarios with some Trim related action
   @CleanAfter
   Scenario: Remove Trim Action preparation best_sad_songs_prep
     When I remove the preparation "best_sad_songs_prep"
-    Then I check that the preparation "best_sad_songs_prep" doesn't exist in the folder "/"
+    Then I check that the preparation "/best_sad_songs_prep" doesn't exist

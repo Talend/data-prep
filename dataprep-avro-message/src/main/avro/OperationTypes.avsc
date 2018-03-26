@@ -1,0 +1,6 @@
+{
+  "namespace": "org.talend.dataprep.messages",
+  "name": "OperationTypes",
+  "type": "enum",
+  "symbols" : ["CREATION", "DELETION", "UPDATE", "READ"]
+}

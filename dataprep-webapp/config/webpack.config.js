@@ -16,12 +16,11 @@ const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' 
 
 const INDEX_TEMPLATE_PATH = path.resolve(__dirname, '../src/index.html');
 const STYLE_PATH = path.resolve(__dirname, '../src/app/index.scss');
-const STYLE_THEMED_PATH = path.resolve(__dirname, '../src/app/index.themed.scss');
 const INDEX_PATH = path.resolve(__dirname, '../src/app/index-module.js');
 const VENDOR_PATH = path.resolve(__dirname, '../src/vendor.js');
 const BUILD_PATH = path.resolve(__dirname, '../build');
 
-const CHUNKS_ORDER = ['vendor', 'style', 'style-themed', 'app'];
+const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
 function getDefaultConfig(options) {
 	const isTestMode = options.env === 'test';
@@ -186,7 +185,6 @@ function addFilesConfig(config) {
 			VENDOR_PATH,
 		],
 		style: STYLE_PATH,
-		'style-themed': STYLE_THEMED_PATH,
 		app: INDEX_PATH,
 	};
 	config.output = {

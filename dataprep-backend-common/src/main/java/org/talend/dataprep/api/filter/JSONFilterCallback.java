@@ -68,7 +68,7 @@ public interface JSONFilterCallback<T> {
      * @param value The value for matches.
      * @return An <i>matches</i> expression T.
      */
-    T createMatchesPredicate(JsonNode currentNode, String columnId, String value);
+    T createCompliesPredicate(JsonNode currentNode, String columnId, String value);
 
     /**
      * @param columnId the column id for the expression.

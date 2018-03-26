@@ -12,10 +12,22 @@
 
 package org.talend.dataprep.api.filter;
 
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createCompliesPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createContainsPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createEmptyPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createEqualsPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createGreaterOrEqualsPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createGreaterThanPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createInvalidPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createLowerOrEqualsPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createLowerThanPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createMatchesPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createRangePredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createValidPredicate;
+
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,11 +35,26 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.tql.model.*;
+import org.talend.tql.model.AllFields;
+import org.talend.tql.model.AndExpression;
+import org.talend.tql.model.ComparisonExpression;
+import org.talend.tql.model.ComparisonOperator;
+import org.talend.tql.model.Expression;
+import org.talend.tql.model.FieldBetweenExpression;
+import org.talend.tql.model.FieldCompliesPattern;
+import org.talend.tql.model.FieldContainsExpression;
+import org.talend.tql.model.FieldInExpression;
+import org.talend.tql.model.FieldIsEmptyExpression;
+import org.talend.tql.model.FieldIsInvalidExpression;
+import org.talend.tql.model.FieldIsValidExpression;
+import org.talend.tql.model.FieldMatchesRegex;
+import org.talend.tql.model.FieldReference;
+import org.talend.tql.model.LiteralValue;
+import org.talend.tql.model.NotExpression;
+import org.talend.tql.model.OrExpression;
+import org.talend.tql.model.TqlElement;
 import org.talend.tql.parser.Tql;
 import org.talend.tql.visitor.IASTVisitor;
-
-import static org.talend.dataprep.api.filter.DataSetRowFilters.*;
 
 /**
  * A {@link FilterService} implementation that parses TQL and builds a filter.
@@ -168,9 +195,7 @@ public class TQLFilterService implements FilterService {
             fieldMatchesRegex.getField().accept(this);
             final String columnName = fields.pop();
             final String regex = fieldMatchesRegex.getRegex();
-            final Pattern pattern = Pattern.compile(regex);
-
-            return row -> pattern.matcher(row.get(columnName)).matches();
+            return createMatchesPredicate(columnName, regex);
         }
 
         @Override

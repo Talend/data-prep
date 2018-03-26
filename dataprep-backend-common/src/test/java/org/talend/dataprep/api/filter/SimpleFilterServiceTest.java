@@ -74,94 +74,6 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Test
-    public void should_create_GT_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"gt\": {" + //
-                "       \"value\": 5" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.set("0001", "6"); //gt
-        row.set("0002", "7"); //gt
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "4"); // lt
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0002", "4"); // lt
-        assertThatFilterExecutionReturnsFalse();
-    }
-
-    @Test
-    public void should_create_GTE_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"gte\": {" + //
-                "       \"value\": 5" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.set("0001", "5"); //gt
-        row.set("0002", "6"); //gt
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "4"); // lt
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0002", "4"); //lt
-        assertThatFilterExecutionReturnsFalse();
-    }
-
-    @Test
-    public void should_create_LT_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"lt\": {" + //
-                "       \"value\": 5" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.set("0001", "6"); //gt
-        row.set("0002", "6"); //gt
-        assertThatFilterExecutionReturnsFalse();
-        row.set("0001", "4"); // lt
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0002", "4"); // lt
-        assertThatFilterExecutionReturnsTrue();
-    }
-
-    @Test
-    public void should_create_LTE_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"lte\": {" + //
-                "       \"value\": 5" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.set("0001", "6"); //gt
-        row.set("0002", "6"); //gt
-        assertThatFilterExecutionReturnsFalse();
-        row.set("0001", "5"); //eq
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0002", "5"); //lt
-        assertThatFilterExecutionReturnsTrue();
-    }
-
-    @Test
     public void should_create_CONTAINS_predicate_on_all() throws Exception {
         //given
         final String filtersDefinition = "{" + //
@@ -184,72 +96,6 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
         row.set("0001", "tagada"); // not contains
         assertThatFilterExecutionReturnsTrue();
         row.set("0002", "tagada"); // not contains
-        assertThatFilterExecutionReturnsFalse();
-    }
-
-    @Test
-    public void should_create_COMPLIES_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"matches\": {" + //
-                "       \"value\": \"Aa9-\"" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.set("0001", "toto"); // different pattern
-        row.set("0002", "toto"); // different pattern
-        assertThatFilterExecutionReturnsFalse();
-
-        row.set("0001", "To5-"); // same pattern
-        assertThatFilterExecutionReturnsTrue();
-
-        row.set("0002", "To5-"); // different length
-        assertThatFilterExecutionReturnsTrue();
-    }
-
-    @Test
-    public void should_create_INVALID_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"invalid\": {" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.setInvalid("0001"); // value in invalid array in column metadata
-        row.setInvalid("0002"); // value in invalid array in column metadata
-        assertThatFilterExecutionReturnsTrue();
-        row.unsetInvalid("0002");
-        assertThatFilterExecutionReturnsTrue();
-        assertThatFilterExecutionReturnsTrue();
-    }
-
-    @Test
-    public void should_create_VALID_predicate_on_all() throws Exception {
-        //given
-        final String filtersDefinition = "{" + //
-                "   \"valid\": {" + //
-                "   }" + //
-                "}";
-
-        //when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        //then
-        row.set("0001", "toto");
-        row.set("0002", "toto");
-
-        row.setInvalid("0001"); // value is marked as invalid
-        assertThatFilterExecutionReturnsTrue();
-
-        row.setInvalid("0002"); // value is marked as invalid
         assertThatFilterExecutionReturnsFalse();
     }
 
@@ -569,6 +415,15 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
+    protected String givenFilter_one_column_complies_Aa9dash() {
+        return "{" + //
+                "   \"matches\": {" + //
+                "       \"value\": \"Aa9-\"" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
     protected String givenFilter_0001_complies_empty() {
         return "{" + //
                 "   \"matches\": {" + //
@@ -579,7 +434,7 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
-    protected String givenFilter_all_columns_complies_empty() {
+    protected String givenFilter_one_column_complies_empty() {
         return "{" + //
                 "   \"empty\": {" + //
                 "   }" + //

@@ -85,4 +85,23 @@ public class FilterTranslatorTest {
         assertEquals(expectedTQLFilter, tql);
     }
 
+    @Test
+    public void testToTQL_TranslateRangeExpression() {
+        // given
+        String filter = //
+                "{" + //
+                        "   \"range\": {" + //
+                        "       \"field\": \"0001\"," + //
+                        "       \"start\": \"5\"," + //
+                        "       \"end\": \"10\"" + //
+                        "   }" + //
+                        "}";
+        // when
+        String tql = filterTranslator.toTQL(filter);
+
+        // then
+        String expectedTQLFilter = "0001 between [5, 10[";
+        assertEquals(expectedTQLFilter, tql);
+    }
+
 }

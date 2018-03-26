@@ -46,7 +46,6 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.filter.FilterTranslator;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
@@ -77,8 +76,6 @@ public class PreparationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationService.class);
 
     private static final String STEP_ID = "stepId";
-
-    private final FilterTranslator filterTranslator = new FilterTranslator();
 
     /**
      * Where preparation are stored.

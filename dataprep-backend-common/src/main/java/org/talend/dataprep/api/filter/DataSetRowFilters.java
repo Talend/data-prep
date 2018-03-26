@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.util.NumericHelper.isBigDecimal;
@@ -154,10 +155,12 @@ class DataSetRowFilters {
     }
 
     /**
-     * Create a predicate that checks if the var comply to a value.
+     * Create a predicate that checks if the var complies to a pattern containing only 'A', 'a', '9' and special chars.
+     * It corresponds to the former JSON "matches" filter and to the TQL "complies" filter.
+     * It DOES NOT correspond to the TQL "matches" filter.
      *
      * @param columnId The column id
-     * @param value    The value to comply to
+     * @param value    The pattern to comply to
      * @return The complies predicate
      */
     static Predicate<DataSetRow> createCompliesPredicate(final String columnId, final String value) {
@@ -259,11 +262,12 @@ class DataSetRowFilters {
      * Create a predicate that checks if the value is within a range [min, max[.
      *
      * @param columnId    The column id
-     * @param min         The range minimum
-     * @param max         The range maximum
+     * @param min         The minimum
+     * @param max         The maximum
      * @param lowerOpen   <code>true</code> if min number is excluded from range.
      * @param upperOpen   <code>true</code> if max number is excluded from range.
-     * @param rowMetadata The row metadata  @return The range predicate
+     * @param rowMetadata The row metadata
+     * @return The range predicate
      */
     static Predicate<DataSetRow> createRangePredicate(final String columnId, final String min, final String max,
                                                       boolean lowerOpen, boolean upperOpen, final RowMetadata rowMetadata) {
@@ -391,6 +395,22 @@ class DataSetRowFilters {
         } else {
             return c -> columnId.equals(c.getId());
         }
+    }
+
+    /**
+     * Create a predicate that checks if the var matches the regex
+     * It only corresponds correspond to the TQL "matches" filter, NOT the JSON one (which is corresponds to a "complies" one).
+     *
+     * @param columnId The column id
+     * @param regex    The regex to comply to
+     * @return The matches predicate
+     */
+    static Predicate<DataSetRow> createMatchesPredicate(final String columnId, final String regex) {
+        final Pattern pattern = Pattern.compile(regex);
+        return r -> r.values().entrySet().stream() //
+                .filter(getColumnFilter(columnId)) //
+                .map(e -> String.valueOf(e.getValue())) //
+                .anyMatch(s -> pattern.matcher(s).matches());
     }
 
 }

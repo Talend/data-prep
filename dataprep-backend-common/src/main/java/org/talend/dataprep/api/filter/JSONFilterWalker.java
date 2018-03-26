@@ -106,15 +106,12 @@ public class JSONFilterWalker {
 
         final String operation = propertiesIterator.next();
         if (columnId == null && allowFullFilter(operation)) {
+
             // Full data set filter (no column)
             final List<ColumnMetadata> columns = rowMetadata.getColumns();
             T predicate;
             if (!columns.isEmpty()) {
-                predicate = buildOperationFilter(currentNode, rowMetadata, columns.get(0).getId(), operation, value, callBack);
-                for (int i = 1; i < columns.size(); i++) {
-                    T right = buildOperationFilter(currentNode, rowMetadata, columns.get(i).getId(), operation, value, callBack);
-                    predicate = callBack.or(predicate, right);
-                }
+                predicate = buildOperationFilter(currentNode, rowMetadata, "*", operation, value, callBack);
             } else {
                 // We can't return a null filter, default to the neutral value
                 predicate = callBack.empty();
@@ -167,7 +164,7 @@ public class JSONFilterWalker {
         case CONTAINS:
             return callBack.createContainsPredicate(currentNode, columnId, value);
         case MATCHES:
-            return callBack.createMatchesPredicate(currentNode, columnId, value);
+            return callBack.createCompliesPredicate(currentNode, columnId, value);
         case INVALID:
             return callBack.createInvalidPredicate(columnId);
         case VALID:

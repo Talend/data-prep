@@ -78,7 +78,7 @@ public class FilterTranslator {
         }
 
         @Override
-        public String createMatchesPredicate(JsonNode currentNode, String columnId, String value) {
+        public String createCompliesPredicate(JsonNode currentNode, String columnId, String value) {
             return columnId + " matches " + value;
         }
 
@@ -104,7 +104,7 @@ public class FilterTranslator {
             final String lowerBound = lowerBoundOpen ? "]" : "[";
             final String upperBound = upperBoundOpen ? "[" : "]";
 
-            return columnId + " in " + lowerBound + node.get(0).asText() + ", " + node.get(1).asText() + upperBound;
+            return columnId + " between " + lowerBound + node.get("start").asText() + ", " + node.get("end").asText() + upperBound;
         }
 
         @Override

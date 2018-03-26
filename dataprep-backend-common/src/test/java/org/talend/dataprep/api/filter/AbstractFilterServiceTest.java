@@ -51,9 +51,17 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrue();
     }
 
+    protected void assertThatFilterExecutionReturnsTrue() {
+        assertThat(filter.test(row)).isTrue();
+    }
+
     protected void assertThatFilterExecutionReturnsFalseForRow(String columnId, String value) {
         row.set(columnId, value);
         assertThatFilterExecutionReturnsFalse();
+    }
+
+    protected void assertThatFilterExecutionReturnsFalse() {
+        assertThat(filter.test(row)).isFalse();
     }
 
     protected void assertThatFilterExecutionReturnsTrueForRow(String[] columnIds, String[] values) {
@@ -68,10 +76,6 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
             row.set(columnIds[i], values[i]);
         }
         assertThatFilterExecutionReturnsFalse();
-    }
-
-    protected void assertThatFilterExecutionReturnsTrue() {
-        assertThat(filter.test(row)).isTrue();
     }
 
     @Test
@@ -660,6 +664,28 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     protected abstract String givenFilter_0001_complies_Aa9dash();
 
     @Test
+    public void testCompliesPredicateOnStringValueOnOneColumn() throws Exception {
+        // given
+        final String filtersDefinition = givenFilter_one_column_complies_Aa9dash();
+
+        // when
+        filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        row.set("0001", "toto"); // different pattern
+        row.set("0002", "toto"); // different pattern
+        assertThatFilterExecutionReturnsFalse();
+
+        row.set("0001", "To5-"); // same pattern
+        assertThatFilterExecutionReturnsTrue();
+
+        row.set("0002", "To5-"); // different length
+        assertThatFilterExecutionReturnsTrue();
+    }
+
+    protected abstract String givenFilter_one_column_complies_Aa9dash();
+
+    @Test
     public void testCompliesEmptyPatternPredicateOnStringValue() throws Exception {
         // given
         final String filtersDefinition = givenFilter_0001_complies_empty();
@@ -675,9 +701,9 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     protected abstract String givenFilter_0001_complies_empty();
 
     @Test
-    public void testCompliesEmptyPatternPredicateOnStringValueOnOneColumns() throws Exception {
+    public void testCompliesEmptyPatternPredicateOnStringValueOnOneColumn() throws Exception {
         // given
-        final String filtersDefinition = givenFilter_all_columns_complies_empty();
+        final String filtersDefinition = givenFilter_one_column_complies_empty();
 
         // when
         filter = service.build(filtersDefinition, rowMetadata);
@@ -690,10 +716,10 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "titi", "" }); // empty value
     }
 
-    protected abstract String givenFilter_all_columns_complies_empty();
+    protected abstract String givenFilter_one_column_complies_empty();
 
     @Test
-    public void testInvalidPredicate() throws Exception {
+    public void testInvalidPredicateOnOneCell() throws Exception {
         // given
         final String filtersDefinition = givenFilter_0001_is_invalid();
 
@@ -731,12 +757,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
     protected abstract String givenFilter_one_column_is_invalid();
 
-    protected void assertThatFilterExecutionReturnsFalse() {
-        assertThat(filter.test(row)).isFalse();
-    }
-
     @Test
-    public void testValidPredicate() throws Exception {
+    public void testValidPredicateOnOneCell() throws Exception {
         // given
         final String filtersDefinition = givenFilter_0001_is_valid();
 
@@ -757,7 +779,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     protected abstract String givenFilter_0001_is_valid();
 
     @Test
-    public void testValidPredicateOnOneColumns() throws Exception {
+    public void testValidPredicateOnOneColumn() throws Exception {
         // given
         final String filtersDefinition = givenFilter_one_column_is_valid();
 
@@ -765,17 +787,14 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
+        row.set("0001", "toto");
+        row.set("0002", "toto");
+
         row.setInvalid("0001"); // value is marked as invalid
-        row.unsetInvalid("0002"); // value is marked as valid
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "aa", "bb" }); // non empty value
+        assertThatFilterExecutionReturnsTrue();
 
-        row.unsetInvalid("0001"); // value is marked as valid
         row.setInvalid("0002"); // value is marked as invalid
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "aa", "bb" }); // non empty value
-
-        row.unsetInvalid("0001"); // value is marked as valid
-        row.unsetInvalid("0002"); // value is marked as valid
-        assertThatFilterExecutionReturnsTrueForRow("0001", "toto"); // correct value
+        assertThatFilterExecutionReturnsFalse();
     }
 
     protected abstract String givenFilter_one_column_is_valid();

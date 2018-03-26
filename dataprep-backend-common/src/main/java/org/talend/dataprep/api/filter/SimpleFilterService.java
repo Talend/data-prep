@@ -27,18 +27,9 @@ import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
  */
 public class SimpleFilterService implements FilterService {
 
-    private DateParser dateParser;
-
     @Override
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
         final PredicateCallback callback = new PredicateCallback();
-        if (dateParser != null) {
-            callback.setDateParser(dateParser);
-        }
         return walk(filterAsString, rowMetadata, callback);
-    }
-
-    void setDateParser(DateParser dateParser) {
-        this.dateParser = dateParser;
     }
 }

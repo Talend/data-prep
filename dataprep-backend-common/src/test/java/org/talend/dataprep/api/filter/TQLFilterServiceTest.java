@@ -36,8 +36,9 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
 
         // then
         row.set("0001", "skermabon@dataprep.com");
-        assertThatFilterExecutionReturnsTrueForRow("0001", "skermabon@dataprep.com");
-        assertThatFilterExecutionReturnsFalseForRow("0001", "skermabon@talend.com");
+        assertThatFilterExecutionReturnsTrue();
+        row.set("0001", "skermabon@talend.com");
+        assertThatFilterExecutionReturnsFalse();
     }
 
     @Test
@@ -49,8 +50,10 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         filter = service.build(tqlFilter, rowMetadata);
 
         // then
-        assertThatFilterExecutionReturnsTrueForRow("0001", "Vincent");
-        assertThatFilterExecutionReturnsFalseForRow("0001", "Stéphane");
+        row.set("0001", "Vincent");
+        assertThatFilterExecutionReturnsTrue();
+        row.set("0001", "Stéphane");
+        assertThatFilterExecutionReturnsFalse();
     }
 
     @Override
@@ -179,11 +182,6 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
-    protected String givenFilter_all_columns_complies_empty() {
-        return "* complies ''";
-    }
-
-    @Override
     protected String givenFilter_0001_is_valid() {
         return "0001 is valid";
     }
@@ -209,8 +207,18 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
+    protected String givenFilter_one_column_complies_Aa9dash() {
+        return "* complies 'Aa9-'";
+    }
+
+    @Override
     protected String givenFilter_0001_complies_empty() {
         return "0001 complies ''";
+    }
+
+    @Override
+    protected String givenFilter_one_column_complies_empty() {
+        return "* complies ''";
     }
 
     @Override

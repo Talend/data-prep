@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
 import com.jayway.restassured.response.Response;
 
 import cucumber.api.DataTable;
@@ -25,7 +28,7 @@ import cucumber.api.java.en.Then;
  */
 public class FolderStep extends DataPrepStep {
 
-    public static final String FOLDER_NAME = "folderName";
+    private static final String FOLDER_NAME = "folderName";
 
     /**
      * This class' logger.
@@ -36,7 +39,7 @@ public class FolderStep extends DataPrepStep {
     public void createFolder(@NotNull DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String parentFolderName = params.get(ORIGIN);
-        String folder = params.get(FOLDER_NAME);
+        String folder = suffixFolderName(params.get(FOLDER_NAME));
 
         List<Folder> folders = folderUtil.listFolders();
         Folder parentFolder = folderUtil.extractFolder(parentFolderName, folders);

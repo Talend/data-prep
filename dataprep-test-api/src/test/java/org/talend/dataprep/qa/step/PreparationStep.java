@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
@@ -75,7 +76,7 @@ public class PreparationStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<Folder> folders = folderUtil.listFolders();
         Folder originFolder = folderUtil.extractFolder(params.get(ORIGIN), folders);
-        Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
+        Folder destFolder = folderUtil.extractFolder(suffixFolderName(params.get(DESTINATION)), folders);
         String prepId = context.getPreparationId(suffixName(preparationName));
         Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,
                 suffixName(params.get(NEW_PREPARATION_NAME)));
@@ -91,12 +92,12 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^I check that the preparation \"(.*)\" doesn't exist in the folder \"(.*)\"$")
     public void checkPreparationNotExist(String preparationName, String folder) throws IOException {
-        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, folder));
+        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, suffixFolderName(folder)));
     }
 
     @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
     public void checkPrepExists(String preparationName, String folder) throws IOException {
-        Assert.assertEquals(1, checkPrepExistsInTheFolder(preparationName, folder));
+        Assert.assertEquals(1, checkPrepExistsInTheFolder(preparationName, suffixFolderName(folder)));
     }
 
     private long checkPrepExistsInTheFolder(String preparationName, String folder) throws IOException {

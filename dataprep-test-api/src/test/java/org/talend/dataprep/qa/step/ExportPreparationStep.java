@@ -1,11 +1,9 @@
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.format.export.ExportFormatMessage;
@@ -14,11 +12,13 @@ import org.talend.dataprep.qa.step.export.ExportSampleStep;
 import org.talend.dataprep.qa.util.export.ExportParamAnalyzer;
 import org.talend.dataprep.qa.util.export.ExportType;
 
-import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with preparation
@@ -48,25 +48,17 @@ public class ExportPreparationStep extends DataPrepStep {
         Response apiResponse = api.getExportFormats(preparationId);
 
         ExportFormatMessage[] parameters = objectMapper.readValue(apiResponse.getBody().asString(), ExportFormatMessage[].class);
-        context.storePreparationExportFormat(preparationName, parameters);
+        context.storePreparationExportFormat(suffixName(preparationName), parameters);
     }
 
-    @Then("^I received the right \"(.*)\" export format for preparation \"(.*)\"$")
-    public void thenIReceievedTheRightExportFormat(String exportFormatId, String preparationName) throws IOException {
-        final InputStream expectedJson = ExportPreparationStep.class.getResourceAsStream("export/" + exportFormatId + ".json");
-        ExportFormatMessage expectedExportFormat = objectMapper.readValue(expectedJson, ExportFormatMessage.class);
+    @Then("^I received for the preparation \"(.*)\" the export formats list with:$")
+    public void thenIReceivedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
+        ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(suffixName(preparationName));
 
-        ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(preparationName);
-        ExportFormatMessage foundExportFormat = null;
+        List<String> exportFormatsIds = Arrays.stream(exportFormats) //
+                .map(ExportFormatMessage::getId) //
+                .collect(Collectors.toList());
 
-        for (ExportFormatMessage exportFormat : exportFormats) {
-            if (exportFormat.getId().equals(exportFormatId)) {
-                foundExportFormat = exportFormat;
-                break;
-            }
-        }
-
-        Assert.assertNotNull(exportFormatId + " not found", foundExportFormat);
-        Assert.assertEquals(expectedExportFormat, foundExportFormat);
+        Assert.assertTrue(exportFormatsIds.containsAll(dataTable.asList(String.class)));
     }
 }

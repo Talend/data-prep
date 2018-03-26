@@ -1,11 +1,8 @@
 package org.talend.dataprep.qa.util.folder;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,9 +10,11 @@ import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class OSFolderUtil implements FolderUtil {
@@ -51,9 +50,9 @@ public class OSFolderUtil implements FolderUtil {
     }
 
     @Override
-    public void deleteFolder(Folder folder) {
+    public Response deleteFolder(Folder folder) {
         String folderPath = api.encode64(folder.path);
-        api.deleteFolder(folderPath).then().statusCode(200);
+        return api.deleteFolder(folderPath);
     }
 
 }

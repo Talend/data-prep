@@ -87,9 +87,11 @@ public class FeatureContext {
      * @return the suffixed folderPath.
      */
     public static String suffixFolderName(String folderPath) {
+        // The Home folder does not be suffixed
         if (StringUtils.equals(folderPath,"/")) {
             return folderPath;
         }
+        // 2 cases, following the path starts from the root or not
         return folderPath.startsWith("/") ?
                 "/" + folderPath.substring(1).replace("/",TI_SUFFIX_UID+"/")+TI_SUFFIX_UID :
                 folderPath.replace("/",TI_SUFFIX_UID+"/")+TI_SUFFIX_UID;

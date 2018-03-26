@@ -15,27 +15,26 @@ import static java.util.Locale.US;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.web.servlet.DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME;
 
+import java.util.Arrays;
 import java.util.IllformedLocaleException;
+import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContext;
-import org.springframework.context.i18n.SimpleLocaleContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 // This component must have the LOCALE_RESOLVER_BEAN_NAME as it is searched by this name in
 // DispatcherServlet.initLocaleResolver:524
 @Component(LOCALE_RESOLVER_BEAN_NAME)
-public class DataprepLocaleContextResolver extends AbstractLocaleContextResolver {
+public class DataprepLocaleContextResolver extends AcceptHeaderLocaleResolver {
 
     private static final Logger LOGGER = getLogger(DataprepLocaleContextResolver.class);
+
+    private static final Locale DEFAULT_LOCALE = Locale.US;
 
     private final Locale applicationLocale;
 
@@ -45,13 +44,13 @@ public class DataprepLocaleContextResolver extends AbstractLocaleContextResolver
     }
 
     @Override
-    public LocaleContext resolveLocaleContext(HttpServletRequest request) {
-        return new SimpleLocaleContext(applicationLocale);
+    public Locale getDefaultLocale() {
+        return applicationLocale;
     }
 
     @Override
-    public void setLocaleContext(HttpServletRequest request, HttpServletResponse response, LocaleContext localeContext) {
-        throw new UnsupportedOperationException();
+    public List<Locale> getSupportedLocales() {
+        return Arrays.asList(Locale.getAvailableLocales());
     }
 
     private Locale resolveApplicationLocale(String configuredLocale) {
@@ -62,17 +61,17 @@ public class DataprepLocaleContextResolver extends AbstractLocaleContextResolver
                 if (LocaleUtils.isAvailableLocale(locale)) {
                     LOGGER.debug("Setting application locale to configured {}", locale);
                 } else {
-                    locale = getDefaultLocale();
+                    locale = DEFAULT_LOCALE;
                     LOGGER.debug("Locale {} is not available. Defaulting to {}", configuredLocale, getDefaultLocale());
                 }
             } catch (IllformedLocaleException e) {
-                locale = getDefaultLocale();
+                locale = DEFAULT_LOCALE;
                 LOGGER.warn(
                         "Error parsing configured application locale: {}. Defaulting to {}. Locale must be in the form \"en-US\" or \"fr-FR\"",
-                        configuredLocale, getDefaultLocale());
+                        configuredLocale, DEFAULT_LOCALE, e);
             }
         } else {
-            locale = getDefaultLocale();
+            locale = DEFAULT_LOCALE;
             LOGGER.debug("Setting application locale to default value {}", getDefaultLocale());
         }
         LOGGER.info("Application locale set to: '{}'", locale);

@@ -14,6 +14,7 @@ package org.talend.dataprep.api.user;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -142,5 +143,9 @@ public class UserData implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(favoritesDatasets, userId, appVersion);
+    }
+
+    public Locale getLocale() {
+        return Locale.getDefault();
     }
 }

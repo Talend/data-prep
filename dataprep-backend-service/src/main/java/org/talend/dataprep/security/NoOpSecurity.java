@@ -14,6 +14,7 @@ package org.talend.dataprep.security;
 
 import static java.util.Collections.emptySet;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -65,6 +66,11 @@ public class NoOpSecurity implements Security {
     @Override
     public boolean isTDPUser() {
         return true;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return Locale.getDefault();
     }
 
 }

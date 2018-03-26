@@ -99,12 +99,17 @@ window.fetchConfiguration = function fetchConfiguration() {
 				'ngInject';
 				$compileProvider.debugInfoEnabled(config.enableDebug);
 			})
-			.config(($translateProvider) => {
+			.config(($httpProvider, $translateProvider) => {
 				'ngInject';
 
 				preferredLanguage =
 					(appSettings.context && appSettings.context.language) ||
 					fallbackLng;
+
+				const preferredLocale = appSettings.context && appSettings.context.locale;
+				if (preferredLocale) {
+					$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
+				}
 
 				$translateProvider.preferredLanguage(preferredLanguage);
 

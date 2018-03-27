@@ -405,6 +405,15 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
+    protected String givenFilter_one_column_contains_toto() {
+        return "{" + //
+                "   \"contains\": {" + //
+                "       \"value\": \"toto\"" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
     protected String givenFilter_0001_complies_Aa9dash() {
         return "{" + //
                 "   \"matches\": {" + //

@@ -32,8 +32,8 @@ Feature: Filter features
       | ((0003 between [1167606000000, 1169852400000[)) | customers_100_between_filter_records.json           |
       | ((0001 = 'Johnson')) and ((0000 = 'BILL'))      | customers_100_and_filter_records.json               |
       | ((0001 = 'Taft') or (0001 = 'Arthur'))          | customers_100_or_filter_records.json                |
-      | (0002 is invalid)                               | customers_100_invalid_filter_records.json                  |
-      | (0002 is empty)                                 | customers_100_empty_filter_records.json                    |
-      | (* is invalid)                                  | customers_100_all_invalid_filter_records.json              |
-      | (* is empty)                                    | customers_100_all_empty_filter_records.json                |
+      | (0002 is invalid)                               | customers_100_invalid_filter_records.json           |
+      | (0002 is empty)                                 | customers_100_empty_filter_records.json             |
+      | (* is invalid)                                  | customers_100_all_invalid_filter_records.json       |
+      | (* is empty)                                    | customers_100_all_empty_filter_records.json         |
       | ((* is empty) or (* is invalid))                | customers_100_all_invalid_empty_filter_records.json |

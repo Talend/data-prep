@@ -5,7 +5,6 @@ import static org.talend.tql.parser.Tql.parse;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -29,12 +28,24 @@ public class PreparationStepMarker implements StepMarker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationStepMarker.class);
 
+    // Utility method to log recently modified preparations (log in DEBUG level).
+    private static void logRecentlyModified(PreparationRepository repository) {
+        if (LOGGER.isDebugEnabled()) {
+            repository.list(Preparation.class, recentlyModified()).forEach(
+                    rm -> LOGGER.debug("Preparation '{}' was recently modified.", rm));
+        }
+    }
+
+    // Utility method to get TQL expression for recently modified preparations.
+    private static Expression recentlyModified() {
+        return parse("lastModificationDate > " + now().minus(1, ChronoUnit.HOURS).toEpochMilli());
+    }
+
     @Override
     public Result mark(PreparationRepository repository, String marker) {
         if (repository.exist(Preparation.class, recentlyModified())) {
             LOGGER.info("Not running clean up (at least a preparation modified within last hour).");
-            repository.list(Preparation.class, recentlyModified()).forEach(
-                    p -> System.out.println(new Date(p.getLastModificationDate())));
+            logRecentlyModified(repository);
             return Result.INTERRUPTED;
         }
 
@@ -45,9 +56,7 @@ public class PreparationStepMarker implements StepMarker {
                 .forEach(p -> {
                     if (repository.exist(Preparation.class, recentlyModified())) {
                         LOGGER.info("Interrupting clean up (preparation modified within last hour).");
-                        // if (LOGGER.isDebugEnabled()) {
-                        repository.list(Preparation.class, recentlyModified()).forEach(System.out::println);
-                        // }
+                        logRecentlyModified(repository);
                         interrupted.set(true);
                         return;
                     }
@@ -60,9 +69,5 @@ public class PreparationStepMarker implements StepMarker {
                     repository.add(markedSteps);
                 });
         return interrupted.get() ? Result.INTERRUPTED : Result.COMPLETED;
-    }
-
-    private Expression recentlyModified() {
-        return parse("lastModificationDate > " + now().minus(1, ChronoUnit.HOURS).toEpochMilli());
     }
 }

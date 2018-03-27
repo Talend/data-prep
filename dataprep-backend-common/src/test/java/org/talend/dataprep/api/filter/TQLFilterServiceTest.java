@@ -42,9 +42,23 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Test
+    public void testOneColumnMatch() {
+        // given
+        final String tqlFilter = "* ~ '[a-z]+@dataprep.[a-z]+'";
+
+        // when
+        filter = service.build(tqlFilter, rowMetadata);
+
+        // then
+        row.set("0001", "skermabon@dataprep");
+        row.set("0002", "skermabon@dataprep.com");
+        assertThatFilterExecutionReturnsTrue();
+    }
+
+    @Test
     public void testValueIn() throws Exception {
         // given
-        final String tqlFilter = "0001 in ['Vincent', 'François', 'Paul']'";
+        final String tqlFilter = "0001 in ['Vincent', 'François', 'Paul']";
 
         // when
         filter = service.build(tqlFilter, rowMetadata);
@@ -53,6 +67,26 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         row.set("0001", "Vincent");
         assertThatFilterExecutionReturnsTrue();
         row.set("0001", "Stéphane");
+        assertThatFilterExecutionReturnsFalse();
+    }
+
+    @Test
+    public void testOneColumnIn() throws Exception {
+        // given
+        final String tqlFilter = "* in ['Vincent', 'François', 'Paul']";
+
+        // when
+        filter = service.build(tqlFilter, rowMetadata);
+
+        // then
+        row.set("0001", "Vincent");
+        row.set("0002", "François");
+        assertThatFilterExecutionReturnsTrue();
+        row.set("0001", "Vincent");
+        row.set("0002", "Stéphane");
+        assertThatFilterExecutionReturnsTrue();
+        row.set("0001", "Nicolas");
+        row.set("0002", "Stéphane");
         assertThatFilterExecutionReturnsFalse();
     }
 
@@ -169,6 +203,11 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
     @Override
     protected String givenFilter_0001_contains_toto() {
         return "0001 contains 'toto'";
+    }
+
+    @Override
+    protected String givenFilter_one_column_contains_toto() {
+        return "* contains 'toto'";
     }
 
     @Override

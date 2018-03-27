@@ -647,6 +647,24 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     protected abstract String givenFilter_0001_contains_toto();
 
     @Test
+    public void testContainsPredicateOnOneColumn() throws Exception {
+        // given
+        final String filtersDefinition = givenFilter_one_column_contains_toto();
+
+        // when
+        filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] {"toto", "toto"}); // equals
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] {"toto", "titi"}); // equals
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] {"titi", "Toto"}); // different case
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] {"tatatoto", "titi"}); // contains but different
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] {"tagada", "titi"}); // not contains
+    }
+
+    protected abstract String givenFilter_one_column_contains_toto();
+
+    @Test
     public void testCompliesPredicateOnStringValue() throws Exception {
         // given
         final String filtersDefinition = givenFilter_0001_complies_Aa9dash();

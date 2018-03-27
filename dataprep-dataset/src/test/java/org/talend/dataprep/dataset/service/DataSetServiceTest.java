@@ -34,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.daikon.content.DeletableResource;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -94,6 +96,9 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     @Autowired
     private ContentCache cacheManager;
+
+    @Autowired
+    private ResourceResolver resolver;
 
     @MockBean
     private QuotaService quotaService;
@@ -742,6 +747,28 @@ public class DataSetServiceTest extends DataSetBaseTest {
         ids = from(when().get("/datasets").asString()).get("id");
         assertThat(ids, hasItem(dataSetId));
         assertQueueMessages(dataSetId);
+    }
+
+    @Test
+    public void updateRawContentWithDirectoryTraversalFile_TDP_3505() throws Exception {
+        // dataSetId is the filename under which the file will be stored on the server
+        String dataSetIdFlawed = "foobar..\\..\\..\\a";
+
+        // create dataset
+        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
+                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+
+        String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);
+        given().body(body) //
+                .when() //
+                .queryParam("name", "toto") //
+                .put("/datasets/{id}/raw", dataSetIdFlawed) //
+                .then() //
+                .statusCode(OK.value());
+
+        // expectations
+        DeletableResource resource = resolver.getResource("/store/datasets/content/dataset/" + dataSetIdFlawed);
+        assertFalse(resource.getFile().exists());
     }
 
     @Test

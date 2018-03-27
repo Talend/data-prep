@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -35,30 +36,32 @@ public class FormatAnalysisTest extends DataSetBaseTest {
     FormatAnalysis formatAnalysis;
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNullArgument() throws Exception {
+    public void testNullArgument() {
         formatAnalysis.analyze(null);
     }
 
     @Test
-    public void testNoDataSetFound() throws Exception {
-        formatAnalysis.analyze("1234");
-        assertThat(dataSetMetadataRepository.get("1234"), nullValue());
+    public void testNoDataSetFound() {
+        String dataSetId = UUID.randomUUID().toString();
+        formatAnalysis.analyze(dataSetId);
+        assertThat(dataSetMetadataRepository.get(dataSetId), nullValue());
     }
 
     @Test
-    public void testUpdate() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void testUpdate() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
-        formatAnalysis.analyze("1234");
-        final DataSetMetadata original = dataSetMetadataRepository.get("1234");
-        final DataSetMetadata modified = dataSetMetadataRepository.get("1234");
+        formatAnalysis.analyze(id);
+        final DataSetMetadata original = dataSetMetadataRepository.get(id);
+        final DataSetMetadata modified = dataSetMetadataRepository.get(id);
         modified.setEncoding("windows-1252");
         modified.getContent().getParameters().put("SEPARATOR", ",");
 
         formatAnalysis.update(original, modified);
 
-        final DataSetMetadata updated = dataSetMetadataRepository.get("1234");
+        final DataSetMetadata updated = dataSetMetadataRepository.get(id);
         assertNotNull(updated);
         assertThat(updated.getContent().getFormatFamilyId(), is(CSVFormatFamily.BEAN_ID));
         assertThat(updated.getContent().getMediaType(), is("text/csv"));
@@ -68,12 +71,13 @@ public class FormatAnalysisTest extends DataSetBaseTest {
     }
 
     @Test
-    public void testCSVAnalysis() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void testCSVAnalysis() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
-        formatAnalysis.analyze("1234");
-        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        formatAnalysis.analyze(id);
+        final DataSetMetadata actual = dataSetMetadataRepository.get(id);
         assertThat(actual, notNullValue());
         assertThat(actual.getContent().getFormatFamilyId(), is(CSVFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("text/csv"));
@@ -81,12 +85,13 @@ public class FormatAnalysisTest extends DataSetBaseTest {
     }
 
     @Test
-    public void testEncodingDetection() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void testEncodingDetection() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../wave_lab_utf16_LE.txt"));
-        formatAnalysis.analyze("1234");
-        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        formatAnalysis.analyze(id);
+        final DataSetMetadata actual = dataSetMetadataRepository.get(id);
         assertThat(actual, notNullValue());
         assertThat(actual.getContent().getFormatFamilyId(), is(CSVFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("text/csv"));
@@ -98,13 +103,14 @@ public class FormatAnalysisTest extends DataSetBaseTest {
      * see https://jira.talendforge.org/browse/TDP-2930.
      */
     @Test
-    public void testEncodingDetection_UTF16LE_WithoutBOM() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void testEncodingDetection_UTF16LE_WithoutBOM() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../utf16_LE_without_bom.txt"));
 
-        formatAnalysis.analyze("1234");
-        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        formatAnalysis.analyze(id);
+        final DataSetMetadata actual = dataSetMetadataRepository.get(id);
         assertThat(actual, notNullValue());
         assertThat(actual.getContent().getFormatFamilyId(), is(CSVFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("text/csv"));
@@ -113,25 +119,27 @@ public class FormatAnalysisTest extends DataSetBaseTest {
     }
 
     @Test
-    public void test_TDP_690() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void test_TDP_690() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../wave_lab_utf16_LE.txt"));
-        formatAnalysis.analyze("1234");
+        formatAnalysis.analyze(id);
         // Test for empty lines
-        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        final DataSetMetadata actual = dataSetMetadataRepository.get(id);
         Stream<DataSetRow> content = contentStore.stream(actual);
         final long emptyRows = content.filter(DataSetRow::isEmpty).count();
         assertThat(emptyRows, is(0L));
     }
 
     @Test
-    public void testXLSXAnalysis() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void testXLSXAnalysis() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../tagada.xls"));
-        formatAnalysis.analyze("1234");
-        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        formatAnalysis.analyze(id);
+        final DataSetMetadata actual = dataSetMetadataRepository.get(id);
         assertThat(actual, notNullValue());
         assertThat(actual.getContent().getFormatFamilyId(), is(XlsFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("application/vnd.ms-excel"));

@@ -103,7 +103,7 @@ public interface DatasetActions {
             .name("dataset.create")
             .icon("talend-plus-circle")
             .type("@@dataset/CREATE")
-            .bsStyle("primary")
+            .bsStyle("info")
             .build();
 }
 // @formatter:on

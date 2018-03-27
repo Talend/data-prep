@@ -11,6 +11,16 @@
 
  ============================================================================*/
 
+
+import {
+	INVALID_RECORDS,
+	EMPTY_RECORDS,
+	INVALID_EMPTY_RECORDS,
+	VALID_RECORDS,
+	QUALITY,
+} from '../adapter/tql-filter-adapter-service';
+
+
 describe('Filter Manager Service', () => {
 
 	let stateMock;
@@ -254,5 +264,67 @@ describe('Filter Manager Service', () => {
 				stateMock.playground.filter.gridFilters
 			);
 		}));
+	});
+
+	describe('create quality filter', () => {
+		beforeEach(inject((FilterManagerService) => {
+			spyOn(FilterManagerService, 'addFilterAndDigest').and.returnValue();
+		}));
+
+		it('should create valid_records filter', inject((FilterManagerService) => {
+			//given
+			let column = {
+				id: '0000',
+				name: 'col1',
+			};
+
+			//when
+			FilterManagerService.createQualityFilter(VALID_RECORDS, column);
+
+			//then
+			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(VALID_RECORDS, '0000', 'col1');
+		}));
+		it('should create invalid_records filter', inject((FilterManagerService) => {
+			//given
+			let column = {
+				id: '0000',
+				name: 'col1',
+			};
+
+			//when
+			FilterManagerService.createQualityFilter(INVALID_RECORDS, column);
+
+			//then
+			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(INVALID_RECORDS, '0000', 'col1');
+		}));
+
+		it('should create empty_records filter', inject((FilterManagerService) => {
+			//given
+			let column = {
+				id: '0000',
+				name: 'col1',
+			};
+
+			//when
+			FilterManagerService.createQualityFilter(EMPTY_RECORDS, column);
+
+			//then
+			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(EMPTY_RECORDS, '0000', 'col1');
+		}));
+
+		it('should create invalid_empty_records filter', inject((FilterManagerService) => {
+			//given
+			let column = {
+				id: '0000',
+				name: 'col1',
+			};
+
+			//when
+			FilterManagerService.createQualityFilter(INVALID_EMPTY_RECORDS, column);
+
+			//then
+			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(QUALITY, '0000', 'col1', { invalid: true, empty: true });
+		}));
+
 	});
 });

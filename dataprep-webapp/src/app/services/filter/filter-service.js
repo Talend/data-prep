@@ -12,6 +12,16 @@
  ============================================================================*/
 
 import { chain, find, isEqual, remove, some } from 'lodash';
+import {
+	CONTAINS,
+	EXACT,
+	INVALID_RECORDS,
+	VALID_RECORDS,
+	EMPTY_RECORDS,
+	INSIDE_RANGE,
+	MATCHES,
+	QUALITY,
+} from './adapter/tql-filter-adapter-service';
 
 export const RANGE_SEPARATOR = ' .. ';
 export const INTERVAL_SEPARATOR = ',';
@@ -90,7 +100,7 @@ export default class FilterService {
 		let hasEmptyRecordsMatchFilter;
 
 		switch (type) {
-		case 'contains': {
+		case CONTAINS: {
 			// If we want to select records and a empty filter is already applied to that column
 			// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
@@ -137,7 +147,7 @@ export default class FilterService {
 
 			break;
 		}
-		case 'exact': {
+		case EXACT: {
 			// If we want to select records and a empty filter is already applied to that column
 			// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
@@ -185,7 +195,7 @@ export default class FilterService {
 
 			break;
 		}
-		case 'quality': {
+		case QUALITY: {
 			createFilter = () => {
 				const qualityFilters = this._getQualityFilters(colId);
 				if (qualityFilters.length) {
@@ -200,7 +210,7 @@ export default class FilterService {
 
 			break;
 		}
-		case 'invalid_records': {
+		case INVALID_RECORDS: {
 			createFilter = () => {
 				const qualityFilters = this._getQualityFilters(colId);
 				if (qualityFilters.length) {
@@ -215,16 +225,16 @@ export default class FilterService {
 
 			break;
 		}
-		case 'empty_records': {
+		case EMPTY_RECORDS: {
 			// If we want to select empty records and another filter is already applied to that column
 			// Then we need remove it before
 			const sameColExactFilter = find(this.state.playground.filter.gridFilters, {
 				colId,
-				type: 'exact',
+				type: EXACT,
 			});
 			const sameColMatchFilter = find(this.state.playground.filter.gridFilters, {
 				colId,
-				type: 'matches',
+				type: MATCHES,
 			});
 			if (sameColExactFilter) {
 				hasEmptyRecordsExactFilter = (
@@ -258,7 +268,7 @@ export default class FilterService {
 
 			break;
 		}
-		case 'valid_records': {
+		case VALID_RECORDS: {
 			createFilter = () => {
 				const qualityFilters = this._getQualityFilters(colId);
 				if (qualityFilters.length) {
@@ -274,7 +284,7 @@ export default class FilterService {
 
 			break;
 		}
-		case 'inside_range': {
+		case INSIDE_RANGE: {
 			createFilter = () => {
 				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
 			};
@@ -300,7 +310,7 @@ export default class FilterService {
 
 			break;
 		}
-		case 'matches': {
+		case MATCHES: {
 			// If we want to select records and a empty filter is already applied to that column
 			// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
@@ -388,7 +398,7 @@ export default class FilterService {
 		const addFromToCriteria = keyName === SHIFT_KEY_NAME;
 
 		switch (oldFilter.type) {
-		case 'contains': {
+		case CONTAINS: {
 			if (addOrCriteria) {
 				newComputedValue = this._computeOr(oldFilter.args.phrase, newValue);
 			}
@@ -402,7 +412,7 @@ export default class FilterService {
 			editableFilter = true;
 			break;
 		}
-		case 'exact': {
+		case EXACT: {
 			if (addOrCriteria) {
 				newComputedValue = this._computeOr(oldFilter.args.phrase, newValue);
 			}
@@ -417,7 +427,7 @@ export default class FilterService {
 			editableFilter = true;
 			break;
 		}
-		case 'inside_range': {
+		case INSIDE_RANGE: {
 			let newComputedArgs;
 			let newComputedRange;
 			if (addFromToCriteria) {
@@ -445,7 +455,7 @@ export default class FilterService {
 			editableFilter = false;
 			break;
 		}
-		case 'matches': {
+		case MATCHES: {
 			let newComputedPattern;
 			if (addOrCriteria) {
 				newComputedPattern = this._computeOr(oldFilter.args.patterns, newValue);
@@ -631,7 +641,7 @@ export default class FilterService {
 	 * @private
 	 */
 	_getEmptyFilter(colId) {
-		return find(this.state.playground.filter.gridFilters, { colId, type: 'empty_records' });
+		return find(this.state.playground.filter.gridFilters, { colId, type: EMPTY_RECORDS });
 	}
 
 	/**
@@ -640,15 +650,15 @@ export default class FilterService {
 	 * @private
 	 */
 	_getQualityFilters(colId) {
-		const quality = find(this.state.playground.filter.gridFilters, { colId, type: 'quality' });
+		const quality = find(this.state.playground.filter.gridFilters, { colId, type: QUALITY });
 		const empty = this._getEmptyFilter(colId);
 		const valid = find(this.state.playground.filter.gridFilters, {
 			colId,
-			type: 'valid_records',
+			type: VALID_RECORDS,
 		});
 		const invalid = find(this.state.playground.filter.gridFilters, {
 			colId,
-			type: 'invalid_records',
+			type: INVALID_RECORDS,
 		});
 
 		const filters = [];
@@ -742,7 +752,7 @@ export default class FilterService {
 		return splittedLabel;
 	}
 
-	//Frontend can send only TQL to backend
+	// frontend can send only TQL to backend
 	stringify(filters) {
 		return this.TqlFilterAdapterService.toTQL(filters);
 	}

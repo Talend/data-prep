@@ -19,6 +19,7 @@ import { parse } from '@talend/tql/index';
 export const CONTAINS = 'contains';
 export const EXACT = 'exact';
 export const INVALID_RECORDS = 'invalid_records';
+export const INVALID_EMPTY_RECORDS = 'invalid_empty_records';
 export const VALID_RECORDS = 'valid_records';
 export const EMPTY_RECORDS = 'empty_records';
 export const INSIDE_RANGE = 'inside_range';
@@ -27,35 +28,13 @@ export const QUALITY = 'quality';
 export const WILDCARD = '*';
 
 export default function TqlFilterAdapterService($translate, FilterUtilsService) {
-	const INVALID_EMPTY_RECORDS_VALUES = [
-		{
-			label: $translate.instant('INVALID_EMPTY_RECORDS_LABEL'),
-		},
-	];
+	let EMPTY_RECORDS_VALUES;
+	let INVALID_EMPTY_RECORDS_VALUES;
+	let INVALID_RECORDS_VALUES;
+	let VALID_RECORDS_VALUES;
 
-	const INVALID_RECORDS_VALUES = [
-		{
-			label: $translate.instant('INVALID_RECORDS_LABEL'),
-		},
-	];
-
-	const VALID_RECORDS_VALUES = [
-		{
-			label: $translate.instant('VALID_RECORDS_LABEL'),
-		},
-	];
-
-	const EMPTY_RECORDS_VALUES = [
-		{
-			label: $translate.instant('EMPTY_RECORDS_LABEL'),
-			isEmpty: true,
-			value: '',
-		},
-	];
 
 	return {
-		EMPTY_RECORDS_VALUES,
-
 		createFilter,
 		toTQL,
 		fromTQL,
@@ -80,6 +59,32 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			args,
 			removeFilterFn,
 		};
+
+		EMPTY_RECORDS_VALUES = [
+			{
+				label: $translate.instant('EMPTY_RECORDS_LABEL'),
+				isEmpty: true,
+				value: '',
+			},
+		];
+
+		INVALID_EMPTY_RECORDS_VALUES = [
+			{
+				label: $translate.instant('INVALID_EMPTY_RECORDS_LABEL'),
+			},
+		];
+
+		INVALID_RECORDS_VALUES = [
+			{
+				label: $translate.instant('INVALID_RECORDS_LABEL'),
+			},
+		];
+
+		VALID_RECORDS_VALUES = [
+			{
+				label: $translate.instant('VALID_RECORDS_LABEL'),
+			},
+		];
 
 		filter.__defineGetter__('badgeClass', getBadgeClass.bind(filter)); // eslint-disable-line no-underscore-dangle
 		filter.__defineGetter__('value', getFilterValueGetter.bind(filter)); // eslint-disable-line no-underscore-dangle
@@ -174,7 +179,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	// ---------------------------------------------------CONVERTION-------------------------------------------------
 	// -------------------------------------------------TQL ==> FILTER----------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
-	function fromTQL(tql, columns) { //TODO
+	function fromTQL(tql, columns) { // TODO
 		let type;
 		let args;
 		let field;

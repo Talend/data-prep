@@ -10,9 +10,12 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-const INVALID_RECORDS = 'invalid_records';
-const EMPTY_RECORDS = 'empty_records';
-const INVALID_EMPTY_RECORDS = 'invalid_empty_records';
+
+import {
+	INVALID_RECORDS,
+	EMPTY_RECORDS,
+	INVALID_EMPTY_RECORDS,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller

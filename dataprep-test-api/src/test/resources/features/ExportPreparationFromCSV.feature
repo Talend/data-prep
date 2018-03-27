@@ -3,11 +3,9 @@ Feature: Export Preparation from CSV
   Scenario: Create a preparation with one step from a CSV
     Given I upload the dataset "/data/6L3C.csv" with name "6L3C_dataset"
     And I create a preparation with name "6L3C_preparation", based on "6L3C_dataset" dataset
-    And I add a step with parameters :
-      | actionName      | uppercase        |
-      | columnName      | lastname         |
-      | columnId        | 0001             |
-      | preparationName | 6L3C_preparation |
+    And I add a "uppercase" step on the preparation "6L3C_preparation" with parameters :
+      | column_name      | lastname         |
+      | column_id        | 0001             |
 
   Scenario: Verify transformation result
     # escape and enclosure characters should be given because they can be empty

@@ -36,7 +36,7 @@ const settingsMock = {
 				debounceTimeout: 300,
 			},
 			userMenu: 'user:menu',
-			help: 'headerbar:help',
+			help: 'external:help',
 			products: 'products:menu',
 		},
 		'appheaderbar:playground': {
@@ -62,7 +62,7 @@ const settingsMock = {
 				debounceTimeout: 300,
 			},
 			userMenu: 'user:menu',
-			help: 'headerbar:help',
+			help: 'external:help',
 			products: 'products:menu',
 		},
 		breadcrumb: {
@@ -417,6 +417,10 @@ const settingsMock = {
 				args: [],
 			},
 		},
+		divider: {
+			id: 'divider',
+			divider: true,
+		},
 		'preparation:display-mode': {
 			id: 'preparation:display-mode',
 			name: 'Change preparation display mode',
@@ -554,7 +558,14 @@ const settingsMock = {
 			name: 'anonymousUser',
 			icon: 'talend-user-circle',
 			displayMode: 'dropdown',
-			staticActions: ['user:logout'],
+			staticActions: [
+				'modal:about',
+				'onboarding:preparation',
+				'divider',
+				'modal:feedback',
+				'divider',
+				'user:logout',
+			],
 		},
 		'version:toggle': {
 			displayMode: 'ActionSettings',
@@ -574,19 +585,6 @@ const settingsMock = {
 				args: 'version',
 				method: 'go',
 			},
-		},
-		'headerbar:help': {
-			displayMode: 'splitDropdown',
-			id: 'headerbar:help',
-			name: 'Help',
-			icon: 'talend-question-circle',
-			type: '@@external/HELP',
-			items: [
-				'modal:feedback',
-				'onboarding:preparation',
-				'modal:about',
-			],
-			action: 'external:help',
 		},
 		'modal:about': {
 			displayMode: 'ActionSettings',

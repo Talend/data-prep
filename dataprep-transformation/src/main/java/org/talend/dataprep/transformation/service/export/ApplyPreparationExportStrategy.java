@@ -12,10 +12,12 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -93,7 +95,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, fullContent, true);
 
         try (final InputStream datasetContent = dataSetGet.execute();
-                final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
 
             // release the technical user identity
             securityProxy.releaseIdentity();

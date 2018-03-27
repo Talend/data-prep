@@ -12,9 +12,6 @@
 
 package org.talend;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.talend.ServiceBaseTest.TEST_LOCALE;
-
 import java.util.Locale;
 
 import org.junit.Before;
@@ -35,6 +32,9 @@ import org.talend.dataprep.test.LocalizationRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
+
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.talend.ServiceBaseTest.TEST_LOCALE;
 
 @RunWith(SpringRunner.class)
 @Import({ LocalContentServiceConfiguration.class, DataPrepComponentScanConfiguration.class })
@@ -63,14 +63,18 @@ public abstract class ServiceBaseTest {
     @Before
     public void setUp() {
         if (!environmentSet) {
+            RestAssured.baseURI = RestAssured.DEFAULT_URI;
             RestAssured.port = port;
 
             // Overrides connection information with random port value
+            String url = RestAssured.baseURI + ":" + port;
             MockPropertySource connectionInformation = new MockPropertySource()
-                    .withProperty("dataset.service.url", "http://localhost:" + port)
-                    .withProperty("transformation.service.url", "http://localhost:" + port)
-                    .withProperty("preparation.service.url", "http://localhost:" + port)
-                    .withProperty("fullrun.service.url", "http://localhost:" + port);
+                    .withProperty("dataset.service.url", url)
+                    .withProperty("transformation.service.url", url)
+                    .withProperty("preparation.service.url", url)
+                    .withProperty("async_store.service.url", url)
+                    .withProperty("gateway.service.url", url)
+                    .withProperty("fullrun.service.url", url);
             environment.getPropertySources().addFirst(connectionInformation);
             environmentSet = true;
         }

@@ -13,7 +13,11 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
@@ -21,7 +25,13 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -61,10 +71,6 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("splitAction.json"));
-    }
-
-    private void initParametersWithOldParam() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("splitActionOldParam.json"));
     }
 
     @Test
@@ -107,27 +113,6 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
         expectedValues.put("0003", "Bacon");
         expectedValues.put("0004", "ipsum dolor amet swine leberkas pork belly");
         expectedValues.put("0002", "01/01/2015");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
-    public void test_apply_in_newcolumn_with_old_param() throws Exception {
-        // given
-        final DataSetRow row = getRow("lorem bacon", "Bacon ipsum dolor amet swine leberkas pork belly", "01/01/2015");
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0003", "Bacon");
-        expectedValues.put("0004", "ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0002", "01/01/2015");
-
-        initParametersWithOldParam();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -284,55 +269,11 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
     }
 
     @Test
-    public void test_split_on_regex_with_old_param() {
-        // given
-        final DataSetRow row = getRow("lorem bacon", "Je vais bien (tout va bien)", "01/01/2015");
-
-        parameters.put(Split.SEPARATOR_PARAMETER, "other (regex)");
-        parameters.put(Split.MANUAL_SEPARATOR_PARAMETER_REGEX, "bien");
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Je vais bien (tout va bien)");
-        expectedValues.put("0003", "Je vais ");
-        expectedValues.put("0004", " (tout va bien)");
-        expectedValues.put("0002", "01/01/2015");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
     public void test_split_on_regex2() {
         // given
         final DataSetRow row = getRow("lorem bacon", "Je vais bien (tout va bien)", "01/01/2015");
 
         parameters.put(Split.SEPARATOR_PARAMETER, Split.OTHER_REGEX);
-        parameters.put(Split.MANUAL_SEPARATOR_PARAMETER_REGEX, "bien|fff");
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Je vais bien (tout va bien)");
-        expectedValues.put("0003", "Je vais ");
-        expectedValues.put("0004", " (tout va bien)");
-        expectedValues.put("0002", "01/01/2015");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
-    public void test_split_on_regex2_with_old_param() {
-        // given
-        final DataSetRow row = getRow("lorem bacon", "Je vais bien (tout va bien)", "01/01/2015");
-
-        parameters.put(Split.SEPARATOR_PARAMETER, "other (regex)");
         parameters.put(Split.MANUAL_SEPARATOR_PARAMETER_REGEX, "bien|fff");
 
         final Map<String, String> expectedValues = new HashMap<>();
@@ -394,29 +335,6 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
     }
 
     @Test
-    public void should_split_row_twice_with_old_param() throws Exception {
-        // given
-        final DataSetRow row = getRow("lorem bacon", "Bacon ipsum dolor amet swine leberkas pork belly", "01/01/2015");
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0005", "Bacon");
-        expectedValues.put("0006", "ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0003", "Bacon");
-        expectedValues.put("0004", "ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0002", "01/01/2015");
-
-        initParametersWithOldParam();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
     public void should_split_row_with_separator_at_the_end() {
         // given
         final DataSetRow row = getRow("lorem bacon", "Bacon ", "01/01/2015");
@@ -436,27 +354,6 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
     }
 
     @Test
-    public void should_split_row_with_separator_at_the_end_and_old_param() throws Exception {
-        // given
-        final DataSetRow row = getRow("lorem bacon", "Bacon ", "01/01/2015");
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon ");
-        expectedValues.put("0003", "Bacon");
-        expectedValues.put("0004", "");
-        expectedValues.put("0002", "01/01/2015");
-
-        initParametersWithOldParam();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
     public void should_split_row_no_separator() {
         // given
         final DataSetRow row = getRow("lorem bacon", "Bacon", "01/01/2015");
@@ -467,27 +364,6 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
         expectedValues.put("0003", "Bacon");
         expectedValues.put("0004", "");
         expectedValues.put("0002", "01/01/2015");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
-    public void should_split_row_no_separator_with_old_param() throws Exception {
-        // given
-        final DataSetRow row = getRow("lorem bacon", "Bacon", "01/01/2015");
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon");
-        expectedValues.put("0003", "Bacon");
-        expectedValues.put("0004", "");
-        expectedValues.put("0002", "01/01/2015");
-
-        initParametersWithOldParam();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

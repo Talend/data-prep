@@ -1,8 +1,8 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -19,23 +20,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionFilterEnum;
-import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.SCOPE;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -43,14 +29,12 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 @Component
 public class OSIntegrationTestUtil {
 
-    public static final String ACTION_NAME = "actionName";
-
     List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id");
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.
      *
-     * @param folder  the folder to split.
+     * @param folder the folder to split.
      * @param folders existing folders.
      * @return a {@link Set} of folders and subfolders.
      */
@@ -64,7 +48,8 @@ public class OSIntegrationTestUtil {
 
         String[] folderPaths = folder.getPath().split("/");
         StringBuilder folderBuilder = new StringBuilder();
-        Arrays.stream(folderPaths) //
+        Arrays
+                .stream(folderPaths) //
                 .filter(f -> !f.isEmpty() && !f.equals("/")) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
@@ -80,29 +65,32 @@ public class OSIntegrationTestUtil {
     }
 
     /**
-     * Map parameters from a Cucumber step to an {@link Action}.
-     *
+     * Map parameters from a Cucumber step to an Action parameters.
+     * <p>
+     * add default scope column
+     * </p>
+     * 
      * @param params the parameters to map.
-     * @param action the {@link Action} that will receive the parameters.
      * @return the given {@link Action} updated.
      */
     @NotNull
-    public Action mapParamsToAction(@NotNull Map<String, String> params, @NotNull Action action) {
-        action.action = params.get(ACTION_NAME) == null ? action.action : params.get(ACTION_NAME);
-        params.forEach((k, v) -> ActionParamEnum.getActionParamEnum(k)
-                .ifPresent(actionParamEnum -> {
-                    Object value;
-                    if (parametersToBeSuffixed.contains(actionParamEnum.getName())) {
-                        value = suffixName(v);
+    public Map<String, Object> mapParamsToActionParameters(@NotNull Map<String, String> params) {
+        Map<String, Object> actionParameters = params
+                .entrySet()
+                .stream() //
+                .filter(entry -> !entry.getKey().startsWith(FILTER.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> {
+                    if (parametersToBeSuffixed.contains(e.getKey())) {
+                        return suffixName(e.getValue());
                     } else {
-                        value = StringUtils.isEmpty(v) ? null : v;
+                        return StringUtils.isEmpty(e.getValue()) ? null : e.getValue();
                     }
-                    action.parameters.put(actionParamEnum, value);
                 }));
-        Filter filter = mapParamsToFilter(params);
-        action.parameters.put(FILTER, filter);
-        action.parameters.putIfAbsent(SCOPE, "column");
-        return action;
+
+        actionParameters.put(FILTER.getKey(), mapParamsToFilter(params));
+        actionParameters.putIfAbsent(SCOPE.getKey(), "column");
+
+        return actionParameters;
     }
 
     /**
@@ -114,8 +102,10 @@ public class OSIntegrationTestUtil {
     @Nullable
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
-        long nbAfes = params.keySet().stream() //
-                .map(ActionFilterEnum::getActionFilterEnum) // //
+        long nbAfes = params
+                .keySet()
+                .stream() //
+                .map(ActionFilterEnum::getActionFilterEnum) //
                 .filter(Objects::nonNull) //
                 .peek(afe -> {
                     String v = params.get(afe.getName());
@@ -135,5 +125,31 @@ public class OSIntegrationTestUtil {
     public String getFilenameExtension(@NotNull String filename) {
         String[] tokens = filename.split("\\.");
         return tokens[tokens.length - 1];
+    }
+
+    /**
+     * Return the path of a fully qualified name.
+     *
+     * @param fullName the fully qualified name.
+     * @return the path or an empty {@link String } if no path is found.
+     */
+    @NotNull
+    public String extractPathFromFullName(@NotNull String fullName) {
+        String foundPath = "/";
+        if (fullName.contains("/") && fullName.lastIndexOf("/") != 0) {
+            foundPath = fullName.substring(0, fullName.lastIndexOf("/"));
+        }
+        return foundPath;
+    }
+
+    /**
+     * Return the name of a fully qualified name.
+     *
+     * @param fullName the fully qualified name.
+     * @return the found name.
+     */
+    @NotNull
+    public String extractNameFromFullName(@NotNull String fullName) {
+        return fullName.substring(fullName.lastIndexOf("/") + 1);
     }
 }

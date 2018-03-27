@@ -54,20 +54,21 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@talend/bootstrap-theme@0.152.0":
-  version "0.152.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.152.0.tgz#b3657c69c5ee92b420a0af3532e3c955322745a5"
+"@talend/bootstrap-theme@0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.166.0.tgz#a110ba9d3708a2acf3c8d2dcc43dc8877cbc7204"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.152.0":
-  version "0.152.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.152.0.tgz#a2f9e5d5472405eec610dc0a764dfaac6b11e7f3"
+"@talend/icons@0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.166.0.tgz#90a65eef3965e194bbd1782b9293d5d39570677f"
 
-"@talend/react-components@0.152.0":
-  version "0.152.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.152.0.tgz#4ed1037e54a6bf44ce6a40f76a24e2b36ea4f6ee"
+"@talend/react-components@0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.166.0.tgz#8428a7d318d9b74f9087a94cb68ffafc02d27b3c"
   dependencies:
+    date-fns "1.27.2"
     lodash "4.17.4"
     rc-slider "8.4.1"
     rc-tooltip "3.7.0"
@@ -75,10 +76,11 @@
     react-debounce-input "3.1.0"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.152.0":
-  version "0.152.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.152.0.tgz#dc8ede184682f022f1b04be5c253911cb1f48cd6"
+"@talend/react-forms@0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.166.0.tgz#b130643f0977003b9dedd87a7f7ab66f731e6ef9"
   dependencies:
+    ajv "^6.2.1"
     classnames "2.2.5"
     keycode "2.1.9"
     lodash "4.17.4"
@@ -171,6 +173,14 @@ ajv@^5.0.0, ajv@^5.1.5:
     fast-deep-equal "^1.0.0"
     json-schema-traverse "^0.3.0"
     json-stable-stringify "^1.0.1"
+
+ajv@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.2.1.tgz#28a6abc493a2abe0fb4c8507acaedb43fa550671"
+  dependencies:
+    fast-deep-equal "^1.0.0"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.3.0"
 
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"
@@ -2265,6 +2275,14 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+date-fns@1.27.2:
+  version "1.27.2"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.27.2.tgz#ce82f420bc028356cc661fc55c0494a56a990c9c"
+
+date-fns@^1.29.0:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -3096,6 +3114,10 @@ extsprintf@1.0.2:
 fast-deep-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.0.0.tgz#96256a3bc975595eb36d82e9929d060d893439ff"
+
+fast-json-stable-stringify@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.0.0.tgz#d5142c0caee6b1189f87d3a76111064f86c8bbf2"
 
 fast-levenshtein@~2.0.4:
   version "2.0.6"

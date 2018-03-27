@@ -23,7 +23,12 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -59,12 +64,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     /** Choice of other separator as string. */
     public static final String OTHER_STRING = "other_string";
 
-    public static final String OLD_OTHER_STRING = "other (string)";
-
     /** Choice of other separator as regex. */
     public static final String OTHER_REGEX = "other_regex";
-
-    public static final String OLD_OTHER_REGEX = "other (regex)";
 
     /** The string separator specified by the user. Should be used only if SEPARATOR_PARAMETER value is 'other'. */
     protected static final String MANUAL_SEPARATOR_PARAMETER_STRING = "manual_separator_string"; //$NON-NLS-1$
@@ -182,8 +183,7 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
      */
     private boolean isRegexMode(ActionContext context) {
         final String separatorParameter = context.getParameters().get(SEPARATOR_PARAMETER);
-        return StringUtils.equals(OTHER_REGEX, separatorParameter)
-                || StringUtils.equals(OLD_OTHER_REGEX, separatorParameter);
+        return StringUtils.equals(OTHER_REGEX, separatorParameter);
     }
 
     /**
@@ -193,11 +193,9 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     private String getSeparator(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
         final String separatorParameter = parameters.get(SEPARATOR_PARAMETER);
-        if (StringUtils.equals(OTHER_STRING, separatorParameter)
-                || StringUtils.equals(OLD_OTHER_STRING, separatorParameter)) {
+        if (StringUtils.equals(OTHER_STRING, separatorParameter)) {
             return parameters.get(MANUAL_SEPARATOR_PARAMETER_STRING);
-        } else if (StringUtils.equals(OTHER_REGEX, separatorParameter)
-                || StringUtils.equals(OLD_OTHER_REGEX, separatorParameter)) {
+        } else if (StringUtils.equals(OTHER_REGEX, separatorParameter)) {
             return parameters.get(MANUAL_SEPARATOR_PARAMETER_REGEX);
         } else {
             return separatorParameter;

@@ -14,7 +14,9 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
@@ -109,33 +111,6 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertEquals(expectedValues, row.values());
-    }
-
-    @Test
-    public void test_apply_in_newcolumn_old_style() throws Exception {
-        Map<String, String> parameters_old_style = ActionMetadataTestUtils
-                .parseParameters(CreateNewColumnTest.class.getResourceAsStream("createNewColumnAction_oldStyle.json"));
-
-        // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "lorem bacon");
-        values.put("0001", "Bacon ipsum");
-        values.put("0002", "01/01/2015");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon ipsum");
-        expectedValues.put("0003", "tagada");
-        expectedValues.put("0002", "01/01/2015");
-
-        parameters_old_style.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters_old_style));
 
         // then
         assertEquals(expectedValues, row.values());

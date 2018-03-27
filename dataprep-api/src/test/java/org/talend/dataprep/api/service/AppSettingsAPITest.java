@@ -54,7 +54,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetCreate.getName(), is("Add dataset"));
         assertThat(datasetCreate.getIcon(), is("talend-plus-circle"));
         assertThat(datasetCreate.getType(), is("@@dataset/CREATE"));
-        assertThat(datasetCreate.getBsStyle(), is("primary"));
+        assertThat(datasetCreate.getBsStyle(), is("info"));
 
         final ActionSettings datasetDisplayMode = settings.getActions().get("dataset:display-mode");
         assertThat(datasetDisplayMode.getName(), is("Change dataset display mode"));
@@ -191,7 +191,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationCreate.getName(), is("Add preparation"));
         assertThat(preparationCreate.getIcon(), is("talend-plus-circle"));
         assertThat(preparationCreate.getType(), is("@@preparation/CREATE"));
-        assertThat(preparationCreate.getBsStyle(), is("primary"));
+        assertThat(preparationCreate.getBsStyle(), is("info"));
         assertThat(preparationCreate.getPayload().get(PAYLOAD_METHOD_KEY), is("togglePreparationCreator"));
 
         final ActionSettings preparationDisplayMode = settings.getActions().get("preparation:display-mode");
@@ -250,22 +250,23 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(sidepanelToggle.getType(), is("@@sidepanel/TOGGLE"));
         assertThat(sidepanelToggle.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleHomeSidepanel"));
 
-        final ActionSplitDropdownSettings headerHelp = (ActionSplitDropdownSettings) settings.getActions().get("headerbar:help");
-        assertThat(headerHelp.getName(), is("Help"));
-        assertThat(headerHelp.getIcon(), is("talend-question-circle"));
-        assertThat(headerHelp.getType(), is("@@headerbar/HELP"));
-        assertThat(headerHelp.getAction(), is("external:help"));
-        assertThat(headerHelp.getItems(),
-                contains("external:help", "external:community", "onboarding:preparation", "modal:about", "modal:feedback"));
+        final ActionDropdownSettings headerbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:information");
+        assertThat(headerbarInformation.getName(), is("Information"));
+        assertThat(headerbarInformation.getIcon(), is("talend-information"));
+        assertThat(headerbarInformation.getStaticActions().get(0), is("modal:about"));
+        assertThat(headerbarInformation.getStaticActions().get(1), is("onboarding:preparation"));
+        assertThat(headerbarInformation.getStaticActions().get(2), is("divider"));
+        assertThat(headerbarInformation.getStaticActions().get(3), is("external:community"));
+        assertThat(headerbarInformation.getStaticActions().get(4), is("modal:feedback"));
 
-        final ActionSplitDropdownSettings playgroundHeaderHelp =
-                (ActionSplitDropdownSettings) settings.getActions().get("playground:headerbar:help");
-        assertThat(playgroundHeaderHelp.getName(), is("Help"));
-        assertThat(playgroundHeaderHelp.getIcon(), is("talend-question-circle"));
-        assertThat(playgroundHeaderHelp.getType(), is("@@headerbar/HELP"));
-        assertThat(playgroundHeaderHelp.getAction(), is("external:help"));
-        assertThat(playgroundHeaderHelp.getItems(),
-                contains("external:help", "external:community", "onboarding:playground", "modal:about", "modal:feedback"));
+        final ActionDropdownSettings playgroundHeaderbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:playground:information");
+        assertThat(playgroundHeaderbarInformation.getName(), is("Information"));
+        assertThat(playgroundHeaderbarInformation.getIcon(), is("talend-information"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(0), is("modal:about"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(1), is("onboarding:playground"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(2), is("divider"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(3), is("external:community"));
+        assertThat(playgroundHeaderbarInformation.getStaticActions().get(4), is("modal:feedback"));
     }
 
     @Test
@@ -290,7 +291,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
         assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("dataset:open"));
         assertThat(ahb.getSearch().getOnSelect().get("preparation"), is("menu:playground:preparation"));
-        assertThat(ahb.getHelp(), is("headerbar:help"));
+        assertThat(ahb.getHelp(), is("external:help"));
     }
 
     @Test
@@ -312,7 +313,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnKeyDown(), is("search:focus"));
         assertThat(ahb.getSearch().getOnToggle(), is("search:toggle"));
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
-        assertThat(ahb.getHelp(), is("playground:headerbar:help"));
+        assertThat(ahb.getHelp(), is("external:help"));
     }
 
     @Test
@@ -535,16 +536,5 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(localeFull, is(Locale.US.toLanguageTag()));
         assertThat(country, is(Locale.US.getCountry()));
         assertThat(language, is(Locale.US.getLanguage()));
-    }
-
-    @Test
-    public void shouldNotEnableThemeByDefaultInContextSettings() {
-        // when
-        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
-
-        // then
-        final boolean theme = (boolean) settings.getContext().get("theme");
-
-        assertThat(theme, is(Boolean.FALSE));
     }
 }

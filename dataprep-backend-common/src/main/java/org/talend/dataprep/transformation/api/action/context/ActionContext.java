@@ -194,6 +194,11 @@ public class ActionContext implements Serializable {
         return value;
     }
 
+    /** Remove context cached entry. */
+    public void evict(String key) {
+        getContext().remove(key);
+    }
+
     /**
      * @return the context entries.
      */
@@ -359,6 +364,11 @@ public class ActionContext implements Serializable {
         @Override
         public <T> T get(String key) {
             return delegate.get(key);
+        }
+
+        @Override
+        public void evict(String key) {
+            // No op: unable to modify once immutable.
         }
 
         @Override

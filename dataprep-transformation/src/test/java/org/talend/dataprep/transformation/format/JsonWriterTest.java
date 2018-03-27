@@ -47,7 +47,7 @@ public class JsonWriterTest extends BaseFormatTest {
     private ByteArrayOutputStream outputStream;
 
     @Before
-    public void init() throws IOException {
+    public void init() {
         outputStream = new ByteArrayOutputStream();
         writer = (JsonWriter) context.getBean("writer#JSON", outputStream);
     }
@@ -67,7 +67,7 @@ public class JsonWriterTest extends BaseFormatTest {
 
         // when
         writer.write(new RowMetadata(columns));
-        writer.flush();
+        writer.close();
 
         // then
         assertThat(new String(outputStream.toByteArray()), sameJSONAs(expectedOutput).allowingExtraUnexpectedFields());
@@ -85,56 +85,14 @@ public class JsonWriterTest extends BaseFormatTest {
         final DataSetRow row = new DataSetRow(values);
         row.setTdpId(23L);
 
-        final String expectedCsv = "{\"firstname\":\"Superman\",\"id\":\"64a5456ac148b64524ef165\",\"tdpId\":23}";
+        final String expectedJson = "{\"records\":[{\"firstname\":\"Superman\",\"id\":\"64a5456ac148b64524ef165\",\"tdpId\":23}]}";
 
         // when
         writer.write(row);
-        writer.flush();
+        writer.close();
 
         // then
-        assertThat(new String(outputStream.toByteArray()), is(expectedCsv));
-    }
-
-    @Test
-    public void startArray_should_write_json_startArray() throws IOException {
-        // when
-        writer.startArray();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), is("["));
-    }
-
-    @Test
-    public void endArray_should_write_json_endArray() throws IOException {
-        // when
-        writer.startArray();
-        writer.endArray();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), sameJSONAs("[]"));
-    }
-
-    @Test
-    public void startObject_should_write_json_startObject() throws IOException {
-        // when
-        writer.startObject();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), is("{"));
-    }
-
-    @Test
-    public void endObject_should_write_json_endObject() throws IOException {
-        // when
-        writer.startObject();
-        writer.endObject();
-        writer.flush();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), sameJSONAs("{}"));
+        assertThat(new String(outputStream.toByteArray()), is(expectedJson));
     }
 
 }

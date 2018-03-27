@@ -106,7 +106,7 @@ public class SplitReplaceOnValueAction implements BaseUpgradeTaskTo_2_1_0_PE {
      * <li>extract the token value from 'cell_value' and set it to 'original_value'</li>
      * <li>rename the 'replace_value' to 'new_value'</li>
      * </ul>
-     * 
+     *
      * @param parameters the actions parameters.
      */
     private void updateActionParameters(Map<String, String> parameters) {
@@ -115,10 +115,11 @@ public class SplitReplaceOnValueAction implements BaseUpgradeTaskTo_2_1_0_PE {
         final String cellValue = parameters.get(CELL_VALUE);
         try {
             cellValueNode = mapper.readTree(cellValue);
+            if (cellValueNode == null) {
+                cellValueNode = buildDefaultCellValueNode(cellValue);
+            }
         } catch (IOException e) {
-            cellValueNode = mapper.createObjectNode();
-            ((ObjectNode) cellValueNode).put("token", cellValue);
-            LOGGER.warn("Could not get the original value out of '{}', let's use it as is", cellValue);
+            cellValueNode = buildDefaultCellValueNode(cellValue);
         }
 
         final String originalValue = cellValueNode.get("token").asText();
@@ -127,6 +128,13 @@ public class SplitReplaceOnValueAction implements BaseUpgradeTaskTo_2_1_0_PE {
 
         parameters.put("new_value", parameters.get(REPLACE_VALUE));
         parameters.remove(REPLACE_VALUE);
+    }
+
+    private JsonNode buildDefaultCellValueNode(String cellValue) {
+        JsonNode cellValueNode = mapper.createObjectNode();
+        ((ObjectNode) cellValueNode).put("token", cellValue);
+        LOGGER.warn("Could not get the original value out of '{}', let's use it as is", cellValue);
+        return cellValueNode;
     }
 
     @Override

@@ -21,7 +21,7 @@ beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) =>
 describe('stats details directive', function () {
 	'use strict';
 
-	let stateMock, scope, element, createElement;
+	let stateMock, scope, element, createElement, ctrl;
 
 	beforeEach(angular.mock.module('data-prep.stats-details', function ($provide) {
 		stateMock = {
@@ -29,7 +29,7 @@ describe('stats details directive', function () {
 				statistics: {},
 				grid: {
 					selectedColumns: [{}]
-				},
+				}
 			},
 			statistics: {
 				loading: false,
@@ -46,6 +46,7 @@ describe('stats details directive', function () {
 			element = angular.element('<stats-details></stats-details>');
 			$compile(element)(scope);
 			scope.$digest();
+			ctrl = element.controller('stats-details');
 		};
 	}));
 
@@ -74,11 +75,10 @@ describe('stats details directive', function () {
 				VARIANCE: 13,
 			},
 		};
-		scope.$apply();
 
 		//when
-		var event = angular.element.Event('click');
-		element.find('li').eq(1).trigger(event);
+		ctrl.selectedTab = 'stats-tab-value';
+		scope.$apply();
 
 		//then
 		expect(element.find('.stat-table').length).toBe(2);

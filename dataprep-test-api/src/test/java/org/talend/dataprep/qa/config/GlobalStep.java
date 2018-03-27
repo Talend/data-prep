@@ -90,7 +90,7 @@ public class GlobalStep extends DataPrepStep {
             for (Folder folder:listFolderDeletionPb) {
                 LOGGER.warn("Pb in the deletion of folder {}.",folder.getPath());
             }
-            LOGGER.warn("The Clean After Step is Ok. All deletion were done.");
+            LOGGER.warn("The Clean After Step has failed. All deletion were not done.");
             fail("Fail to delete preparation : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
         }
     }

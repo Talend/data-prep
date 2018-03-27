@@ -51,7 +51,7 @@ public class ExportPreparationStep extends DataPrepStep {
         context.storePreparationExportFormat(suffixName(preparationName), parameters);
     }
 
-    @Then("^I received for the preparation \"(.*)\" the export formats list with:$")
+    @Then("^I check that \"(.*)\" available export formats are :$")
     public void thenIReceivedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
         ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(suffixName(preparationName));
 

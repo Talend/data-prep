@@ -75,7 +75,7 @@ public class PreparationStep extends DataPrepStep {
     public void movePreparation(String preparationName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<Folder> folders = folderUtil.listFolders();
-        Folder originFolder = folderUtil.extractFolder(params.get(ORIGIN), folders);
+        Folder originFolder = folderUtil.extractFolder(suffixFolderName(params.get(ORIGIN)), folders);
         Folder destFolder = folderUtil.extractFolder(suffixFolderName(params.get(DESTINATION)), folders);
         String prepId = context.getPreparationId(suffixName(preparationName));
         Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,

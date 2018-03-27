@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -87,6 +88,7 @@ import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.http.HttpResponseContext;
@@ -197,7 +199,7 @@ public class DataSetService extends BaseDataSetService {
     private AnalyzerService analyzerService;
 
     @Autowired
-    FilterService filterService;
+    private FilterService filterService;
 
     @Value("${dataset.local.file.size.limit:20000000}")
     private long maximumInputStreamSize;
@@ -314,9 +316,9 @@ public class DataSetService extends BaseDataSetService {
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(defaultValue = "") String tag,
-            @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
+            @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(required = false) Long size,
             @RequestHeader(CONTENT_TYPE) String contentType,
-            @ApiParam(value = "content") InputStream content) throws IOException {
+            @ApiParam(value = "content") InputStream content) {
         //@formatter:on
         checkDataSetName(name);
 
@@ -325,7 +327,7 @@ public class DataSetService extends BaseDataSetService {
         LOG.debug(marker, "Creating...");
 
         // sanity check
-        if (size < 0) {
+        if (size != null && size < 0) {
             LOG.warn("invalid size provided {}", size);
             throw new TDPException(UNEXPECTED_CONTENT, build().put("size", size));
         }
@@ -345,7 +347,7 @@ public class DataSetService extends BaseDataSetService {
         try {
 
             // if the size is provided, let's check if the quota will not be exceeded
-            if (size > 0) {
+            if (size != null && size > 0) {
                 quotaService.checkIfAddingSizeExceedsAvailableStorage(size);
             }
 
@@ -460,7 +462,7 @@ public class DataSetService extends BaseDataSetService {
      * Returns the data set {@link DataSetMetadata metadata} for given <code>dataSetId</code>.
      *
      * @param dataSetId A data set id. If <code>null</code> <b>or</b> if no data set with provided id exits, operation
-     * returns {@link org.apache.commons.httpclient.HttpStatus#SC_NO_CONTENT} if metadata does not exist.
+     * returns {@link org.apache.http.HttpStatus#SC_NO_CONTENT} if metadata does not exist.
      */
     @RequestMapping(value = "/datasets/{id}/metadata", method = RequestMethod.GET)
     @ApiOperation(value = "Get metadata information of a data set by id", notes = "Get metadata information of a data set by id. Not valid or non existing data set id returns empty content.")
@@ -601,104 +603,100 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Update a data set by id", notes = "Update a data set content based on provided id and PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
     @Timed
     @VolumeMetered
-    public void updateRawDataSet(
+    public String updateRawDataSet(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId, //
             @RequestParam(value = "name", required = false) @ApiParam(name = "name", value = "New value for the data set name") String name, //
-            @RequestParam(value = "size", required = false, defaultValue = "0") @ApiParam(name = "size", value = "The size of the dataSet") long size, //
+            @RequestParam(value = "size", required = false) @ApiParam(name = "size", value = "The size of the dataSet") Long size, //
             @ApiParam(value = "content") InputStream dataSetContent) {
 
-        // avoid Path Traversal Attack
-        String dataSetIdBaseName = FilenameUtils.getBaseName(dataSetId);
-
-        LOG.debug("updating dataset content #{}", dataSetIdBaseName);
+        LOG.debug("updating dataset content #{}", dataSetId);
 
         if (name != null) {
             checkDataSetName(name);
         }
 
-        DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetIdBaseName);
-        if (currentDataSetMetadata == null && name == null) {
-            throw new TDPException(INVALID_DATASET_NAME, ExceptionContext.build().put("name", name));
-        }
+        DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
 
-        // just like the creation, let's make sure invalid size forbids dataset creation
-        if (size < 0) {
-            LOG.warn("invalid size provided {}", size);
-            throw new TDPException(UNSUPPORTED_CONTENT);
-        }
+        if (currentDataSetMetadata == null) {
+            return create(name, null, size, MediaType.TEXT_PLAIN_VALUE, dataSetContent);
+        } else {
 
-        final UpdateDataSetCacheKey cacheKey = new UpdateDataSetCacheKey(dataSetIdBaseName);
-
-        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetIdBaseName);
-        try {
-            lock.lock();
-
-            // check the size if it's available (quick win)
-            if (size > 0 && currentDataSetMetadata != null) {
-                quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
+            // just like the creation, let's make sure invalid size forbids dataset creation
+            if (size != null && size < 0) {
+                LOG.warn("invalid size provided {}", size);
+                throw new TDPException(UNSUPPORTED_CONTENT);
             }
 
-            final DataSetMetadataBuilder datasetBuilder = metadataBuilder.metadata().id(dataSetIdBaseName);
-            final DataSetMetadata metadataForUpdate = dataSetMetadataRepository.get(dataSetIdBaseName);
-            if (metadataForUpdate != null) {
-                datasetBuilder.copyNonContentRelated(metadataForUpdate);
-                datasetBuilder.modified(System.currentTimeMillis());
-                datasetBuilder.dataSetSize(size);
-            }
-            if (!StringUtils.isEmpty(name)) {
-                datasetBuilder.name(name);
-            }
-            final DataSetMetadata dataSetMetadata = datasetBuilder.build();
+            final UpdateDataSetCacheKey cacheKey = new UpdateDataSetCacheKey(currentDataSetMetadata.getId());
 
-            // Save data set content into cache to make sure there's enough space in the content store
-            final long maxDataSetSizeAllowed = getMaxDataSetSizeAllowed();
-            final StrictlyBoundedInputStream sizeCalculator = new StrictlyBoundedInputStream(dataSetContent,
-                    maxDataSetSizeAllowed);
-            try (OutputStream cacheEntry = cacheManager.put(cacheKey, TimeToLive.DEFAULT)) {
-                IOUtils.copy(sizeCalculator, cacheEntry);
-            }
+            final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(currentDataSetMetadata.getId());
+            try {
+                lock.lock();
 
-            // once fully copied to the cache, we know for sure that the content store has enough space, so let's copy
-            // from the cache to the content store
-            PipedInputStream toContentStore = new PipedInputStream();
-            PipedOutputStream fromCache = new PipedOutputStream(toContentStore);
-            Runnable r = () -> {
-                try (final InputStream input = cacheManager.get(cacheKey)) {
-                    IOUtils.copy(input, fromCache);
-                    fromCache.close(); // it's important to close this stream, otherwise the piped stream will never close
-                } catch (IOException e) {
-                    throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
+                // check the size if it's available (quick win)
+                if (size != null && size > 0) {
+                    quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
                 }
-            };
-            executor.execute(r);
-            contentStore.storeAsRaw(dataSetMetadata, toContentStore);
 
-            // update the dataset metadata with its new size
-            dataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
-            dataSetMetadataRepository.save(dataSetMetadata);
+                final DataSetMetadataBuilder datasetBuilder = metadataBuilder.metadata().id(currentDataSetMetadata.getId());
+                datasetBuilder.copyNonContentRelated(currentDataSetMetadata);
+                datasetBuilder.modified(System.currentTimeMillis());
+                if (!StringUtils.isEmpty(name)) {
+                    datasetBuilder.name(name);
+                }
+                final DataSetMetadata updatedDataSetMetadata = datasetBuilder.build();
 
-            // clean preparation cache
-            publisher.publishEvent(new DataSetMetadataBeforeUpdateEvent(dataSetMetadata));
+                // Save data set content into cache to make sure there's enough space in the content store
+                final long maxDataSetSizeAllowed = getMaxDataSetSizeAllowed();
+                final StrictlyBoundedInputStream sizeCalculator = new StrictlyBoundedInputStream(dataSetContent,
+                        maxDataSetSizeAllowed);
+                try (OutputStream cacheEntry = cacheManager.put(cacheKey, TimeToLive.DEFAULT)) {
+                    IOUtils.copy(sizeCalculator, cacheEntry);
+                }
 
-            // analyze the content
-            publisher.publishEvent(new DataSetRawContentUpdateEvent(dataSetMetadata));
+                // once fully copied to the cache, we know for sure that the content store has enough space, so let's copy
+                // from the cache to the content store
+                PipedInputStream toContentStore = new PipedInputStream();
+                PipedOutputStream fromCache = new PipedOutputStream(toContentStore);
+                Runnable r = () -> {
+                    try (final InputStream input = cacheManager.get(cacheKey)) {
+                        IOUtils.copy(input, fromCache);
+                        fromCache.close(); // it's important to close this stream, otherwise the piped stream will never close
+                    } catch (IOException e) {
+                        throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
+                    }
+                };
+                executor.execute(r);
+                contentStore.storeAsRaw(updatedDataSetMetadata, toContentStore);
 
-        } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
-            LOG.warn("Dataset update {} cannot be done, new content is too big", dataSetIdBaseName);
-            throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put("limit", e.getMaxSize()));
-        } catch (IOException e) {
-            LOG.error("Error updating the dataset", e);
-            throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
-        } finally {
-            dataSetContentToNull(dataSetContent);
-            // whatever the outcome the cache needs to be cleaned
-            if (cacheManager.has(cacheKey)) {
-                cacheManager.evict(cacheKey);
+                // update the dataset metadata with its new size
+                updatedDataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
+                dataSetMetadataRepository.save(updatedDataSetMetadata);
+
+                // clean preparation cache
+                publisher.publishEvent(new DataSetMetadataBeforeUpdateEvent(updatedDataSetMetadata));
+
+                // analyze the content
+                publisher.publishEvent(new DataSetRawContentUpdateEvent(updatedDataSetMetadata));
+
+            } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
+                LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());
+                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put("limit", e.getMaxSize()));
+            } catch (IOException e) {
+                LOG.error("Error updating the dataset", e);
+                throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
+            } finally {
+                dataSetContentToNull(dataSetContent);
+                // whatever the outcome the cache needs to be cleaned
+                if (cacheManager.has(cacheKey)) {
+                    cacheManager.evict(cacheKey);
+                }
+                lock.unlock();
             }
-            lock.unlock();
+            // Content was changed, so queue events (format analysis, content indexing for search...)
+            analyzeDataSet(currentDataSetMetadata.getId(), true, emptyList());
+            return currentDataSetMetadata.getId();
         }
-        // Content was changed, so queue events (format analysis, content indexing for search...)
-        analyzeDataSet(dataSetIdBaseName, true, emptyList());
     }
 
     /**
@@ -731,7 +729,7 @@ public class DataSetService extends BaseDataSetService {
 
     /**
      * Returns preview of the the data set content for given id (first 100 rows). Service might return
-     * {@link org.apache.commons.httpclient.HttpStatus#SC_ACCEPTED} if the data set exists but analysis is not yet fully
+     * {@link org.apache.http.HttpStatus#SC_ACCEPTED} if the data set exists but analysis is not yet fully
      * completed so content is not yet ready to be served.
      *
      * @param metadata If <code>true</code>, includes data set metadata information.
@@ -1166,22 +1164,25 @@ public class DataSetService extends BaseDataSetService {
         LOG.debug("listing semantic categories for dataset #{} column #{}", datasetId, columnId);
 
         final DataSetMetadata metadata = dataSetMetadataRepository.get(datasetId);
-        try (final Stream<DataSetRow> records = contentStore.stream(metadata)) {
+        if (metadata == null) {
+            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, ExceptionContext.withBuilder().put("id", datasetId).build());
+        } else {
+            try (final Stream<DataSetRow> records = contentStore.stream(metadata)) {
 
-            final ColumnMetadata columnMetadata = metadata.getRowMetadata().getById(columnId);
-            final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
+                final ColumnMetadata columnMetadata = metadata.getRowMetadata().getById(columnId);
+                final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
 
-            analyzer.init();
-            records.map(r -> r.get(columnId)).forEach(analyzer::analyze);
-            analyzer.end();
+                analyzer.init();
+                records.map(r -> r.get(columnId)).forEach(analyzer::analyze);
+                analyzer.end();
 
-            final List<Analyzers.Result> analyzerResult = analyzer.getResult();
-            final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
-            statisticsAdapter.adapt(singletonList(columnMetadata), analyzerResult);
-            LOG.debug("found {} for dataset #{}, column #{}", columnMetadata.getSemanticDomains(), datasetId, columnId);
-            return columnMetadata.getSemanticDomains();
+                final List<Analyzers.Result> analyzerResult = analyzer.getResult();
+                final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
+                statisticsAdapter.adapt(singletonList(columnMetadata), analyzerResult);
+                LOG.debug("found {} for dataset #{}, column #{}", columnMetadata.getSemanticDomains(), datasetId, columnId);
+                return columnMetadata.getSemanticDomains();
+            }
         }
-
     }
 
     /**
@@ -1191,7 +1192,7 @@ public class DataSetService extends BaseDataSetService {
      * @param dataSetName the data set name to validate
      */
     private void checkDataSetName(String dataSetName) {
-        if (dataSetName.contains("'")) {
+        if (dataSetName == null || dataSetName.contains("'")) {
             throw new TDPException(DataSetErrorCodes.INVALID_DATASET_NAME, ExceptionContext.withBuilder().put("name", dataSetName).build());
         }
     }

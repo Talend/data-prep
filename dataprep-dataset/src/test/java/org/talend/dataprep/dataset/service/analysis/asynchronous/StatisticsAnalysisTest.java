@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class StatisticsAnalysisTest extends DataSetBaseTest {
      * @return the analyzed dataset metadata.
      */
     private DataSetMetadata initializeDataSetMetadata(InputStream content) {
-        String id = String.valueOf(random.nextInt(10000));
+        String id = UUID.randomUUID().toString();
         final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, content);

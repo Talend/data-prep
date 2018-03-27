@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
 import java.util.Random;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +47,13 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
     private Random random = new Random();
 
     @Test
-    public void testNoDataSetFound() throws Exception {
+    public void testNoDataSetFound() {
         schemaAnalysis.analyze("1234");
         assertThat(dataSetMetadataRepository.get("1234"), nullValue());
     }
 
     @Test
-    public void testAnalysis() throws Exception {
+    public void testAnalysis() {
         final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "nickname", "secret firstname", "secret lastname", "date of birth", "city" };
@@ -71,7 +72,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void testTDP_224() throws Exception {
+    public void testTDP_224() {
         final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../whatever.xls"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "whaterver" }; // Not a typo: this is what QA provided as column name.
@@ -90,7 +91,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void testTDP_279() throws Exception {
+    public void testTDP_279() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../post_code.xls"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
@@ -117,7 +118,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void testTDP_471() throws Exception {
+    public void testTDP_471() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../semantic_type_threshold.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
@@ -137,7 +138,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
     }
 
     @Test
-    public void testGenderAnalysis() throws Exception {
+    public void testGenderAnalysis() {
         final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../gender.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         // Gender must be a String with Gender domain
@@ -159,7 +160,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void testTDP_226() throws Exception {
+    public void testTDP_226() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../empty_lines.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
@@ -180,7 +181,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @return the analyzed dataset metadata.
      */
     private DataSetMetadata initializeDataSetMetadata(InputStream content) {
-        String id = String.valueOf(random.nextInt(10000));
+        String id = UUID.randomUUID().toString();
         final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, content);
@@ -198,11 +199,9 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
 
     /**
      * See <a href="https://jira.talendforge.org/browse/TDP-1674">TDP-1674_error_with_ipv6_addresses</a>.
-     *
-     * @throws Exception
      */
     @Test
-    public void testTDP_1674() throws Exception {
+    public void testTDP_1674() {
         final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../ipv6.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "number", "description", "address" };
@@ -219,11 +218,9 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
 
     /**
      * See <a href="https://jira.talendforge.org/browse/TDP-855">TDP-855_movie_title_detected_as_city</a>.
-     *
-     * @throws Exception
      */
     @Test
-    public void testTDP_855() throws Exception {
+    public void testTDP_855() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../TDP-855_movie_title_detected_as_city.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));

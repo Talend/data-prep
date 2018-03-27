@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
 import java.util.Random;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,22 +48,23 @@ public class QualityAnalysisTest extends DataSetBaseTest {
     private Random random = new Random();
 
     @Test
-    public void testNoDataSetFound() throws Exception {
+    public void testNoDataSetFound() {
         qualityAnalysis.analyze("1234");
         assertThat(dataSetMetadataRepository.get("1234"), nullValue());
     }
 
     @Test
-    public void testAnalysis() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+    public void testAnalysis() {
+        String id = UUID.randomUUID().toString();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
-        formatAnalysis.analyze("1234");
-        contentAnalysis.analyze("1234");
-        schemaAnalysis.analyze("1234");
+        formatAnalysis.analyze(id);
+        contentAnalysis.analyze(id);
+        schemaAnalysis.analyze(id);
         // Analyze quality
-        qualityAnalysis.analyze("1234");
-        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
+        qualityAnalysis.analyze(id);
+        final DataSetMetadata actual = dataSetMetadataRepository.get(id);
         assertThat(actual.getLifecycle().qualityAnalyzed(), is(true));
         assertThat(actual.getContent().getNbRecords(), is(5L));
         for (ColumnMetadata column : actual.getRowMetadata().getColumns()) {
@@ -74,8 +76,8 @@ public class QualityAnalysisTest extends DataSetBaseTest {
     }
 
     @Test
-    public void testAnalysisWithInvalidValues() throws Exception {
-        String dsId = "4321";
+    public void testAnalysisWithInvalidValues() {
+        String dsId = UUID.randomUUID().toString();
         final DataSetMetadata metadata = metadataBuilder.metadata().id(dsId).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../dataset_with_invalid_records.csv"));
@@ -104,7 +106,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void TDP_1150_full() throws Exception {
+    public void TDP_1150_full() {
         // given
         String[] expectedNames = { //
                 "string_boolean", //
@@ -162,7 +164,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void TDP_1150_integer_must_be_detected_as_so_even_if_sampling_detects_text() throws Exception {
+    public void TDP_1150_integer_must_be_detected_as_so_even_if_sampling_detects_text() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../valid_must_be_integer.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
@@ -183,7 +185,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void TDP_1150_string_must_be_detected_as_so_if_even_if_subtype_is_integer() throws Exception {
+    public void TDP_1150_string_must_be_detected_as_so_if_even_if_subtype_is_integer() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../valid_must_be_text1.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
@@ -205,7 +207,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    public void TDP_1150_text_must_be_detected_if_even_if_integer_is_more_frequent() throws Exception {
+    public void TDP_1150_text_must_be_detected_if_even_if_integer_is_more_frequent() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../valid_must_be_text_2.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
@@ -224,7 +226,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
      * @return the analyzed dataset metadata.
      */
     private DataSetMetadata initializeDataSetMetadata(InputStream content) {
-        String id = String.valueOf(random.nextInt(10000));
+        String id = UUID.randomUUID().toString();
         final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
         dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, content);

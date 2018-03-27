@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.daikon.content.DeletableResource;
 import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -766,7 +767,8 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .statusCode(OK.value());
 
         // expectations
-        assertNotNull(resolver.getResource("/store/datasets/content/dataset/" + dataSetIdFlawed));
+        DeletableResource resource = resolver.getResource("/store/datasets/content/dataset/" + dataSetIdFlawed);
+        assertFalse(resource.getFile().exists());
     }
 
     @Test

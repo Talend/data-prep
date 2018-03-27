@@ -25,11 +25,15 @@ Feature: Filter features
     Then I check the records of the preparation "customers_100_with_pb_preparation" after applying a filter using the following TQL "<tql_prep>" equals "/data/<filename_prep>" file
 
     Examples:
-      | tql_prep                                        | filename_prep                              |
-      | ((0000 = 'BILL'))                               | customers_100_equals_filter_records.json   |
-      | ((0000 contains 'WAR'))                         | customers_100_contains_filter_records.json |
-      | ((0000 complies 'AAAAAAAAAA'))                  | customers_100_complies_filter_records.json |
-      | ((0003 between [1167606000000, 1169852400000[)) | customers_100_between_filter_records.json  |
-      | ((0001 = 'Johnson')) and ((0000 = 'BILL'))      | customers_100_and_filter_records.json      |
-      | ((0001 = 'Taft') or (0001 = 'Arthur'))       | customers_100_or_filter_records.json       |
-
+      | tql_prep                                        | filename_prep                                       |
+      | ((0000 = 'BILL'))                               | customers_100_equals_filter_records.json            |
+      | ((0000 contains 'WAR'))                         | customers_100_contains_filter_records.json          |
+      | ((0000 complies 'AAAAAAAAAA'))                  | customers_100_complies_filter_records.json          |
+      | ((0003 between [1167606000000, 1169852400000[)) | customers_100_between_filter_records.json           |
+      | ((0001 = 'Johnson')) and ((0000 = 'BILL'))      | customers_100_and_filter_records.json               |
+      | ((0001 = 'Taft') or (0001 = 'Arthur'))          | customers_100_or_filter_records.json                |
+      | (0002 is invalid)                               | customers_100_invalid_filter_records.json                  |
+      | (0002 is empty)                                 | customers_100_empty_filter_records.json                    |
+      | (* is invalid)                                  | customers_100_all_invalid_filter_records.json              |
+      | (* is empty)                                    | customers_100_all_empty_filter_records.json                |
+      | ((* is empty) or (* is invalid))                | customers_100_all_invalid_empty_filter_records.json |

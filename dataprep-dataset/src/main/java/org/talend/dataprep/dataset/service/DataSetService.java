@@ -108,7 +108,6 @@ import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.http.HttpResponseContext;
@@ -642,7 +641,7 @@ public class DataSetService extends BaseDataSetService {
         DataSetMetadata currentDataSetMetadata = dataSetMetadataRepository.get(dataSetId);
 
         if (currentDataSetMetadata == null) {
-            return create(name, null, size, MediaType.TEXT_PLAIN_VALUE, dataSetContent);
+            return create(name, null, size, TEXT_PLAIN_VALUE, dataSetContent);
         } else {
 
             // just like the creation, let's make sure invalid size forbids dataset creation

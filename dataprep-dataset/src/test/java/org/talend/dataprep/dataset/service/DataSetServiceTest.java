@@ -754,7 +754,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         String dataSetIdFlawed = "foobar..\\..\\..\\a";
 
         // create dataset
-        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
+        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
                 .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
 
         String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);

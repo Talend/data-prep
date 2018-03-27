@@ -758,9 +758,10 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
 
         String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);
-        given().body(body)
+        given().body(body) //
                 .when() //
-                .put("/datasets/{id}/raw?name={name}", dataSetIdFlawed, "toto") //
+                .queryParam("name", "toto") //
+                .put("/datasets/{id}/raw", dataSetIdFlawed) //
                 .then() //
                 .statusCode(OK.value());
 

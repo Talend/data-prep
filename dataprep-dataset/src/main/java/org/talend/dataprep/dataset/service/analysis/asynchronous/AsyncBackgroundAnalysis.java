@@ -13,41 +13,58 @@
 
 package org.talend.dataprep.dataset.service.analysis.asynchronous;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.dataset.event.DataSetImportedEvent;
-import org.talend.dataprep.event.AsyncApplicationListener;
-import org.talend.dataprep.security.SecurityProxy;
+import org.talend.dataprep.dataset.event.AnalysisEventProcessingUtil;
+import org.talend.dataprep.dataset.event.DatasetImportedEvent;
 
 /**
  * Compute statistics analysis on the full dataset.
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 @Component
-@ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
-public class AsyncBackgroundAnalysis implements AsyncApplicationListener<DataSetImportedEvent> {
+@Conditional(AsyncBackgroundAnalysis.AsyncBackgroundAnalysisConditon.class)
+public class AsyncBackgroundAnalysis {
+
+    /**
+     * This class' logger.
+     */
+    private static final Logger LOGGER = getLogger(AsyncBackgroundAnalysis.class);
 
     @Autowired
-    private BackgroundAnalysis backgroundAnalysis;
-
-    @Autowired
-    private SecurityProxy securityProxy;
+    private AnalysisEventProcessingUtil analysisEventProcessingUtil;
 
     /**
      * Handle an application event.
      *
      * @param event the event to respond to
      */
-    @Override
-    public void onApplicationEvent(DataSetImportedEvent event) {
-        String dataSetId = event.getSource();
+    @EventListener
+    public void onEvent(DatasetImportedEvent event) {
+        LOGGER.debug("Processing spring dataset imported event: {}", event);
+        String datasetId = event.getSource();
+        analysisEventProcessingUtil.processAnalysisEvent(datasetId);
+    }
 
-        try {
-            securityProxy.asTechnicalUser();
-            backgroundAnalysis.analyze(dataSetId);
-        } finally {
-            securityProxy.releaseIdentity();
+    public static class AsyncBackgroundAnalysisConditon extends AllNestedConditions {
+
+        AsyncBackgroundAnalysisConditon() {
+            super(ConfigurationPhase.REGISTER_BEAN);
+        }
+
+        @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
+        static class springEventListener {
+        }
+
+        @ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
+        static class asyncAnalysis {
         }
     }
 }

@@ -35,31 +35,23 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 // TODO Switch to immutable
 @JsonRootName("execution")
-public class AsyncExecution {
+public class AsyncExecution implements Comparable<AsyncExecution> {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncExecution.class);
 
-    /**
-     * The comparator to use to make sure the running executions come first.
-     */
-    private static final Comparator<AsyncExecution> ASYNC_EXECUTION_ORDER = (fr1, fr2) -> { //
+    @Override
+    public int compareTo(AsyncExecution o) {
         // Ensure running executions are top of sort
-        if (fr1.getStatus() == Status.RUNNING) {
-            return Integer.MIN_VALUE;
+        if (this.getStatus() == Status.RUNNING) {
+            return -1;
         }
-        if (fr2.getStatus() == Status.RUNNING) {
-            return Integer.MAX_VALUE;
+        if (o.getStatus() == Status.RUNNING) {
+            return 1;
         }
         // Normal sort
-        if (fr1.getTime().getEndDate() > fr2.getTime().getEndDate()) {
-            return -1;
-        } else if (fr1.getTime().getEndDate() < fr2.getTime().getEndDate()) {
-            return 1;
-        } else {
-            return 0;
-        }
-    };
+        return Long.compare(o.getTime().getEndDate(), this.getTime().getEndDate());
+    }
 
     /**
      * The comparator to use to make sure the last started is first.
@@ -156,14 +148,6 @@ public class AsyncExecution {
                 return 0;
             }
         };
-    }
-
-    /**
-     * @return the comparator to use.
-     * @see AsyncExecution#ASYNC_EXECUTION_ORDER
-     */
-    public static Comparator<AsyncExecution> naturalOrder() {
-        return ASYNC_EXECUTION_ORDER;
     }
 
     /**

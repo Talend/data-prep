@@ -72,6 +72,8 @@ public abstract class ServiceBaseTest {
                     .withProperty("dataset.service.url", url)
                     .withProperty("transformation.service.url", url)
                     .withProperty("preparation.service.url", url)
+                    .withProperty("async_store.service.url", url)
+                    .withProperty("gateway.service.url", url)
                     .withProperty("fullrun.service.url", url);
             environment.getPropertySources().addFirst(connectionInformation);
             environmentSet = true;

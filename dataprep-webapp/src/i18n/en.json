@@ -466,8 +466,10 @@
   "PREPARATIONS_STEP_2_CONTENT": "Here you can browse through and manage the datasets you added.</br>A dataset holds the raw data that can be used as raw material without affecting your original data.",
   "PREPARATIONS_STEP_3_TITLE": "Add preparation",
   "PREPARATIONS_STEP_3_CONTENT": "Click here to add a preparation and start cleansing your data.",
-  "PREPARATIONS_STEP_4_TITLE": "Help",
-  "PREPARATIONS_STEP_4_CONTENT": "Click here to get some help (Online Documentation, Guided tour, About Data Preparation)",
+  "PREPARATIONS_STEP_4_TITLE": "Online Documentation",
+  "PREPARATIONS_STEP_4_CONTENT": "Click here to access the online help",
+  "PREPARATIONS_STEP_5_TITLE": "Information",
+  "PREPARATIONS_STEP_5_CONTENT": "Click here to access additional resources (Community forum, Product version) or send feedback",
 
   "EMPTY_RECORDS_LABEL": "rows with empty values",
   "INVALID_RECORDS_LABEL": "rows with invalid values",

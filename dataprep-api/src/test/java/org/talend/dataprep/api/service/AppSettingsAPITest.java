@@ -54,7 +54,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetCreate.getName(), is("Add dataset"));
         assertThat(datasetCreate.getIcon(), is("talend-plus-circle"));
         assertThat(datasetCreate.getType(), is("@@dataset/CREATE"));
-        assertThat(datasetCreate.getBsStyle(), is("primary"));
+        assertThat(datasetCreate.getBsStyle(), is("info"));
 
         final ActionSettings datasetDisplayMode = settings.getActions().get("dataset:display-mode");
         assertThat(datasetDisplayMode.getName(), is("Change dataset display mode"));
@@ -191,7 +191,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationCreate.getName(), is("Add preparation"));
         assertThat(preparationCreate.getIcon(), is("talend-plus-circle"));
         assertThat(preparationCreate.getType(), is("@@preparation/CREATE"));
-        assertThat(preparationCreate.getBsStyle(), is("primary"));
+        assertThat(preparationCreate.getBsStyle(), is("info"));
         assertThat(preparationCreate.getPayload().get(PAYLOAD_METHOD_KEY), is("togglePreparationCreator"));
 
         final ActionSettings preparationDisplayMode = settings.getActions().get("preparation:display-mode");
@@ -536,16 +536,5 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(localeFull, is(Locale.US.toLanguageTag()));
         assertThat(country, is(Locale.US.getCountry()));
         assertThat(language, is(Locale.US.getLanguage()));
-    }
-
-    @Test
-    public void shouldNotEnableThemeByDefaultInContextSettings() {
-        // when
-        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
-
-        // then
-        final boolean theme = (boolean) settings.getContext().get("theme");
-
-        assertThat(theme, is(Boolean.FALSE));
     }
 }

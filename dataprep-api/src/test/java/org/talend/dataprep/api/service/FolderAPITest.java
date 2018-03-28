@@ -15,8 +15,16 @@ package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
 
 import java.io.IOException;
@@ -97,6 +105,15 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertThat(response.getStatusCode(), is(200));
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, is(empty()));
+    }
+
+    @Test
+    public void should_remove_missing_folder() throws IOException {
+        // when
+        final Response response = removeFolder("folder1234");
+
+        // then
+        assertThat(response.getStatusCode(), is(404));
     }
 
     @Test

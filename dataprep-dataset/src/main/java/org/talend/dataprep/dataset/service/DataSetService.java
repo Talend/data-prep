@@ -66,7 +66,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -524,10 +523,12 @@ public class DataSetService extends BaseDataSetService {
         try {
             lock.lock();
             if (metadata != null) {
-                dataSetMetadataRepository.remove(dataSetId); // first remove the metadata as there may be additional
-                                                             // check
+                // first remove the metadata as there may be additional check
+                dataSetMetadataRepository.remove(dataSetId);
                 contentStore.delete(metadata);
-            } // do nothing if the dataset does not exists
+            } else {
+                HttpResponseContext.status(HttpStatus.NOT_FOUND);
+            }
         } finally {
             lock.unlock();
         }

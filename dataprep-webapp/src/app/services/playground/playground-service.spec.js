@@ -953,6 +953,7 @@ describe('Playground Service', () => {
 				// given
 				const preparation = { id: '456415ae348e6046dc' };
 				stateMock.playground.preparation = preparation;
+				stateMock.playground.filter = { enabled: false };
 				const parameters = { value: 'tata', column_id: '0001' };
 
 				// when
@@ -960,7 +961,7 @@ describe('Playground Service', () => {
 				$rootScope.$digest();
 
 				// then
-				expect(PreparationService.getContent).toHaveBeenCalledWith(preparation.id, lastActiveStep.transformation.stepId, 'HEAD');
+				expect(PreparationService.getContent).toHaveBeenCalledWith(preparation.id, lastActiveStep.transformation.stepId, 'HEAD', false);
 				expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 			}));

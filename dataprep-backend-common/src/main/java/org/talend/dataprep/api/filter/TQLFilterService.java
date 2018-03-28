@@ -18,6 +18,7 @@ import static org.talend.dataprep.api.filter.DataSetRowFilters.createEmptyPredic
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createEqualsPredicate;
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createGreaterOrEqualsPredicate;
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createGreaterThanPredicate;
+import static org.talend.dataprep.api.filter.DataSetRowFilters.createInPredicate;
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createInvalidPredicate;
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createLowerOrEqualsPredicate;
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createLowerThanPredicate;
@@ -166,7 +167,7 @@ public class TQLFilterService implements FilterService {
             final String columnName = fields.pop();
             final List<String> collect = Stream.of(fieldInExpression.getValues()).map(LiteralValue::getValue).collect(Collectors.toList());
 
-            return row -> collect.contains(row.get(columnName));
+            return createInPredicate(columnName, collect);
         }
 
         @Override

@@ -243,7 +243,7 @@ export default function PlaygroundService(
 	 * @returns {Promise} The process promise
 	 */
 	function loadPreparation(preparation, sampleType = 'HEAD') {
-		startLoader()
+		startLoader();
 		return PreparationService.getContent(preparation.id, 'head', sampleType)
 			.then(data => reset.call(
 				this,
@@ -275,11 +275,16 @@ export default function PlaygroundService(
 	 * @returns {Promise} The process promise
 	 */
 	function loadStep(step) {
+		const tql =
+			state.playground.filter.enabled &&
+			FilterService.stringify(state.playground.filter.gridFilters);
+
 		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			step.transformation.stepId,
-			state.playground.sampleType
+			state.playground.sampleType,
+			tql
 		)
 			.then((response) => {
 				DatagridService.updateData(response);
@@ -935,6 +940,7 @@ export default function PlaygroundService(
 			state.playground.filter.enabled &&
 			FilterService.stringify(state.playground.filter.gridFilters);
 
+		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			'head',
@@ -943,7 +949,7 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
-		});
+		}).finally(stopLoader);
 	}
 
 	function updateDatasetDatagrid() {
@@ -955,6 +961,7 @@ export default function PlaygroundService(
 			filter.enabled &&
 			FilterService.stringify(filter.gridFilters);
 
+		startLoader();
 		return DatasetService.getContent(
 			dataset.id,
 			true,
@@ -962,7 +969,7 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
-		});
+		}).finally(stopLoader);
 	}
 
 	function updateDatagrid() {

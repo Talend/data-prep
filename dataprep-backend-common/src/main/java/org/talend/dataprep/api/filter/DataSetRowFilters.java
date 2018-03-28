@@ -13,6 +13,19 @@
 
 package org.talend.dataprep.api.filter;
 
+import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
+import static org.talend.dataprep.util.NumericHelper.isBigDecimal;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +38,6 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataprep.util.NumericHelper;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
-import static org.talend.dataprep.util.NumericHelper.isBigDecimal;
 
 /**
  * Common data set row filters.
@@ -138,6 +139,23 @@ class DataSetRowFilters {
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
                         && toBigDecimal(s).compareTo(toBigDecimal(value)) <= 0);
+    }
+
+    /**
+     * Create a predicate that checks if the var is in a supplied set of values.
+     *
+     * @param columnId The column id
+     * @param values The value set
+     * @return The in predicate
+     */
+    static Predicate<DataSetRow> createInPredicate(final String columnId, final List<String> values) {
+        return r -> r
+                .values()
+                .entrySet()
+                .stream() //
+                .filter(getColumnFilter(columnId)) //
+                .map(e -> String.valueOf(e.getValue())) //
+                .anyMatch(values::contains);
     }
 
     /**

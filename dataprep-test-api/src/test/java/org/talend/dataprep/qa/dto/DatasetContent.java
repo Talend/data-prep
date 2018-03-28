@@ -1,12 +1,12 @@
 package org.talend.dataprep.qa.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PreparationContent {
+public class DatasetContent {
 
     public List<Object> records = new ArrayList<>();
 

@@ -23,6 +23,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpHeaders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -69,7 +70,7 @@ public class DataprepLocaleContextResolverTest {
     @Test
     public void resolveLocaleContext_fromHttpHeader() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(null);
-        when(request.getHeader(eq("Accept-Language"))).thenReturn(Locale.JAPANESE.toLanguageTag());
+        when(request.getHeader(eq(HttpHeaders.ACCEPT_LANGUAGE))).thenReturn(Locale.JAPANESE.toLanguageTag());
         when(request.getLocales()).thenReturn(Collections.enumeration(Arrays.asList(Locale.JAPANESE, Locale.US)));
 
         Locale locale = resolver.resolveLocale(request);

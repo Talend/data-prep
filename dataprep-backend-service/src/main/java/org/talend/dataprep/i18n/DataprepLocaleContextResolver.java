@@ -11,46 +11,66 @@
 // ============================================================================
 package org.talend.dataprep.i18n;
 
-import static java.util.Locale.US;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.web.servlet.DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME;
 
 import java.util.Arrays;
 import java.util.IllformedLocaleException;
-import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
-// This component must have the LOCALE_RESOLVER_BEAN_NAME as it is searched by this name in
-// DispatcherServlet.initLocaleResolver:524
+/**
+ * Implementation of {@link LocaleResolver} that uses a {@link AcceptHeaderLocaleResolver} underneath. Locale used in
+ * decreasing order of priority:
+ * <ol>
+ * <li>Locale in Accept-Language</li>
+ * <li>Locale defined in
+ * 
+ * <code>
+ * dataprep.locale
+ * </code>
+ * 
+ * </li>
+ * <li>US Locale: if no property is defined in
+ * 
+ * <code>
+ * dataprep.locale
+ * </code>
+ * 
+ * <b>OR</b> if property has an invalid value (malformed or not available).</li>
+ * </ol>
+ *
+ * <p>
+ * This component must have the {@link org.springframework.web.servlet.DispatcherServlet#LOCALE_RESOLVER_BEAN_NAME
+ * LOCALE_RESOLVER_BEAN_NAME} as
+ * it is searched by this name in
+ * {@link org.springframework.web.servlet.DispatcherServlet#initLocaleResolver(ApplicationContext)
+ * initLocaleResolver()}.
+ * </p>
+ */
 @Component(LOCALE_RESOLVER_BEAN_NAME)
-public class DataprepLocaleContextResolver extends AcceptHeaderLocaleResolver {
+public class DataprepLocaleContextResolver implements LocaleResolver {
 
     private static final Logger LOGGER = getLogger(DataprepLocaleContextResolver.class);
 
     private static final Locale DEFAULT_LOCALE = Locale.US;
 
-    private final Locale applicationLocale;
+    private final AcceptHeaderLocaleResolver delegate = new AcceptHeaderLocaleResolver();
 
     public DataprepLocaleContextResolver(@Value("${dataprep.locale:en-US}") String configuredLocale) {
-        setDefaultLocale(US);
-        this.applicationLocale = resolveApplicationLocale(configuredLocale);
-    }
-
-    @Override
-    public Locale getDefaultLocale() {
-        return applicationLocale;
-    }
-
-    @Override
-    public List<Locale> getSupportedLocales() {
-        return Arrays.asList(Locale.getAvailableLocales());
+        delegate.setSupportedLocales(Arrays.asList(Locale.getAvailableLocales()));
+        delegate.setDefaultLocale(resolveApplicationLocale(configuredLocale));
     }
 
     private Locale resolveApplicationLocale(String configuredLocale) {
@@ -62,7 +82,8 @@ public class DataprepLocaleContextResolver extends AcceptHeaderLocaleResolver {
                     LOGGER.debug("Setting application locale to configured {}", locale);
                 } else {
                     locale = DEFAULT_LOCALE;
-                    LOGGER.debug("Locale {} is not available. Defaulting to {}", configuredLocale, getDefaultLocale());
+                    LOGGER.debug("Locale {} is not available. Defaulting to {}", configuredLocale,
+                            delegate.getDefaultLocale());
                 }
             } catch (IllformedLocaleException e) {
                 locale = DEFAULT_LOCALE;
@@ -72,9 +93,19 @@ public class DataprepLocaleContextResolver extends AcceptHeaderLocaleResolver {
             }
         } else {
             locale = DEFAULT_LOCALE;
-            LOGGER.debug("Setting application locale to default value {}", getDefaultLocale());
+            LOGGER.debug("Setting application locale to default value {}", delegate.getDefaultLocale());
         }
         LOGGER.info("Application locale set to: '{}'", locale);
         return locale;
+    }
+
+    @Override
+    public Locale resolveLocale(HttpServletRequest request) {
+        return delegate.resolveLocale(request);
+    }
+
+    @Override
+    public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
+        delegate.setLocale(request, response, locale);
     }
 }

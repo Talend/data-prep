@@ -31,7 +31,7 @@
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <tika.version>1.16</tika.version>
-        <org.talend.daikon.version>0.20.0</org.talend.daikon.version>
+        <org.talend.daikon.version>0.23.0</org.talend.daikon.version>
         <dataquality-libraries.version>5.0.0-SNAPSHOT</dataquality-libraries.version>
         <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>

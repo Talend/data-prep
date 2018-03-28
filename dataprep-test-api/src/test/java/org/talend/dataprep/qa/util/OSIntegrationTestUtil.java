@@ -29,7 +29,7 @@ import org.talend.dataprep.qa.dto.Folder;
 @Component
 public class OSIntegrationTestUtil {
 
-    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id");
+    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id", "new_domain_label", "new_domain_frequency");
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.

@@ -109,7 +109,8 @@ export default function ColumnProfileCtrl(
 						),
 					value: [min, max],
 					isMaxReached: interval.isMaxReached,
-					excludeMax: interval.excludeMax,
+					excludeMin: min !== max && !interval.isMinReached,
+					excludeMax: min !== max && !interval.isMaxReached,
 				},
 			],
 			type: selectedColumn.type,
@@ -127,7 +128,8 @@ export default function ColumnProfileCtrl(
 	function changeAggregation(column, aggregation) {
 		if (aggregation) {
 			StatisticsService.processAggregation(column, aggregation);
-		} else {
+		}
+		else {
 			StatisticsService.processClassicChart();
 		}
 	}

@@ -48,10 +48,12 @@ export default function FilterUtilsService($filter) {
 		}
 
 		if (min === max) {
-			label = '[' + min + ']';
+			label = `[${min}]`;
 		}
 		else {
-			label = '[' + min + RANGE_SEPARATOR + max + (interval.isMaxReached ? ']' : '[');
+			const opening = interval.isMinReached ? '[' : ']';
+			const closing = interval.isMaxReached ? ']' : '[';
+			label = `${opening}${min}${RANGE_SEPARATOR}${max}${closing}`;
 		}
 
 		return label;

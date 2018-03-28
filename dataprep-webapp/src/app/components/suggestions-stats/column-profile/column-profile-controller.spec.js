@@ -157,7 +157,7 @@ describe('ColumnProfile controller', () => {
                 min: 15,
                 max: 15,
                 isMaxReached: true,
-                excludeMax: false,
+				excludeMax: false,
             };
 
             stateMock.playground.grid.selectedColumns = [{
@@ -181,7 +181,8 @@ describe('ColumnProfile controller', () => {
                             label: '[15]',
                             value: [15, 15],
                             isMaxReached: true,
-                            excludeMax: false,
+							excludeMax: false,
+							excludeMin: false,
                         },
                     ],
                     type: 'integer',

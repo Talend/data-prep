@@ -30,14 +30,14 @@ const dateFormatter = {
 /**
  * Checks max interval >= the max of data values and  if the min interval < max interval
  */
-function adaptSelection(selection, maxValue) {
-	const isMaxReached =
-		selection.max >= maxValue || selection.min >= selection;
+function adaptSelection(selection, minValue, maxValue) {
+	const isMinReached = selection.min <= minValue || selection.max <= selection;
+	const isMaxReached = selection.max >= maxValue || selection.min >= selection;
 
 	return {
 		min: selection.min,
 		max: selection.max,
-		excludeMax: !isMaxReached,
+		isMinReached,
 		isMaxReached,
 	};
 }
@@ -329,7 +329,8 @@ export default class RangeSliderCtrl {
 	validateInputs() {
 		if (this.inputsAreValid()) {
 			this.hideMsgErr();
-		} else {
+		}
+		else {
 			this.showMsgErr();
 		}
 	}
@@ -363,7 +364,7 @@ export default class RangeSliderCtrl {
      * @param {Object} values The values to propagate
      **/
 	onChange(values) {
-		const interval = adaptSelection(values, this.rangeLimits.max);
+		const interval = adaptSelection(values, this.rangeLimits.min, this.rangeLimits.max);
 		this.onBrushEnd({ interval });
 	}
 
@@ -403,7 +404,8 @@ export default class RangeSliderCtrl {
 			this.setLastBrushValues(adaptedBrushValues);
 			this.setLastInputValues(adaptedValue);
 			this.onChange(adaptedValue);
-		} else {
+		}
+		else {
 			this.resetInputValues();
 		}
 	}

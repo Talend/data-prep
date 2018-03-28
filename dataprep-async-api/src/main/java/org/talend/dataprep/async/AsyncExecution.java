@@ -63,8 +63,6 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
     private ErrorCode error;
 
     /** The current execution progress. */
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private ExecutionProgress progress;
 
     private String userId;

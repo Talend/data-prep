@@ -25,7 +25,7 @@
     <packaging>pom</packaging>
     <name>dataprep-backend</name>
     <properties>
-        <dataprep.core.version>2.5.1</dataprep.core.version>
+        <dataprep.core.version>2.5.2</dataprep.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
         <java.version>1.8</java.version>

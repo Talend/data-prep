@@ -41,7 +41,7 @@ public class DataprepLocaleContextResolverTest {
     private HttpServletResponse response;
 
     @Test
-    public void resolveLocaleContext_wellFormattedLocaleIsTaken() throws Exception {
+    public void resolveLocaleContextWithWellFormattedLocaleIsTaken() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(TEST_LOCALE);
 
         Locale locale = resolver.resolveLocale(request);
@@ -50,7 +50,7 @@ public class DataprepLocaleContextResolverTest {
     }
 
     @Test
-    public void resolveLocaleContext_notFormattedLocaleDefault() throws Exception {
+    public void resolveLocaleContextWithNotFormattedLocaleDefault() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver("abcd");
 
         Locale locale = resolver.resolveLocale(request);
@@ -59,7 +59,7 @@ public class DataprepLocaleContextResolverTest {
     }
 
     @Test
-    public void resolveLocaleContext_noLocaleThenDefault() throws Exception {
+    public void resolveLocaleContextWithNoLocaleThenDefault() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(null);
 
         Locale locale = resolver.resolveLocale(request);
@@ -68,7 +68,7 @@ public class DataprepLocaleContextResolverTest {
     }
 
     @Test
-    public void resolveLocaleContext_fromHttpHeader() throws Exception {
+    public void resolveLocaleContextWithFromHttpHeader() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(null);
         when(request.getHeader(eq(HttpHeaders.ACCEPT_LANGUAGE))).thenReturn(Locale.JAPANESE.toLanguageTag());
         when(request.getLocales()).thenReturn(Collections.enumeration(Arrays.asList(Locale.JAPANESE, Locale.US)));
@@ -79,7 +79,7 @@ public class DataprepLocaleContextResolverTest {
     }
 
     @Test
-    public void resolveLocaleContext_malformedLocale() throws Exception {
+    public void resolveLocaleContextWithMalformedLocale() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver("@@&&");
 
         Locale locale = resolver.resolveLocale(request);

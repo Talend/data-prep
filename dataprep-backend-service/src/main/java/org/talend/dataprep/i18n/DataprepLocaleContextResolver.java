@@ -25,7 +25,6 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
@@ -55,7 +54,7 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
  * This component must have the {@link org.springframework.web.servlet.DispatcherServlet#LOCALE_RESOLVER_BEAN_NAME
  * LOCALE_RESOLVER_BEAN_NAME} as
  * it is searched by this name in
- * {@link org.springframework.web.servlet.DispatcherServlet#initLocaleResolver(ApplicationContext)
+ * {@link org.springframework.web.servlet.DispatcherServlet#initLocaleResolver(org.springframework.context.ApplicationContext)
  * initLocaleResolver()}.
  * </p>
  */

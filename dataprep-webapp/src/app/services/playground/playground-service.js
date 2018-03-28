@@ -940,6 +940,7 @@ export default function PlaygroundService(
 			state.playground.filter.enabled &&
 			FilterService.stringify(state.playground.filter.gridFilters);
 
+		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			'head',
@@ -948,7 +949,7 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
-		});
+		}).finally(stopLoader);
 	}
 
 	function updateDatasetDatagrid() {
@@ -960,6 +961,7 @@ export default function PlaygroundService(
 			filter.enabled &&
 			FilterService.stringify(filter.gridFilters);
 
+		startLoader();
 		return DatasetService.getContent(
 			dataset.id,
 			true,
@@ -967,7 +969,7 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
-		});
+		}).finally(stopLoader);
 	}
 
 	function updateDatagrid() {

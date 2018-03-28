@@ -157,7 +157,7 @@ describe('ColumnProfile controller', () => {
                 min: 15,
                 max: 15,
                 isMaxReached: true,
-                excludeMax: false,
+                excludeMax: true,
             };
 
             stateMock.playground.grid.selectedColumns = [{

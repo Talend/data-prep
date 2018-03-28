@@ -109,7 +109,7 @@ export default function ColumnProfileCtrl(
 						),
 					value: [min, max],
 					isMaxReached: interval.isMaxReached,
-					excludeMax: interval.excludeMax,
+					excludeMax: min !== max && interval.excludeMax,
 				},
 			],
 			type: selectedColumn.type,

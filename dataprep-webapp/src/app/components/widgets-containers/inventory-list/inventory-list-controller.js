@@ -191,14 +191,18 @@ export default class InventoryListCtrl {
 
 		const listSettings = this.appSettings.views[this.viewKey].list;
 		const action = this.appSettings.actions[listSettings.titleProps.onClick];
-		if (action.data) {
-			Object.keys(action.data)
-				.forEach((dataAttr) => {
-					titleProps[`data-${dataAttr}`] = action.data[dataAttr];
-				});
-		}
-
+		this.adaptDataAttributes(titleProps, action);
 		return titleProps;
+	}
+
+	adaptDataAttributes(toAction, fromAction = toAction) {
+		if (toAction.data) {
+			Object.keys(toAction.data)
+				.forEach((dataAttr) => {
+					toAction[`data-${dataAttr}`] = fromAction.data[dataAttr];
+				});
+			delete toAction.data;
+		}
 	}
 
 	getActionDispatcher(actionName) {
@@ -262,7 +266,7 @@ export default class InventoryListCtrl {
 					// dropdown static actions are applied to the host model
 					// ex: dataset > "create new preparation action" is applied to the dataset
 					const staticActions = actionSettings.staticActions.map(
-						staticAction => this.createDropdownItemAction(hostModel, staticAction)
+						staticAction => this.createDropdownItemAction(hostModel, staticAction),
 					);
 					// dropdown dynamic action is the unique action on each item click
 					// ex: dataset > "open preparation x" is applied to "preparation x"
@@ -291,14 +295,7 @@ export default class InventoryListCtrl {
 		if (adaptedActions) {
 			adaptedActions.forEach((action) => {
 				action.id = `${this.id}-${index}-${action.id}`;
-				if (action.data) {
-					Object.keys(action.data)
-						.forEach((dataAttr) => {
-							action[`data-${dataAttr}`] = action.data[dataAttr];
-						});
-					delete action.data;
-				}
-				console.log(action);
+				this.adaptDataAttributes(action);
 			});
 		}
 		return adaptedActions;

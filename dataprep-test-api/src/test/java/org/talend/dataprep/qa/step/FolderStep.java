@@ -1,13 +1,8 @@
 package org.talend.dataprep.qa.step;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -15,13 +10,14 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
-import com.jayway.restassured.response.Response;
-
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
 
 /**
  * Store steps related to folders.

@@ -13,17 +13,17 @@
 
 package org.talend.dataprep.qa.config;
 
-import static org.junit.Assert.fail;
+import com.jayway.restassured.response.Response;
+import cucumber.api.java.After;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.dto.Folder;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.dto.Folder;
-
-import cucumber.api.java.After;
+import static org.junit.Assert.fail;
 
 /**
  * Storage for Before and After actions.
@@ -79,17 +79,24 @@ public class GlobalStep extends DataPrepStep {
         if (cleanAfterStepIsOK) {
             LOGGER.info("The Clean After Step is Ok. All deletion were done.");
         } else {
-            for (String prepId:listPreparationDeletionPb) {
-                LOGGER.warn("Pb in the deletion of preparation {}.",prepId);
+            for (String prepId : listPreparationDeletionPb) {
+                LOGGER.warn("Pb in the deletion of preparation {}.", prepId);
             }
-            for (String datasetId:listDatasetDeletionPb) {
-                LOGGER.warn("Pb in the deletion of dataset {}.",datasetId);
+            for (String datasetId : listDatasetDeletionPb) {
+                LOGGER.warn("Pb in the deletion of dataset {}.", datasetId);
             }
-            for (Folder folder:listFolderDeletionPb) {
-                LOGGER.warn("Pb in the deletion of folder {}.",folder.getPath());
+            for (Folder folder : listFolderDeletionPb) {
+                LOGGER.warn("Pb in the deletion of folder {}.", folder.getPath());
             }
             LOGGER.warn("The Clean After Step has failed. All deletion were not done.");
-            fail("Fail to delete preparation : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
+            throw new CleanAfterException("Fail to delete some elements : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
+        }
+    }
+
+
+    public class CleanAfterException extends RuntimeException {
+        CleanAfterException(String s) {
+            super(s);
         }
     }
 

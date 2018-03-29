@@ -13,16 +13,8 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.command.Defaults.emptyStream;
-import static org.talend.dataprep.command.Defaults.pipeStream;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.URI;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -30,9 +22,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.api.export.ExportParameters.SourceType;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+
+import static org.talend.dataprep.BaseErrorCodes.UNEXPECTED_EXCEPTION;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.command.Defaults.emptyStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
 
 /**
  * Command used to retrieve the preparation content.
@@ -41,17 +39,11 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Scope("request")
 public class PreparationGetContent extends GenericCommand<InputStream> {
 
-    /** The preparation id. */
-    private final String id;
-
-    /** The preparation version. */
-    private final String version;
-
     /**
      * @param id the preparation id.
      * @param version the preparation version.
      */
-    private PreparationGetContent(String id, String version) {
+    private PreparationGetContent(final String id, final String version) {
         this(id, version, HEAD);
     }
 
@@ -60,15 +52,14 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
      * @param version the preparation version.
      * @param from where to read the data from.
      */
-    private PreparationGetContent(String id, String version, ExportParameters.SourceType from) {
+    private PreparationGetContent(final String id, final String version, final SourceType from) {
         super(PREPARATION_GROUP);
-        this.id = id;
-        this.version = version;
+
         execute(() -> {
             try {
                 ExportParameters parameters = new ExportParameters();
-                parameters.setPreparationId(this.id);
-                parameters.setStepId(this.version);
+                parameters.setPreparationId(id);
+                parameters.setStepId(version);
                 parameters.setExportType("JSON");
                 parameters.setFrom(from);
 
@@ -77,10 +68,11 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
                 post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
                 return post;
             } catch (Exception e) {
-                throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_CONTENT, e);
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });
         on(HttpStatus.OK).then(pipeStream());
         on(HttpStatus.ACCEPTED).then(emptyStream());
+        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_CONTENT, e));
     }
 }

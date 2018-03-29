@@ -13,16 +13,17 @@
 
 package org.talend.dataprep.qa.config;
 
-import cucumber.api.java.After;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.dto.Folder;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.fail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.dto.Folder;
+
+import cucumber.api.java.After;
 
 /**
  * Storage for Before and After actions.
@@ -74,9 +75,6 @@ public class GlobalStep extends DataPrepStep {
 
         // cleaning all features context object
         context.clearObject();
-
-        // cleaning all export parameters
-        context.clearPreparationExportFormat();
 
         if (cleanAfterStepIsOK) {
             LOGGER.info("The Clean After Step is Ok. All deletion were done.");

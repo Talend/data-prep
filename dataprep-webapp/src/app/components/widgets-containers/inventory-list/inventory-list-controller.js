@@ -235,7 +235,7 @@ export default class InventoryListCtrl {
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
 		}
-        this.adaptDataAttributes(baseAction);
+		this.adaptDataAttributes(baseAction);
 		return baseAction;
 	}
 
@@ -243,7 +243,7 @@ export default class InventoryListCtrl {
 		const itemOnClick = this.getActionDispatcher(actionName);
 		const itemAction = this.createBaseAction(actionName, true);
 		itemAction.onClick = event => itemOnClick(event, item);
-        this.adaptDataAttributes(itemAction);
+		this.adaptDataAttributes(itemAction);
 		return itemAction;
 	}
 
@@ -252,7 +252,7 @@ export default class InventoryListCtrl {
 			const itemAction = this.createDropdownItemAction(item, actionName);
 			itemAction.label = item.label || item.name;
 			if (item.locationType) {
-				itemAction['data-feature'] = `dataset.${item.locationType}.add` ;
+				itemAction['data-feature'] = `dataset.${item.locationType}.add`;
 			}
 			this.adaptDataAttributes(itemAction);
 			return itemAction;

@@ -12,11 +12,6 @@
 
 package org.talend.dataprep.api.filter;
 
-import static java.time.Month.JANUARY;
-import static java.time.ZoneOffset.UTC;
-
-import java.time.LocalDateTime;
-
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -145,7 +140,7 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     @Test
     public void shouldIncludeAllDecimalSeparators() {
         // given
-        final String filtersDefinition = givenFilter_0001_between_5_and_10();
+        final String filtersDefinition = givenFilter_0001_between_5_incl_and_10_incl();
         row.set("0001", "5.35");
 
         // when
@@ -541,7 +536,7 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
-    protected String givenFilter_0001_between_5_and_10() {
+    protected String givenFilter_0001_between_5_incl_and_10_incl() {
         return "{" + //
                 "   \"range\": {" + //
                 "       \"field\": \"0001\"," + //
@@ -553,7 +548,43 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
-    protected String givenFilter_one_column_between_5_and_10() {
+    protected String givenFilter_0001_between_5_excl_and_10_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"field\": \"0001\"," + //
+                "       \"start\": \"5\"," + //
+                "       \"end\": \"10\"," + //
+                "       \"lowerOpen\": true" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_5_incl_and_10_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"field\": \"0001\"," + //
+                "       \"start\": \"5\"," + //
+                "       \"end\": \"10\"" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_5_excl_and_10_incl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"field\": \"0001\"," + //
+                "       \"start\": \"5\"," + //
+                "       \"end\": \"10\"," + //
+                "       \"lowerOpen\": true," + //
+                "       \"upperOpen\": false" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_5_incl_and_10_incl() {
         return "{" + //
                 "   \"range\": {" + //
                 "       \"start\": \"5\"," + //
@@ -564,24 +595,118 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
-    protected String givenFilter_0001_between_timestampFor19700101_and_timestampFor19900101() {
+    protected String givenFilter_one_column_between_5_excl_and_10_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"start\": \"5\"," + //
+                "       \"end\": \"10\"," + //
+                "       \"lowerOpen\": true" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_5_incl_and_10_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"start\": \"5\"," + //
+                "       \"end\": \"10\"" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_5_excl_and_10_incl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"start\": \"5\"," + //
+                "       \"end\": \"10\"," + //
+                "       \"lowerOpen\": true," + //
+                "       \"upperOpen\": false" + //
+                "   }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl() {
         return "{" + //
                 "   \"range\": {" + //
                 "       \"field\": \"0001\"," + //
                 "       \"start\": 0," + // 1970-01-01 UTC timezone
-                // 1990-01-01 UTC timezone
-                "       \"end\": " + (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000) + "," + //
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "," + // 1990-01-01 UTC timezone
                 "       \"upperOpen\": false }" + //
                 "}";
     }
 
     @Override
-    protected String givenFilter_one_column_between_timestampFor19700101_and_timestampFor19900101() {
+    protected String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"field\": \"0001\"," + //
+                "       \"start\": 0," + // 1970-01-01 UTC timezone
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "," + // 1990-01-01 UTC timezone
+                "       \"lowerOpen\": true }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"field\": \"0001\"," + //
+                "       \"start\": 0," + // 1970-01-01 UTC timezone
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "}" + // 1990-01-01 UTC timezone
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"field\": \"0001\"," + //
+                "       \"start\": 0," + // 1970-01-01 UTC timezone
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "," + // 1990-01-01 UTC timezone
+                "       \"lowerOpen\": true," + //
+                "       \"upperOpen\": false }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl() {
         return "{" + //
                 "   \"range\": {" + //
                 "       \"start\": 0," + // 1970-01-01 UTC timezone
-                // 1990-01-01 UTC timezone
-                "       \"end\": " + (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000) + "," + //
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "," + // 1990-01-01 UTC timezone
+                "       \"upperOpen\": false }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"start\": 0," + // 1970-01-01 UTC timezone
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "," + // 1990-01-01 UTC timezone
+                "       \"lowerOpen\": true }" + //
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"start\": 0," + // 1970-01-01 UTC timezone
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "}" + // 1990-01-01 UTC timezone
+                "}";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl() {
+        return "{" + //
+                "   \"range\": {" + //
+                "       \"start\": 0," + // 1970-01-01 UTC timezone
+                "       \"end\": " + SECONDS_FROM_1970_01_01_UTC + "," + // 1990-01-01 UTC timezone
+                "       \"lowerOpen\": true," + //
                 "       \"upperOpen\": false }" + //
                 "}";
     }

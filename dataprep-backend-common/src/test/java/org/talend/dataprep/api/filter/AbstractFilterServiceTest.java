@@ -14,6 +14,7 @@
 package org.talend.dataprep.api.filter;
 
 import static java.time.Month.JANUARY;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +30,9 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 
 public abstract class AbstractFilterServiceTest extends FilterServiceTest {
+
+    /** 1990-01-01 UTC timezone */
+    protected static final long SECONDS_FROM_1970_01_01_UTC = (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000);
 
     protected final FilterService service = getFilterService();
 
@@ -76,6 +80,18 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
             row.set(columnIds[i], values[i]);
         }
         assertThatFilterExecutionReturnsFalse();
+    }
+
+    private void assertFilterReturnsExpectedResultForRow(boolean expectedResult, String columnId, String value) {
+        row.set(columnId, value);
+        assertThat(filter.test(row)).isEqualTo(expectedResult);
+    }
+
+    private void assertFilterReturnsExpectedResultForRow(boolean expectedResult, String[] columnIds, String[] values) {
+        for (int i = 0; i < columnIds.length; i++) {
+            row.set(columnIds[i], values[i]);
+        }
+        assertThat(filter.test(row)).isEqualTo(expectedResult);
     }
 
     @Test
@@ -847,10 +863,9 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
     protected abstract String givenFilter_one_column_is_empty();
 
-    @Test
-    public void testBetweenPredicateOnNumberValue() throws Exception {
+    private void runTestBetweenPredicateOnNumberValue(String filtersDefinition, boolean isMinIncluded, boolean isMaxIncluded) throws Exception {
         // given
-        final String filtersDefinition = givenFilter_0001_between_5_and_10();
+        // see method arguments
 
         // when
         filter = service.build(filtersDefinition, rowMetadata);
@@ -859,9 +874,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         row.getRowMetadata().getById("0001").setType("integer");
         assertThatFilterExecutionReturnsFalseForRow("0001", "a"); // invalid number
         assertThatFilterExecutionReturnsFalseForRow("0001", "4"); // lt min
-        assertThatFilterExecutionReturnsTrueForRow("0001", "5"); // eq min
         assertThatFilterExecutionReturnsTrueForRow("0001", "8"); // in range
-        assertThatFilterExecutionReturnsTrueForRow("0001", "10"); // eq max
         assertThatFilterExecutionReturnsFalseForRow("0001", "20"); // gt max
 
         assertThatFilterExecutionReturnsFalseForRow("0001", "toto"); // nan
@@ -873,23 +886,52 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", ",5"); // lt
         assertThatFilterExecutionReturnsFalseForRow("0001", ".5"); // lt
 
-        assertThatFilterExecutionReturnsTrueForRow("0001", "5.0"); // eq
-        assertThatFilterExecutionReturnsTrueForRow("0001", "5,00"); // eq
-        assertThatFilterExecutionReturnsTrueForRow("0001", "05.0"); // eq
-        assertThatFilterExecutionReturnsTrueForRow("0001", "0 005"); // eq
 
         assertThatFilterExecutionReturnsTrueForRow("0001", "5.5"); // gt
         assertThatFilterExecutionReturnsTrueForRow("0001", "5,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1 000.5"); // gt
+
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, "0001", "5"); // min
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, "0001", "5.0"); // min
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, "0001", "5,00"); // min
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, "0001", "05.0"); // min
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, "0001", "0 005"); // min
+
+        assertFilterReturnsExpectedResultForRow(isMaxIncluded, "0001", "10"); // max
     }
 
-    protected abstract String givenFilter_0001_between_5_and_10();
+    @Test
+    public void testBetweenPredicateOnNumberValue_closed() throws Exception {
+        runTestBetweenPredicateOnNumberValue(givenFilter_0001_between_5_incl_and_10_incl(), true, true);
+    }
+
+    protected abstract String givenFilter_0001_between_5_incl_and_10_incl();
 
     @Test
-    public void testBetweenPredicateOnNumberValueOnOneColumn() throws Exception {
+    public void testBetweenPredicateOnNumberValue_open() throws Exception {
+        runTestBetweenPredicateOnNumberValue(givenFilter_0001_between_5_excl_and_10_excl(), false, false);
+    }
+
+    protected abstract String givenFilter_0001_between_5_excl_and_10_excl();
+
+    @Test
+    public void testBetweenPredicateOnNumberValue_rightOpen() throws Exception {
+        runTestBetweenPredicateOnNumberValue(givenFilter_0001_between_5_incl_and_10_excl(), true, false);
+    }
+
+    protected abstract String givenFilter_0001_between_5_incl_and_10_excl();
+
+    @Test
+    public void testBetweenPredicateOnNumberValue_leftOpen() throws Exception {
+        runTestBetweenPredicateOnNumberValue(givenFilter_0001_between_5_excl_and_10_incl(), false, true);
+    }
+
+    protected abstract String givenFilter_0001_between_5_excl_and_10_incl();
+
+    private void runTestBetweenPredicateOnNumberValueOnOneColumn(String filtersDefinition, boolean isMinIncluded, boolean isMaxIncluded)  throws Exception {
         // given
-        final String filtersDefinition = givenFilter_one_column_between_5_and_10();
+        // see method arguments
 
         // when
         filter = service.build(filtersDefinition, rowMetadata);
@@ -897,30 +939,61 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         // then
         row.getRowMetadata().getById("0001").setType("integer");
         row.getRowMetadata().getById("0002").setType("integer");
+
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "a", "4" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5.5" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5,5" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "8" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "10" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "toto", "20" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "", null });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "4.5", "4,5" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { ",5", ".5" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5.0" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5,00" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "05.0" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "0 005" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5.5" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "5.5" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "1.000,5", "1 000.5" });
+
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, new String[] { "0001", "0002" }, new String[] { "a", "5" });
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, new String[] { "0001", "0002" }, new String[] { "a", "5.0" });
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, new String[] { "0001", "0002" }, new String[] { "a", "5,00" });
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, new String[] { "0001", "0002" }, new String[] { "a", "05.0" });
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, new String[] { "0001", "0002" }, new String[] { "a", "0 005" });
+
+        assertFilterReturnsExpectedResultForRow(isMaxIncluded, new String[] { "0001", "0002" }, new String[] { "a", "10" });
     }
 
-    protected abstract String givenFilter_one_column_between_5_and_10();
+    @Test
+    public void testBetweenPredicateOnNumberValueOnOneColumn_closed() throws Exception {
+        // [min, max]
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_incl_and_10_incl(), true, true);
+    }
+
+    protected abstract String givenFilter_one_column_between_5_incl_and_10_incl();
 
     @Test
-    public void testBetweenPredicateOnDateValue() throws Exception {
-        // given
-        final String filtersDefinition = givenFilter_0001_between_timestampFor19700101_and_timestampFor19900101();
+    public void testBetweenPredicateOnNumberValueOnOneColumn_open() throws Exception {
+        // ]min, max[
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_excl_and_10_excl(), false, false);
+    }
 
+    protected abstract String givenFilter_one_column_between_5_excl_and_10_excl();
+
+    @Test
+    public void testBetweenPredicateOnNumberValueOnOneColumn_rightOpen() throws Exception {
+        // [min, max[
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_incl_and_10_excl(), true, false);
+    }
+
+    protected abstract String givenFilter_one_column_between_5_incl_and_10_excl();
+
+    @Test
+    public void testBetweenPredicateOnNumberValueOnOneColumn_leftOpen() throws Exception {
+        // ]min, max]
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_excl_and_10_incl(), false, true);
+    }
+
+    protected abstract String givenFilter_one_column_between_5_excl_and_10_incl();
+
+    private void runTestBetweenPredicateOnDateValue(String filtersDefinition, boolean isMinIncluded, boolean isMaxIncluded) throws Exception {
+        // given
+        // see method arguments too
         final ColumnMetadata column = row.getRowMetadata().getById("0001");
         column.setType("date");
         final DateParser dateParser = Mockito.mock(DateParser.class);
@@ -937,20 +1010,44 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         // then
         assertThatFilterExecutionReturnsFalseForRow("0001", "a"); // invalid number
         assertThatFilterExecutionReturnsFalseForRow("0001", "1960-01-01"); // lt min
-        assertThatFilterExecutionReturnsTrueForRow("0001", "1970-01-01"); // eq min
         assertThatFilterExecutionReturnsTrueForRow("0001", "1980-01-01"); // in range
-        assertThatFilterExecutionReturnsTrueForRow("0001", "1990-01-01"); // eq max
         assertThatFilterExecutionReturnsFalseForRow("0001", "2000-01-01"); // gt max
 
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, "0001", "1970-01-01");
+        assertFilterReturnsExpectedResultForRow(isMaxIncluded, "0001", "1990-01-01");
     }
 
-    protected abstract String givenFilter_0001_between_timestampFor19700101_and_timestampFor19900101();
+    @Test
+    public void testBetweenPredicateOnDateValue_closed() throws Exception {
+        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl(), true, true);
+    }
+
+    protected abstract String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl();
 
     @Test
-    public void testBetweenPredicateOnDateValueOnOneColumn() throws Exception {
-        // given
-        final String filtersDefinition = givenFilter_one_column_between_timestampFor19700101_and_timestampFor19900101();
+    public void testBetweenPredicateOnDateValue_open() throws Exception {
+        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl(), false, false);
+    }
 
+    protected abstract String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl();
+
+    @Test
+    public void testBetweenPredicateOnDateValue_rigthOpen() throws Exception {
+        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl(), true, false);
+    }
+
+    protected abstract String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl();
+
+    @Test
+    public void testBetweenPredicateOnDateValue_leftOpen() throws Exception {
+        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl(), false, true);
+    }
+
+    protected abstract String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl();
+
+    private void runTestBetweenPredicateOnDateValueOnOneColumn(String filtersDefinition, boolean isMinIncluded, boolean isMaxExcluded) throws Exception {
+        // given
+        // see method args too
         final DateParser dateParser = Mockito.mock(DateParser.class);
 
         final ColumnMetadata column1 = row.getRowMetadata().getById("0001");
@@ -976,12 +1073,38 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         // then
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "a", "1960-01-01" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "1960-01-01", "1970-01-01" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "a", "1980-01-01" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "1990-01-01", "2000-01-01" });
+        assertFilterReturnsExpectedResultForRow(isMinIncluded, new String[] { "0001", "0002" }, new String[] { "1960-01-01", "1970-01-01" });
+        assertFilterReturnsExpectedResultForRow(isMaxExcluded, new String[] { "0001", "0002" }, new String[] { "1990-01-01", "2000-01-01" });
     }
 
-    protected abstract String givenFilter_one_column_between_timestampFor19700101_and_timestampFor19900101();
+    @Test
+    public void testBetweenPredicateOnDateValueOnOneColumn_closed() throws Exception {
+        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl(), true, true);
+    }
+
+    protected abstract String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl();
+
+    @Test
+    public void testBetweenPredicateOnDateValueOnOneColumn_open() throws Exception {
+        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl(), false, false);
+    }
+
+    protected abstract String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl();
+
+    @Test
+    public void testBetweenPredicateOnDateValueOnOneColumn_rightOpen() throws Exception {
+        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl(), true, false);
+    }
+
+    protected abstract String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl();
+
+    @Test
+    public void testBetweenPredicateOnDateValueOnOneColumn_leftOpen() throws Exception {
+        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl(), false, true);
+    }
+
+    protected abstract String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl();
 
     @Test
     public void should_create_AND_predicate() throws Exception {

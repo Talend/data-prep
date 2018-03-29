@@ -12,11 +12,6 @@
 
 package org.talend.dataprep.api.filter;
 
-import static java.time.Month.JANUARY;
-import static java.time.ZoneOffset.UTC;
-
-import java.time.LocalDateTime;
-
 import org.junit.Test;
 
 public class TQLFilterServiceTest extends AbstractFilterServiceTest {
@@ -113,7 +108,7 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
     @Test
     public void shouldIncludeAllDecimalSeparators() {
         // given
-        final String filtersDefinition = givenFilter_0001_between_5_and_10();
+        final String filtersDefinition = givenFilter_0001_between_5_incl_and_10_incl();
         row.set("0001", "5.35");
 
         // when
@@ -315,29 +310,83 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
     }
 
     @Override
-    protected String givenFilter_0001_between_5_and_10() {
+    protected String givenFilter_0001_between_5_incl_and_10_incl() {
         return "0001 between [5, 10]";
     }
 
     @Override
-    protected String givenFilter_one_column_between_5_and_10() {
+    protected String givenFilter_0001_between_5_excl_and_10_excl() {
+        return "0001 between ]5, 10[";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_5_incl_and_10_excl() {
+        return "0001 between [5, 10[";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_5_excl_and_10_incl() {
+        return "0001 between ]5, 10]";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_5_incl_and_10_incl() {
         return "* between [5, 10]";
     }
 
     @Override
-    protected String givenFilter_0001_between_timestampFor19700101_and_timestampFor19900101() {
-        final long secondsFrom_1970_01_01_UTC = (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000); // 1990-01-01
-                                                                                                                      // UTC
-                                                                                                                      // timezone
-        return "0001 between [0, " + secondsFrom_1970_01_01_UTC + "]";
+    protected String givenFilter_one_column_between_5_excl_and_10_excl() {
+        return "* between ]5, 10[";
     }
 
     @Override
-    protected String givenFilter_one_column_between_timestampFor19700101_and_timestampFor19900101() {
-        final long secondsFrom_1970_01_01_UTC = (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000); // 1990-01-01
-        // UTC
-        // timezone
-        return "* between [0, " + secondsFrom_1970_01_01_UTC + "]";
+    protected String givenFilter_one_column_between_5_incl_and_10_excl() {
+        return "* between [5, 10[";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_5_excl_and_10_incl() {
+        return "* between ]5, 10]";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl() {
+        return "0001 between [0, " + SECONDS_FROM_1970_01_01_UTC + "]";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl() {
+        return "0001 between ]0, " + SECONDS_FROM_1970_01_01_UTC + "[";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl() {
+        return "0001 between [0, " + SECONDS_FROM_1970_01_01_UTC + "[";
+    }
+
+    @Override
+    protected String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl() {
+        return "0001 between ]0, " + SECONDS_FROM_1970_01_01_UTC + "]";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl() {
+        return "* between [0, " + SECONDS_FROM_1970_01_01_UTC + "]";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl() {
+        return "* between ]0, " + SECONDS_FROM_1970_01_01_UTC + "[";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl() {
+        return "* between [0, " + SECONDS_FROM_1970_01_01_UTC + "[";
+    }
+
+    @Override
+    protected String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl() {
+        return "* between ]0, " + SECONDS_FROM_1970_01_01_UTC + "]";
     }
 
 }

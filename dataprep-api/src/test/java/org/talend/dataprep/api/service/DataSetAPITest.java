@@ -18,8 +18,15 @@ import static com.jayway.restassured.path.json.JsonPath.from;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order.ASC;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order.DESC;
@@ -28,7 +35,12 @@ import static org.talend.dataprep.util.SortAndOrderHelper.Sort.NAME;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -364,6 +376,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // then
         assertEquals("[]", updatedList);
+    }
+
+    @Test
+    public void testDataSetDeleteMissing() throws Exception {
+        // then
+        when().delete("/api/datasets/dataset1234").then().statusCode(404);
     }
 
     /**

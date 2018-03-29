@@ -15,8 +15,13 @@ package org.talend.dataprep.api.service;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.command.CommandHelper.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.command.CommandHelper.toStreaming;
 
 import java.io.InputStream;
 import java.util.List;
@@ -27,14 +32,31 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedDataSetMetadata;
-import org.talend.dataprep.api.service.command.dataset.*;
+import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
+import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
+import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
+import org.talend.dataprep.api.service.command.dataset.CreateOrUpdateDataSet;
+import org.talend.dataprep.api.service.command.dataset.DataSetDelete;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetEncodings;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetImportParameters;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetImports;
+import org.talend.dataprep.api.service.command.dataset.DataSetList;
+import org.talend.dataprep.api.service.command.dataset.DataSetPreview;
+import org.talend.dataprep.api.service.command.dataset.GetDataSetColumnTypes;
+import org.talend.dataprep.api.service.command.dataset.SetFavorite;
+import org.talend.dataprep.api.service.command.dataset.UpdateColumn;
+import org.talend.dataprep.api.service.command.dataset.UpdateDataSet;
 import org.talend.dataprep.api.service.command.preparation.PreparationList;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDataSetId;
 import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
@@ -359,16 +381,18 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets/{id}", method = DELETE)
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
-    public void delete(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to delete") String dataSetId) {
+    public ResponseEntity<String> delete(@PathVariable(value = "id") @ApiParam(name = "id",
+            value = "Id of the data set to delete") String dataSetId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Delete dataset #{} (pool: {})...", dataSetId, getConnectionStats());
         }
-        HystrixCommand<Void> deleteCommand = getCommand(DataSetDelete.class, dataSetId);
-
-        deleteCommand.execute();
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Listing datasets (pool: {}) done.", getConnectionStats());
+        HystrixCommand<ResponseEntity<String>> deleteCommand = getCommand(DataSetDelete.class, dataSetId);
+        try {
+            return deleteCommand.execute();
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Listing datasets (pool: {}) done.", getConnectionStats());
+            }
         }
     }
 

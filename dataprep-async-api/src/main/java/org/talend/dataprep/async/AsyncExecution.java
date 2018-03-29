@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
+import org.talend.dataprep.async.progress.ExecutionProgress;
 import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -37,75 +38,37 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonRootName("execution")
 public class AsyncExecution implements Comparable<AsyncExecution> {
 
-    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncExecution.class);
 
-    @Override
-    public int compareTo(AsyncExecution o) {
-        // Ensure running executions are top of sort
-        if (this.getStatus() == Status.RUNNING) {
-            return -1;
-        }
-        if (o.getStatus() == Status.RUNNING) {
-            return 1;
-        }
-        // Normal sort
-        return Long.compare(o.getTime().getEndDate(), this.getTime().getEndDate());
-    }
-
-    /**
-     * The comparator to use to make sure the last started is first.
-     */
-    private static final Comparator<AsyncExecution> ASYNC_EXECUTION_START_DESC_ORDER = generateDateDescComparator(
-            task -> task.getTime().getStartDate(), true);
-
-    /**
-     * The comparator to use to make sure the last started is first.
-     */
-    private static final Comparator<AsyncExecution> ASYNC_EXECUTION_END_DESC_ORDER = generateDateDescComparator(
-            task -> task.getTime().getEndDate(), true);
-
     /** The execution group (parent) id. */
-    @JsonProperty("group")
     private String group;
 
     /** The execution id. */
-    @JsonProperty("id")
     private String id;
 
     /** The execution detailed timing (start / stop...). */
-    @JsonProperty("time")
     private Time time = new Time();
 
     /** The current execution status. */
-    @JsonProperty("status")
     private Status status = Status.NEW;
 
     /** The execution result (e.g. transformation / sampling...). */
-    @JsonProperty("result")
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private AsyncExecutionResult result;
 
     /** The execution error code when it failed. */
-    @JsonProperty("error")
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
     private ErrorCode error;
 
     /** The current execution progress. */
-    @JsonProperty("progress")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    private Object progress;
+    private ExecutionProgress progress;
 
-    @JsonProperty("userId")
     private String userId;
 
-    @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("dispatchId")
     private String dispatchId;
 
     /**
@@ -131,39 +94,12 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         this.id = id;
     }
 
-    /**
-     * The comparator to use to make sure the last started is first.
-     */
-    private static Comparator<AsyncExecution> generateDateDescComparator(final Function<AsyncExecution, Long> getDate,
-            final boolean desc) {
-        final int order = desc ? -1 : 1;
-        return (task1, task2) -> {
-            final long task1Date = getDate.apply(task1);
-            final long task2Date = getDate.apply(task2);
-            if (task1Date > task2Date) {
-                return order;
-            } else if (task1Date < task2Date) {
-                return -order;
-            } else {
-                return 0;
-            }
-        };
+    public static Comparator<AsyncExecution> reverseStartDateComparator() {
+        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getStartDate()).reversed();
     }
 
-    /**
-     * @return the comparator to use.
-     * @see AsyncExecution#ASYNC_EXECUTION_START_DESC_ORDER
-     */
-    public static Comparator<AsyncExecution> startDateDescOrder() {
-        return ASYNC_EXECUTION_START_DESC_ORDER;
-    }
-
-    /**
-     * @return the comparator to use.
-     * @see AsyncExecution#ASYNC_EXECUTION_END_DESC_ORDER
-     */
-    public static Comparator<AsyncExecution> endDateDescOrder() {
-        return ASYNC_EXECUTION_END_DESC_ORDER;
+    public static Comparator<AsyncExecution> reverseEndDateComparator() {
+        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getEndDate()).reversed();
     }
 
     /**
@@ -215,12 +151,7 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         }
     }
 
-    /**
-     * @return the execution current progress (null if done).
-     */
-    @JsonProperty("progress")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
-    public Object getProgress() {
+    public ExecutionProgress getProgress() {
         switch (status) {
         case DONE:
             return null;
@@ -233,7 +164,7 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         }
     }
 
-    public void setProgress(Object progress) {
+    public void setProgress(ExecutionProgress progress) {
         this.progress = progress;
     }
 
@@ -299,9 +230,6 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         return result;
     }
 
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return "AsyncExecution{" + //
@@ -354,6 +282,19 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
 
     public String getDispatchId() {
         return dispatchId;
+    }
+
+    @Override
+    public int compareTo(AsyncExecution o) {
+        // Ensure running executions are top of sort
+        if (this.getStatus() == Status.RUNNING) {
+            return -1;
+        }
+        if (o.getStatus() == Status.RUNNING) {
+            return 1;
+        }
+        // Normal sort
+        return Long.compare(o.getTime().getEndDate(), this.getTime().getEndDate());
     }
 
     /**

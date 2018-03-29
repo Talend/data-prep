@@ -180,7 +180,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	// -------------------------------------------------TQL ==> FILTER----------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
 	function fromTQL(tql, columns) { // TODO
-		console.log('[NC] fromTQL');
 		let type;
 		let args;
 		let field;

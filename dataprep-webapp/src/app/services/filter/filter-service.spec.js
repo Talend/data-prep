@@ -558,7 +558,7 @@ describe('Filter service', () => {
 						},
 					],
 					type: 'integer',
-					isMaxReached: true,
+					excludeMax: true,
 				});
 				FilterService.addFilter('inside_range', 'col2', 'column name2', {
 					intervals: [
@@ -568,7 +568,7 @@ describe('Filter service', () => {
 						},
 					],
 					type: 'integer',
-					isMaxReached: false,
+					excludeMax: true,
 				});
 
 				//then
@@ -589,7 +589,7 @@ describe('Filter service', () => {
 						},
 					],
 					type: 'integer',
-					isMaxReached: true,
+					excludeMax: true,
 				});
 
 				const filterInfo2 = StateService.addGridFilter.calls.argsFor(1)[0];
@@ -611,7 +611,7 @@ describe('Filter service', () => {
 						},
 					],
 					type: 'integer',
-					isMaxReached: false,
+					excludeMax: true,
 				});
 			}));
 
@@ -1112,7 +1112,7 @@ describe('Filter service', () => {
 					{
 						label: '[5 .. 10[',
 						value: [5, 10],
-						isMaxReached: true,
+						excludeMax: false,
 					},
 				],
 				type: 'integer',
@@ -1133,7 +1133,7 @@ describe('Filter service', () => {
 				{
 					label: '[5 .. 10[',
 					value: [5, 10],
-					isMaxReached: true,
+					excludeMax: false,
 				},
 			]);
 			expect(newFilterInfos.editable).toBe(false);
@@ -1142,7 +1142,7 @@ describe('Filter service', () => {
 					{
 						label: '[5 .. 10[',
 						value: [5, 10],
-						isMaxReached: true,
+						excludeMax: false,
 					},
 				],
 				type: 'integer',
@@ -1292,6 +1292,7 @@ describe('Filter service', () => {
 						new Date(2014, 3, 1).getTime(),
 						new Date(2014, 4, 1).getTime(),
 					],
+					excludeMax: true,
 				},
 			], SHIFT_KEY_NAME);
 
@@ -1306,6 +1307,7 @@ describe('Filter service', () => {
 							new Date(2014, 0, 1).getTime(),
 							new Date(2014, 4, 1).getTime(),
 						],
+						excludeMax: true,
 					},
 				]
 			);

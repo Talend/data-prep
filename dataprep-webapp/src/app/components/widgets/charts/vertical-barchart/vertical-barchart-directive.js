@@ -308,10 +308,11 @@ export default function VerticalBarchart($timeout) {
 					})
 					.on('click', (d) => {
 						// create a new reference as the data object could be modified outside the component
-						const interval = _.extend({}, getRangeInfos(d));
-						const isMinReached = interval.min <= scope.primaryData[0].data.min;
-						const isMaxReached = interval.max >= scope.primaryData[scope.primaryData.length - 1].data.max;
-
+						const selected = _.extend({}, getRangeInfos(d));
+						const interval = {
+							...selected,
+							excludeMax: selected.max < scope.primaryData[scope.primaryData.length - 1].data.max,
+						};
 
 						if (d3.event.ctrlKey || d3.event.metaKey) {
 							scope.onCtrlClick({ interval });
@@ -322,13 +323,7 @@ export default function VerticalBarchart($timeout) {
 							return;
 						}
 
-						scope.onClick({
-							interval: {
-								...interval,
-								isMinReached,
-								isMaxReached,
-							},
-						});
+						scope.onClick({ interval });
 					});
 			}
 

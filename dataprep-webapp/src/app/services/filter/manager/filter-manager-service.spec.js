@@ -56,10 +56,10 @@ describe('Filter Manager Service', () => {
 	    it('should construct range label', inject((FilterUtilsService) => {
 	        //given
 	        const intervals = [
-	            { input: { min: 0, max: 10, isMaxReached: false }, output: '[0 .. 10[' },
-	            { input: { min: 10, max: 10, isMaxReached: false }, output: '[10]' },
-	            { input: { min: 0, max: 10, isMaxReached: true }, output: '[0 .. 10]' },
-	            { input: { min: 'Jan 2015', max: 'Mar 2015', isMaxReached: true }, output: '[Jan 2015 .. Mar 2015]' },
+	            { input: { min: 0, max: 10, excludeMax: true }, output: '[0 .. 10[' },
+	            { input: { min: 10, max: 10, excludeMax: true }, output: '[10]' },
+	            { input: { min: 0, max: 10, excludeMax: false }, output: '[0 .. 10]' },
+	            { input: { min: 'Jan 2015', max: 'Mar 2015', excludeMax: false }, output: '[Jan 2015 .. Mar 2015]' },
 	        ];
 
 	        //when

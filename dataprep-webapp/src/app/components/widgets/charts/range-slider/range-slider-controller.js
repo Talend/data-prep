@@ -30,15 +30,11 @@ const dateFormatter = {
 /**
  * Checks max interval >= the max of data values and  if the min interval < max interval
  */
-function adaptSelection(selection, minValue, maxValue) {
-	const isMinReached = selection.min <= minValue || selection.max <= selection;
-	const isMaxReached = selection.max >= maxValue || selection.min >= selection;
-
+function adaptSelection(selection) {
 	return {
 		min: selection.min,
 		max: selection.max,
-		isMinReached,
-		isMaxReached,
+		excludeMax: false,
 	};
 }
 
@@ -364,7 +360,7 @@ export default class RangeSliderCtrl {
      * @param {Object} values The values to propagate
      **/
 	onChange(values) {
-		const interval = adaptSelection(values, this.rangeLimits.min, this.rangeLimits.max);
+		const interval = adaptSelection(values, this.rangeLimits.max);
 		this.onBrushEnd({ interval });
 	}
 

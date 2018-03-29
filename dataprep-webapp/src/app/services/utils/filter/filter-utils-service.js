@@ -51,9 +51,8 @@ export default function FilterUtilsService($filter) {
 			label = `[${min}]`;
 		}
 		else {
-			const opening = interval.isMinReached ? '[' : ']';
-			const closing = interval.isMaxReached ? ']' : '[';
-			label = `${opening}${min}${RANGE_SEPARATOR}${max}${closing}`;
+			const closing = interval.excludeMax ? '[' : ']';
+			label = `[${min}${RANGE_SEPARATOR}${max}${closing}`;
 		}
 
 		return label;

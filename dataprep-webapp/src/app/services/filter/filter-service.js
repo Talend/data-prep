@@ -513,6 +513,7 @@ export default class FilterService {
 		const oldFilterArgs = oldFilter.args;
 		const oldIntervals = oldFilterArgs.intervals;
 		const oldDirection = oldFilterArgs.direction || 1;
+
 		newValue.forEach((newInterval) => {
 			// Identify min and max old interval
 			const oldMinInterval = this._findMinInterval(oldIntervals);
@@ -529,21 +530,25 @@ export default class FilterService {
 			const newMax = newInterval.value[1] || newMin;
 			const newLabel = this._getSplittedRangeLabelFor(newInterval.label);
 
+			// Identify the appropriated closing bound
+			const closing = newInterval.excludeMax ? '[' : ']';
+
 			let mergedInterval;
 			let newDirection = oldFilter.direction;
-
 			const updateMinInterval = () => {
 				newDirection = 1;
 				mergedInterval = oldMinInterval;
 				mergedInterval.value[1] = newMax;
-				mergedInterval.label = `[${oldMinLabel[0]}${RANGE_SEPARATOR}${newLabel[1] || newLabel[0]}[`;
+				mergedInterval.label = `[${oldMinLabel[0]}${RANGE_SEPARATOR}${newLabel[1] || newLabel[0]}${closing}`;
+				mergedInterval.excludeMax = newInterval.excludeMax;
 			};
 
 			const updateMaxInterval = () => {
 				newDirection = -1;
 				mergedInterval = oldMaxInterval;
 				mergedInterval.value[0] = newMin;
-				mergedInterval.label = `[${newLabel[0]}${RANGE_SEPARATOR}${oldMaxLabel[1] || oldMaxLabel[0]}[`;
+				mergedInterval.label = `[${newLabel[0]}${RANGE_SEPARATOR}${oldMaxLabel[1] || oldMaxLabel[0]}${closing}`;
+				mergedInterval.excludeMax = newInterval.excludeMax;
 			};
 
 			// Compare old and new interval values
@@ -571,6 +576,7 @@ export default class FilterService {
 			// Store direction
 			oldFilterArgs.direction = newDirection;
 		});
+
 		return oldFilterArgs;
 	}
 

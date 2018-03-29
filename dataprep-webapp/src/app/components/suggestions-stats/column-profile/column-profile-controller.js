@@ -98,6 +98,7 @@ export default function ColumnProfileCtrl(
 		const max = interval.max;
 		const isDateRange = selectedColumn.type === 'date';
 		const removeFilterFn = StatisticsService.getRangeFilterRemoveFn();
+		const excludeMax = min !== max && interval.excludeMax;
 		const args = {
 			intervals: [
 				{
@@ -108,13 +109,12 @@ export default function ColumnProfileCtrl(
 							isDateRange
 						),
 					value: [min, max],
-					isMaxReached: interval.isMaxReached,
-					excludeMin: min !== max && !interval.isMinReached,
-					excludeMax: min !== max && !interval.isMaxReached,
+					excludeMax,
 				},
 			],
 			type: selectedColumn.type,
 		};
+
 		FilterManagerService.addFilterAndDigest(
 			'inside_range',
 			selectedColumn.id,

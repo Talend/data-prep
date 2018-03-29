@@ -122,6 +122,26 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
         assertThatFilterExecutionReturnsTrue();
     }
 
+    @Test
+    public void shouldNotIncludeInvalidValues() throws Exception {
+        // given
+        final String filtersDefinition = givenFilter_0001_equals_toto();
+        row.set("0001", "toto");
+        row.setInvalid("0001");
+
+        // when
+        filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        assertThatFilterExecutionReturnsFalse();
+
+        // given
+        row.unsetInvalid("0001");
+
+        // then
+        assertThatFilterExecutionReturnsTrue();
+    }
+
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid1() throws Exception {
         //given

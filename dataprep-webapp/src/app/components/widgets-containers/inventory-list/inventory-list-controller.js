@@ -182,6 +182,9 @@ export default class InventoryListCtrl {
 			};
 		}
 
+		const listSettings = this.appSettings.views[this.viewKey].list;
+		this.titleAction = this.appSettings.actions[listSettings.titleProps.onClick];
+
 		return {
 			...titleSettings,
 			onClick,
@@ -270,7 +273,6 @@ export default class InventoryListCtrl {
 					adaptedAction.model = hostModel;
 					adaptedAction.onClick = (event, payload) => dispatch(event, payload && payload.model);
 				}
-
 				return adaptedAction;
 			});
 	}
@@ -280,6 +282,14 @@ export default class InventoryListCtrl {
 		if (adaptedActions) {
 			adaptedActions.forEach((action) => {
 				action.id = `${this.id}-${index}-${action.id}`;
+				if (action.data) {
+					Object.keys(action.data)
+						.forEach((dataAttr) => {
+							action[`data-${dataAttr}`] = action.data[dataAttr];
+						});
+					delete action.data;
+				}
+				console.log(action);
 			});
 		}
 		return adaptedActions;
@@ -293,6 +303,15 @@ export default class InventoryListCtrl {
 				...item,
 				actions: this.adaptItemActions(item, item.actions, index),
 			};
+			const actionSettings = this.titleAction;
+			console.log('title', this.titleAction);
+			if (actionSettings.data) {
+				Object.keys(actionSettings.data)
+					.forEach((dataAttr) => {
+						adaptedItem[`data-${dataAttr}`] = actionSettings.data[dataAttr];
+					});
+			}
+			console.log({ adaptedItem });
 
 			if (persistentActionsKey) {
 				adaptedItem[persistentActionsKey] = this.adaptItemActions(item, item[persistentActionsKey], index);

@@ -29,7 +29,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.preparation.store.PersistentStep;
@@ -54,9 +53,6 @@ public class PreparationCleaner {
 
     @Autowired
     private SecurityProxy securityProxy;
-
-    @Autowired
-    private PreparationUtils preparationUtils;
 
     @Autowired(required = false)
     private List<OrphanStepsFinder> orphanStepsFinders;

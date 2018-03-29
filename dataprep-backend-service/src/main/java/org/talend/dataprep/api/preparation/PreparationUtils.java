@@ -121,7 +121,7 @@ public class PreparationUtils {
 
     }
 
-    private void __listSteps(final List<Step> steps, final String limit, final Step step,
+    private static void __listSteps(final List<Step> steps, final String limit, final Step step,
             final PreparationRepository repository) {
         if (step == null) {
             return;
@@ -142,7 +142,7 @@ public class PreparationUtils {
      * @param repository The identifiable repository
      * @return The list of step ids from root to step
      */
-    public List<String> listStepsIds(final String stepId, final PreparationRepository repository) {
+    public static List<String> listStepsIds(final String stepId, final PreparationRepository repository) {
         return listStepsIds(stepId, Step.ROOT_STEP.getId(), repository);
     }
 
@@ -154,7 +154,8 @@ public class PreparationUtils {
      * @param repository The identifiable repository
      * @return The list of step ids from starting (limit) to step
      */
-    public List<String> listStepsIds(final String stepId, final String limit, final PreparationRepository repository) {
+    public static List<String> listStepsIds(final String stepId, final String limit,
+            final PreparationRepository repository) {
         return listSteps(repository.get(stepId, Step.class), limit, repository).stream() //
                 .map(Step::id) //
                 .collect(toList());
@@ -173,7 +174,7 @@ public class PreparationUtils {
      * @see Step#id()
      * @see Step#getParent()
      */
-    public List<Step> listSteps(String headStepId, PreparationRepository repository) {
+    public static List<Step> listSteps(String headStepId, PreparationRepository repository) {
         return listSteps(repository.get(headStepId, Step.class), Step.ROOT_STEP.getId(), repository);
     }
 
@@ -188,7 +189,7 @@ public class PreparationUtils {
      * @see Step#id()
      * @see Step#getParent()
      */
-    public List<Step> listSteps(final Step step, final String limit, final PreparationRepository repository) {
+    public static List<Step> listSteps(final Step step, final String limit, final PreparationRepository repository) {
         if (repository == null) {
             throw new IllegalArgumentException("Repository cannot be null.");
         }

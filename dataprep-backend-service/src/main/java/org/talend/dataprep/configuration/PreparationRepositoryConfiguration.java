@@ -104,10 +104,10 @@ public class PreparationRepositoryConfiguration {
                                  * Warning: doing so has some performance impacts (list may perform many getById calls
                                  * depending on preparation size)
                                  */
-                            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
                             final PreparationRepository repository = applicationContext.getBean(PreparationRepository.class);
                             if (preparation.getHeadId() != null) {
-                                final List<String> storageSteps = preparationUtils.listStepsIds(preparation.getHeadId(),
+                                final List<String> storageSteps =
+                                        PreparationUtils.listStepsIds(preparation.getHeadId(),
                                         repository);
                                 persistentPreparation.setSteps(storageSteps);
                             }
@@ -135,9 +135,8 @@ public class PreparationRepositoryConfiguration {
                                 preparation.setSteps(steps);
                             }
                         } else {
-                            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
-                            final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
-
+                            final List<String> stepIds =
+                                    PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
                             final List<Step> steps = stepIds.stream() //
                                     .map(stepId -> repository.get(stepId, Step.class)) //
                                     .collect(Collectors.toList());

@@ -18,15 +18,32 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.INVALID_PREPARATION;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_NAME_ALREADY_USED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_NOT_EMPTY;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_ROOT_STEP_CANNOT_BE_DELETED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_CANNOT_BE_REORDERED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
-import static org.talend.tql.api.TqlBuilder.*;
+import static org.talend.tql.api.TqlBuilder.and;
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.match;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -48,7 +65,16 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -129,9 +155,6 @@ public class PreparationService {
 
     @Autowired
     private BeanConversionService beanConversionService;
-
-    @Autowired
-    private PreparationUtils preparationUtils;
 
     @Autowired
     private Set<Validator> validators;
@@ -593,7 +616,7 @@ public class PreparationService {
                 preparation.setSteps(Collections.singletonList(Step.ROOT_STEP));
                 preparation.setHeadId(Step.ROOT_STEP.id());
             } else if (preparationRepository.exist(Step.class, TqlBuilder.eq("id", stepId))) {
-                preparation.setSteps(preparationUtils.listSteps(stepId, preparationRepository));
+                preparation.setSteps(PreparationUtils.listSteps(stepId, preparationRepository));
                 preparation.setHeadId(stepId);
             } else {
                 throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation).put(STEP_ID, stepId));
@@ -658,7 +681,7 @@ public class PreparationService {
     public List<String> getSteps(String id) {
         LOGGER.debug("Get steps of preparation for #{}.", id);
         final Step step = getStep(id);
-        return preparationUtils.listStepsIds(step.id(), preparationRepository);
+        return PreparationUtils.listStepsIds(step.id(), preparationRepository);
     }
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
@@ -987,7 +1010,8 @@ public class PreparationService {
      * @throws TDPException If 'fromStepId' is not a step of the provided preparation
      */
     private List<String> extractSteps(final Preparation preparation, final String fromStepId) {
-        final List<String> steps = preparationUtils.listStepsIds(preparation.getHeadId(), fromStepId, preparationRepository);
+        final List<String> steps =
+                PreparationUtils.listStepsIds(preparation.getHeadId(), fromStepId, preparationRepository);
         if (!fromStepId.equals(steps.get(0))) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
                     build().put("id", preparation.getId()).put(STEP_ID, fromStepId));

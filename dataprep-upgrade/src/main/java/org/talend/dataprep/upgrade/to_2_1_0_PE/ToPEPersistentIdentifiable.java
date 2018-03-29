@@ -44,9 +44,6 @@ public class ToPEPersistentIdentifiable implements BaseUpgradeTaskTo_2_1_0_PE {
     private static final Logger LOGGER = getLogger(ToPEPersistentIdentifiable.class);
 
     @Autowired
-    private PreparationUtils preparationUtils;
-
-    @Autowired
     private PreparationRepository preparationRepository;
 
     @Autowired
@@ -90,7 +87,7 @@ public class ToPEPersistentIdentifiable implements BaseUpgradeTaskTo_2_1_0_PE {
         final Stream<PersistentPreparation> persistentPreparations = preparationRepository.list(PersistentPreparation.class);
         persistentPreparations.forEach(p -> {
             LOGGER.info("Migration of preparation #{}", p.getId());
-            final List<String> stepsIds = preparationUtils.listStepsIds(p.getHeadId(), preparationRepository);
+            final List<String> stepsIds = PreparationUtils.listStepsIds(p.getHeadId(), preparationRepository);
             p.setSteps(stepsIds);
 
             final DataSetMetadata metadata = dataSetMetadataRepository.get(p.getDataSetId());

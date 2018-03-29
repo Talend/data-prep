@@ -36,9 +36,6 @@ public class StepListPreparationsMigration implements BaseUpgradeTaskTo_2_1_0_PE
     @Autowired
     private PreparationRepository preparationRepository;
 
-    @Autowired
-    private PreparationUtils preparationUtils;
-
     @Override
     public void run() {
         LOGGER.info("Migration of step ids in preparation...");
@@ -46,7 +43,7 @@ public class StepListPreparationsMigration implements BaseUpgradeTaskTo_2_1_0_PE
         preparationRepository.list(PersistentPreparation.class) //
                 .forEach(p -> {
                     LOGGER.info("Migration of preparation #{}", p.getId());
-                    final List<String> stepsIds = preparationUtils.listStepsIds(p.getHeadId(), preparationRepository);
+                    final List<String> stepsIds = PreparationUtils.listStepsIds(p.getHeadId(), preparationRepository);
                     p.setSteps(stepsIds);
 
                     preparationRepository.add(p);

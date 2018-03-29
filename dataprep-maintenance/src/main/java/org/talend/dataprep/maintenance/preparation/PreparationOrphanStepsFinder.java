@@ -32,8 +32,6 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 @Component
 public class PreparationOrphanStepsFinder implements OrphanStepsFinder {
 
-    private final PreparationUtils preparationUtils = new PreparationUtils();
-
     @Autowired
     private PreparationRepository repository;
 
@@ -50,7 +48,7 @@ public class PreparationOrphanStepsFinder implements OrphanStepsFinder {
 
     private Set<String> getUsedSteps() {
         return repository.list(Preparation.class) //
-                .flatMap(prep -> preparationUtils.listStepsIds(prep.getHeadId(), repository).stream()) //
+                .flatMap(prep -> PreparationUtils.listStepsIds(prep.getHeadId(), repository).stream()) //
                 .collect(toSet());
     }
 

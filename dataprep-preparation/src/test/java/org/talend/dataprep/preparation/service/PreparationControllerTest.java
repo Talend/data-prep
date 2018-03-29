@@ -19,17 +19,40 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.preparation.service.EntityBuilder.*;
+import static org.talend.dataprep.preparation.service.EntityBuilder.action;
+import static org.talend.dataprep.preparation.service.EntityBuilder.diff;
+import static org.talend.dataprep.preparation.service.EntityBuilder.params;
+import static org.talend.dataprep.preparation.service.EntityBuilder.paramsColAction;
+import static org.talend.dataprep.preparation.service.EntityBuilder.step;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -38,13 +61,18 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.BasePreparationTest;
 import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataprep.test.MockTDPException;
@@ -62,9 +90,6 @@ import com.jayway.restassured.response.Response;
  * Unit test for the preparation service.
  */
 public class PreparationControllerTest extends BasePreparationTest {
-
-    @Autowired
-    private PreparationUtils preparationUtils;
 
     @Rule
     public LocalizationRule rule = new LocalizationRule(Locale.US);
@@ -1250,7 +1275,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, secondStep);
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        final List<String> stepIds = PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
         assertEquals(3, stepIds.size());
         assertEquals(singletonList("0004"), repository.get(stepIds.get(1), Step.class).getDiff().getCreatedColumns());
         assertEquals(asList("0005", "0006"), repository.get(stepIds.get(2), Step.class).getDiff().getCreatedColumns());
@@ -1263,7 +1288,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         final String newHeadId = repository.get(preparationId, Preparation.class).getHeadId();
-        final List<String> stepIdsAfter = preparationUtils.listStepsIds(newHeadId, repository);
+        final List<String> stepIdsAfter = PreparationUtils.listStepsIds(newHeadId, repository);
         assertThatStepHasCreatedColumns(stepIdsAfter.get(1), "0004", "0005", "0006");
         assertThatStepHasCreatedColumns(stepIdsAfter.get(2), "0007", "0008");
     }
@@ -1329,7 +1354,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0004", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        final List<String> stepIds = PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
         assertEquals(3, stepIds.size());
 
         // when : delete second step in single mode
@@ -1339,7 +1364,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // then
         final Preparation preparationAfter = repository.get(preparationId, Preparation.class);
-        final List<String> stepIdsAfter = preparationUtils.listStepsIds(preparationAfter.getHeadId(), repository);
+        final List<String> stepIdsAfter = PreparationUtils.listStepsIds(preparationAfter.getHeadId(), repository);
         assertEquals(1, stepIdsAfter.size());
     }
 
@@ -1352,7 +1377,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        final List<String> stepIds = PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
         assertEquals(4, stepIds.size());
 
         // when : delete second step in single mode
@@ -1429,7 +1454,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        final List<String> stepIds = PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
         assertEquals(4, stepIds.size());
         final Step step4 = repository.get(stepIds.get(3), Step.class);
         final Step step3 = repository.get(stepIds.get(2), Step.class);
@@ -1604,7 +1629,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step(null, action("uppercase", paramsColAction("0005", "lastname_copy"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        final List<String> stepIds = PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
         assertEquals(4, stepIds.size());
 
         // when : delete second step in single mode
@@ -1633,7 +1658,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step(null, action("delete_column", paramsColAction("0001", "lastname"))));
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
-        final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+        final List<String> stepIds = PreparationUtils.listStepsIds(preparation.getHeadId(), repository);
         assertEquals(3, stepIds.size());
 
         // when : delete second step in single mode

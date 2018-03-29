@@ -16,10 +16,17 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.talend.tql.api.TqlBuilder.eq;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
@@ -39,9 +46,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     @Autowired
     private VersionService versionService;
 
-    @Autowired
-    private PreparationUtils preparationUtils;
-
     @Test
     public void should_list_steps_ids_history_from_root() {
         // given
@@ -59,7 +63,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         repository.add(step2);
 
         // when
-        List<String> ids = preparationUtils.listStepsIds(step1.id(), repository);
+        List<String> ids = PreparationUtils.listStepsIds(step1.id(), repository);
 
         // then
         assertThat(ids, hasItem(Step.ROOT_STEP.id()));
@@ -67,7 +71,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         assertThat(ids, not(hasItem(step2.id())));
 
         // when
-        ids = preparationUtils.listStepsIds(step2.id(), repository);
+        ids = PreparationUtils.listStepsIds(step2.id(), repository);
 
         // then
         assertThat(ids, hasItem(Step.ROOT_STEP.id()));
@@ -92,7 +96,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         repository.add(step2);
 
         // when
-        List<String> ids = preparationUtils.listStepsIds(step2.id(), step1.getId(), repository);
+        List<String> ids = PreparationUtils.listStepsIds(step2.id(), step1.getId(), repository);
 
         // then
         assertThat(ids, not(hasItem(Step.ROOT_STEP.id())));
@@ -100,7 +104,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         assertThat(ids, hasItem(step2.id()));
 
         // when
-        ids = preparationUtils.listStepsIds(step2.id(), step2.getId(), repository);
+        ids = PreparationUtils.listStepsIds(step2.id(), step2.getId(), repository);
 
         // then
         assertThat(ids, not(hasItem(Step.ROOT_STEP.id())));
@@ -125,7 +129,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         repository.add(step2);
 
         // when
-        List<Step> steps = preparationUtils.listSteps(step1.id(), repository);
+        List<Step> steps = PreparationUtils.listSteps(step1.id(), repository);
 
         // then
         assertThat(steps, hasItem(Step.ROOT_STEP));
@@ -133,7 +137,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         assertThat(steps, not(hasItem(step2)));
 
         // when
-        steps = preparationUtils.listSteps(step2.id(), repository);
+        steps = PreparationUtils.listSteps(step2.id(), repository);
 
         // then
         assertThat(steps, hasItem(Step.ROOT_STEP));
@@ -158,7 +162,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         repository.add(step2);
 
         // when
-        List<Step> steps = preparationUtils.listSteps(step2, step1.getId(), repository);
+        List<Step> steps = PreparationUtils.listSteps(step2, step1.getId(), repository);
 
         // then
         assertThat(steps, not(hasItem(Step.ROOT_STEP)));
@@ -166,7 +170,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         assertThat(steps, hasItem(step2));
 
         // when
-        steps = preparationUtils.listSteps(step2, step2.getId(), repository);
+        steps = PreparationUtils.listSteps(step2, step2.getId(), repository);
 
         // then
         assertThat(steps, not(hasItem(Step.ROOT_STEP)));
@@ -177,7 +181,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     @Test
     public void should_return_empty_list_with_null_last_step() throws Exception {
         // when
-        final List<Step> steps = preparationUtils.listSteps(null, "limit", repository);
+        final List<Step> steps = PreparationUtils.listSteps(null, "limit", repository);
 
         // then
         assertThat(steps, hasSize(0));
@@ -186,7 +190,7 @@ public class PreparationUtilsTest extends ServiceBaseTest {
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception_with_null_limit() throws Exception {
         // when
-        preparationUtils.listSteps(Step.ROOT_STEP, null, repository);
+        PreparationUtils.listSteps(Step.ROOT_STEP, null, repository);
 
         // then
         fail("Should have thrown IllegalArgumentException because limit step is null");

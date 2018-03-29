@@ -12,12 +12,19 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.refEq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -271,7 +278,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
     public void shouldInterruptWhenMarkerAsksForInterruption() {
         // given
         cleaner.setMarkers(Collections.singletonList(marker));
-        when(marker.mark(any(), anyString())).thenReturn(StepMarker.Result.INTERRUPTED);
+        when(marker.mark(any(), any(UUID.class))).thenReturn(StepMarker.Result.INTERRUPTED);
 
         // when
         cleaner.removeOrphanSteps();

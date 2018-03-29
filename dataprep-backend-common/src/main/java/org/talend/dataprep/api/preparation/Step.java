@@ -50,7 +50,7 @@ public class Step extends Identifiable implements Serializable {
         ROOT_STEP.parent = null;
     }
 
-    private String marker;
+    private UUID marker;
 
     /**
      * Default empty constructor;
@@ -195,11 +195,11 @@ public class Step extends Identifiable implements Serializable {
      * Sets a marker on this object (for efficient mass deletion, for example).
      * @param marker The marker (as string) to set.
      */
-    public void setMarker(String marker) {
+    public void setMarker(UUID marker) {
         this.marker = marker;
     }
 
-    public String getMarker() {
+    public UUID getMarker() {
         return marker;
     }
 }

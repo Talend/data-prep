@@ -1,5 +1,7 @@
 package org.talend.dataprep.maintenance.preparation;
 
+import java.util.UUID;
+
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
@@ -16,10 +18,10 @@ public interface StepMarker {
      * @return {@link Result#COMPLETED} if implementation was not interrupted by a user action,
      * {@link Result#INTERRUPTED} if implementation was not able to carefully mark all used objects.
      */
-    Result mark(PreparationRepository repository, String marker);
+    Result mark(PreparationRepository repository, UUID marker);
 
     /**
-     * The result of the mark operation as returned by {@link #mark(PreparationRepository, String)}.
+     * The result of the mark operation as returned by {@link #mark(PreparationRepository, UUID)}.
      */
     enum Result {
         /**

@@ -2,11 +2,17 @@ package org.talend.dataprep.maintenance.preparation;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -23,8 +29,9 @@ public class PreparationStepMarkerTest {
     @Test
     public void shouldMarkUnusedSteps() {
         // Given
-        StepMarker marker = new PreparationStepMarker();
-        PreparationRepository repository = mock(PreparationRepository.class);
+        final UUID stepMarker = UUID.randomUUID();
+        final StepMarker marker = new PreparationStepMarker();
+        final PreparationRepository repository = mock(PreparationRepository.class);
         final Preparation preparation = new Preparation();
 
         final Step step = mock(Step.class);
@@ -36,23 +43,24 @@ public class PreparationStepMarkerTest {
         when(repository.list(eq(Preparation.class))).thenReturn(Stream.of(preparation));
 
         // When
-        final StepMarker.Result result = marker.mark(repository, "myMarker-1234");
+        final StepMarker.Result result = marker.mark(repository, stepMarker);
 
         // Then
         assertEquals(StepMarker.Result.COMPLETED, result);
         verify(repository, times(1)).add(eq(Collections.singletonList(step)));
-        verify(step, times(1)).setMarker(eq("myMarker-1234"));
+        verify(step, times(1)).setMarker(eq(stepMarker));
     }
 
     @Test
     public void shouldDisableCleanUpAtStart() {
         // Given
-        StepMarker marker = new PreparationStepMarker();
-        PreparationRepository repository = mock(PreparationRepository.class);
+        final UUID stepMarker = UUID.randomUUID();
+        final StepMarker marker = new PreparationStepMarker();
+        final PreparationRepository repository = mock(PreparationRepository.class);
         when(repository.exist(eq(Preparation.class), any())).thenReturn(true);
 
         // When
-        final StepMarker.Result result = marker.mark(repository, "myMarker-1234");
+        final StepMarker.Result result = marker.mark(repository, stepMarker);
 
         // Then
         assertEquals(StepMarker.Result.INTERRUPTED, result);
@@ -61,14 +69,15 @@ public class PreparationStepMarkerTest {
     @Test
     public void shouldDisableCleanUpDuringProcess() {
         // Given
-        StepMarker marker = new PreparationStepMarker();
-        PreparationRepository repository = mock(PreparationRepository.class);
+        final UUID stepMarker = UUID.randomUUID();
+        final StepMarker marker = new PreparationStepMarker();
+        final PreparationRepository repository = mock(PreparationRepository.class);
         when(repository.exist(eq(Preparation.class), any())).thenReturn(false, true);
         final Preparation preparation = new Preparation();
         when(repository.list(eq(Preparation.class))).thenReturn(Stream.of(preparation));
 
         // When
-        final StepMarker.Result result = marker.mark(repository, "myMarker-1234");
+        final StepMarker.Result result = marker.mark(repository, stepMarker);
 
         // Then
         assertEquals(StepMarker.Result.INTERRUPTED, result);

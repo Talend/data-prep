@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.neq;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +29,6 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tenancy.ForAll;
-import org.talend.tql.parser.Tql;
 
 /**
  * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.
@@ -58,7 +60,7 @@ public class PreparationCleaner {
      */
     private void removeCurrentOrphanSteps() {
         securityProxy.asTechnicalUser();
-        final String currentCleanerRun = UUID.randomUUID().toString();
+        final UUID currentCleanerRun = UUID.randomUUID();
         try {
             LOGGER.info("Starting clean run '{}'", currentCleanerRun);
             StepMarker.Result allMarkersResult = StepMarker.Result.COMPLETED;
@@ -70,12 +72,16 @@ public class PreparationCleaner {
             }
 
             if (allMarkersResult == StepMarker.Result.COMPLETED) {
-                LOGGER.info("Removing unused steps ({} scheduled for deletion)",
-                        repository.count(Step.class, Tql.parse("marker = '" + currentCleanerRun + "'")));
-                repository.remove(Step.class, Tql.parse("marker != '" + currentCleanerRun + "'"));
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Removing unused steps ({} scheduled for deletion)",
+                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                }
+                repository.remove(Step.class, neq("marker", currentCleanerRun.toString()));
             } else {
-                LOGGER.info("Discarding {} pending step deletes",
-                        repository.count(Step.class, Tql.parse("marker = '" + currentCleanerRun + "'")));
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Discarding {} pending step deletes",
+                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                }
             }
         } finally {
             securityProxy.releaseIdentity();

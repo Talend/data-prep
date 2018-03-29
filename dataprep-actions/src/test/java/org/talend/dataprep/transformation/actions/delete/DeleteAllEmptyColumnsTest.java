@@ -110,6 +110,9 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         assertTrue(action.acceptField(getColumn(Type.ANY)));
     }
 
+    /**
+     * Next tests only use column metadatas and not the column content
+     */
     @Test
     public void should_delete_column() {
         // given

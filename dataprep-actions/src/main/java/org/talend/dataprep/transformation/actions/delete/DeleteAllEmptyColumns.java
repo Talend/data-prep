@@ -50,6 +50,8 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
         return parameters;
     }
 
+
+
     @Override
     public String getCategory(Locale locale) {
         return DATA_CLEANSING.getDisplayName(locale);

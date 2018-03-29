@@ -110,6 +110,25 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         assertThatFilterExecutionReturnsTrue();
     }
 
+    @Test
+    public void shouldIncludeAllDecimalSeparators() {
+        // given
+        final String filtersDefinition = givenFilter_0001_between_5_and_10();
+        row.set("0001", "5.35");
+
+        // when
+        filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        assertThatFilterExecutionReturnsTrue();
+
+        // given
+        row.set("0001", "5,35");
+
+        // then
+        assertThatFilterExecutionReturnsTrue();
+    }
+
     @Override
     protected String givenFilter_0001_equals_toto() {
         return "0001 = 'toto'";

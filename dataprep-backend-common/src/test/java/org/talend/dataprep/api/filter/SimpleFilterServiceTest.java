@@ -142,6 +142,25 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
         assertThatFilterExecutionReturnsTrue();
     }
 
+    @Test
+    public void shouldIncludeAllDecimalSeparators() {
+        // given
+        final String filtersDefinition = givenFilter_0001_between_5_and_10();
+        row.set("0001", "5.35");
+
+        // when
+        filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        assertThatFilterExecutionReturnsTrue();
+
+        // given
+        row.set("0001", "5,35");
+
+        // then
+        assertThatFilterExecutionReturnsTrue();
+    }
+
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid1() throws Exception {
         //given

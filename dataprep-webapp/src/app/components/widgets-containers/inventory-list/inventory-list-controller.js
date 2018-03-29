@@ -182,15 +182,23 @@ export default class InventoryListCtrl {
 			};
 		}
 
-		const listSettings = this.appSettings.views[this.viewKey].list;
-		this.titleAction = this.appSettings.actions[listSettings.titleProps.onClick];
-
-		return {
+		const titleProps = {
 			...titleSettings,
 			onClick,
 			onEditCancel: this.getTitleActionDispatcher(this.viewKey, 'onEditCancel'),
 			onEditSubmit: this.getTitleActionDispatcher(this.viewKey, 'onEditSubmit'),
 		};
+
+		const listSettings = this.appSettings.views[this.viewKey].list;
+		const action = this.appSettings.actions[listSettings.titleProps.onClick];
+		if (action.data) {
+			Object.keys(action.data)
+				.forEach((dataAttr) => {
+					titleProps[`data-${dataAttr}`] = action.data[dataAttr];
+				});
+		}
+
+		return titleProps;
 	}
 
 	getActionDispatcher(actionName) {
@@ -273,6 +281,7 @@ export default class InventoryListCtrl {
 					adaptedAction.model = hostModel;
 					adaptedAction.onClick = (event, payload) => dispatch(event, payload && payload.model);
 				}
+
 				return adaptedAction;
 			});
 	}
@@ -303,15 +312,6 @@ export default class InventoryListCtrl {
 				...item,
 				actions: this.adaptItemActions(item, item.actions, index),
 			};
-			const actionSettings = this.titleAction;
-			console.log('title', this.titleAction);
-			if (actionSettings.data) {
-				Object.keys(actionSettings.data)
-					.forEach((dataAttr) => {
-						adaptedItem[`data-${dataAttr}`] = actionSettings.data[dataAttr];
-					});
-			}
-			console.log({ adaptedItem });
 
 			if (persistentActionsKey) {
 				adaptedItem[persistentActionsKey] = this.adaptItemActions(item, item[persistentActionsKey], index);

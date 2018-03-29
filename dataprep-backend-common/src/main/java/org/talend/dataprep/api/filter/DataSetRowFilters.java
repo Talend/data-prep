@@ -246,9 +246,13 @@ class DataSetRowFilters {
      * @return The invalid value predicate
      */
     static Predicate<DataSetRow> createInvalidPredicate(final String columnId) {
-        return r -> r.getRowMetadata().getColumns().stream() //
-                .filter(getColumnMetadataPredicate(columnId)) //
-                .anyMatch(c -> r.isInvalid(c.getId()));
+        return r -> r
+                .values()
+                .entrySet()
+                .stream() //
+                .filter(getColumnFilter(columnId, r)) //
+                .map(e -> String.valueOf(e.getValue())) //
+                .anyMatch(value -> r.isInvalid(columnId));
     }
 
     /**
@@ -258,9 +262,13 @@ class DataSetRowFilters {
      * @return The valid value predicate
      */
     static Predicate<DataSetRow> createValidPredicate(final String columnId) {
-        return r -> r.getRowMetadata().getColumns().stream() //
-                .filter(getColumnMetadataPredicate(columnId)) //
-                .anyMatch(c -> !r.isInvalid(c.getId()) && StringUtils.isNotEmpty(r.get(c.getId())));
+        return r -> r
+                .values()
+                .entrySet()
+                .stream() //
+                .filter(getColumnFilter(columnId, r)) //
+                .map(e -> String.valueOf(e.getValue())) //
+                .anyMatch(value -> !r.isInvalid(columnId) && StringUtils.isNotEmpty(value));
     }
 
     /**
@@ -404,14 +412,6 @@ class DataSetRowFilters {
         } catch (Exception e) {
             LOGGER.debug("Unable to create number range predicate.", e);
             throw new IllegalArgumentException("Unsupported query, malformed 'range' (expected number min and max properties).");
-        }
-    }
-
-    private static Predicate<ColumnMetadata> getColumnMetadataPredicate(String columnId) {
-        if ("*".equals(columnId)) {
-            return c -> true;
-        } else {
-            return c -> columnId.equals(c.getId());
         }
     }
 

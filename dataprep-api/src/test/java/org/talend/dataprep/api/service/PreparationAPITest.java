@@ -814,7 +814,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .getResourceAsStream("dataset/expected_filtered_dataset_with_columns.json");
 
         // when
-        final String content = when().get("/api/preparations/{id}/content?filter=0001 = 'John'", preparationId).asString();
+        final String content = testClient.getPreparationWithFilter(preparationId, "0001 = 'John'").asString();
 
         // then
         assertThat(content, sameJSONAsFile(expected));

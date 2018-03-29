@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.jayway.restassured.specification.ResponseSpecification;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -225,26 +226,36 @@ public class APIClientTest {
     }
 
     public Response getPreparation(String preparationId) throws IOException {
-        return getPreparation(preparationId, "head", "HEAD");
+        return getPreparation(preparationId, "head", "HEAD", "");
+    }
+
+    public Response getPreparationWithFilter(String preparationId, String filter) throws IOException {
+        return getPreparation(preparationId, "head", "HEAD", filter);
     }
 
     public Response getPreparation(String preparationId, String versionId) throws IOException {
-        return getPreparation(preparationId, versionId, "HEAD");
+        return getPreparation(preparationId, versionId, "HEAD", "");
     }
 
     /**
      * Method handling 202/200 status to get the transformation content
      *
-     * @param preparationId prepartionId
+     * @param preparationId is of the preparation
+     * @param version version of the preparation
+     * @param stepId like HEAD or FILTER, etc.
+     * @param filter TQL filter to filter the preparation content
      * @return the content of a preparation
      * @throws IOException
-     * @throws InterruptedException
      */
-    public Response getPreparation(String preparationId, String version, String stepId) throws IOException {
+    public Response getPreparation(String preparationId, String version, String stepId, String filter) throws IOException {
         // when
-        Response transformedResponse = given()
-                .when() //
-                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+        Response transformedResponse;
+        RequestSpecification initialRequest = given().when();
+        if (filter.isEmpty()) {
+            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+        } else {
+            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, version, stepId, filter);
+        }
 
         if (HttpStatus.ACCEPTED.value() == transformedResponse.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
@@ -252,13 +263,17 @@ public class APIClientTest {
 
             waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
-            transformedResponse = given()
+            ResponseSpecification contentRequest = given()
                     .when() //
                     .expect()
                     .statusCode(200)
                     .log()
-                    .ifError() //
-                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+                    .ifError();
+            if (filter.isEmpty()) {
+                transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+            } else {
+                transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, version, stepId, filter);
+            }
         }
 
         return transformedResponse;

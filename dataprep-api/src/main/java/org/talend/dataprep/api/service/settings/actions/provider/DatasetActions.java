@@ -84,6 +84,7 @@ public interface DatasetActions {
             .name("dataset.favorite")
             .icon("talend-star")
             .type("@@dataset/FAVORITE")
+            .data(DATA_FEATURE_KEY, "dataset.favorite.add")
             .payload(PAYLOAD_METHOD_KEY, "toggleFavorite")
             .build();
 

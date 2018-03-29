@@ -337,11 +337,10 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		};
 		const onBetweenFilter = (ctx) => {
 			type = INSIDE_RANGE;
-
 			field = ctx.children[0].getText();
 
-			const min = ctx.children[3].getText();
-			const max = ctx.children[5].getText();
+			const min = parseInt(ctx.children[3].getText(), 10);
+			const max = parseInt(ctx.children[5].getText(), 10);
 			const filteredColumn = find(columns, { id: field });
 			const isDateRange = filteredColumn && (filteredColumn.type === 'date');
 			// on date we shift timestamp to fit UTC timezone
@@ -350,10 +349,12 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				const minDate = new Date(min);
 				offset = minDate.getTimezoneOffset() * 60 * 1000;
 			}
-
 			const label = isDateRange ?
-				FilterUtilsService.getDateLabel(filteredColumn.statistics.histogram.pace, min, max) :
-				FilterUtilsService.getRangeLabelFor({ min, max }, isDateRange);
+				FilterUtilsService.getDateLabel(
+					filteredColumn.statistics.histogram.pace,
+					new Date(min),
+					new Date(max)
+				) : FilterUtilsService.getRangeLabelFor({ min, max }, isDateRange);
 
 			args = {
 				intervals: [{

@@ -107,9 +107,6 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 		const actionValues = actionStep[1];
 		const metadata = actionStep[2];
 		const diff = actionStep[3];
-
-
-
 		const item = {
 			column: {
 				id: actionValues.parameters.column_id,

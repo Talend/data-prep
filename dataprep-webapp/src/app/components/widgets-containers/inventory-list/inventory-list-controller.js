@@ -196,8 +196,8 @@ export default class InventoryListCtrl {
 	}
 
 	adaptDataAttributes(toAction, fromAction = toAction) {
-		if (toAction.data) {
-			Object.keys(toAction.data)
+		if (fromAction.data) {
+			Object.keys(fromAction.data)
 				.forEach((dataAttr) => {
 					toAction[`data-${dataAttr}`] = fromAction.data[dataAttr];
 				});
@@ -235,7 +235,7 @@ export default class InventoryListCtrl {
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
 		}
-		this.adaptDataAttributes(baseAction);
+		this.adaptDataAttributes(baseAction, actionSettings);
 		return baseAction;
 	}
 
@@ -263,6 +263,28 @@ export default class InventoryListCtrl {
 		return actions &&
 			actions.map((actionName) => {
 				const adaptedAction = this.createBaseAction(actionName);
+
+				const model = hostModel && hostModel.model;
+				if (model) {
+					const actionDataFeature = adaptedAction['data-feature'];
+					if (hostModel.type && actionDataFeature === 'inventory.rename') {
+                        adaptedAction['data-feature'] = `${hostModel.type}.rename`;
+					}
+					if (model.favorite && actionDataFeature === 'dataset.favorite.add') {
+						adaptedAction['data-feature'] = 'dataset.favorite.remove';
+					}
+					// TODO should comes from decorator
+					if (model.certificationStep && actionDataFeature === 'dataset.certification') {
+						switch (model.certificationStep) {
+						case 'PENDING':
+							adaptedAction['data-feature'] = 'dataset.certification.pending';
+							break;
+						case 'CERTIFIED':
+							adaptedAction['data-feature'] = 'dataset.certification.remove';
+							break;
+						}
+					}
+				}
 
 				if (adaptedAction.displayMode === DROPDOWN_ACTION) {
 					const actionSettings = this.appSettings.actions[actionName];

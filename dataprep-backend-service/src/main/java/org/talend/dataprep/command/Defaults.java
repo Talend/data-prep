@@ -18,6 +18,7 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -127,8 +128,7 @@ public class Defaults {
      */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, Class<T> clazz) {
         return (request, response) -> {
-            try {
-                final InputStream content = response.getEntity().getContent();
+            try (final InputStream content = response.getEntity().getContent()) {
                 final String contentAsString = IOUtils.toString(content, UTF_8);
                 if (StringUtils.isEmpty(contentAsString)) {
                     return null;

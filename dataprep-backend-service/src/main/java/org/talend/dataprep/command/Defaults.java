@@ -170,8 +170,8 @@ public class Defaults {
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
             TypeReference<T> typeReference, Function<Exception, T> errorHandler) {
         return (request, response) -> {
-            try {
-                return mapper.readerFor(typeReference).readValue(response.getEntity().getContent());
+            try (InputStream content = response.getEntity().getContent()) {
+                return mapper.readerFor(typeReference).readValue(content);
             } catch (Exception e) {
                 return errorHandler.apply(e);
             } finally {
@@ -188,8 +188,8 @@ public class Defaults {
      */
     public static BiFunction<HttpRequestBase, HttpResponse, JsonNode> toJson(ObjectMapper mapper) {
         return (request, response) -> {
-            try {
-                JsonNode jsonNode = mapper.readTree(response.getEntity().getContent());
+            try (InputStream content = response.getEntity().getContent()) {
+                JsonNode jsonNode = mapper.readTree(content);
                 if (jsonNode == null) {
                     throw new IllegalArgumentException("Source should not be empty");
                 }

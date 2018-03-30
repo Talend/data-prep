@@ -505,9 +505,7 @@ export default function PlaygroundService(
 
 		return getCurrentPreparation()
 		// append step
-			.then((preparation) => {
-				return PreparationService.appendStep(preparation.id, actions);
-			})
+			.then(preparation => PreparationService.appendStep(preparation.id, actions))
 			// update recipe and datagrid
 			.then(() => {
 				return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]);

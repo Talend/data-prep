@@ -1,18 +1,25 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.qa.config;
 
-import com.jayway.restassured.response.Response;
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,13 +29,7 @@ import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.mockito.Matchers.endsWith;
-import static org.mockito.Mockito.when;
+import com.jayway.restassured.response.Response;
 
 @RunWith(org.mockito.runners.MockitoJUnitRunner.class)
 public class GlobalStepTest {
@@ -52,12 +53,12 @@ public class GlobalStepTest {
     private Response respNotFound;
 
     private Folder folderOK1 = new Folder().setId("A_OK");
-    private Folder folderOK2 = new Folder().setId("B_OK");
-    private Folder folderOK3 = new Folder().setId("C_OK");
-    private Folder folderNotFound = new Folder().setId("B_NotFound");
 
-    private Set<Folder> folderSetOK;
-    private Set<Folder> folderSetNotFound;
+    private Folder folderOK2 = new Folder().setId("B_OK");
+
+    private Folder folderOK3 = new Folder().setId("C_OK");
+
+    private Folder folderNotFound = new Folder().setId("B_NotFound");
 
     @Before
     public void setUp() throws Exception {
@@ -76,7 +77,7 @@ public class GlobalStepTest {
         when(folderUtil.deleteFolder(folderNotFound)).thenReturn(respNotFound);
     }
 
-    // should clean context OK :  no exception is thrown
+    // should clean context OK : no exception is thrown
     @Test
     public void shouldCleanContextIsOK() throws Exception {
 
@@ -90,7 +91,6 @@ public class GlobalStepTest {
         // then
         gobalstep.cleanAfter();
     }
-
 
     @Test(expected = GlobalStep.CleanAfterException.class)
     public void shouldCleanContextWithDatasetError() throws Exception {
@@ -151,7 +151,7 @@ public class GlobalStepTest {
     }
 
     public Set<Folder> getOKFolderSet() {
-        folderSetOK = new HashSet<>();
+        Set<Folder> folderSetOK = new HashSet<>();
         folderSetOK.add(folderOK1);
         folderSetOK.add(folderOK2);
         folderSetOK.add(folderOK3);
@@ -159,7 +159,7 @@ public class GlobalStepTest {
     }
 
     public Set<Folder> getNotFoundFolderSet() {
-        folderSetNotFound = new HashSet<>();
+        Set<Folder> folderSetNotFound = new HashSet<>();
         folderSetNotFound.add(folderOK1);
         folderSetNotFound.add(folderNotFound);
         folderSetNotFound.add(folderOK2);

@@ -270,6 +270,7 @@
   "ACTIONS_TAB_COLUMN": "カラム",
   "ACTIONS_TAB_TABLE": "テーブル",
   "NO_ACTION_AVAILABLE": "検索に一致するファンクションがありません",
+  "SUGGESTIONS": "提案",
 
   "_comment": "オンボーディング",
   "FILTERS_APPLIED": "フィルター適用済み",

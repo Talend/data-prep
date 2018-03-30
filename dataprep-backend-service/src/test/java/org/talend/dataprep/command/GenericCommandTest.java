@@ -20,6 +20,7 @@ import static org.talend.dataprep.command.Defaults.asString;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -301,6 +302,11 @@ public class GenericCommandTest extends ServiceBaseTest {
         @Override
         public boolean isTDPUser() {
             return true;
+        }
+
+        @Override
+        public Locale getLocale() {
+            return Locale.getDefault();
         }
 
         @Override

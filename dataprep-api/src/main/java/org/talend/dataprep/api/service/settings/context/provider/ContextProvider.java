@@ -13,15 +13,16 @@
 
 package org.talend.dataprep.api.service.settings.context.provider;
 
+import static java.util.Arrays.asList;
+
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
-
-import static java.util.Arrays.asList;
+import org.talend.dataprep.security.Security;
 
 /**
  * Default documentation settings provider
@@ -29,9 +30,12 @@ import static java.util.Arrays.asList;
 @Component
 public class ContextProvider implements AppSettingsProvider<ContextSettings> {
 
+    @Autowired
+    private Security security;
+
     @Override
     public List<ContextSettings> getSettings() {
-        Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = security.getLocale();
         return asList( //
                 ContextSettings
                         .builder() //

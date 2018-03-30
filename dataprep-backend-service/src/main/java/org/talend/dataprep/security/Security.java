@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.security;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.talend.dataprep.api.user.UserGroup;
@@ -56,5 +57,10 @@ public interface Security {
      * @return true if the current user is a valid and registered TDP user.
      */
     boolean isTDPUser();
+
+    /**
+     * @return the {@link Locale} to be used for current user.
+     */
+    Locale getLocale();
 
 }

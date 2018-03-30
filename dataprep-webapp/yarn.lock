@@ -54,19 +54,19 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@talend/bootstrap-theme@0.166.0":
-  version "0.166.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.166.0.tgz#a110ba9d3708a2acf3c8d2dcc43dc8877cbc7204"
+"@talend/bootstrap-theme@0.171.0":
+  version "0.171.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.171.0.tgz#d0cfa619b93047422d68ee605e6665ce53d65965"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/icons@0.166.0":
-  version "0.166.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.166.0.tgz#90a65eef3965e194bbd1782b9293d5d39570677f"
+"@talend/icons@0.171.0":
+  version "0.171.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.171.0.tgz#73b91d04feed8b68062830c9ca33d844170f33b6"
 
-"@talend/react-components@0.166.0":
-  version "0.166.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.166.0.tgz#8428a7d318d9b74f9087a94cb68ffafc02d27b3c"
+"@talend/react-components@0.171.0":
+  version "0.171.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.171.0.tgz#dce2c5412eeafea12f19db5c315f1ff3f1c52f6d"
   dependencies:
     date-fns "1.27.2"
     lodash "4.17.4"
@@ -76,9 +76,9 @@
     react-debounce-input "3.1.0"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.166.0":
-  version "0.166.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.166.0.tgz#b130643f0977003b9dedd87a7f7ab66f731e6ef9"
+"@talend/react-forms@0.171.0":
+  version "0.171.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.171.0.tgz#9005dc46e3357dd90e42346723b353d46571abc0"
   dependencies:
     ajv "^6.2.1"
     classnames "2.2.5"
@@ -2279,10 +2279,6 @@ date-fns@1.27.2:
   version "1.27.2"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.27.2.tgz#ce82f420bc028356cc661fc55c0494a56a990c9c"
 
-date-fns@^1.29.0:
-  version "1.29.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
-
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -3851,6 +3847,10 @@ ignore@^3.1.2:
 ignore@^3.2.0:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.5.tgz#c4e715455f6073a8d7e5dae72d2fc9d71663dba6"
+
+immutable@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
 
 import-local@^0.1.1:
   version "0.1.1"

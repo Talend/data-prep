@@ -129,12 +129,27 @@ public class DatasetStep extends DataPrepStep {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 
-        assertEquals(expected ? 1 : 0,
-                response
+        if (expected) {
+            // we expect the semantic Type
+            assertEquals(1, response
+                    .body()
+                    .jsonPath()
+                    .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
+                    .size());
+        } else {
+            // We don't expect the semantic type, and no semantic type exist for this column
+            if ("".equals(response.body().print())) {
+                return;
+            }
+            // We don't expect the semantic type
+            else {
+                assertEquals(0, response
                         .body()
                         .jsonPath()
                         .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
                         .size());
+            }
+        }
     }
 
     private void createDataSet(String fileName, String suffixedName) throws IOException {

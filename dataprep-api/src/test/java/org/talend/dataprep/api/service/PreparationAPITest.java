@@ -14,19 +14,14 @@ package org.talend.dataprep.api.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.StandalonePreparation;
@@ -118,7 +114,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     // -----------------------------------------------------GETTER-------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
     @Test
-    public void testEmptyPreparationList() throws Exception {
+    public void testEmptyPreparationList() {
         assertThat(when().get("/api/preparations").asString(), sameJSONAs("[]"));
         assertThat(when().get("/api/preparations/?format=short").asString(), sameJSONAs("[]"));
         assertThat(when().get("/api/preparations/?format=long").asString(), sameJSONAs("[]"));
@@ -331,7 +327,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void copyPreparationShouldForwardExceptions() throws Exception {
+    public void copyPreparationShouldForwardExceptions() {
 
         // when
         final Response response = given() //
@@ -376,7 +372,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void movePreparationShouldForwardExceptions() throws Exception {
+    public void movePreparationShouldForwardExceptions() {
 
         // when
         final Response response = given() //
@@ -656,7 +652,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void should_throw_error_when_preparation_does_not_exist_on_delete() throws Exception {
+    public void should_throw_error_when_preparation_does_not_exist_on_delete() {
         // when : delete unknown preparation action
         final Response response = given().delete("/api/preparations/{preparation}/actions/{action}", "unknown_prep",
                 "unkown_step");
@@ -811,10 +807,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", preparationName, home.getId());
 
         // when
-        final String content = testClient.getPrepMetadata(preparationId).asString();
+        final DataSetMetadata actual = testClient.getPrepMetadata(preparationId);
 
         // then
-        final DataSetMetadata actual = mapper.readerFor(DataSetMetadata.class).readValue(content);
         assertNotNull(actual);
         final List<ColumnMetadata> columns = actual.getRowMetadata().getColumns();
         assertEquals(6, columns.size());
@@ -1253,6 +1248,21 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertNotNull(preparationContent);
         ColumnMetadata firstNameColumn = getColumnByName(preparationContent, "first_name_copy");
         assertNotEquals(idCopyColumn.getId(), firstNameColumn.getId());
+    }
+
+    @Test
+    @Ignore("Only needed against a real split stack")
+    public void testShouldNotLeakConnection_TDP_5444() throws IOException {
+        RestAssured.port = 8888;
+        String datasetId = testClient.createDataset("dataset/dataset.csv", "mon super dataset " + UUID.randomUUID());
+        Folder homeFolder = testClient.getFolderByPath("/");
+        String preparationId =
+                testClient.createPreparationFromDataset(datasetId, "ma super préparation " + UUID.randomUUID(), homeFolder.getId());
+
+        for (int i = 0; i < 1_000; i++) {
+            DataSetMetadata prepMetadata = testClient.getPrepMetadata(preparationId);
+            LOGGER.warn("I gad METADATA for the {} time ! Yay ! {}", i+1, prepMetadata);
+        }
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {

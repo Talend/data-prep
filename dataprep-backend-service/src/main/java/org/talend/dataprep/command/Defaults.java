@@ -194,8 +194,8 @@ public class Defaults {
      */
     public static BiFunction<HttpRequestBase, HttpResponse, JsonNode> toJson(ObjectMapper mapper) {
         return (request, response) -> {
-            try {
-                JsonNode jsonNode = mapper.readTree(response.getEntity().getContent());
+            try (InputStream content = response.getEntity().getContent();) {
+                JsonNode jsonNode = mapper.readTree(content);
                 if (jsonNode == null) {
                     throw new IllegalArgumentException("Source should not be empty");
                 }

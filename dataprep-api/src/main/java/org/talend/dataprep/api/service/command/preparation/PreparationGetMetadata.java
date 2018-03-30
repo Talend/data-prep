@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
@@ -72,7 +73,7 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
             }
         }
         try (final InputStream content = response.getEntity().getContent();
-                final InputStreamReader contentReader = new InputStreamReader(content)) {
+                final InputStreamReader contentReader = new InputStreamReader(content, UTF_8)) {
             DataSetMetadata result = objectMapper.readValue(contentReader, DataSetMetadata.class);
             return new ResponseEntity<>(result, headers, status);
         } catch (IOException e) {

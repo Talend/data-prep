@@ -18,6 +18,7 @@ import static org.talend.dataprep.i18n.DataprepBundle.message;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
@@ -161,7 +162,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
         List<String> fields = readLine(line);
         for (String field: fields) {
             Scanner scanner = new Scanner(field);
-            scanner.useDelimiter(Character.toString(separator.getSeparator()));
+            scanner.useDelimiter(Pattern.quote(Character.toString(separator.getSeparator())));
             // called integer but we are looking for long in Java parlance
             if (scanner.hasNextLong()) {
                 result.add(INTEGER);

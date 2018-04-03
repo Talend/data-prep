@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-backend</artifactId>
-        <version>2.5.0-BETA</version>
+        <version>2.5.0</version>
         <relativePath>../dataprep-backend/pom.xml</relativePath>
     </parent>
 

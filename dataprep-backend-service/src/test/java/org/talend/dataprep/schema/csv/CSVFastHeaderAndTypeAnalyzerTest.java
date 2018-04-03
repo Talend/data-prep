@@ -195,7 +195,7 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         Assert.assertArrayEquals(expectedHeaders.toArray(), analysis.getHeaders().stream().map( p -> p.getKey()).toArray());
     }
 
-    // When having a special pattern character as seprator we had a PatternSyntaxException from java.util.Scanner
+    // When having a special pattern character as separator we had a PatternSyntaxException from java.util.Scanner
     // we do not want user to use a RegEx pattern as separator
     @Test
     public void testNonPatternNeutralSeparator_TDP_5123() {

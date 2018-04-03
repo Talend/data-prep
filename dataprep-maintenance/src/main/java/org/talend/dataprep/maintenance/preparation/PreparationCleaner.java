@@ -12,27 +12,20 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
-import static java.util.stream.Collectors.toSet;
 import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.neq;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tenancy.ForAll;
@@ -49,75 +42,50 @@ public class PreparationCleaner {
     @Autowired
     private PreparationRepository repository;
 
-    @Value("${preparation.store.remove.hours:24}")
-    private int orphanTime;
-
     @Autowired
     private SecurityProxy securityProxy;
 
     @Autowired
-    private PreparationUtils preparationUtils;
-
-    @Autowired(required = false)
-    private List<OrphanStepsFinder> orphanStepsFinders;
+    private List<StepMarker> markers = new ArrayList<>();
 
     @Autowired
     private ForAll forAll;
 
-    /**
-     * Get all the step ids that belong to a preparation
-     *
-     * @return The step ids
-     */
-    private Set<String> getPreparationStepIds() {
-        return repository.list(Preparation.class) //
-                .flatMap(p -> p.getSteps().stream().map(Step::getId)) //
-                .collect(toSet());
-    }
-
-    /**
-     * Get current steps that has no preparation
-     *
-     * @return The orphan steps
-     */
-    private Stream<PersistentStep> getCurrentOrphanSteps() {
-        final Set<String> preparationStepIds = getPreparationStepIds();
-        final Predicate<PersistentStep> isNotRootStep = step -> !Step.ROOT_STEP.getId().equals(step.getId());
-        final Predicate<PersistentStep> isOrphan = step -> !preparationStepIds.contains(step.getId());
-        return repository.list(PersistentStep.class).filter(isNotRootStep).filter(isOrphan);
+    public void setMarkers(List<StepMarker> markers) {
+        this.markers = markers;
     }
 
     /**
      * Remove all orphan steps in preparation repository.
      */
-    public void removeCurrentOrphanSteps() {
+    private void removeCurrentOrphanSteps() {
         securityProxy.asTechnicalUser();
+        final UUID currentCleanerRun = UUID.randomUUID();
         try {
-            getCurrentOrphanSteps().forEach(step -> {
-                // Remove step
-                final Step stepToRemove = new Step();
-                stepToRemove.setId(step.getId());
-                repository.remove(stepToRemove);
-
-                // Remove actions linked to step
-                // if this step re-use an existing actions we don't delete the actions
-                boolean criterion = repository.exist(PersistentStep.class, eq("contentId", step.getContent()));
-                if (criterion) {
-                    LOGGER.debug("Don't removing step content {} it still used by another step.", step.getContent());
-                } else {
-                    LOGGER.debug("Removing step content {}.", step.getContent());
-                    final PreparationActions preparationActionsToRemove = new PreparationActions();
-                    preparationActionsToRemove.setId(step.getContent());
-                    repository.remove(preparationActionsToRemove);
+            LOGGER.info("Starting clean run '{}'", currentCleanerRun);
+            StepMarker.Result allMarkersResult = StepMarker.Result.COMPLETED;
+            for (StepMarker marker : markers) {
+                final StepMarker.Result result = marker.mark(repository, currentCleanerRun);
+                if (result == StepMarker.Result.INTERRUPTED) {
+                    allMarkersResult = StepMarker.Result.INTERRUPTED;
                 }
+            }
 
-                // Remove metadata linked to step
-                final StepRowMetadata stepRowMetadataToRemove = new StepRowMetadata();
-                stepRowMetadataToRemove.setId(stepToRemove.getRowMetadata());
-                repository.remove(stepRowMetadataToRemove);
-            });
+            if (allMarkersResult == StepMarker.Result.COMPLETED) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Removing unused steps ({} scheduled for deletion)",
+                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                }
+                repository.remove(Step.class, neq("marker", currentCleanerRun.toString()));
+            } else {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Discarding {} pending step deletes",
+                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                }
+            }
         } finally {
             securityProxy.releaseIdentity();
+            LOGGER.info("Done clean run '{}'", currentCleanerRun);
         }
     }
 

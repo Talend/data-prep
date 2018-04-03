@@ -12,16 +12,12 @@
 // ============================================================================
 package org.talend.dataprep.qa.config;
 
-import static org.mockito.Matchers.endsWith;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.jayway.restassured.response.Response;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +25,13 @@ import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
-import com.jayway.restassured.response.Response;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.when;
 
 @RunWith(org.mockito.runners.MockitoJUnitRunner.class)
 public class GlobalStepTest {
@@ -60,6 +62,9 @@ public class GlobalStepTest {
 
     private Folder folderNotFound = new Folder().setId("B_NotFound");
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void setUp() throws Exception {
         when(respOK.getStatusCode()).thenReturn(200);
@@ -79,7 +84,7 @@ public class GlobalStepTest {
 
     // should clean context OK : no exception is thrown
     @Test
-    public void shouldCleanContextIsOK() throws Exception {
+    public void shouldCleanContextIsOK() {
 
         // when
         when(context.getPreparationIds()).thenReturn(getOKList());
@@ -87,12 +92,18 @@ public class GlobalStepTest {
         when(context.getFolders()).thenReturn(getOKFolderSet());
 
         gobalstep.context = this.context;
+        boolean isExceptionThrown = true;
 
         // then
-        gobalstep.cleanAfter();
+        try {
+            gobalstep.cleanAfter();
+            isExceptionThrown = false;
+        } finally {
+            Assert.assertFalse(isExceptionThrown);
+        }
     }
 
-    @Test(expected = GlobalStep.CleanAfterException.class)
+    @Test
     public void shouldCleanContextWithDatasetError() throws Exception {
 
         // when
@@ -103,10 +114,11 @@ public class GlobalStepTest {
         gobalstep.context = this.context;
 
         // then
+        thrown.expect(GlobalStep.CleanAfterException.class);
         gobalstep.cleanAfter();
     }
 
-    @Test(expected = GlobalStep.CleanAfterException.class)
+    @Test
     public void shouldCleanContextWithPreparationError() throws Exception {
 
         // when
@@ -117,10 +129,11 @@ public class GlobalStepTest {
         gobalstep.context = this.context;
 
         // then
+        thrown.expect(GlobalStep.CleanAfterException.class);
         gobalstep.cleanAfter();
     }
 
-    @Test(expected = GlobalStep.CleanAfterException.class)
+    @Test
     public void shouldCleanContextWithFolderError() throws Exception {
 
         // when
@@ -131,6 +144,7 @@ public class GlobalStepTest {
         gobalstep.context = this.context;
 
         // then
+        thrown.expect(GlobalStep.CleanAfterException.class);
         gobalstep.cleanAfter();
     }
 

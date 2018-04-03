@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import { chain, find, map, sortBy } from 'lodash';
+import { chain, find, sortBy } from 'lodash';
 
 export const gridState = {
 	dataView: new Slick.Data.DataView({ inlineFilters: false }),
@@ -54,8 +54,9 @@ export function GridStateService() {
 	 * @description Update the number of lines statistics
 	 */
 	function updateLinesCount(data) {
+		// [NC],
 		gridState.nbLines = data.records.length;
-		gridState.nbTotalLines = data.metadata && data.metadata.records || data.records.length;
+		gridState.nbTotalLines = (data.metadata && data.metadata.records) || data.records.length;
 		gridState.displayLinesPercentage = ((gridState.nbLines * 100) / gridState.nbTotalLines).toFixed(0);
 	}
 

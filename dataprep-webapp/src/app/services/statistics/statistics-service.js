@@ -33,9 +33,9 @@ const PatternOccurrenceWorker = require('worker-loader!./pattern-occurence.worke
  * @requires data-prep.services.utils.service:DateService
  */
 export default function StatisticsService($q, $log, $filter, state, StateService,
-										  StepUtilsService, StatisticsRestService,
-										  ConverterService, TqlFilterAdapterService, TextFormatService,
-										  StorageService, FilterUtilsService) {
+											StepUtilsService, StatisticsRestService,
+											ConverterService, TqlFilterAdapterService, TextFormatService,
+											StorageService, FilterUtilsService) {
 	'ngInject';
 
 	const service = {
@@ -646,8 +646,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 			initRangeHistogram();
 			initRangeLimits();
 			break;
-		case 'date':
-		{
+		case 'date': {
 			const promise = initDateRangeHistogram();
 			initRangeLimits();
 			return promise;
@@ -783,8 +782,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 				StateService.setStatisticsFilteredHistogram(createNumberRangeHistograms().filteredHistogram);
 				initRangeLimits();
 				break;
-			case 'date':
-			{
+			case 'date': {
 				const dateRangeProcess = createFilteredDateRangeHistogram()
 					.then((histogram) => {
 						StateService.setStatisticsFilteredHistogram(histogram);

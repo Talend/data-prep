@@ -2,6 +2,8 @@ package org.talend.dataprep.qa.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.when;
 import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
 import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
 import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
@@ -16,13 +18,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.ReflectionUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.Filter;
+import org.talend.dataprep.qa.config.FeatureContext;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })
@@ -30,6 +37,13 @@ public class OSIntegrationTestUtilTest {
 
     @Autowired
     OSIntegrationTestUtil util;
+
+    FeatureContext featureContext;
+
+    @Before
+    public void setUp() throws Exception {
+        ReflectionUtils.setField(FeatureContext.class.getDeclaredField("TI_SUFFIX_UID"), featureContext, "_TI_SUFFIX_UID");
+    }
 
     @Test
     public void mapParamsToFilterEmpty() {
@@ -191,14 +205,14 @@ public class OSIntegrationTestUtilTest {
     public void extractPathFromFullNameSimplePath() {
         String result = util.extractPathFromFullName("/simplePath/name");
         Assert.assertNotNull(result);
-        assertEquals("/simplePath", result);
+        assertEquals("/simplePath_TI_SUFFIX_UID", result);
     }
 
     @Test
     public void extractPathFromFullNameLongPath() {
         String result = util.extractPathFromFullName("/long/path/name");
         Assert.assertNotNull(result);
-        assertEquals("/long/path", result);
+        assertEquals("/long_TI_SUFFIX_UID/path_TI_SUFFIX_UID", result);
     }
 
     @Test

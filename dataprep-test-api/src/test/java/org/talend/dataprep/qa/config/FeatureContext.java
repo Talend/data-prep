@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.format.export.ExportFormatMessage;
@@ -51,9 +52,9 @@ public class FeatureContext {
     private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
     /** Classify uploaded dataset id by their name (Map< Name, Id >) */
-    protected Map<String, String> datasetIdByName = new HashMap<>();
+    Map<String, String> datasetIdByName = new HashMap<>();
 
-    protected Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
+    Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
 
     protected SortedSet<Folder> folders;
 
@@ -74,10 +75,14 @@ public class FeatureContext {
      */
     private Map<String, Object> featureContext = new HashMap<>();
 
+    public static String getTiSuffixUid() {
+        return TI_SUFFIX_UID;
+    }
+
     /**
      * Add a suffix to a name depending of the execution instance.
      *
-     * @param name the to suffix.
+     * @param name the name to suffix.
      * @return the suffixed name.
      */
     public static String suffixName(String name) {
@@ -87,6 +92,23 @@ public class FeatureContext {
     @PostConstruct
     public void init() {
         folders = folderUtil.getEmptyReverseSortedSet();
+    }
+
+    /**
+     * Add a suffix to a name depending of the execution instance.
+     *
+     * @param folderPath to suffix.
+     * @return the suffixed folderPath.
+     */
+    public static String suffixFolderName(String folderPath) {
+        // The Home folder does not be suffixed
+        if (StringUtils.equals(folderPath, "/")) {
+            return folderPath;
+        }
+        // 2 cases, following the path starts from the root or not
+        return folderPath.startsWith("/") ?
+                "/" + folderPath.substring(1).replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID :
+                folderPath.replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID;
     }
 
     /**
@@ -297,7 +319,7 @@ public class FeatureContext {
     /**
      * Clear the list of folders.
      */
-    public void clearFolders() {
+    void clearFolders() {
         folders.clear();
     }
 

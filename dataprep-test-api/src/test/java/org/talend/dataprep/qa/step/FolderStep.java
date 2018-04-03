@@ -1,13 +1,8 @@
 package org.talend.dataprep.qa.step;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -15,17 +10,21 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 
-import com.jayway.restassured.response.Response;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
 
 /**
  * Store steps related to folders.
  */
 public class FolderStep extends DataPrepStep {
 
-    public static final String FOLDER_NAME = "folderName";
+    private static final String FOLDER_NAME = "folderName";
 
     /**
      * This class' logger.
@@ -36,7 +35,7 @@ public class FolderStep extends DataPrepStep {
     public void createFolder(@NotNull DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String parentFolderName = params.get(ORIGIN);
-        String folder = params.get(FOLDER_NAME);
+        String folder = suffixFolderName(params.get(FOLDER_NAME));
 
         Folder parentFolder = folderUtil.searchFolder(parentFolderName);
         Assert.assertNotNull(parentFolder);

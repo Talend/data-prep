@@ -51,7 +51,7 @@ public class PreparationCleaner {
     @Autowired
     private ForAll forAll;
 
-    void setMarkers(List<StepMarker> markers) {
+    public void setMarkers(List<StepMarker> markers) {
         this.markers = markers;
     }
 

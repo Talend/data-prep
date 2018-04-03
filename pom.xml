@@ -229,6 +229,31 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <!-- Following Talend config: https://github.com/Talend/tools/tree/master/tools-java-formatter-->
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>2.0.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>validate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <configFile>talend_java_eclipse_formatter.xml</configFile>
+                        <lineEnding>LF</lineEnding>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.talend.tools</groupId>
+                            <artifactId>java-formatter</artifactId>
+                            <version>0.2.0</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
                     <groupId>com.github.jeluard</groupId>
                     <artifactId>plantuml-maven-plugin</artifactId>
                     <version>1.2</version>

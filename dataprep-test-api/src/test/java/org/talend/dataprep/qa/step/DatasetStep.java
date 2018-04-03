@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
@@ -108,21 +107,29 @@ public class DatasetStep extends DataPrepStep {
             throws IOException, InterruptedException {
         String dataSetId = context.getObject("dataSetId").toString();
 
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId);
+        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
     }
 
     @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
     public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId);
+        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
     }
 
-    private void getDatasetsColumnSemanticTypes(String semanticTypeId, String columnId, String dataSetId) {
+    @Then("^I check that the semantic type \"(.*)\" does not exist the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
+    public void thenICheckSemanticTypeDoesNotExist(String semanticTypeId, String columnId, String dataSetName)
+            throws IOException, InterruptedException {
+        String dataSetId = context.getDatasetId(suffixName(dataSetName));
+        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, false);
+    }
+
+    private void getDatasetsColumnSemanticTypes(String semanticTypeId, String columnId, String dataSetId,
+            boolean expected) {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 
-        assertEquals(1,
+        assertEquals(expected ? 1 : 0,
                 response
                         .body()
                         .jsonPath()
@@ -157,6 +164,7 @@ public class DatasetStep extends DataPrepStep {
 
         }
         context.storeDatasetRef(datasetId, suffixedName);
+        // context.storeObject("dataSetId", datasetId);
     }
 
     @Given("^I have a dataset with parameters:$")

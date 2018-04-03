@@ -42,7 +42,7 @@ public interface PreparationActions {
             .name("preparation.create")
             .icon("talend-plus-circle")
             .type("@@preparation/CREATE")
-            .bsStyle("primary")
+            .bsStyle("info")
             .payload(PAYLOAD_METHOD_KEY, "togglePreparationCreator")
             .build();
 

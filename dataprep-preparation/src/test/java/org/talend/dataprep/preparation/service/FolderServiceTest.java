@@ -14,7 +14,10 @@ package org.talend.dataprep.preparation.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -153,6 +156,18 @@ public class FolderServiceTest extends BasePreparationTest {
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, hasSize(1));
         assertThat(folders.get(0).getName(), is("bar"));
+    }
+
+    @Test
+    public void shouldRemoveMissingFolder() throws Exception {
+        // then
+        given() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError()//
+                .when() //
+                .delete("/folders/folder1234");
     }
 
     @Test

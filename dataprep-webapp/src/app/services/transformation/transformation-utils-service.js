@@ -15,7 +15,6 @@ import { chain, forEach, filter, map, find } from 'lodash';
 
 const ACTION_SCOPE = 'hidden_in_action_list';
 const CATEGORY = 'category';
-const SUGGESTIONS_CATEGORY = 'suggestions';
 const FILTERED_COLUMN = 'column_filtered';
 const HIGHLIGHT_CLASS = 'highlighted';
 
@@ -27,10 +26,11 @@ const HIGHLIGHT_CLASS = 'highlighted';
  * @requires data-prep.services.utils.service:ConverterService
  */
 export default class TransformationUtilsService {
-	constructor(TextFormatService, ConverterService) {
+	constructor($translate, TextFormatService, ConverterService) {
 		'ngInject';
 		this.ConverterService = ConverterService;
 		this.TextFormatService = TextFormatService;
+		this.$translate = $translate;
 	}
 
 	// ---------------------------------------------------------------------------------------------
@@ -206,9 +206,10 @@ export default class TransformationUtilsService {
 		} = this.popFilteredCategory(categories);
 
 		const filterTransformations = filterCategory ? filterCategory.transformations : [];
+		const suggestionsLabel = this.$translate.instant('SUGGESTIONS');
 		const suggestionsCategory = {
-			category: SUGGESTIONS_CATEGORY,
-			categoryHtml: SUGGESTIONS_CATEGORY.toUpperCase(),
+			category: suggestionsLabel,
+			categoryHtml: suggestionsLabel.toUpperCase(),
 			transformations: filterTransformations.concat(suggestions),
 		};
 

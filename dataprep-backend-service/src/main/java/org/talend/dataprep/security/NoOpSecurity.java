@@ -14,9 +14,11 @@ package org.talend.dataprep.security;
 
 import static java.util.Collections.emptySet;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.user.UserGroup;
 
@@ -65,6 +67,11 @@ public class NoOpSecurity implements Security {
     @Override
     public boolean isTDPUser() {
         return true;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return LocaleContextHolder.getLocale();
     }
 
 }

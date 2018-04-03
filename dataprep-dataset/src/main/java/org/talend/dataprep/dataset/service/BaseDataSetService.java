@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.dataset.service;
 
+import static java.util.Comparator.comparingInt;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
 
@@ -63,7 +64,7 @@ public abstract class BaseDataSetService {
      */
     @PostConstruct
     public void initialize() {
-        synchronousAnalyzers.sort((analyzer1, analyzer2) -> analyzer1.order() - analyzer2.order());
+        synchronousAnalyzers.sort(comparingInt(SynchronousDataSetAnalyzer::order));
     }
 
     static void assertDataSetMetadata(DataSetMetadata dataSetMetadata, String dataSetId) {

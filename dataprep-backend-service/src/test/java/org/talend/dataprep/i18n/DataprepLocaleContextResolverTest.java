@@ -13,18 +13,21 @@ package org.talend.dataprep.i18n;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpHeaders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.i18n.LocaleContext;
-import org.springframework.context.i18n.SimpleLocaleContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataprepLocaleContextResolverTest {
@@ -38,35 +41,55 @@ public class DataprepLocaleContextResolverTest {
     private HttpServletResponse response;
 
     @Test
-    public void resolveLocaleContext_wellFormattedLocaleIsTaken() throws Exception {
+    public void resolveLocaleContextWithWellFormattedLocaleIsTaken() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(TEST_LOCALE);
 
-        LocaleContext localeContext = resolver.resolveLocaleContext(request);
-        assertNotNull(localeContext);
-        assertEquals(TEST_LOCALE, localeContext.getLocale().toLanguageTag());
+        Locale locale = resolver.resolveLocale(request);
+        assertNotNull(locale);
+        assertEquals(TEST_LOCALE, locale.toLanguageTag());
     }
 
     @Test
-    public void resolveLocaleContext_notFormattedLocaleDefault() throws Exception {
+    public void resolveLocaleContextWithNotFormattedLocaleDefault() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver("abcd");
 
-        LocaleContext localeContext = resolver.resolveLocaleContext(request);
-        assertNotNull(localeContext);
-        assertEquals(Locale.US, localeContext.getLocale());
+        Locale locale = resolver.resolveLocale(request);
+        assertNotNull(locale);
+        assertEquals(Locale.US, locale);
     }
 
     @Test
-    public void resolveLocaleContext_noLocaleThenDefault() throws Exception {
+    public void resolveLocaleContextWithNoLocaleThenDefault() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(null);
 
-        LocaleContext localeContext = resolver.resolveLocaleContext(request);
-        assertNotNull(localeContext);
-        assertEquals(Locale.US, localeContext.getLocale());
+        Locale locale = resolver.resolveLocale(request);
+        assertNotNull(locale);
+        assertEquals(Locale.US, locale);
+    }
+
+    @Test
+    public void resolveLocaleContextWithFromHttpHeader() throws Exception {
+        DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(null);
+        when(request.getHeader(eq(HttpHeaders.ACCEPT_LANGUAGE))).thenReturn(Locale.JAPANESE.toLanguageTag());
+        when(request.getLocales()).thenReturn(Collections.enumeration(Arrays.asList(Locale.JAPANESE, Locale.US)));
+
+        Locale locale = resolver.resolveLocale(request);
+        assertNotNull(locale);
+        assertEquals(Locale.JAPANESE, locale);
+    }
+
+    @Test
+    public void resolveLocaleContextWithMalformedLocale() throws Exception {
+        DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver("@@&&");
+
+        Locale locale = resolver.resolveLocale(request);
+        assertNotNull(locale);
+        assertEquals(Locale.US, locale);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void setLocaleContext() throws Exception {
-        new DataprepLocaleContextResolver("en-US").setLocaleContext(request, response, new SimpleLocaleContext(Locale.FRANCE));
+        new DataprepLocaleContextResolver("en-US").setLocale(request, response, Locale.FRANCE);
     }
 
 }

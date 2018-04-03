@@ -143,4 +143,5 @@ public class UserData implements Serializable {
     public int hashCode() {
         return Objects.hash(favoritesDatasets, userId, appVersion);
     }
+
 }

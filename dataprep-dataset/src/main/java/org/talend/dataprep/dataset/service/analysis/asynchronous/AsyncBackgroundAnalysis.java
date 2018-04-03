@@ -24,6 +24,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.dataset.event.AnalysisEventProcessingUtil;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
+import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 
 /**
  * Compute statistics analysis on the full dataset.
@@ -53,13 +54,20 @@ public class AsyncBackgroundAnalysis {
         analysisEventProcessingUtil.processAnalysisEvent(datasetId);
     }
 
+    @EventListener
+    public void onEvent(DatasetUpdatedEvent event) {
+        LOGGER.debug("Processing spring dataset imported event: {}", event);
+        String datasetId = event.getSource().getId();
+        analysisEventProcessingUtil.processAnalysisEvent(datasetId);
+    }
+
     public static class AsyncBackgroundAnalysisConditon extends AllNestedConditions {
 
         AsyncBackgroundAnalysisConditon() {
             super(ConfigurationPhase.REGISTER_BEAN);
         }
 
-        @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
+        @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring", matchIfMissing = true)
         static class springEventListener {
         }
 

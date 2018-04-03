@@ -19,7 +19,9 @@ const settingsPath = '/api/settings';
 function get(url) {
 	const initInjector = angular.injector(['ng']);
 	const $http = initInjector.get('$http');
-	return $http.get(url).then(response => response.data);
+	return $http.get(url, {
+		headers: { 'Accept-Language': '' },
+	}).then(response => response.data);
 }
 
 function getAppConfig() {

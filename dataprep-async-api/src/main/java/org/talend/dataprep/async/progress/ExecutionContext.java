@@ -113,7 +113,7 @@ public class ExecutionContext {
      *
      * @param progress Any Java bean (might even be null).
      */
-    public void push(Object progress) {
+    public void push(ExecutionProgress progress) {
         final ProgressEntry entry = currentProgress.get(Thread.currentThread());
         if (entry != null) {
             entry.execution.setProgress(progress);
@@ -133,21 +133,6 @@ public class ExecutionContext {
         entry.repository.save(entry.execution);
 
     }
-    // /**
-    // * Result initialization entry point
-    // *
-    // * @param result Any Java bean (might even be null).
-    // */
-    // public void initResult(AsyncExecutionResult result) {
-    // final ProgressEntry entry = currentProgress.get(Thread.currentThread());
-    // //TODO what this code do ?
-    // if(entry.execution.getResult() != null) {
-    // LOGGER.warn("The result for execution #{} is already initialized", entry.execution.getId());
-    // return;
-    // }
-    // entry.execution.setResult(result);
-    // entry.repository.save(entry.execution);
-    // }
 
     /**
      * @return The current {@link AsyncExecution execution} linked to current thread.

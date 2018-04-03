@@ -1,13 +1,11 @@
 package org.talend.dataprep.qa.step;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -17,13 +15,14 @@ import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with preparation
@@ -77,8 +76,8 @@ public class PreparationStep extends DataPrepStep {
     public void movePreparation(String preparationName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<Folder> folders = folderUtil.listFolders();
-        Folder originFolder = folderUtil.extractFolder(params.get(ORIGIN), folders);
-        Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
+        Folder originFolder = folderUtil.extractFolder(suffixFolderName(params.get(ORIGIN)), folders);
+        Folder destFolder = folderUtil.extractFolder(suffixFolderName(params.get(DESTINATION)), folders);
         String prepId = context.getPreparationId(suffixName(preparationName));
         Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,
                 suffixName(params.get(NEW_PREPARATION_NAME)));
@@ -107,7 +106,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^I check that the preparation \"(.*)\" doesn't exist in the folder \"(.*)\"$")
     public void checkPreparationNotExist(String preparationName, String folder) throws IOException {
-        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, folder));
+        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, suffixFolderName(folder)));
     }
 
     @And("I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")
@@ -124,7 +123,7 @@ public class PreparationStep extends DataPrepStep {
 
     @And("^I check that the preparation \"(.*)\" exists under the folder \"(.*)\"$")
     public void checkPrepExists(String preparationName, String folder) throws IOException {
-        Assert.assertEquals(1, checkPrepExistsInTheFolder(preparationName, folder));
+        Assert.assertEquals(1, checkPrepExistsInTheFolder(preparationName, suffixFolderName(folder)));
     }
 
     private long checkPrepExistsInTheFolder(String preparationName, String folder) throws IOException {

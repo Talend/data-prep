@@ -117,45 +117,6 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
         assertThatFilterExecutionReturnsTrue();
     }
 
-    @Test
-    public void shouldNotIncludeInvalidValues() throws Exception {
-        // given
-        final String filtersDefinition = givenFilter_0001_equals_toto();
-        row.set("0001", "toto");
-        row.setInvalid("0001");
-
-        // when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        // then
-        assertThatFilterExecutionReturnsFalse();
-
-        // given
-        row.unsetInvalid("0001");
-
-        // then
-        assertThatFilterExecutionReturnsTrue();
-    }
-
-    @Test
-    public void shouldIncludeAllDecimalSeparators() {
-        // given
-        final String filtersDefinition = givenFilter_0001_between_5_incl_and_10_incl();
-        row.set("0001", "5.35");
-
-        // when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        // then
-        assertThatFilterExecutionReturnsTrue();
-
-        // given
-        row.set("0001", "5,35");
-
-        // then
-        assertThatFilterExecutionReturnsTrue();
-    }
-
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid1() throws Exception {
         //given

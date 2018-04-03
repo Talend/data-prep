@@ -85,45 +85,6 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         assertThatFilterExecutionReturnsFalse();
     }
 
-    @Test
-    public void testOnInvalidValue() throws Exception {
-        // given
-        final String tqlFilter = "0001 in ['Vincent', 'François', 'Paul']";
-        row.setInvalid("0001");
-        row.set("0001", "Vincent");
-
-        // when
-        filter = service.build(tqlFilter, rowMetadata);
-
-        // then
-        assertThatFilterExecutionReturnsFalse();
-
-        // given
-        row.unsetInvalid("0001");
-
-        // then
-        assertThatFilterExecutionReturnsTrue();
-    }
-
-    @Test
-    public void shouldIncludeAllDecimalSeparators() {
-        // given
-        final String filtersDefinition = givenFilter_0001_between_5_incl_and_10_incl();
-        row.set("0001", "5.35");
-
-        // when
-        filter = service.build(filtersDefinition, rowMetadata);
-
-        // then
-        assertThatFilterExecutionReturnsTrue();
-
-        // given
-        row.set("0001", "5,35");
-
-        // then
-        assertThatFilterExecutionReturnsTrue();
-    }
-
     @Override
     protected String givenFilter_0001_equals_toto() {
         return "0001 = 'toto'";

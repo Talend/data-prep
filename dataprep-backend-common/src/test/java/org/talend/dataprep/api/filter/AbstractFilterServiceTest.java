@@ -95,6 +95,22 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     }
 
     @Test
+    public void testFilterShouldUnderstandAllDecimalSeparators() {
+        // given
+        final String filtersDefinition = givenFilter_0001_between_5_incl_and_10_incl();
+        row.set("0001", "5.35");
+
+        // when
+        filter = service.build(filtersDefinition, rowMetadata);
+
+        // then
+        assertThatFilterExecutionReturnsTrue();
+
+        row.set("0001", "5,35");
+        assertThatFilterExecutionReturnsTrue();
+    }
+
+    @Test
     public void testEqualsPredicateOnStringValue() throws Exception {
         // given
         final String filtersDefinition = givenFilter_0001_equals_toto();
@@ -108,6 +124,10 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", "tatatoto"); // contains but different
         assertThatFilterExecutionReturnsFalseForRow("0001", ""); // empty
         assertThatFilterExecutionReturnsFalseForRow("0001", null); // null
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "toto");
     }
 
     protected abstract String givenFilter_0001_equals_toto();
@@ -121,12 +141,16 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "titi", "toto" }); // empty
-                                                                                                                      // value
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "toto", "titi" }); // empty
-                                                                                                                      // value
-        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "titi", "tata" }); // empty
-                                                                                                                       // value
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "titi", "toto" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "toto", "titi" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "titi", "tata" });
+
+        // invalid values are excluded
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "titi", "toto" });
+        row.unsetInvalid("0002");
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "toto", "titi" });
     }
 
     protected abstract String givenFilter_one_columns_equals_toto();
@@ -152,6 +176,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", ".5"); // lt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1 000.5"); // gt
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5.0"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5,00"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "05.0"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "0 005"); // eq but invalid
     }
 
     protected abstract String givenFilter_0001_equals_5();
@@ -176,6 +207,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { ",5", "4.0" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "1.000,5", "4.0" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "1 000.5", "4.0" });
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "4.0" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5,00", "4.0" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "05.0", "4.0" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "0 005", "4.0" });
     }
 
     protected abstract String givenFilter_one_column_equals_5();
@@ -202,6 +240,15 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", ".5"); // lt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1 000.5"); // gt
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5.35"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5,35"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "05.35"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5,3500"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5,3500"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "0 005.35"); // eq but invalid
     }
 
     protected abstract String givenFilter_0001_equals_5dot35();
@@ -215,12 +262,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5.35" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5,35", "4.0" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "05.35" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5,3500", "4.0" });
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5,3500" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "0 005.35", "4.0" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5.35" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "05.35" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5,3500" });
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "4.0" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5,0", "4.0" });
@@ -228,6 +275,16 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", ".5" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "1.000,5", "4.0" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "1 000.5" });
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5,35", "4.0" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5,3500", "4.0" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "0 005.35", "4.0" });
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5.35" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "05.35" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5,3500" });
     }
 
     protected abstract String givenFilter_one_column_equals_5dot35();
@@ -244,6 +301,10 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow("0001", "Test"); // neq
 
         assertThatFilterExecutionReturnsFalseForRow("0001", "test"); // eq
+
+        // invalid values matches the filter (as it is a 'not' one)
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsTrueForRow("0001", "test"); // eq but invalid so neq
     }
 
     protected abstract String givenFilter_0001_not_equal_test();
@@ -260,6 +321,10 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "toto", "Test" });
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "toto", "test" });
+
+        // invalid values matches the filter (as it is a 'not' one)
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "toto", "test" });
     }
 
     protected abstract String givenFilter_one_column_not_equal_test();
@@ -279,6 +344,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", "12"); // eq
         assertThatFilterExecutionReturnsFalseForRow("0001", "12.00"); // eq
         assertThatFilterExecutionReturnsFalseForRow("0001", "012,0"); // eq
+
+        // invalid values matches the filter (as it is a 'not' one)
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsTrueForRow("0001", "12"); // eq but invalid so neq
+        assertThatFilterExecutionReturnsTrueForRow("0001", "12.00"); // eq but invalid so neq
+        assertThatFilterExecutionReturnsTrueForRow("0001", "012,0"); // eq but invalid so neq
     }
 
     protected abstract String givenFilter_0001_not_equal_12();
@@ -296,8 +367,15 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "14", "11,99" });
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "12", "11.99" });
-        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "12.1", "12.00" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "012,0", "11.99" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "12.1", "12.00" });
+
+        // invalid values matches the filter (as it is a 'not' one)
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "12", "11.99" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "012,0", "11.99" });
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "12.1", "12.00" });
     }
 
     protected abstract String givenFilter_one_column_not_equal_12();
@@ -317,6 +395,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", "24.60"); // eq
         assertThatFilterExecutionReturnsFalseForRow("0001", "24,6"); // eq
         assertThatFilterExecutionReturnsFalseForRow("0001", "024,60"); // eq
+
+        // invalid values matches the filter (as it is a 'not' one)
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsTrueForRow("0001", "24.60"); // eq but invalid so neq
+        assertThatFilterExecutionReturnsTrueForRow("0001", "24,6"); // eq but invalid so neq
+        assertThatFilterExecutionReturnsTrueForRow("0001", "024,60"); // eq but invalid so neq
     }
 
     protected abstract String givenFilter_0001_not_equal_24dot6();
@@ -333,8 +417,15 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "24", "26.6" });
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "24.60", "11.99" });
-        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "12.1", "24,6" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "024,60", "11.99" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "12.1", "24,6" });
+
+        // invalid values matches the filter (as it is a 'not' one)
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "24.60", "11.99" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "024,60", "11.99" });
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "12.1", "24,6" });
     }
 
     protected abstract String givenFilter_one_column_not_equal_24dot6();
@@ -370,6 +461,15 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow("0001", "5,5"); // gt
         assertThatFilterExecutionReturnsTrueForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsTrueForRow("0001", "1 000.5"); // gt
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "6"); // gt but invalid
+
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5.5"); // gt but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5,5"); // gt but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "1 000.5"); // gt but invalid
     }
 
     protected abstract String givenFilter_0001_greater_than_5();
@@ -396,10 +496,20 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "5,00" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "05.0", "0 005" });
 
-        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.5", "1.6" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "3.0", "5,5" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "-1.000,5", "26.6" });
+        assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "5.5", "1.6" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "24", "-1 000.5" });
+
+        // invalid values are excluded
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "4", "6" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "3.0", "5,5" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "-1.000,5", "26.6" });
+        row.unsetInvalid("0002");
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.5", "1.6" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "24", "-1 000.5" });
     }
 
     protected abstract String givenFilter_one_column_greater_than_5();
@@ -422,6 +532,11 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", "toto"); // nan
         assertThatFilterExecutionReturnsFalseForRow("0001", ""); // nan
         assertThatFilterExecutionReturnsFalseForRow("0001", null); // null
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "-0.05"); // gt but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "1"); // gt but invalid
     }
 
     protected abstract String givenFilter_0001_greater_than_minus0dot1();
@@ -441,6 +556,11 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "", "toto" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "tata", null });
+
+        // invalid values are excluded
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "-1", "-0.05" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "-4", "6" });
     }
 
     protected abstract String givenFilter_one_column_greater_than_minus0dot1();
@@ -476,6 +596,11 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow("0001", "5,5"); // gt
         assertThatFilterExecutionReturnsTrueForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsTrueForRow("0001", "1 000.5"); // gt
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "05.0"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt but invalid
     }
 
     protected abstract String givenFilter_0001_greater_or_equal_5();
@@ -508,6 +633,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "4", "5.5" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "1.000,5", "3" });
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] { "1 000.5", "3" });
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "6", "3" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.0", "3" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5,5", "3" });
     }
 
     protected abstract String givenFilter_one_column_greater_or_equal_5();
@@ -543,6 +674,11 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", "5,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1 000.5"); // gt
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "4"); // lt
+        assertThatFilterExecutionReturnsFalseForRow("0001", "4.5"); // lt
     }
 
     protected abstract String givenFilter_0001_less_than_5();
@@ -574,6 +710,11 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.5", "5,5" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "1.000,5", "1 000.5" });
+
+        // invalid values are excluded
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "6", "3" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "12", "0.5" });
     }
 
     protected abstract String givenFilter_one_column_less_than_5();
@@ -609,6 +750,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsFalseForRow("0001", "5,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1.000,5"); // gt
         assertThatFilterExecutionReturnsFalseForRow("0001", "1 000.5"); // gt
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "5"); // eq but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "4"); // lt but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "4,5"); // lt but invalid
     }
 
     protected abstract String givenFilter_0001_less_or_equal_5();
@@ -641,6 +788,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "5.5", "5,5" });
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "1.000,5", "1 000.5" });
+
+        // invalid values are excluded
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "7", ",5" });
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "42", "4,5" });
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] { "3", ",7" });
     }
 
     protected abstract String givenFilter_one_column_less_or_equal_5();
@@ -658,6 +812,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow("0001", "Toto"); // different case
         assertThatFilterExecutionReturnsTrueForRow("0001", "tatatoto"); // contains but different
         assertThatFilterExecutionReturnsFalseForRow("0001", "tagada"); // not contains
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "toto"); // equals but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "Toto"); // different case but invalid
+        assertThatFilterExecutionReturnsFalseForRow("0001", "tatatoto"); // contains but different but invalid
     }
 
     protected abstract String givenFilter_0001_contains_toto();
@@ -676,6 +836,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] {"titi", "Toto"}); // different case
         assertThatFilterExecutionReturnsTrueForRow(new String[] { "0001", "0002" }, new String[] {"tatatoto", "titi"}); // contains but different
         assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] {"tagada", "titi"}); // not contains
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] {"toto", "titi"}); // equals but invalid
+        row.setInvalid("0002");
+        assertThatFilterExecutionReturnsFalseForRow(new String[] { "0001", "0002" }, new String[] {"toto", "toto"}); // equals but invalid
     }
 
     protected abstract String givenFilter_one_column_contains_toto();
@@ -693,6 +859,10 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         assertThatFilterExecutionReturnsTrueForRow("0001", "To5-"); // same pattern
         assertThatFilterExecutionReturnsFalseForRow("0001", "To5--"); // different length
         assertThatFilterExecutionReturnsFalseForRow("0001", ""); // empty value
+
+        // invalid values are excluded
+        row.setInvalid("0001");
+        assertThatFilterExecutionReturnsFalseForRow("0001", "To5-"); // same pattern but invalid
     }
 
     protected abstract String givenFilter_0001_complies_Aa9dash();
@@ -715,6 +885,10 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         row.set("0002", "To5-"); // different length
         assertThatFilterExecutionReturnsTrue();
+
+        // TODO ELO to be continued...
+        // invalid values are excluded
+        row.setInvalid("0001");
     }
 
     protected abstract String givenFilter_one_column_complies_Aa9dash();
@@ -761,6 +935,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
+        row.set("0001", "toto");
         row.setInvalid("0001"); // value in invalid array in column metadata
         assertThatFilterExecutionReturnsTrue();
         row.unsetInvalid("0001");

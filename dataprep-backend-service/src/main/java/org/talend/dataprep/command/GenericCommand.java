@@ -13,7 +13,6 @@
 package org.talend.dataprep.command;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -38,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.error.ErrorCode;
@@ -216,11 +217,14 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         // update request header with security token
         if (StringUtils.isNotBlank(getAuthenticationToken())) {
-            request.addHeader(AUTHORIZATION, getAuthenticationToken());
+            request.addHeader(HttpHeaders.AUTHORIZATION, getAuthenticationToken());
         } else {
             // Intentionally left as debug to prevent log flood in open source edition.
             LOGGER.debug("No current authentication token for {}.", this.getClass());
         }
+
+        // Forward locale to target
+        request.addHeader(HttpHeaders.ACCEPT_LANGUAGE, LocaleContextHolder.getLocale().toLanguageTag());
 
         final HttpResponse response;
         try {

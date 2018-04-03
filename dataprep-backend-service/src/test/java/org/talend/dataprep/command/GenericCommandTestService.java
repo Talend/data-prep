@@ -18,6 +18,7 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -39,6 +40,11 @@ public class GenericCommandTestService {
     @RequestMapping(value = "/command/test/success", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String success() throws IOException {
         return "success";
+    }
+
+    @RequestMapping(value = "/command/test/language", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public String testLanguage(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) throws IOException {
+        return language;
     }
 
     @RequestMapping(value = "/command/test/authentication/token", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)

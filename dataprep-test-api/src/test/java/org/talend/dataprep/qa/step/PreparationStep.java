@@ -1,11 +1,14 @@
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -15,14 +18,13 @@ import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import com.jayway.restassured.response.Response;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with preparation
@@ -106,7 +108,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^I check that the preparation \"(.*)\" doesn't exist in the folder \"(.*)\"$")
     public void checkPreparationNotExist(String preparationName, String folder) throws IOException {
-        Assert.assertEquals(0, checkPrepExistsInTheFolder(preparationName, suffixFolderName(folder)));
+        assertEquals(0, checkPrepExistsInTheFolder(preparationName, suffixFolderName(folder)));
     }
 
     @And("I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")
@@ -116,8 +118,8 @@ public class PreparationStep extends DataPrepStep {
         PreparationDetails prepDet1 = getPreparationDetails(prepId1);
         PreparationDetails prepDet2 = getPreparationDetails(prepId2);
 
-        Assert.assertEquals(prepDet1.actions, prepDet2.actions);
-        Assert.assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
+        assertEquals(prepDet1.actions, prepDet2.actions);
+        assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
         context.storeObject("copiedPrep", prepDet1);
     }
 

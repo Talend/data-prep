@@ -12,22 +12,9 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.http.HttpStatus.OK;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,6 +25,15 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.command.AsyncGenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * Command used to retrieve the preparation content.
@@ -76,12 +72,10 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
                 headers.put(header.getName(), Collections.singletonList(header.getValue()));
             }
         }
-        try {
-            final InputStream content = response.getEntity().getContent();
-            final String contentAsString = IOUtils.toString(content, UTF_8);
-            DataSetMetadata result = objectMapper.readerFor(DataSetMetadata.class).readValue(contentAsString);
-            return new ResponseEntity<>(result, headers,
-                    status);
+        try (final InputStream content = response.getEntity().getContent();
+                final InputStreamReader contentReader = new InputStreamReader(content, UTF_8)) {
+            DataSetMetadata result = objectMapper.readValue(contentReader, DataSetMetadata.class);
+            return new ResponseEntity<>(result, headers, status);
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

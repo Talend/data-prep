@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
@@ -154,6 +155,15 @@ public class PreparationStep extends DataPrepStep {
     @And("^I check that the preparation \"(.*)\" exists$")
     public void checkPrepExists(String prepFullName) throws IOException {
         Assert.assertTrue(doesPrepExistsInFolder(prepFullName));
+    }
+
+    @Then("^I check that I can load \"(.*)\" times the preparation with name \"(.*)\"")
+    public void loadPreparationMultipleTimes(Integer nbTime, String prepFullName) throws IOException {
+        String prepId = context.getPreparationId(suffixName(prepFullName));
+        for (int i = 0; i < nbTime; i++) {
+            Response response = api.getPreparationContent(prepId, "head", "HEAD");
+            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        }
     }
 
     /**

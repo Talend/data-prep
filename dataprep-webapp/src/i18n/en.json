@@ -270,6 +270,7 @@
   "ACTIONS_TAB_COLUMN": "Column",
   "ACTIONS_TAB_TABLE": "Table",
   "NO_ACTION_AVAILABLE": "No function matching your search",
+  "SUGGESTIONS": "suggestions",
 
   "_comment": "Recipe",
   "FILTERS_APPLIED": "Filters applied",

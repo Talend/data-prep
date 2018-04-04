@@ -67,7 +67,7 @@ public class AsyncBackgroundAnalysis {
             super(ConfigurationPhase.REGISTER_BEAN);
         }
 
-        @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
+        @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring", matchIfMissing = true)
         static class springEventListener {
         }
 

@@ -13,9 +13,7 @@
 
 package org.talend.dataprep.api.service.test;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -24,13 +22,17 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.HttpStatus.ACCEPTED;
+import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.MappingIterator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -38,6 +40,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -76,6 +80,14 @@ public class APIClientTest {
         CollectionType resultType =
                 TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, UserDataSetMetadata.class);
         return mapper.readValue(result, resultType);
+    }
+
+    public Folder getFolderByPath(String path) throws IOException {
+        InputStream inputStream = with().queryParam("path", path).get("/api/folders/search").asInputStream();
+        MappingIterator<Folder> foldersIterator = mapper.readerFor(Folder.class).readValues(inputStream);
+        List<Folder> folders = foldersIterator.readAll();
+        assertTrue(folders.size() == 1);
+        return folders.iterator().next();
     }
 
     /**
@@ -238,7 +250,6 @@ public class APIClientTest {
      * @param preparationId prepartionId
      * @return the content of a preparation
      * @throws IOException
-     * @throws InterruptedException
      */
     public Response getPreparation(String preparationId, String version, String stepId) throws IOException {
         // when
@@ -246,7 +257,7 @@ public class APIClientTest {
                 .when() //
                 .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
 
-        if (HttpStatus.ACCEPTED.value() == transformedResponse.getStatusCode()) {
+        if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
@@ -269,7 +280,6 @@ public class APIClientTest {
      *
      * @param asyncMethodStatusUrl
      * @throws IOException
-     * @throws InterruptedException
      */
     public void waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
@@ -326,7 +336,7 @@ public class APIClientTest {
         // when
         Response export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, null);
 
-        if (HttpStatus.ACCEPTED.value() == export.getStatusCode()) {
+        if (ACCEPTED.value() == export.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = export.getHeader("Location");
 
@@ -368,28 +378,28 @@ public class APIClientTest {
         return exportRequest.get("/api/export");
     }
 
-    public Response getPrepMetadata(String preparationId) throws IOException, InterruptedException {
+    public DataSetMetadata getPrepMetadata(String preparationId) throws IOException {
+        DataSetMetadata metadata;
 
         // when
         Response transformedResponse = given().when().get("/api/preparations/{id}/metadata", preparationId);
 
-        if (HttpStatus.ACCEPTED.value() == transformedResponse.getStatusCode()) {
+        HttpStatus responseStatus = HttpStatus.valueOf(transformedResponse.getStatusCode());
+        if (ACCEPTED.equals(responseStatus)) {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
             waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
-            transformedResponse = given()
-                    .when()
-                    .expect()
-                    .statusCode(200)
-                    .log()
-                    .ifError() //
+            Response response = given().when().expect().statusCode(200).log().ifError() //
                     .get("/api/preparations/{id}/metadata", preparationId);
+            metadata =  mapper.readValue(response.asInputStream(), DataSetMetadata.class);
+        } else if (OK.equals(responseStatus)) {
+            metadata = mapper.readValue(transformedResponse.asInputStream(), DataSetMetadata.class);
+        } else {
+            throw new RuntimeException("Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
-
-        return transformedResponse;
-
+        return metadata;
     }
 
 }

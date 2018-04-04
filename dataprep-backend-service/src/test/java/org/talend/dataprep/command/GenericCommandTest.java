@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
@@ -111,6 +112,20 @@ public class GenericCommandTest extends ServiceBaseTest {
         // Then
         assertThat(result, is(security.getAuthenticationToken()));
         assertThat(lastException, nullValue());
+    }
+
+    @Test
+    public void testLanguageHeader() throws Exception {
+        // Given
+        LocaleContextHolder.setLocale(Locale.JAPANESE);
+        final GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/language", GenericCommandTest::error);
+
+        // When
+        final String result = command.run();
+
+        // Then
+        assertThat(result, is("ja"));
     }
 
     @Test

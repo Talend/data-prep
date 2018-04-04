@@ -79,6 +79,19 @@ public class DataprepLocaleContextResolverTest {
     }
 
     @Test
+    public void resolveLocaleContextWithMissingLocaleSupport() throws Exception {
+        DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver(Locale.US.getLanguage());
+        when(request.getHeader(eq(HttpHeaders.ACCEPT_LANGUAGE))).thenReturn("fr"); // Use constant to mimic IAM's
+                                                                                   // behavior
+        when(request.getLocale()).thenReturn(Locale.FRENCH);
+        when(request.getLocales()).thenReturn(Collections.enumeration(Collections.singletonList(Locale.US)));
+
+        Locale locale = resolver.resolveLocale(request);
+        assertNotNull(locale);
+        assertEquals(Locale.FRENCH, locale);
+    }
+
+    @Test
     public void resolveLocaleContextWithMalformedLocale() throws Exception {
         DataprepLocaleContextResolver resolver = new DataprepLocaleContextResolver("@@&&");
 

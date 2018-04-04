@@ -13,6 +13,8 @@
 package org.talend.dataprep.preparation.store;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.preparation.*;
@@ -78,13 +80,20 @@ public class PersistentPreparationRepository implements PreparationRepository {
 
     @Override
     public void add(Identifiable object) {
-        final Collection<Identifiable> identifiableList = PreparationUtils.scatter(object);
-        for (Identifiable identifiable : identifiableList) {
-            if (!(Step.ROOT_STEP.equals(identifiable) || PreparationActions.ROOT_ACTIONS.equals(identifiable))) {
-                final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());
-                final Identifiable storedIdentifiable = beanConversionService.convert(identifiable, targetClass);
-                delegate.add(storedIdentifiable);
-            }
+        final List<? extends Identifiable> objects = PreparationUtils.scatter(object).stream() //
+                .filter(o -> !(Step.ROOT_STEP.equals(o) || PreparationActions.ROOT_ACTIONS.equals(o))) //
+                .map(identifiable -> {
+                    final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());
+                    return beanConversionService.convert(identifiable, targetClass);
+                }) //
+                .collect(Collectors.toList());
+        delegate.add(objects);
+    }
+
+    @Override
+    public void add(Collection<? extends Identifiable> objects) {
+        for (Identifiable object : objects) {
+            add(object);
         }
     }
 
@@ -111,5 +120,15 @@ public class PersistentPreparationRepository implements PreparationRepository {
     public void remove(Identifiable object) {
         final Class<? extends Identifiable> targetClass = selectPersistentClass(object.getClass());
         delegate.remove(beanConversionService.convert(object, targetClass));
+    }
+
+    @Override
+    public <T extends Identifiable> void remove(Class<T> clazz, Expression filter) {
+        list(clazz, filter).forEach(this::remove);
+    }
+
+    @Override
+    public long count(Class<? extends Identifiable> clazz, Expression filter) {
+        return delegate.count(clazz, filter);
     }
 }

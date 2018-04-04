@@ -12,8 +12,23 @@
 
 package org.talend.dataprep.command;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.util.EntityUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.io.ReleasableInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,23 +38,8 @@ import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.io.ReleasableInputStream;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.daikon.exception.ExceptionContext.build;
 
 /**
  * A helper class for common behavior definition.
@@ -70,6 +70,7 @@ public class Defaults {
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> asNull() {
         return (request, response) -> {
             request.releaseConnection();
+            EntityUtils.consumeQuietly(response.getEntity());
             return null;
         };
     }
@@ -79,8 +80,8 @@ public class Defaults {
      */
     public static BiFunction<HttpRequestBase, HttpResponse, String> asString() {
         return (request, response) -> {
-            try {
-                return IOUtils.toString(response.getEntity().getContent(), UTF_8);
+            try (InputStream content = response.getEntity().getContent()) {
+                return IOUtils.toString(content, UTF_8);
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             } finally {
@@ -95,6 +96,7 @@ public class Defaults {
     public static BiFunction<HttpRequestBase, HttpResponse, String> emptyString() {
         return (request, response) -> {
             request.releaseConnection();
+            EntityUtils.consumeQuietly(response.getEntity());
             return StringUtils.EMPTY;
         };
     }
@@ -105,6 +107,7 @@ public class Defaults {
     public static BiFunction<HttpRequestBase, HttpResponse, InputStream> emptyStream() {
         return (request, response) -> {
             request.releaseConnection();
+            EntityUtils.consumeQuietly(response.getEntity());
             return new ByteArrayInputStream(new byte[0]);
         };
     }
@@ -133,8 +136,7 @@ public class Defaults {
      */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, Class<T> clazz) {
         return (request, response) -> {
-            try {
-                final InputStream content = response.getEntity().getContent();
+            try (final InputStream content = response.getEntity().getContent()) {
                 final String contentAsString = IOUtils.toString(content, UTF_8);
                 if (StringUtils.isEmpty(contentAsString)) {
                     return null;
@@ -176,8 +178,8 @@ public class Defaults {
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
             TypeReference<T> typeReference, Function<Exception, T> errorHandler) {
         return (request, response) -> {
-            try {
-                return mapper.readerFor(typeReference).readValue(response.getEntity().getContent());
+            try (InputStream content = response.getEntity().getContent()) {
+                return mapper.readerFor(typeReference).readValue(content);
             } catch (Exception e) {
                 return errorHandler.apply(e);
             } finally {
@@ -194,8 +196,8 @@ public class Defaults {
      */
     public static BiFunction<HttpRequestBase, HttpResponse, JsonNode> toJson(ObjectMapper mapper) {
         return (request, response) -> {
-            try {
-                JsonNode jsonNode = mapper.readTree(response.getEntity().getContent());
+            try (InputStream content = response.getEntity().getContent()) {
+                JsonNode jsonNode = mapper.readTree(content);
                 if (jsonNode == null) {
                     throw new IllegalArgumentException("Source should not be empty");
                 }
@@ -210,7 +212,7 @@ public class Defaults {
 
     public static <T, S> BiFunction<HttpRequestBase, HttpResponse, S> iterate(Class<T> clazz, ObjectMapper mapper, Function<Iterator<T>, S> convert) {
         return (request, response) -> {
-            try (InputStream content = response.getEntity().getContent()){
+            try (InputStream content = response.getEntity().getContent()) {
                 try (MappingIterator<T> objects = mapper.readerFor(clazz).readValues(content)) {
                     return convert.apply(objects);
                 }
@@ -223,13 +225,12 @@ public class Defaults {
     }
 
     public static ResponseEntity<String> getResponseEntity(HttpStatus status, HttpResponse response) {
-
         final MultiValueMap<String, String> headers = new HttpHeaders();
         for (Header header : response.getAllHeaders()) {
             headers.put(header.getName(), Collections.singletonList(header.getValue()));
         }
-        try {
-            return new ResponseEntity<>(IOUtils.toString(response.getEntity().getContent(), UTF_8), headers, status);
+        try (InputStream content = response.getEntity().getContent()) {
+            return new ResponseEntity<>(IOUtils.toString(content, UTF_8), headers, status);
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

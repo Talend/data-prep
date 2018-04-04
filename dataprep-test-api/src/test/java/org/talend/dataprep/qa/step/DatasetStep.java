@@ -2,6 +2,8 @@ package org.talend.dataprep.qa.step;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -20,6 +22,7 @@ import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ResponseBody;
 
@@ -110,8 +113,8 @@ public class DatasetStep extends DataPrepStep {
         getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
     }
 
-    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId, String dataSetName)
+    @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
+    public void thenICheckSemanticTypeExist(String semanticTypeName, String columnName, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
         getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
@@ -175,7 +178,6 @@ public class DatasetStep extends DataPrepStep {
 
         }
         context.storeDatasetRef(datasetId, suffixedName);
-        // context.storeObject("dataSetId", datasetId);
     }
 
     @Given("^I have a dataset with parameters:$")
@@ -216,6 +218,19 @@ public class DatasetStep extends DataPrepStep {
         parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));
 
         context.storeDatasetRef(dataset.get("id").asText(), dataset.get("name").asText());
+    }
+
+    @Then("^I check that the dataSet \"(.*)\" is created with the following columns :$")
+    public void thenTheDataSetIsCreatedWithColumns(String datasetName, List<String> columns) throws IOException {
+        Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
+        response.then().statusCode(200);
+
+        final JsonPath jsonPath = response.body().jsonPath();
+        final List<String> actual = jsonPath.getList("columns.name", String.class);
+        assertNotNull(actual);
+        assertFalse(actual.isEmpty());
+        assertEquals(columns.size(), actual.size());
+        Assert.assertTrue(actual.containsAll(columns));
     }
 
 }

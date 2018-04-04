@@ -39,7 +39,7 @@ export default class SidePanelCtrl {
 	adaptActions() {
 		this.actions = this.appSettings.views.sidepanel.actions
 			.map(actionName => this.appSettings.actions[actionName])
-			.map(action => {
+			.map((action) => {
 				const adaptedAction = {
 					...action,
 					label: action.name,

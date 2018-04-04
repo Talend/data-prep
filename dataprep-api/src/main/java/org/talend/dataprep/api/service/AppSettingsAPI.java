@@ -56,7 +56,8 @@ public class AppSettingsAPI extends APIService {
     @ApiOperation(value = "Get the app settings", produces = APPLICATION_JSON_VALUE)
     @Timed
     @PublicAPI
-    public Callable<AppSettings> getSettings(@RequestHeader(name = HttpHeaders.ACCEPT_LANGUAGE) String language) {
+    public Callable<AppSettings>
+            getSettings(@RequestHeader(name = HttpHeaders.ACCEPT_LANGUAGE, required = false) String language) {
         return () -> {
             if (StringUtils.isBlank(language)) {
                 final Locale userLocale = security.getLocale();

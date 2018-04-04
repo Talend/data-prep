@@ -58,7 +58,7 @@ public class AppSettingsAPI extends APIService {
     @PublicAPI
     public Callable<AppSettings> getSettings(@RequestHeader(name = HttpHeaders.ACCEPT_LANGUAGE) String language) {
         return () -> {
-            if (StringUtils.isEmpty(language)) {
+            if (StringUtils.isBlank(language)) {
                 final Locale userLocale = security.getLocale();
                 final Locale previous = LocaleContextHolder.getLocale();
                 LocaleContextHolder.setLocale(userLocale);

@@ -102,7 +102,7 @@ public class DataprepLocaleContextResolver implements LocaleContextResolver {
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
-        return delegate.resolveLocale(request);
+        return getLocale(request);
     }
 
     @Override
@@ -112,12 +112,18 @@ public class DataprepLocaleContextResolver implements LocaleContextResolver {
 
     @Override
     public LocaleContext resolveLocaleContext(HttpServletRequest request) {
-        return new SimpleLocaleContext(delegate.resolveLocale(request));
+        return new SimpleLocaleContext(getLocale(request));
     }
 
     @Override
     public void setLocaleContext(HttpServletRequest request, HttpServletResponse response,
             LocaleContext localeContext) {
-        delegate.setLocale(request, response, localeContext.getLocale());
+        delegate.setLocale(request, response, getLocale(request));
+    }
+
+    private Locale getLocale(HttpServletRequest request) {
+        final Locale locale = delegate.resolveLocale(request);
+        LOGGER.debug("Resolved locale for request '{}': {}", request, locale);
+        return locale;
     }
 }

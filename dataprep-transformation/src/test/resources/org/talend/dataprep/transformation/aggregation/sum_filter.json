@@ -11,10 +11,5 @@
     }
   ],
   "sampleSize": 5000,
-  "filter": {
-    "eq": {
-      "field": "0002",
-      "value": "Rhone-Alpes"
-    }
-  }
+  "filter": "0002 = 'Rhone-Alpes'"
 }

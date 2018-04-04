@@ -138,11 +138,7 @@ public class DatasetStep extends DataPrepStep {
                     .size());
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column
-            if ("".equals(response.body().print())) {
-                return;
-            }
-            // We don't expect the semantic type
-            else {
+            if (!"".equals(response.body().print())) {
                 assertEquals(0, response
                         .body()
                         .jsonPath()

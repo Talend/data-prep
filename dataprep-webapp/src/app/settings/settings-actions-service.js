@@ -38,4 +38,16 @@ export default class SettingsActionsService {
 	dispatch(action) {
 		this.SettingsActionsHandlers.forEach(handler => handler.dispatch(action));
 	}
+
+	adaptDataAttributes(toAction, fromAction = toAction) {
+		const adaptedAction = { ...toAction };
+		if (fromAction.data) {
+			Object.keys(fromAction.data)
+				.forEach((dataAttr) => {
+					adaptedAction[`data-${dataAttr}`] = fromAction.data[dataAttr];
+				});
+			delete adaptedAction.data;
+		}
+		return adaptedAction;
+	}
 }

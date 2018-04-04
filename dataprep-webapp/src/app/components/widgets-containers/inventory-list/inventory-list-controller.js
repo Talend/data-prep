@@ -19,7 +19,7 @@ const ACTION_TYPE = 'actions';
 const LOADING_TIMEOUT_VALUE = 400;
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, $timeout, appSettings, SettingsActionsService, state, StateService) {
+	constructor($element, $translate, $timeout, appSettings, state, InventoryListService, SettingsActionsService, StateService) {
 		'ngInject';
 
 		this.$element = $element;
@@ -27,6 +27,7 @@ export default class InventoryListCtrl {
 		this.$timeout = $timeout;
 		this.appSettings = appSettings;
 		this.stateService = StateService;
+		this.InventoryListService = InventoryListService;
 		this.SettingsActionsService = SettingsActionsService;
 		this.state = state;
 
@@ -191,18 +192,7 @@ export default class InventoryListCtrl {
 
 		const listSettings = this.appSettings.views[this.viewKey].list;
 		const action = this.appSettings.actions[listSettings.titleProps.onClick];
-		this.adaptDataAttributes(titleProps, action);
-		return titleProps;
-	}
-
-	adaptDataAttributes(toAction, fromAction = toAction) {
-		if (fromAction.data) {
-			Object.keys(fromAction.data)
-				.forEach((dataAttr) => {
-					toAction[`data-${dataAttr}`] = fromAction.data[dataAttr];
-				});
-			delete toAction.data;
-		}
+		return this.SettingsActionsService.adaptDataAttributes(titleProps, action);
 	}
 
 	getActionDispatcher(actionName) {
@@ -235,16 +225,14 @@ export default class InventoryListCtrl {
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
 		}
-		this.adaptDataAttributes(baseAction, actionSettings);
-		return baseAction;
+		return this.SettingsActionsService.adaptDataAttributes(baseAction, actionSettings);
 	}
 
 	createDropdownItemAction(item, actionName) {
 		const itemOnClick = this.getActionDispatcher(actionName);
 		const itemAction = this.createBaseAction(actionName, true);
 		itemAction.onClick = event => itemOnClick(event, item);
-		this.adaptDataAttributes(itemAction);
-		return itemAction;
+		return this.SettingsActionsService.adaptDataAttributes(itemAction);
 	}
 
 	createDropdownActions(items, actionName) {
@@ -254,8 +242,7 @@ export default class InventoryListCtrl {
 			if (item.locationType) {
 				itemAction['data-feature'] = `dataset.${item.locationType}.add`;
 			}
-			this.adaptDataAttributes(itemAction);
-			return itemAction;
+			return this.SettingsActionsService.adaptDataAttributes(itemAction);
 		});
 	}
 
@@ -263,28 +250,6 @@ export default class InventoryListCtrl {
 		return actions &&
 			actions.map((actionName) => {
 				const adaptedAction = this.createBaseAction(actionName);
-
-				const model = hostModel && hostModel.model;
-				if (model) {
-					const actionDataFeature = adaptedAction['data-feature'];
-					if (hostModel.type && actionDataFeature === 'inventory.rename') {
-                        adaptedAction['data-feature'] = `${hostModel.type}.rename`;
-					}
-					if (model.favorite && actionDataFeature === 'dataset.favorite.add') {
-						adaptedAction['data-feature'] = 'dataset.favorite.remove';
-					}
-					// TODO should comes from decorator
-					if (model.certificationStep && actionDataFeature === 'dataset.certification') {
-						switch (model.certificationStep) {
-						case 'PENDING':
-							adaptedAction['data-feature'] = 'dataset.certification.pending';
-							break;
-						case 'CERTIFIED':
-							adaptedAction['data-feature'] = 'dataset.certification.remove';
-							break;
-						}
-					}
-				}
 
 				if (adaptedAction.displayMode === DROPDOWN_ACTION) {
 					const actionSettings = this.appSettings.actions[actionName];
@@ -319,12 +284,13 @@ export default class InventoryListCtrl {
 	}
 
 	adaptItemActions(item, actions, index) {
-		const adaptedActions = this.adaptActions(actions, item);
+		let adaptedActions = this.adaptActions(actions, item);
 		if (adaptedActions) {
-			adaptedActions.forEach((action) => {
-				action.id = `${this.id}-${index}-${action.id}`;
-				this.adaptDataAttributes(action);
-			});
+			adaptedActions = adaptedActions.map(action => ({
+				...action,
+				...this.InventoryListService.adaptAction(action, item),
+				id: `${this.id}-${index}-${action.id}`,
+			}));
 		}
 		return adaptedActions;
 	}

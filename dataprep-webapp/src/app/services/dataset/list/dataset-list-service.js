@@ -97,6 +97,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	function adaptDatasets(datasets) {
 		return datasets.map(item => ({
 			id: item.id,
+			'data-feature': 'dataset.open',
 			type: 'dataset',
 			name: item.name,
 			author: item.owner && item.owner.displayName,

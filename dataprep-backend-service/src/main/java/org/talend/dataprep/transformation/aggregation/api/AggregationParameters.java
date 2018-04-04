@@ -45,7 +45,8 @@ public class AggregationParameters {
     @NotEmpty
     private List<AggregationOperation> operations;
 
-    private Object filter;
+    /** TQL filter */
+    private String filter;
 
     /** Optional sample size (null for the whole thing). */
     private String sampleSize;
@@ -124,23 +125,19 @@ public class AggregationParameters {
     }
 
     /**
-     * @return The filter (as raw JSON) for the aggregation.
+     * @return The filter (as TQL) for the aggregation.
      * @see org.talend.dataprep.api.filter.FilterService
      */
     public String getFilter() {
-        return filter == null ? null : filter.toString();
+        return filter;
     }
 
     /**
-     * @param filter The filter (as raw JSON) for the aggregation.
+     * @param filter The filter (as TQL) for the aggregation.
      * @see org.talend.dataprep.api.filter.FilterService
      */
-    public void setFilter(JsonNode filter) {
-        if (filter == null || filter.isNull()) {
-            this.filter = null;
-        } else {
-            this.filter = filter;
-        }
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     /**
@@ -191,8 +188,8 @@ public class AggregationParameters {
     @Override
     public String toString() {
         return "AggregationParameters{" + "datasetId='" + datasetId + '\'' + ", preparationId='" + preparationId + '\''
-                + ", stepId='" + stepId + '\'' + ", groupBy=" + groupBy + ", operations=" + operations + ", sampleSize="
-                + sampleSize + '}';
+                + ", stepId='" + stepId + '\'' + ", groupBy=" + groupBy + ", operations=" + operations + ", filter="
+                + filter + ", sampleSize=" + sampleSize + '}';
     }
 
 

@@ -2,6 +2,7 @@ package org.talend.dataprep.transformation.actions.delete;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -15,7 +16,12 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import java.util.*;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
+/**
+ * Delete columns when they are empty.
+ */
+@Action(DeleteAllEmptyColumns.DELETE_ALL_EMPTY_COLUMNS_ACTION_NAME)
 public class DeleteAllEmptyColumns extends AbstractActionMetadata implements DataSetAction {
 
     /**
@@ -50,7 +56,10 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
         return parameters;
     }
 
-
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
+    }
 
     @Override
     public String getCategory(Locale locale) {

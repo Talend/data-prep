@@ -1,4 +1,4 @@
-id;"firstname";"lastname";"empty1";"phonenumber";"city";"iscustomer";"empty2"
+id;firstname;lastname;empty1;phonenumber;city;iscustomer;empty2
 1;Warren;Pierce;;160522616;Baton Rouge;true;
 2;George;Arthur;;719358555;Phoenix;false;
 3;Calvin;Arthur;;274481288;Olympia;false;

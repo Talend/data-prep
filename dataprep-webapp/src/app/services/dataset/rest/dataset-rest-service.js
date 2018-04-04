@@ -217,14 +217,16 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getContent(datasetId, metadata, tql) {
-		const url = `${RestURLs.datasetUrl}/${datasetId}`;
+		let url = `${RestURLs.datasetUrl}/${datasetId}`;
 		const params = {
 			metadata,
 			includeTechnicalProperties: true,
 		};
+
 		if (tql) {
-			params.filter = encodeURIComponent(tql);
+			url = `${url}&filter=${encodeURIComponent(tql)}`;
 		}
+
 		return $http(
 			{
 				url,

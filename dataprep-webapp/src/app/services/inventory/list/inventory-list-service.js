@@ -69,7 +69,6 @@ export default function DatasetListService() {
 	 * @returns {object} adaptedAction The adapted action
 	 */
 	function adaptAction(action, hostModel) {
-		console.log('adaptAction', { action, hostModel });
 		const adaptedAction = { ...action };
 		const actionDataFeature = adaptedAction[DATA_FEATURE_ATTR];
 		// Rename inventory item

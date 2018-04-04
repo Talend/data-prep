@@ -75,10 +75,6 @@ public class FeatureContext {
      */
     private Map<String, Object> featureContext = new HashMap<>();
 
-    public static String getTiSuffixUid() {
-        return TI_SUFFIX_UID;
-    }
-
     /**
      * Add a suffix to a name depending of the execution instance.
      *

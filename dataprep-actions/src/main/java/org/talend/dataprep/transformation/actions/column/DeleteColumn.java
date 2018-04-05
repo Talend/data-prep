@@ -40,6 +40,8 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteColumn.class);
 
+    private static final String COLUMN_ID = "columnId";
+
     @Override
     public String getName() {
         return DELETE_COLUMN_ACTION_NAME;
@@ -61,10 +63,17 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        final String columnId = actionContext.getColumnId();
         LOGGER.debug("DeleteColumn for columnId {}", columnId);
-        context.getRowMetadata().deleteColumnById(columnId);
+        actionContext.getRowMetadata().deleteColumnById(columnId);
+        actionContext.get(COLUMN_ID, s -> columnId);
+    }
+
+    @Override
+    public void applyOnColumn(DataSetRow row, ActionContext context) {
+        final String columnId = context.get(COLUMN_ID);
         row.deleteColumnById(columnId);
     }
 

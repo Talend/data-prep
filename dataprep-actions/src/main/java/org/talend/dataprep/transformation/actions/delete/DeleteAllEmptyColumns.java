@@ -36,6 +36,8 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     protected static final String KEEP = "keep";
 
+    private static final String COLUMN_IDS = "columnIds";
+
     @Override
     public String getName() {
         return DELETE_ALL_EMPTY_COLUMNS_ACTION_NAME;
@@ -71,27 +73,36 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     }
 
     @Override
-    public void applyOnDataSet(DataSetRow row, ActionContext context) {
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
         String columnId;
         ColumnMetadata column;
         Quality quality;
-        List<ColumnMetadata> columns = row.getRowMetadata().getColumns();
+        List<ColumnMetadata> columns = actionContext.getRowMetadata().getColumns();
+        List<String> columnIds = new ArrayList<>();
 
-        for (int i = columns.size() - 1; i >= 0; i--) {
+        for(int i = columns.size() - 1; i >= 0; i--) {
             column = columns.get(i);
             columnId = column.getId();
-            if (context.getParameters().get(ACTION_PARAMETER).equals(KEEP)) {
-                if (context.getRowMetadata().getById(columnId).getStatistics().getDataFrequencies().size() > 1) {
+            if (actionContext.getParameters().get(ACTION_PARAMETER).equals(KEEP)) {
+                if (actionContext.getRowMetadata().getById(columnId).getStatistics().getDataFrequencies().size() > 1) {
                     continue; //parameter to keep blanks is at true and the size of the datafrequencies is higher than 1 so we don't delete this column
                 }
             }
             quality = column.getQuality();
             if (quality.getValid() + quality.getInvalid() == 0) {
                 LOGGER.debug("DeleteColumn for columnId {}", columnId);
-                context.getRowMetadata().deleteColumnById(columnId);
-                row.deleteColumnById(columnId);
+                actionContext.getRowMetadata().deleteColumnById(columnId);
+                columnIds.add(columnId);
             }
         }
+        actionContext.get(COLUMN_IDS, p -> columnIds);
+    }
+
+    @Override
+    public void applyOnDataSet(DataSetRow row, ActionContext context) {
+        List<String> columnIds = context.get(COLUMN_IDS);
+        columnIds.forEach(columnId -> row.deleteColumnById(columnId));
     }
 
     @Override

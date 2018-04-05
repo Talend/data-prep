@@ -19,13 +19,12 @@
     <ul class="submenu">
         <li ng-repeat="semanticDomain in $ctrl.domains track by semanticDomain.id">
             <div class="radio">
-                <label>
+                <label data-feature="column.semantic_type.change">
                     <input type="radio"
                            value="{{ ::semanticDomain.id }}"
                            ng-model="$ctrl.currentDomain"
                            ng-checked="$ctrl.currentDomain === semanticDomain.label"
                            ng-click="$ctrl.changeDomain(semanticDomain)"
-                           data-feature="column.semantic_type.change"
                     />
                     <span>{{ ::semanticDomain.label }} {{ semanticDomain.frequency | number: 2 }} %</span>
                 </label>
@@ -34,13 +33,12 @@
         <li ng-if="$ctrl.domains.length > 0" class="divider"></li>
         <li ng-repeat="type in $ctrl.types track by type.id">
             <div class="radio">
-                <label>
+                <label data-feature="column.standard_type.change">
                     <input type="radio"
                            value="{{ ::type.id}}"
                            ng-model="$ctrl.currentDomain"
                            ng-checked="$ctrl.shouldBeChecked(type)"
                            ng-click="$ctrl.changeType(type)"
-                           data-feature="column.standard_type.change"
                     />
                     <span class="set-type-label" translate-once="COLUMN_TYPE_SET"/>
                     <span class="type">{{ ::type.labelKey | translate }}</span>

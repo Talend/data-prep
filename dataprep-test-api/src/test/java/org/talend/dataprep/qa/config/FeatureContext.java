@@ -52,9 +52,9 @@ public class FeatureContext {
     private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
     /** Classify uploaded dataset id by their name (Map< Name, Id >) */
-    Map<String, String> datasetIdByName = new HashMap<>();
+    protected Map<String, String> datasetIdByName = new HashMap<>();
 
-    Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
+    protected Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
 
     protected SortedSet<Folder> folders;
 
@@ -268,14 +268,14 @@ public class FeatureContext {
     /**
      * Clear the list of temporary {@link File}.
      */
-    public void clearTempFile() {
+    protected void clearTempFile() {
         tempFileByName.clear();
     }
 
     /**
      * Clear the list of {@link Action}}.
      */
-    public void clearAction() {
+    protected void clearAction() {
         actionByAlias.clear();
     }
 
@@ -291,7 +291,7 @@ public class FeatureContext {
         return featureContext.get(key);
     }
 
-    public void clearObject() {
+    protected void clearObject() {
         featureContext.clear();
     }
 
@@ -315,7 +315,7 @@ public class FeatureContext {
     /**
      * Clear the list of folders.
      */
-    void clearFolders() {
+    protected void clearFolders() {
         folders.clear();
     }
 

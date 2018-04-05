@@ -1,9 +1,23 @@
 package org.talend.dataprep.qa.util;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.ReflectionUtils;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.Filter;
+import org.talend.dataprep.qa.config.FeatureContext;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Matchers.endsWith;
-import static org.mockito.Mockito.when;
 import static org.talend.dataprep.helper.api.ActionFilterEnum.END;
 import static org.talend.dataprep.helper.api.ActionFilterEnum.FIELD;
 import static org.talend.dataprep.helper.api.ActionFilterEnum.LABEL;
@@ -13,32 +27,14 @@ import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
 import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
 import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.ReflectionUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.Filter;
-import org.talend.dataprep.qa.config.FeatureContext;
-
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { OSIntegrationTestUtil.class })
+@ContextConfiguration(classes = {OSIntegrationTestUtil.class})
 public class OSIntegrationTestUtilTest {
 
     @Autowired
-    OSIntegrationTestUtil util;
+    private OSIntegrationTestUtil util;
 
-    FeatureContext featureContext;
+    private FeatureContext featureContext;
 
     @Before
     public void setUp() throws Exception {

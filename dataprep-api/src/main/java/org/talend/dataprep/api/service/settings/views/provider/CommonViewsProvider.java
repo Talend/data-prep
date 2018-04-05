@@ -39,16 +39,16 @@ public class CommonViewsProvider implements AppSettingsProvider<ViewSettings> {
         List<ViewSettings> settings = new ArrayList<>(5);
 
         if (security.isTDPUser()) {
-            settings.add(HomeViews.APP_HEADER_BAR);
-            settings.add(HomeViews.SIDE_PANEL);
-            settings.add(HomeViews.BREADCRUMB);
-            settings.add(PlaygroundViews.PLAYGROUND_APP_HEADER_BAR);
+            settings.add(HomeViews.appHeaderBar());
+            settings.add(HomeViews.sidePanel());
+            settings.add(HomeViews.breadcrumb());
+            settings.add(PlaygroundViews.playgroundAppHeaderBar());
         } else {
-            settings.add(HomeViewsForNonTDPUsers.APP_HEADER_BAR_FOR_NON_TDP_USERS);
-            settings.add(HomeViewsForNonTDPUsers.SIDE_PANEL);
+            settings.add(HomeViewsForNonTDPUsers.appHeaderBarForNonTdpUsers());
+            settings.add(HomeViewsForNonTDPUsers.sidePanel());
         }
 
-        settings.addAll(asList(ListViews.FOLDERS_LIST, ListViews.PREPARATIONS_LIST, ListViews.DATASETS_LIST));
+        settings.addAll(asList(ListViews.folderList(), ListViews.preparationList(), ListViews.datasetsList()));
 
         return settings;
 

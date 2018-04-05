@@ -15,6 +15,8 @@ package org.talend.dataprep.api.service.settings.views.api.breadcrumb;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+import java.util.Objects;
+
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -77,6 +79,21 @@ public class BreadcrumbSettings implements ViewSettings {
 
     public void setOnItemClick(String onItemClick) {
         this.onItemClick = onItemClick;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        BreadcrumbSettings that = (BreadcrumbSettings) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static Builder builder() {

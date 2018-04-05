@@ -21,27 +21,32 @@ import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSet
  * Home elements configuration for non TDP users (so that they get a nice UI)
  */
 // @formatter:off
-public interface HomeViewsForNonTDPUsers {
+public abstract class HomeViewsForNonTDPUsers {
 
-    ViewSettings APP_HEADER_BAR_FOR_NON_TDP_USERS = AppHeaderBarSettings.builder()
-            .id("appheaderbar")
-            .logo(
-                    LinkSettings.builder()
-                            .name("appheaderbar.logo")
-                            .label("appheaderbar.logo.tooltip")
-                            .build()
-            )
-            .brand(
-                    LinkSettings.builder()
-                            .label("appheaderbar.brand")
-                            .build()
-            )
-            .help("external:help")
-            .build();
+    public static ViewSettings appHeaderBarForNonTdpUsers() {
+        return AppHeaderBarSettings.builder()
+                .id("appheaderbar")
+                .logo(
+                        LinkSettings.builder()
+                                .name("appheaderbar.logo")
+                                .label("appheaderbar.logo.tooltip")
+                                .build()
+                )
+                .brand(
+                        LinkSettings.builder()
+                                .label("appheaderbar.brand")
+                                .build()
+                )
+                .help("external:help")
+                .build();
+    }
 
-    ViewSettings SIDE_PANEL = SidePanelSettings.builder()
-            .id("sidepanel")
-            .onToggleDock("sidepanel:toggle")
-            .build();
+    public static ViewSettings sidePanel() {
+        return SidePanelSettings.builder()
+                .id("sidepanel")
+                .onToggleDock("sidepanel:toggle")
+                .build();
+    }
+
 }
 // @formatter:on

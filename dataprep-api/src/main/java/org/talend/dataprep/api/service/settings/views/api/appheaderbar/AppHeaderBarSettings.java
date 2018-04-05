@@ -13,11 +13,14 @@
 
 package org.talend.dataprep.api.service.settings.views.api.appheaderbar;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import java.util.Objects;
+
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * An app header bar is a static bar placed on the top of the window
@@ -157,6 +160,21 @@ public class AppHeaderBarSettings implements ViewSettings {
                 .userMenu(viewSettings.getUserMenu()) //
                 .information(viewSettings.getInformation()) //
                 .products(viewSettings.getProducts());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        AppHeaderBarSettings that = (AppHeaderBarSettings) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static class Builder {

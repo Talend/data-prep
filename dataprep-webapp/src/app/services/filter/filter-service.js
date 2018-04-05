@@ -15,9 +15,6 @@ import { chain, find, isEqual, remove, some } from 'lodash';
 import {
 	CONTAINS,
 	EXACT,
-	INVALID_RECORDS,
-	VALID_RECORDS,
-	EMPTY_RECORDS,
 	INSIDE_RANGE,
 	MATCHES,
 	QUALITY,
@@ -196,85 +193,40 @@ export default class FilterService {
 			break;
 		}
 		case QUALITY: {
-			createFilter = () => {
-				const qualityFilters = this._getQualityFilters(colId);
-				if (qualityFilters.length) {
-					this._removeQualityFilters(qualityFilters);
+			if (args && args.empty && !args.invalid) {
+				// If we want to select empty records and another filter is already applied to that column
+				// Then we need remove it before
+				const sameColExactFilter = find(this.state.playground.filter.gridFilters, {
+					colId,
+					type: EXACT,
+				});
+				const sameColMatchFilter = find(this.state.playground.filter.gridFilters, {
+					colId,
+					type: MATCHES,
+				});
+				if (sameColExactFilter) {
+					hasEmptyRecordsExactFilter = (
+						sameColExactFilter.args
+						&& sameColExactFilter.args.phrase.length === 1
+						&& sameColExactFilter.args.phrase[0].value === ''
+					);
+					this.removeFilter(sameColExactFilter);
 				}
-				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
-			};
-
-			filterExists = () => {
-				return sameColAndTypeFilter;
-			};
-
-			break;
-		}
-		case INVALID_RECORDS: {
-			createFilter = () => {
-				const qualityFilters = this._getQualityFilters(colId);
-				if (qualityFilters.length) {
-					this._removeQualityFilters(qualityFilters);
+				else if (sameColMatchFilter) {
+					hasEmptyRecordsMatchFilter = (
+						sameColMatchFilter.args &&
+						sameColMatchFilter.args.patterns.length === 1 &&
+						sameColMatchFilter.args.patterns[0].value === ''
+					);
+					this.removeFilter(sameColMatchFilter);
 				}
-				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
-			};
-
-			filterExists = () => {
-				return sameColAndTypeFilter;
-			};
-
-			break;
-		}
-		case EMPTY_RECORDS: {
-			// If we want to select empty records and another filter is already applied to that column
-			// Then we need remove it before
-			const sameColExactFilter = find(this.state.playground.filter.gridFilters, {
-				colId,
-				type: EXACT,
-			});
-			const sameColMatchFilter = find(this.state.playground.filter.gridFilters, {
-				colId,
-				type: MATCHES,
-			});
-			if (sameColExactFilter) {
-				hasEmptyRecordsExactFilter = (
-					sameColExactFilter.args
-					&& sameColExactFilter.args.phrase.length === 1
-					&& sameColExactFilter.args.phrase[0].value === ''
-				);
-				this.removeFilter(sameColExactFilter);
-			}
-			else if (sameColMatchFilter) {
-				hasEmptyRecordsMatchFilter = (
-					sameColMatchFilter.args &&
-					sameColMatchFilter.args.patterns.length === 1 &&
-					sameColMatchFilter.args.patterns[0].value === ''
-				);
-				this.removeFilter(sameColMatchFilter);
 			}
 
 			createFilter = () => {
 				const qualityFilters = this._getQualityFilters(colId);
-				if (qualityFilters.length) {
+				if (qualityFilters) {
 					this._removeQualityFilters(qualityFilters);
 				}
-
-				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
-			};
-
-			filterExists = () => {
-				return sameColAndTypeFilter || hasEmptyRecordsExactFilter || hasEmptyRecordsMatchFilter;
-			};
-
-			break;
-		}
-		case VALID_RECORDS: {
-			createFilter = () => {
-				const qualityFilters = this._getQualityFilters(colId);
-				if (qualityFilters.length) {
-					this._removeQualityFilters(qualityFilters);
-				}
-
 				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
 			};
 
@@ -647,7 +599,7 @@ export default class FilterService {
 	 * @private
 	 */
 	_getEmptyFilter(colId) {
-		return find(this.state.playground.filter.gridFilters, { colId, type: EMPTY_RECORDS });
+		return find(this.state.playground.filter.gridFilters, { colId, type: QUALITY, args: { empty: true, invalid: false } });
 	}
 
 	/**
@@ -656,31 +608,7 @@ export default class FilterService {
 	 * @private
 	 */
 	_getQualityFilters(colId) {
-		const quality = find(this.state.playground.filter.gridFilters, { colId, type: QUALITY });
-		const empty = this._getEmptyFilter(colId);
-		const valid = find(this.state.playground.filter.gridFilters, {
-			colId,
-			type: VALID_RECORDS,
-		});
-		const invalid = find(this.state.playground.filter.gridFilters, {
-			colId,
-			type: INVALID_RECORDS,
-		});
-
-		const filters = [];
-		if (quality) {
-			filters.push(quality);
-		}
-		if (empty) {
-			filters.push(empty);
-		}
-		if (valid) {
-			filters.push(valid);
-		}
-		if (invalid) {
-			filters.push(invalid);
-		}
-		return filters;
+		return find(this.state.playground.filter.gridFilters, { colId, type: QUALITY });
 	}
 
 	/**

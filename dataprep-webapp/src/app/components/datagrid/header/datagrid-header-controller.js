@@ -12,10 +12,7 @@
  ============================================================================*/
 
 import {
-	INVALID_RECORDS,
-	EMPTY_RECORDS,
-	INVALID_EMPTY_RECORDS,
-	VALID_RECORDS,
+	QUALITY,
 } from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
@@ -45,10 +42,7 @@ export default function DatagridHeaderCtrl($scope, state,
 	vm.PlaygroundService = PlaygroundService;
 	vm.state = state;
 
-	vm.VALID_RECORDS = VALID_RECORDS;
-	vm.INVALID_RECORDS = INVALID_RECORDS;
-	vm.EMPTY_RECORDS = EMPTY_RECORDS;
-	vm.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
+	vm.QUALITY = QUALITY;
 
 	/**
 	 * @ngdoc property
@@ -160,8 +154,8 @@ export default function DatagridHeaderCtrl($scope, state,
 	 * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
 	 * @description add filter
 	 */
-	vm.addFilter = (type) => {
-		vm.filterManagerService.addFilter(type, vm.column.id, vm.column.name);
+	vm.addFilter = (type, args) => {
+		vm.filterManagerService.addFilter(type, vm.column.id, vm.column.name, args);
 	};
 
 	/**

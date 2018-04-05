@@ -11,6 +11,10 @@
 
   ============================================================================*/
 import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
+import {
+	MATCHES,
+	EMPTY_RECORDS,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -75,7 +79,7 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 			],
 		};
 		return item.pattern || keyName === CTRL_KEY_NAME ?
-			FilterManagerService.addFilterAndDigest('matches', column.id, column.name, args, null, keyName) :
-			FilterManagerService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
+			FilterManagerService.addFilterAndDigest(MATCHES, column.id, column.name, args, null, keyName) :
+			FilterManagerService.addFilterAndDigest(EMPTY_RECORDS, column.id, column.name, null, null, keyName);
 	}
 }

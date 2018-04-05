@@ -12,6 +12,11 @@
  ============================================================================*/
 
 import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
+import {
+	EXACT,
+	EMPTY_RECORDS,
+	INSIDE_RANGE,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -57,7 +62,7 @@ export default function ColumnProfileCtrl(
 		};
 		return value.length || keyName === CTRL_KEY_NAME
 			? FilterManagerService.addFilterAndDigest(
-					'exact',
+					EXACT,
 					column.id,
 					column.name,
 					args,
@@ -65,7 +70,7 @@ export default function ColumnProfileCtrl(
 					keyName
 				)
 			: FilterManagerService.addFilterAndDigest(
-					'empty_records',
+					EMPTY_RECORDS,
 					column.id,
 					column.name,
 					null,
@@ -116,7 +121,7 @@ export default function ColumnProfileCtrl(
 		};
 
 		FilterManagerService.addFilterAndDigest(
-			'inside_range',
+			INSIDE_RANGE,
 			selectedColumn.id,
 			selectedColumn.name,
 			args,

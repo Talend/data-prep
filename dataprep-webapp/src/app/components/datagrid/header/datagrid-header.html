@@ -29,7 +29,7 @@
                         <a
                             translate-once-title="DISPLAY_ROWS_VALID_VALUES"
                             translate-once="DISPLAY_ROWS_VALID_VALUES"
-                            ng-click="ctrl.filterManagerService.createQualityFilter(ctrl.VALID_RECORDS, ctrl.column)"
+                            ng-click="ctrl.filterManagerService.addFilter(ctrl.QUALITY, ctrl.column.id, ctrl.column.name, { invalid: false, empty: false })"
                             data-feature="preparation.filter.column.valid"
                         ></a>
                     </li>
@@ -37,7 +37,7 @@
                         <a
                             translate-once-title="DISPLAY_ROWS_INVALID_VALUES"
                             translate-once="DISPLAY_ROWS_INVALID_VALUES"
-                            ng-click="ctrl.filterManagerService.createQualityFilter(ctrl.INVALID_RECORDS, ctrl.column)"
+                            ng-click="ctrl.filterManagerService.addFilter(ctrl.QUALITY, ctrl.column.id, ctrl.column.name, { invalid: true, empty: false })"
                             data-feature="preparation.filter.column.invalid"
                         ></a>
                     </li>
@@ -45,7 +45,7 @@
                         <a
                             translate-once-title="DISPLAY_ROWS_EMPTY_VALUES"
                             translate-once="DISPLAY_ROWS_EMPTY_VALUES"
-                            ng-click="ctrl.filterManagerService.createQualityFilter(ctrl.EMPTY_RECORDS, ctrl.column)"
+                            ng-click="ctrl.filterManagerService.addFilter(ctrl.QUALITY, ctrl.column.id, ctrl.column.name, { invalid: false, empty: true })"
                             data-feature="preparation.filter.column.empty"
                         ></a>
                     </li>
@@ -53,7 +53,7 @@
                         <a
                             translate-once-title="DISPLAY_ROWS_INVALID_EMPTY_VALUES"
                             translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES"
-                            ng-click="ctrl.filterManagerService.createQualityFilter(ctrl.INVALID_EMPTY_RECORDS, ctrl.column)"
+                            ng-click="ctrl.filterManagerService.addFilter(ctrl.QUALITY, ctrl.column.id, ctrl.column.name, { invalid: true, empty: true })"
                             data-feature="preparation.filter.column.invalid_empty"
                         ></a>
                     </li>
@@ -84,7 +84,7 @@
              empty-items-has-menu="!ctrl.state.playground.isReadOnly && ctrl.state.playground.suggestions.transformationsForEmptyCells.length > 0"
              on-click="ctrl.addFilter">
     <empty-menu-items>
-        <li ng-click="ctrl.addFilter(ctrl.EMPTY_RECORDS)"
+        <li ng-click="ctrl.filterManagerService.addFilter(ctrl.QUALITY, ctrl.column.id, ctrl.column.name, { invalid: false, empty: true })"
             data-feature="preparation.filter.column.empty">
             <a><span translate-once="SELECT_EMPTY_RECORDS"></span><span class="filter-column-name">{{ ctrl.column.name }}</span></a>
         </li>
@@ -96,7 +96,7 @@
     </empty-menu-items>
 
     <invalid-menu-items>
-        <li ng-click="ctrl.addFilter(ctrl.INVALID_RECORDS)"
+        <li ng-click="ctrl.filterManagerService.addFilter(ctrl.QUALITY, ctrl.column.id, ctrl.column.name, { invalid: true, empty: false })"
             data-feature="preparation.filter.column.invalid">
             <a><span translate-once="SELECT_INVALID_RECORDS"></span><span class="filter-column-name">{{ ctrl.column.name }}</span></a>
         </li>

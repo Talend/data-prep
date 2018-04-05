@@ -1,11 +1,13 @@
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
+import java.io.IOException;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -16,13 +18,13 @@ import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.Map;
+import com.jayway.restassured.response.Response;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with preparation
@@ -184,20 +186,6 @@ public class PreparationStep extends DataPrepStep {
                     .count() == 1;
         }
         return isPrepPresent;
-    }
-
-    @And("^I check that the semantic type \"([^\"]*)\" is removed from the types list of the column \"([^\"]*)\" of the preparation \"([^\"]*)\"$")
-    public void iCheckThatTheSemanticTypeIsRemoved(String semantictypeName, String columnId, String prepName) {
-        String prepId = context.getPreparationId(suffixName(prepName));
-
-        Response response = api.getPreparationsColumnSemanticTypes(columnId, prepId);
-        response.then().statusCode(200);
-
-        assertEquals(0, response
-                .body()
-                .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semantictypeName) + "'  }")
-                .size());
     }
 
     /**

@@ -13,7 +13,9 @@
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -51,13 +53,13 @@ public class CommonViewsProviderTest {
         // then
         assertNotNull(settings);
         assertEquals(settings.size(), 7);
-        assertTrue(settings.contains(HomeViews.APP_HEADER_BAR));
-        assertTrue(settings.contains(HomeViews.SIDE_PANEL));
-        assertTrue(settings.contains(HomeViews.BREADCRUMB));
-        assertTrue(settings.contains(ListViews.FOLDERS_LIST));
-        assertTrue(settings.contains(ListViews.PREPARATIONS_LIST));
-        assertTrue(settings.contains(ListViews.DATASETS_LIST));
-        assertTrue(settings.contains(PlaygroundViews.PLAYGROUND_APP_HEADER_BAR));
+        assertTrue(settings.contains(HomeViews.appHeaderBar()));
+        assertTrue(settings.contains(HomeViews.sidePanel()));
+        assertTrue(settings.contains(HomeViews.breadcrumb()));
+        assertTrue(settings.contains(ListViews.folderList()));
+        assertTrue(settings.contains(ListViews.preparationList()));
+        assertTrue(settings.contains(ListViews.datasetsList()));
+        assertTrue(settings.contains(PlaygroundViews.playgroundAppHeaderBar()));
     }
 
     @Test
@@ -71,10 +73,10 @@ public class CommonViewsProviderTest {
         // then
         assertNotNull(settings);
         assertEquals(5, settings.size());
-        assertTrue(settings.contains(HomeViewsForNonTDPUsers.APP_HEADER_BAR_FOR_NON_TDP_USERS));
-        assertTrue(settings.contains(HomeViewsForNonTDPUsers.SIDE_PANEL));
-        assertTrue(settings.contains(ListViews.FOLDERS_LIST));
-        assertTrue(settings.contains(ListViews.PREPARATIONS_LIST));
-        assertTrue(settings.contains(ListViews.DATASETS_LIST));
+        assertTrue(settings.contains(HomeViewsForNonTDPUsers.appHeaderBarForNonTdpUsers()));
+        assertTrue(settings.contains(HomeViewsForNonTDPUsers.sidePanel()));
+        assertTrue(settings.contains(ListViews.folderList()));
+        assertTrue(settings.contains(ListViews.preparationList()));
+        assertTrue(settings.contains(ListViews.datasetsList()));
     }
 }

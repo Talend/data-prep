@@ -23,7 +23,10 @@
               title="{{editableTextCtrl.textTitle}}"
               ng-click="editableTextCtrl.onTextClick({event: $event})"
               ng-bind="editableTextCtrl.text"></span>
-        <button class="btn btn-link edit-btn" data-icon="a" ng-click="editableTextCtrl.edit()"></button>
+        <button class="btn btn-link edit-btn"
+                data-icon="a"
+                data-feature="preparation.playground.rename"
+                ng-click="editableTextCtrl.edit()"></button>
     </div>
 
     <form class="editable-text-container" ng-show="editableTextCtrl.editionMode" ng-submit="editableTextCtrl.validate()">

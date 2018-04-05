@@ -46,6 +46,8 @@ public class ActionSettings {
 
     public static final String PAYLOAD_ARGS_KEY = "args";
 
+    public static final String DATA_FEATURE_KEY = "feature";
+
     /**
      * The key that will hold this settings in the actions dictionary
      */
@@ -96,6 +98,11 @@ public class ActionSettings {
      * The bootstrap size (ex: small to render a small button)
      */
     private String bsSize;
+
+    /**
+     * Data attributes
+     */
+    private Map<String, Object> data;
 
     /**
      * Can hold any extra static information to pass to the action function
@@ -184,6 +191,14 @@ public class ActionSettings {
         this.bsSize = bsSize;
     }
 
+    public Map<String, Object> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, Object> data) {
+        this.data = data;
+    }
+
     public Map<String, Object> getPayload() {
         return payload;
     }
@@ -219,6 +234,7 @@ public class ActionSettings {
                 .divider(actionSettings.getDivider()) //
                 .bsStyle(actionSettings.getBsStyle()) //
                 .bsSize(actionSettings.getBsSize()) //
+                .data(actionSettings.getData()) //
                 .payload(actionSettings.getPayload()) //
                 .enabled(actionSettings.isEnabled());
 
@@ -249,6 +265,8 @@ public class ActionSettings {
         private String bsStyle;
 
         private String bsSize;
+
+        private Map<String, Object> data = new HashMap<>();
 
         private Map<String, Object> payload = new HashMap<>();
 
@@ -319,6 +337,18 @@ public class ActionSettings {
             return this;
         }
 
+        public Builder data(final String key, final Object value) {
+            this.data.put(key, value);
+            return this;
+        }
+
+        public Builder data(final Map<String, Object> data) {
+            if (Objects.nonNull(data)) {
+                data.entrySet().stream().forEach(entry -> this.data.put(entry.getKey(), entry.getValue()));
+            }
+            return this;
+        }
+
         public Builder payload(final String key, final Object value) {
             this.payload.put(key, value);
             return this;
@@ -358,6 +388,7 @@ public class ActionSettings {
             action.setDivider(this.divider);
             action.setBsStyle(this.bsStyle);
             action.setBsSize(this.bsSize);
+            action.setData(this.data.isEmpty() ? null : this.data);
             action.setPayload(this.payload.isEmpty() ? null : this.payload);
             action.setEnabled(this.enabled);
             return action;

@@ -23,6 +23,7 @@
     <li ng-repeat="menu in menuCtrl.menuItems track by menu.name">
         <a href
            title="{{ menu.label }}"
+           data-feature="{{ 'column.' + menu.name }}"
            ng-click="menuCtrl.select(menu, 'column')">
             {{ menu.label }}
         </a>

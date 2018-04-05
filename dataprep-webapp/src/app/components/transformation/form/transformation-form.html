@@ -34,7 +34,8 @@
                     ng-disabled="formCtrl.paramForm.$invalid || formCtrl.isTransformationInProgress"
                     ng-mouseleave="formCtrl.submitHoverOff()"
                     ng-mouseenter="formCtrl.submitHoverOn()"
-                    translate-once="SUBMIT"></button>
+                    translate-once="SUBMIT"
+                    data-feature="{{'preparation.' + formCtrl.transformation.name + '.submit'}}"></button>
 
             <a ng-if="formCtrl.transformation.docUrl"
                href="{{::formCtrl.transformation.docUrl}}"

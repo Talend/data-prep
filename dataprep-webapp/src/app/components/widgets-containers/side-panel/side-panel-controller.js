@@ -39,12 +39,16 @@ export default class SidePanelCtrl {
 	adaptActions() {
 		this.actions = this.appSettings.views.sidepanel.actions
 			.map(actionName => this.appSettings.actions[actionName])
-			.map(action => ({
-				...action,
-				label: action.name,
-				id: action.id.replace(/:/g, '-'),
-				onClick: this.SettingsActionsService.createDispatcher(action),
-			}));
+			.map((action) => {
+				const adaptedAction = {
+					...action,
+					label: action.name,
+					id: action.id.replace(/:/g, '-'),
+					onClick: this.SettingsActionsService.createDispatcher(action),
+				};
+				delete adaptedAction.type;
+				return adaptedAction;
+			});
 	}
 
 	adaptToggle() {

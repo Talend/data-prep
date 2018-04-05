@@ -44,6 +44,7 @@ import SETTINGS_MODULE from '../../settings/settings-module';
 import STATE_MODULE from '../../services/state/state-module';
 import DATASET_UPLOAD_STATUS_MODULE from '../dataset/upload-status/dataset-upload-status-module';
 import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
+import SERVICES_INVENTORY_MODULE from '../../services/inventory/inventory-module';
 
 const MODULE_NAME = '@talend/react-components.containers';
 
@@ -55,6 +56,7 @@ angular.module(MODULE_NAME,
 		STATE_MODULE,
 		DATASET_UPLOAD_STATUS_MODULE,
 		STEP_PROGRESS_MODULE,
+		SERVICES_INVENTORY_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(
 		getTranslated(AppHeaderBar, { i18n })

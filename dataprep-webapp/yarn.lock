@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@talend/bootstrap-theme@0.171.0":
-  version "0.171.0"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.171.0.tgz#d0cfa619b93047422d68ee605e6665ce53d65965"
+"@talend/bootstrap-theme@0.175.0":
+  version "0.175.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.175.0.tgz#5535d9d7581198ce848dc182799dd547d36e3d4b"
   dependencies:
     bootstrap-sass "3.3.7"
 
@@ -68,15 +68,16 @@
     hoist-non-react-statics "^1.2.0"
     mock-socket "^7.0.0"
 
-"@talend/icons@0.171.0":
-  version "0.171.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.171.0.tgz#73b91d04feed8b68062830c9ca33d844170f33b6"
+"@talend/icons@0.175.0":
+  version "0.175.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.175.0.tgz#9f0d9ed0142dac7052dafe7c5dbf48fdb075fbf1"
 
-"@talend/react-components@0.171.0":
-  version "0.171.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.171.0.tgz#dce2c5412eeafea12f19db5c315f1ff3f1c52f6d"
+"@talend/react-components@0.175.0":
+  version "0.175.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.175.0.tgz#0129ff6c7d609a27a4e8ef3d41b400511eefafea"
   dependencies:
     date-fns "1.27.2"
+    immutable "3.8.1"
     lodash "4.17.4"
     rc-slider "8.4.1"
     rc-tooltip "3.7.0"
@@ -84,9 +85,9 @@
     react-debounce-input "3.1.0"
     react-virtualized "9.10.1"
 
-"@talend/react-forms@0.171.0":
-  version "0.171.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.171.0.tgz#9005dc46e3357dd90e42346723b353d46571abc0"
+"@talend/react-forms@0.175.0":
+  version "0.175.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.175.0.tgz#2b451c7d6c9e993d3f0fcceb09fc2d2347c0ce26"
   dependencies:
     ajv "^6.2.1"
     classnames "2.2.5"
@@ -3866,9 +3867,9 @@ ignore@^3.2.0:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.5.tgz#c4e715455f6073a8d7e5dae72d2fc9d71663dba6"
 
-immutable@^3.8.2:
-  version "3.8.2"
-  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
+immutable@3.8.1:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
 import-local@^0.1.1:
   version "0.1.1"

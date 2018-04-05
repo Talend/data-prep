@@ -21,11 +21,14 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.SimpleLocaleContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
@@ -59,7 +62,7 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
  * </p>
  */
 @Component(LOCALE_RESOLVER_BEAN_NAME)
-public class DataprepLocaleContextResolver implements LocaleResolver {
+public class DataprepLocaleContextResolver implements LocaleContextResolver {
 
     private static final Logger LOGGER = getLogger(DataprepLocaleContextResolver.class);
 
@@ -77,7 +80,7 @@ public class DataprepLocaleContextResolver implements LocaleResolver {
         if (StringUtils.isNotBlank(configuredLocale)) {
             try {
                 locale = new Locale.Builder().setLanguageTag(configuredLocale).build();
-                if (LocaleUtils.isAvailableLocale(locale)) {
+                if (delegate.getSupportedLocales().contains(locale)) {
                     LOGGER.debug("Setting application locale to configured {}", locale);
                 } else {
                     locale = DEFAULT_LOCALE;
@@ -100,11 +103,29 @@ public class DataprepLocaleContextResolver implements LocaleResolver {
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
-        return delegate.resolveLocale(request);
+        return getLocale(request);
     }
 
     @Override
     public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
         delegate.setLocale(request, response, locale);
+    }
+
+    @Override
+    public LocaleContext resolveLocaleContext(HttpServletRequest request) {
+        return new SimpleLocaleContext(getLocale(request));
+    }
+
+    @Override
+    public void setLocaleContext(HttpServletRequest request, HttpServletResponse response,
+            LocaleContext localeContext) {
+        delegate.setLocale(request, response, getLocale(request));
+    }
+
+    private Locale getLocale(HttpServletRequest request) {
+        final Locale locale = delegate.resolveLocale(request);
+        LOGGER.debug("Resolved locale for request '{}': {} (Accept-Language: '{}').", request, locale,
+                request.getHeader(HttpHeaders.ACCEPT_LANGUAGE));
+        return locale;
     }
 }

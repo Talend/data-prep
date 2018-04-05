@@ -13,7 +13,7 @@ public class ExportUtil {
 
     /**
      * Store a parameters in the export {@link Map} depending of its {@link StepParamType} and its value.
-     * 
+     *
      * @param exportParams the export {@link Map} that'll received the parameters.
      * @param param the parameters type.
      * @param value the parameters value to store in the export {@link Map}
@@ -28,7 +28,7 @@ public class ExportUtil {
 
     /**
      * Extract a parameters from the dataTable and store it in the export {@link Map} depending of its {@link StepParamType}.
-     * 
+     *
      * @param exportParams the export {@link Map} that'll received the parameters.
      * @param param the parameters type.
      * @param dataTable the dataTable expecting to contains the parameter value to store.

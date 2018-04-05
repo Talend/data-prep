@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.format.export.ExportFormatMessage;
@@ -77,7 +78,7 @@ public class FeatureContext {
     /**
      * Add a suffix to a name depending of the execution instance.
      *
-     * @param name the to suffix.
+     * @param name the name to suffix.
      * @return the suffixed name.
      */
     public static String suffixName(String name) {
@@ -87,6 +88,23 @@ public class FeatureContext {
     @PostConstruct
     public void init() {
         folders = folderUtil.getEmptyReverseSortedSet();
+    }
+
+    /**
+     * Add a suffix to a name depending of the execution instance.
+     *
+     * @param folderPath to suffix.
+     * @return the suffixed folderPath.
+     */
+    public static String suffixFolderName(String folderPath) {
+        // The Home folder does not be suffixed
+        if (StringUtils.equals(folderPath, "/")) {
+            return folderPath;
+        }
+        // 2 cases, following the path starts from the root or not
+        return folderPath.startsWith("/") ?
+                "/" + folderPath.substring(1).replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID :
+                folderPath.replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID;
     }
 
     /**

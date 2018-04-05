@@ -92,9 +92,12 @@ class PipelineDiffTransformer implements Transformer {
         // Filter source records (extract TDP ids information)
         final List<Long> indexes = previewConfiguration.getIndexes();
         final boolean isIndexLimited = indexes != null && !indexes.isEmpty();
-        final Long minIndex = isIndexLimited ? indexes.stream().mapToLong(Long::longValue).min().getAsLong() : 0L;
-        final Long maxIndex = isIndexLimited ? indexes.stream().mapToLong(Long::longValue).max().getAsLong() : Long.MAX_VALUE;
-        final Predicate<DataSetRow> filter = isWithinWantedIndexes(minIndex, maxIndex);
+        final Predicate<DataSetRow> filter;
+        if (isIndexLimited) {
+            filter = isIndexWanted(indexes);
+        } else {
+            filter = row -> true;
+        }
 
         // Build diff pipeline
         final Node diffPipeline = NodeBuilder.filteredSource(filter) //
@@ -142,7 +145,7 @@ class PipelineDiffTransformer implements Transformer {
         return PreviewConfiguration.class.isAssignableFrom(configuration.getClass());
     }
 
-    private Predicate<DataSetRow> isWithinWantedIndexes(Long minIndex, Long maxIndex) {
-        return row -> row.getTdpId() >= minIndex && row.getTdpId() <= maxIndex;
+    private Predicate<DataSetRow> isIndexWanted(List<Long> indexes) {
+        return row -> indexes.contains(row.getTdpId());
     }
 }

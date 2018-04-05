@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.dto.Folder;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**

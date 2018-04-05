@@ -8,7 +8,6 @@ import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
-import org.talend.dataprep.transformation.actions.column.DeleteColumn;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -29,7 +28,7 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
      */
     public static final String DELETE_ALL_EMPTY_COLUMNS_ACTION_NAME = "delete_all_empty_columns";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteColumn.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
 
     protected static final String ACTION_PARAMETER = "action_on_columns_with_blank";
 

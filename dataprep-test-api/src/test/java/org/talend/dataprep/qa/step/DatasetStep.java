@@ -107,21 +107,44 @@ public class DatasetStep extends DataPrepStep {
             throws IOException, InterruptedException {
         String dataSetId = context.getObject("dataSetId").toString();
 
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
+        getDatasetsColumnSemanticTypes(suffixName(semanticTypeId), columnId, dataSetId, true);
     }
 
     @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
     public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
+        getDatasetsColumnSemanticTypes(suffixName(semanticTypeId), columnId, dataSetId, true);
+    }
+
+    @Then("^I check that the default semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
+    public void thenICheckDefaultSemanticTypeExist(String semanticTypeName, String columnId, String dataSetName)
+            throws IOException, InterruptedException {
+        String dataSetId = context.getDatasetId(suffixName(dataSetName));
+        getDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, true);
+    }
+
+    @Then("^I check they are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
+    public void checkColumnQuality(Integer expectedValue, String qualityField, String columnId, String dataSetName)
+            throws Exception {
+        String dataSetId = context.getDatasetId(suffixName(dataSetName));
+        checkQuality(expectedValue, qualityField, columnId, dataSetId);
+    }
+
+    private void checkQuality(Integer expectedValue, String qualityField, String columnId, String dataSetId)
+            throws Exception {
+        Response response = api.getDataSetMetaData(dataSetId);
+        response.then().statusCode(200);
+
+        assertEquals(expectedValue, response.body().jsonPath().get(
+                "columns.findAll { c -> c.id == '" + columnId + "'}.quality[0]." + qualityField));
     }
 
     @Then("^I check that the semantic type \"(.*)\" does not exist the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
     public void thenICheckSemanticTypeDoesNotExist(String semanticTypeId, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, false);
+        getDatasetsColumnSemanticTypes(suffixName(semanticTypeId), columnId, dataSetId, false);
     }
 
     private void getDatasetsColumnSemanticTypes(String semanticTypeId, String columnId, String dataSetId,
@@ -131,19 +154,21 @@ public class DatasetStep extends DataPrepStep {
 
         if (expected) {
             // we expect the semantic Type
-            assertEquals(1, response
-                    .body()
-                    .jsonPath()
-                    .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
-                    .size());
+            assertEquals(1,
+                    response
+                            .body()
+                            .jsonPath()
+                            .getList("findAll { semanticType -> semanticType.id == '" + semanticTypeId + "'  }")
+                            .size());
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column
             if (!"".equals(response.body().print())) {
-                assertEquals(0, response
-                        .body()
-                        .jsonPath()
-                        .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
-                        .size());
+                assertEquals(0,
+                        response
+                                .body()
+                                .jsonPath()
+                                .getList("findAll { semanticType -> semanticType.id == '" + semanticTypeId + "'  }")
+                                .size());
             }
         }
     }

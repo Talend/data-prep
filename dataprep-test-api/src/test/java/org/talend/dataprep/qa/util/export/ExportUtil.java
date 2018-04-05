@@ -18,7 +18,7 @@ public class ExportUtil {
      * @param param the parameters type.
      * @param value the parameters value to store in the export {@link Map}
      */
-    public void feedExportParam(Map<String, Object> exportParams, ExportParam param, Object value) {
+    public void feedExportParam(Map<String, Object> exportParams, ExportParam param, String value) {
         if (!param.getType().equals(StepParamType.IN)) {
             if (value != null) {
                 exportParams.put(param.getJsonName(), value);

@@ -268,14 +268,14 @@ public class FeatureContext {
     /**
      * Clear the list of temporary {@link File}.
      */
-    protected void clearTempFile() {
+    public void clearTempFile() {
         tempFileByName.clear();
     }
 
     /**
      * Clear the list of {@link Action}}.
      */
-    protected void clearAction() {
+    public void clearAction() {
         actionByAlias.clear();
     }
 
@@ -291,7 +291,7 @@ public class FeatureContext {
         return featureContext.get(key);
     }
 
-    protected void clearObject() {
+    public void clearObject() {
         featureContext.clear();
     }
 
@@ -315,7 +315,7 @@ public class FeatureContext {
     /**
      * Clear the list of folders.
      */
-    protected void clearFolders() {
+    public void clearFolders() {
         folders.clear();
     }
 

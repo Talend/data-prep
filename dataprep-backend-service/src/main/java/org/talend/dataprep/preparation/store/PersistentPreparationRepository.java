@@ -34,12 +34,14 @@ public class PersistentPreparationRepository implements PreparationRepository {
 
     private final PreparationRepository delegate;
 
-    public PersistentPreparationRepository(PreparationRepository delegate, BeanConversionService beanConversionService) {
+    public PersistentPreparationRepository(PreparationRepository delegate,
+            BeanConversionService beanConversionService) {
         this.delegate = delegate;
         this.beanConversionService = beanConversionService;
     }
 
-    private static Class<? extends Identifiable> selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
+    private static Class<? extends Identifiable>
+            selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
         if (Preparation.class.isAssignableFrom(identifiableClass)) {
             return PersistentPreparation.class;
         } else if (Step.class.isAssignableFrom(identifiableClass)) {
@@ -59,7 +61,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz)), getRootElement(persistentClass, clazz));
+        return Stream.concat(delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz)),
+                getRootElement(persistentClass, clazz));
     }
 
     private <T extends Identifiable> Stream<T> getRootElement(Class<T> clazz, Class<T> targetClass) {
@@ -75,12 +78,16 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression expression) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass, expression).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz, clazz));
+        return Stream.concat(
+                delegate.list(persistentClass, expression).map(i -> beanConversionService.convert(i, clazz)),
+                getRootElement(clazz, clazz));
     }
 
     @Override
     public void add(Identifiable object) {
-        final List<? extends Identifiable> objects = PreparationUtils.scatter(object).stream() //
+        final List<? extends Identifiable> objects = PreparationUtils
+                .scatter(object)
+                .stream() //
                 .filter(o -> !(Step.ROOT_STEP.equals(o) || PreparationActions.ROOT_ACTIONS.equals(o))) //
                 .map(identifiable -> {
                     final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());

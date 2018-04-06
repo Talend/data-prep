@@ -32,15 +32,13 @@ public interface Registration<T> {
      */
     default Registration<T> merge(Registration<T> other) {
 
-//            List<Class<?>> convClasses = new ArrayList();
-//            convClasses.addAll(getConvertedClasses());
-//            convClasses.addAll(other.getConvertedClasses());
-//
-//            HashMap<Class<?>, BiFunction<T, Object, Object>> customs = new HashMap<>();
-//
-//            new RegistrationImpl<>(getModelClass(), convClasses, customs);
-
-
+        //            List<Class<?>> convClasses = new ArrayList();
+        //            convClasses.addAll(getConvertedClasses());
+        //            convClasses.addAll(other.getConvertedClasses());
+        //
+        //            HashMap<Class<?>, BiFunction<T, Object, Object>> customs = new HashMap<>();
+        //
+        //            new RegistrationImpl<>(getModelClass(), convClasses, customs);
 
         return new Registration<T>() {
 

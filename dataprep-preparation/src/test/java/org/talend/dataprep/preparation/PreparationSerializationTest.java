@@ -47,8 +47,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void emptyPreparation() throws Exception {
-        Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7", versionService.version().getVersionId());
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
         mapper.writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
@@ -58,8 +58,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void namePreparation() throws Exception {
-        Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7", versionService.version().getVersionId());
         preparation.setName("MyName");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -70,8 +70,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationDataSet() throws Exception {
-        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", versionService.version().getVersionId());
         preparation.setDataSetId("12345");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -82,8 +82,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationAuthor() throws Exception {
-        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", versionService.version().getVersionId());
         preparation.setDataSetId("12345");
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
@@ -95,13 +95,14 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationDetailsSteps() throws Exception {
-        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345",
+                Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
         mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
-        final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("preparationDetailsSteps.json");
+        final InputStream expected =
+                PreparationSerializationTest.class.getResourceAsStream("preparationDetailsSteps.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
 
@@ -116,7 +117,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
         final Step s1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         repository.add(s1);
         // Use it in preparation
-        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
+        Preparation preparation =
+                new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
         preparation.setCreationDate(0L);
         repository.add(preparation);
 

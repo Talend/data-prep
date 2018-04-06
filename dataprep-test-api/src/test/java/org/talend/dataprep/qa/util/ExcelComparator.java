@@ -31,7 +31,7 @@ public class ExcelComparator {
             return false;
         }
         boolean equalFile = true;
-        for (int i = 0; i <= nbSheet1-1; i++) {
+        for (int i = 0; i <= nbSheet1 - 1; i++) {
             XSSFSheet sheet1 = workbook1.getSheetAt(i);
             XSSFSheet sheet2 = workbook2.getSheetAt(i);
             if (!compareTwoSheets(sheet1, sheet2)) {

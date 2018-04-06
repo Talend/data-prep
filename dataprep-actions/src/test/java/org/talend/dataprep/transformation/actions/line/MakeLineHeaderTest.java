@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.line;
 
@@ -42,7 +42,7 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
@@ -86,7 +86,7 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "line");
         parameters.put("row_id", row2.getTdpId().toString());
-        parameters.put( MakeLineHeader.SKIP_UNTIL, Boolean.FALSE.toString() );
+        parameters.put(MakeLineHeader.SKIP_UNTIL, Boolean.FALSE.toString());
 
         assertThat(row1.isDeleted(), is(false));
         assertThat(row2.isDeleted(), is(false));
@@ -190,7 +190,7 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, makeHeader, concat);
 
         // then
-       // assertEquals(3, row3.getRowMetadata().getColumns().size());
+        // assertEquals(3, row3.getRowMetadata().getColumns().size());
         assertEquals("John", row1.getRowMetadata().getById("0000").getName());
         assertEquals("Lennon", row1.getRowMetadata().getById("0001").getName());
         assertEquals("John", row2.getRowMetadata().getById("0000").getName());
@@ -198,7 +198,6 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
         assertEquals("John", row3.getRowMetadata().getById("0000").getName());
         assertEquals("Lennon", row3.getRowMetadata().getById("0001").getName());
     }
-
 
     @Test
     public void should_delete_line_with_provided_row_id_and_previous_as_well() {
@@ -235,7 +234,7 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
         assertThat(row3.isDeleted(), is(false));
 
         //when
-        ActionTestWorkbench.test(Arrays.asList( row1,row2, row3 ), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row1.isDeleted(), is(true));
@@ -247,7 +246,6 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
         assertEquals("John", row2.getRowMetadata().getById("0000").getName());
         assertEquals("Lennon", row2.getRowMetadata().getById("0001").getName());
     }
-
 
     @Test
     public void should_use_mask_on_empty_cell() {
@@ -284,7 +282,7 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest<MakeLineHeader>
         assertFalse(row3.isDeleted());
 
         //when
-        ActionTestWorkbench.test(Arrays.asList( row1,row2, row3 ), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
         assertTrue(row1.isDeleted());

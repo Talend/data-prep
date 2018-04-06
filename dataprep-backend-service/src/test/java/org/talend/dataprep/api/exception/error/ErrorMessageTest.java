@@ -110,7 +110,9 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("An unexpected error occurred and we could not complete your last operation. You can continue to use Data Preparation", exception.getMessage());
+        assertEquals(
+                "An unexpected error occurred and we could not complete your last operation. You can continue to use Data Preparation",
+                exception.getMessage());
         assertEquals("An error has occurred", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
 
@@ -126,7 +128,8 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("Unable to create dataset, content is not supported. Try with a csv or xls file!", exception.getMessage());
+        assertEquals("Unable to create dataset, content is not supported. Try with a csv or xls file!",
+                exception.getMessage());
         assertEquals("Unsupported content", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
     }
@@ -229,7 +232,9 @@ public class ErrorMessageTest extends ServiceBaseTest {
 
         // then
         assertEquals(errorCode, exception.getCode());
-        assertEquals("An unexpected error occurred and we could not complete your last operation. You can continue to use Data Preparation", exception.getMessage());
+        assertEquals(
+                "An unexpected error occurred and we could not complete your last operation. You can continue to use Data Preparation",
+                exception.getMessage());
         assertEquals("An error has occurred", exception.getMessageTitle());
         assertFalse(exception.getContext().entries().iterator().hasNext());
     }

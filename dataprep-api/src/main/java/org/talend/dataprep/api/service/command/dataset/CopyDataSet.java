@@ -44,7 +44,7 @@ public class CopyDataSet extends GenericCommand<String> {
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/copy");
-                if(StringUtils.isNotBlank(name)) {
+                if (StringUtils.isNotBlank(name)) {
                     uriBuilder.addParameter("copyName", name);
                 }
                 return new HttpPost(uriBuilder.build());

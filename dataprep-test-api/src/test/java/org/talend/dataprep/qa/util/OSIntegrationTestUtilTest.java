@@ -28,7 +28,7 @@ import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
 import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {OSIntegrationTestUtil.class})
+@ContextConfiguration(classes = { OSIntegrationTestUtil.class })
 public class OSIntegrationTestUtilTest {
 
     @Autowired
@@ -38,7 +38,8 @@ public class OSIntegrationTestUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        ReflectionUtils.setField(FeatureContext.class.getDeclaredField("TI_SUFFIX_UID"), featureContext, "_TI_SUFFIX_UID");
+        ReflectionUtils.setField(FeatureContext.class.getDeclaredField("TI_SUFFIX_UID"), featureContext,
+                "_TI_SUFFIX_UID");
     }
 
     @Test

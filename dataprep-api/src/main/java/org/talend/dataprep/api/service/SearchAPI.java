@@ -90,8 +90,8 @@ public class SearchAPI extends APIService {
 
             // Now the search types categories
             searchDelegates.forEach(searchDelegate -> {
-                final String categoryLabel =
-                        messagesBundle.getString(LocaleContextHolder.getLocale(), "search." + searchDelegate.getSearchLabel());
+                final String categoryLabel = messagesBundle.getString(LocaleContextHolder.getLocale(),
+                        "search." + searchDelegate.getSearchLabel());
                 try {
                     generator.writeStartObject();
                     generator.writeStringField("type", searchDelegate.getInventoryType());

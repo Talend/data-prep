@@ -181,8 +181,14 @@ public class PersistentPreparation extends PersistentIdentifiable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("dataSetId", dataSetId).append("author", author)
-                .append("name", name).append("creationDate", creationDate).append("lastModificationDate", lastModificationDate)
-                .append("headId", headId).toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("dataSetId", dataSetId)
+                .append("author", author)
+                .append("name", name)
+                .append("creationDate", creationDate)
+                .append("lastModificationDate", lastModificationDate)
+                .append("headId", headId)
+                .toString();
     }
 }

@@ -57,7 +57,8 @@ public class RowMetadataUtils {
     public static Schema toSchema(String name, List<ColumnMetadata> columns) {
 
         final Map<String, Integer> uniqueSuffixes = new HashMap<>();
-        final List<Schema.Field> fields = columns.stream() //
+        final List<Schema.Field> fields = columns
+                .stream() //
                 .peek(columnMetadata -> {
                     final Integer suffix = uniqueSuffixes.get(columnMetadata.getName());
                     if (suffix != null) {
@@ -132,7 +133,10 @@ public class RowMetadataUtils {
         if (Type.get(column.getType()) != Type.DATE) {
             return null;
         }
-        Optional<PatternFrequency> electedPattern = column.getStatistics().getPatternFrequencies().stream()
+        Optional<PatternFrequency> electedPattern = column
+                .getStatistics()
+                .getPatternFrequencies()
+                .stream()
                 .filter(p -> !StringUtils.isEmpty(p.getPattern()))
                 .sorted((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()))
                 .findFirst();

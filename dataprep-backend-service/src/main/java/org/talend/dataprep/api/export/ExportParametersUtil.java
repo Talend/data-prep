@@ -64,13 +64,13 @@ public class ExportParametersUtil {
         }
 
         // we deal with a preparation export parameter. We need to populate stepId and datasetId
-        if(StringUtils.isNotEmpty(exportParam.getPreparationId())){
+        if (StringUtils.isNotEmpty(exportParam.getPreparationId())) {
             Preparation prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
             result.setStepId(getCleanStepId(prep, exportParam.getStepId()));
-            if(exportParam.getFrom() != ExportParameters.SourceType.FILTER){
+            if (exportParam.getFrom() != ExportParameters.SourceType.FILTER) {
                 result.setDatasetId(prep.getDataSetId());
             }
-        } else{
+        } else {
             // it'w a dataset export parameter. We need to switch stepId to empty
             result.setStepId("");
         }
@@ -87,7 +87,8 @@ public class ExportParametersUtil {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {
             return mapper.readerFor(PreparationMessage.class).readValue(details);
         } catch (Exception e) {

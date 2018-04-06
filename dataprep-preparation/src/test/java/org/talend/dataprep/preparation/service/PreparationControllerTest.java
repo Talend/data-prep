@@ -71,8 +71,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
     @Test
     public void CORSHeaders() throws Exception {
-        given().header("Origin", "fake.host.to.trigger.cors").when().get("/preparations").then()
-                .header("Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
+        given().header("Origin", "fake.host.to.trigger.cors").when().get("/preparations").then().header(
+                "Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -83,8 +83,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         when().get("/preparations/details").then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[]"));
 
-        final Preparation preparation = new Preparation("#548425458", "1234", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        final Preparation preparation =
+                new Preparation("#548425458", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0);
         preparation.setLastModificationDate(12345);
         repository.add(preparation);
@@ -93,12 +93,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = when().get("/preparations/details");
 
         // then
-        response.then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[{\"id\":\"#548425458\"," + "\"dataSetId\":\"1234\","
-                + "\"creationDate\":0," + "\"lastModificationDate\":12345}]").allowingExtraUnexpectedFields());
+        response.then().statusCode(HttpStatus.OK.value()).body(
+                sameJSONAs("[{\"id\":\"#548425458\"," + "\"dataSetId\":\"1234\"," + "\"creationDate\":0,"
+                        + "\"lastModificationDate\":12345}]").allowingExtraUnexpectedFields());
 
         // given
-        final Preparation preparation1 = new Preparation("#1438725", "5678", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        final Preparation preparation1 =
+                new Preparation("#1438725", "5678", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation1.setCreationDate(500);
         preparation1.setLastModificationDate(456789);
         repository.add(preparation1);
@@ -133,23 +134,28 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder rootFolder = folderRepository.addFolder(home.getId(), "/root");
         final List<String> rootPreparations = new ArrayList<>(1);
-        rootPreparations.add(clientTest.createPreparation(createTestPreparation("prep_1", "1234"), rootFolder.getId()).getId());
+        rootPreparations
+                .add(clientTest.createPreparation(createTestPreparation("prep_1", "1234"), rootFolder.getId()).getId());
 
         final Folder threePrepsFolder = folderRepository.addFolder(rootFolder.getId(), "three_preps");
         final List<String> threePreparations = new ArrayList<>(3);
-        threePreparations
-                .add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), threePrepsFolder.getId()).getId());
-        threePreparations
-                .add(clientTest.createPreparation(createTestPreparation("prep_3", "1234"), threePrepsFolder.getId()).getId());
-        threePreparations
-                .add(clientTest.createPreparation(createTestPreparation("prep_4", "1234"), threePrepsFolder.getId()).getId());
+        threePreparations.add(clientTest
+                .createPreparation(createTestPreparation("prep_2", "1234"), threePrepsFolder.getId())
+                .getId());
+        threePreparations.add(clientTest
+                .createPreparation(createTestPreparation("prep_3", "1234"), threePrepsFolder.getId())
+                .getId());
+        threePreparations.add(clientTest
+                .createPreparation(createTestPreparation("prep_4", "1234"), threePrepsFolder.getId())
+                .getId());
 
         final Folder noPrepsFolder = folderRepository.addFolder(threePrepsFolder.getId(), "no_prep");
         List<String> noPreparations = new ArrayList<>();
 
         // then
         checkSearchFolder(rootFolder.getId(), rootPreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
-        checkSearchFolder(threePrepsFolder.getId(), threePreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
+        checkSearchFolder(threePrepsFolder.getId(), threePreparations,
+                SortAndOrderHelper.Sort.CREATION_DATE.camelName());
         checkSearchFolder(noPrepsFolder.getId(), noPreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
     }
 
@@ -158,16 +164,20 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder rootFolder = folderRepository.addFolder(home.getId(), "/root");
         final List<String> rootPreparations = new ArrayList<>(1);
-        rootPreparations.add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), rootFolder.getId()).getId());
+        rootPreparations
+                .add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), rootFolder.getId()).getId());
 
         final Folder threePrepsFolder = folderRepository.addFolder(rootFolder.getId(), "three_preps");
         final List<String> threePreparations = new ArrayList<>(3);
-        threePreparations
-                .add(clientTest.createPreparation(createTestPreparation("prep_2", "1234"), threePrepsFolder.getId()).getId());
-        threePreparations
-                .add(clientTest.createPreparation(createTestPreparation("prep_3", "1234"), threePrepsFolder.getId()).getId());
-        threePreparations
-                .add(clientTest.createPreparation(createTestPreparation("prep_4", "1234"), threePrepsFolder.getId()).getId());
+        threePreparations.add(clientTest
+                .createPreparation(createTestPreparation("prep_2", "1234"), threePrepsFolder.getId())
+                .getId());
+        threePreparations.add(clientTest
+                .createPreparation(createTestPreparation("prep_3", "1234"), threePrepsFolder.getId())
+                .getId());
+        threePreparations.add(clientTest
+                .createPreparation(createTestPreparation("prep_4", "1234"), threePrepsFolder.getId())
+                .getId());
 
         final Folder noPrepsFolder = folderRepository.addFolder(threePrepsFolder.getId(), "no_prep");
         List<String> noPreparations = new ArrayList<>();
@@ -185,13 +195,18 @@ public class PreparationControllerTest extends BasePreparationTest {
      * @param expectedIds the expected preparations id.
      * @throws IOException if an error occurs.
      */
-    private void checkSearchFolder(final String folderId, final List<String> expectedIds, String sort) throws IOException {
+    private void checkSearchFolder(final String folderId, final List<String> expectedIds, String sort)
+            throws IOException {
         // when
         final Response response = given() //
                 .queryParam("folderId", folderId) //
                 .queryParam("sort", sort) //
                 .queryParam("order", "asc") //
-                .when().expect().statusCode(200).log().ifError() //
+                .when()
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/preparations/search");
 
         // then
@@ -199,7 +214,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         final JsonNode rootNode = mapper.reader().readTree(response.asInputStream());
         assertTrue(rootNode.isArray());
         assertEquals(expectedIds.size(), rootNode.size());
-        final List<String> actualIds = StreamSupport.stream(rootNode.spliterator(), false).map(n -> n.get("id").asText())
+        final List<String> actualIds = StreamSupport
+                .stream(rootNode.spliterator(), false)
+                .map(n -> n.get("id").asText())
                 .collect(Collectors.toList());
         assertEquals(expectedIds, actualIds);
     }
@@ -222,7 +239,11 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("exactMatch", exactMatch) //
                 .queryParam("sort", "creationDate") //
                 .queryParam("order", "asc") //
-                .when().expect().statusCode(200).log().ifError() //
+                .when()
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/preparations/search");
 
         // then
@@ -230,7 +251,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         final JsonNode rootNode = mapper.reader().readTree(response.asInputStream());
         assertTrue(rootNode.isArray());
         assertEquals(expectedIds.size(), rootNode.size());
-        final List<String> actualIds = StreamSupport.stream(rootNode.spliterator(), false).map(n -> n.get("id").asText())
+        final List<String> actualIds = StreamSupport
+                .stream(rootNode.spliterator(), false)
+                .map(n -> n.get("id").asText())
                 .collect(Collectors.toList());
         assertEquals(expectedIds.size(), actualIds.stream().filter(expectedIds::contains).count());
     }
@@ -271,14 +294,14 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void list() throws Exception {
         // given
         when().get("/preparations").then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[]"));
-        final Preparation preparation1 = new Preparation("#18875", "1234", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        final Preparation preparation1 =
+                new Preparation("#18875", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation1.setCreationDate(0);
         repository.add(preparation1);
 
         when().get("/preparations").then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[\"#18875\"]"));
-        final Preparation preparation2 = new Preparation("#483275", "5678", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        final Preparation preparation2 =
+                new Preparation("#483275", "5678", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation2.setCreationDate(0);
         repository.add(preparation2);
 
@@ -292,8 +315,8 @@ public class PreparationControllerTest extends BasePreparationTest {
     @Test
     public void getDetails() throws Exception {
         // given
-        final Preparation preparation = new Preparation("8b6281c5e99c41313a83777c3ab43b06adda9e5c", "1234", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        final Preparation preparation = new Preparation("8b6281c5e99c41313a83777c3ab43b06adda9e5c", "1234",
+                Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0);
         preparation.setLastModificationDate(12345);
         repository.add(preparation);
@@ -310,10 +333,12 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void getDetailsWithSpecificStepId() throws Exception {
 
         // given
-        final String preparationContent = IOUtils.toString(this.getClass().getResourceAsStream("base_preparation.json"), "UTF-8");
+        final String preparationContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("base_preparation.json"), "UTF-8");
         final String preparationId = clientTest.createPreparationWithAPI(preparationContent);
 
-        final String step = IOUtils.toString(this.getClass().getResourceAsStream("actions/append_copy_firstname.json"), "UTF-8");
+        final String step =
+                IOUtils.toString(this.getClass().getResourceAsStream("actions/append_copy_firstname.json"), "UTF-8");
         clientTest.addStep(preparationId, step);
         final String wantedStepId = clientTest.addStep(preparationId, step);
         clientTest.addStep(preparationId, step);
@@ -331,7 +356,8 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void getDetailsWithSpecificStepIdShouldReturn404WhenStepIdNotFound() throws Exception {
 
         // given
-        final String preparationContent = IOUtils.toString(this.getClass().getResourceAsStream("base_preparation.json"), "UTF-8");
+        final String preparationContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("base_preparation.json"), "UTF-8");
         final String preparationId = clientTest.createPreparationWithAPI(preparationContent);
 
         try {
@@ -356,7 +382,10 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("name", "the new preparation") //
                 .queryParam("destination", "new preparation") //
                 .when() //
-                .expect().statusCode(404).log().ifError() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError() //
                 .post("/preparations/{id}/copy", unknownId);
 
         // then
@@ -370,8 +399,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
-        final String originalId = clientTest.createPreparation(createTestPreparation("test_name", "1234"), fromFolder.getId())
-                .getId();
+        final String originalId =
+                clientTest.createPreparation(createTestPreparation("test_name", "1234"), fromFolder.getId()).getId();
         // Change the author, to make it different from system user.
         repository.get(originalId, Preparation.class).setAuthor("tagada");
 
@@ -380,7 +409,10 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("name", "the new preparation") //
                 .queryParam("destination", toFolder.getId()) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/preparations/{id}/copy", originalId);
         final String copyId = response.asString();
 
@@ -411,14 +443,18 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String name = "my preparation";
         final Folder folder = folderRepository.addFolder(home.getId(), "great_folder");
 
-        final String originalId = clientTest.createPreparation(createTestPreparation(name, "1234"), folder.getId()).getId();
+        final String originalId =
+                clientTest.createPreparation(createTestPreparation(name, "1234"), folder.getId()).getId();
 
         // when
         final Response response = given() //
                 .queryParam("name", name) //
                 .queryParam("destination", folder.getId()) //
                 .when() //
-                .expect().statusCode(409).log().ifError() //
+                .expect()
+                .statusCode(409)
+                .log()
+                .ifError() //
                 .post("/preparations/{id}/copy", originalId);
 
         // then
@@ -429,14 +465,18 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldCopyWithDefaultParameters() throws Exception {
         // given
         final Folder folder = folderRepository.addFolder(home.getId(), "yet_another_folder");
-        final String originalId = clientTest.createPreparation(createTestPreparation("prep_1", "1234"), folder.getId()).getId();
+        final String originalId =
+                clientTest.createPreparation(createTestPreparation("prep_1", "1234"), folder.getId()).getId();
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
         // when
         final Response response = given() //
                 .queryParam("destination", toFolder.getId()) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/preparations/{id}/copy", originalId);
         final String copyId = response.asString();
 
@@ -464,8 +504,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
 
-        final String originalId = clientTest.createPreparation(createTestPreparation("test_move", "7535"), fromFolder.getId())
-                .getId();
+        final String originalId =
+                clientTest.createPreparation(createTestPreparation("test_move", "7535"), fromFolder.getId()).getId();
 
         // when
         final Response response = given() //
@@ -473,7 +513,10 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("destination", toFolder.getId()) //
                 .queryParam("newName", "moved preparation") //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/move", originalId);
 
         // then
@@ -490,7 +533,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         final String name = "super preparation";
         final String preparationId = clientTest
-                .createPreparation(createTestPreparation("another preparation", "7535"), fromFolder.getId()).getId();
+                .createPreparation(createTestPreparation("another preparation", "7535"), fromFolder.getId())
+                .getId();
         clientTest.createPreparation(createTestPreparation(name, "7384"), toFolder.getId());
 
         // when
@@ -499,7 +543,10 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("destination", toFolder.getId()) //
                 .queryParam("newName", name) //
                 .when() //
-                .expect().statusCode(409).log().ifError() //
+                .expect()
+                .statusCode(409)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/move", preparationId);
 
         // then
@@ -511,14 +558,18 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
-        final String originalId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
+        final String originalId =
+                clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
 
         // when
         final Response response = given() //
                 .queryParam("folder", fromFolder.getId()) //
                 .queryParam("destination", toFolder.getId()) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/move", originalId);
 
         // then
@@ -539,7 +590,10 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("folder", fromFolder.getId()) //
                 .queryParam("destination", toFolder.getId()) //
                 .when() //
-                .expect().statusCode(404).log().ifError() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/move", "ABC123XYZ");
 
         // then
@@ -574,12 +628,16 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldLocatePreparation() throws Exception {
         // given
         final Folder bar = folderRepository.addFolder(home.getId(), "/foo/bar");
-        final String barEntry = clientTest.createPreparation(createTestPreparation("youpi", "4824"), bar.getId()).getId();
+        final String barEntry =
+                clientTest.createPreparation(createTestPreparation("youpi", "4824"), bar.getId()).getId();
 
         // when
         final Response response = given() //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/preparations/{id}/folder", barEntry);
 
         // then
@@ -595,7 +653,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         // when
         final Response response = given() //
                 .when() //
-                .expect().statusCode(404).log().ifError() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError() //
                 .get("/preparations/{id}/folder", "unknown preparation");
 
         // then
@@ -633,7 +694,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = given() //
                 .param("from", referenceId) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/steps/copy", preparationId);
 
         // then
@@ -651,7 +715,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = given() //
                 .param("from", "reference") //
                 .when() //
-                .expect().statusCode(404).log().ifError() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/steps/copy", "prepNotFound");
 
         // then
@@ -689,7 +756,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = given() //
                 .param("from", "not to be found") //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/steps/copy", preparationId);
 
         // then
@@ -707,7 +777,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         // when
         final Response response = given() //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/lock", preparationId);
 
         // then
@@ -723,12 +796,18 @@ public class PreparationControllerTest extends BasePreparationTest {
         // when
         given() //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/lock", preparationId);
 
         final Response response = given() //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/lock", preparationId);
 
         // then
@@ -744,12 +823,18 @@ public class PreparationControllerTest extends BasePreparationTest {
         // when
         given() //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/lock", preparationId);
 
         final Response response = given() //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/unlock", preparationId);
 
         // then
@@ -762,7 +847,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
         final Folder toFolder = folderRepository.addFolder(home.getId(), "to");
-        final String originalId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
+        final String originalId =
+                clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
         Preparation expected = repository.get(originalId, Preparation.class);
 
         // when
@@ -770,7 +856,10 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .queryParam("folder", fromFolder.getId()) //
                 .queryParam("destination", toFolder.getId()) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("/preparations/{id}/move", originalId);
 
         // then
@@ -781,21 +870,25 @@ public class PreparationControllerTest extends BasePreparationTest {
     public void shouldGetPreparation() throws Exception {
         // given
         final Folder fromFolder = folderRepository.addFolder(home.getId(), "from");
-        final String preparationId = clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId())
-                .getId();
+        final String preparationId =
+                clientTest.createPreparation(createTestPreparation("yap", "7535"), fromFolder.getId()).getId();
         final Preparation preparation = repository.get(preparationId, Preparation.class);
 
         final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
                 + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\","
                 + "\"rowMetadata\":{\"nextId\":0,\"columns\":[]}," + "\"author\":\"" + preparation.getAuthor() + "\","
-                + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate() + "," + "\"lastModificationDate\":"
-                + preparation.getCreationDate() + "," + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
+                + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate() + ","
+                + "\"lastModificationDate\":" + preparation.getCreationDate() + ","
+                + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
 
         // when
         final Response response = given() //
                 .queryParam("id", preparationId) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/preparations/{id}", preparationId);
 
         // then
@@ -838,7 +931,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final String preparationId = clientTest
-                .createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).id();
+                .createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId())
+                .id();
 
         // then
         final FolderEntry entry = assertThatPreparationIsFirstInsideFolder(preparationId, folder.getId());
@@ -948,7 +1042,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = createdPreparation.getLastModificationDate();
 
         // Test preparation details update
-        final String updatedId = given().contentType(ContentType.JSON) //
+        final String updatedId = given()
+                .contentType(ContentType.JSON) //
                 .body(createTestPreparation("test_name_updated", "1234")) //
                 .when() //
                 .put("/preparations/{id}", preparationId) //
@@ -975,8 +1070,12 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String preparationId = clientTest.createPreparation(createdPreparation).getId();
 
         // when
-        final String updatedId = given().contentType(ContentType.JSON.withCharset(UTF_8))
-                .body(createTestPreparation("éàçè", "1234")).when().put("/preparations/{id}", preparationId).asString();
+        final String updatedId = given()
+                .contentType(ContentType.JSON.withCharset(UTF_8))
+                .body(createTestPreparation("éàçè", "1234"))
+                .when()
+                .put("/preparations/{id}", preparationId)
+                .asString();
 
         // then
         // Preparation id should not change (new name)
@@ -999,7 +1098,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getHeadId(), is(secondStepId));
 
         // when
-        given().when()//
+        given()
+                .when()//
                 .put("/preparations/{id}/head/{stepId}", preparationId, firstStepId)//
                 .then()//
                 .statusCode(200);
@@ -1019,11 +1119,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(preparation.getHeadId(), is(firstStepId));
 
         // when
-        final Response response = given().when()//
+        final Response response = given()
+                .when()//
                 .put("/preparations/{id}/head/{stepId}", preparationId, "unknown_step_id");
 
         // then
-        response.then()//
+        response
+                .then()//
                 .statusCode(404)//
                 .assertThat()//
                 .body("code", is("TDP_PS_PREPARATION_STEP_DOES_NOT_EXIST"));
@@ -1073,7 +1175,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Step head = repository.get(preparation.getHeadId(), Step.class);
         final Step lastBeforeHead = repository.get(head.getParent(), Step.class);
         final PreparationActions headAction = repository.get(head.getContent(), PreparationActions.class);
-        final PreparationActions lastBeforeHeadAction = repository.get(lastBeforeHead.getContent(), PreparationActions.class);
+        final PreparationActions lastBeforeHeadAction =
+                repository.get(lastBeforeHead.getContent(), PreparationActions.class);
 
         // first step : contains only uppercase on lastname
         assertThat(lastBeforeHeadAction.getActions(), hasSize(1));
@@ -1125,7 +1228,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         applyTransformation(preparationId, "actions/append_copy_lastname.json");
 
         // then
-        Optional<Step> first = repository.list(Step.class) //
+        Optional<Step> first = repository
+                .list(Step.class) //
                 .filter(s -> s.getParent() != null && Objects.equals(s.getParent(), Step.ROOT_STEP.getId())) //
                 .findFirst();
 
@@ -1144,15 +1248,15 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final Response request = given()
-                .body(IOUtils.toString(
-                        PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_list_params.json"),
-                        UTF_8))//
+                .body(IOUtils.toString(PreparationControllerTest.class
+                        .getResourceAsStream("error/incomplete_transformation_list_params.json"), UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .post("/preparations/{id}/actions", preparationId);
 
         // then
-        request.then()//
+        request
+                .then()//
                 .statusCode(400)//
                 .assertThat()//
                 .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
@@ -1171,9 +1275,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when
-        try (InputStream inputStream = PreparationControllerTest.class
-                .getResourceAsStream("actions/append_update_upper_case.json")) {
-            given().body(IOUtils.toString(inputStream, UTF_8))//
+        try (InputStream inputStream =
+                PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json")) {
+            given()
+                    .body(IOUtils.toString(inputStream, UTF_8))//
                     .contentType(ContentType.JSON)//
                     .when()//
                     .put("/preparations/{id}/actions/{action}", preparationId, firstStepId);
@@ -1198,9 +1303,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when : update second (last) step
-        given().body(IOUtils
-                .toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"), UTF_8))
-                .contentType(ContentType.JSON).when().put("/preparations/{id}/actions/{action}", preparationId, secondStepId);
+        given()
+                .body(IOUtils.toString(
+                        PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
+                        UTF_8))
+                .contentType(ContentType.JSON)
+                .when()
+                .put("/preparations/{id}/actions/{action}", preparationId, secondStepId);
 
         // then
         preparation = repository.get(preparationId, Preparation.class);
@@ -1221,10 +1330,14 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when
-        given().body(IOUtils
-                .toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"), UTF_8))
-                .contentType(ContentType.JSON).when()
-                .put("/preparations/{id}/actions/{action}", preparation.id(), "a41184275b046d86c8d98d413ed019bc0a7f3c49");
+        given()
+                .body(IOUtils.toString(
+                        PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
+                        UTF_8))
+                .contentType(ContentType.JSON)
+                .when()
+                .put("/preparations/{id}/actions/{action}", preparation.id(),
+                        "a41184275b046d86c8d98d413ed019bc0a7f3c49");
 
         // then
         preparation = repository.get(preparationId, Preparation.class);
@@ -1245,8 +1358,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         AppendStep firstStep = step(null, action("copy", paramsColAction("0003", "birth")));
         clientTest.addStep(preparationId, firstStep);
-        AppendStep secondStep = step(null,
-                action("split", params("column_id", "0001", "column_name", "firstname", "scope", "column", "limit", "2")));
+        AppendStep secondStep = step(null, action("split",
+                params("column_id", "0001", "column_name", "firstname", "scope", "column", "limit", "2")));
         clientTest.addStep(preparationId, secondStep);
 
         final Preparation preparation = repository.get(preparationId, Preparation.class);
@@ -1256,7 +1369,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertEquals(asList("0005", "0006"), repository.get(stepIds.get(2), Step.class).getDiff().getCreatedColumns());
 
         // when : +1 column
-        given().body(step(diff("0004", "0005", "0006"), action("split", paramsColAction("0001", "firstname")))) //
+        given()
+                .body(step(diff("0004", "0005", "0006"), action("split", paramsColAction("0001", "firstname")))) //
                 .contentType(ContentType.JSON) //
                 .when() //
                 .put("/preparations/{id}/actions/{action}", preparationId, stepIds.get(1));
@@ -1276,15 +1390,15 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final Response request = given()
-                .body(IOUtils.toString(
-                        PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_params.json"),
-                        UTF_8))//
+                .body(IOUtils.toString(PreparationControllerTest.class
+                        .getResourceAsStream("error/incomplete_transformation_params.json"), UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .put("/preparations/{id}/actions/{action}", preparationId, stepId);
 
         // then
-        request.then()//
+        request
+                .then()//
                 .statusCode(400)//
                 .assertThat()//
                 .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
@@ -1307,7 +1421,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(headActions.getActions().get(1).getName(), is("lowercase"));
 
         // when : delete second step in single mode
-        when().delete("/preparations/{id}/actions/{action}", preparationId, firstStepId)//
+        when()
+                .delete("/preparations/{id}/actions/{action}", preparationId, firstStepId)//
                 .then()//
                 .statusCode(200);
 
@@ -1333,7 +1448,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertEquals(3, stepIds.size());
 
         // when : delete second step in single mode
-        when().delete("/preparations/{id}/actions/{action}", preparationId, stepIds.get(1))//
+        when()
+                .delete("/preparations/{id}/actions/{action}", preparationId, stepIds.get(1))//
                 .then()//
                 .statusCode(200);
 
@@ -1356,7 +1472,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertEquals(4, stepIds.size());
 
         // when : delete second step in single mode
-        when().delete("/preparations/{id}/actions/{action}", preparationId, stepIds.get(1))//
+        when()
+                .delete("/preparations/{id}/actions/{action}", preparationId, stepIds.get(1))//
                 .then()//
                 .statusCode(200);
 
@@ -1382,7 +1499,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         applyTransformation(preparationId, "actions/append_lower_case.json");
 
         // when: delete ROOT
-        final Response response = when().delete("/preparations/{id}/actions/{action}", preparationId, Step.ROOT_STEP.getId());
+        final Response response =
+                when().delete("/preparations/{id}/actions/{action}", preparationId, Step.ROOT_STEP.getId());
 
         // then
         response.then().statusCode(403).assertThat().body("code", is("TDP_PS_PREPARATION_ROOT_STEP_CANNOT_BE_DELETED"));
@@ -1608,10 +1726,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertEquals(4, stepIds.size());
 
         // when : delete second step in single mode
-        given().queryParam("parentStepId", stepIds.get(1)).when()
+        given()
+                .queryParam("parentStepId", stepIds.get(1))
+                .when()
                 .post("/preparations/{id}/steps/{stepId}/order", preparationId, stepIds.get(3))//
                 // TDP-3624
-                .then().statusCode(409);
+                .then()
+                .statusCode(409);
 
         final Preparation preparationAfter = repository.get(preparationId, Preparation.class);
         final String newHeadStepId = preparationAfter.getHeadId();
@@ -1637,10 +1758,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertEquals(3, stepIds.size());
 
         // when : delete second step in single mode
-        given().queryParam("parentStepId", stepIds.get(0)).when()
+        given()
+                .queryParam("parentStepId", stepIds.get(0))
+                .when()
                 .post("/preparations/{id}/steps/{stepId}/order", preparationId, stepIds.get(2))//
                 // TDP-3624
-                .then().statusCode(409);
+                .then()
+                .statusCode(409);
 
         final Preparation preparationAfter = repository.get(preparationId, Preparation.class);
         final String newHeadStepId = preparationAfter.getHeadId();
@@ -1704,8 +1828,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Map<String, String> parametersWithoutDataset = new HashMap<>();
         parametersWithoutDataset.put("other", "other");
 
-        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
+        final List<Action> action1 =
+                singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
+        final List<Action> action2 =
+                singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
 
         final PreparationActions prepAction1 = new PreparationActions().append(action1);
         final PreparationActions prepAction2 = new PreparationActions().append(action2);
@@ -1733,8 +1859,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Map<String, String> parametersWithoutDataset = new HashMap<>();
         parametersWithoutDataset.put("other", "other");
 
-        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
+        final List<Action> action1 =
+                singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
+        final List<Action> action2 =
+                singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
 
         final PreparationActions prepAction1 = new PreparationActions().append(action1);
         final PreparationActions prepAction2 = new PreparationActions().append(action2);
@@ -1801,9 +1929,11 @@ public class PreparationControllerTest extends BasePreparationTest {
      * @param transformationFilePath The transformation json file path
      * @return The created step id
      */
-    private String applyTransformation(final String preparationId, final String transformationFilePath) throws IOException {
+    private String applyTransformation(final String preparationId, final String transformationFilePath)
+            throws IOException {
         try (InputStream inputStream = PreparationControllerTest.class.getResourceAsStream(transformationFilePath)) {
-            given().body(IOUtils.toString(inputStream, UTF_8)) //
+            given()
+                    .body(IOUtils.toString(inputStream, UTF_8)) //
                     .contentType(ContentType.JSON) //
                     .when() //
                     .post("/preparations/{id}/actions", preparationId) //

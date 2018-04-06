@@ -27,11 +27,11 @@ public class DataSetLocationModule extends SimpleModule {
     private List<DataSetLocationMapping> mappings = new ArrayList<>();
 
     @PostConstruct
-    public void init(){
+    public void init() {
         mappings.forEach(mapping -> registerLocationMapping(mapping.getLocationType(), mapping.getLocationClass()));
     }
 
-    protected void registerLocationMapping(String type, Class<? extends DataSetLocation> locationClass){
+    protected void registerLocationMapping(String type, Class<? extends DataSetLocation> locationClass) {
         this.registerSubtypes(new NamedType(locationClass, type));
     }
 }

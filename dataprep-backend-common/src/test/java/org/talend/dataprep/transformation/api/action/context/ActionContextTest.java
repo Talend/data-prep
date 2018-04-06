@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.context;
 
@@ -57,33 +57,28 @@ public class ActionContextTest {
 
     @Test
     public void testColumnCreate() {
-        final String column = context.column("test",
-                (row) -> {
-                    final ColumnMetadata c = column().name("test").type(Type.STRING).build();
-                    row.insertAfter("", c);
-                    return c;
-                }
-        );
+        final String column = context.column("test", (row) -> {
+            final ColumnMetadata c = column().name("test").type(Type.STRING).build();
+            row.insertAfter("", c);
+            return c;
+        });
         assertThat(column, is("0000"));
     }
 
     @Test
     public void testColumnCache() {
-        final String column = context.column("test",
-                (row) -> {
-                    final ColumnMetadata c = column().name("test").type(Type.STRING).build();
-                    row.insertAfter("", c);
-                    return c;
-                });
+        final String column = context.column("test", (row) -> {
+            final ColumnMetadata c = column().name("test").type(Type.STRING).build();
+            row.insertAfter("", c);
+            return c;
+        });
         assertThat(column, is("0000"));
         // Calling twice context with same key shall return same column id
-        final String cachedColumn = context.column("test",
-                (row) -> {
-                    final ColumnMetadata c = column().name("test").type(Type.STRING).build();
-                    row.insertAfter("", c);
-                    return c;
-                }
-        );
+        final String cachedColumn = context.column("test", (row) -> {
+            final ColumnMetadata c = column().name("test").type(Type.STRING).build();
+            row.insertAfter("", c);
+            return c;
+        });
         assertThat(cachedColumn, is("0000"));
     }
 

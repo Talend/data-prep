@@ -130,7 +130,8 @@ public class APIClientTest {
      * @return the preparation id.
      * @throws IOException sh*i happens.
      */
-    public String createPreparationFromFile(final String file, final String name, final String folderId) throws IOException {
+    public String createPreparationFromFile(final String file, final String name, final String folderId)
+            throws IOException {
         final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID());
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
@@ -192,8 +193,13 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then().statusCode(
-                is(200));
+        given()
+                .contentType(JSON)
+                .body(action)
+                .when()
+                .post("/api/preparations/{id}/actions", preparationId)
+                .then()
+                .statusCode(is(200));
     }
 
     /**
@@ -230,9 +236,12 @@ public class APIClientTest {
     public Preparation getPreparationDetails(String preparationId) throws IOException {
         String json = //
                 expect() //
-                        .statusCode(200).log().ifValidationFails() //
+                        .statusCode(200)
+                        .log()
+                        .ifValidationFails() //
                         .when() //
-                        .get("/api/preparations/{id}/details", preparationId).asString();
+                        .get("/api/preparations/{id}/details", preparationId)
+                        .asString();
         return mapper.readerFor(Preparation.class).readValue(json);
     }
 
@@ -255,7 +264,8 @@ public class APIClientTest {
         // when
         Response transformedResponse = given()
                 .when() //
-                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version,
+                        stepId);
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
@@ -269,7 +279,8 @@ public class APIClientTest {
                     .statusCode(200)
                     .log()
                     .ifError() //
-                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version,
+                            stepId);
         }
 
         return transformedResponse;
@@ -331,8 +342,8 @@ public class APIClientTest {
         return export("", datasetId, stepId, null, null);
     }
 
-    protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter, String fileName)
-            throws IOException, InterruptedException {
+    protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter,
+            String fileName) throws IOException, InterruptedException {
         // when
         Response export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, null);
 
@@ -391,13 +402,19 @@ public class APIClientTest {
 
             waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
-            Response response = given().when().expect().statusCode(200).log().ifError() //
+            Response response = given()
+                    .when()
+                    .expect()
+                    .statusCode(200)
+                    .log()
+                    .ifError() //
                     .get("/api/preparations/{id}/metadata", preparationId);
-            metadata =  mapper.readValue(response.asInputStream(), DataSetMetadata.class);
+            metadata = mapper.readValue(response.asInputStream(), DataSetMetadata.class);
         } else if (OK.equals(responseStatus)) {
             metadata = mapper.readValue(transformedResponse.asInputStream(), DataSetMetadata.class);
         } else {
-            throw new RuntimeException("Could not get preparation metadata. Response was: " + transformedResponse.print());
+            throw new RuntimeException(
+                    "Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
         return metadata;
     }

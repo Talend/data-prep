@@ -54,7 +54,8 @@ public class Export extends GenericCommand<InputStream> {
      */
     private HttpRequestBase onExecute(ExportParameters parameters) {
         try {
-            final String parametersAsString = objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
+            final String parametersAsString =
+                    objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
             final HttpPost post = new HttpPost(transformationServiceUrl + "/apply");
             post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
             return post;

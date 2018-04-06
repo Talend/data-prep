@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
 
@@ -51,8 +51,8 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils
-                .parseParameters(RemoveNonAlphaNumCharsTest.class.getResourceAsStream("remove_non_alpha_num_chars.json"));
+        parameters = ActionMetadataTestUtils.parseParameters(
+                RemoveNonAlphaNumCharsTest.class.getResourceAsStream("remove_non_alpha_num_chars.json"));
     }
 
     @Test
@@ -94,7 +94,8 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_only_alpha").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_only_alpha").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -167,4 +168,3 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
         assertEquals("aaあああaa", action.apply("aaあああaa"));
     }
 }
-

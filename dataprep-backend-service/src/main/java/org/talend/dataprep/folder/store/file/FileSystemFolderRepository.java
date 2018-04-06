@@ -114,7 +114,9 @@ public class FileSystemFolderRepository implements FolderRepository {
             if (Files.notExists(folderPath)) {
                 children = Stream.empty();
             } else {
-                children = Files.list(folderPath).map(p -> toFolderIfDirectory(p, security.getUserId())) //
+                children = Files
+                        .list(folderPath)
+                        .map(p -> toFolderIfDirectory(p, security.getUserId())) //
                         .filter(Objects::nonNull);
             }
             return children;
@@ -129,15 +131,16 @@ public class FileSystemFolderRepository implements FolderRepository {
         // parent path must be set and exists
         FolderPath parentFolderPath = fromId(parentId);
 
-        List<String> pathToAppend = Arrays.stream(givenPath.split(PATH_SEPARATOR.toString()))
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList());
+        List<String> pathToAppend =
+                Arrays.stream(givenPath.split(PATH_SEPARATOR.toString())).filter(StringUtils::isNotBlank).collect(
+                        Collectors.toList());
 
         if (parentFolderPath == null || !exists(parentId)) {
             throw new TDPException(UNABLE_TO_ADD_FOLDER, build().put("path", givenPath));
         }
 
-        FolderPath folderPathToCreate = new FolderPath(parentFolderPath, pathToAppend.toArray(new String[pathToAppend.size()]));
+        FolderPath folderPathToCreate =
+                new FolderPath(parentFolderPath, pathToAppend.toArray(new String[pathToAppend.size()]));
         try {
             Path pathToCreate = pathsConverter.toPath(folderPathToCreate);
             Files.createDirectories(pathToCreate);
@@ -244,7 +247,8 @@ public class FileSystemFolderRepository implements FolderRepository {
             Path path = pathsConverter.toPath(folderPath);
 
             try (Stream<Path> paths = Files.walk(path)) {
-                paths.filter(pathFound -> !Files.isDirectory(pathFound)) //
+                paths
+                        .filter(pathFound -> !Files.isDirectory(pathFound)) //
                         .filter(pathFile -> matches(pathFile, contentId, contentType)) //
                         .forEach(deleteFile());
             }
@@ -283,19 +287,22 @@ public class FileSystemFolderRepository implements FolderRepository {
         }
 
         try {
-            return Files.list(path) //
+            return Files
+                    .list(path) //
                     .filter(pathFound -> !Files.isDirectory(pathFound)) //
                     .map(FileSystemUtils::toFolderEntry) //
                     .filter(entry -> Objects.equals(contentType, entry.getContentType()));
         } catch (IOException e) {
-            throw new TDPException(UNABLE_TO_LIST_FOLDER_ENTRIES, e, build().put("path", path).put("type", contentType));
+            throw new TDPException(UNABLE_TO_LIST_FOLDER_ENTRIES, e,
+                    build().put("path", path).put("type", contentType));
         }
     }
 
     @Override
     public Stream<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType) {
         try {
-            return Files.walk(pathsConverter.getRootFolder()) //
+            return Files
+                    .walk(pathsConverter.getRootFolder()) //
                     .filter(Files::isRegularFile) //
                     .map(FileSystemUtils::toFolderEntry) //
                     .filter(entry -> StringUtils.equals(entry.getContentId(), contentId) //
@@ -318,10 +325,11 @@ public class FileSystemFolderRepository implements FolderRepository {
     @Override
     public Stream<Folder> searchFolders(String queryString, boolean strict) {
         try {
-            return Files.walk(pathsConverter.getRootFolder()) //
+            return Files
+                    .walk(pathsConverter.getRootFolder()) //
                     .filter(path -> //
-                            Files.isDirectory(path) //
-                                    && StringsHelper.match(path.getFileName().toString(), queryString, strict)) //
+                    Files.isDirectory(path) //
+                            && StringsHelper.match(path.getFileName().toString(), queryString, strict)) //
                     .map(path -> toFolder(path, security.getUserId()));
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

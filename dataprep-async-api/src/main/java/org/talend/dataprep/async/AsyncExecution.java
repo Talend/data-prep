@@ -95,11 +95,11 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
     }
 
     public static Comparator<AsyncExecution> reverseStartDateComparator() {
-        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getStartDate()).reversed();
+        return Comparator.<AsyncExecution, Long> comparing(task -> task.getTime().getStartDate()).reversed();
     }
 
     public static Comparator<AsyncExecution> reverseEndDateComparator() {
-        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getEndDate()).reversed();
+        return Comparator.<AsyncExecution, Long> comparing(task -> task.getTime().getEndDate()).reversed();
     }
 
     /**

@@ -219,7 +219,8 @@ public class EnrichedPreparation {
 
     @Override
     public String toString() {
-        return "EnrichedPreparation{" + "preparation id=" + getId() + '\'' + ", summary=" + summary + ", folder=" + folder + '}';
+        return "EnrichedPreparation{" + "preparation id=" + getId() + '\'' + ", summary=" + summary + ", folder="
+                + folder + '}';
     }
 
     /**

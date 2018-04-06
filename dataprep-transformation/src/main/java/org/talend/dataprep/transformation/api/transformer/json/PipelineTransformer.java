@@ -84,18 +84,20 @@ public class PipelineTransformer implements Transformer {
         // prepare the fallback row metadata
         RowMetadata fallBackRowMetadata = transformationRowMetadataUtils.getMatchingEmptyRowMetadata(rowMetadata);
 
-        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(), configuration.output(),
-                configuration.getArguments());
+        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
+                configuration.output(), configuration.getArguments());
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
-                configuration.stepId(), configuration.getSourceType());
+        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
+                configuration.getPreparationId(), configuration.stepId(), configuration.getSourceType());
         final PreparationMessage preparation = configuration.getPreparation();
         // function that from a step gives the rowMetadata associated to the previous/parent step
-        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
+        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional
+                .ofNullable(s.getParent()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
 
-        final Pipeline pipeline = Pipeline.Builder.builder() //
+        final Pipeline pipeline = Pipeline.Builder
+                .builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
                 .withPreparation(preparation) //

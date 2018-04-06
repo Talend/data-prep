@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
@@ -31,7 +31,6 @@ import com.jayway.restassured.response.Response;
  */
 public class AggregationAPITest extends ApiServiceTestBase {
 
-
     @Test
     public void should_not_aggregate_because_dataset_and_preparation_id_are_missing() throws IOException {
 
@@ -41,7 +40,8 @@ public class AggregationAPITest extends ApiServiceTestBase {
         params.setPreparationId(null);
 
         // when
-        final Response response = given().contentType(ContentType.JSON)//
+        final Response response = given()
+                .contentType(ContentType.JSON)//
                 .body(mapper.writer().writeValueAsString(params))//
                 .when()//
                 .post("/api/aggregate");
@@ -62,20 +62,24 @@ public class AggregationAPITest extends ApiServiceTestBase {
         params.setStepId(null);
 
         // when
-        final String response = given().contentType(ContentType.JSON)//
+        final String response = given()
+                .contentType(ContentType.JSON)//
                 .body(mapper.writer().writeValueAsString(params))//
                 .when()//
-                .post("/api/aggregate").asString();
+                .post("/api/aggregate")
+                .asString();
 
         // then
-        assertThat(response, sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_expected.json")));
+        assertThat(response,
+                sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_expected.json")));
     }
 
     @Test
     public void should_aggregate_on_preparation() throws IOException {
 
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", home.getId());
+        final String preparationId =
+                testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", home.getId());
 
         AggregationParameters params = getAggregationParameters("aggregation/aggregation_parameters.json");
         params.setDatasetId(null);
@@ -83,13 +87,16 @@ public class AggregationAPITest extends ApiServiceTestBase {
         params.setStepId(null);
 
         // when
-        final String response = given().contentType(ContentType.JSON)//
+        final String response = given()
+                .contentType(ContentType.JSON)//
                 .body(mapper.writer().writeValueAsString(params))//
                 .when()//
-                .post("/api/aggregate").asString();
+                .post("/api/aggregate")
+                .asString();
 
         // then
-        assertThat(response, sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_expected.json")));
+        assertThat(response,
+                sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_expected.json")));
     }
 
     @Test
@@ -100,7 +107,8 @@ public class AggregationAPITest extends ApiServiceTestBase {
         params.setDatasetId("ds#753874");
 
         // when
-        final Response response = given().contentType(ContentType.JSON)//
+        final Response response = given()
+                .contentType(ContentType.JSON)//
                 .body(mapper.writer().writeValueAsString(params))//
                 .when()//
                 .post("/api/aggregate");

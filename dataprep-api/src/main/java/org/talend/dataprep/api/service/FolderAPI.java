@@ -75,7 +75,8 @@ public class FolderAPI extends APIService {
     private SecurityProxy securityProxy;
 
     @RequestMapping(value = "/api/folders", method = GET)
-    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
+            produces = APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<StreamingResponseBody> listFolders(@RequestParam(required = false) String parentId) {
         try {
@@ -113,7 +114,8 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = PUT)
     @ApiOperation(value = "Add a folder.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId, @RequestParam final String path) {
+    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId,
+            @RequestParam final String path) {
         try {
             final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, parentId, path);
             return CommandHelper.toStreaming(createChildFolder);
@@ -164,8 +166,7 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "Search Folders with parameter as part of the name", produces = APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<StreamingResponseBody> search(@RequestParam(required = false) final String name,
-                                                        @RequestParam(required = false) final Boolean strict,
-                                                        @RequestParam(required = false) final String path) {
+            @RequestParam(required = false) final Boolean strict, @RequestParam(required = false) final String path) {
         try {
             final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, name, strict, path);
             return CommandHelper.toStreaming(searchFolders);
@@ -203,7 +204,8 @@ public class FolderAPI extends APIService {
                 final Flux<Folder> folders = Flux.from(toPublisher(Folder.class, mapper, commandListFolders));
                 writeFluxToJsonArray(folders, "folders", generator);
                 // Preparation list
-                final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
+                final PreparationListByFolder listPreparations =
+                        getCommand(PreparationListByFolder.class, id, sort, order);
 
                 final Flux<EnrichedPreparation> preparations = Flux
                         .from(toPublisher(UserPreparation.class, mapper, listPreparations)) // From preparation list

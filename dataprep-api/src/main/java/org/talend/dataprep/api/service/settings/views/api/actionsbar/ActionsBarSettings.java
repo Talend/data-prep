@@ -24,7 +24,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * An actions bar is a group of actions that can be placed on the left or on the right
- * see https://talend.github.io/react-talend-components/?selectedKind=ActionBar&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * see
+ * https://talend.github.io/react-talend-components/?selectedKind=ActionBar&selectedStory=default&full=0&down=1&left=1&
+ * panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class ActionsBarSettings {

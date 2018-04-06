@@ -114,12 +114,14 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "true"));
 
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("last update_gt_02/21/2008?").type(Type.BOOLEAN).build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(1).name("last update_gt_02/21/2008?").type(Type.BOOLEAN).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0001");
         assertEquals(expected, actual);
     }
@@ -143,7 +145,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "true"));
@@ -169,7 +172,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "false"));
@@ -196,7 +200,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(1) //
                 .containsExactly(MapEntry.entry("0000", "false"));
     }
@@ -222,7 +227,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "02/28/1973"), //
@@ -251,7 +257,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "02/01/2012"), //
@@ -280,7 +287,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", "02/02/2012"), //
@@ -302,7 +310,6 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         parameters.put(CompareDates.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
 
-
         final Map<String, String> secondRowvalues = new HashMap<>();
         secondRowvalues.put("0000", "Beer");
 
@@ -314,28 +321,31 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
                 new DataSetRow(rowMetadata, thirdRowvalues));
 
         // when
-        ActionTestWorkbench.test( rows, actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get( 0 ).values()) //
-            .hasSize(2) //
-            .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
-                             MapEntry.entry("0001", "true"));
+        Assertions
+                .assertThat(rows.get(0).values()) //
+                .hasSize(2) //
+                .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
+                        MapEntry.entry("0001", "true"));
 
-        Assertions.assertThat(rows.get( 1 ).values()) //
-            .hasSize(2) //
-            .containsExactly(MapEntry.entry("0000", "Beer"), //
-                             MapEntry.entry("0001", ""));
+        Assertions
+                .assertThat(rows.get(1).values()) //
+                .hasSize(2) //
+                .containsExactly(MapEntry.entry("0000", "Beer"), //
+                        MapEntry.entry("0001", ""));
 
-        Assertions.assertThat(rows.get( 2 ).values()) //
-            .hasSize(2) //
-            .containsExactly(MapEntry.entry("0000", "02/01/2001"), //
-                             MapEntry.entry("0001", "false"));
+        Assertions
+                .assertThat(rows.get(2).values()) //
+                .hasSize(2) //
+                .containsExactly(MapEntry.entry("0000", "02/01/2001"), //
+                        MapEntry.entry("0001", "false"));
 
     }
 
     @Test
-    public void compare_date_with_empty_should_have_empty_result() throws Exception{
+    public void compare_date_with_empty_should_have_empty_result() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "02/01/2012");
@@ -354,7 +364,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "02/01/2012"), //
                         MapEntry.entry("0001", ""), //
@@ -362,7 +373,7 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
     }
 
     @Test
-    public void compare_empty_with_date_should_have_empty_result() throws Exception{
+    public void compare_empty_with_date_should_have_empty_result() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "");
@@ -381,7 +392,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", ""), //
                         MapEntry.entry("0001", "02/01/2012"), //
@@ -389,7 +401,7 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
     }
 
     @Test
-    public void compare_empty_with_empty_should_have_empty_result() throws Exception{
+    public void compare_empty_with_empty_should_have_empty_result() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "");
@@ -408,7 +420,8 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", ""), //
                         MapEntry.entry("0001", ""), //
@@ -420,6 +433,5 @@ public class CompareDatesTest extends BaseDateTest<CompareDates> {
         assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
-
 
 }

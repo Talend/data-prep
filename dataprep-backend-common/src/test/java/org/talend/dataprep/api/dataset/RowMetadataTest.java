@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset;
 
@@ -192,7 +192,9 @@ public class RowMetadataTest {
 
         // then (collect the columns with the new flag only and compare them with
         // the expected result)
-        final List<ColumnMetadata> actual = row.getColumns().stream() //
+        final List<ColumnMetadata> actual = row
+                .getColumns()
+                .stream() //
                 .filter(column -> UPDATE.getValue().equals(column.getDiffFlagValue())) //
                 .collect(Collectors.toList());
 
@@ -327,7 +329,6 @@ public class RowMetadataTest {
 
         assertEquals("0001", addedColumn.getId());
     }
-
 
     /**
      * @param name the column name.

@@ -84,17 +84,17 @@ public class Configuration {
      * Constructor for the transformer configuration.
      */
     protected Configuration(final OutputStream output, //
-                            final Predicate<DataSetRow> filter, //
-                            final Function<RowMetadata, Predicate<DataSetRow>> outFilter, //
-                            final Supplier<Node> monitorSupplier, //
-                            final ExportParameters.SourceType sourceType, //
-                            final String format, //
-                            final String actions, //
-                            final Map<String, String> arguments, //
-                            final PreparationMessage preparation, //
-                            final String stepId, //
-                            boolean allowMetadataChange, //
-                            boolean globalStatistics, //
+            final Predicate<DataSetRow> filter, //
+            final Function<RowMetadata, Predicate<DataSetRow>> outFilter, //
+            final Supplier<Node> monitorSupplier, //
+            final ExportParameters.SourceType sourceType, //
+            final String format, //
+            final String actions, //
+            final Map<String, String> arguments, //
+            final PreparationMessage preparation, //
+            final String stepId, //
+            boolean allowMetadataChange, //
+            boolean globalStatistics, //
             final Volume dataVolume, //
             final Long limit) {
         this.output = output;

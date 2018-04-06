@@ -40,9 +40,11 @@ public enum ActionFilterEnum {
      */
     @Nullable
     public static ActionFilterEnum getActionFilterEnum(@NotNull String pName) {
-        return Arrays.stream(ActionFilterEnum.values()) //
+        return Arrays
+                .stream(ActionFilterEnum.values()) //
                 .filter(e -> e.name.equalsIgnoreCase(pName)) //
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     public String getName() {

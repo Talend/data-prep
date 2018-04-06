@@ -94,7 +94,8 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
 
         parameters.add(builder.name(TO_UNIT_PARAMETER).defaultValue(KILOMETER.name()).build(this));
 
-        parameters.add(parameter(locale).setName(TARGET_PRECISION)
+        parameters.add(parameter(locale)
+                .setName(TARGET_PRECISION)
                 .setType(INTEGER)
                 .setDefaultValue("2")
                 .setPlaceHolder("precision")
@@ -114,8 +115,10 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn()
-                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER))
+        return singletonList(ActionsUtils
+                .additionalColumn()
+                .withName(
+                        context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER))
                 .withType(DOUBLE));
     }
 
@@ -138,8 +141,8 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
         if (actionContext.getActionStatus() == OK) {
             DistanceEnum unitFrom = valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
             DistanceEnum unitTo = valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
-            org.talend.dataquality.converters.DistanceConverter converter = new org.talend.dataquality.converters.DistanceConverter(
-                    unitFrom, unitTo);
+            org.talend.dataquality.converters.DistanceConverter converter =
+                    new org.talend.dataquality.converters.DistanceConverter(unitFrom, unitTo);
             actionContext.get(ACTION_NAME, parameters -> converter);
         }
     }
@@ -154,13 +157,17 @@ public class DistanceConverter extends AbstractActionMetadata implements ColumnA
             try {
                 final org.talend.dataquality.converters.DistanceConverter converter = context.get(ACTION_NAME);
                 BigDecimal valueFrom = BigDecimalParser.toBigDecimal(columnValue);
-                if (Double.POSITIVE_INFINITY == valueFrom.doubleValue() || Double.NEGATIVE_INFINITY == valueFrom.doubleValue()) {
+                if (Double.POSITIVE_INFINITY == valueFrom.doubleValue()
+                        || Double.NEGATIVE_INFINITY == valueFrom.doubleValue()) {
                     valueToString = columnValue;
                 } else {
                     double valueTo = converter.convert(valueFrom.doubleValue());
                     String precisionParameter = context.getParameters().get(TARGET_PRECISION);
                     Integer targetScale = NumberUtils.toInt(precisionParameter, valueFrom.scale());
-                    valueToString = BigDecimalParser.toBigDecimal(String.valueOf(valueTo)).setScale(targetScale, RoundingMode.HALF_UP).toPlainString();
+                    valueToString = BigDecimalParser
+                            .toBigDecimal(String.valueOf(valueTo))
+                            .setScale(targetScale, RoundingMode.HALF_UP)
+                            .toPlainString();
                 }
             } catch (NumberFormatException nfe) {
                 valueToString = columnValue;

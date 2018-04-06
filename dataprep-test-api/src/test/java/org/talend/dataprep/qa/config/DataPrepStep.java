@@ -59,8 +59,7 @@ public abstract class DataPrepStep {
      */
     protected PreparationDetails getPreparationDetails(String preparationId) {
         Response response = api.getPreparationDetails(preparationId);
-        response.then()
-                .statusCode(200);
+        response.then().statusCode(200);
 
         return response.as(PreparationDetails.class);
     }

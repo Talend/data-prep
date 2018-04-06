@@ -236,9 +236,15 @@ public class Preparation extends Identifiable implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("dataSetId", dataSetId).append("author", author)
-                .append("name", name).append("creationDate", creationDate).append("lastModificationDate", lastModificationDate)
-                .append("headId", headId).toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("dataSetId", dataSetId)
+                .append("author", author)
+                .append("name", name)
+                .append("creationDate", creationDate)
+                .append("lastModificationDate", lastModificationDate)
+                .append("headId", headId)
+                .toString();
     }
 
     @Override
@@ -252,8 +258,9 @@ public class Preparation extends Identifiable implements Serializable {
         Preparation that = (Preparation) o;
         return Objects.equals(id, that.id) && // NOSONAR generated code that's easy to read
                 Objects.equals(rowMetadata, that.rowMetadata) && Objects.equals(creationDate, that.creationDate)
-                && Objects.equals(lastModificationDate, that.lastModificationDate) && Objects.equals(dataSetId, that.dataSetId)
-                && Objects.equals(author, that.author) && Objects.equals(name, that.name) && Objects.equals(headId, that.headId);
+                && Objects.equals(lastModificationDate, that.lastModificationDate)
+                && Objects.equals(dataSetId, that.dataSetId) && Objects.equals(author, that.author)
+                && Objects.equals(name, that.name) && Objects.equals(headId, that.headId);
     }
 
     @Override

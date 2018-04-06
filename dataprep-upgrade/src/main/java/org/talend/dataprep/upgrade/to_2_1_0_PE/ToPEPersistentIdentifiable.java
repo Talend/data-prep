@@ -57,8 +57,8 @@ public class ToPEPersistentIdentifiable implements BaseUpgradeTaskTo_2_1_0_PE {
     @PostConstruct
     private void postInitialize() {
         try {
-            fileSystemPreparationRepository = (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository,
-                    "delegate", true);
+            fileSystemPreparationRepository =
+                    (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository, "delegate", true);
         } catch (IllegalAccessException e) {
             LOGGER.error("Impossible to get access to the delegate preparation repository object");
         }
@@ -87,7 +87,8 @@ public class ToPEPersistentIdentifiable implements BaseUpgradeTaskTo_2_1_0_PE {
         LOGGER.info("Upgrade from {} to {} done.", Preparation.class, PersistentPreparation.class);
 
         LOGGER.info("Migration of step ids in preparation...");
-        final Stream<PersistentPreparation> persistentPreparations = preparationRepository.list(PersistentPreparation.class);
+        final Stream<PersistentPreparation> persistentPreparations =
+                preparationRepository.list(PersistentPreparation.class);
         persistentPreparations.forEach(p -> {
             LOGGER.info("Migration of preparation #{}", p.getId());
             final List<String> stepsIds = preparationUtils.listStepsIds(p.getHeadId(), preparationRepository);

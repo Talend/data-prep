@@ -116,7 +116,9 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final Preparation preparationDetails = getPreparation(preparation);
         for (Step step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content =
+                    contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD),
+                            ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -141,7 +143,9 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final Preparation preparationDetails = getPreparation(preparation);
         for (Step step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content =
+                    contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD),
+                            ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -181,7 +185,9 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final Preparation preparationDetails = getPreparation(preparation);
         for (Step step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content =
+                    contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD),
+                            ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }

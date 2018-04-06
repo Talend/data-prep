@@ -72,7 +72,8 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
                 parameters.setExportType("JSON");
                 parameters.setFrom(from);
 
-                final String parametersAsString = objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
+                final String parametersAsString =
+                        objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
                 final HttpPost post = new HttpPost(transformationServiceUrl + "/apply");
                 post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
                 return post;

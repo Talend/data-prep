@@ -110,7 +110,8 @@ public class DateParser {
             // only one value --> only one result
             final Analyzers.Result result = analyzer.getResult().get(0);
             if (result.exist(PatternFrequencyStatistics.class)) {
-                final PatternFrequencyStatistics patternFrequencyStatistics = result.get(PatternFrequencyStatistics.class);
+                final PatternFrequencyStatistics patternFrequencyStatistics =
+                        result.get(PatternFrequencyStatistics.class);
                 final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(1);
                 List<PatternFrequency> patterns = new ArrayList<>(1);
                 topTerms.forEach((s, o) -> patterns.add(new PatternFrequency(s, o)));
@@ -183,7 +184,7 @@ public class DateParser {
                 .stream()
                 .filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
                 .filter(patternFreqItem -> distinctPatterns.add(patternFreqItem.getPattern())) // use Set<> to detect if
-                                                                                               // pattern is a duplicate
+                // pattern is a duplicate
                 .map(patternFreqItem -> {
                     try {
                         return new DatePattern(patternFreqItem.getPattern(), patternFreqItem.getOccurrences());

@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 /**
  * Base class for all date related unit tests.
  */
-public abstract class BaseDateTest<T extends  AbstractActionMetadata> extends AbstractMetadataBaseTest<T> {
+public abstract class BaseDateTest<T extends AbstractActionMetadata> extends AbstractMetadataBaseTest<T> {
 
     protected BaseDateTest(T action) {
         super(action);
@@ -39,7 +39,10 @@ public abstract class BaseDateTest<T extends  AbstractActionMetadata> extends Ab
     protected DataSetRow getDefaultRow(String statisticsFileName) {
         return builder() //
                 .with(value("lorem bacon").type(Type.STRING).name("recipe")) //
-                .with(value("01/01/2010").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream(statisticsFileName))) //
+                .with(value("01/01/2010")
+                        .type(Type.DATE)
+                        .name("last update")
+                        .statistics(getDateTestJsonAsStream(statisticsFileName))) //
                 .with(value("Bacon").type(Type.STRING).name("steps")) //
                 .build();
     }

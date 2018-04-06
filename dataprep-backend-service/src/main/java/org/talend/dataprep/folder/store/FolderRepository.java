@@ -24,17 +24,19 @@ import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.exception.TDPException;
 
-
 /**
  * Folder repository that manage folders and folder entries.
- * TODO: there is a real problem in this API: folderId and  folder path are two different concept that should not be interchangeable.
- * It might be better to remove folder ID concept to FolderPath or use it as a real ID that could be toatally decorellated from path.
+ * TODO: there is a real problem in this API: folderId and folder path are two different concept that should not be
+ * interchangeable.
+ * It might be better to remove folder ID concept to FolderPath or use it as a real ID that could be toatally
+ * decorellated from path.
  * It should be taken in account a path might not be enough to find a folder as two users might create the same folder.
  */
 public interface FolderRepository {
 
     /**
      * Return true if the given folder exists.
+     * 
      * @param folderId the wanted folder folderId.
      * @return true if the given folder exists.
      */
@@ -186,17 +188,17 @@ public interface FolderRepository {
         final List<Folder> hierarchy = new ArrayList<>();
 
         String nextParentId = folder.getParentId();
-        while(nextParentId != null) {
+        while (nextParentId != null) {
             try {
                 final Folder parent = this.getFolderById(nextParentId);
                 hierarchy.add(0, parent);
                 nextParentId = parent.getParentId();
-            } catch(final TDPException e) {
+            } catch (final TDPException e) {
                 // in case of shared folder, we can have a 403 during hierarchy construction
                 // ex: /folder/folderChild/folderGrandChild, with /folderChild shared but not /folder
                 // we just add the current user home because every top level shared folder is considered
                 // as the user's home child
-                if(e.getCode().getHttpStatus() == 403) {
+                if (e.getCode().getHttpStatus() == 403) {
                     hierarchy.add(0, this.getHome());
                     break;
                 }
@@ -213,7 +215,8 @@ public interface FolderRepository {
     default Map<String, Folder> getPreparationsFolderPaths() {
         return searchFolders("", false) //
                 .flatMap( //
-                        f -> entries(f.getId(), FolderContentType.PREPARATION).map(e -> new SimpleEntry<>(f, e.getContentId())) //
+                        f -> entries(f.getId(), FolderContentType.PREPARATION)
+                                .map(e -> new SimpleEntry<>(f, e.getContentId())) //
                 ) //
                 .collect(Collectors.toMap(SimpleEntry::getValue, SimpleEntry::getKey));
     }

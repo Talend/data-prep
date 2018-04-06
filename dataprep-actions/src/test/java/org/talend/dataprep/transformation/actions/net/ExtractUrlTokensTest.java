@@ -67,7 +67,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -110,7 +110,8 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
-        values.put("0001", "http://stef:pwd@10.42.10.99:80/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        values.put("0001",
+                "http://stef:pwd@10.42.10.99:80/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
@@ -253,18 +254,19 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     @Test
     public void testProtocolExtractor() throws URISyntaxException {
         assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("http://www.yahoo.fr")));
-        assertEquals("mailto", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mailto:smallet@talend.com")));
-        assertEquals("ftp",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("ftp://server:21/this/is/a/resource")));
+        assertEquals("mailto",
+                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mailto:smallet@talend.com")));
+        assertEquals("ftp", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR
+                .extractToken(new URI("ftp://server:21/this/is/a/resource")));
         assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("HTTP://www.yahoo.fr")));
         assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR
                 .extractToken(new URI("http:10.42.10.99:80/home/datasets?datasetid=c522a037")));
-        assertEquals("file",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("file://server:21/this/is/a/resource")));
-        assertEquals("mvn",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mvn://server:21/this/is/a/resource")));
-        assertEquals("tagada",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("tagada://server:21/this/is/a/resource")));
+        assertEquals("file", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR
+                .extractToken(new URI("file://server:21/this/is/a/resource")));
+        assertEquals("mvn", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR
+                .extractToken(new URI("mvn://server:21/this/is/a/resource")));
+        assertEquals("tagada", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR
+                .extractToken(new URI("tagada://server:21/this/is/a/resource")));
     }
 
     @Test

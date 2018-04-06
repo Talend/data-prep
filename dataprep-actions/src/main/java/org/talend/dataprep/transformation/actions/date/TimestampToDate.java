@@ -81,7 +81,8 @@ public class TimestampToDate extends AbstractDate implements ColumnAction {
         } else {
             result = Type.DATE;
         }
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(result));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(result));
     }
 
     @Override

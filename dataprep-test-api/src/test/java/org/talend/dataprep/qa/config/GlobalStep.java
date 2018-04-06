@@ -50,21 +50,24 @@ public class GlobalStep extends DataPrepStep {
         context.clearTempFile();
 
         // cleaning application's preparations
-        List<String> listPreparationDeletionPb = context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
+        List<String> listPreparationDeletionPb =
+                context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterStepIsOK = listPreparationDeletionPb.size() == 0;
 
         // cleaning preparations's related context
         context.clearPreparation();
 
         // cleaning application's datasets
-        List<String> listDatasetDeletionPb = context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
+        List<String> listDatasetDeletionPb =
+                context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterStepIsOK = cleanAfterStepIsOK && listDatasetDeletionPb.size() == 0;
 
         // cleaning dataset's related context
         context.clearDataset();
 
         // cleaning application's folders
-        List<Folder> listFolderDeletionPb = context.getFolders().stream().filter(folderDeletionIsNotOK()).collect(Collectors.toList());
+        List<Folder> listFolderDeletionPb =
+                context.getFolders().stream().filter(folderDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterStepIsOK = cleanAfterStepIsOK && listFolderDeletionPb.size() == 0;
 
         // cleaning folder's related context
@@ -86,12 +89,13 @@ public class GlobalStep extends DataPrepStep {
                 LOGGER.warn("Pb in the deletion of folder {}.", folder.getPath());
             }
             LOGGER.warn("The Clean After Step has failed. All deletion were not done.");
-            throw new CleanAfterException("Fail to delete some elements : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
+            throw new CleanAfterException(
+                    "Fail to delete some elements : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
         }
     }
 
-
     public class CleanAfterException extends RuntimeException {
+
         CleanAfterException(String s) {
             super(s);
         }

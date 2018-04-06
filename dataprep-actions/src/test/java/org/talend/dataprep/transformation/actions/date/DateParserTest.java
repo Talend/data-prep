@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
 
@@ -36,6 +36,7 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 
 /**
  * Unit test for the DateParser class.
+ * 
  * @see DateParser
  */
 public class DateParserTest {
@@ -56,8 +57,10 @@ public class DateParserTest {
     public void getPatterns_should_remove_invalid_or_empty_then_sort_patterns() throws IOException {
         // given
         final DataSetRow row = ActionMetadataTestUtils.getRow("toto", "04/25/1999", "tata");
-        ActionMetadataTestUtils.setStatistics(row, "0001", getDateTestJsonAsStream("statistics_with_different_test_cases.json")); //contains valid, invalid, empty patterns
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
+        ActionMetadataTestUtils.setStatistics(row, "0001",
+                getDateTestJsonAsStream("statistics_with_different_test_cases.json")); //contains valid, invalid, empty patterns
+        final List<PatternFrequency> patternFrequencies =
+                row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
 
         // when
         final List<DatePattern> actual = action.getPatterns(patternFrequencies);

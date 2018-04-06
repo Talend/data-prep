@@ -40,7 +40,8 @@ import org.talend.dataprep.transformation.service.StepMetadataRepository;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatedStepVisitorTest {
 
-    private final RowMetadata metadata = new RowMetadata(singletonList(column().type(Type.STRING).name("original").build()));
+    private final RowMetadata metadata =
+            new RowMetadata(singletonList(column().type(Type.STRING).name("original").build()));
 
     private ActionNode entryNode;
 
@@ -60,7 +61,10 @@ public class UpdatedStepVisitorTest {
         // Given
         final Step step = new Step(ROOT_STEP.id(), new PreparationActions().id(), "0.0");
         final RowMetadata stepRowMetadata = new RowMetadata();
-        final Node stepNode = NodeBuilder.from(new StepNode(step, stepRowMetadata, entryNode, new BasicNode())).to(new BasicNode()).build();
+        final Node stepNode = NodeBuilder
+                .from(new StepNode(step, stepRowMetadata, entryNode, new BasicNode()))
+                .to(new BasicNode())
+                .build();
         final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
         actionContext.setActionStatus(ActionContext.ActionStatus.OK); // OK action!
 
@@ -77,7 +81,10 @@ public class UpdatedStepVisitorTest {
         // Given
         final Step step = new Step(ROOT_STEP.id(), new PreparationActions().id(), "0.0");
         final RowMetadata stepRowMetadata = new RowMetadata();
-        final Node stepNode = NodeBuilder.from(new StepNode(step, stepRowMetadata, entryNode, new BasicNode())).to(new BasicNode()).build();
+        final Node stepNode = NodeBuilder
+                .from(new StepNode(step, stepRowMetadata, entryNode, new BasicNode()))
+                .to(new BasicNode())
+                .build();
         final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
         actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED); // Canceled action!
 

@@ -34,7 +34,8 @@ class ActionsStaticProfiler {
     private Map<Action, ActionDefinition> getActionMetadataByAction(final List<RunnableAction> actions) {
         final Map<Action, ActionDefinition> actionToMetadata = new HashMap<>(actions.size());
         for (final Action action : actions) {
-            final ActionDefinition actionMetadata = actionRegistry.get(action.getName()) //
+            final ActionDefinition actionMetadata = actionRegistry
+                    .get(action.getName()) //
                     .adapt(ScopeCategory.from(action.getParameters().get(ImplicitParameters.SCOPE.getKey())));
             actionToMetadata.put(action, actionMetadata);
         }
@@ -76,8 +77,10 @@ class ActionsStaticProfiler {
                     valueModifiedColumns.add(action.getParameters().get(COLUMN_ID.getKey()));
                     // ... then add all column parameter (COLUMN_ID is string, not column)
                     final List<Parameter> parameters = actionMetadata.getParameters(Locale.US);
-                    valueModifiedColumns.addAll(parameters.stream() //
-                            .filter(parameter -> ParameterType.valueOf(parameter.getType().toUpperCase()) == ParameterType.COLUMN) //
+                    valueModifiedColumns.addAll(parameters
+                            .stream() //
+                            .filter(parameter -> ParameterType
+                                    .valueOf(parameter.getType().toUpperCase()) == ParameterType.COLUMN) //
                             .map(parameter -> action.getParameters().get(parameter.getName())) //
                             .collect(Collectors.toList()));
                     break;
@@ -104,13 +107,14 @@ class ActionsStaticProfiler {
         // when only metadata is modified, we need to re-evaluate the invalids entries
         boolean needOnlyInvalidAnalysis = !needFullAnalysis && !metadataModifiedColumns.isEmpty();
         // only the columns with modified values or new columns need the schema + stats analysis
-        SerializablePredicate<ColumnMetadata> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns,
-                valueModifiedColumns);
+        SerializablePredicate<ColumnMetadata> filterForFullAnalysis =
+                new FilterForFullAnalysis(originalColumns, valueModifiedColumns);
         // only the columns with metadata change or value changes need to re-evaluate invalids
-        Predicate<ColumnMetadata> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns);
+        Predicate<ColumnMetadata> filterForInvalidAnalysis =
+                new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns);
 
-        return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
-                filterForInvalidAnalysis, metadataByAction);
+        return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis,
+                filterForInvalidAnalysis, filterForInvalidAnalysis, metadataByAction);
     }
 
     private static boolean isCreateColumnParameterOn(Action action) {
@@ -136,7 +140,8 @@ class ActionsStaticProfiler {
 
         @Override
         public boolean test(ColumnMetadata columnMetadata) {
-            return valueModifiedColumns.contains(columnMetadata.getId()) || !originalColumns.contains(columnMetadata.getId());
+            return valueModifiedColumns.contains(columnMetadata.getId())
+                    || !originalColumns.contains(columnMetadata.getId());
         }
     }
 
@@ -156,7 +161,8 @@ class ActionsStaticProfiler {
 
         @Override
         public boolean test(ColumnMetadata columnMetadata) {
-            return filterForFullAnalysis.test(columnMetadata) || metadataModifiedColumns.contains(columnMetadata.getId());
+            return filterForFullAnalysis.test(columnMetadata)
+                    || metadataModifiedColumns.contains(columnMetadata.getId());
         }
     }
 

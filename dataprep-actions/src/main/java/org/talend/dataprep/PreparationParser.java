@@ -42,7 +42,8 @@ public class PreparationParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationParser.class);
 
-    public static final ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
+    public static final ActionRegistry actionRegistry =
+            new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
 
     private static final ActionFactory actionFactory = new ActionFactory();
 
@@ -62,7 +63,8 @@ public class PreparationParser {
     public static StandalonePreparation parsePreparation(InputStream preparation) {
         assertPreparation(preparation);
         try {
-            final StandalonePreparation preparationMessage = mapper.reader(StandalonePreparation.class).readValue(preparation);
+            final StandalonePreparation preparationMessage =
+                    mapper.reader(StandalonePreparation.class).readValue(preparation);
             if (preparationMessage.getRowMetadata() == null) {
                 preparationMessage.setRowMetadata(new RowMetadata());
             }
@@ -72,8 +74,10 @@ public class PreparationParser {
         }
     }
 
-    public static List<RunnableAction> ensureActionRowsExistence(List<Action> actions, boolean allowNonDistributedActions) {
-        return actions.stream() //
+    public static List<RunnableAction> ensureActionRowsExistence(List<Action> actions,
+            boolean allowNonDistributedActions) {
+        return actions
+                .stream() //
                 .map(action -> {
                     final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
                     // Distributed run check for action
@@ -84,10 +88,12 @@ public class PreparationParser {
                         if (behavior.contains(FORBID_DISTRIBUTED)) {
                             // actions that changes the schema (potentially really harmful for the preparation) throws an exception
                             if (behavior.contains(METADATA_CREATE_COLUMNS)) {
-                                throw new IllegalArgumentException("Action '" + actionDefinition.getName() + "' cannot run in distributed environments.");
+                                throw new IllegalArgumentException("Action '" + actionDefinition.getName()
+                                        + "' cannot run in distributed environments.");
                             } else {
                                 // else the action is just skipped
-                                LOGGER.warn("Action '{}' cannot run in distributed environment, skip its execution.", actionDefinition.getName());
+                                LOGGER.warn("Action '{}' cannot run in distributed environment, skip its execution.",
+                                        actionDefinition.getName());
                                 return null;
                             }
                         }

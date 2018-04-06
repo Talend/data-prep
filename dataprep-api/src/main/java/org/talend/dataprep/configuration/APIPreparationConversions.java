@@ -59,8 +59,8 @@ public class APIPreparationConversions extends BeanConversionServiceWrapper {
             // get the dataset metadata
             try {
                 securityProxy.asTechnicalUser(); // because dataset are not shared
-                final DataSetGetMetadata bean = applicationContext.getBean(DataSetGetMetadata.class,
-                        preparationMessage.getDataSetId());
+                final DataSetGetMetadata bean =
+                        applicationContext.getBean(DataSetGetMetadata.class, preparationMessage.getDataSetId());
                 final DataSetMetadata dataSetMetadata = bean.execute();
                 enrichedPreparation.setSummary(new EnrichedPreparation.DataSetMetadataSummary(dataSetMetadata));
             } catch (Exception e) {
@@ -81,7 +81,8 @@ public class APIPreparationConversions extends BeanConversionServiceWrapper {
         enrichedPreparation.setSteps(collected);
 
         // Add folder information
-        final LocatePreparation command = applicationContext.getBean(LocatePreparation.class, enrichedPreparation.getId());
+        final LocatePreparation command =
+                applicationContext.getBean(LocatePreparation.class, enrichedPreparation.getId());
         final Folder folder = command.execute();
         enrichedPreparation.setFolder(folder);
 

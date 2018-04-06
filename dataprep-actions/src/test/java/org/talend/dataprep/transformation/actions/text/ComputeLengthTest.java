@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
 
@@ -65,7 +65,7 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -135,7 +135,8 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
         expectedValues.put("0002", "01/01/2015");
 
         //when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -180,7 +181,8 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
         expected.add(createMetadata("0002", "last update"));
 
         //when
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -206,7 +208,15 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
     }
 
     protected ColumnMetadata createMetadata(String id, String name, Type type) {
-        return ColumnMetadata.Builder.column().computedId(id).name(name).type(type).headerSize(12).empty(0).invalid(2).valid(5)
+        return ColumnMetadata.Builder
+                .column()
+                .computedId(id)
+                .name(name)
+                .type(type)
+                .headerSize(12)
+                .empty(0)
+                .invalid(2)
+                .valid(5)
                 .build();
     }
 

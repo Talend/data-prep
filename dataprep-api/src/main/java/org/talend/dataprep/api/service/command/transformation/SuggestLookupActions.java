@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.transformation;
 
@@ -93,7 +93,8 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
             try {
                 String jsonInput = getInput();
                 if (jsonInput.isEmpty()) {
-                    throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, new IllegalArgumentException("Source should not be empty"));
+                    throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS,
+                            new IllegalArgumentException("Source should not be empty"));
                 }
                 suggestedActions = (ArrayNode) objectMapper.readerFor(new TypeReference<Action>() {
                 }).readTree(jsonInput);
@@ -101,7 +102,7 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
                 // list datasets from this command's response
                 List<DataSetMetadata> dataSets = objectMapper.readValue(response.getEntity().getContent(),
                         new TypeReference<List<DataSetMetadata>>() {
-                });
+                        });
 
                 // create and add all the possible lookup to the suggested actions
                 for (DataSetMetadata dataset : dataSets) {

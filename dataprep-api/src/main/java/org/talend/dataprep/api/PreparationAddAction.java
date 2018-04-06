@@ -43,7 +43,8 @@ public class PreparationAddAction extends GenericCommand<Void> {
             final String stepAsString = objectMapper.writeValueAsString(steps);
             final InputStream stepInputStream = new ByteArrayInputStream(stepAsString.getBytes(StandardCharsets.UTF_8));
 
-            final HttpPost actionAppend = new HttpPost(preparationServiceUrl + "/preparations/" + preparationId + "/actions");
+            final HttpPost actionAppend =
+                    new HttpPost(preparationServiceUrl + "/preparations/" + preparationId + "/actions");
             actionAppend.setHeader(new BasicHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE));
             actionAppend.setEntity(new InputStreamEntity(stepInputStream));
 

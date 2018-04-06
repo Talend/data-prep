@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.command;
 
@@ -47,26 +47,30 @@ public class GenericCommandTestService {
         return language;
     }
 
-    @RequestMapping(value = "/command/test/authentication/token", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String testToken(@RequestHeader(value= AUTHORIZATION) String token) throws IOException {
+    @RequestMapping(value = "/command/test/authentication/token", method = RequestMethod.GET,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    public String testToken(@RequestHeader(value = AUTHORIZATION) String token) throws IOException {
         if (StringUtils.isBlank(token)) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION);
         }
         return token;
     }
 
-    @RequestMapping(value = "/command/test/success_with_unknown", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/command/test/success_with_unknown", method = RequestMethod.GET,
+            produces = MediaType.TEXT_PLAIN_VALUE)
     public String success_with_unknown() throws IOException {
         HttpResponseContext.status(HttpStatus.ACCEPTED);
         return "success";
     }
 
-    @RequestMapping(value = "/command/test/fail_with_400", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/command/test/fail_with_400", method = RequestMethod.GET,
+            produces = MediaType.TEXT_PLAIN_VALUE)
     public String fail_with_400() throws IOException {
         throw new TDPException(BaseErrorCodes.MISSING_ACTION_SCOPE);
     }
 
-    @RequestMapping(value = "/command/test/fail_with_500", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/command/test/fail_with_500", method = RequestMethod.GET,
+            produces = MediaType.TEXT_PLAIN_VALUE)
     public String fail_with_500() throws IOException {
         throw new TDPException(CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON);
     }
@@ -85,37 +89,43 @@ public class GenericCommandTestService {
     @ApiOperation("Execute an operation")
     @RequestMapping(value = "/command/test/fail_bad_request_exception", method = RequestMethod.GET)
     public void fail_with_bad_request_exception() {
-        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.BAD_REQUEST_EXCEPTION, null, "Bad request", null, null);
+        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.BAD_REQUEST_EXCEPTION, null,
+                "Bad request", null, null);
     }
 
     @ApiOperation("Execute an operation")
     @RequestMapping(value = "/command/test/fail_command_exception", method = RequestMethod.GET)
     public void fail_with_command_exception() {
-        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.COMMAND_EXCEPTION, null, "Command Exception", null, null);
+        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.COMMAND_EXCEPTION, null,
+                "Command Exception", null, null);
     }
 
     @ApiOperation("Execute an operation")
     @RequestMapping(value = "/command/test/fail_rejected_semaphore_execution", method = RequestMethod.GET)
     public void fail_with_rejected_semaphore_execution() {
-        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.REJECTED_SEMAPHORE_EXECUTION, null, "Rejected Semaphore execution", null, null);
+        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.REJECTED_SEMAPHORE_EXECUTION, null,
+                "Rejected Semaphore execution", null, null);
     }
 
     @ApiOperation("Execute an operation")
     @RequestMapping(value = "/command/test/fail_rejected_execution", method = RequestMethod.GET)
     public void fail_with_rejected_thread_execution() {
-        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.REJECTED_THREAD_EXECUTION, null, "Rejected thread execution", null, null);
+        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.REJECTED_THREAD_EXECUTION, null,
+                "Rejected thread execution", null, null);
     }
 
     @ApiOperation("Execute an operation")
     @RequestMapping(value = "/command/test/fail_rejected_semaphore_fallback", method = RequestMethod.GET)
     public void fail_with_rejected_semaphore_fallback() {
-        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.REJECTED_SEMAPHORE_FALLBACK, null, "Rejected semaphore fallback", null, null);
+        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.REJECTED_SEMAPHORE_FALLBACK, null,
+                "Rejected semaphore fallback", null, null);
     }
 
     @ApiOperation("Execute an operation")
     @RequestMapping(value = "/command/test/fail_short_circuit", method = RequestMethod.GET)
     public void fail_with_short_circuit() {
-        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.SHORTCIRCUIT, null, "Short circuit", null, null);
+        throw new HystrixRuntimeException(HystrixRuntimeException.FailureType.SHORTCIRCUIT, null, "Short circuit", null,
+                null);
     }
 
     @ApiOperation("Execute an operation")

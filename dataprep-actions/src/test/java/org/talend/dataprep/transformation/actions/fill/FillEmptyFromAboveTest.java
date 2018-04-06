@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.fill;
 
@@ -73,8 +73,11 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         assertNotNull(parameters);
         // column_id, row_id, scope, filter
         assertEquals(4, parameters.size());
-        final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName)
-                .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
+        final List<String> expectedParametersNotFound = parameters
+                .stream()
+                .map(Parameter::getName)
+                .filter(n -> !parameterNames.contains(n))
+                .collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
     }
 
@@ -140,7 +143,6 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         rowContent.put("0001", "\t");
         final DataSetRow row8 = new DataSetRow(rowContent);
 
-
         rowContent = new HashMap<>();
         rowContent.put("0000", "John");
         rowContent.put("0001", "\f");
@@ -173,8 +175,9 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row0,row1, row2,row3, row4,row5, row6,row7, row8, row81, row82, row83, row9, row10), actionRegistry, factory.create(
-                action, parameters));
+        ActionTestWorkbench.test(
+                Arrays.asList(row0, row1, row2, row3, row4, row5, row6, row7, row8, row81, row82, row83, row9, row10),
+                actionRegistry, factory.create(action, parameters));
 
         // then
         assertNull(row0.get("0001"));
@@ -252,7 +255,6 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         rowContent.put("0001", "\t");
         final DataSetRow row8 = new DataSetRow(rowContent);
 
-
         rowContent = new HashMap<>();
         rowContent.put("0000", "John");
         rowContent.put("0001", "\f");
@@ -285,8 +287,9 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row0,row1, row2,row3, row4,row5, row6,row7, row8, row81, row82, row83, row9, row10), actionRegistry, factory.create(
-                action, parameters));
+        ActionTestWorkbench.test(
+                Arrays.asList(row0, row1, row2, row3, row4, row5, row6, row7, row8, row81, row82, row83, row9, row10),
+                actionRegistry, factory.create(action, parameters));
 
         // then
         assertNull(row0.get("0001"));
@@ -374,8 +377,8 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         parameters.put("filter", "200");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
-                factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10),
+                actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("", row1.get("0001"));
@@ -412,8 +415,7 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row0,row1), actionRegistry, factory.create(
-                action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row0, row1), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(davidFirstBlankValue, row0.get("0001"));

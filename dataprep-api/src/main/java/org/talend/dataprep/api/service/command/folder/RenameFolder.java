@@ -32,8 +32,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 @Component
 @Scope("request")
-public class RenameFolder
-        extends GenericCommand<Void> {
+public class RenameFolder extends GenericCommand<Void> {
 
     public RenameFolder(final String id, final String newName) {
         super(GenericCommand.DATASET_GROUP);

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.dataset;
 
@@ -46,21 +46,22 @@ public class DataSetList extends GenericCommand<InputStream> {
             on(HttpStatus.OK).then(pipeStream());
 
         } catch (Exception e) {
-            throw new TDPException( CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
-    private HttpRequestBase onExecute(Sort sort, Order order,String name,  boolean certified, boolean favorite, boolean limit) {
+    private HttpRequestBase onExecute(Sort sort, Order order, String name, boolean certified, boolean favorite,
+            boolean limit) {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets");
-            uriBuilder.addParameter( "sort", sort.camelName() );
-            uriBuilder.addParameter( "order", order.camelName() );
-            uriBuilder.addParameter( "name", name );
-            uriBuilder.addParameter( "certified", Boolean.toString(certified));
-            uriBuilder.addParameter( "favorite", Boolean.toString(favorite));
-            uriBuilder.addParameter( "limit", Boolean.toString(limit));
-            return new HttpGet( uriBuilder.build() );
+            uriBuilder.addParameter("sort", sort.camelName());
+            uriBuilder.addParameter("order", order.camelName());
+            uriBuilder.addParameter("name", name);
+            uriBuilder.addParameter("certified", Boolean.toString(certified));
+            uriBuilder.addParameter("favorite", Boolean.toString(favorite));
+            uriBuilder.addParameter("limit", Boolean.toString(limit));
+            return new HttpGet(uriBuilder.build());
         } catch (URISyntaxException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

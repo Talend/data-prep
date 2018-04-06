@@ -51,7 +51,8 @@ public class PreparationTest extends ServiceBaseTest {
     @Test
     public void testDefaultPreparation() throws Exception {
 
-        final Preparation preparation = new Preparation("#123", "12345", Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        final Preparation preparation =
+                new Preparation("#123", "12345", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0L);
 
         assertThat(preparation.id(), is("#123"));
@@ -67,12 +68,14 @@ public class PreparationTest extends ServiceBaseTest {
 
         assertThat(repository.get(Step.ROOT_STEP.getId(), PreparationActions.class), nullValue());
         assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class), notNullValue());
-        assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class).getId(), is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
+        assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class).getId(),
+                is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
     }
 
     @Test
     public void testTimestamp() throws Exception {
-        Preparation preparation = new Preparation("#584284", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("#584284", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         final long time0 = preparation.getLastModificationDate();
         TimeUnit.MILLISECONDS.sleep(50);
         preparation.updateLastModificationDate();
@@ -83,7 +86,8 @@ public class PreparationTest extends ServiceBaseTest {
     @Test
     public void testId_withName() throws Exception {
         // Preparation id with name
-        Preparation preparation = new Preparation("#87374", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("#87374", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setName("My Preparation");
         preparation.setCreationDate(0L);
         final String id0 = preparation.getId();
@@ -194,7 +198,8 @@ public class PreparationTest extends ServiceBaseTest {
         assertEquals(actual, source);
     }
 
-    public static List<Action> getSimpleAction(final String actionName, final String paramKey, final String paramValue) {
+    public static List<Action> getSimpleAction(final String actionName, final String paramKey,
+            final String paramValue) {
         final Action action = new Action();
         action.setName(actionName);
         action.getParameters().put(paramKey, paramValue);

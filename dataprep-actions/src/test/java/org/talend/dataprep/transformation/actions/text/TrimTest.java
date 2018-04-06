@@ -157,7 +157,7 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
     public void should_remove_other_value() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", " the beatles " + '\u2028'+""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        values.put("0000", " the beatles " + '\u2028' + ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.service;
 
@@ -69,7 +69,8 @@ public abstract class BaseDataSetService {
 
     static void assertDataSetMetadata(DataSetMetadata dataSetMetadata, String dataSetId) {
         if (dataSetMetadata == null) {
-            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, ExceptionContext.build().put("id", dataSetId));
+            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST,
+                    ExceptionContext.build().put("id", dataSetId));
         }
         if (dataSetMetadata.getLifecycle().isImporting()) {
             // Data set is being imported, this is an error since user should not have an id to a being-created
@@ -86,7 +87,8 @@ public abstract class BaseDataSetService {
      */
     protected void checkIfNameIsAvailable(String name) {
         if (dataSetMetadataRepository.exist("name = '" + name + "'")) {
-            final ExceptionContext context = ExceptionContext.build() //
+            final ExceptionContext context = ExceptionContext
+                    .build() //
                     .put("name", name);
             throw new TDPException(DATASET_NAME_ALREADY_USED, context);
         }

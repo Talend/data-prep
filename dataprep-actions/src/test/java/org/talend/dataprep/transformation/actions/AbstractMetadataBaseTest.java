@@ -52,7 +52,8 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
 
     protected final ActionFactory factory = new ActionFactory();
 
-    protected final ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
+    protected final ActionRegistry actionRegistry =
+            new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
 
     protected final AnalyzerService analyzerService = new AnalyzerService();
 
@@ -62,7 +63,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
     /* The action to be tested: */
     protected T action;
 
-    public AbstractMetadataBaseTest(T action){
+    public AbstractMetadataBaseTest(T action) {
         this.action = action;
     }
 
@@ -164,7 +165,7 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
 
         // test that this action will not create a new column:
-        assertFalse(ActionsUtils.doesCreateNewColumn(Collections.<String, String>emptyMap(), false));
+        assertFalse(ActionsUtils.doesCreateNewColumn(Collections.<String, String> emptyMap(), false));
     }
 
     @Test
@@ -196,11 +197,12 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
     }
 
-    protected ColumnMetadata createMetadata(String id, String name, Type type, String statisticsFileName) throws IOException {
+    protected ColumnMetadata createMetadata(String id, String name, Type type, String statisticsFileName)
+            throws IOException {
         ColumnMetadata column = createMetadata(id, name, type);
         ObjectMapper mapper = new ObjectMapper();
-        final Statistics statistics = mapper.reader(Statistics.class).readValue(
-                getClass().getResourceAsStream("/org/talend/dataprep/transformation/actions/date/" + statisticsFileName));
+        final Statistics statistics = mapper.reader(Statistics.class).readValue(getClass()
+                .getResourceAsStream("/org/talend/dataprep/transformation/actions/date/" + statisticsFileName));
         column.setStatistics(statistics);
         return column;
     }
@@ -289,8 +291,14 @@ public abstract class AbstractMetadataBaseTest<T extends AbstractActionMetadata>
         }
 
         ColumnMetadata buildColumn(int current) {
-            return ColumnMetadata.Builder.column().computedId(format.format(current)).statistics(statistics).type(type).name(name)
-                    .domain(domainName).build();
+            return ColumnMetadata.Builder
+                    .column()
+                    .computedId(format.format(current))
+                    .statistics(statistics)
+                    .type(type)
+                    .name(name)
+                    .domain(domainName)
+                    .build();
         }
 
         public ValueBuilder domain(String name) {

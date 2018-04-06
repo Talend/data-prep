@@ -74,7 +74,8 @@ public class SetStepRowMetadata implements BaseUpgradeTaskTo_2_1_0_PE {
         // Check if preparation is accessible to end user
         final Folder folder = folderRepository.locateEntry(preparation.id(), PREPARATION);
         if (folder == null) {
-            LOGGER.warn("Preparation {} does not belong to a folder, skip migration (not accessible to user).", preparation.getName());
+            LOGGER.warn("Preparation {} does not belong to a folder, skip migration (not accessible to user).",
+                    preparation.getName());
             return;
         }
 

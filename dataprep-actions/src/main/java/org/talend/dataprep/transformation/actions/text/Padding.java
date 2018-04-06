@@ -76,21 +76,17 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType())) || Type.NUMERIC.isAssignableFrom(Type.get(column.getType()));
+        return Type.STRING.equals(Type.get(column.getType()))
+                || Type.NUMERIC.isAssignableFrom(Type.get(column.getType()));
     }
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
-        parameters.add(parameter(locale).setName(SIZE_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("5")
-                .build(this));
-        parameters.add(parameter(locale).setName(PADDING_CHAR_PARAMETER)
-                .setType(STRING)
-                .setDefaultValue("0")
-                .build(this));
+        parameters.add(parameter(locale).setName(SIZE_PARAMETER).setType(INTEGER).setDefaultValue("5").build(this));
+        parameters.add(
+                parameter(locale).setName(PADDING_CHAR_PARAMETER).setType(STRING).setDefaultValue("0").build(this));
 
         //@formatter:off
         parameters.add(selectParameter(locale)
@@ -109,8 +105,8 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context,
-                    singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
     }
 

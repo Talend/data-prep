@@ -36,7 +36,8 @@ import org.talend.dataprep.util.SortAndOrderHelper.Order;
 @Scope("request")
 public class PreparationList extends GenericCommand<InputStream> {
 
-    private PreparationList(SortAndOrderHelper.Format format, String name, String folderPath, String path, Sort sort, Order order) {
+    private PreparationList(SortAndOrderHelper.Format format, String name, String folderPath, String path, Sort sort,
+            Order order) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(format, name, folderPath, path, sort, order));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_LIST, e));
@@ -48,7 +49,8 @@ public class PreparationList extends GenericCommand<InputStream> {
         this(format, null, null, null, sort, order);
     }
 
-    private HttpRequestBase onExecute(SortAndOrderHelper.Format format, String name, String folderPath, String path, Sort sort, Order order) {
+    private HttpRequestBase onExecute(SortAndOrderHelper.Format format, String name, String folderPath, String path,
+            Sort sort, Order order) {
         try {
             URIBuilder uriBuilder;
             if (SortAndOrderHelper.Format.SHORT.equals(format)) {

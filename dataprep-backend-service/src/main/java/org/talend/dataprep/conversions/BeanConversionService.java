@@ -59,9 +59,11 @@ public class BeanConversionService implements ConversionService {
                     final Type sourceReturnType = readMethod.getGenericReturnType();
                     final Method targetPropertyWriteMethod = targetProperty.getWriteMethod();
                     if (targetPropertyWriteMethod != null) {
-                        final Type targetReturnType = targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
-                        boolean valid = Object.class.equals(targetPropertyType) ||
-                                sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
+                        final Type targetReturnType =
+                                targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
+                        boolean valid =
+                                Object.class.equals(targetPropertyType) || sourcePropertyType.equals(targetPropertyType)
+                                        && sourceReturnType.equals(targetReturnType);
                         if (!valid) {
                             discardedProperties.add(sourceProperty.getName());
                         }
@@ -73,14 +75,15 @@ public class BeanConversionService implements ConversionService {
         }
 
         // Perform copy
-        BeanUtils.copyProperties(source, converted, discardedProperties.toArray(new String[discardedProperties.size()]));
+        BeanUtils.copyProperties(source, converted,
+                discardedProperties.toArray(new String[discardedProperties.size()]));
     }
 
     public static <T> RegistrationBuilder<T> fromBean(Class<T> source) {
         return new RegistrationBuilder<>(source);
     }
 
-    public  void register(Registration<?> registration) {
+    public void register(Registration<?> registration) {
         registrations.merge(registration.getModelClass(), (Registration<Object>) registration, Registration::merge);
     }
 
@@ -163,7 +166,7 @@ public class BeanConversionService implements ConversionService {
 
     /** Get all available transformations in this registration. */
     private <T, U> List<BiFunction<T, U, U>> getRegistrationFunctions(Class<U> targetClass,
-                                                                                  Registration<T> registration) {
+            Registration<T> registration) {
         List<BiFunction<T, U, U>> customs = new ArrayList<>();
         Class<U> currentClass = targetClass;
         while (currentClass != null) {

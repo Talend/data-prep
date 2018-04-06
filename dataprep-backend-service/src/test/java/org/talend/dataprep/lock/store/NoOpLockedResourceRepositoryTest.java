@@ -42,10 +42,11 @@ public class NoOpLockedResourceRepositoryTest {
         when(preparationRepository.get(preparationId, Preparation.class)).thenReturn(preparationMock);
 
         // when
-        Preparation preparation = noOpLockedResourceRepository.tryLock(preparationId, "Toto", "toto de Charleville-Mézières");
+        Preparation preparation =
+                noOpLockedResourceRepository.tryLock(preparationId, "Toto", "toto de Charleville-Mézières");
 
         // then
-        assertEquals(preparationMock,preparation);
+        assertEquals(preparationMock, preparation);
         verify(preparationRepository).get(preparationId, Preparation.class);
     }
 
@@ -56,7 +57,7 @@ public class NoOpLockedResourceRepositoryTest {
         when(preparationRepository.get(preparationId, Preparation.class)).thenReturn(null);
 
         // when
-        try{
+        try {
             noOpLockedResourceRepository.tryLock(preparationId, "toto", "Toto de Charleville-Mézières");
             fail();
         } catch (TDPException e) {

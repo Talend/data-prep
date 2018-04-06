@@ -68,7 +68,7 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
 
         final MultiValueMap<String, String> headers = new HttpHeaders();
         for (Header header : response.getAllHeaders()) {
-            if("Location".equalsIgnoreCase(header.getName())) {
+            if ("Location".equalsIgnoreCase(header.getName())) {
                 headers.put(header.getName(), Collections.singletonList(header.getValue()));
             }
         }

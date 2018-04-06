@@ -81,8 +81,8 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
         parameters.add(
                 parameter(locale).setName(ORIGINAL_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(this));
-        parameters.add(
-                parameter(locale).setName(NEW_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(this));
+        parameters
+                .add(parameter(locale).setName(NEW_VALUE_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(this));
         return parameters;
     }
 

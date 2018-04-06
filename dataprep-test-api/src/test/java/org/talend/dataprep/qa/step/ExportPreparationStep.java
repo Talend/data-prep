@@ -1,6 +1,5 @@
 package org.talend.dataprep.qa.step;
 
-
 import com.jayway.restassured.response.Response;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Then;
@@ -48,7 +47,8 @@ public class ExportPreparationStep extends DataPrepStep {
 
         Response apiResponse = api.getExportFormats(preparationId);
 
-        ExportFormatMessage[] parameters = objectMapper.readValue(apiResponse.getBody().asString(), ExportFormatMessage[].class);
+        ExportFormatMessage[] parameters =
+                objectMapper.readValue(apiResponse.getBody().asString(), ExportFormatMessage[].class);
         context.storePreparationExportFormat(suffixName(preparationName), parameters);
     }
 
@@ -56,7 +56,8 @@ public class ExportPreparationStep extends DataPrepStep {
     public void thenIReceivedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
         ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(suffixName(preparationName));
 
-        List<String> exportFormatsIds = Arrays.stream(exportFormats) //
+        List<String> exportFormatsIds = Arrays
+                .stream(exportFormats) //
                 .map(ExportFormatMessage::getId) //
                 .collect(Collectors.toList());
 

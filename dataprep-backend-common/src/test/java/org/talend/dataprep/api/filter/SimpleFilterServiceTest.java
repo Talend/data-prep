@@ -71,12 +71,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test(expected = TalendRuntimeException.class)
     public void should_create_unknown_filter() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"bouh\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"toto\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"bouh\": {" + "       \"field\": \"0001\"," + "       \"value\": \"toto\"" + "   }" + "}";
 
         //when
         service.build(filtersDefinition, rowMetadata);
@@ -87,12 +83,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_EQ_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"eq\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"toto\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"eq\": {" + "       \"field\": \"0001\"," + "       \"value\": \"toto\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -114,12 +106,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_EQ_predicate_more_number_format_integer_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"eq\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"5\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"eq\": {" + "       \"field\": \"0001\"," + "       \"value\": \"5\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -151,12 +139,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_EQ_predicate_more_number_format_decimal_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"eq\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"5,35\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"eq\": {" + "       \"field\": \"0001\"," + "       \"value\": \"5,35\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -188,11 +172,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_EQ_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"eq\": {" +
-                "       \"value\": \"toto\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"eq\": {" + "       \"value\": \"toto\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -210,12 +190,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_GT_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"gt\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"gt\": {" + "       \"field\": \"0001\"," + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -266,11 +242,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_GT_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"gt\": {" +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"gt\": {" + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -288,12 +260,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_GTE_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"gte\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"gte\": {" + "       \"field\": \"0001\"," + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -344,11 +312,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_GTE_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"gte\": {" +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"gte\": {" + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -366,12 +330,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_LT_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"lt\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"lt\": {" + "       \"field\": \"0001\"," + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -422,11 +382,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_LT_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"lt\": {" +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"lt\": {" + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -441,16 +397,11 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
         assertThat(filter.test(datasetRowFromValues), is(true));
     }
 
-
     @Test
     public void should_create_LTE_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"lte\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"lte\": {" + "       \"field\": \"0001\"," + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -501,11 +452,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_LTE_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"lte\": {" +
-                "       \"value\": 5" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"lte\": {" + "       \"value\": 5" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -523,12 +470,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_CONTAINS_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"contains\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"toto\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"contains\": {" + "       \"field\": \"0001\","
+                + "       \"value\": \"toto\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -547,11 +490,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_CONTAINS_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"contains\": {" +
-                "       \"value\": \"toto\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"contains\": {" + "       \"value\": \"toto\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -573,12 +512,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_MATCHES_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"matches\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"Aa9-\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"matches\": {" + "       \"field\": \"0001\"," + "       \"value\": \"Aa9-\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -600,12 +535,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_MATCHES_predicate_empty_pattern() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"matches\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"value\": \"\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"matches\": {" + "       \"field\": \"0001\"," + "       \"value\": \"\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -621,11 +552,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_MATCHES_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"matches\": {" +
-                "       \"value\": \"Aa9-\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"matches\": {" + "       \"value\": \"Aa9-\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -642,15 +569,10 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
         assertThat(filter.test(row), is(true));
     }
 
-
     @Test
     public void should_create_INVALID_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"invalid\": {" +
-                "       \"field\": \"0001\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"invalid\": {" + "       \"field\": \"0001\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -666,10 +588,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_INVALID_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"invalid\": {" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"invalid\": {" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -686,11 +605,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_VALID_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"valid\": {" +
-                "       \"field\": \"0001\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"valid\": {" + "       \"field\": \"0001\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -711,10 +626,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_VALID_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"valid\": {" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"valid\": {" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -733,11 +645,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_EMPTY_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"empty\": {" +
-                "       \"field\": \"0001\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"empty\": {" + "       \"field\": \"0001\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -752,10 +660,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_EMPTY_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"empty\": {" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"empty\": {" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -771,13 +676,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_number_RANGE_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"range\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"start\": \"5\"," +
-                "       \"end\": \"10\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"range\": {" + "       \"field\": \"0001\","
+                + "       \"start\": \"5\"," + "       \"end\": \"10\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -835,12 +735,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_number_RANGE_predicate_on_all() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"range\": {" +
-                "       \"start\": \"5\"," +
-                "       \"end\": \"10\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"range\": {" + "       \"start\": \"5\"," + "       \"end\": \"10\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -857,13 +753,10 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_date_RANGE_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"range\": {" +
-                "       \"field\": \"0001\"," +
-                "       \"start\": 0," + //1970-01-01 UTC timezone
-                "       \"end\": " + (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000) + //1990-01-01 UTC timezone
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"range\": {" + "       \"field\": \"0001\"," + "       \"start\": 0," + //1970-01-01 UTC timezone
+                        "       \"end\": " + (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000) + //1990-01-01 UTC timezone
+                        "   }" + "}";
 
         final ColumnMetadata column = row.getRowMetadata().getById("0001");
         column.setType("date");
@@ -897,21 +790,10 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_AND_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"and\": [" +
-                "       {" +
-                "           \"empty\": {" +
-                "               \"field\": \"0001\"" +
-                "           }" +
-                "       }," +
-                "       {" +
-                "           \"eq\": {" +
-                "               \"field\": \"0002\"," +
-                "               \"value\": \"toto\"" +
-                "           }" +
-                "       }" +
-                "   ]" +
-                "}";
+        final String filtersDefinition = "{" + "   \"and\": [" + "       {" + "           \"empty\": {"
+                + "               \"field\": \"0001\"" + "           }" + "       }," + "       {"
+                + "           \"eq\": {" + "               \"field\": \"0002\"," + "               \"value\": \"toto\""
+                + "           }" + "       }" + "   ]" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -931,21 +813,10 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_OR_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"or\": [" +
-                "       {" +
-                "           \"empty\": {" +
-                "               \"field\": \"0001\"" +
-                "           }" +
-                "       }," +
-                "       {" +
-                "           \"eq\": {" +
-                "               \"field\": \"0002\"," +
-                "               \"value\": \"toto\"" +
-                "           }" +
-                "       }" +
-                "   ]" +
-                "}";
+        final String filtersDefinition = "{" + "   \"or\": [" + "       {" + "           \"empty\": {"
+                + "               \"field\": \"0001\"" + "           }" + "       }," + "       {"
+                + "           \"eq\": {" + "               \"field\": \"0002\"," + "               \"value\": \"toto\""
+                + "           }" + "       }" + "   ]" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -968,14 +839,8 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test
     public void should_create_NOT_predicate() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"not\":" +
-                "       {" +
-                "           \"empty\": {" +
-                "               \"field\": \"0001\"" +
-                "           }" +
-                "       }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"not\":" + "       {" + "           \"empty\": {"
+                + "               \"field\": \"0001\"" + "           }" + "       }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
@@ -990,21 +855,10 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid1() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"not\": [" +
-                "       {" +
-                "           \"empty\": {" +
-                "               \"field\": \"0001\"" +
-                "           }" +
-                "       }," +
-                "       {" +
-                "           \"eq\": {" +
-                "               \"field\": \"0002\"," +
-                "               \"value\": \"toto\"" +
-                "           }" +
-                "       }" +
-                "   ]" +
-                "}";
+        final String filtersDefinition = "{" + "   \"not\": [" + "       {" + "           \"empty\": {"
+                + "               \"field\": \"0001\"" + "           }" + "       }," + "       {"
+                + "           \"eq\": {" + "               \"field\": \"0002\"," + "               \"value\": \"toto\""
+                + "           }" + "       }" + "   ]" + "}";
 
         //when
         service.build(filtersDefinition, rowMetadata);
@@ -1015,11 +869,7 @@ public class SimpleFilterServiceTest extends FilterServiceTest {
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid2() throws Exception {
         //given
-        final String filtersDefinition = "{" +
-                "   \"not\":" +
-                "       {" +
-                "       }" +
-                "}";
+        final String filtersDefinition = "{" + "   \"not\":" + "       {" + "       }" + "}";
 
         //when
         service.build(filtersDefinition, rowMetadata);

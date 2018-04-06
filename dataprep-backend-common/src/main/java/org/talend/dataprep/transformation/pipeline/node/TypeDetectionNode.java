@@ -128,7 +128,8 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
             if (resultAnalyzer == null) {
                 resultAnalyzer = analyzer.apply(filteredColumns);
             }
-            final String[] values = row.filter(filteredColumns) //
+            final String[] values = row
+                    .filter(filteredColumns) //
                     .order(rowMetadata.getColumns()) //
                     .toArray(DataSetRow.SKIP_TDP_ID.and(e -> filteredColumnNames.contains(e.getKey())));
             try {
@@ -170,7 +171,8 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                     resultAnalyzer.close();
                 }
                 // Continue process
-                try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(new GZIPInputStream(new FileInputStream(reservoir)), UTF_8))) {
+                try (JsonParser parser = mapper.getFactory().createParser(
+                        new InputStreamReader(new GZIPInputStream(new FileInputStream(reservoir)), UTF_8))) {
                     final DataSet dataSet = mapper.reader(DataSet.class).readValue(parser);
                     dataSet.getRecords().forEach(r -> {
                         r.setRowMetadata(rowMetadata);

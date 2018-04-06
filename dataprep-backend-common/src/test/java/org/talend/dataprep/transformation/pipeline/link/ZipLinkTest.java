@@ -28,13 +28,14 @@ import org.talend.dataprep.transformation.pipeline.TestNode;
 import org.talend.dataprep.transformation.pipeline.node.ZipLink;
 
 public class ZipLinkTest {
+
     @Test
     public void should_emit_single_input_row_when_all_source_has_emitted_one() {
         // given
         final TestNode source1 = new TestNode();
         final TestNode source2 = new TestNode();
         final TestNode target = new TestNode();
-        ZipLink.zip(new Node[]{ source1, source2 }, target);
+        ZipLink.zip(new Node[] { source1, source2 }, target);
 
         final DataSetRow row = new DataSetRow(new HashMap<>());
         final RowMetadata metadata = new RowMetadata(new ArrayList<>());
@@ -60,7 +61,7 @@ public class ZipLinkTest {
         final TestNode source1 = new TestNode();
         final TestNode source2 = new TestNode();
         final TestNode target = new TestNode();
-        ZipLink.zip(new Node[]{ source1, source2 }, target);
+        ZipLink.zip(new Node[] { source1, source2 }, target);
 
         // when
         source1.signal(END_OF_STREAM);

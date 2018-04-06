@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.actions.conversions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -92,8 +92,8 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest<DistanceConv
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("create_new_column", "from_unit", "to_unit", "precision", "column_id", "row_id",
-                "scope", "filter");
+        List<String> parameterNames = Arrays.asList("create_new_column", "from_unit", "to_unit", "precision",
+                "column_id", "row_id", "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
@@ -101,7 +101,8 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest<DistanceConv
         // then
         assertNotNull(parameters);
         assertEquals(8, parameters.size()); // 4 implicit parameters + 3 specific
-        final List<String> expectedParametersNotFound = parameters.stream() //
+        final List<String> expectedParametersNotFound = parameters
+                .stream() //
                 .map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)) //
                 .collect(Collectors.toList());
@@ -109,37 +110,57 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest<DistanceConv
     }
 
     @Test
-    public void testEmpty() { testConversion("", DistanceEnum.METER, "", DistanceEnum.YARD, "9"); }
+    public void testEmpty() {
+        testConversion("", DistanceEnum.METER, "", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testNull() { testConversion(null, DistanceEnum.METER, null, DistanceEnum.YARD, "9"); }
+    public void testNull() {
+        testConversion(null, DistanceEnum.METER, null, DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testBlank() { testConversion(" ", DistanceEnum.METER, " ", DistanceEnum.YARD, "9"); }
+    public void testBlank() {
+        testConversion(" ", DistanceEnum.METER, " ", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testZero() { testConversion("0", DistanceEnum.METER, "0.0", DistanceEnum.YARD, "1"); }
+    public void testZero() {
+        testConversion("0", DistanceEnum.METER, "0.0", DistanceEnum.YARD, "1");
+    }
 
     @Test
-    public void testNanInput1() { testConversion(" a ", DistanceEnum.METER, " a ", DistanceEnum.YARD, "9"); }
+    public void testNanInput1() {
+        testConversion(" a ", DistanceEnum.METER, " a ", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testNanInput2() { testConversion(" 3a ", DistanceEnum.METER, " 3a ", DistanceEnum.YARD, "9"); }
+    public void testNanInput2() {
+        testConversion(" 3a ", DistanceEnum.METER, " 3a ", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testNanInput3() { testConversion(" 5@ ", DistanceEnum.METER, " 5@ ", DistanceEnum.YARD, "9"); }
+    public void testNanInput3() {
+        testConversion(" 5@ ", DistanceEnum.METER, " 5@ ", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testNanInput4() { testConversion(" 5@6a8 ", DistanceEnum.METER, " 5@6a8 ", DistanceEnum.YARD, "9"); }
+    public void testNanInput4() {
+        testConversion(" 5@6a8 ", DistanceEnum.METER, " 5@6a8 ", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void testMaxValue() { testConversion(String.valueOf(Double.MAX_VALUE) , DistanceEnum.METER, String.valueOf(Double.MAX_VALUE), DistanceEnum.YARD, "1"); }
+    public void testMaxValue() {
+        testConversion(String.valueOf(Double.MAX_VALUE), DistanceEnum.METER, String.valueOf(Double.MAX_VALUE),
+                DistanceEnum.YARD, "1");
+    }
 
     @Test
     public void testPositiveInfinityValue() {
         BigDecimal simple_max = BigDecimal.valueOf(Double.MAX_VALUE);
         BigDecimal double_max = simple_max.add(simple_max);
-        testConversion(double_max.toPlainString() , DistanceEnum.METER, double_max.toPlainString(), DistanceEnum.YARD, "1");
+        testConversion(double_max.toPlainString(), DistanceEnum.METER, double_max.toPlainString(), DistanceEnum.YARD,
+                "1");
     }
 
     @Test
@@ -147,31 +168,48 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest<DistanceConv
         BigDecimal simple_max = BigDecimal.valueOf(Double.MAX_VALUE);
         BigDecimal double_max = simple_max.add(simple_max);
         BigDecimal neg_double_max = double_max.negate();
-        testConversion(neg_double_max.toPlainString() , DistanceEnum.METER, neg_double_max.toPlainString(), DistanceEnum.YARD, "1");
+        testConversion(neg_double_max.toPlainString(), DistanceEnum.METER, neg_double_max.toPlainString(),
+                DistanceEnum.YARD, "1");
     }
 
     @Test
-    public void testMinValue() { testConversion(String.valueOf(Double.MIN_VALUE) , DistanceEnum.METER, String.valueOf(0.0), DistanceEnum.YARD, "1"); }
+    public void testMinValue() {
+        testConversion(String.valueOf(Double.MIN_VALUE), DistanceEnum.METER, String.valueOf(0.0), DistanceEnum.YARD,
+                "1");
+    }
 
     @Test
-    public void testNegativeNumber() { testConversion("-1", DistanceEnum.METER, "-1.093613298", DistanceEnum.YARD, "9"); }
+    public void testNegativeNumber() {
+        testConversion("-1", DistanceEnum.METER, "-1.093613298", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void meter2yardWithBlank() { testConversion(" 1 ", DistanceEnum.METER, "1.093613298", DistanceEnum.YARD, "9"); }
+    public void meter2yardWithBlank() {
+        testConversion(" 1 ", DistanceEnum.METER, "1.093613298", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void meter2yard() { testConversion("1.0", DistanceEnum.METER, "1.093613298", DistanceEnum.YARD, "9"); }
+    public void meter2yard() {
+        testConversion("1.0", DistanceEnum.METER, "1.093613298", DistanceEnum.YARD, "9");
+    }
 
     @Test
-    public void yard2meter() { testConversion("1.0", DistanceEnum.YARD, "0.914400000", DistanceEnum.METER, "9"); }
+    public void yard2meter() {
+        testConversion("1.0", DistanceEnum.YARD, "0.914400000", DistanceEnum.METER, "9");
+    }
 
     @Test
-    public void mile2kilometer() { testConversion("1.0", DistanceEnum.MILE, "1.609344000", DistanceEnum.KILOMETER, "9"); }
+    public void mile2kilometer() {
+        testConversion("1.0", DistanceEnum.MILE, "1.609344000", DistanceEnum.KILOMETER, "9");
+    }
 
     @Test
-    public void test_apply_inplace() { testConversion("1.0", DistanceEnum.KILOMETER, "0.621371192", DistanceEnum.MILE, "9"); }
+    public void test_apply_inplace() {
+        testConversion("1.0", DistanceEnum.KILOMETER, "0.621371192", DistanceEnum.MILE, "9");
+    }
 
-    private void testConversion(String from, DistanceEnum deFrom, String expected, DistanceEnum deTo, String precision) {
+    private void testConversion(String from, DistanceEnum deFrom, String expected, DistanceEnum deTo,
+            String precision) {
         // given
         Map<String, String> rowContent = new HashMap<>();
         rowContent.put("0000", "David");

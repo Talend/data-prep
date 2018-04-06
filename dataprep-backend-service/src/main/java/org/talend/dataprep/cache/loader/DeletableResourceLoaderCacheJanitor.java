@@ -51,8 +51,8 @@ public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
         final AtomicLong totalCount = new AtomicLong();
         performCleanUp(deletedCount, totalCount);
 
-        LOGGER.debug("Janitor process end ({}/{} files successfully deleted).", System.currentTimeMillis(), deletedCount,
-                totalCount);
+        LOGGER.debug("Janitor process end ({}/{} files successfully deleted).", System.currentTimeMillis(),
+                deletedCount, totalCount);
     }
 
     private void performCleanUp(AtomicLong deletedCount, AtomicLong totalCount) {

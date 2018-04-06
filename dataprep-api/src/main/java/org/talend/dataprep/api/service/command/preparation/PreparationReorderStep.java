@@ -52,7 +52,7 @@ public class PreparationReorderStep extends GenericCommand<String> {
     private HttpRequestBase onExecute(final String preparationId, final String stepId, final String parentStepId) {
         try {
             URIBuilder builder = new URIBuilder(
-                    preparationServiceUrl + "/preparations/"+ preparationId + "/steps/" + stepId + "/order");
+                    preparationServiceUrl + "/preparations/" + preparationId + "/steps/" + stepId + "/order");
             if (StringUtils.isNotBlank(parentStepId)) {
                 builder.addParameter("parentStepId", parentStepId);
             }

@@ -35,7 +35,6 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class PreparationMove extends GenericCommand<Void> {
 
-
     /**
      * Default constructor.
      *
@@ -52,10 +51,9 @@ public class PreparationMove extends GenericCommand<Void> {
         on(HttpStatus.OK).then(asNull());
     }
 
-
     private HttpRequestBase onExecute(String id, String folder, String destination, String newName) {
         try {
-            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/" + id +"/move");
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/" + id + "/move");
             if (StringUtils.isNotBlank(folder)) {
                 uriBuilder.addParameter("folder", folder);
             }

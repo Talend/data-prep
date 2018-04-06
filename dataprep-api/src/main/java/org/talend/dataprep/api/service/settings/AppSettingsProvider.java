@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Static Settings provider
+ * 
  * @param <T>
  */
 public interface AppSettingsProvider<T> {

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.service;
 
@@ -41,8 +41,10 @@ public class AggregationTest extends TransformationServiceBaseTest {
 
         // when
         final Response response = given()//
-                .contentType(APPLICATION_JSON_VALUE).body(invalidOperation)//
-                .when().post("/aggregate");
+                .contentType(APPLICATION_JSON_VALUE)
+                .body(invalidOperation)//
+                .when()
+                .post("/aggregate");
 
         // then
         assertEquals(400, response.getStatusCode());
@@ -52,7 +54,8 @@ public class AggregationTest extends TransformationServiceBaseTest {
     public void shouldAggregateAverage() throws IOException {
 
         // when
-        final String actual = aggregateFromDataSet("../aggregation/average.json", "../aggregation/aggregation_dataset.csv");
+        final String actual =
+                aggregateFromDataSet("../aggregation/average.json", "../aggregation/aggregation_dataset.csv");
 
         // then
         assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/average_expected.json")));
@@ -88,13 +91,14 @@ public class AggregationTest extends TransformationServiceBaseTest {
     @Test
     public void shouldAggregateFromPreparation() throws IOException {
         // given
-        final String datasetId = createDataset("../aggregation/aggregation_dataset.csv", "for a preparation", "text/csv");
+        final String datasetId =
+                createDataset("../aggregation/aggregation_dataset.csv", "for a preparation", "text/csv");
         final String preparationId = createEmptyPreparationFromDataset(datasetId, "preparation");
         applyActionFromFile(preparationId, "../aggregation/uppercase_action.json");
 
         // when
-        final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream("../aggregation/sum.json"),
-                UTF_8);
+        final String actionsAsJson =
+                IOUtils.toString(this.getClass().getResourceAsStream("../aggregation/sum.json"), UTF_8);
         final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(null);
         parameters.setPreparationId(preparationId);
@@ -103,38 +107,41 @@ public class AggregationTest extends TransformationServiceBaseTest {
         String actual = given()//
                 .body(mapper.writeValueAsString(parameters))//
                 .contentType(APPLICATION_JSON_VALUE) //
-                .when().post("/aggregate")//
+                .when()
+                .post("/aggregate")//
                 .asString();
 
         // then
-        assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/uppercase_sum_expected.json")));
+        assertThat(actual,
+                sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/uppercase_sum_expected.json")));
     }
 
     @Test
     public void shouldAggregateSumWithFilter() throws IOException {
         // when
-        final String actual = aggregateFromDataSet("../aggregation/sum_filter.json", "../aggregation/aggregation_dataset.csv");
+        final String actual =
+                aggregateFromDataSet("../aggregation/sum_filter.json", "../aggregation/aggregation_dataset.csv");
 
         // then
-        assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/sum_filter_expected.json")));
+        assertThat(actual,
+                sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/sum_filter_expected.json")));
     }
 
     @Test
     public void shouldAggregateSumWithNullFilter() throws IOException {
         // when
-        final String actual = aggregateFromDataSet("../aggregation/sum_filter_null.json",
-                "../aggregation/aggregation_dataset.csv");
+        final String actual =
+                aggregateFromDataSet("../aggregation/sum_filter_null.json", "../aggregation/aggregation_dataset.csv");
 
         // then
         assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/sum_expected.json")));
     }
 
-
     private String aggregateFromDataSet(String actions, String content) throws IOException {
 
         // create the dataset
-        final String datasetId = createDataset(content, "aggregateFromDataSet input " + Instant.now().getEpochSecond(),
-                "text/csv");
+        final String datasetId =
+                createDataset(content, "aggregateFromDataSet input " + Instant.now().getEpochSecond(), "text/csv");
 
         // update the actions
         final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream(actions), UTF_8);
@@ -146,7 +153,12 @@ public class AggregationTest extends TransformationServiceBaseTest {
         return given()//
                 .body(mapper.writer().writeValueAsString(parameters))//
                 .contentType(APPLICATION_JSON_VALUE) //
-                .when().expect().statusCode(200).log().ifError().post("/aggregate")//
+                .when()
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()
+                .post("/aggregate")//
                 .asString();
     }
 

@@ -72,12 +72,12 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     public void testShouldMaskDatetime() throws IOException {
 
         // given
-        final DataSetRow row = builder() //
-                .with(value("2015-09-15") //
-                        .type(Type.DATE) //
-                        .statistics(MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json"))
-                ) //
-                .build();
+        final DataSetRow row =
+                builder() //
+                        .with(value("2015-09-15") //
+                                .type(Type.DATE) //
+                                .statistics(MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json"))) //
+                        .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -192,7 +192,6 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         // then
         assertEquals(expectedValues, row.values());
     }
-
 
     @Test
     public void testShouldUseDefaultMaskingForInvalid() {

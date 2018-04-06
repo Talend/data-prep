@@ -98,7 +98,8 @@ public final class TransformationContext implements Serializable {
             currentContext.getContextEntries().forEach(contextEntry -> {
                 try {
                     try {
-                        final Method destroy = ClassUtils.getPublicMethod(contextEntry.getClass(), "destroy", new Class[0]);
+                        final Method destroy =
+                                ClassUtils.getPublicMethod(contextEntry.getClass(), "destroy", new Class[0]);
                         LOGGER.debug("destroy {}", contextEntry);
                         destroy.invoke(contextEntry);
                     } catch (NoSuchMethodException e) {

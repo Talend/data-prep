@@ -37,7 +37,8 @@ public class StepNodeTransformer {
      * @return The transformed pipeline, based on copies of the original <code>node</code> (no modification done on the pipeline
      * reachable from <code>node/code>).
      */
-    public static Node transform(Node node, List<Step> steps, Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
+    public static Node transform(Node node, List<Step> steps,
+            Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
         final StepNodeTransformation visitor = new StepNodeTransformation(steps, previousStepRowMetadataSupplier);
         node.accept(visitor);
         return visitor.getTransformedNode();

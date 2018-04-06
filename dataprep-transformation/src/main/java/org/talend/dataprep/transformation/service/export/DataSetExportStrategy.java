@@ -61,14 +61,17 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
             final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, datasetId, false, true);
-            final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, datasetId);
+            final DataSetGetMetadata dataSetGetMetadata =
+                    applicationContext.getBean(DataSetGetMetadata.class, datasetId);
             try (InputStream datasetContent = dataSetGet.execute()) {
-                try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
+                try (JsonParser parser =
+                        mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
                     // Create dataset
                     final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
                     dataSet.setMetadata(dataSetGetMetadata.execute());
                     // get the actions to apply (no preparation ==> dataset export ==> no actions)
-                    Configuration configuration = Configuration.builder() //
+                    Configuration configuration = Configuration
+                            .builder() //
                             .args(parameters.getArguments()) //
                             .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                             .format(format.getName()) //

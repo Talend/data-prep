@@ -74,7 +74,8 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(STRING));
     }
 
     @Override
@@ -85,7 +86,8 @@ public class RemoveRepeatedChars extends AbstractActionMetadata implements Colum
         parameters.add(selectParameter(locale)
                 .name(REMOVE_TYPE)
                 .item(WHITESPACE, WHITESPACE)
-                .item(CUSTOM, CUSTOM, parameter(locale).setName(CUSTOM_REPEAT_CHAR_PARAMETER)
+                .item(CUSTOM, CUSTOM, parameter(locale)
+                        .setName(CUSTOM_REPEAT_CHAR_PARAMETER)
                         .setType(ParameterType.STRING)
                         .setDefaultValue(EMPTY)
                         .build(this))

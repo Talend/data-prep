@@ -44,7 +44,8 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     /** Number of digit after the decimal symbol. */
     protected static final String PRECISION = "precision"; //$NON-NLS-1$
 
-    protected static  final String NEW_COLUMN_SUFFIX = "_rounded";
+    protected static final String NEW_COLUMN_SUFFIX = "_rounded";
+
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.NUMBERS.getDisplayName(locale);
@@ -112,7 +113,8 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(DOUBLE));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX).withType(DOUBLE));
     }
 
     @Override

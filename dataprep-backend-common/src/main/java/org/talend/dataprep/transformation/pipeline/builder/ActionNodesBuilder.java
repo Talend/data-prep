@@ -87,13 +87,15 @@ public class ActionNodesBuilder {
      * Build the actions pipeline
      */
     public Node build() {
-        final StatisticsNodesBuilder statisticsNodesBuilder = StatisticsNodesBuilder.builder()
-                .analyzerService(analyzerService) //
-                .actionRegistry(actionRegistry) //
-                .statisticsAdapter(statisticsAdapter) //
-                .allowSchemaAnalysis(allowSchemaAnalysis) //
-                .actions(actions) //
-                .columns(initialMetadata.getColumns());
+        final StatisticsNodesBuilder statisticsNodesBuilder =
+                StatisticsNodesBuilder
+                        .builder()
+                        .analyzerService(analyzerService) //
+                        .actionRegistry(actionRegistry) //
+                        .statisticsAdapter(statisticsAdapter) //
+                        .allowSchemaAnalysis(allowSchemaAnalysis) //
+                        .actions(actions) //
+                        .columns(initialMetadata.getColumns());
 
         final NodeBuilder builder = NodeBuilder.source();
 

@@ -36,8 +36,8 @@ import org.talend.dataprep.schema.SchemaParser;
 public class CSVSchemaParser implements SchemaParser {
 
     /** A list of supported separators for a CSV content */
-    public static final List<Character> DEFAULT_VALID_SEPARATORS = Collections
-            .unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
+    public static final List<Character> DEFAULT_VALID_SEPARATORS =
+            Collections.unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSchemaParser.class);
 
@@ -93,16 +93,22 @@ public class CSVSchemaParser implements SchemaParser {
             LOGGER.debug("Setting default type for columns...");
             int i = 0;
             for (String column : header) {
-                sheetContents.stream().filter(sheetContent -> META_KEY.equals(sheetContent.getName())).findFirst() //
-                        .get().getColumnMetadatas() //
+                sheetContents
+                        .stream()
+                        .filter(sheetContent -> META_KEY.equals(sheetContent.getName()))
+                        .findFirst() //
+                        .get()
+                        .getColumnMetadatas() //
                         .add(column().id(i++).name(column).type(Type.STRING).build());
             }
         } catch (Exception e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_CONTENT, e);
         }
-        return Schema.Builder.parserResult() //
+        return Schema.Builder
+                .parserResult() //
                 .sheetContents(sheetContents) //
-                .draft(false).build();
+                .draft(false)
+                .build();
     }
 
     /**
@@ -238,8 +244,10 @@ public class CSVSchemaParser implements SchemaParser {
         separators.forEach(separatorAnalyzer::accept); // analyse separators and set header info and score
 
         // sort separator and return the first
-        return separators.stream() //
-                .sorted(separatorAnalyzer::compare).findFirst() //
+        return separators
+                .stream() //
+                .sorted(separatorAnalyzer::compare)
+                .findFirst() //
                 .get();
     }
 
@@ -291,8 +299,8 @@ public class CSVSchemaParser implements SchemaParser {
                 throws UnsupportedEncodingException {
             this.sizeLimit = sizeLimit;
             this.lineLimit = lineLimit;
-            this.reader = new LineNumberReader(
-                    encoding != null ? new InputStreamReader(inputStream, encoding) : new InputStreamReader(inputStream));
+            this.reader = new LineNumberReader(encoding != null ? new InputStreamReader(inputStream, encoding)
+                    : new InputStreamReader(inputStream));
         }
 
         /**

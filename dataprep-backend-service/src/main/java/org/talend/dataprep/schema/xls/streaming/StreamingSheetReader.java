@@ -42,7 +42,7 @@ import com.monitorjbl.xlsx.impl.StreamingRow;
 
 public class StreamingSheetReader implements Iterable<Row> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( StreamingSheetReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StreamingSheetReader.class);
 
     private final SharedStringsTable sst;
 
@@ -75,7 +75,8 @@ public class StreamingSheetReader implements Iterable<Row> {
     // <dimension ref="A1:B60"/>
     private String dimension = StringUtils.EMPTY;
 
-    public StreamingSheetReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
+    public StreamingSheetReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser,
+            int rowCacheSize) {
         this.sst = sst;
         this.stylesTable = stylesTable;
         this.parser = parser;
@@ -96,7 +97,7 @@ public class StreamingSheetReader implements Iterable<Row> {
             rowCacheIterator = rowCache.iterator();
             return rowCacheIterator.hasNext();
         } catch (XMLStreamException | SAXException e) {
-            LOGGER.debug( "End of stream");
+            LOGGER.debug("End of stream");
         }
         return false;
     }
@@ -128,7 +129,6 @@ public class StreamingSheetReader implements Iterable<Row> {
             StartElement startElement = event.asStartElement();
             String tagLocalName = startElement.getName().getLocalPart();
 
-
             if ("row".equals(tagLocalName)) {
                 Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
                 if (firstRowIndex == -1) {
@@ -138,12 +138,13 @@ public class StreamingSheetReader implements Iterable<Row> {
             } else if ("cols".equals(tagLocalName)) {
                 parsingCols = true;
             } else if ("col".equals(tagLocalName) && parsingCols) {
-                colNumber = colNumber +1;
+                colNumber = colNumber + 1;
             } else if ("c".equals(tagLocalName)) {
                 Attribute ref = startElement.getAttributeByName(new QName("r"));
 
                 String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-                currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
+                currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]),
+                        Integer.parseInt(coord[1]) - 1);
                 setFormatString(startElement, currentCell);
 
                 Attribute type = startElement.getAttributeByName(new QName("t"));
@@ -160,15 +161,15 @@ public class StreamingSheetReader implements Iterable<Row> {
                         int index = Integer.parseInt(indexStr);
                         currentCell.setCellStyle(stylesTable.getStyleAt(index));
                     } catch (NumberFormatException nfe) {
-                        LOGGER.warn( "Ignoring invalid style index {}", indexStr);
+                        LOGGER.warn("Ignoring invalid style index {}", indexStr);
                     }
                 }
-            // we store the dimension as well to revert with this method when cols not found
-            // can happen see xlsx attached here https://jira.talendforge.org/browse/TDP-1957
-            // <dimension ref="A1:B60"/>
-            } else if ("dimension".equals( tagLocalName )) {
-                Attribute attribute = startElement.getAttributeByName( new QName( "ref" ) );
-                if (attribute != null){
+                // we store the dimension as well to revert with this method when cols not found
+                // can happen see xlsx attached here https://jira.talendforge.org/browse/TDP-1957
+                // <dimension ref="A1:B60"/>
+            } else if ("dimension".equals(tagLocalName)) {
+                Attribute attribute = startElement.getAttributeByName(new QName("ref"));
+                if (attribute != null) {
                     this.dimension = attribute.getValue();
                 }
             }
@@ -244,8 +245,8 @@ public class StreamingSheetReader implements Iterable<Row> {
             return StringUtils.EMPTY;// "ERROR:  " + lastContents;
         case "n": // numeric type
             if (currentCell.getNumericFormat() != null && lastContents.length() > 0) {
-                return dataFormatter.formatRawCellContents(Double.parseDouble(lastContents), currentCell.getNumericFormatIndex(),
-                        currentCell.getNumericFormat());
+                return dataFormatter.formatRawCellContents(Double.parseDouble(lastContents),
+                        currentCell.getNumericFormatIndex(), currentCell.getNumericFormat());
             } else {
                 return lastContents;
             }
@@ -314,14 +315,14 @@ public class StreamingSheetReader implements Iterable<Row> {
         }
     }
 
-
     class CustomDataFormatter extends DataFormatter {
 
         @Override
-        public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+        public String formatRawCellContents(double value, int formatIndex, String formatString,
+                boolean use1904Windowing) {
             // TDP-1656 (olamy) for some reasons poi use date format with only 2 digits for years
             // even the excel data ws using 4 so force the pattern here
-            if ( DateUtil.isValidExcelDate( value) && StringUtils.countMatches( formatString, "y") == 2) {
+            if (DateUtil.isValidExcelDate(value) && StringUtils.countMatches(formatString, "y") == 2) {
                 formatString = StringUtils.replace(formatString, "yy", "yyyy");
             }
             if (DateUtil.isValidExcelDate(value) && StringUtils.countMatches(formatString, "Y") == 2) {

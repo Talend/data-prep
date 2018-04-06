@@ -71,11 +71,13 @@ public class SimpleManagedTaskExecutor implements ManagedTaskExecutor {
         final AsyncExecution execution = repository.get(executionId);
         if (execution == null) {
             LOGGER.error("Execution #{} can be resumed (not found).", executionId);
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION, ExceptionContext.withBuilder().put("id", executionId).build());
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION,
+                    ExceptionContext.withBuilder().put("id", executionId).build());
         } else if (execution.getStatus() != AsyncExecution.Status.RUNNING) {
             // Execution is expected to be created as "RUNNING" before the dispatcher resumes it.
             LOGGER.error("Execution #{} can be resumed (status is {}).", execution.getStatus());
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION, ExceptionContext.withBuilder().put("id", executionId).build());
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION,
+                    ExceptionContext.withBuilder().put("id", executionId).build());
         }
 
         // Wrap callable to get the running status.
@@ -95,13 +97,14 @@ public class SimpleManagedTaskExecutor implements ManagedTaskExecutor {
      * @see ManagedTaskExecutor#queue(ManagedTaskCallable, String, String, AsyncExecutionResult)
      */
     @Override
-    public synchronized AsyncExecution queue(final ManagedTaskCallable task, String executionId, String groupId, AsyncExecutionResult resultUrl) {
+    public synchronized AsyncExecution queue(final ManagedTaskCallable task, String executionId, String groupId,
+            AsyncExecutionResult resultUrl) {
 
         // Create async execution
         final AsyncExecution asyncExecution =
                 ofNullable(groupId).map(s -> new AsyncExecution(groupId)).orElseGet(AsyncExecution::new);
 
-        if(StringUtils.isNotEmpty(executionId)){
+        if (StringUtils.isNotEmpty(executionId)) {
             asyncExecution.setId(executionId);
         }
 
@@ -243,7 +246,7 @@ public class SimpleManagedTaskExecutor implements ManagedTaskExecutor {
             if (t != null) {
                 LOGGER.debug("Execution {} finished with success.", asyncExecution.getId());
                 try {
-                    if( t instanceof AsyncExecutionResult) {
+                    if (t instanceof AsyncExecutionResult) {
                         // if the async method result an asyncExecutionResult then we override basic Url Result
                         asyncExecution.setResult((AsyncExecutionResult) t);
                     }

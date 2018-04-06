@@ -42,7 +42,8 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
     /**
      * List of statistics (one for each column)
      */
-    private final ResizableList<StreamDateHistogramStatistics> stats = new ResizableList<>(StreamDateHistogramStatistics.class);
+    private final ResizableList<StreamDateHistogramStatistics> stats =
+            new ResizableList<>(StreamDateHistogramStatistics.class);
 
     /**
      * The columns types
@@ -66,7 +67,8 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
      * @param types The columns data types
      * @param dateParser A date parser based on column metadata and DQ analyzer
      */
-    public StreamDateHistogramAnalyzer(List<ColumnMetadata> columns, final DataTypeEnum[] types, final DateParser dateParser) {
+    public StreamDateHistogramAnalyzer(List<ColumnMetadata> columns, final DataTypeEnum[] types,
+            final DateParser dateParser) {
         this.columns = columns;
         this.types = types;
         this.dateParser = dateParser;
@@ -75,10 +77,11 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
     @Override
     public boolean analyze(String... record) {
         if (record.length != types.length) {
-            throw new IllegalArgumentException("Each column of the record should be declared a DataType.Type corresponding! \n"
-                    + types.length + " type(s) declared in this histogram analyzer but " + record.length
-                    + " column(s) was found in this record. \n"
-                    + "Using method: setTypes(DataType.Type[] types) to set the types. ");
+            throw new IllegalArgumentException(
+                    "Each column of the record should be declared a DataType.Type corresponding! \n" + types.length
+                            + " type(s) declared in this histogram analyzer but " + record.length
+                            + " column(s) was found in this record. \n"
+                            + "Using method: setTypes(DataType.Type[] types) to set the types. ");
         }
 
         stats.resize(record.length);

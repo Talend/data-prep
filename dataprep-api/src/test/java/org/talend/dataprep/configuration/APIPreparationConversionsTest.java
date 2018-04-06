@@ -70,7 +70,8 @@ public class APIPreparationConversionsTest {
     @Before
     public void setUp() throws Exception {
         if (!setup) {
-            conversionService = eeApiPreparationConversions.doWith(conversionService, "whateverTheName", applicationContext);
+            conversionService =
+                    eeApiPreparationConversions.doWith(conversionService, "whateverTheName", applicationContext);
             when(applicationContext.getBean(eq(SecurityProxy.class))).thenAnswer(i -> new NoOpSecurityProxy());
 
             setup = true;
@@ -96,7 +97,8 @@ public class APIPreparationConversionsTest {
         assertEquals(metadata.getName(), actual.getSummary().getDataSetName());
         assertEquals(metadata.getContent().getNbRecords(), actual.getSummary().getDataSetNbRow());
 
-        final List<String> expectedSteps = preparation.getSteps().stream().map(Step::getId).collect(Collectors.toList());
+        final List<String> expectedSteps =
+                preparation.getSteps().stream().map(Step::getId).collect(Collectors.toList());
         final List<String> actualSteps = actual.getSteps();
         assertNotNull(actualSteps);
         assertEquals(expectedSteps.size(), expectedSteps.size());
@@ -158,7 +160,6 @@ public class APIPreparationConversionsTest {
         assertEquals(1, actual.getSteps().size());
         assertEquals(Step.ROOT_STEP.id(), actual.getSteps().get(0));
     }
-
 
     private Folder getFolder(String name) {
         final Folder folder = new Folder();

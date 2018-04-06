@@ -82,7 +82,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
 
     /** Behaviours map. */
-    private final Map<HttpStatus, BiFunction<HttpRequestBase, HttpResponse, T>> behavior = new EnumMap<>(HttpStatus.class);
+    private final Map<HttpStatus, BiFunction<HttpRequestBase, HttpResponse, T>> behavior =
+            new EnumMap<>(HttpStatus.class);
 
     /** The http client. */
     @Autowired
@@ -239,7 +240,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         Header cookies = response.getFirstHeader("Set-Cookie");
         if (cookies != null) {
-            LOGGER.warn("request {} {}: Cookie detected in responseHeaders (check security.oauth2.resource.uri settings)",
+            LOGGER.warn(
+                    "request {} {}: Cookie detected in responseHeaders (check security.oauth2.resource.uri settings)",
                     request.getMethod(), request.getURI());
         }
 
@@ -256,7 +258,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
         // handle response's HTTP status
         if (status.is4xxClientError() || status.is5xxServerError()) {
-            LOGGER.debug("request {} {} : response on error {}", request.getMethod(), request.getURI(), response.getStatusLine());
+            LOGGER.debug("request {} {} : response on error {}", request.getMethod(), request.getURI(),
+                    response.getStatusLine());
             // Http status >= 400 so apply onError behavior
             return callOnError(onError).apply(request, response);
         } else {
@@ -490,7 +493,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 try {
                     builder
                             .append("load:")
-                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(), UTF_8))
+                            .append(IOUtils.toString(((HttpEntityEnclosingRequestBase) req).getEntity().getContent(),
+                                    UTF_8))
                             .append(",\n");
                 } catch (IOException e) {
                     // We ignore the field

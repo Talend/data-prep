@@ -99,7 +99,10 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
                 .body(preparationContent) //
                 .queryParam("folderId", folderId) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/preparations");
 
         assertThat(response.getStatusCode(), is(200));
@@ -129,15 +132,26 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
     }
 
     protected void createFolder(final String parentId, final String path) {
-        given().queryParam("parentId", parentId) //
+        given()
+                .queryParam("parentId", parentId) //
                 .queryParam("path", path) //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
-                .put("/folders").then().assertThat().statusCode(200);
+                .put("/folders")
+                .then()
+                .assertThat()
+                .statusCode(200);
     }
 
     protected Folder getFolder(final String parentId, final String name) throws IOException {
-        return getFolderChildren(parentId).stream().filter((folder) -> folder.getName().equals(name)).findFirst().orElse(null);
+        return getFolderChildren(parentId)
+                .stream()
+                .filter((folder) -> folder.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     protected List<Folder> getFolderChildren(final String id) throws IOException {

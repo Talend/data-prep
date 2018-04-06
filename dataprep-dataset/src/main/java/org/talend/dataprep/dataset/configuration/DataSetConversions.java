@@ -33,7 +33,8 @@ import org.talend.dataprep.user.store.UserDataRepository;
 public class DataSetConversions extends BeanConversionServiceWrapper {
 
     @Override
-    public BeanConversionService doWith(BeanConversionService conversionService, String beanName, ApplicationContext applicationContext) {
+    public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
+            ApplicationContext applicationContext) {
         conversionService.register(fromBean(DataSetMetadata.class) //
                 .toBeans(UserDataSetMetadata.class) //
                 .using(UserDataSetMetadata.class, (dataSetMetadata, userDataSetMetadata) -> {
@@ -44,12 +45,14 @@ public class DataSetConversions extends BeanConversionServiceWrapper {
                     // update the dataset favorites
                     final UserData userData = userDataRepository.get(userId);
                     if (userData != null) {
-                        userDataSetMetadata.setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
+                        userDataSetMetadata
+                                .setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
                     }
 
                     // and the owner (if not already present).
                     if (userDataSetMetadata.getOwner() == null) {
-                        userDataSetMetadata.setOwner(new Owner(userId, security.getUserDisplayName(), StringUtils.EMPTY));
+                        userDataSetMetadata
+                                .setOwner(new Owner(userId, security.getUserDisplayName(), StringUtils.EMPTY));
                     }
 
                     return userDataSetMetadata;

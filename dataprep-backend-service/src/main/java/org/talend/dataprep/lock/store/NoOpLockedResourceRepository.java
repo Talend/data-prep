@@ -51,6 +51,7 @@ public class NoOpLockedResourceRepository implements LockedResourceRepository {
     }
 
     @Override
-    public void unlock(String preparationId, String userId) {}
+    public void unlock(String preparationId, String userId) {
+    }
 
 }

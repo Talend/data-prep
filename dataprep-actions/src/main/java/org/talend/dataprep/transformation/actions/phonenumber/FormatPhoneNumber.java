@@ -62,6 +62,7 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
  */
 @Action(FormatPhoneNumber.ACTION_NAME)
 public class FormatPhoneNumber extends AbstractMultiScopeAction {
+
     /**
      * Action name.
      */
@@ -145,8 +146,8 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
         final String regionCode = getRegionCode(context, row);
 
-        final String formatedStr = formatIfValid(regionCode,
-                context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
+        final String formatedStr =
+                formatIfValid(regionCode, context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
         row.set(targetColumnId, formatedStr);
     }
 
@@ -160,16 +161,16 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
             return phone;
         }
         switch (formatType) {
-            case TYPE_INTERNATIONAL:
-                return PhoneNumberHandlerBase.formatInternational(phone, regionParam);
-            case TYPE_NATIONAL:
-                return PhoneNumberHandlerBase.formatNational(phone, regionParam);
-            case TYPE_E164:
-                return PhoneNumberHandlerBase.formatE164(phone, regionParam);
-            case TYPE_RFC3966:
-                return PhoneNumberHandlerBase.formatRFC396(phone, regionParam);
-            default:
-                return phone;
+        case TYPE_INTERNATIONAL:
+            return PhoneNumberHandlerBase.formatInternational(phone, regionParam);
+        case TYPE_NATIONAL:
+            return PhoneNumberHandlerBase.formatNational(phone, regionParam);
+        case TYPE_E164:
+            return PhoneNumberHandlerBase.formatE164(phone, regionParam);
+        case TYPE_RFC3966:
+            return PhoneNumberHandlerBase.formatRFC396(phone, regionParam);
+        default:
+            return phone;
         }
     }
 
@@ -183,30 +184,38 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         parameters.add(selectParameter(locale) //
                 .name(MODE_PARAMETER) //
                 .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
-                        parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                        parameter(locale)
+                                .setName(SELECTED_COLUMN_PARAMETER)
                                 .setType(COLUMN)
                                 .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
                                 .build(this)) //
                 .item(CONSTANT_MODE, CONSTANT_MODE, //
-                        selectParameter(locale).name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
+                        selectParameter(locale)
+                                .name(REGIONS_PARAMETER_CONSTANT_MODE)
+                                .canBeBlank(true) //
                                 .item(US_REGION_CODE, US_REGION_CODE) //
                                 .item(FR_REGION_CODE, FR_REGION_CODE) //
                                 .item(UK_REGION_CODE, UK_REGION_CODE) //
                                 .item(DE_REGION_CODE, DE_REGION_CODE) //
-                                .item(OTHER_REGION_TO_BE_SPECIFIED, OTHER_REGION_TO_BE_SPECIFIED,
-                                        parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
-                                                .setType(STRING)
-                                                .setDefaultValue(EMPTY)
-                                                .build(this)).defaultValue(US_REGION_CODE).build(this)) //
-                .defaultValue(CONSTANT_MODE).build(this));
+                                .item(OTHER_REGION_TO_BE_SPECIFIED, OTHER_REGION_TO_BE_SPECIFIED, parameter(locale)
+                                        .setName(MANUAL_REGION_PARAMETER_STRING)
+                                        .setType(STRING)
+                                        .setDefaultValue(EMPTY)
+                                        .build(this))
+                                .defaultValue(US_REGION_CODE)
+                                .build(this)) //
+                .defaultValue(CONSTANT_MODE)
+                .build(this));
 
-        parameters.add(selectParameter(locale).name(FORMAT_TYPE_PARAMETER) //
+        parameters.add(selectParameter(locale)
+                .name(FORMAT_TYPE_PARAMETER) //
                 .item(TYPE_INTERNATIONAL, TYPE_INTERNATIONAL) //
                 .item(TYPE_NATIONAL, TYPE_NATIONAL) //
                 .item(TYPE_E164) //
                 .item(TYPE_RFC3966) //
-                .defaultValue(TYPE_INTERNATIONAL).build(this));
+                .defaultValue(TYPE_INTERNATIONAL)
+                .build(this));
         return parameters;
     }
 
@@ -214,22 +223,22 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
         final Map<String, String> parameters = context.getParameters();
         final String regionParam;
         switch (parameters.get(OtherColumnParameters.MODE_PARAMETER)) {
-            case CONSTANT_MODE:
-                final String constantModeParameter = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
+        case CONSTANT_MODE:
+            final String constantModeParameter = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
             if (OTHER_REGION_TO_BE_SPECIFIED.equals(constantModeParameter)) {
-                    regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
-                } else {
-                    regionParam = constantModeParameter;
-                }
-                break;
-            case OTHER_COLUMN_MODE:
-                final ColumnMetadata selectedColumn = context.getRowMetadata()
-                        .getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
-                regionParam = row.get(selectedColumn.getId());
-                break;
-            default:
-                regionParam = Locale.getDefault().getCountry();
-                break;
+                regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
+            } else {
+                regionParam = constantModeParameter;
+            }
+            break;
+        case OTHER_COLUMN_MODE:
+            final ColumnMetadata selectedColumn =
+                    context.getRowMetadata().getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
+            regionParam = row.get(selectedColumn.getId());
+            break;
+        default:
+            regionParam = Locale.getDefault().getCountry();
+            break;
         }
         return regionParam;
     }
@@ -251,7 +260,8 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
     @Override
     public boolean acceptField(ColumnMetadata column) {
         final String domain = column.getDomain().toUpperCase();
-        return Stream.of(PHONE, US_PHONE, UK_PHONE, DE_PHONE, FR_PHONE) //
+        return Stream
+                .of(PHONE, US_PHONE, UK_PHONE, DE_PHONE, FR_PHONE) //
                 .map(SemanticCategoryEnum::name) //
                 .anyMatch(domain::equals);
     }

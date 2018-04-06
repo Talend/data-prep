@@ -38,7 +38,8 @@ import static org.talend.ServiceBaseTest.TEST_LOCALE;
 
 @RunWith(SpringRunner.class)
 @Import({ LocalContentServiceConfiguration.class, DataPrepComponentScanConfiguration.class })
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false", "content-service.store=local", "dataprep.locale:" + TEST_LOCALE })
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false",
+        "content-service.store=local", "dataprep.locale:" + TEST_LOCALE })
 public abstract class ServiceBaseTest {
 
     public static final String TEST_LOCALE = "en-US";

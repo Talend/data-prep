@@ -17,9 +17,13 @@ package org.talend.dataprep.preparation.service;
 public class PreparationSearchCriterion {
 
     private String dataSetId;
+
     private String folderId;
+
     private String name;
+
     private boolean nameExactMatch;
+
     private String folderPath;
 
     public static PreparationSearchCriterion filterPreparation() {

@@ -32,7 +32,8 @@ public class NumericHelper {
 
     private static final Locale[] LOCALES = { Locale.FRENCH, Locale.ENGLISH };
 
-    private static final char[] ALLOWED_NUMERIC_CHARACTERS = new char[]{',', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', 'E', 'e', ' ', '\'', '%'};
+    private static final char[] ALLOWED_NUMERIC_CHARACTERS = new char[] { ',', '.', '0', '1', '2', '3', '4', '5', '6',
+            '7', '8', '9', '-', '+', 'E', 'e', ' ', '\'', '%' };
 
     private NumericHelper() {
     }
@@ -60,11 +61,13 @@ public class NumericHelper {
         if (StringUtils.isEmpty(strForValidation)) {
             return false;
         }
-        if (strForValidation.lastIndexOf('(') == 0 && strForValidation.lastIndexOf(')') == strForValidation.length() - 1) {
+        if (strForValidation.lastIndexOf('(') == 0
+                && strForValidation.lastIndexOf(')') == strForValidation.length() - 1) {
             strForValidation = strForValidation.substring(1, strForValidation.length() - 1); // Keep only nnnn
         }
 
-        if (!StringUtils.containsOnly(strForValidation, ALLOWED_NUMERIC_CHARACTERS) && !isValid(strForValidation, new BigDecimalValidator())) {
+        if (!StringUtils.containsOnly(strForValidation, ALLOWED_NUMERIC_CHARACTERS)
+                && !isValid(strForValidation, new BigDecimalValidator())) {
             return false;
         }
 
@@ -74,18 +77,17 @@ public class NumericHelper {
         }
 
         // Try custom decimal formats
-        DecimalFormat[] supportedFormats = { BigDecimalParser.EU_DECIMAL_PATTERN,
-                BigDecimalParser.EU_SCIENTIFIC_DECIMAL_PATTERN,
-                BigDecimalParser.US_DECIMAL_PATTERN,
-                BigDecimalParser.US_SCIENTIFIC_DECIMAL_PATTERN
-        };
+        DecimalFormat[] supportedFormats =
+                { BigDecimalParser.EU_DECIMAL_PATTERN, BigDecimalParser.EU_SCIENTIFIC_DECIMAL_PATTERN,
+                        BigDecimalParser.US_DECIMAL_PATTERN, BigDecimalParser.US_SCIENTIFIC_DECIMAL_PATTERN };
         for (DecimalFormat supportedFormat : supportedFormats) {
             try {
                 if (supportedFormat.parse(strForValidation) != null) {
                     return true;
                 }
             } catch (ParseException e) {
-                LOGGER.debug("Unable to parse '{}' using custom decimal format '{}'.", strForValidation, supportedFormat.toPattern(), e);
+                LOGGER.debug("Unable to parse '{}' using custom decimal format '{}'.", strForValidation,
+                        supportedFormat.toPattern(), e);
             }
         }
 

@@ -27,18 +27,14 @@ public class PolyglotFilterServiceTest extends FilterServiceTest {
     public void shouldUnderstandJsonQuery() throws Exception {
         //given
         row.set("c0001", "test");
-        final String filtersDefinition = "{" +
-                "   \"eq\": {" +
-                "       \"field\": \"c0001\"," +
-                "       \"value\": \"test\"" +
-                "   }" +
-                "}";
+        final String filtersDefinition =
+                "{" + "   \"eq\": {" + "       \"field\": \"c0001\"," + "       \"value\": \"test\"" + "   }" + "}";
 
         //when
         final Predicate<DataSetRow> filter = compositeFilterService.build(filtersDefinition, rowMetadata);
 
         //then
-       assertTrue(filter.test(row));
+        assertTrue(filter.test(row));
     }
 
     @Test

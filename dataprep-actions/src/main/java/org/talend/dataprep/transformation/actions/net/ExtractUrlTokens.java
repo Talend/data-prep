@@ -66,7 +66,8 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
             final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
             for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-                additionalColumns.add(ActionsUtils.additionalColumn()
+                additionalColumns.add(ActionsUtils
+                        .additionalColumn()
                         .withKey(urlTokenExtractor.getTokenName())
                         .withName(context.getColumnName() + urlTokenExtractor.getTokenName())
                         .withType(urlTokenExtractor.getType()));
@@ -92,7 +93,8 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         final Map<String, String> newColumns = ActionsUtils.getTargetColumnIds(context);
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
             final String tokenValue = url == null ? StringUtils.EMPTY : urlTokenExtractor.extractToken(url);
-            row.set(newColumns.get(urlTokenExtractor.getTokenName()), (tokenValue == null ? StringUtils.EMPTY : tokenValue));
+            row.set(newColumns.get(urlTokenExtractor.getTokenName()),
+                    (tokenValue == null ? StringUtils.EMPTY : tokenValue));
         }
     }
 

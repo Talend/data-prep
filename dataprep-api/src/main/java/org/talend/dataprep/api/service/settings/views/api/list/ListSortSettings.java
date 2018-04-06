@@ -29,7 +29,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ListSortSettings {
 
     /**
-     * The list of selectable option. Each option should contains an id (the field key to base the sort on) and a label that will
+     * The list of selectable option. Each option should contains an id (the field key to base the sort on) and a label
+     * that will
      * be displayed
      */
     private List<Map<String, String>> options;

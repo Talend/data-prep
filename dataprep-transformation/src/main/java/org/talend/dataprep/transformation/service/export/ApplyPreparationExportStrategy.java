@@ -95,7 +95,8 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, fullContent, true);
 
         try (final InputStream datasetContent = dataSetGet.execute();
-                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
+                final JsonParser parser =
+                        mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
 
             // release the technical user identity
             securityProxy.releaseIdentity();
@@ -121,12 +122,14 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             );
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration.Builder configurationBuilder = Configuration.builder() //
+            try (final TeeOutputStream tee =
+                    new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                final Configuration.Builder configurationBuilder = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .sourceType(parameters.getFrom()).format(format.getName()) //
+                        .sourceType(parameters.getFrom())
+                        .format(format.getName()) //
                         .actions(actions) //
                         .preparation(getPreparation(preparationId)) //
                         .stepId(version) //

@@ -67,7 +67,7 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     private DeletableResource getResource(ContentCacheKey key) {
         try {
-            final DeletableResource[] resources = resolver.getResources( "/cache/" + key.getKey() + "*");
+            final DeletableResource[] resources = resolver.getResources("/cache/" + key.getKey() + "*");
             if (resources.length <= 0) {
                 return null;
             } else { // resources.length > 0

@@ -47,8 +47,7 @@ public class StatisticsNode extends ColumnFilteredNode {
     private Analyzer<Analyzers.Result> configuredAnalyzer;
 
     public StatisticsNode(Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
-                          Predicate<? super ColumnMetadata> filter,
-                          StatisticsAdapter adapter) {
+            Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter) {
         super(filter);
         this.analyzer = analyzer;
         this.adapter = adapter;
@@ -62,7 +61,8 @@ public class StatisticsNode extends ColumnFilteredNode {
      * @param filter the filter to apply on values of a column
      * @param adapter the adapter used to retrieve statistical information
      */
-    public StatisticsNode(AnalyzerService analyzerService, Predicate<ColumnMetadata> filter, StatisticsAdapter adapter) {
+    public StatisticsNode(AnalyzerService analyzerService, Predicate<ColumnMetadata> filter,
+            StatisticsAdapter adapter) {
         this(getDefaultAnalyzer(analyzerService), filter, adapter);
     }
 
@@ -72,7 +72,8 @@ public class StatisticsNode extends ColumnFilteredNode {
      *
      * @param analyzerService the provided analyzer service
      */
-    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getDefaultAnalyzer(AnalyzerService analyzerService) {
+    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>>
+            getDefaultAnalyzer(AnalyzerService analyzerService) {
         return c -> analyzerService.build(c, //
                 AnalyzerService.Analysis.QUALITY, //
                 AnalyzerService.Analysis.CARDINALITY, //
@@ -91,7 +92,8 @@ public class StatisticsNode extends ColumnFilteredNode {
             this.configuredAnalyzer = analyzer.apply(filteredColumns);
         }
         if (!row.isDeleted()) {
-            configuredAnalyzer.analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
+            configuredAnalyzer
+                    .analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
         }
         super.receive(row, metadata);
     }

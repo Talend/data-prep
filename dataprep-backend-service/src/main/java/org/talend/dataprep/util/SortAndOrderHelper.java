@@ -66,8 +66,7 @@ public final class SortAndOrderHelper {
         /** Creator of the entity. */
         AUTHOR,
         /** @deprecated use {@link #CREATION_DATE} or {@link #LAST_MODIFICATION_DATE}. */
-        @Deprecated
-        DATE,
+        @Deprecated DATE,
         /** Creation date. */
         CREATION_DATE,
         /** Last modification date. {@link Preparation#lastModificationDate} */
@@ -105,11 +104,11 @@ public final class SortAndOrderHelper {
 
     private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
-    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
-            .converterTo(CaseFormat.UPPER_UNDERSCORE);
+    private static final Converter<String, String> camelToSnakeCaseConverter =
+            CaseFormat.LOWER_CAMEL.converterTo(CaseFormat.UPPER_UNDERSCORE);
 
-    private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
-            .converterTo(CaseFormat.LOWER_CAMEL);
+    private static final Converter<String, String> snakeToCamelCaseConverter =
+            CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 
     private SortAndOrderHelper() {
     }
@@ -302,7 +301,9 @@ public final class SortAndOrderHelper {
             // In case of API call error, default to NAME sort
             case NB_RECORDS:
             case NAME:
-                keyExtractor = preparation -> Optional.ofNullable(preparation).map(p -> p.getName().toUpperCase())
+                keyExtractor = preparation -> Optional
+                        .ofNullable(preparation)
+                        .map(p -> p.getName().toUpperCase())
                         .orElse(StringUtils.EMPTY);
                 break;
             case AUTHOR:

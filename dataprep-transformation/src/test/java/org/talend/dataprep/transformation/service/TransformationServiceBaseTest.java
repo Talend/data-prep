@@ -110,7 +110,10 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
                 .body(datasetContent) //
                 .queryParam("Content-Type", type) //
                 .queryParam("name", name) //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .when() //
                 .post("/datasets");
 
@@ -127,7 +130,10 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
 
         final Response get = given() //
                 .contentType(ContentType.JSON) //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .when() //
                 .get("/datasets/{id}/metadata", dataSetId);
 
@@ -141,7 +147,10 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
 
         final Response get = given() //
                 .contentType(ContentType.JSON) //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .when() //
                 .get("/datasets/{id}/content", dataSetId);
 
@@ -161,7 +170,8 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
         final Response post = given() //
                 .contentType(ContentType.JSON)//
                 .accept(ContentType.ANY) //
-                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\", \"rowMetadata\":{\"columns\":[]}}")//
+                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId
+                        + "\", \"rowMetadata\":{\"columns\":[]}}")//
                 .when()//
                 .post("/preparations?folderId=" + folderId);
 
@@ -174,14 +184,16 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
         return preparationId;
     }
 
-    protected String createEmptyPreparationFromDatasetWithMetadata(final String dataSetId, final String name) throws IOException {
+    protected String createEmptyPreparationFromDatasetWithMetadata(final String dataSetId, final String name)
+            throws IOException {
 
         RowMetadata rowMetadata = getMetadata(dataSetId).getRowMetadata();
         String metadata = mapper.writeValueAsString(rowMetadata);
         final Response post = given() //
                 .contentType(ContentType.JSON)//
                 .accept(ContentType.ANY) //
-                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\", \"rowMetadata\":" + metadata + "}")//
+                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\", \"rowMetadata\":" + metadata
+                        + "}")//
                 .when()//
                 .post("/preparations?folderId=" + home.getId());
 
@@ -200,18 +212,26 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
     }
 
     protected void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(ContentType.JSON) //
+        given()
+                .contentType(ContentType.JSON) //
                 .body(action) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/preparations/{id}/actions", preparationId) //
                 .then() //
                 .statusCode(is(200));
     }
 
     protected Preparation getPreparation(final String preparationId) throws IOException {
-        final String json = given().when() //
-                .expect().statusCode(200).log().ifError() //
+        final String json = given()
+                .when() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/preparations/{id}/details", preparationId) //
                 .asString();
 

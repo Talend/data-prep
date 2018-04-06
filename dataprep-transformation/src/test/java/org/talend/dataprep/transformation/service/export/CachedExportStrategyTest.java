@@ -53,7 +53,8 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         preparation.setHeadId("0");
         preparationRepository.add(preparation);
 
-        final TransformationCacheKey cacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
+        final TransformationCacheKey cacheKey =
+                cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
         try (OutputStream text = cache.put(cacheKey, ContentCache.TimeToLive.DEFAULT)) {
             text.write("{}".getBytes());
         } catch (IOException e) {

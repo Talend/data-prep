@@ -140,7 +140,8 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         int i = 0;
         while (iter.hasNext()) {
             XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(iter.next());
-            sheets.add(new StreamingSheet(sheetNames.get(i++), new StreamingSheetReader(sst, stylesTable, parser, rowCacheSize)));
+            sheets.add(new StreamingSheet(sheetNames.get(i++),
+                    new StreamingSheetReader(sst, stylesTable, parser, rowCacheSize)));
         }
     }
 

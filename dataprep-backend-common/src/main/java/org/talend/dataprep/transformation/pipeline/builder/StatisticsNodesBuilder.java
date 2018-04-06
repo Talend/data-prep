@@ -106,14 +106,18 @@ public class StatisticsNodesBuilder {
 
         performActionsProfiling();
         if (actionsProfile.needFullAnalysis()) {
-            return NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+            return NodeBuilder
+                    .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
                     .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .to(getFullStatisticsNode(actionsProfile.getFilterForInvalidAnalysis())).build();
+                    .to(getFullStatisticsNode(actionsProfile.getFilterForInvalidAnalysis()))
+                    .build();
         }
 
         if (actionsProfile.needOnlyInvalidAnalysis()) {
-            return NodeBuilder.from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis())).build();
+            return NodeBuilder
+                    .from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
+                    .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis()))
+                    .build();
         }
         return new BasicNode();
     }
@@ -137,11 +141,14 @@ public class StatisticsNodesBuilder {
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
                     // the type detection is needed by some actions : see bug TDP-4926
                     // this modification needs performance analysis
-                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
-                            .to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
+                    node = NodeBuilder
+                            .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+                            .to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis()))
+                            .build();
                 } else {
                     // 2 cases remain as this point: action needs invalid values or filter attached to action does
-                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+                    node = NodeBuilder
+                            .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
                             .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
                             .build();
                 }
@@ -208,7 +215,8 @@ public class StatisticsNodesBuilder {
     }
 
     private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
-        return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis)
+        return allowSchemaAnalysis
+                ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis)
                 : new BasicNode();
     }
 

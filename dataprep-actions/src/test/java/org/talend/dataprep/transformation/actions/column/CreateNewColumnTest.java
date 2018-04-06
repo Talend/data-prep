@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.column;
 
@@ -42,7 +42,6 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-
 public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColumn> {
 
     private Map<String, String> parameters;
@@ -53,11 +52,12 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(CreateNewColumnTest.class.getResourceAsStream("createNewColumnAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(CreateNewColumnTest.class.getResourceAsStream("createNewColumnAction.json"));
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -202,7 +202,6 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
         assertEquals(row.get("0001"), "second");
         assertEquals(row.get("0002"), "Done !");
     }
-
 
     @Test
     public void should_do_nothing_with_wrong_parameters_3() {

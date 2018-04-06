@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.preparation;
 
@@ -32,8 +32,10 @@ public class PreviewDiff extends PreviewAbstract {
 
     /** The diff parameters. */
     private final PreviewDiffParameters input;
+
     /** Preparation actions up to the last active step. */
     private final List<Action> lastActiveStepActions;
+
     /** Preparation actions up to the preview step. */
     private final List<Action> previewStepActions;
 
@@ -45,7 +47,8 @@ public class PreviewDiff extends PreviewAbstract {
      * @param previewStepActions preparation actions up to the preview step.
      */
     // private constructor used to ensure the IoC
-    private PreviewDiff(final PreviewDiffParameters input, Preparation preparation, List<Action> lastActiveStepActions, List<Action> previewStepActions) {
+    private PreviewDiff(final PreviewDiffParameters input, Preparation preparation, List<Action> lastActiveStepActions,
+            List<Action> previewStepActions) {
         super(preparation, new ArrayList<>(0));
         this.input = input;
         this.lastActiveStepActions = lastActiveStepActions;
@@ -68,17 +71,19 @@ public class PreviewDiff extends PreviewAbstract {
         // extract actions by steps in chronological order, until defined last active step (from input)
         final Map<String, Action> originalActions = new LinkedHashMap<>();
         final Iterator<Action> actions = lastActiveStepActions.iterator();
-        steps.stream().filter(step -> actions.hasNext()).forEach(step -> originalActions.put(step.id(), actions.next()));
+        steps.stream().filter(step -> actions.hasNext()).forEach(
+                step -> originalActions.put(step.id(), actions.next()));
 
         // extract actions by steps in chronological order, until preview step (from input)
         final Map<String, Action> previewActions = new LinkedHashMap<>();
         final Iterator<Action> previewActionsIterator = previewStepActions.iterator();
-        steps.stream().filter(step -> previewActionsIterator.hasNext()).forEach(step -> previewActions.put(step.id(), previewActionsIterator.next()));
+        steps.stream().filter(step -> previewActionsIterator.hasNext()).forEach(
+                step -> previewActions.put(step.id(), previewActionsIterator.next()));
 
         // execute transformation preview with content and the 2 transformations
-        setContext(originalActions.values(), previewActions.values(), dataSetId, input.getPreparationId(), input.getTdpIds(), input.getSourceType());
+        setContext(originalActions.values(), previewActions.values(), dataSetId, input.getPreparationId(),
+                input.getTdpIds(), input.getSourceType());
         return super.run();
     }
-
 
 }

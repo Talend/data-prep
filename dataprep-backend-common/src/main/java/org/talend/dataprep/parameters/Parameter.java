@@ -69,8 +69,8 @@ public class Parameter implements Serializable {
     public Parameter() {
     }
 
-    protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit, final boolean canBeBlank, String placeHolder, String label, String description,
-                        Boolean readonly) {
+    protected Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
+            final boolean canBeBlank, String placeHolder, String label, String description, Boolean readonly) {
         this.name = name;
         this.placeHolder = placeHolder;
         this.type = type == null ? null : type.asString();
@@ -86,7 +86,8 @@ public class Parameter implements Serializable {
         return new ParameterBuilder(locale);
     }
 
-    public static Parameter generateParameter(Locale locale, String name, ParameterType type, String defaultValue, Boolean implicit, Boolean canBeBlank, Action action) {
+    public static Parameter generateParameter(Locale locale, String name, ParameterType type, String defaultValue,
+            Boolean implicit, Boolean canBeBlank, Action action) {
         return Parameter
                 .parameter(locale) //
                 .setName(name) //
@@ -183,18 +184,23 @@ public class Parameter implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Parameter parameter = (Parameter) o;
-        return implicit == parameter.implicit && canBeBlank == parameter.canBeBlank && Objects.equals(name, parameter.name)
-                && Objects.equals(type, parameter.type) && Objects.equals(defaultValue, parameter.defaultValue) && Objects.equals(
-                placeHolder, parameter.placeHolder) && Objects.equals(configuration, parameter.configuration) && Objects.equals(
-                label, parameter.label) && Objects.equals(description, parameter.description) && Objects.equals(readonly, parameter.readonly);
+        return implicit == parameter.implicit && canBeBlank == parameter.canBeBlank
+                && Objects.equals(name, parameter.name) && Objects.equals(type, parameter.type)
+                && Objects.equals(defaultValue, parameter.defaultValue)
+                && Objects.equals(placeHolder, parameter.placeHolder)
+                && Objects.equals(configuration, parameter.configuration) && Objects.equals(label, parameter.label)
+                && Objects.equals(description, parameter.description) && Objects.equals(readonly, parameter.readonly);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, defaultValue, implicit, canBeBlank, placeHolder, configuration, label, description, readonly);
+        return Objects.hash(name, type, defaultValue, implicit, canBeBlank, placeHolder, configuration, label,
+                description, readonly);
     }
 
     public static class ParameterBuilder {
@@ -297,7 +303,8 @@ public class Parameter implements Serializable {
                     LOGGER.trace("Error while auto-finding description parameter for [{}].", name);
                 }
             }
-            return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description, readonly);
+            return new Parameter(name, type, defaultValue, implicit, canBeBlank, placeHolder, label, description,
+                    readonly);
         }
     }
 }

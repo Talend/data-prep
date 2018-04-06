@@ -30,7 +30,8 @@ public class ReorderStepsUtils {
      */
     boolean isStepOrderValid(List<AppendStep> appendSteps) {
         // Add all the columns created by steps as not available at the beginning
-        final Set<String> notYetAvailableColumnsIds = appendSteps.stream()
+        final Set<String> notYetAvailableColumnsIds = appendSteps
+                .stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toSet());
 
@@ -64,7 +65,8 @@ public class ReorderStepsUtils {
      */
     void renameCreatedColumns(List<AppendStep> appendSteps) {
 
-        final List<String> createdColumns = appendSteps.stream()
+        final List<String> createdColumns = appendSteps
+                .stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toList());
 

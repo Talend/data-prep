@@ -76,22 +76,17 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        final Parameter fromIndexParameters = parameter(locale).setName(FROM_INDEX_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("0")
-                .build(this);
-        final Parameter fromNBeforeEndParameters = parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("5")
-                .build(this);
-        final Parameter toIndexParameters = parameter(locale).setName(TO_INDEX_PARAMETER)
+        final Parameter fromIndexParameters =
+                parameter(locale).setName(FROM_INDEX_PARAMETER).setType(INTEGER).setDefaultValue("0").build(this);
+        final Parameter fromNBeforeEndParameters = parameter(locale)
+                .setName(FROM_N_BEFORE_END_PARAMETER)
                 .setType(INTEGER)
                 .setDefaultValue("5")
                 .build(this);
-        final Parameter toNBeforeEndParameters = parameter(locale).setName(TO_N_BEFORE_END_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("1")
-                .build(this);
+        final Parameter toIndexParameters =
+                parameter(locale).setName(TO_INDEX_PARAMETER).setType(INTEGER).setDefaultValue("5").build(this);
+        final Parameter toNBeforeEndParameters =
+                parameter(locale).setName(TO_N_BEFORE_END_PARAMETER).setType(INTEGER).setDefaultValue("1").build(this);
 
         // "to" parameter with all possible values
         final Parameter toCompleteParameters = selectParameter(locale) //
@@ -144,7 +139,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(STRING));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(STRING));
     }
 
     @Override

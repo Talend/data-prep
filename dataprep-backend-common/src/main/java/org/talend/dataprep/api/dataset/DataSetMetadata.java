@@ -311,7 +311,6 @@ public class DataSetMetadata implements Serializable {
         this.schemaParserResult = schemaParserResult;
     }
 
-
     /**
      * @return The data set content's encoding
      */
@@ -369,7 +368,8 @@ public class DataSetMetadata implements Serializable {
      * @return true if this data set metadata is similar with the specified one and false otherwise
      */
     public boolean compatible(DataSetMetadata other) {
-        return other != null && (rowMetadata != null ? rowMetadata.compatible(other.getRowMetadata()) : other.getRowMetadata() == null);
+        return other != null && (rowMetadata != null ? rowMetadata.compatible(other.getRowMetadata())
+                : other.getRowMetadata() == null);
     }
 
     @Override
@@ -420,7 +420,7 @@ public class DataSetMetadata implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rowMetadata, lifecycle, dataSetSize, content, governance, location, name, author, creationDate,
-                lastModificationDate, sheetName, draft, schemaParserResult, appVersion);
+        return Objects.hash(id, rowMetadata, lifecycle, dataSetSize, content, governance, location, name, author,
+                creationDate, lastModificationDate, sheetName, draft, schemaParserResult, appVersion);
     }
 }

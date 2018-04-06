@@ -41,7 +41,7 @@ public class DataPrepEvents {
      */
     // do NOT change the name as it is important to replace the default application context event multi caster
     @Bean(name = "applicationEventMulticaster")
-    public ApplicationEventMulticaster getDataPrepEventsCaster( ) {
+    public ApplicationEventMulticaster getDataPrepEventsCaster() {
         return new DataPrepEventsCaster(executor, beanFactory);
     }
 

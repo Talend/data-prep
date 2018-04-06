@@ -51,7 +51,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
     @Override
     public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
-                                        ApplicationContext applicationContext) {
+            ApplicationContext applicationContext) {
         conversionService.register(fromBean(Preparation.class) //
                 .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class) //
                 .using(PreparationMessage.class, (s, t) -> toPreparationMessage(s, t, applicationContext)) //
@@ -62,7 +62,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
     }
 
     private PreparationSummary toStudioPreparation(Preparation source, PreparationSummary target,
-                                                   ApplicationContext applicationContext) {
+            ApplicationContext applicationContext) {
         if (target.getOwner() == null) {
             final Security security = applicationContext.getBean(Security.class);
             Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
@@ -99,12 +99,15 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
         return target;
     }
 
-    private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target, ApplicationContext applicationContext) {
+    private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target,
+            ApplicationContext applicationContext) {
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
         final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
         // Steps diff metadata
-        final List<StepDiff> diffs = source.getSteps().stream() //
+        final List<StepDiff> diffs = source
+                .getSteps()
+                .stream() //
                 .filter(step -> !Step.ROOT_STEP.id().equals(step.id())) //
                 .map(Step::getDiff) //
                 .collect(toList());
@@ -116,7 +119,8 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             final String headId = source.getHeadId();
             final Step head = preparationRepository.get(headId, Step.class);
             if (head != null) {
-                final PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+                final PreparationActions prepActions =
+                        preparationRepository.get(head.getContent(), PreparationActions.class);
                 if (prepActions != null) {
                     final List<Action> actions = prepActions.getActions();
                     target.setActions(prepActions.getActions());
@@ -137,15 +141,20 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
                     // Actions metadata
                     if (actionRegistry == null) {
-                        LOGGER.debug("No action metadata available, unable to serialize action metadata for preparation {}.",
+                        LOGGER.debug(
+                                "No action metadata available, unable to serialize action metadata for preparation {}.",
                                 source.id());
                     } else {
-                        List<ActionForm> actionDefinitions = actions.stream() //
-                                .map(a -> actionRegistry.get(a.getName()) //
-                                .adapt(ScopeCategory.from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
-                                .map(a -> a.getActionForm(getLocale())) //
-                                .map(PreparationConversions::disallowColumnCreationChange) //
-                                .collect(Collectors.toList());
+                        List<ActionForm> actionDefinitions =
+                                actions
+                                        .stream() //
+                                        .map(a -> actionRegistry
+                                                .get(a.getName()) //
+                                                .adapt(ScopeCategory.from(
+                                                        a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
+                                        .map(a -> a.getActionForm(getLocale())) //
+                                        .map(PreparationConversions::disallowColumnCreationChange) //
+                                        .collect(Collectors.toList());
                         target.setMetadata(actionDefinitions);
                     }
                 }
@@ -171,7 +180,8 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
      * </p>
      */
     private static ActionForm disallowColumnCreationChange(ActionForm form) {
-        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(p -> p.setReadonly(true));
+        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(
+                p -> p.setReadonly(true));
         return form;
     }
 }

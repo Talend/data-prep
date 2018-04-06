@@ -199,7 +199,6 @@ public enum DataSetErrorCodes implements ErrorCode {
      */
     MAX_STORAGE_MAY_BE_EXCEEDED(PAYLOAD_TOO_LARGE.value(), "limit");
 
-
     /**
      * The http status to use.
      */

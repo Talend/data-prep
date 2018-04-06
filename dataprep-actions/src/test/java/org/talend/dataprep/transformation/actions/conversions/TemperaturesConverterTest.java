@@ -116,7 +116,8 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest<Temperat
         assertEquals("0", row1.get("0001"));
         assertEquals("32", row1.get("0002"));
 
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(2).name("0001_in_Fahrenheit").type(Type.DOUBLE).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(2).name("0001_in_Fahrenheit").type(Type.DOUBLE).build();
         ColumnMetadata actual = row1.getRowMetadata().getById("0002");
         assertEquals(expected, actual);
     }
@@ -144,8 +145,8 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest<Temperat
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("create_new_column", "to_temperature", "from_temperature", "precision", "column_id", "row_id",
-                "scope", "filter");
+        List<String> parameterNames = Arrays.asList("create_new_column", "to_temperature", "from_temperature",
+                "precision", "column_id", "row_id", "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
@@ -153,7 +154,8 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest<Temperat
         // then
         assertNotNull(parameters);
         assertEquals(8, parameters.size()); // 4 implicit parameters + 3 specific
-        final List<String> expectedParametersNotFound = parameters.stream() //
+        final List<String> expectedParametersNotFound = parameters
+                .stream() //
                 .map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)) //
                 .collect(Collectors.toList());
@@ -170,7 +172,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest<Temperat
     }
 
     private void testConversion(String from, TemperaturesConverter.TemperatureUnit fromUnit, String expected,
-                               TemperaturesConverter.TemperatureUnit toUnit) {
+            TemperaturesConverter.TemperatureUnit toUnit) {
         // given
         long rowId = 120;
 

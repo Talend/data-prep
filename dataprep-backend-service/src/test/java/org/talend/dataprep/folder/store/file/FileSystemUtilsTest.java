@@ -37,7 +37,8 @@ public class FileSystemUtilsTest {
     public void deleteFile() throws Exception {
         assertEquals(4, Files.walk(testFolder).count());
 
-        Files.walk(testFolder) //
+        Files
+                .walk(testFolder) //
                 .filter(path -> "foo".equals(path.getFileName().toString())) //
                 .forEach(FileSystemUtils.deleteFile());
 

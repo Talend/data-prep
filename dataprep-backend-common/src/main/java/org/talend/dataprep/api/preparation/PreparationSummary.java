@@ -15,6 +15,7 @@ package org.talend.dataprep.api.preparation;
 import org.talend.dataprep.api.share.Owner;
 
 public class PreparationSummary {
+
     private String id;
 
     private String name;

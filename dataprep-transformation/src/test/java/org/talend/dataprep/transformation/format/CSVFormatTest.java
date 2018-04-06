@@ -46,7 +46,8 @@ public class CSVFormatTest extends BaseFormatTest {
     @Test
     public void csv() {
         // when
-        final ExportFormatMessage exportFormatMessage = beanConversionService.convert(format, ExportFormatMessage.class);
+        final ExportFormatMessage exportFormatMessage =
+                beanConversionService.convert(format, ExportFormatMessage.class);
 
         // then
         assertEquals("text/csv", exportFormatMessage.getMimeType());

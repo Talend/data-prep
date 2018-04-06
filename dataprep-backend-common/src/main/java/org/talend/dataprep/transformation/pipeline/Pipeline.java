@@ -306,18 +306,24 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             // Apply actions
             final List<RunnableAction> runnableActions;
             if (preparation != null) {
-                LOG.debug("Running using preparation #{} ({} step(s))", preparation.getId(), preparation.getSteps().size());
-                runnableActions = actions.stream() //
+                LOG.debug("Running using preparation #{} ({} step(s))", preparation.getId(),
+                        preparation.getSteps().size());
+                runnableActions = actions
+                        .stream() //
                         .map(a -> {
                             // gather all info for creating runnable actions
                             final Map<String, String> parameters = a.getParameters();
-                            final ScopeCategory scope = ScopeCategory.from(parameters.get(ImplicitParameters.SCOPE.getKey()));
+                            final ScopeCategory scope =
+                                    ScopeCategory.from(parameters.get(ImplicitParameters.SCOPE.getKey()));
                             final ActionDefinition actionDefinition = actionRegistry.get(a.getName());
-                            final CompileDataSetRowAction compile = new CompileDataSetRowAction(parameters, actionDefinition, scope);
-                            final ApplyDataSetRowAction apply = new ApplyDataSetRowAction(actionDefinition, parameters, scope);
+                            final CompileDataSetRowAction compile =
+                                    new CompileDataSetRowAction(parameters, actionDefinition, scope);
+                            final ApplyDataSetRowAction apply =
+                                    new ApplyDataSetRowAction(actionDefinition, parameters, scope);
 
                             // Create runnable action
-                            return RunnableAction.Builder.builder() //
+                            return RunnableAction.Builder
+                                    .builder() //
                                     .withCompile(compile) //
                                     .withRow(apply) //
                                     .withName(a.getName()) //
@@ -331,7 +337,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             }
 
             // Build nodes for actions
-            final Node actionsNode = ActionNodesBuilder.builder() //
+            final Node actionsNode = ActionNodesBuilder
+                    .builder() //
                     .initialMetadata(rowMetadata) //
                     .actions(runnableActions) //
                     // statistics requests
@@ -347,7 +354,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), previousStepRowMetadataSupplier);
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
+                        previousStepRowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {

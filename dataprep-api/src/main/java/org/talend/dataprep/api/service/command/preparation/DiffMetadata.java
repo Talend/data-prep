@@ -58,57 +58,55 @@ public class DiffMetadata extends ChainedCommand<InputStream, InputStream> {
      * @param actionsToAdd  The actions to add.
      * @param input         the command to execute to get the actions of the preparation.
      */
-    public DiffMetadata(String dataSetId, String preparationId, List<Action> actionsToAdd, PreparationGetActions input) {
+    public DiffMetadata(String dataSetId, String preparationId, List<Action> actionsToAdd,
+            PreparationGetActions input) {
         super(GenericCommand.PREPARATION_GROUP, input);
         execute(() -> onExecute(dataSetId, preparationId, actionsToAdd));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-
-    private HttpRequestBase onExecute(final String dataSetId, final String preparationId, final List<Action> actionsToAdd) {
+    private HttpRequestBase onExecute(final String dataSetId, final String preparationId,
+            final List<Action> actionsToAdd) {
         // original actions (currently applied on the preparation)
         final List<Action> originalActions;
         try {
-            originalActions = objectMapper
-                    .readerFor(new TypeReference<List<Action>>() {
-                    })
-                    .readValue(getInput());
+            originalActions = objectMapper.readerFor(new TypeReference<List<Action>>() {
+            }).readValue(getInput());
         } catch (final IOException e) {
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
         }
 
         // prepare the preview parameters out of the preparation actions
-        final List<PreviewParameters> previewParameters = IntStream.range(0, actionsToAdd.size())
-                .mapToObj((index) -> {
-                    try {
-                        // base actions = original actions + actions to add from 0 to index
-                        final List<Action> previousActionsToAdd = actionsToAdd.subList(0, index);
-                        final List<Action> baseActions = new ArrayList<>(originalActions);
-                        baseActions.addAll(previousActionsToAdd);
+        final List<PreviewParameters> previewParameters = IntStream.range(0, actionsToAdd.size()).mapToObj((index) -> {
+            try {
+                // base actions = original actions + actions to add from 0 to index
+                final List<Action> previousActionsToAdd = actionsToAdd.subList(0, index);
+                final List<Action> baseActions = new ArrayList<>(originalActions);
+                baseActions.addAll(previousActionsToAdd);
 
-                        // diff actions actions = base actions + the action to add for diff
-                        final Action singleActionToAdd = actionsToAdd.get(index);
-                        final List<Action> diffActions = new ArrayList<>(baseActions);
-                        diffActions.add(singleActionToAdd);
+                // diff actions actions = base actions + the action to add for diff
+                final Action singleActionToAdd = actionsToAdd.get(index);
+                final List<Action> diffActions = new ArrayList<>(baseActions);
+                diffActions.add(singleActionToAdd);
 
-                        return new PreviewParameters( //
-                                serializeActions(baseActions), //
-                                serializeActions(diffActions), //
-                                dataSetId, //
-                                null, //
-                                null, //
-                                HEAD);
-                    } catch (IOException e) {
-                        throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
-                    }
-                })
-                .collect(toList());
+                return new PreviewParameters( //
+                        serializeActions(baseActions), //
+                        serializeActions(diffActions), //
+                        dataSetId, //
+                        null, //
+                        null, //
+                        HEAD);
+            } catch (IOException e) {
+                throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
+            }
+        }).collect(toList());
 
         // create the http action to perform
         try {
             final String uri = transformationServiceUrl + "/transform/diff/metadata";
             final HttpPost transformationCall = new HttpPost(uri);
-            transformationCall.setEntity(new StringEntity(objectMapper.writer().writeValueAsString(previewParameters), APPLICATION_JSON));
+            transformationCall.setEntity(
+                    new StringEntity(objectMapper.writer().writeValueAsString(previewParameters), APPLICATION_JSON));
             return transformationCall;
         } catch (JsonProcessingException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

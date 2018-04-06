@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Parameter for dataset/preparation format
  */
-@OneNotBlank({"preparationId", "datasetId"})
+@OneNotBlank({ "preparationId", "datasetId" })
 public class ExportParameters implements AsyncGroupKey {
 
     /**
@@ -215,7 +215,7 @@ public class ExportParameters implements AsyncGroupKey {
                 '}';
     }
 
-    public String generateUniqueId(){
-        return DigestUtils.sha1Hex(preparationId +"_" + stepId + "_" + datasetId + "_" + from +"_" + filter);
+    public String generateUniqueId() {
+        return DigestUtils.sha1Hex(preparationId + "_" + stepId + "_" + datasetId + "_" + from + "_" + filter);
     }
 }

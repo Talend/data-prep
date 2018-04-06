@@ -115,7 +115,8 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -143,7 +144,8 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

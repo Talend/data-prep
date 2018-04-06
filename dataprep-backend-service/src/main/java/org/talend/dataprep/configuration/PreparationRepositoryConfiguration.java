@@ -81,7 +81,8 @@ public class PreparationRepositoryConfiguration {
                 ApplicationContext applicationContext) {
             // Preparation -> PersistentPreparation
             conversionService.register(fromBean(Preparation.class) //
-                    .toBeans(PersistentPreparation.class).using(PersistentPreparation.class, (preparation, persistentPreparation) -> {
+                    .toBeans(PersistentPreparation.class)
+                    .using(PersistentPreparation.class, (preparation, persistentPreparation) -> {
                         final List<Step> steps = preparation.getSteps();
                         final List<String> stepIds = steps.stream().map(Step::getId).collect(Collectors.toList());
 
@@ -95,20 +96,23 @@ public class PreparationRepositoryConfiguration {
                                 }
                             }
                             persistentPreparation.setSteps(stepIdSubList);
-                        } else if (!stepIds.contains(preparation.getHeadId()) && StringUtils.equals(preparation.getHeadId(), stepIds.get(stepIds.size() - 1))) {
+                        } else if (!stepIds.contains(preparation.getHeadId())
+                                && StringUtils.equals(preparation.getHeadId(), stepIds.get(stepIds.size() - 1))) {
                             // Complete override of steps, set them as is (as long as it exists).
                             persistentPreparation.setSteps(stepIds);
                         } else {
-                                /*
-                                 * More complex: new head is *not* part of previous steps, delegate to PreparationUtils
-                                 * Warning: doing so has some performance impacts (list may perform many getById calls
-                                 * depending on preparation size)
-                                 */
-                            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
-                            final PreparationRepository repository = applicationContext.getBean(PreparationRepository.class);
+                            /*
+                             * More complex: new head is *not* part of previous steps, delegate to PreparationUtils
+                             * Warning: doing so has some performance impacts (list may perform many getById calls
+                             * depending on preparation size)
+                             */
+                            final PreparationUtils preparationUtils =
+                                    applicationContext.getBean(PreparationUtils.class);
+                            final PreparationRepository repository =
+                                    applicationContext.getBean(PreparationRepository.class);
                             if (preparation.getHeadId() != null) {
-                                final List<String> storageSteps = preparationUtils.listStepsIds(preparation.getHeadId(),
-                                        repository);
+                                final List<String> storageSteps =
+                                        preparationUtils.listStepsIds(preparation.getHeadId(), repository);
                                 persistentPreparation.setSteps(storageSteps);
                             }
 
@@ -128,17 +132,22 @@ public class PreparationRepositoryConfiguration {
                                 preparation.setSteps(Collections.singletonList(Step.ROOT_STEP));
                             } else {
                                 final Stream<PersistentStep> stream = repository
-                                        .list(PersistentStep.class, in("id", preparationSteps.toArray(new String[]{})))
-                                        .sorted(Comparator.comparingInt(o -> preparationSteps.indexOf(o.getId())));
-                                final List<Step> steps = stream.map(s -> conversionService.convert(s, Step.class)) //
+                                        .list(PersistentStep.class, in("id", preparationSteps.toArray(new String[] {})))
+                                        .sorted(Comparator.comparingInt(o -> preparationSteps.indexOf(o
+                                                .getId())));
+                                final List<Step> steps = stream
+                                        .map(s -> conversionService.convert(s, Step.class)) //
                                         .collect(Collectors.toList());
                                 preparation.setSteps(steps);
                             }
                         } else {
-                            final PreparationUtils preparationUtils = applicationContext.getBean(PreparationUtils.class);
-                            final List<String> stepIds = preparationUtils.listStepsIds(preparation.getHeadId(), repository);
+                            final PreparationUtils preparationUtils =
+                                    applicationContext.getBean(PreparationUtils.class);
+                            final List<String> stepIds =
+                                    preparationUtils.listStepsIds(preparation.getHeadId(), repository);
 
-                            final List<Step> steps = stepIds.stream() //
+                            final List<Step> steps = stepIds
+                                    .stream() //
                                     .map(stepId -> repository.get(stepId, Step.class)) //
                                     .collect(Collectors.toList());
                             preparation.setSteps(steps);

@@ -47,7 +47,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
+ * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with
+ * {@link ExportParameters.SourceType HEAD} sample.
  */
 @Component
 public class PreparationExportStrategy extends BaseSampleExportStrategy {
@@ -124,9 +125,10 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 LOGGER.debug("Cache key: " + key.getKey());
                 LOGGER.debug("Cache key details: " + key.toString());
 
-                try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                        contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                    final Configuration configuration = Configuration.builder() //
+                try (final TeeOutputStream tee =
+                        new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                    final Configuration configuration = Configuration
+                            .builder() //
                             .args(parameters.getArguments()) //
                             .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                             .sourceType(parameters.getFrom())

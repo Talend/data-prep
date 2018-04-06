@@ -86,8 +86,10 @@ public class HttpClient {
         }
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(RegistryBuilder
-                .<ConnectionSocketFactory> create().register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", sslSocketFactory).build());
+                .<ConnectionSocketFactory> create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", sslSocketFactory)
+                .build());
 
         connectionManager.setMaxTotal(maxPoolSize);
         connectionManager.setDefaultMaxPerRoute(maxPerRoute);
@@ -100,7 +102,8 @@ public class HttpClient {
      */
     @Bean(destroyMethod = "close")
     public CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager) {
-        return HttpClientBuilder.create() //
+        return HttpClientBuilder
+                .create() //
                 .setConnectionManager(connectionManager) //
                 .setKeepAliveStrategy(getKeepAliveStrategy()) //
                 .setDefaultRequestConfig(getRequestConfig()) //
@@ -113,7 +116,8 @@ public class HttpClient {
      * @return the http request configuration to use.
      */
     private RequestConfig getRequestConfig() {
-        return RequestConfig.custom() //
+        return RequestConfig
+                .custom() //
                 .setContentCompressionEnabled(true)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
                 .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
@@ -135,7 +139,7 @@ public class HttpClient {
                 if (value != null && "timeout".equalsIgnoreCase(param)) {
                     try {
                         return Long.parseLong(value) * 1000;
-                    } catch(NumberFormatException ignore) {
+                    } catch (NumberFormatException ignore) {
                         // let's move on the next header value
                         break;
                     }
@@ -170,7 +174,8 @@ public class HttpClient {
          * @see DefaultRedirectStrategy#isRedirected(HttpRequest, HttpResponse, HttpContext)
          */
         @Override
-        public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
+        public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context)
+                throws ProtocolException {
             return false;
         }
 

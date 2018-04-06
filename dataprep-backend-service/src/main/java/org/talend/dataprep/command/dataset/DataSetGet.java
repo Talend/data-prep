@@ -17,13 +17,16 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -82,12 +85,33 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
     private void configureLimitedDataset(final String dataSetId) {
         execute(() -> {
-            final String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=" + includeMetadata + "&includeInternalContent=" + includeInternalContent + "&filter=" + filter;
-            return new HttpGet(url);
+            try {
+                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/content");
+                uriBuilder.addParameter("metadata", String.valueOf(includeMetadata));
+                uriBuilder.addParameter("includeInternalContent", String.valueOf(includeInternalContent));
+                if (StringUtils.isNotEmpty(filter)) {
+                    uriBuilder.addParameter("filter", filter);
+                }
+
+                return new HttpGet(uriBuilder.build());
+            } catch (URISyntaxException e) {
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
+            }
         });
     }
 
     private void configureSampleDataset(final String dataSetId) {
-        execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/sample?filter=" + filter));
+        execute(() -> {
+            try {
+                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/sample");
+                if (StringUtils.isNotEmpty(filter)) {
+                    uriBuilder.addParameter("filter", filter);
+                }
+
+                return new HttpGet(uriBuilder.build());
+            } catch (URISyntaxException e) {
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
+            }
+        });
     }
 }

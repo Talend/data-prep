@@ -198,21 +198,15 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			});
 
 			const InvalidFilterWithWildcard = find(filters, {
-				WILDCARD,
+				colId: WILDCARD,
 				type: QUALITY,
 				args: { empty: false, invalid: true },
 			});
 
-			const EmptyFilterWithWildcard = find(filters, {
-				WILDCARD,
-				type: QUALITY,
-				args: { empty: true, invalid: false },
-			});
-
 			if (colId === WILDCARD && type === QUALITY) {
 				// if there is already a quality filter => merge it with the new quality filter
-				if (InvalidFilterWithWildcard || EmptyFilterWithWildcard) {
-					const existingQualityFilter = filters.find(filter => filter.colId === WILDCARD && filter.type === QUALITY)[0];
+				if (InvalidFilterWithWildcard || existingColEmptyFilter) {
+					const existingQualityFilter = filters.find(filter => filter.colId === WILDCARD && filter.type === QUALITY);
 					existingQualityFilter.args.empty = existingQualityFilter.args.empty || args.empty;
 					existingQualityFilter.args.invalid = existingQualityFilter.args.empty || args.invalid;
 				}
@@ -222,43 +216,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 						createFilter(type, colId, colName, editable, args, null)
 					);
 				}
-			}
-			// if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them together
-			else if (colId !== WILDCARD && type === QUALITY && args.empty && !args.invalid) {
-				const sameColExactFilter = find(filters, {
-					colId,
-					type: EXACT,
-				});
-				const sameColMatchFilter = find(filters, {
-					colId,
-					type: MATCHES,
-				});
-
-				if (sameColExactFilter) {
-					sameColExactFilter.args.phrase = sameColExactFilter.args.phrase.concat(this.EMPTY_RECORDS_VALUES);
-				}
-				else if (sameColMatchFilter) {
-					sameColMatchFilter.args.patterns = sameColMatchFilter.args.patterns.concat(this.EMPTY_RECORDS_VALUES);
-				}
-				else {
-					filters.push(
-						createFilter(type, colId, colName, editable, args, null)
-					);
-				}
-			}
-			// if the new filter are EXACT or MATCHES filter and there is already an empty filter => Merge them together
-			else if (colId !== WILDCARD && existingColEmptyFilter) { // if EMPTY_RECORDS filter is already added,  merge it into new EXACT or MATCHES filters
-				filters = filters.filter(filter => filter.colId !== colId || filter.type !== EMPTY_RECORDS);
-				const filterArgs = {};
-				switch (type) {
-				case EXACT:
-					filterArgs.phrase = this.EMPTY_RECORDS_VALUES.concat(args.phrase);
-					break;
-				case MATCHES:
-					filterArgs.patterns = this.EMPTY_RECORDS_VALUES.concat(args.patterns);
-					break;
-				}
-				filters.push(createFilter(type, colId, colName, editable, filterArgs, null));
 			}
 			else {
 				const sameColAndTypeFilter = find(filters, {
@@ -364,7 +321,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		const onValidFilter = (ctx) => {
 			type = QUALITY;
 			field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
-			args = { empty: false, invalid: false };
+			args = { valid: true };
 			return createFilterFromTQL(type, field, editable, args, columns);
 		};
 		const onInvalidFilter = (ctx) => {
@@ -383,7 +340,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				onBetweenFilter,
 				onEmptyFilter,
 				onValidFilter,
-				onInvalidFilter
+				onInvalidFilter,
 			);
 		}
 

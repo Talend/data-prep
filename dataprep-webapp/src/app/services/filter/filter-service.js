@@ -223,9 +223,9 @@ export default class FilterService {
 			}
 
 			createFilter = () => {
-				const qualityFilters = this._getQualityFilters(colId);
-				if (qualityFilters) {
-					this._removeQualityFilters(qualityFilters);
+				const qualityFilter = this._getQualityFilters(colId);
+				if (qualityFilter) {
+					this.removeFilter(qualityFilter);
 				}
 				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
 			};
@@ -304,7 +304,9 @@ export default class FilterService {
 		}
 		}
 
-		if (!sameColAndTypeFilter && !hasEmptyRecordsExactFilter && !hasEmptyRecordsMatchFilter) {
+		if ((!sameColAndTypeFilter &&
+			!hasEmptyRecordsExactFilter &&
+			!hasEmptyRecordsMatchFilter) || type === QUALITY) {
 			const filterInfo = createFilter();
 			this.pushFilter(filterInfo);
 		}
@@ -609,15 +611,6 @@ export default class FilterService {
 	 */
 	_getQualityFilters(colId) {
 		return find(this.state.playground.filter.gridFilters, { colId, type: QUALITY });
-	}
-
-	/**
-	 * Remove the filters
-	 * @param qualityFilters
-	 * @private
-	 */
-	_removeQualityFilters(qualityFilters) {
-		qualityFilters.forEach(filter => this.removeFilter(filter));
 	}
 
 	/**

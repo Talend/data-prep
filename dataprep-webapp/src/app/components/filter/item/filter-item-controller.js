@@ -10,6 +10,12 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import {
+	CONTAINS,
+	EXACT,
+	INSIDE_RANGE,
+	WILDCARD,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -26,16 +32,17 @@ export default class FilterItemCtrl {
 
 	$onInit() {
 		this.filter = this.value;
+		this.WILDCARD = WILDCARD;
 		if (this.filter) {
 			this.filterValues = this.filter.value;
 			switch (this.filter.type) {
-			case 'contains':
+			case CONTAINS:
 				this.sign = '≅';
 				break;
-			case 'exact':
+			case EXACT:
 				this.sign = '=';
 				break;
-			case 'inside_range':
+			case INSIDE_RANGE:
 				this.sign = this.$translate.instant('IN');
 				break;
 			default:
@@ -53,19 +60,6 @@ export default class FilterItemCtrl {
 				this.filterValues = this.filter.value;
 			}
 		}
-	}
-
-    /**
-     * @ngdoc method
-     * @name getBadgeClassByFilterType
-     * @methodOf data-prep.filter-item:FilterItemCtrl
-     * @description get badge class by filter type
-     */
-	getBadgeClassByFilterType(filter) {
-		if (filter.type === 'quality' && filter.args && filter.args.invalid && filter.args.empty) {
-			return 'invalid_empty_records';
-		}
-		return filter.type;
 	}
 
     /**

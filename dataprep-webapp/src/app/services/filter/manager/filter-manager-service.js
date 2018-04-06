@@ -11,14 +11,6 @@
 
  ============================================================================*/
 
-import {
-	INVALID_RECORDS,
-	EMPTY_RECORDS,
-	INVALID_EMPTY_RECORDS,
-	VALID_RECORDS,
-	QUALITY,
-} from '../../../services/filter/adapter/tql-filter-adapter-service';
-
 /**
  * @ngdoc service
  * @name data-prep.services.filter.service:FilterService

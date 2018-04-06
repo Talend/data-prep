@@ -14,7 +14,7 @@
 import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
 import {
 	EXACT,
-	EMPTY_RECORDS,
+	QUALITY,
 	INSIDE_RANGE,
 } from '../../../services/filter/adapter/tql-filter-adapter-service';
 
@@ -70,10 +70,10 @@ export default function ColumnProfileCtrl(
 					keyName
 				)
 			: FilterManagerService.addFilterAndDigest(
-					EMPTY_RECORDS,
+					QUALITY,
 					column.id,
 					column.name,
-					null,
+					{ empty: true, invalid: false },
 					null,
 					keyName
 				);

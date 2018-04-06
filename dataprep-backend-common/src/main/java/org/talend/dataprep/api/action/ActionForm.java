@@ -32,7 +32,7 @@ public class ActionForm implements Serializable {
 
     /**
      * Alternate action category. Non i18n.
-     * The goal is to provide unique data-feature for each for analytics tracking purpose
+     * The goal is to provide unique data-feature for each action (for analytic tracking purpose)
      */
     private String alternateCategory;
 

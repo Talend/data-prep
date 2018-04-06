@@ -100,7 +100,7 @@ public class ActionForm implements Serializable {
     }
 
     public void setAlternateCategory(String alternateCategory) {
-        this.alternateCategory  = alternateCategory;
+        this.alternateCategory = alternateCategory;
     }
 
     public String getLabel() {

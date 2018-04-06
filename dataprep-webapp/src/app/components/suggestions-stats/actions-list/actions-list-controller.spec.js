@@ -300,7 +300,7 @@ describe('Actions list controller', () => {
 			stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
 		});
 
-		it('should set current dynamic transformation on dynamic transformation selection', () => {
+		it('should slugify', () => {
 			//given
 			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
 

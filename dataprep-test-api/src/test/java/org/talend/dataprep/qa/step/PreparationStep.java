@@ -1,5 +1,6 @@
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -94,11 +95,12 @@ public class PreparationStep extends DataPrepStep {
         Folder originFolder = folderUtil.searchFolder(suffixedPrepOriginPath);
         Folder destFolder = folderUtil.searchFolder(prepDestPath);
 
-        Response response = api.movePreparation(suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
+        Response response = api.movePreparation( //
+                suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
         response.then().statusCode(200);
 
-        context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path, suffixedPrepDestName,
-                destFolder.path);
+        context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
+                suffixedPrepDestName, destFolder.path);
     }
 
     @Then("^I copy the preparation \"(.*)\" to \"(.*)\"$")

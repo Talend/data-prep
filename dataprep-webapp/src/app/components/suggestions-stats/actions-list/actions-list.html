@@ -15,7 +15,6 @@
 
 <div class="actions-list">
     <sc-accordion class="actions-group">
-
         <li ng-repeat="category in actionsListCtrl.actions track by $index"
             ng-if="actionsListCtrl.shouldRenderCategory(category)">
             <div class="actions-category" ng-bind-html="category.categoryHtml"></div>

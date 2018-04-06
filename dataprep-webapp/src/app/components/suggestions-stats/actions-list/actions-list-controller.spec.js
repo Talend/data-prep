@@ -305,8 +305,8 @@ describe('Actions list controller', () => {
 			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
 
 			const action = {
-			    name: 'cluster',
-                dynamic: true,
+				name: 'cluster',
+				dynamic: true,
 				category: 'data cleansing category'
 			};
 			const ctrl = createController();

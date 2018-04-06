@@ -19,7 +19,7 @@
              ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableValid, 'not-fixed-width': qualityBarCtrl.width.isVariableValid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.valid > 0"
              title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)"
-             ng-click="qualityBarCtrl.onClick('quality', { invalid: false, empty: false })"
+             ng-click="qualityBarCtrl.onClick('quality', { valid: true })"
              data-feature="preparation.filter.column.valid">
         </button>
         <div talend-dropdown ng-if="qualityBarCtrl.validItemsHasMenu"

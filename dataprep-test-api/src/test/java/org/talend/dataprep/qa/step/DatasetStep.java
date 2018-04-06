@@ -136,7 +136,7 @@ public class DatasetStep extends DataPrepStep {
             assertEquals(1, response
                     .body()
                     .jsonPath()
-                    .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
+                    .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName) + "'  }")
                     .size());
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column

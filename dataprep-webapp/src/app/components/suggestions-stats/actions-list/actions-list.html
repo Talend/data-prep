@@ -15,6 +15,7 @@
 
 <div class="actions-list">
     <sc-accordion class="actions-group">
+
         <li ng-repeat="category in actionsListCtrl.actions track by $index"
             ng-if="actionsListCtrl.shouldRenderCategory(category)">
             <div class="actions-category" ng-bind-html="category.categoryHtml"></div>
@@ -28,7 +29,7 @@
                     <div class="trigger-label" ng-switch-when="false"
                          ng-if="transfo.dynamic"
                          ng-click="actionsListCtrl.select(transfo)" ng-bind-html="transfo.labelHtml"
-                         data-feature="{{ ::actionsListCtrl.getDataFeature(category.category, transfo.name) }}"></div>
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(transfo.alternateCategory, transfo.name) }}"></div>
 
                     <!--no parameters-->
                     <div class="trigger-label" ng-switch-when="false"
@@ -37,17 +38,17 @@
                          ng-mouseenter="actionsListCtrl.earlyPreview(transfo)({})"
                          ng-mouseleave="actionsListCtrl.cancelEarlyPreview()"
                          ng-bind-html="transfo.labelHtml"
-                         data-feature="{{ ::actionsListCtrl.getDataFeature(category.category, transfo.name) }}.submit"></div>
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(transfo.alternateCategory, transfo.name) }}.submit"></div>
 
                     <!--with static parameters-->
                     <div class="trigger-label"
                          ng-switch-when="true"
                          ng-bind-html="transfo.labelHtml"
-                         data-feature="{{ ::actionsListCtrl.getDataFeature(category.category, transfo.name) }}"></div>
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(transfo.alternateCategory, transfo.name) }}"></div>
                 </trigger>
 
                 <content ng-switch-when="true">
-                    <transform-form feature="actionsListCtrl.getDataFeature(category.category, transfo.name)"
+                    <transform-form feature="actionsListCtrl.getDataFeature(transfo.alternateCategory, transfo.name)"
                                     transformation="transfo"
                                     on-submit="actionsListCtrl.transform(transfo)(params)"
                                     on-submit-hover-on="actionsListCtrl.earlyPreview(transfo)(params)"

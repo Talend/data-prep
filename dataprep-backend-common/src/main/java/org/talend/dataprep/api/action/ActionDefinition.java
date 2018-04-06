@@ -275,6 +275,7 @@ public interface ActionDefinition extends Serializable {
         form.setDocUrl(getDocUrl(locale));
         form.setParameters(getParameters(locale));
         if (!Objects.equals(locale, alternateLocale)) {
+            form.setAlternateCategory(getCategory(alternateLocale));
             form.setAlternateDescription(getDescription(alternateLocale));
             form.setAlternateLabel(getLabel(alternateLocale));
         }

@@ -27,8 +27,11 @@ public class ActionForm implements Serializable {
     private String name;
 
     // TODO: should be an enum value
-    /** Action category unique id. Non i18n. */
+    /** Action category. */
     private String category;
+
+    /** Alternate action category. Non i18n. */
+    private String alternateCategory;
 
     /** Action parameters to build the form. */
     private List<Parameter> parameters;
@@ -90,6 +93,14 @@ public class ActionForm implements Serializable {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getAlternateCategory() {
+        return alternateCategory;
+    }
+
+    public void setAlternateCategory(String alternateCategory) {
+        this.alternateCategory  = alternateCategory;
     }
 
     public String getLabel() {

@@ -28,7 +28,7 @@
                     <div class="trigger-label" ng-switch-when="false"
                          ng-if="transfo.dynamic"
                          ng-click="actionsListCtrl.select(transfo)" ng-bind-html="transfo.labelHtml"
-                         data-feature="{{ 'preparation.' + transfo.name }}"></div>
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(category.category, transfo.name) }}"></div>
 
                     <!--no parameters-->
                     <div class="trigger-label" ng-switch-when="false"
@@ -37,17 +37,18 @@
                          ng-mouseenter="actionsListCtrl.earlyPreview(transfo)({})"
                          ng-mouseleave="actionsListCtrl.cancelEarlyPreview()"
                          ng-bind-html="transfo.labelHtml"
-                         data-feature="{{ 'preparation.' + transfo.name }}"></div>
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(category.category, transfo.name) }}.submit"></div>
 
                     <!--with static parameters-->
                     <div class="trigger-label"
                          ng-switch-when="true"
                          ng-bind-html="transfo.labelHtml"
-                         data-feature="{{ 'preparation.' + transfo.name }}"></div>
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(category.category, transfo.name) }}"></div>
                 </trigger>
 
                 <content ng-switch-when="true">
-                    <transform-form transformation="transfo"
+                    <transform-form feature="actionsListCtrl.getDataFeature(category.category, transfo.name)"
+                                    transformation="transfo"
                                     on-submit="actionsListCtrl.transform(transfo)(params)"
                                     on-submit-hover-on="actionsListCtrl.earlyPreview(transfo)(params)"
                                     on-submit-hover-off="actionsListCtrl.cancelEarlyPreview()"

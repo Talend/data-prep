@@ -13,12 +13,6 @@
 
 package org.talend.dataprep.command.preparation;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.command.Defaults.emptyStream;
-import static org.talend.dataprep.command.Defaults.pipeStream;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
-
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,8 +20,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.exception.TDPException;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.emptyStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
 
 /**
  * Command that retrieves preparation details (NOT the content !)
@@ -56,7 +54,7 @@ public class PreparationDetailsGet extends GenericCommand<InputStream> {
         execute(() -> onExecute(preparationId, stepId));
         on(HttpStatus.NO_CONTENT).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
-        onError(e -> new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId)));
+        onError(Defaults.passthrough());
     }
 
     private HttpGet onExecute(String preparationId, String stepId) {

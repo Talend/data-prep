@@ -12,14 +12,18 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * Preparation error codes.
@@ -31,7 +35,7 @@ public enum PreparationErrorCodes implements ErrorCode {
     PREPARATION_STEP_CANNOT_BE_REORDERED(CONFLICT),
     PREPARATION_ROOT_STEP_CANNOT_BE_DELETED(FORBIDDEN, "id", "stepId"),
     UNABLE_TO_SERVE_PREPARATION_CONTENT(BAD_REQUEST, "id", "version"),
-    UNABLE_TO_READ_PREPARATION(BAD_REQUEST, "id", "version"),
+    UNABLE_TO_READ_PREPARATION(INTERNAL_SERVER_ERROR, "id", "version"),
     PREPARATION_NAME_ALREADY_USED(CONFLICT, "id", "name", "folder"),
     PREPARATION_NOT_EMPTY(CONFLICT, "id"),
     FORBIDDEN_PREPARATION_CREATION(FORBIDDEN),

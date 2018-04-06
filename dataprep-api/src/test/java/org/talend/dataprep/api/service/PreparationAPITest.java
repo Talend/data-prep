@@ -88,10 +88,9 @@ import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
 import static org.talend.dataprep.api.service.PreparationAPITestClient.appendStepsToPrep;
 import static org.talend.dataprep.api.service.PreparationAPITestClient.changePreparationStepsOrder;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_PREPARATION;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_READ_PREPARATION;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -1319,13 +1318,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // when trying to get the content of the preparation with an invalid version value
         String invalidVersionId = "%00";
         TdpExceptionDto exception = given().queryParam("version", invalidVersionId) //
-                .expect().statusCode(400) //
+                .expect().statusCode(404) //
                 .log().ifError() //
                 .get("/api/preparations/{preparationId}/content", preparationId) //
                 .as(TdpExceptionDto.class);
 
         // assertions
-        assertTrue(exception.getCode().endsWith(UNABLE_TO_READ_PREPARATION.getCode()));
+        assertTrue(exception.getCode().endsWith(PREPARATION_STEP_DOES_NOT_EXIST.getCode()));
     }
 
     @Test

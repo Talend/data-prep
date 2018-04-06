@@ -18,15 +18,14 @@ import java.io.InputStream;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
+import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.APIErrorCodes;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.BaseErrorCodes.UNEXPECTED_EXCEPTION;
@@ -75,6 +74,6 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
         });
         on(HttpStatus.OK).then(pipeStream());
         on(HttpStatus.ACCEPTED).then(emptyStream());
-        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_CONTENT, e));
+        onError(Defaults.passthrough());
     }
 }

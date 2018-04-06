@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
@@ -48,6 +49,7 @@ public class PreparationCreate extends GenericCommand<String> {
     private PreparationCreate(Preparation preparation, String folderId) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(preparation, folderId));
+        onError(Defaults.passthrough());
         on(HttpStatus.OK).then(asString());
     }
 

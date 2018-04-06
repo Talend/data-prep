@@ -19,8 +19,9 @@
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.early-preview.service:EarlyPreviewService
  */
-export default function ActionsListCtrl($timeout, state, TransformationService,                                        
+export default function ActionsListCtrl($timeout, state, TransformationService,
 					 PlaygroundService, EarlyPreviewService, StateService) {
+	
 	'ngInject';
 
 	const vm = this;

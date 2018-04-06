@@ -312,7 +312,7 @@ describe('Actions list controller', () => {
 			const datatFeatureValue = ctrl.getDataFeature(category.category, transformation.name);
 
 			//then
-			expect(datatFeatureValue).toBe("preparation.data_cleansing_category.cluster");
+			expect(datatFeatureValue).toBe('preparation.data_cleansing_category.cluster');
 		});
 	});
 });

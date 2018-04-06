@@ -19,8 +19,8 @@
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.early-preview.service:EarlyPreviewService
  */
-export default function ActionsListCtrl($timeout, state, TransformationService,
-										PlaygroundService, EarlyPreviewService, StateService) {
+export default function ActionsListCtrl($timeout, state, TransformationService,                                        
+					 PlaygroundService, EarlyPreviewService, StateService) {
 	'ngInject';
 
 	const vm = this;
@@ -126,11 +126,10 @@ export default function ActionsListCtrl($timeout, state, TransformationService,
 			vm.showDynamicModal = true;
 
 			// get new parameters
-			initDynamicParams(transformation)
-				.finally(function () {
-					checkDynamicResponse();
-					vm.dynamicFetchInProgress = false;
-				});
+			initDynamicParams(transformation).finally(function () {
+				checkDynamicResponse();
+				vm.dynamicFetchInProgress = false;
+			});
 		}
 		else {
 			vm.transform(transformation, vm.scope)();

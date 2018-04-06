@@ -60,9 +60,9 @@
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/daikon-tql-client@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@talend/daikon-tql-client/-/daikon-tql-client-1.0.0.tgz#e11a8b8489d72fc0983d9710cb71c0d50d0e9cd3"
+"@talend/daikon-tql-client@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@talend/daikon-tql-client/-/daikon-tql-client-1.0.1.tgz#b5ab6900f541253e1352917b146f924b384de89d"
   dependencies:
     babel-polyfill "^6.26.0"
     hoist-non-react-statics "^1.2.0"
@@ -99,9 +99,9 @@
     talend-json-schema-form-core "1.0.2-alpha.2"
     tv4 "^1.2.7"
 
-"@talend/tql@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@talend/tql/-/tql-1.0.0.tgz#9e7d7a542a3aa90d07d5c0d5924b3c2e0bd3490b"
+"@talend/tql@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@talend/tql/-/tql-1.0.1.tgz#31de6f5dc9b76d3f2ea5f8d0593732c82f34ef78"
   dependencies:
     antlr4 "^4.7.0"
 

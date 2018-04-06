@@ -30,7 +30,10 @@ public class ActionForm implements Serializable {
     /** Action category. */
     private String category;
 
-    /** Alternate action category. Non i18n. */
+    /**
+     * Alternate action category. Non i18n.
+     * The goal is to provide unique data-feature for each for analytics tracking purpose
+     */
     private String alternateCategory;
 
     /** Action parameters to build the form. */

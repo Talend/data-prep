@@ -86,9 +86,9 @@ public class DataSetGet extends GenericCommand<InputStream> {
     private void configureLimitedDataset(final String dataSetId) {
         execute(() -> {
             try {
-                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/content");
-                uriBuilder.addParameter("metadata", String.valueOf(includeMetadata));
-                uriBuilder.addParameter("includeInternalContent", String.valueOf(includeInternalContent));
+                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/content")
+                        .addParameter("metadata", String.valueOf(includeMetadata))
+                        .addParameter("includeInternalContent", String.valueOf(includeInternalContent));
                 if (StringUtils.isNotEmpty(filter)) {
                     uriBuilder.addParameter("filter", filter);
                 }

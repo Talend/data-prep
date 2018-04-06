@@ -29,13 +29,14 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.talend.dataprep.BaseErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.command.Defaults.asString;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_PREPARATION;
 
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationCreate extends GenericCommand<String> {
 
     /**
@@ -47,7 +48,6 @@ public class PreparationCreate extends GenericCommand<String> {
     private PreparationCreate(Preparation preparation, String folderId) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(preparation, folderId));
-        onError(e -> new TDPException(UNABLE_TO_CREATE_PREPARATION, e));
         on(HttpStatus.OK).then(asString());
     }
 

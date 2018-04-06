@@ -18,6 +18,7 @@ import java.io.InputStream;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.BaseErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.command.Defaults.emptyStream;
@@ -36,14 +38,14 @@ import static org.talend.dataprep.command.Defaults.pipeStream;
  * Command used to retrieve the preparation content.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationGetContent extends GenericCommand<InputStream> {
 
     /**
      * @param id the preparation id.
      * @param version the preparation version.
      */
-    private PreparationGetContent(final String id, final String version) {
+    private PreparationGetContent(String id, String version) {
         this(id, version, HEAD);
     }
 
@@ -52,7 +54,7 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
      * @param version the preparation version.
      * @param from where to read the data from.
      */
-    private PreparationGetContent(final String id, final String version, final SourceType from) {
+    private PreparationGetContent(String id, String version, SourceType from) {
         super(PREPARATION_GROUP);
 
         execute(() -> {

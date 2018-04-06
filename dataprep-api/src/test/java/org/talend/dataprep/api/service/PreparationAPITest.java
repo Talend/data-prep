@@ -48,6 +48,7 @@ import org.talend.dataprep.api.service.api.PreviewAddParameters;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
@@ -1317,13 +1318,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when trying to get the content of the preparation with an invalid version value
         String invalidVersionId = "%00";
-        Response response = given().queryParam("version", invalidVersionId) //
-                .expect().statusCode(500) //
+        TdpExceptionDto exception = given().queryParam("version", invalidVersionId) //
+                .expect().statusCode(400) //
                 .log().ifError() //
-                .get("/api/preparations/{preparationId}/content", preparationId);
+                .get("/api/preparations/{preparationId}/content", preparationId) //
+                .as(TdpExceptionDto.class);
 
         // assertions
-        assertTrue(response.jsonPath().getString("context.cause.code").endsWith(UNABLE_TO_READ_PREPARATION.getCode()));
+        assertTrue(exception.getCode().endsWith(UNABLE_TO_READ_PREPARATION.getCode()));
     }
 
     @Test
@@ -1333,34 +1335,36 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when using an invalid folder id to create a preparation on the existing dataSet
         String invalidFolderId = "invalid-folder-id";
-        Response response = given().contentType(ContentType.JSON)
+        TdpExceptionDto exception = given().contentType(ContentType.JSON)
                 .body("{ \"name\": \"foo\", \"dataSetId\": \"" + dataSetId + "\"}") //
                 .queryParam("folder", invalidFolderId) //
                 .expect() //
-                .statusCode(500) //
-                .log().ifError() //
+                .statusCode(400) //
+                .log()
+                .ifError() //
                 .when() //
-                .post("/api/preparations");
+                .post("/api/preparations") //
+                .as(TdpExceptionDto.class);
         // assertions
-        JsonPath jsonPath = response.jsonPath();
-        assertTrue(jsonPath.getString("code").endsWith(UNABLE_TO_CREATE_PREPARATION.getCode()));
-        assertTrue(jsonPath.getString("cause.code").endsWith(FOLDER_DOES_NOT_EXIST.getCode()));
+        assertTrue(exception.getCode().endsWith(FOLDER_DOES_NOT_EXIST.getCode()));
     }
 
     @Test
     public void shouldNotAcceptInvalidDataSetId_TDP_4959() {
         // when using an invalid dataSet id
         String invalidDataSetId = "@+";
-        Response response = given().contentType(ContentType.JSON)
+        TdpExceptionDto exception = given().contentType(ContentType.JSON)
                 .body("{ \"name\": \"foo\", \"dataSetId\": \"" + invalidDataSetId + "\"}") //
                 .queryParam("folder", "5a549eea1235ef6ee90e2096") //
                 .expect() //
                 .statusCode(400) //
-                .log().ifError() //
+                .log()
+                .ifError() //
                 .when() //
-                .post("/api/preparations");
+                .post("/api/preparations") //
+                .as(TdpExceptionDto.class);
         // assertions
-        assertTrue(response.jsonPath().getString("cause.code").endsWith(DATASET_DOES_NOT_EXIST.getCode()));
+        assertTrue(exception.getCause().getCode().endsWith(DATASET_DOES_NOT_EXIST.getCode()));
 
     }
 

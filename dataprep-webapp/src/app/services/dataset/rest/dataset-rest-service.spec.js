@@ -471,7 +471,7 @@ describe('Dataset Rest Service', () => {
 			const data = [{ column: [], records: [] }];
 			const tql = "(0001='charles')";
 			$httpBackend
-				.expectGET(RestURLs.datasetUrl + "/e85afAa78556d5425bc2?filter=(0001%253D'charles')&includeTechnicalProperties=true&metadata=false")
+				.expectGET(RestURLs.datasetUrl + "/e85afAa78556d5425bc2?filter=(0001%3D'charles')&includeTechnicalProperties=true&metadata=false")
 				.respond(200, data);
 
 			//when

@@ -93,10 +93,14 @@ public class OSFolderUtil implements FolderUtil {
             // reverse order : the longer string is the first one.
             if (o1 == null && o2 == null)
                 return 0;
-            if (o1 == null)
+            if (o1 == null || o1.path == null)
                 return 1;
-            if (o2 == null)
+            if (o2 == null || o2.path == null)
                 return -1;
+
+            if (o1.path.length() == o2.path.length())
+                return o2.path.compareTo(o1.path);
+
             return ((Integer) o2.path.length()).compareTo(o1.path.length());
         });
     }

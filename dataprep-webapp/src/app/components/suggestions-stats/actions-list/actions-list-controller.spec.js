@@ -294,4 +294,25 @@ describe('Actions list controller', () => {
             expect(ctrl.showModalContent).toBe(true);
         }));
     });
+
+    describe('getDataFeature',() => {
+		beforeEach(() => {
+			stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
+		});
+
+		it('should set current dynamic transformation on dynamic transformation selection', () => {
+			//given
+			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
+
+			const category = { category: "data cleansing category" };
+			const transformation = { name: 'cluster', dynamic: true };
+			const ctrl = createController();
+
+			//when
+			const datatFeatureValue = ctrl.getDataFeature(category.category, transformation.name);
+
+			//then
+			expect(datatFeatureValue).toBe("preparation.data_cleansing_category.cluster");
+		});
+	});
 });

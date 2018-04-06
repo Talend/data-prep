@@ -35,7 +35,7 @@
                     ng-mouseleave="formCtrl.submitHoverOff()"
                     ng-mouseenter="formCtrl.submitHoverOn()"
                     translate-once="SUBMIT"
-                    data-feature="{{'preparation.' + formCtrl.transformation.name + '.submit'}}"></button>
+                    data-feature="{{ ::formCtrl.feature }}.submit"></button>
 
             <a ng-if="formCtrl.transformation.docUrl"
                href="{{::formCtrl.transformation.docUrl}}"

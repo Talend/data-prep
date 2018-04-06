@@ -160,4 +160,8 @@ export default function ActionsListCtrl($timeout, state, TransformationService,
 			}
 		};
 	};
+
+	vm.getDataFeature = function getFeature(categoryId, actionId) {
+		return `preparation.${categoryId.replace(/\s/g, '_')}.${actionId}`;
+	};
 }

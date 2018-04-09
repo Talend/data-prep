@@ -57,14 +57,14 @@ public class GlobalStep extends DataPrepStep {
 
         // cleaning application's datasets
         List<String> listDatasetDeletionPb = context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
-        cleanAfterOSStepIsOK = cleanAfterOSStepIsOK && listDatasetDeletionPb.size() == 0;
+        cleanAfterOSStepIsOK &= listDatasetDeletionPb.size() == 0;
 
         // cleaning dataset's related context
         context.clearDataset();
 
         // cleaning application's folders
         List<Folder> listFolderDeletionPb = context.getFolders().stream().filter(folderDeletionIsNotOK()).collect(Collectors.toList());
-        cleanAfterOSStepIsOK = cleanAfterOSStepIsOK && listFolderDeletionPb.size() == 0;
+        cleanAfterOSStepIsOK &= listFolderDeletionPb.size() == 0;
 
         // cleaning folder's related context
         context.clearFolders();

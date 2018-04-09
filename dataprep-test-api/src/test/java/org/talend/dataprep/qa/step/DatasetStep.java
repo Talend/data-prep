@@ -103,25 +103,24 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
+    public void thenICheckSemanticTypeExist(String semanticTypeLabel, String columnId)
             throws IOException, InterruptedException {
         String dataSetId = context.getObject("dataSetId").toString();
-
-        getDatasetsColumnSemanticTypes(suffixName(semanticTypeId), columnId, dataSetId, true);
+        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }
 
     @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId, String dataSetName)
+    public void thenICheckSemanticTypeExist(String semanticTypeLabel, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(suffixName(semanticTypeId), columnId, dataSetId, true);
+        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }
 
     @Then("^I check that the default semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void thenICheckDefaultSemanticTypeExist(String semanticTypeName, String columnId, String dataSetName)
+    public void thenICheckDefaultSemanticTypeExist(String semanticTypeLabel, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, true);
+        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }
 
     @Then("^I check they are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
@@ -141,13 +140,13 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Then("^I check that the semantic type \"(.*)\" does not exist the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void thenICheckSemanticTypeDoesNotExist(String semanticTypeId, String columnId, String dataSetName)
+    public void thenICheckSemanticTypeDoesNotExist(String semanticTypeLabel, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(suffixName(semanticTypeId), columnId, dataSetId, false);
+        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, false);
     }
 
-    private void getDatasetsColumnSemanticTypes(String semanticTypeId, String columnId, String dataSetId,
+    private void getDatasetsColumnSemanticTypes(String semanticTypeLabel, String columnId, String dataSetId,
             boolean expected) {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
@@ -158,7 +157,7 @@ public class DatasetStep extends DataPrepStep {
                     response
                             .body()
                             .jsonPath()
-                            .getList("findAll { semanticType -> semanticType.id == '" + semanticTypeId + "'  }")
+                            .getList("findAll { semanticType -> semanticType.label == '" + semanticTypeLabel + "'  }")
                             .size());
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column
@@ -167,7 +166,7 @@ public class DatasetStep extends DataPrepStep {
                         response
                                 .body()
                                 .jsonPath()
-                                .getList("findAll { semanticType -> semanticType.id == '" + semanticTypeId + "'  }")
+                                .getList("findAll { semanticType -> semanticType.label == '" + semanticTypeLabel + "'  }")
                                 .size());
             }
         }

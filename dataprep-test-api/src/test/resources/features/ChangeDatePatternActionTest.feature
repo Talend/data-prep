@@ -31,7 +31,7 @@ Feature: Perform scenarios with ChangeDate related actions
     Then I check that a step like "changeDateFrench" exists in the preparation "A-customers_100_with_pb_prep"
 
   # This one re-uses previous preparation and updates it
-  Scenario: Export previous preparation ("A-customers_100_with_pb_prep") and check the exported file
+  Scenario: Export previous preparation - "A-customers_100_with_pb_prep" - and check the exported file
     # Before update : ISO 8601 and French Standard should be exported
     When I export the preparation with parameters :
       | preparationName      | A-customers_100_with_pb_prep            |
@@ -83,7 +83,7 @@ Feature: Perform scenarios with ChangeDate related actions
       | create_new_column   | true               |
     Then I check that a step like "changeDateFrench_newCol" exists in the preparation "A-customers_100_with_pb_prep_newCol"
 
-  Scenario: Export previous preparation ("A-customers_100_with_pb_prep_newCol") and check the exported file
+  Scenario: Export previous preparation - "A-customers_100_with_pb_prep_newCol" - and check the exported file
     # Before update : ISO 8601 and French Standard should be exported
     When I export the preparation with parameters :
       | dataSetName          | A-customers_100_with_pb_dataset                |

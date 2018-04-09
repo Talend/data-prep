@@ -42,7 +42,6 @@ public class ExportPreparationStep extends DataPrepStep {
         exporter.exportSample(params);
     }
 
-    //@Then("^I check that \"(.*)\" available export formats are :$")
     @When("^I get the export formats for the preparation \"(.*)\"$")
     public void whenIGetExportFormat(String preparationName) throws IOException {
         String preparationId = context.getPreparationId(suffixName(preparationName));

@@ -4,6 +4,5 @@ Feature: Test OS the export format
   Scenario: Get the export format and verify the returned export format
     Given I upload the dataset "/data/6L3C.csv" with name "simpleCSVForExportFormat"
     And I create a preparation with name "simpleExportPrep", based on "simpleCSVForExportFormat" dataset
-    When I get the export formats for the preparation "test_usecase_custom_dico_export_S3_preparation"
-    Then I received for the preparation "test_usecase_custom_dico_export_S3_preparation" the export formats list with:
+    Then I check that "simpleExportPrep" available export formats are :
       | XLSX | CSV |

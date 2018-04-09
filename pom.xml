@@ -24,7 +24,7 @@
     <description>dataprep parent pom</description>
     <modules>
         <module>dataprep-backend</module>
-        <module>dataprep-webapp</module>
+        <!-- <module>dataprep-webapp</module> -->
     </modules>
     <scm>
         <connection>scm:git:https://github.com/Talend/data-prep.git</connection>

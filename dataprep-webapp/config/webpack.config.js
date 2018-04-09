@@ -6,6 +6,7 @@ const path = require('path');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 
+const TalendHTML = require('@talend/html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const SassLintPlugin = require('sasslint-webpack-plugin');
@@ -20,6 +21,7 @@ const INDEX_PATH = path.resolve(__dirname, '../src/app/index-module.js');
 const VENDOR_PATH = path.resolve(__dirname, '../src/vendor.js');
 const BUILD_PATH = path.resolve(__dirname, '../build');
 
+const AppLoader = require('@talend/react-components/lib/AppLoader/constant').default;
 const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
 function getDefaultConfig(options) {
@@ -224,7 +226,8 @@ function addPlugins(config, options) {
 			rootModule: appConf.rootModule,
 			env: options.env,
 			template: INDEX_TEMPLATE_PATH,
-			inject: 'head',
+			inject: 'body',
+			loader: AppLoader.APP_LOADER,
 			// ensure loding order vendor/style/app
 			chunksSortMode: (a, b) => {
 				const aOrder = CHUNKS_ORDER.indexOf(a.names[0]);
@@ -237,6 +240,16 @@ function addPlugins(config, options) {
 				}
 				return 0;
 			},
+		}),
+
+		/*
+		 * Plugin: TalendHTML
+		 * Description: Hook for HtmlWebpackPlugin
+		 * This is used to inject the app loader.
+		 */
+		new TalendHTML({
+			loadCSSAsync: true,
+			appLoaderIcon: appConf.icon,
 		}),
 
 		/*

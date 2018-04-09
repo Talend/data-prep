@@ -60,6 +60,12 @@
   dependencies:
     bootstrap-sass "3.3.7"
 
+"@talend/html-webpack-plugin@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@talend/html-webpack-plugin/-/html-webpack-plugin-0.0.1.tgz#39b09d3c75f169acb596266e009ebd4dba9ea7a6"
+  dependencies:
+    "@talend/react-components" "^0.175.0"
+
 "@talend/icons@0.175.0":
   version "0.175.0"
   resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.175.0.tgz#9f0d9ed0142dac7052dafe7c5dbf48fdb075fbf1"

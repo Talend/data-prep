@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@talend/bootstrap-theme": "0.175.0",
+    "@talend/html-webpack-plugin": "^0.0.1",
     "@talend/icons": "0.175.0",
     "@talend/react-components": "0.175.0",
     "@talend/react-forms": "0.175.0",

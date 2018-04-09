@@ -70,7 +70,7 @@
   version "0.175.0"
   resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.175.0.tgz#9f0d9ed0142dac7052dafe7c5dbf48fdb075fbf1"
 
-"@talend/react-components@0.175.0":
+"@talend/react-components@0.175.0", "@talend/react-components@^0.175.0":
   version "0.175.0"
   resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.175.0.tgz#0129ff6c7d609a27a4e8ef3d41b400511eefafea"
   dependencies:

@@ -104,12 +104,12 @@ export default class FilterService {
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
 				if (keyName === CTRL_KEY_NAME) {
-					args.phrase = this.TqlFilterAdapterService.EMPTY_RECORDS_VALUES.concat(args.phrase);
+					args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues().concat(args.phrase);
 				}
 			}
 
 			if (args.phrase.length === 1 && args.phrase[0].value === '') {
-				args.phrase = this.TqlFilterAdapterService.EMPTY_RECORDS_VALUES;
+				args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues();
 			}
 
 			argsToDisplay = {
@@ -152,12 +152,12 @@ export default class FilterService {
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
 				if (keyName === CTRL_KEY_NAME) {
-					args.phrase = this.TqlFilterAdapterService.EMPTY_RECORDS_VALUES.concat(args.phrase);
+					args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues().concat(args.phrase);
 				}
 			}
 
 			if (args.phrase.length === 1 && args.phrase[0].value === '') {
-				args.phrase = this.TqlFilterAdapterService.EMPTY_RECORDS_VALUES;
+				args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues();
 			}
 
 			argsToDisplay = {
@@ -269,12 +269,12 @@ export default class FilterService {
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
 				if (keyName === CTRL_KEY_NAME) {
-					args.patterns = this.TqlFilterAdapterService.EMPTY_RECORDS_VALUES.concat(args.patterns);
+					args.patterns = this.TqlFilterAdapterService.getEmptyRecordsValues().concat(args.patterns);
 				}
 			}
 
 			if (args.patterns.length === 1 && args.patterns[0].value === '') {
-				args.patterns = this.TqlFilterAdapterService.EMPTY_RECORDS_VALUES;
+				args.patterns = this.TqlFilterAdapterService.getEmptyRecordsValues();
 			}
 
 			createFilter = () => {

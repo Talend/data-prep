@@ -33,16 +33,11 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	let INVALID_RECORDS_VALUES;
 	let VALID_RECORDS_VALUES;
 
-
 	return {
 		createFilter,
 		toTQL,
 		fromTQL,
-		EMPTY_RECORDS_VALUES,
-		INVALID_EMPTY_RECORDS_VALUES,
-		INVALID_RECORDS_VALUES,
-		VALID_RECORDS_VALUES,
-
+		getEmptyRecordsValues,
 	};
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -57,7 +52,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			args,
 			removeFilterFn,
 		};
-
 		EMPTY_RECORDS_VALUES = [
 			{
 				label: $translate.instant('EMPTY_RECORDS_LABEL'),
@@ -83,13 +77,28 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				label: $translate.instant('VALID_RECORDS_LABEL'),
 			},
 		];
-
 		filter.__defineGetter__('badgeClass', getBadgeClass.bind(filter)); // eslint-disable-line no-underscore-dangle
 		filter.__defineGetter__('value', getFilterValueGetter.bind(filter)); // eslint-disable-line no-underscore-dangle
 		filter.__defineSetter__('value', value =>
 			getFilterValueSetter.call(filter, value)
 		); // eslint-disable-line no-underscore-dangle
 		return filter;
+	}
+
+	function getEmptyRecordsValues() {
+		return EMPTY_RECORDS_VALUES;
+	}
+
+	function getInvalidEmptyRecordsValues() {
+		return INVALID_EMPTY_RECORDS_VALUES;
+	}
+
+	function getInvalidRecordsValues() {
+		return INVALID_RECORDS_VALUES;
+	}
+
+	function getValidRecordsValues() {
+		return VALID_RECORDS_VALUES;
 	}
 
 	/**
@@ -110,16 +119,16 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			return this.args.patterns;
 		case QUALITY:
 			if (this.args.invalid && this.args.empty) {
-				return INVALID_EMPTY_RECORDS_VALUES;
+				return getInvalidEmptyRecordsValues();
 			}
 			else if (this.args.invalid && !this.args.empty) {
-				return INVALID_RECORDS_VALUES;
+				return getInvalidRecordsValues();
 			}
 			else if (!this.args.invalid && this.args.empty) {
-				return EMPTY_RECORDS_VALUES;
+				return getEmptyRecordsValues();
 			}
 			else {
-				return VALID_RECORDS_VALUES;
+				return getValidRecordsValues();
 			}
 		}
 	}
@@ -202,7 +211,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				type: QUALITY,
 				args: { empty: false, invalid: true },
 			});
-
 			if (colId === WILDCARD && type === QUALITY) {
 				// if there is already a quality filter => merge it with the new quality filter
 				if (InvalidFilterWithWildcard || existingColEmptyFilter) {
@@ -217,12 +225,49 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 					);
 				}
 			}
+			// For a column, if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them into a filter with multi values (same filter badge)
+			else if (colId !== WILDCARD && type === QUALITY && args.empty && !args.invalid) {
+				const sameColExactFilter = find(filters, {
+					colId,
+					type: EXACT,
+				});
+				const sameColMatchFilter = find(filters, {
+					colId,
+					type: MATCHES,
+				});
+
+				if (sameColExactFilter) {
+					sameColExactFilter.args.phrase = sameColExactFilter.args.phrase.concat(getEmptyRecordsValues());
+				}
+				else if (sameColMatchFilter) {
+					sameColMatchFilter.args.patterns = sameColMatchFilter.args.patterns.concat(getEmptyRecordsValues());
+				}
+				else {
+					filters.push(
+						createFilter(type, colId, colName, editable, args, null)
+					);
+				}
+			}
+			// For a column, if the new filter are EXACT or MATCHES filter and there is already an empty filter =>  Merge them into a filter with multi values (same filter badge)
+			else if (colId !== WILDCARD && existingColEmptyFilter) {
+				filters = filters.filter(filter => filter.colId !== colId || filter.type !== QUALITY);
+				const filterArgs = {};
+				switch (type) {
+				case EXACT:
+					filterArgs.phrase = getEmptyRecordsValues().concat(args.phrase);
+					break;
+				case MATCHES:
+					filterArgs.patterns = getEmptyRecordsValues().concat(args.patterns);
+					break;
+				}
+				filters.push(createFilter(type, colId, colName, editable, filterArgs, null));
+			}
 			else {
 				const sameColAndTypeFilter = find(filters, {
 					colId,
 					type,
 				});
-				if (sameColAndTypeFilter) {
+				if (sameColAndTypeFilter) { // update the existing filter
 					switch (type) {
 					case CONTAINS:
 					case EXACT:
@@ -236,7 +281,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 						break;
 					}
 				}
-				else {
+				else { // create a new filter
 					filters.push(
 						createFilter(type, colId, colName, editable, args, null)
 					);
@@ -244,7 +289,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			}
 		};
 
-		// initialize filter listeners
+		// Initialize filter listeners
 		const onExactFilter = (ctx) => {
 			type = EXACT;
 			field = ctx.children[0].getText();

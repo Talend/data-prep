@@ -402,7 +402,7 @@ describe('Datagrid header directive', () => {
 				element.find('quality-bar empty-menu-items > li').eq(0).click();
 
 				// then
-				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('empty_records', column.id, column.name);
+				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('quality', column.id, column.name, { invalid: false, empty: true });
 			}));
 
 			it('should delete rows on 2nd item menu click', inject((PlaygroundService) => {
@@ -438,7 +438,7 @@ describe('Datagrid header directive', () => {
 				element.find('quality-bar invalid-menu-items > li').eq(0).click();
 
 				// then
-				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('invalid_records', column.id, column.name);
+				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('quality', column.id, column.name, { invalid: true, empty: false });
 			}));
 
 			it('should clear invalid cells on 2nd item menu click', inject((PlaygroundService) => {

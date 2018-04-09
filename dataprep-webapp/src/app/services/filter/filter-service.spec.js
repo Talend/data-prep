@@ -386,18 +386,18 @@ describe('Filter service', () => {
 				};
 
 				//when
-				FilterService.addFilter('invalid_records', 'col1', 'column name');
+				FilterService.addFilter('quality', 'col1', 'column name', { invalid: true, empty: false });
 
 				//then
 				expect(StateService.addGridFilter).toHaveBeenCalled();
 
 				const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-				expect(filterInfo.type).toBe('invalid_records');
+				expect(filterInfo.type).toBe('quality');
 				expect(filterInfo.colId).toBe('col1');
 				expect(filterInfo.colName).toBe('column name');
 				expect(filterInfo.value[0].label).toBe('rows with invalid values');
 				expect(filterInfo.editable).toBe(false);
-				expect(filterInfo.args).toBeFalsy();
+				expect(filterInfo.args).toEqual({ invalid: true, empty: false });
 			}));
 
 			it('should create filter for all columns', inject((FilterService, StateService) => {
@@ -413,28 +413,28 @@ describe('Filter service', () => {
 				};
 
 				//when
-				FilterService.addFilter('invalid_records');
+				FilterService.addFilter('quality', null, null, { invalid: true, empty: false });
 
 				//then
 				expect(StateService.addGridFilter).toHaveBeenCalled();
 
 				const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-				expect(filterInfo.type).toBe('invalid_records');
-				expect(filterInfo.colId).toBe(undefined);
-				expect(filterInfo.colName).toBe(undefined);
+				expect(filterInfo.type).toBe('quality');
+				expect(filterInfo.colId).toBeFalsy();
+				expect(filterInfo.colName).toBeFalsy();
 				expect(filterInfo.value[0].label).toBe('rows with invalid values');
 				expect(filterInfo.editable).toBe(false);
-				expect(filterInfo.args).toBeFalsy();
+				expect(filterInfo.args).toEqual({ invalid: true, empty: false });
 			}));
 
 			it('should remove filter when it already exists', inject((FilterService, StateService) => {
 				//given
-				const oldFilter = { colId: 'col1', type: 'invalid_records' };
+				const oldFilter = { colId: 'col1', type: 'quality', args: { invalid: true, empty: false } };
 				stateMock.playground.filter.gridFilters = [oldFilter];
 				spyOn(StateService, 'removeGridFilter').and.returnValue();
 
 				//when
-				FilterService.addFilter('invalid_records', 'col1', 'column name');
+				FilterService.addFilter('quality', 'col1', 'column name', { invalid: true, empty: false });
 
 				//then
 				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
@@ -447,18 +447,18 @@ describe('Filter service', () => {
 				expect(StateService.addGridFilter).not.toHaveBeenCalled();
 
 				//when
-				FilterService.addFilter('empty_records', 'col1', 'column name');
+				FilterService.addFilter('quality', 'col1', 'column name', { invalid: false, empty: true });
 
 				//then
 				expect(StateService.addGridFilter).toHaveBeenCalled();
 
 				const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-				expect(filterInfo.type).toBe('empty_records');
+				expect(filterInfo.type).toBe('quality');
 				expect(filterInfo.colId).toBe('col1');
 				expect(filterInfo.colName).toBe('column name');
 				expect(filterInfo.value[0].label).toBe('rows with empty values');
 				expect(filterInfo.editable).toBe(false);
-				expect(filterInfo.args).toBeFalsy();
+				expect(filterInfo.args).toEqual({ invalid: false, empty: true });
 			}));
 
 			it('should create filter for multi columns', inject((FilterService, StateService) => {
@@ -474,28 +474,28 @@ describe('Filter service', () => {
 				};
 
 				//when
-				FilterService.addFilter('empty_records');
+				FilterService.addFilter('quality', null, null, { invalid: false, empty: true });
 
 				//then
 				expect(StateService.addGridFilter).toHaveBeenCalled();
 
 				const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-				expect(filterInfo.type).toBe('empty_records');
-				expect(filterInfo.colId).toBe(undefined);
-				expect(filterInfo.colName).toBe(undefined);
+				expect(filterInfo.type).toBe('quality');
+				expect(filterInfo.colId).toBeFalsy();
+				expect(filterInfo.colName).toBeFalsy();
 				expect(filterInfo.value[0].label).toBe('rows with empty values');
 				expect(filterInfo.editable).toBe(false);
-				expect(filterInfo.args).toBeFalsy();
+				expect(filterInfo.args).toEqual({ invalid: false, empty: true });
 			}));
 
 			it('should remove filter', inject((FilterService, StateService) => {
 				//given
-				const oldFilter = { colId: 'col1', type: 'empty_records' };
+				const oldFilter = { colId: 'col1', type: 'quality', args: { invalid: false, empty: true } };
 				stateMock.playground.filter.gridFilters = [oldFilter];
 				spyOn(StateService, 'removeGridFilter').and.returnValue();
 
 				//when
-				FilterService.addFilter('empty_records', 'col1', 'column name');
+				FilterService.addFilter('quality', 'col1', 'column name', { invalid: false, empty: true });
 
 				//then
 				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
@@ -516,28 +516,28 @@ describe('Filter service', () => {
 				};
 
 				//when
-				FilterService.addFilter('valid_records', 'col1', 'column name');
+				FilterService.addFilter('quality', 'col1', 'column name', { valid: true });
 
 				//then
 				expect(StateService.addGridFilter).toHaveBeenCalled();
 
 				const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-				expect(filterInfo.type).toBe('valid_records');
+				expect(filterInfo.type).toBe('quality');
 				expect(filterInfo.colId).toBe('col1');
 				expect(filterInfo.colName).toBe('column name');
 				expect(filterInfo.value[0].label).toBe('rows with valid values');
 				expect(filterInfo.editable).toBe(false);
-				expect(filterInfo.args).toBeFalsy();
+				expect(filterInfo.args).toEqual({ valid: true });
 			}));
 
 			it('should remove filter', inject((FilterService, StateService) => {
 				//given
-				const oldFilter = { colId: 'col1', type: 'valid_records' };
+				const oldFilter = { colId: 'col1', type: 'quality' };
 				stateMock.playground.filter.gridFilters = [oldFilter];
 				spyOn(StateService, 'removeGridFilter').and.returnValue();
 
 				//when
-				FilterService.addFilter('valid_records', 'col1', 'column name');
+				FilterService.addFilter('quality', 'col1', 'column name', { valid: true });
 
 				//then
 				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);

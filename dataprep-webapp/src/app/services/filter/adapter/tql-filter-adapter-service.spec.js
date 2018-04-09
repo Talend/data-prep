@@ -81,7 +81,7 @@ describe('TQL Filter Adapter Service', () => {
 
             it('should return value on INVALID_RECORDS filter', inject((TqlFilterAdapterService) => {
                 //when
-                const filter = TqlFilterAdapterService.createFilter(INVALID_RECORDS, null, null, null, null);
+                const filter = TqlFilterAdapterService.createFilter(QUALITY, null, null, null, { invalid: true, empty: false }, null);
 
                 //then
                 expect(filter.value).toEqual([{ label: 'rows with invalid values' }]);
@@ -97,7 +97,7 @@ describe('TQL Filter Adapter Service', () => {
 
             it('should return value on EMPTY_RECORDS filter', inject((TqlFilterAdapterService) => {
                 //when
-                const filter = TqlFilterAdapterService.createFilter(EMPTY_RECORDS, null, null, null, null, null);
+                const filter = TqlFilterAdapterService.createFilter(QUALITY, null, null, null, { invalid: false, empty: true }, null);
 
                 //then
                 expect(filter.value).toEqual([
@@ -111,7 +111,7 @@ describe('TQL Filter Adapter Service', () => {
 
             it('should return value on VALID_RECORDS filter', inject((TqlFilterAdapterService) => {
                 //when
-                const filter = TqlFilterAdapterService.createFilter(VALID_RECORDS, null, null, null, null, null);
+                const filter = TqlFilterAdapterService.createFilter(QUALITY, null, null, null, { valid: true }, null);
 
                 //then
                 expect(filter.value).toEqual([{ label: 'rows with valid values' }]);

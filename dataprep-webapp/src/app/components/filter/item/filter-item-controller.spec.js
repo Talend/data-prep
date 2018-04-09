@@ -146,26 +146,4 @@ describe('Filter item controller', () => {
             filter: filter,
         });
     });
-
-    it('should return class by filter type', () => {
-        //given
-        const ctrl = createController();
-
-        //then
-        expect(ctrl.getBadgeClassByFilterType(filter)).toEqual('exact');
-    });
-
-    it('should return class by filter type in the case of quality filter', () => {
-        //given
-        const ctrl = createController();
-        const qualityFilter = {
-            type: 'quality',
-            args: {
-                    invalid: true,
-                    empty: true,
-                }
-        };
-        //then
-        expect(ctrl.getBadgeClassByFilterType(qualityFilter)).toEqual('invalid_empty_records');
-    });
 });

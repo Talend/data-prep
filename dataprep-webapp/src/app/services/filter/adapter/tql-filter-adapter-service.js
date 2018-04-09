@@ -279,20 +279,19 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		const filteredColumn = find(columns, { id: colId });
 		const colName = (filteredColumn && filteredColumn.name) || colId;
 
-		const existingColEmptyFilter = find(filters, {
+		const existingEmptyFilter = find(filters, {
 			colId,
 			type: QUALITY,
 			args: { empty: true, invalid: false },
 		});
-
-		const InvalidFilterWithWildcard = find(filters, {
-			colId: WILDCARD,
-			type: QUALITY,
-			args: { empty: false, invalid: true },
-		});
 		if (colId === WILDCARD && type === QUALITY) {
 			// if there is already a quality filter => merge it with the new quality filter
-			if (InvalidFilterWithWildcard || existingColEmptyFilter) {
+			const existingInvalidFilterWithWildcard = find(filters, {
+				colId: WILDCARD,
+				type: QUALITY,
+				args: { empty: false, invalid: true },
+			});
+			if (existingInvalidFilterWithWildcard || existingEmptyFilter) {
 				const existingQualityFilter = filters.find(filter => filter.colId === WILDCARD && filter.type === QUALITY);
 				existingQualityFilter.args.empty = existingQualityFilter.args.empty || args.empty;
 				existingQualityFilter.args.invalid = existingQualityFilter.args.empty || args.invalid;
@@ -306,20 +305,20 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		}
 		// For a column, if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them into a filter with multi values (same filter badge)
 		else if (colId !== WILDCARD && type === QUALITY && args.empty && !args.invalid) {
-			const sameColExactFilter = find(filters, {
+			const existingExactFilter = find(filters, {
 				colId,
 				type: EXACT,
 			});
-			const sameColMatchFilter = find(filters, {
+			const existingMatchFilter = find(filters, {
 				colId,
 				type: MATCHES,
 			});
 
-			if (sameColExactFilter) {
-				sameColExactFilter.args.phrase = sameColExactFilter.args.phrase.concat(getEmptyRecordsValues());
+			if (existingExactFilter) {
+				existingExactFilter.args.phrase = existingExactFilter.args.phrase.concat(getEmptyRecordsValues());
 			}
-			else if (sameColMatchFilter) {
-				sameColMatchFilter.args.patterns = sameColMatchFilter.args.patterns.concat(getEmptyRecordsValues());
+			else if (existingMatchFilter) {
+				existingMatchFilter.args.patterns = existingMatchFilter.args.patterns.concat(getEmptyRecordsValues());
 			}
 			else {
 				filters.push(
@@ -328,7 +327,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			}
 		}
 		// For a column, if the new filter are EXACT or MATCHES filter and there is already an empty filter =>  Merge them into a filter with multi values (same filter badge)
-		else if (colId !== WILDCARD && existingColEmptyFilter) {
+		else if (colId !== WILDCARD && existingEmptyFilter) {
 			filters = filters.filter(filter => filter.colId !== colId || filter.type !== QUALITY);
 			const filterArgs = {};
 			switch (type) {
@@ -367,7 +366,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			}
 		}
 	}
-
 	function fromTQL(tql, cols) {
 		columns = cols;
 		filters = [];

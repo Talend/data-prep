@@ -32,7 +32,8 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	let INVALID_EMPTY_RECORDS_VALUES;
 	let INVALID_RECORDS_VALUES;
 	let VALID_RECORDS_VALUES;
-
+	let filters = [];
+	let columns = [];
 	return {
 		createFilter,
 		toTQL,
@@ -189,193 +190,187 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	// ---------------------------------------------------CONVERTION-------------------------------------------------
 	// -------------------------------------------------TQL ==> FILTER----------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
-	function fromTQL(tql, columns) {
-		let type;
-		let args;
-		let field;
-		const editable = false;
-		let filters = [];
+	// Initialize filter listeners which convert TQL to filter models
+	function onExactFilter(ctx) {
+		const type = EXACT;
+		const field = ctx.children[0].getText();
+		const args = {
+			phrase: [
+				{
+					value: ctx.children[2].getText().replace(/'/g, ''),
+				},
+			],
+		};
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function onContainsFilter(ctx) {
+		const type = CONTAINS;
+		const field = ctx.children[0].getText();
+		const args = {
+			phrase: [
+				{
+					value: ctx.children[2].getText().replace(/'/g, ''),
+				},
+			],
+		};
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function onCompliesFilter(ctx) {
+		const type = MATCHES;
+		const field = ctx.children[0].getText();
+		const args = {
+			patterns: [
+				{
+					value: ctx.children[2].getText().replace(/'/g, ''),
+				},
+			],
+		};
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function onBetweenFilter(ctx) {
+		const type = INSIDE_RANGE;
+		const field = ctx.children[0].getText();
 
-		const createFilterFromTQL = (type, colId, editable, args, columns) => {
-			const filteredColumn = find(columns, { id: colId });
-			const colName = (filteredColumn && filteredColumn.name) || colId;
+		const min = parseInt(ctx.children[3].getText(), 10);
+		const max = parseInt(ctx.children[5].getText(), 10);
+		const filteredColumn = find(columns, { id: field });
+		const isDateRange = filteredColumn && (filteredColumn.type === 'date');
+		// on date we shift timestamp to fit UTC timezone
+		let offset = 0;
+		if (isDateRange) {
+			const minDate = new Date(min);
+			offset = minDate.getTimezoneOffset() * 60 * 1000;
+		}
+		const label = isDateRange ?
+			FilterUtilsService.getDateLabel(
+				filteredColumn.statistics.histogram.pace,
+				new Date(min),
+				new Date(max)
+			) : FilterUtilsService.getRangeLabelFor({ min, max }, isDateRange);
 
-			const existingColEmptyFilter = find(filters, {
+		const args = {
+			intervals: [{
+				label,
+				value: [parseInt(min, 10) + offset, parseInt(max, 10) + offset],
+			}],
+			type: filteredColumn.type,
+		};
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function onEmptyFilter(ctx) {
+		const type = QUALITY;
+		const field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
+		const args = { empty: true, invalid: false };
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function onValidFilter(ctx) {
+		const type = QUALITY;
+		const field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
+		const args = { valid: true };
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function onInvalidFilter(ctx) {
+		const type = QUALITY;
+		const field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
+		const args = { empty: false, invalid: true };
+		createFilterFromTQL(type, field, false, args, columns);
+	}
+	function createFilterFromTQL(type, colId, editable, args, columns) {
+		const filteredColumn = find(columns, { id: colId });
+		const colName = (filteredColumn && filteredColumn.name) || colId;
+
+		const existingColEmptyFilter = find(filters, {
+			colId,
+			type: QUALITY,
+			args: { empty: true, invalid: false },
+		});
+
+		const InvalidFilterWithWildcard = find(filters, {
+			colId: WILDCARD,
+			type: QUALITY,
+			args: { empty: false, invalid: true },
+		});
+		if (colId === WILDCARD && type === QUALITY) {
+			// if there is already a quality filter => merge it with the new quality filter
+			if (InvalidFilterWithWildcard || existingColEmptyFilter) {
+				const existingQualityFilter = filters.find(filter => filter.colId === WILDCARD && filter.type === QUALITY);
+				existingQualityFilter.args.empty = existingQualityFilter.args.empty || args.empty;
+				existingQualityFilter.args.invalid = existingQualityFilter.args.empty || args.invalid;
+			}
+			// Otherwise, add the new quality filter
+			else {
+				filters.push(
+					createFilter(type, colId, colName, editable, args, null)
+				);
+			}
+		}
+		// For a column, if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them into a filter with multi values (same filter badge)
+		else if (colId !== WILDCARD && type === QUALITY && args.empty && !args.invalid) {
+			const sameColExactFilter = find(filters, {
 				colId,
-				type: QUALITY,
-				args: { empty: true, invalid: false },
+				type: EXACT,
+			});
+			const sameColMatchFilter = find(filters, {
+				colId,
+				type: MATCHES,
 			});
 
-			const InvalidFilterWithWildcard = find(filters, {
-				colId: WILDCARD,
-				type: QUALITY,
-				args: { empty: false, invalid: true },
-			});
-			if (colId === WILDCARD && type === QUALITY) {
-				// if there is already a quality filter => merge it with the new quality filter
-				if (InvalidFilterWithWildcard || existingColEmptyFilter) {
-					const existingQualityFilter = filters.find(filter => filter.colId === WILDCARD && filter.type === QUALITY);
-					existingQualityFilter.args.empty = existingQualityFilter.args.empty || args.empty;
-					existingQualityFilter.args.invalid = existingQualityFilter.args.empty || args.invalid;
-				}
-				// Otherwise, add the new quality filter
-				else {
-					filters.push(
-						createFilter(type, colId, colName, editable, args, null)
-					);
-				}
+			if (sameColExactFilter) {
+				sameColExactFilter.args.phrase = sameColExactFilter.args.phrase.concat(getEmptyRecordsValues());
 			}
-			// For a column, if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them into a filter with multi values (same filter badge)
-			else if (colId !== WILDCARD && type === QUALITY && args.empty && !args.invalid) {
-				const sameColExactFilter = find(filters, {
-					colId,
-					type: EXACT,
-				});
-				const sameColMatchFilter = find(filters, {
-					colId,
-					type: MATCHES,
-				});
-
-				if (sameColExactFilter) {
-					sameColExactFilter.args.phrase = sameColExactFilter.args.phrase.concat(getEmptyRecordsValues());
-				}
-				else if (sameColMatchFilter) {
-					sameColMatchFilter.args.patterns = sameColMatchFilter.args.patterns.concat(getEmptyRecordsValues());
-				}
-				else {
-					filters.push(
-						createFilter(type, colId, colName, editable, args, null)
-					);
-				}
-			}
-			// For a column, if the new filter are EXACT or MATCHES filter and there is already an empty filter =>  Merge them into a filter with multi values (same filter badge)
-			else if (colId !== WILDCARD && existingColEmptyFilter) {
-				filters = filters.filter(filter => filter.colId !== colId || filter.type !== QUALITY);
-				const filterArgs = {};
-				switch (type) {
-				case EXACT:
-					filterArgs.phrase = getEmptyRecordsValues().concat(args.phrase);
-					break;
-				case MATCHES:
-					filterArgs.patterns = getEmptyRecordsValues().concat(args.patterns);
-					break;
-				}
-				filters.push(createFilter(type, colId, colName, editable, filterArgs, null));
+			else if (sameColMatchFilter) {
+				sameColMatchFilter.args.patterns = sameColMatchFilter.args.patterns.concat(getEmptyRecordsValues());
 			}
 			else {
-				const sameColAndTypeFilter = find(filters, {
-					colId,
-					type,
-				});
-				if (sameColAndTypeFilter) { // update the existing filter
-					switch (type) {
-					case CONTAINS:
-					case EXACT:
-						sameColAndTypeFilter.args.phrase = sameColAndTypeFilter.args.phrase.concat(args.phrase);
-						break;
-					case INSIDE_RANGE:
-						sameColAndTypeFilter.args.intervals = sameColAndTypeFilter.args.intervals.concat(args.intervals);
-						break;
-					case MATCHES:
-						sameColAndTypeFilter.args.patterns = sameColAndTypeFilter.args.patterns.concat(args.patterns);
-						break;
-					}
-				}
-				else { // create a new filter
-					filters.push(
-						createFilter(type, colId, colName, editable, args, null)
-					);
+				filters.push(
+					createFilter(type, colId, colName, editable, args, null)
+				);
+			}
+		}
+		// For a column, if the new filter are EXACT or MATCHES filter and there is already an empty filter =>  Merge them into a filter with multi values (same filter badge)
+		else if (colId !== WILDCARD && existingColEmptyFilter) {
+			filters = filters.filter(filter => filter.colId !== colId || filter.type !== QUALITY);
+			const filterArgs = {};
+			switch (type) {
+			case EXACT:
+				filterArgs.phrase = getEmptyRecordsValues().concat(args.phrase);
+				break;
+			case MATCHES:
+				filterArgs.patterns = getEmptyRecordsValues().concat(args.patterns);
+				break;
+			}
+			filters.push(createFilter(type, colId, colName, editable, filterArgs, null));
+		}
+		else {
+			const sameColAndTypeFilter = find(filters, {
+				colId,
+				type,
+			});
+			if (sameColAndTypeFilter) { // update the existing filter
+				switch (type) {
+				case CONTAINS:
+				case EXACT:
+					sameColAndTypeFilter.args.phrase = sameColAndTypeFilter.args.phrase.concat(args.phrase);
+					break;
+				case INSIDE_RANGE:
+					sameColAndTypeFilter.args.intervals = sameColAndTypeFilter.args.intervals.concat(args.intervals);
+					break;
+				case MATCHES:
+					sameColAndTypeFilter.args.patterns = sameColAndTypeFilter.args.patterns.concat(args.patterns);
+					break;
 				}
 			}
-		};
-
-		// Initialize filter listeners
-		const onExactFilter = (ctx) => {
-			type = EXACT;
-			field = ctx.children[0].getText();
-			args = {
-				phrase: [
-					{
-						value: ctx.children[2].getText().replace(/'/g, ''),
-					},
-				],
-			};
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-
-		const onContainsFilter = (ctx) => {
-			type = CONTAINS;
-			field = ctx.children[0].getText();
-			args = {
-				phrase: [
-					{
-						value: ctx.children[2].getText().replace(/'/g, ''),
-					},
-				],
-			};
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-		const onCompliesFilter = (ctx) => {
-			type = MATCHES;
-			field = ctx.children[0].getText();
-			args = {
-				patterns: [
-					{
-						value: ctx.children[2].getText().replace(/'/g, ''),
-					},
-				],
-			};
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-		const onBetweenFilter = (ctx) => {
-			type = INSIDE_RANGE;
-			field = ctx.children[0].getText();
-
-			const min = parseInt(ctx.children[3].getText(), 10);
-			const max = parseInt(ctx.children[5].getText(), 10);
-			const filteredColumn = find(columns, { id: field });
-			const isDateRange = filteredColumn && (filteredColumn.type === 'date');
-			// on date we shift timestamp to fit UTC timezone
-			let offset = 0;
-			if (isDateRange) {
-				const minDate = new Date(min);
-				offset = minDate.getTimezoneOffset() * 60 * 1000;
+			else { // create a new filter
+				filters.push(
+					createFilter(type, colId, colName, editable, args, null)
+				);
 			}
-			const label = isDateRange ?
-				FilterUtilsService.getDateLabel(
-					filteredColumn.statistics.histogram.pace,
-					new Date(min),
-					new Date(max)
-				) : FilterUtilsService.getRangeLabelFor({ min, max }, isDateRange);
+		}
+	}
 
-			args = {
-				intervals: [{
-					label,
-					value: [parseInt(min, 10) + offset, parseInt(max, 10) + offset],
-				}],
-				type: filteredColumn.type,
-			};
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-		const onEmptyFilter = (ctx) => {
-			type = QUALITY;
-			field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
-			args = { empty: true, invalid: false };
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-		const onValidFilter = (ctx) => {
-			type = QUALITY;
-			field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
-			args = { valid: true };
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-		const onInvalidFilter = (ctx) => {
-			type = QUALITY;
-			field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
-			args = { empty: false, invalid: true };
-			return createFilterFromTQL(type, field, editable, args, columns);
-		};
-
+	function fromTQL(tql, cols) {
+		columns = cols;
+		filters = [];
 		if (tql) {
 			parse(
 				tql,
@@ -388,7 +383,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				onInvalidFilter,
 			);
 		}
-
 		return filters;
 	}
 }

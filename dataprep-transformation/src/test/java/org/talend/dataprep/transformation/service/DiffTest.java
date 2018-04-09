@@ -38,14 +38,14 @@ import com.jayway.restassured.http.ContentType;
 public class DiffTest extends TransformationServiceBaseTest {
 
     @Test
-    public void should_return_preview() throws Exception {
+    public void test_preview_should_return_only_wanted_rows() throws Exception {
         // given
         PreviewParameters input = new PreviewParameters( //
                 getSingleTransformation(), //
                 getMultipleTransformation(), //
                 createDataset("../preview/input.csv", "input4preview", "text/csv"), //
                 null, //
-                "[2,4,6]", //
+                "[2,4,5]", //
                 HEAD
         );
 
@@ -202,10 +202,6 @@ public class DiffTest extends TransformationServiceBaseTest {
     }
 
     private String getTransformation_TDP_1184_step_2() throws IOException {
-        // return "{\"actions\": [ { \"action\": \"delete_column\", \"parameters\":{ \"column_id\": \"lastname\",
-        // \"scope\": \"column\" } }, { \"action\": \"split\", \"parameters\":{ \"column_id\": \"city\", \"scope\":
-        // \"column\", \"separator\":\" \", \"limit\":\"2\" } }, { \"action\": \"uppercase\",\"parameters\":{
-        // \"column_id\": \"0000\", \"scope\": \"column\" } } ]}";
         return IOUtils.toString(this.getClass().getResourceAsStream("../preview/deletecolumn_split_uppercase.json"),
                 UTF_8);
     }

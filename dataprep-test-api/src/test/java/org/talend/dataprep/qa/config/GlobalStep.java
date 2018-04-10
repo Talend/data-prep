@@ -13,16 +13,14 @@
 
 package org.talend.dataprep.qa.config;
 
-import cucumber.api.java.After;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.dto.Folder;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.List;
-import java.util.stream.Collectors;
+import cucumber.api.java.After;
 
 /**
  * Storage for Before and After actions.
@@ -52,21 +50,24 @@ public class GlobalStep extends DataPrepStep {
         context.clearTempFile();
 
         // cleaning application's preparations
-        List<String> listPreparationDeletionPb = context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
+        List<String> listPreparationDeletionPb =
+                context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterOSStepIsOK = listPreparationDeletionPb.size() == 0;
 
         // cleaning preparations's related context
         context.clearPreparation();
 
         // cleaning application's datasets
-        List<String> listDatasetDeletionPb = context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
+        List<String> listDatasetDeletionPb =
+                context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterOSStepIsOK &= listDatasetDeletionPb.size() == 0;
 
         // cleaning dataset's related context
         context.clearDataset();
 
         // cleaning application's folders
-        List<Folder> listFolderDeletionPb = context.getFolders().stream().filter(folderDeletionIsNotOK()).collect(Collectors.toList());
+        List<Folder> listFolderDeletionPb =
+                context.getFolders().stream().filter(folderDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterOSStepIsOK &= listFolderDeletionPb.size() == 0;
 
         // cleaning folder's related context
@@ -88,7 +89,8 @@ public class GlobalStep extends DataPrepStep {
                 LOGGER.warn("Pb in the deletion of folder {}.", folder.getPath());
             }
             LOGGER.warn("The Clean After Step has failed (OS side). All deletion were not done.");
-            throw new CleanAfterException("Fail to delete some elements : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
+            throw new CleanAfterException(
+                    "Fail to delete some elements : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
         }
     }
 

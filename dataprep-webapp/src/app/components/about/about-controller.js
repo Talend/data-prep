@@ -29,10 +29,6 @@ export default class AboutCtrl {
 	}
 
 	/**
-	 *
-	 */
-
-	/**
 	 * @ngdoc method
 	 * @name getFullYear
 	 * @methodOf data-prep.about.controller:AboutCtrl

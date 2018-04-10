@@ -27,6 +27,7 @@ import i18n from './../../../../i18n/en.json';
 describe('TQL Filter Adapter Service', () => {
     const COL_ID = '0001';
     const getArgs = (key, ...args) => ({ [key]: args.map(a => ({ value: a })) });
+	const columns = [{ id: '0000', name: 'id'}];
 
     beforeEach(angular.mock.module('data-prep.services.filter-adapter'));
 
@@ -159,4 +160,168 @@ describe('TQL Filter Adapter Service', () => {
             }));
         });
     });
+
+	describe('toTQL', () => {
+		it('should return tql for CONTAINS filter', inject((TqlFilterAdapterService) => {
+			// when
+			const args = getArgs('phrase', 'Charles');
+			const filter = TqlFilterAdapterService.createFilter(CONTAINS, '0000', 'id', null, args, null);
+			// then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 contains 'Charles'))");
+		}));
+
+		it('should return tql for EXACT filter', inject((TqlFilterAdapterService) => {
+			// when
+			const args = getArgs('phrase', 'Charles');
+			const filter = TqlFilterAdapterService.createFilter(EXACT, '0000', 'id', null, args, null);
+
+			// then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 = 'Charles'))");
+		}));
+
+
+		it('should return tql for INVALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filter = TqlFilterAdapterService.createFilter(QUALITY, '0000', 'id', null, { invalid: true, empty: false }, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("(0000 is invalid)");
+		}));
+
+		it('should return tql for EMPTY_INVALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filter = TqlFilterAdapterService.createFilter(QUALITY, null, null, null, { invalid: true, empty: true }, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((* is empty) or (* is invalid))");
+		}));
+
+		it('should return tql for EMPTY_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filter = TqlFilterAdapterService.createFilter(QUALITY, '0000', 'id', null, { invalid: false, empty: true }, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("(0000 is empty)");
+		}));
+
+		it('should return tql for VALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filter = TqlFilterAdapterService.createFilter(QUALITY, '0000', 'id', null, { valid: true }, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("(0000 is valid)");
+		}));
+
+		it('should return tql for INSIDE_RANGE filter', inject((TqlFilterAdapterService) => {
+			//given
+			const args = {
+				intervals: [
+					{
+						label: '[1,000 .. 2,000[',
+						value: [1000, 2000],
+					},
+				],
+				type: 'integer',
+			};
+
+			//when
+			const filter = TqlFilterAdapterService.createFilter(INSIDE_RANGE, '0000', 'id', null, args, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 between [1000, 2000]))");
+		}));
+
+		it('should return tql for MATCHES filter', inject((TqlFilterAdapterService) => {
+			//given
+			const args = {
+				patterns: [
+					{
+						value: 'Aa9',
+					},
+				],
+			};
+
+			//when
+			const filter = TqlFilterAdapterService.createFilter(MATCHES, '0000', 'id', null, args, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 complies 'Aa9'))");
+		}));
+
+    });
+
+	describe('fromTQL', () => {
+		it('should return CONTAINS filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 contains 'Charles'))", columns)[0];
+			// then
+			console.log(filter.args);
+			expect(filter.type).toEqual(CONTAINS);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.phrase[0].value).toEqual('Charles');
+		}));
+
+		it('should return EXACT filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 = 'Charles'))", columns)[0];
+			// then
+			expect(filter.type).toEqual(EXACT);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.phrase[0].value).toEqual('Charles');
+		}));
+
+		it('should return INVALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("(0000 is invalid)", columns)[0];
+			// then
+			expect(filter.type).toEqual(QUALITY);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args).toEqual({ invalid: true, empty: false });
+		}));
+
+		it('should return EMPTY_INVALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((* is empty) or (* is invalid))", columns)[0];
+			// then
+			expect(filter.type).toEqual(QUALITY);
+			expect(filter.colId).toEqual('*');
+			expect(filter.args).toEqual({ invalid: true, empty: true });
+		}));
+
+		it('should return EMPTY_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("(0000 is empty)", columns)[0];
+			// then
+			expect(filter.type).toEqual(QUALITY);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args).toEqual({ invalid: false, empty: true });
+		}));
+
+		it('should return VALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("(0000 is valid)", columns)[0];
+			// then
+			expect(filter.type).toEqual(QUALITY);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args).toEqual({ valid: true });
+		}));
+
+		it('should return INSIDE_RANGE filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 between [1000, 2000]))", columns)[0];
+			// then
+			expect(filter.type).toEqual(INSIDE_RANGE);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.intervals[0].value).toEqual([1000, 2000]);
+		}));
+
+		it('should return MATCHES filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 complies 'Aa9'))", columns)[0];
+			// then
+			expect(filter.type).toEqual(MATCHES);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.patterns[0].value).toEqual('Aa9');
+		}));
+	});
 });

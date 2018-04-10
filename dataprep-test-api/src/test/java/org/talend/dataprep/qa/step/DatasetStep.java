@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
@@ -140,7 +141,7 @@ public class DatasetStep extends DataPrepStep {
                     .size());
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column
-            if (!"".equals(response.body().print())) {
+            if (!StringUtils.EMPTY.equals(response.body().print())) {
                 assertEquals(0,
                         response
                                 .body()
@@ -170,7 +171,7 @@ public class DatasetStep extends DataPrepStep {
             boolean expected) {
 
         Response response = api.getPreparationsColumnSemanticTypes(columnId, preparationId);
-        response.then().statusCode(200);
+        response.then().statusCode(200).log().ifError();
 
         StringBuilder errorMessage = new StringBuilder();
         if (expected) {

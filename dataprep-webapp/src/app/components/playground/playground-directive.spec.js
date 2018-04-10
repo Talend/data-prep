@@ -183,6 +183,7 @@ describe('Playground directive', () => {
 			createElement();
 
 			// then
+			expect(element.find('pure-app-loader').length).toBe(1);
 			expect(element.find('playground-header').length).toBe(0);
 			expect(element.find('.playground').length).toBe(0);
 		});

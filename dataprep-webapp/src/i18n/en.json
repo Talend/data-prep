@@ -419,6 +419,7 @@
   "BUILD_ID": "BUILD ID",
   "VERSION_ID": "VERSION ID",
   "VERSION": "VERSION",
+  "COPYRIGHTS": "© {{year}} Talend. All Rights Reserved",
 
   "_comment": "404",
   "ERROR_404_TITLE": "Oops…",

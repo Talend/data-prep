@@ -22,6 +22,16 @@ const BUILD_PATH = path.resolve(__dirname, '../build');
 
 const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
+const PROXY_OPTIONS = {
+	context: [
+		'/api/**',
+		'/v2/api-docs**',
+		'/docs/**',
+		'/upload/**',
+	],
+	target: 'http://localhost:8888',
+};
+
 function getDefaultConfig(options) {
 	const isTestMode = options.env === 'test';
 	return {
@@ -161,20 +171,28 @@ function addDevServerConfig(config) {
 	config.devServer = {
 		port: appConf.port,
 		host: appConf.host,
+		open: true,
 		watchOptions: {
 			aggregateTimeout: 300,
 			poll: 1000,
 		},
-		compress: true,
-		inline: true,
+		stats: 'errors-only',
 		contentBase: BUILD_PATH,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+			'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+		},
 		setup(app) {
 			app.get('/assets/config/config.json', function (req, res) {
 				const configFile = require('./../src/assets/config/config.json');
-				configFile.serverUrl = 'http://localhost:8888';
+				configFile.serverUrl = ''; // http://localhost:8888';
 				res.json(configFile);
 			});
 		},
+		proxy: [
+			() => PROXY_OPTIONS,
+		],
 	};
 }
 

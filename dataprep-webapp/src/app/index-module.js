@@ -41,9 +41,6 @@ const MODULE_NAME = 'data-prep';
 const I18N_DOMAIN_COMPONENTS = 'tui-components';
 const I18N_DOMAIN_FORMS = 'tui-forms';
 
-let ws;
-let wsPing;
-
 let preferredLanguage;
 const fallbackLng = 'en';
 export const i18n = init({
@@ -92,12 +89,12 @@ const app = angular
 	.run(routeInterceptor);
 
 window.fetchConfiguration = function fetchConfiguration() {
-	return getAppConfiguration().then(({ config, appSettings }) => {
+	return getAppConfiguration().then((appSettings) => {
 		app
 			// Debug config
 			.config(($compileProvider) => {
 				'ngInject';
-				$compileProvider.debugInfoEnabled(config.enableDebug);
+				$compileProvider.debugInfoEnabled(false);
 			})
 			.config(($httpProvider, $translateProvider) => {
 				'ngInject';
@@ -144,29 +141,10 @@ window.fetchConfiguration = function fetchConfiguration() {
 					HelpService.register(help);
 				}
 
-				RestURLs.register(config, appSettings.uris);
+				RestURLs.register(appSettings.uris);
 
 				// dataset encodings
 				DatasetService.refreshSupportedEncodings();
-			})
-			// Open a keepalive websocket if requested
-			.run(() => {
-				if (!config.serverKeepAliveUrl) return;
-
-				function setupWebSocket() {
-					clearInterval(wsPing);
-
-					ws = new WebSocket(config.serverKeepAliveUrl);
-					ws.onclose = () => {
-						setTimeout(setupWebSocket, 1000);
-					};
-
-					wsPing = setInterval(() => {
-						ws.send('ping');
-					}, 3 * 60 * 1000);
-				}
-
-				setupWebSocket();
 			})
 			.run(($translate) => {
 				'ngInject';
@@ -181,10 +159,6 @@ window.fetchConfiguration = function fetchConfiguration() {
 					);
 				});
 			});
-
-		angular
-			.module(SERVICES_UTILS_MODULE)
-			.value('copyRights', config.copyRights);
 	});
 };
 

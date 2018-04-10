@@ -16,12 +16,11 @@ import settings from '../../../../mocks/Settings.mock';
 describe('REST urls service', () => {
 	beforeEach(angular.mock.module('data-prep.services.utils'));
 
-	it('should init api urls with empty server url (same url by default)', inject((RestURLs) => {
+	it('should init api urls', inject((RestURLs) => {
 		// when
-		RestURLs.register({ serverUrl: '' }, settings.uris);
+		RestURLs.register(settings.uris);
 
 		// then
-		expect(RestURLs.serverUrl).toBe('');
 		expect(RestURLs.datasetUrl).toBe('/api/datasets');
 		expect(RestURLs.uploadDatasetUrl).toBe(RestURLs.datasetUrl);
 		expect(RestURLs.transformUrl).toBe('/api/transform');
@@ -36,27 +35,5 @@ describe('REST urls service', () => {
 		expect(RestURLs.upgradeVersion).toBe('/api/upgrade/check');
 		expect(RestURLs.tcompUrl).toBe('/api/tcomp');
 		expect(RestURLs.versionUrl).toBe('/api/version');
-	}));
-
-	it('should change api url with provided server url', inject((RestURLs) => {
-		// when
-		RestURLs.register({ serverUrl: 'http://10.10.10.10:8888' }, settings.uris);
-
-		// then
-		expect(RestURLs.serverUrl).toBe('http://10.10.10.10:8888');
-		expect(RestURLs.datasetUrl).toBe('http://10.10.10.10:8888/api/datasets');
-		expect(RestURLs.uploadDatasetUrl).toBe(RestURLs.datasetUrl);
-		expect(RestURLs.transformUrl).toBe('http://10.10.10.10:8888/api/transform');
-		expect(RestURLs.preparationUrl).toBe('http://10.10.10.10:8888/api/preparations');
-		expect(RestURLs.previewUrl).toBe('http://10.10.10.10:8888/api/preparations/preview');
-		expect(RestURLs.exportUrl).toBe('http://10.10.10.10:8888/api/export');
-		expect(RestURLs.aggregationUrl).toBe('http://10.10.10.10:8888/api/aggregate');
-		expect(RestURLs.typesUrl).toBe('http://10.10.10.10:8888/api/types');
-		expect(RestURLs.folderUrl).toBe('http://10.10.10.10:8888/api/folders');
-		expect(RestURLs.mailUrl).toBe('http://10.10.10.10:8888/api/mail');
-		expect(RestURLs.searchUrl).toBe('http://10.10.10.10:8888/api/search');
-		expect(RestURLs.upgradeVersion).toBe('http://10.10.10.10:8888/api/upgrade/check');
-		expect(RestURLs.tcompUrl).toBe('http://10.10.10.10:8888/api/tcomp');
-		expect(RestURLs.versionUrl).toBe('http://10.10.10.10:8888/api/version');
 	}));
 });

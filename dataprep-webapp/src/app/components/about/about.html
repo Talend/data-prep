@@ -28,7 +28,9 @@
 
         <div class="version-copyrights">
             <div id="version">{{"VERSION" | translate}}: {{$ctrl.state.home.about.builds.displayVersion}}</div>
-            <div id="copyrights">{{$ctrl.copyRights}}</div>
+            <div id="copyrights"
+                 translate-once="COPYRIGHTS"
+                 translate-values="{year: $ctrl.getFullYear()}"></div>
         </div>
 
         <table ng-if="$ctrl.showBuildDetails">

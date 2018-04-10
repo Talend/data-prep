@@ -11,10 +11,9 @@
 
  ============================================================================*/
 export default class AboutCtrl {
-	constructor(state, copyRights, AboutService) {
+	constructor(state, AboutService) {
 		'ngInject';
 		this.state = state;
-		this.copyRights = copyRights;
 		this.showBuildDetails = false;
 		AboutService.loadBuilds();
 	}
@@ -27,5 +26,20 @@ export default class AboutCtrl {
 	 */
 	toggleDetailsDisplay() {
 		this.showBuildDetails = !this.showBuildDetails;
+	}
+
+	/**
+	 *
+	 */
+
+	/**
+	 * @ngdoc method
+	 * @name getFullYear
+	 * @methodOf data-prep.about.controller:AboutCtrl
+	 * @description get copyrights full year
+	 * @returns {number} full year
+	 */
+	getFullYear() {
+		return (new Date()).getFullYear();
 	}
 }

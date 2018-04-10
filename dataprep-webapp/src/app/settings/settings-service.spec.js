@@ -35,7 +35,7 @@ describe('Settings service', () => {
 		let $httpBackend;
 
 		beforeEach(inject(($rootScope, $injector, RestURLs) => {
-			RestURLs.register({ serverUrl: '' }, settings.uris);
+			RestURLs.register(settings.uris);
 			$httpBackend = $injector.get('$httpBackend');
 		}));
 

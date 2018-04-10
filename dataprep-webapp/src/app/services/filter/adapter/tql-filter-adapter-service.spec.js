@@ -14,9 +14,6 @@
 import {
     CONTAINS,
     EXACT,
-    INVALID_RECORDS,
-    VALID_RECORDS,
-    EMPTY_RECORDS,
     INSIDE_RANGE,
     MATCHES,
     QUALITY,
@@ -27,7 +24,7 @@ import i18n from './../../../../i18n/en.json';
 describe('TQL Filter Adapter Service', () => {
     const COL_ID = '0001';
     const getArgs = (key, ...args) => ({ [key]: args.map(a => ({ value: a })) });
-	const columns = [{ id: '0000', name: 'id'}];
+	const columns = [{ id: '0000', name: 'id'}, { id: '0001', name: 'name'}];
 
     beforeEach(angular.mock.module('data-prep.services.filter-adapter'));
 
@@ -248,6 +245,40 @@ describe('TQL Filter Adapter Service', () => {
 			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 complies 'Aa9'))");
 		}));
 
+		it('should return tql for OR filter', inject((TqlFilterAdapterService) => {
+			//given
+			const args = {
+				patterns: [
+					{
+						value: 'Aa9',
+					},
+					{
+						value: 'AAAAa9',
+					},
+				],
+			};
+			//when
+			const filter = TqlFilterAdapterService.createFilter(MATCHES, '0000', 'id', null, args, null);
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 complies 'Aa9') or (0000 complies 'AAAAa9'))");
+		}));
+
+		it('should return tql for AND filter', inject((TqlFilterAdapterService) => {
+			//given
+			const args = {
+				patterns: [
+					{
+						value: 'Aa9',
+					},
+				],
+			};
+			//when
+			const filter1 = TqlFilterAdapterService.createFilter(MATCHES, '0000', 'id', null, args, null);
+			const filter2 = TqlFilterAdapterService.createFilter(QUALITY, '0001', 'id', null, { invalid: false, empty: true }, null);
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter1, filter2])).toEqual("((0000 complies 'Aa9')) and (0001 is empty)");
+		}));
+
     });
 
 	describe('fromTQL', () => {
@@ -255,7 +286,6 @@ describe('TQL Filter Adapter Service', () => {
 			// when
 			const filter = TqlFilterAdapterService.fromTQL("((0000 contains 'Charles'))", columns)[0];
 			// then
-			console.log(filter.args);
 			expect(filter.type).toEqual(CONTAINS);
 			expect(filter.colId).toEqual('0000');
 			expect(filter.args.phrase[0].value).toEqual('Charles');
@@ -276,6 +306,15 @@ describe('TQL Filter Adapter Service', () => {
 			// then
 			expect(filter.type).toEqual(QUALITY);
 			expect(filter.colId).toEqual('0000');
+			expect(filter.args).toEqual({ invalid: true, empty: false });
+		}));
+
+		it('should return INVALID_RECORDS QUALITY filter with WILDCARD', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("(* is invalid)", columns)[0];
+			// then
+			expect(filter.type).toEqual(QUALITY);
+			expect(filter.colId).toEqual('*');
 			expect(filter.args).toEqual({ invalid: true, empty: false });
 		}));
 
@@ -322,6 +361,43 @@ describe('TQL Filter Adapter Service', () => {
 			expect(filter.type).toEqual(MATCHES);
 			expect(filter.colId).toEqual('0000');
 			expect(filter.args.patterns[0].value).toEqual('Aa9');
+		}));
+
+		it('should return OR filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 complies 'Aa9') or (0000 complies 'AAAAa9'))", columns)[0];
+
+			//then
+			expect(filter.type).toEqual(MATCHES);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.patterns[0].value).toEqual('Aa9');
+			expect(filter.args.patterns[1].value).toEqual('AAAAa9');
+		}));
+
+		it('should return AND filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filters = TqlFilterAdapterService.fromTQL("((0000 complies 'Aa9')) and (0001 is empty)", columns);
+			//then
+			expect(filters[0].type).toEqual(MATCHES);
+			expect(filters[0].colId).toEqual('0000');
+			expect(filters[0].args.patterns[0].value).toEqual('Aa9');
+
+			expect(filters[1].type).toEqual(QUALITY);
+			expect(filters[1].colId).toEqual('0001');
+			expect(filters[1].args).toEqual({ invalid: false, empty: true });
+		}));
+
+		it('should return AND filter', inject((TqlFilterAdapterService) => {
+			//when
+			const filters = TqlFilterAdapterService.fromTQL("(0001 is empty) and ((0000 = 'Charles'))", columns);
+			//then
+			expect(filters[0].type).toEqual(QUALITY);
+			expect(filters[0].colId).toEqual('0001');
+			expect(filters[0].args).toEqual({ invalid: false, empty: true });
+
+			expect(filters[1].type).toEqual(EXACT);
+			expect(filters[1].colId).toEqual('0000');
+			expect(filters[1].args.phrase[0].value).toEqual('Charles');
 		}));
 	});
 });

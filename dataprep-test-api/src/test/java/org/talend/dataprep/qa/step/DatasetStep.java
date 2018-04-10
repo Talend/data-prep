@@ -141,12 +141,13 @@ public class DatasetStep extends DataPrepStep {
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column
             if (!"".equals(response.body().print())) {
-                assertEquals(0, response
-                        .body()
-                        .jsonPath()
-                        .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName)
-                                + "'  }")
-                        .size());
+                assertEquals(0,
+                        response
+                                .body()
+                                .jsonPath()
+                                .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName)
+                                        + "'  }")
+                                .size());
             }
         }
     }
@@ -171,7 +172,30 @@ public class DatasetStep extends DataPrepStep {
         Response response = api.getPreparationsColumnSemanticTypes(columnId, preparationId);
         response.then().statusCode(200);
 
-        assertEquals(expected ? 1 : 0, response
+        StringBuilder errorMessage = new StringBuilder();
+        if (expected) {
+            errorMessage
+                    .append("Expected semantic type \"") //
+                    .append(semanticTypeName) //
+                    .append("\" wasn't find on column \"") //
+                    .append(columnId) //
+                    .append("\" ") //
+                    .append("of the preparation \"") //
+                    .append(preparationId) //
+                    .append("\".");
+        } else {
+            errorMessage
+                    .append("The semantic type \"") //
+                    .append(semanticTypeName) //
+                    .append("\" is present on column \"") //
+                    .append(columnId) //
+                    .append("\" ") //
+                    .append("of the preparation \"") //
+                    .append(preparationId) //
+                    .append("\".");
+        }
+
+        assertEquals(errorMessage.toString(), expected ? 1 : 0, response
                 .body()
                 .jsonPath()
                 .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semanticTypeName) + "'  }")
@@ -254,10 +278,17 @@ public class DatasetStep extends DataPrepStep {
 
         final JsonPath jsonPath = response.body().jsonPath();
         final List<String> actual = jsonPath.getList("columns.name", String.class);
-        assertNotNull(actual);
-        assertFalse(actual.isEmpty());
-        assertEquals(columns.size(), actual.size());
-        assertTrue(actual.containsAll(columns));
+        assertNotNull(new StringBuilder("No columns in dataset \"").append(datasetName).append("\".").toString(),
+                actual);
+        assertFalse(new StringBuilder("No columns in dataset \"").append(datasetName).append("\".").toString(),
+                actual.isEmpty());
+        assertEquals(new StringBuilder("Not the expected number of columns in dataset \"")
+                .append(datasetName)
+                .append("\".")
+                .toString(), columns.size(), actual.size());
+        assertTrue(new StringBuilder("The \"")
+                .append(datasetName)
+                .append("\" dataset doesn't contains the expected columns.")
+                .toString(), actual.containsAll(columns));
     }
-
 }

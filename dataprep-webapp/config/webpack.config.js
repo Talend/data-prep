@@ -171,7 +171,6 @@ function addDevServerConfig(config) {
 	config.devServer = {
 		port: appConf.port,
 		host: appConf.host,
-		open: true,
 		watchOptions: {
 			aggregateTimeout: 300,
 			poll: 1000,

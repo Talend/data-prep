@@ -129,8 +129,7 @@ public class PersistentStep extends PersistentIdentifiable {
         result += '\'' + //
                 ", actions='" + contentId + '\'' + //
                 ", appVersion='" + appVersion + '\'' + //
-                ", diff=" + diff + '\'' +
-                ", rowMetadata=" + rowMetadata + //
+                ", diff=" + diff + //
                 '}';
         return result;
     }

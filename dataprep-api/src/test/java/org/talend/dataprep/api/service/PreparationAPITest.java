@@ -1356,14 +1356,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .body("{ \"name\": \"foo\", \"dataSetId\": \"" + invalidDataSetId + "\"}") //
                 .queryParam("folder", "5a549eea1235ef6ee90e2096") //
                 .expect() //
-                .statusCode(400) //
+                .statusCode(404) //
                 .log()
                 .ifError() //
                 .when() //
                 .post("/api/preparations") //
                 .as(TdpExceptionDto.class);
         // assertions
-        assertTrue(exception.getCause().getCode().endsWith(DATASET_DOES_NOT_EXIST.getCode()));
+        assertTrue(exception.getCode().endsWith(DATASET_DOES_NOT_EXIST.getCode()));
 
     }
 

@@ -63,6 +63,7 @@
   "DESC_ORDER": "Descending",
   "SORT_ORDER": "Order by:",
   "UPLOAD_ERROR": "An error occurred during file upload",
+  "FOLDER": "Folder",
   "CREATE_FOLDER": "Add folder",
   "ENTER_FOLDER_NAME": "Enter folder name",
   "HOME_FOLDER": "Home",

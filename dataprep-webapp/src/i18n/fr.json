@@ -63,6 +63,7 @@
   "DESC_ORDER": "Descendant",
   "SORT_ORDER": "Ordre",
   "UPLOAD_ERROR": "Erreur lors du chargement du fichier",
+  "FOLDER": "Le dossier",
   "CREATE_FOLDER": "Ajouter le dossier",
   "ENTER_FOLDER_NAME": "Saisir le nom du dossier",
   "HOME_FOLDER": "Accueil",

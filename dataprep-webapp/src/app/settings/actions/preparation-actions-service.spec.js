@@ -348,7 +348,7 @@ describe('Preparation actions service', () => {
 			// then
 			expect(TalendConfirmService.confirm).toHaveBeenCalledWith(
 				['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-				{ type: 'preparation', name: preparation.name }
+				{ type: 'Preparation', name: preparation.name }
 			);
 		}));
 
@@ -370,7 +370,7 @@ describe('Preparation actions service', () => {
 			expect(MessageService.success).toHaveBeenCalledWith(
 				'PREPARATION_REMOVE_SUCCESS_TITLE',
 				'REMOVE_SUCCESS',
-				{ type: 'preparation', name: preparation.name }
+				{ type: 'Preparation', name: preparation.name }
 			);
 		}));
 	});

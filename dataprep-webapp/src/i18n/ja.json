@@ -49,6 +49,7 @@
   "SELECT_DATASET_DESCRIPTION": "詳細をアクセスするデータセットまたはフォルダーを選択",
 
   "_comment": "オンボーディング",
+  "DATASET": "データセット",
   "DATASET_DETAILS": "所有者: {{owner.displayName}}、作成日: {{created | TDPMoment}}、含まれている行数: {{records}}行",
   "SEARCH_DATASET_DETAILS": "所有者: {{owner.displayName}}、作成日: {{created | TDPMoment}}、含まれている行数: {{records}}行",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}<\/span> - {{dataset.dataSetNbRow}}行、所有者: {{owner.displayName}}、最終変更日: {{lastModificationDate | TDPMoment}}、含まれているステップ数: {{steps.length - 1}}ステップ",
@@ -62,6 +63,7 @@
   "DESC_ORDER": "降順",
   "SORT_ORDER": "ソート順:",
   "UPLOAD_ERROR": "ファイルのアップロード中にエラーが発生しました",
+  "FOLDER": "フォルダ",
   "CREATE_FOLDER": "フォルダーの追加",
   "ENTER_FOLDER_NAME": "フォルダー名を入力",
   "HOME_FOLDER": "ホーム",
@@ -434,6 +436,7 @@
   "HEADERBAR_INFO": "情報",
   "SIDEPANEL_COLLAPSE": "折りたたみ",
   "SIDEPANEL_EXPAND": "展開",
+  "VIRTUALIZEDLIST_NO_RESULT": "結果が見つかりません。",
 
   "_comment": "オンボーディング",
   "BACK": "戻る",

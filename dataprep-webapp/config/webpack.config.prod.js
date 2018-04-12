@@ -6,6 +6,6 @@ module.exports = function() {
 		entryOutput: true,
 		minify: true,
 		stripComments: true,
-		devServer:true,
+		devServer: true,
 	});
 };

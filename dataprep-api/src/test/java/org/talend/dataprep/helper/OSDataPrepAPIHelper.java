@@ -13,6 +13,10 @@
 
 package org.talend.dataprep.helper;
 
+import static com.jayway.restassured.http.ContentType.JSON;
+import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
+import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,10 +48,6 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
-
-import static com.jayway.restassured.http.ContentType.JSON;
-import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
-import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -339,7 +339,7 @@ import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
      * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeExport(Map<String, Object> parameters) throws IOException {
+    public Response executeExport(Map<String, String> parameters) throws IOException {
         Response response = given() //
                 .contentType(JSON) //
                 .when() //

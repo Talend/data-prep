@@ -38,6 +38,8 @@ import d3LocaleFr from '../lib/d3.locale.fr';
 
 const MODULE_NAME = 'data-prep';
 
+window.MODULE_NAME = MODULE_NAME;
+
 const I18N_DOMAIN_COMPONENTS = 'tui-components';
 const I18N_DOMAIN_FORMS = 'tui-forms';
 
@@ -188,11 +190,10 @@ window.fetchConfiguration = function fetchConfiguration() {
 	});
 };
 
-window.bootstrapDataPrepApplication = function bootstrapDataPrepApplication(
-	modules
-) {
-	angular.element(document).ready(() => angular.bootstrap(document, modules));
-};
+window.fetchConfiguration().then(() => {
+	angular.element(document).ready(() => angular.bootstrap(document, [window.MODULE_NAME]));
+});
+
 /* eslint-enable angular/window-service */
 
 export default MODULE_NAME;

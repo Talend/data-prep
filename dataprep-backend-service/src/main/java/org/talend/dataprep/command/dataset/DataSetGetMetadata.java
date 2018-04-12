@@ -12,14 +12,13 @@
 
 package org.talend.dataprep.command.dataset;
 
-import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.command.Defaults.convertResponse;
-
 import java.io.IOException;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.annotation.PostConstruct;
 
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,10 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+
+import static org.talend.dataprep.command.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.convertResponse;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 @Component
 @Scope("prototype")
@@ -64,14 +66,22 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
     }
 
     private void configureLimitedDataset(final String dataSetId) {
-        execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/metadata"));
+        URI build;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
+            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/metadata");
+            build = uriBuilder.build();
+        } catch (URISyntaxException e) {
+            throw new TDPException(UNEXPECTED_EXCEPTION, e);
+        }
+        execute(() -> new HttpGet(build));
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
                 final DataSet dataSet = objectMapper.readerFor(DataSet.class).readValue(res.getEntity().getContent());
                 return dataSet.getMetadata();
             } catch (IOException e) {
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {
                 req.releaseConnection();
             }

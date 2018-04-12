@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.api.export;
 
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -31,6 +28,9 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.exception.TDPException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 @Component
 public class ExportParametersUtil {
@@ -87,7 +87,7 @@ public class ExportParametersUtil {
         final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {
             return mapper.readerFor(PreparationMessage.class).readValue(details);
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error("Unable to read preparation {}", preparationId, e);
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }

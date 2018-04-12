@@ -278,34 +278,6 @@ describe('Playground Service', () => {
 			assertNewPreparationInitialization();
 		}));
 
-		it('should manage loading spinner', inject(($rootScope, PlaygroundService) => {
-			// given
-			expect($rootScope.$emit).not.toHaveBeenCalled();
-
-			// when
-			PlaygroundService.loadDataset(datasetColumns.metadata.id);
-			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
-			$rootScope.$digest();
-
-			// then
-			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
-		}));
-
-		it('should not stop spinner if it has been started more than one time', inject(($rootScope, PlaygroundService) => {
-			// given
-			expect($rootScope.$emit).not.toHaveBeenCalled();
-
-			// when
-			PlaygroundService.loadDataset(datasetColumns.metadata.id);
-			PlaygroundService.loadDataset(datasetColumns.metadata.id);
-			$rootScope.$digest();
-
-			// then
-			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
-			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
-			expect($rootScope.$emit).toHaveBeenCalledTimes(2);
-		}));
-
 		it('should reset preparation name', inject(($rootScope, PlaygroundService, StateService) => {
 			// given
 			PlaygroundService.preparationName = 'preparation name';
@@ -418,19 +390,6 @@ describe('Playground Service', () => {
 
 			// then
 			assertDatasetLoadInitialized(dataset, data);
-		}));
-
-		it('should manage loading spinner on preparation load', inject(($rootScope, PlaygroundService) => {
-			// given
-			stateMock.playground.preparation = { id: '5746518486846' };
-
-			// when
-			PlaygroundService.loadPreparation(preparation);
-			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_START);
-			$rootScope.$apply();
-
-			// then
-			expect($rootScope.$emit).toHaveBeenCalledWith(EVENT_LOADING_STOP);
 		}));
 
 		it('should load existing preparation with simulated dataset metadata when its metadata is not set yet',

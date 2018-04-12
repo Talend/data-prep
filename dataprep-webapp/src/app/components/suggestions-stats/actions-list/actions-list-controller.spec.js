@@ -304,15 +304,37 @@ describe('Actions list controller', () => {
 			//given
 			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
 
-			const category = { category: 'data cleansing category' };
-			const transformation = { name: 'cluster', dynamic: true };
+			const action = {
+				name: 'cluster',
+				dynamic: true,
+				category: 'data cleansing category'
+			};
 			const ctrl = createController();
 
 			//when
-			const datatFeatureValue = ctrl.getDataFeature(category.category, transformation.name);
+			const datatFeatureValue = ctrl.getDataFeature(action);
 
 			//then
 			expect(datatFeatureValue).toBe('preparation.data_cleansing_category.cluster');
+		});
+
+		it('should slugify with alternate category', () => {
+			//given
+			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
+
+			const action = {
+				name: 'cluster',
+				dynamic: true,
+				category: 'data cleansing category',
+				alternateCategory: 'alternate data cleansing category',
+			};
+			const ctrl = createController();
+
+			//when
+			const datatFeatureValue = ctrl.getDataFeature(action);
+
+			//then
+			expect(datatFeatureValue).toBe('preparation.alternate_data_cleansing_category.cluster');
 		});
 	});
 });

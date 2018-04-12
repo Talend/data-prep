@@ -101,13 +101,4 @@ public class ActionMetadataTestUtils {
         return builder.build();
     }
 
-    public static DataSetRow getTypedRow(Type type, String... values) {
-        AbstractMetadataBaseTest.ValuesBuilder builder = builder();
-        DecimalFormat format = new DecimalFormat("0000");
-        for (int i = 0; i < values.length; i++) {
-            builder = builder.with(value(values[i]).type(type).name(format.format(i)));
-        }
-        return builder.build();
-    }
-
 }

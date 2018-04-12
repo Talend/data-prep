@@ -19,7 +19,6 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.Providers;
@@ -159,9 +158,6 @@ public class DateCalendarConverter extends AbstractActionMetadata implements Col
         super.compile(actionContext);
         if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
             ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
-            ColumnMetadata targetColumn = actionContext.getRowMetadata().getById(ActionsUtils.getTargetColumnId(actionContext));
-            ColumnMetadata originalColumn = actionContext.getRowMetadata().getById(actionContext.getColumnId());
-            targetColumn.setStatistics(new Statistics(originalColumn.getStatistics()));
         }
         if (actionContext.getActionStatus() == OK) {
             dateCalendarConverterMap = new HashMap<>();

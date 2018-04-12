@@ -161,7 +161,14 @@ export default function ActionsListCtrl($timeout, state, TransformationService,
 		};
 	};
 
-	vm.getDataFeature = function getFeature(categoryId, actionId) {
-		return `preparation.${categoryId.replace(/\s/g, '_')}.${actionId}`;
+	vm.getDataFeature = function getFeature(action) {
+		if (action) {
+			const categoryName = action.alternateCategory || action.category;
+			const actionName = action.name;
+			if (categoryName && actionName) {
+				return `preparation.${categoryName.replace(/\s/g, '_')}.${actionName}`;
+			}
+		}
+		return '';
 	};
 }

@@ -72,10 +72,6 @@
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@talend/html-webpack-plugin/-/html-webpack-plugin-0.0.3.tgz#461c7d0877e497ca7c8f63ccbf7ef8603edf64f5"
 
-"@talend/icons@0.175.0":
-  version "0.175.0"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.175.0.tgz#9f0d9ed0142dac7052dafe7c5dbf48fdb075fbf1"
-
 "@talend/icons@0.177.0":
   version "0.177.0"
   resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.177.0.tgz#92a666b69f747cd3ccc7c0f53afd793fcd9e1a3d"

@@ -12,10 +12,25 @@
 
 package org.talend.dataprep.actions;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
@@ -528,8 +543,8 @@ public class DefaultActionParserTest {
         // Then
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
-        assertEquals("CALIFORNIA", result1.get(2));
-        assertEquals("Sacramento", result1.get(3));
+        assertEquals("California", result1.get(2));
+        assertEquals("SACRAMENTO", result1.get(3));
         assertEquals(4, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));
@@ -572,8 +587,8 @@ public class DefaultActionParserTest {
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
         assertEquals("WEST", result1.get(2));
-        assertEquals("CALIFORNIA", result1.get(3));
-        assertEquals("Sacramento", result1.get(4));
+        assertEquals("California", result1.get(3));
+        assertEquals("SACRAMENTO", result1.get(4));
         assertEquals(5, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));

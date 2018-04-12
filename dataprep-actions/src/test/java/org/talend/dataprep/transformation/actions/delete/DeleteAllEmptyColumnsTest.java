@@ -130,6 +130,10 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         // then
         final int rowSize = row.getRowMetadata().getColumns().size();
         assertEquals(2, rowSize);
+        assertNotNull(row.getRowMetadata().getById("0000"));
+        assertNull(row.getRowMetadata().getById("0001"));
+        assertNotNull(row.getRowMetadata().getById("0002"));
+        assertNull(row.getRowMetadata().getById("0003"));
     }
 
     @Test
@@ -149,7 +153,12 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         // then
         final int rowSize = row.getRowMetadata().getColumns().size();
         assertEquals(3, rowSize);
+        assertNotNull(row.getRowMetadata().getById("0000"));
+        assertNull(row.getRowMetadata().getById("0001"));
+        assertNotNull(row.getRowMetadata().getById("0002"));
+        assertNotNull(row.getRowMetadata().getById("0003"));
     }
+
 
     @Test
     public void should_have_expected_behavior() {

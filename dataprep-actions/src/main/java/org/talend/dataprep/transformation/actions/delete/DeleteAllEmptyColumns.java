@@ -12,7 +12,13 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
@@ -35,8 +41,6 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     protected static final String DELETE = "delete";
 
     protected static final String KEEP = "keep";
-
-    private static final String COLUMN_IDS = "columnIds";
 
     @Override
     public String getName() {
@@ -75,34 +79,25 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        String columnId;
-        ColumnMetadata column;
-        Quality quality;
         List<ColumnMetadata> columns = actionContext.getRowMetadata().getColumns();
-        List<String> columnIds = new ArrayList<>();
+        List<String> columnsToDelete = new ArrayList<>();
 
-        for(int i = columns.size() - 1; i >= 0; i--) {
-            column = columns.get(i);
-            columnId = column.getId();
-            if (actionContext.getParameters().get(ACTION_PARAMETER).equals(KEEP)) {
-                if (actionContext.getRowMetadata().getById(columnId).getStatistics().getDataFrequencies().size() > 1) {
-                    continue; //parameter to keep blanks is at true and the size of the datafrequencies is higher than 1 so we don't delete this column
-                }
-            }
-            quality = column.getQuality();
-            if (quality.getValid() + quality.getInvalid() == 0) {
-                LOGGER.debug("DeleteColumn for columnId {}", columnId);
-                actionContext.getRowMetadata().deleteColumnById(columnId);
-                columnIds.add(columnId);
+        for (ColumnMetadata column : columns) {
+            if (isColumnToDelete(column, actionContext.getParameters().get(ACTION_PARAMETER))) {
+                columnsToDelete.add(column.getId());
             }
         }
-        actionContext.get(COLUMN_IDS, p -> columnIds);
+
+        columnsToDelete.forEach(columnId -> {
+            actionContext.getRowMetadata().deleteColumnById(columnId);
+            LOGGER.debug("DeleteColumn for columnId {}", columnId);
+        });
+        actionContext.setActionStatus(ActionContext.ActionStatus.DONE);
     }
 
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        List<String> columnIds = context.get(COLUMN_IDS);
-        columnIds.forEach(columnId -> row.deleteColumnById(columnId));
+        //nothing to do here
     }
 
     @Override
@@ -110,4 +105,14 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
         return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS);
     }
 
+    private boolean isColumnToDelete(ColumnMetadata columnMetadata, String ActionParameter) {
+        switch (ActionParameter) {
+            case KEEP:
+                if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
+                    return false;
+                }
+            default:
+                return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
+        }
+    }
 }

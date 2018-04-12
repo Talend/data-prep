@@ -489,5 +489,7 @@
   "LIST_TOOLBAR_DISPLAY": "Affichage",
   "LIST_TOOLBAR_SORT_BY": "Trier par",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descendant",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant"
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant",
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant",
+  "VIRTUALIZEDLIST_NO_RESULT": "Aucun résultat."
 }

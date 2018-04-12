@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import i18n from '../../../i18n/en.json';
+
 describe('Statistics service', () => {
     const barChartNumCol = {
         domain: 'barchartAndNumeric',
@@ -682,6 +684,11 @@ describe('Statistics service', () => {
         };
         $provide.constant('state', stateMock);
     }));
+
+	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
     beforeEach(inject(($q, StateService) => {
         spyOn(StateService, 'setStatisticsHistogramActiveLimits').and.returnValue();

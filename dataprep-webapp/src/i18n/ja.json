@@ -291,6 +291,8 @@
   "RECORD": "レコード",
   "VALUE": "値",
   "RANGE": "範囲",
+  "OCCURRENCES": "件数",
+  "FILTERED_OCCURRENCES": "フィルタリング件数",
   "MIN": "最小",
   "MINIMUM": "最小値",
   "MAX": "最大",

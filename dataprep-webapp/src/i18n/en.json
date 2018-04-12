@@ -291,6 +291,8 @@
   "RECORD": "Record",
   "VALUE": "Value",
   "RANGE": "Range",
+  "OCCURRENCES": "Occurrences",
+  "FILTERED_OCCURRENCES": "Filtered Occurrences",
   "MIN": "MIN",
   "MINIMUM": "Minimum",
   "MAX": "MAX",

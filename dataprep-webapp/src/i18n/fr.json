@@ -287,6 +287,8 @@
   "RECORD": "Valeur",
   "VALUE": "Valeur",
   "RANGE": "Intervalle",
+  "OCCURRENCES": "Occurrences",
+  "FILTERED_OCCURRENCES": "Occurrences filtrées",
   "MIN": "Min",
   "MINIMUM": "Minimum",
   "MAX": "Max",

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,12 +168,11 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
             final String columnId = parameters.get(COLUMN_ID.getKey());
             final RowMetadata lookupRowMetadata = rowMatcher.getRowMetadata();
             final RowMetadata rowMetadata = context.getRowMetadata();
-            colsToAdd = Lists.reverse(colsToAdd);
-            colsToAdd.forEach(toAdd -> {
+            final List<String> addedColumns = colsToAdd.stream().map(toAdd -> {
                 // create the new column
                 final String toAddColumnId = toAdd.getId();
                 final ColumnMetadata metadata = lookupRowMetadata.getById(toAddColumnId);
-                context.column(toAddColumnId, r -> {
+                return context.column(toAddColumnId, r -> {
                     final ColumnMetadata colMetadata = //
                             column() //
                             .copy(metadata) //
@@ -181,7 +181,9 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
                     rowMetadata.insertAfter(columnId, colMetadata);
                     return colMetadata;
                 });
-            });
+            }).collect(Collectors.toList());
+
+            Lists.reverse(addedColumns).forEach(c -> rowMetadata.moveAfter(c, columnId));
         }
     }
 

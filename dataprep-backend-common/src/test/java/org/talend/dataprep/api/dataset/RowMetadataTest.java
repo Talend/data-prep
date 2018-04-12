@@ -341,7 +341,7 @@ public class RowMetadataTest {
         final ColumnMetadata third = value.addColumn(getColumnMetadata("third"));
 
         // when
-        value.moveAfter(third.getId(), first.getId());
+        value.moveAfter(first.getId(), third.getId());
 
         // then
         final List<ColumnMetadata> columns = value.getColumns();
@@ -360,19 +360,19 @@ public class RowMetadataTest {
         value.addColumn(getColumnMetadata("third"));
 
         // when
-        value.moveAfter(null, "0001");
-
-        // then
-        assertMoveAfterIncorrectInput(value);
-
-        // when
         value.moveAfter("0001", null);
 
         // then
         assertMoveAfterIncorrectInput(value);
 
         // when
-        value.moveAfter("0004", "0001");
+        value.moveAfter(null, "0001");
+
+        // then
+        assertMoveAfterIncorrectInput(value);
+
+        // when
+        value.moveAfter("0001", "0004");
 
         // then
         assertMoveAfterIncorrectInput(value);

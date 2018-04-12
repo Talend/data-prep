@@ -183,7 +183,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
                 });
             }).collect(Collectors.toList());
 
-            Lists.reverse(addedColumns).forEach(c -> rowMetadata.moveAfter(c, columnId));
+            Lists.reverse(addedColumns).forEach(column -> rowMetadata.moveAfter(columnId, column));
         }
     }
 

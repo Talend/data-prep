@@ -308,7 +308,7 @@ public class RowMetadata implements Serializable {
     }
 
     /**
-     * Move column with id <code>c</code> <b>after</b> <code>columnId</code>. If you have:
+     * Move column with id <code>movedColumnId</code> <b>after</b> <code>columnId</code>. If you have:
      * 
      * <pre>
      *     [0001, 0002, 0003, 0004]
@@ -319,19 +319,16 @@ public class RowMetadata implements Serializable {
      * <pre>
      *     [0001, 0004, 0002, 0003]
      * </pre>
-     * 
-     * @param c The column to move.
-     * @param columnId The column where <code>c</code> should be next to.
+     *
+     * @param columnId The column where <code>movedColumnId</code> should be next to.
+     * @param movedColumnId The column to move.
      */
-    public void moveAfter(String c, String columnId) {
-        if (c == null || columnId == null) {
-            return;
-        }
+    public void moveAfter(@Nonnull String columnId, @Nonnull String movedColumnId) {
         final ColumnMetadata columnMetadata = getById(columnId);
         if (columnMetadata == null) {
             return;
         }
-        final ColumnMetadata movedColumn = getById(c);
+        final ColumnMetadata movedColumn = getById(movedColumnId);
         if (movedColumn == null) {
             return;
         }

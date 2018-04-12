@@ -306,4 +306,37 @@ public class RowMetadata implements Serializable {
     public Schema toSchema() {
         return RowMetadataUtils.toSchema(this);
     }
+
+    /**
+     * Move column with id <code>c</code> <b>after</b> <code>columnId</code>. If you have:
+     * 
+     * <pre>
+     *     [0001, 0002, 0003, 0004]
+     * </pre>
+     * 
+     * And call <code>moveAfter(0004, 0001)</code>, you will change order of columns with:
+     * 
+     * <pre>
+     *     [0001, 0004, 0002, 0003]
+     * </pre>
+     * 
+     * @param c The column to move.
+     * @param columnId The column where <code>c</code> should be next to.
+     */
+    public void moveAfter(String c, String columnId) {
+        if (c == null || columnId == null) {
+            return;
+        }
+        final ColumnMetadata columnMetadata = getById(columnId);
+        if (columnMetadata == null) {
+            return;
+        }
+        final ColumnMetadata movedColumn = getById(c);
+        if (movedColumn == null) {
+            return;
+        }
+
+        columns.remove(movedColumn);
+        columns.add(columns.indexOf(columnMetadata) + 1, movedColumn);
+    }
 }

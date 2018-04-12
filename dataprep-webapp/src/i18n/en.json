@@ -49,6 +49,7 @@
   "SELECT_DATASET_DESCRIPTION": "Select a dataset or a folder to access its details",
 
   "_comment": "Inventory",
+  "DATASET": "Dataset",
   "DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
   "SEARCH_DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}</span> - {{dataset.dataSetNbRow}} row(s), owned by {{owner.displayName}}, last change: {{lastModificationDate | TDPMoment}}, contains {{steps.length - 1}} step(s)",
@@ -434,6 +435,7 @@
   "HEADERBAR_INFO": "Information",
   "SIDEPANEL_COLLAPSE": "Collapse",
   "SIDEPANEL_EXPAND": "Expand",
+  "VIRTUALIZEDLIST_NO_RESULT": "No result found.",
 
   "_comment": "On Boarding",
   "BACK": "Back",
@@ -484,6 +486,5 @@
   "LIST_TOOLBAR_DISPLAY": "Display",
   "LIST_TOOLBAR_SORT_BY": "Sort by",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descending",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending",
-  "VIRTUALIZEDLIST_NO_RESULT": "No result found."
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending"
 }

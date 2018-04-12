@@ -49,6 +49,7 @@
   "SELECT_DATASET_DESCRIPTION": "Sélectionner un jeu de données ou un dossier pour voir ses détails",
 
   "_comment": "Inventory",
+  "DATASET": "Jeu de données",
   "DATASET_DETAILS": "créé par {{owner.displayName}}, créé {{created | TDPMoment}}, contient {{records}} ligne(s)",
   "SEARCH_DATASET_DETAILS": "créé par {{owner.displayName}}, créé {{created | TDPMoment}}, contient {{records}} ligne(s)",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}</span> - {{dataset.dataSetNbRow}} ligne(s), créé par {{owner.displayName}}, dernière modification : {{lastModificationDate | TDPMoment}}, contient {{steps.length - 1}} étape(s)",
@@ -489,7 +490,5 @@
   "LIST_TOOLBAR_DISPLAY": "Affichage",
   "LIST_TOOLBAR_SORT_BY": "Trier par",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descendant",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant",
-  "VIRTUALIZEDLIST_NO_RESULT": "Aucun résultat."
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant"
 }

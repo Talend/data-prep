@@ -83,7 +83,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	function initHorizontalHistogram(keyField, valueField, label, data, className) {
 		return {
 			data,
-			label: $translate.instant(label),
+			label,
 			keyField,
 			valueField,
 			column: state.playground.grid.selectedColumns[0],

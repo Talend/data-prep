@@ -1,11 +1,7 @@
 package org.talend.dataprep.qa.step.export;
 
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.DATASET_ID;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.EXPORT_TYPE;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILENAME;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.PREPARATION_ID;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.STEP_ID;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
 import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
 
 import java.io.File;
@@ -80,6 +76,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         exportUtil.feedExportParam(ret, FILENAME, filename);
 
         exportUtil.feedExportParam(ret, EXPORT_TYPE, getExportTypeName());
+        exportUtil.feedExportParam(ret, FILTER, params);
 
         for (ExportParam exportParam : getExtraExportParameter()) {
             exportUtil.feedExportParam(ret, exportParam, params);

@@ -1,0 +1,3 @@
+"firstname";"lastname";"state";"registration";"city";"birth";"nbCommands";"avgAmount";"bool"
+"Theodore";123;"invalid0";27/01/2008;"Harrisburg";"11/08/1953";"--";98.5;invalid
+"Zachary";  Adams  ;"  MI  ";14/10/2007;"Atlant";"invalid";"";89.7;False

@@ -1,0 +1,6 @@
+"firstname";"lastname";"state";"registration";"city";"birth";"nbCommands";"avgAmount";"bool"
+"BILL";"Quincy";"AR";25/01/2008;"Oklahoma City";18/10/1975;-92;-68.5;False
+"BILL";"Adams";"TN";26/08/2007;"Concord";15/05/1968;78;11.4;False
+"BILL";"Harrison";"SD";22/06/2008;"Boston";16/04/1962;8;41.7;False
+"BILL";"Johnson";"NJ";29/10/2008;"Augusta";22/05/1977;40;80.4;False
+"BILL";"Harrison";"KY";03/03/2007;"Olympia";29/12/1983;54;7.5;True

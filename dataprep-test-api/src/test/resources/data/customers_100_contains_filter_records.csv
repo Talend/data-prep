@@ -1,0 +1,4 @@
+"firstname";"lastname";"state";"registration";"city";"birth";"nbCommands";"avgAmount";"bool"
+"WARREN";"Johnson";"WA";18/08/2007;"Nashville";11/02/1960;17.5;87.6;False
+"WARREN";"Tyler";"KY";18/12/2007;"Annapolis";25/08/1986;82;60.9;False
+"WARREN";"Quincy";"MI";21/12/2008;"Richmond";21/11/1957;24;67.3;False

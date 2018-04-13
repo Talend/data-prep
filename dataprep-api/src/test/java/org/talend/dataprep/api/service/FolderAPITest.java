@@ -13,6 +13,26 @@
 
 package org.talend.dataprep.api.service;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.folder.FolderInfo;
+import org.talend.dataprep.api.folder.FolderTreeNode;
+import org.talend.dataprep.exception.TdpExceptionDto;
+import org.talend.dataprep.exception.error.FolderErrorCodes;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
+
 import static com.jayway.restassured.RestAssured.given;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -26,25 +46,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.folder.FolderInfo;
-import org.talend.dataprep.api.folder.FolderTreeNode;
-import org.talend.dataprep.exception.error.FolderErrorCodes;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
 
 /**
  * Unit tests for the folder API.
@@ -339,6 +341,33 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertThat(hierarchy, hasSize(2));
         assertThat(hierarchy.get(0).getId(), equalTo(home.getId()));
         assertThat(hierarchy.get(1).getId(), equalTo(firstFolder.getId()));
+    }
+
+    @Test
+    public void updateFolderPathEncodingIssue_TDP_4959() {
+        String parentId = home.getId();
+        // check non encoding issue on path query parameter
+        given() //
+                .queryParam("parentId", parentId) //
+                .queryParam("path", "ZAP%25n%25s%25n%25s%25n%25s%25n%25s%25n%25s%0A") //
+                .expect().statusCode(200).log().ifError() //
+                .when() //
+                .put("/api/folders");
+    }
+
+    @Test
+    public void updateFolderWithUnknownParent_TDP_4959() {
+        // check non encoding issue on path query parameter
+        Response response = given() //
+                .queryParam("parentId", "ZAP%25n%25s%25n%25s%25n%25s%25n%25s%25n%25s%0A") //
+                .queryParam("path", "new-folder") //
+                .expect().statusCode(400).log().ifError() //
+                .when() //
+                .put("/api/folders");
+
+        TdpExceptionDto exception = response.as(TdpExceptionDto.class);
+
+        assertTrue(exception.getCode().endsWith(FOLDER_DOES_NOT_EXIST.getCode()));
     }
 
     private void assertTree(final FolderTreeNode node, final String nodePath, final String[] expectedChildrenPaths) {

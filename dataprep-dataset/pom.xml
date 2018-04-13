@@ -29,5 +29,4 @@
         <stack.param.name>DataPrepDatasetFQIN</stack.param.name>
         <start-class>org.talend.dataprep.dataset.Application</start-class>
     </properties>
-
 </project>

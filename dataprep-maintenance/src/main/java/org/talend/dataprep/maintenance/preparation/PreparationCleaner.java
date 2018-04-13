@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
-import static org.talend.tql.api.TqlBuilder.eq;
 import static org.talend.tql.api.TqlBuilder.neq;
 
 import java.util.ArrayList;
@@ -74,13 +73,13 @@ public class PreparationCleaner {
             if (allMarkersResult == StepMarker.Result.COMPLETED) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Removing unused steps ({} scheduled for deletion)",
-                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                            repository.count(Step.class, neq("marker", currentCleanerRun.toString())));
                 }
                 repository.remove(Step.class, neq("marker", currentCleanerRun.toString()));
             } else {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Discarding {} pending step deletes",
-                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                            repository.count(Step.class, neq("marker", currentCleanerRun.toString())));
                 }
             }
         } finally {
@@ -92,7 +91,7 @@ public class PreparationCleaner {
     /**
      * Remove the orphan steps (that do NOT belong to any preparation) for all available tenants.
      */
-    @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
+    @Scheduled(fixedDelay = 60 * 1000) // Every hour
     public void removeOrphanSteps() {
         forAll.execute(forAll.condition().operational(repository), this::removeCurrentOrphanSteps);
     }

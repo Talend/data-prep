@@ -43,6 +43,8 @@ public class PersistentStep extends PersistentIdentifiable {
     /** The step row metadata. */
     private String rowMetadata;
 
+    private String marker;
+
     /**
      * Default empty constructor;
      */
@@ -118,6 +120,14 @@ public class PersistentStep extends PersistentIdentifiable {
         this.rowMetadata = rowMetadata;
     }
 
+    public String getMarker() {
+        return marker;
+    }
+
+    public void setMarker(String marker) {
+        this.marker = marker;
+    }
+
     @Override
     public String toString() {
         String result = "PersistentStep{parentId='";
@@ -130,6 +140,7 @@ public class PersistentStep extends PersistentIdentifiable {
                 ", actions='" + contentId + '\'' + //
                 ", appVersion='" + appVersion + '\'' + //
                 ", diff=" + diff + //
+                ", marker=" + marker + //
                 '}';
         return result;
     }

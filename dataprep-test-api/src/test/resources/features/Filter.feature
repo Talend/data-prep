@@ -43,10 +43,11 @@ Feature: Filter features
   Scenario Outline: Apply filter to a preparation step
     When I upload the dataset "/data/A-customers_100_with_pb.csv" with name "customers_100_with_pb_dataset"
     And I create a preparation with name "customers_100_with_pb_preparation", based on "customers_100_with_pb_dataset" dataset
-    And I add a "<step_name>" step on the preparation "customers_100_with_pb_preparation" with parameters :
+    And I add a "<step_name>" step identified by "first_step_filter_preparation" on the preparation "customers_100_with_pb_preparation" with parameters :
       | column_name | firstname       |
       | column_id   | 0000            |
       | filter      | <tql_prep_step> |
+    Then The step "first_step_filter_preparation" is applied with the filter "<tql_prep_step>"
     When I export the preparation with parameters :
       | exportType           | CSV                               |
       | preparationName      | customers_100_with_pb_preparation |

@@ -5,6 +5,7 @@ import com.jayway.restassured.response.Response;
 import cucumber.api.java.en.Then;
 
 import org.junit.Assert;
+import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.PreparationContent;
@@ -13,6 +14,7 @@ import java.io.*;
 import java.util.List;
 
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 public class FilterStep extends DataPrepStep {
 
@@ -42,5 +44,11 @@ public class FilterStep extends DataPrepStep {
         List<Object> expected = objectMapper.readValue(expectedFileStream, new TypeReference<List<Object>>() {});
 
         Assert.assertTrue(prepFilteredRecords.containsAll(expected));
+    }
+
+    @Then("^The step \"(.*)\" is applied with the filter \"(.*)\"$")
+    public void theStepIsAppliedWithTheFilter(String step, String filter) {
+        Action prepStep = context.getAction(step);
+        Assert.assertEquals(filter, prepStep.parameters.get(FILTER.getKey()));
     }
 }

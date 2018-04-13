@@ -91,7 +91,7 @@ public class PreparationCleaner {
     /**
      * Remove the orphan steps (that do NOT belong to any preparation) for all available tenants.
      */
-    @Scheduled(fixedDelay = 60 * 1000) // Every hour
+    @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
     public void removeOrphanSteps() {
         forAll.execute(forAll.condition().operational(repository), this::removeCurrentOrphanSteps);
     }

@@ -42,7 +42,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         // File exported
         String filename = params.get(FILENAME.getName());
 
-        Map<String, Object> exportParams = extractParameters(params);
+        Map<String, String> exportParams = extractParameters(params);
 
         final InputStream csv = api.executeExport(exportParams).asInputStream();
 
@@ -53,8 +53,8 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
     }
 
     @Override
-    public Map<String, Object> extractParameters(Map<String, String> params) {
-        Map<String, Object> ret = new HashMap<>();
+    public Map<String, String> extractParameters(Map<String, String> params) {
+        Map<String, String> ret = new HashMap<>();
 
         // Preparation
         String prepFullName = params.get(MandatoryParameters.PREPARATION_NAME.getName());

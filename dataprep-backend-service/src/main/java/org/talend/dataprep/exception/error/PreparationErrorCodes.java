@@ -12,38 +12,43 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * Preparation error codes.
  */
 public enum PreparationErrorCodes implements ErrorCode {
-    PREPARATION_DOES_NOT_EXIST(NOT_FOUND.value(), "id"),
-    PREPARATION_STEP_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId"),
-    PREPARATION_STEP_CANNOT_BE_DELETED_IN_SINGLE_MODE(FORBIDDEN.value(), "id", "stepId"),
-    PREPARATION_STEP_CANNOT_BE_REORDERED(CONFLICT.value()),
-    PREPARATION_ROOT_STEP_CANNOT_BE_DELETED(FORBIDDEN.value(), "id", "stepId"),
-    UNABLE_TO_SERVE_PREPARATION_CONTENT(BAD_REQUEST.value(), "id", "version"),
-    UNABLE_TO_READ_PREPARATION(INTERNAL_SERVER_ERROR.value(), "id", "version"),
-    PREPARATION_NAME_ALREADY_USED(CONFLICT.value(), "id", "name", "folder"),
-    PREPARATION_NOT_EMPTY(CONFLICT.value(), "id"),
-    FORBIDDEN_PREPARATION_CREATION(FORBIDDEN.value()),
-    PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND.value(), "id", "stepId"),
-    EXPORTED_PREPARATION_VERSION_NOT_SUPPORTED(BAD_REQUEST.value()),
-    UNABLE_TO_READ_PREPARATIONS_EXPORT(BAD_REQUEST.value(), "importVersion", "dataPrepVersion"),
+    PREPARATION_DOES_NOT_EXIST(NOT_FOUND, "id"),
+    PREPARATION_STEP_DOES_NOT_EXIST(NOT_FOUND, "id", "stepId"),
+    PREPARATION_STEP_CANNOT_BE_DELETED_IN_SINGLE_MODE(FORBIDDEN, "id", "stepId"),
+    PREPARATION_STEP_CANNOT_BE_REORDERED(CONFLICT),
+    PREPARATION_ROOT_STEP_CANNOT_BE_DELETED(FORBIDDEN, "id", "stepId"),
+    UNABLE_TO_SERVE_PREPARATION_CONTENT(BAD_REQUEST, "id", "version"),
+    UNABLE_TO_READ_PREPARATION(INTERNAL_SERVER_ERROR, "id", "version"),
+    PREPARATION_NAME_ALREADY_USED(CONFLICT, "id", "name", "folder"),
+    PREPARATION_NOT_EMPTY(CONFLICT, "id"),
+    FORBIDDEN_PREPARATION_CREATION(FORBIDDEN),
+    PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND, "id", "stepId"),
+    EXPORTED_PREPARATION_VERSION_NOT_SUPPORTED(BAD_REQUEST),
+    UNABLE_TO_READ_PREPARATIONS_EXPORT(BAD_REQUEST, "importVersion", "dataPrepVersion"),
     PREPARATION_ALREADY_EXIST(
-            CONFLICT.value(),
+            CONFLICT,
             "newPreparationId",
             "oldPreparationId",
             "newPreparationName",
             "oldPreparationName"),
-    INVALID_PREPARATION(BAD_REQUEST.value(), "message");
+    INVALID_PREPARATION(BAD_REQUEST, "message");
 
 
     /** The http status to use. */
@@ -58,8 +63,8 @@ public enum PreparationErrorCodes implements ErrorCode {
      * @param httpStatus the http status to use.
      * @param contextEntries expected context entries.
      */
-    PreparationErrorCodes(int httpStatus, String... contextEntries) {
-        this.httpStatus = httpStatus;
+    PreparationErrorCodes(HttpStatus httpStatus, String... contextEntries) {
+        this.httpStatus = httpStatus.value();
         this.expectedContextEntries = Arrays.asList(contextEntries);
     }
 

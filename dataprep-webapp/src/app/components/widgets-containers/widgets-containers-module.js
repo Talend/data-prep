@@ -14,6 +14,7 @@
 import angular from 'angular';
 
 import { ActionButton } from '@talend/react-components/lib/index';
+import AppLoader from '@talend/react-components/lib/AppLoader';
 import AppHeaderBar from '@talend/react-components/lib/HeaderBar';
 import Breadcrumbs from '@talend/react-components/lib/Breadcrumbs';
 import CircularProgress from '@talend/react-components/lib/CircularProgress';
@@ -61,6 +62,7 @@ angular.module(MODULE_NAME,
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(
 		getTranslated(AppHeaderBar, { i18n })
 	)])
+	.directive('pureAppLoader', ['reactDirective', reactDirective => reactDirective(AppLoader)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureNotification', ['reactDirective', reactDirective => reactDirective(Notifications)])
 	.directive('pureSubHeaderBar', ['reactDirective', reactDirective => reactDirective(SubHeaderBar)])

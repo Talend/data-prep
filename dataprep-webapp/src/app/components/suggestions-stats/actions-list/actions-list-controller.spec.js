@@ -294,4 +294,47 @@ describe('Actions list controller', () => {
             expect(ctrl.showModalContent).toBe(true);
         }));
     });
+
+    describe('getDataFeature',() => {
+		beforeEach(() => {
+			stateMock.playground.grid.selectedColumns = [{ id: '0001' }];
+		});
+
+		it('should slugify', () => {
+			//given
+			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
+
+			const action = {
+				name: 'cluster',
+				dynamic: true,
+				category: 'data cleansing category'
+			};
+			const ctrl = createController();
+
+			//when
+			const datatFeatureValue = ctrl.getDataFeature(action);
+
+			//then
+			expect(datatFeatureValue).toBe('preparation.data_cleansing_category.cluster');
+		});
+
+		it('should slugify with alternate category', () => {
+			//given
+			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
+
+			const action = {
+				name: 'cluster',
+				dynamic: true,
+				category: 'data cleansing category',
+				alternateCategory: 'alternate data cleansing category',
+			};
+			const ctrl = createController();
+
+			//when
+			const datatFeatureValue = ctrl.getDataFeature(action);
+
+			//then
+			expect(datatFeatureValue).toBe('preparation.alternate_data_cleansing_category.cluster');
+		});
+	});
 });

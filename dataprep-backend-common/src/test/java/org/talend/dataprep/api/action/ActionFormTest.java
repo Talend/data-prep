@@ -29,7 +29,8 @@ public class ActionFormTest {
         actionForm.setLabel("label");
         actionForm.setDocUrl("http://docurl.talend.com/doc.html");
         actionForm.setDescription("description");
-        actionForm.setCategory("category");
+        actionForm.setCategory("category label");
+        actionForm.setAlternateCategory("category");
         actionForm.setName("toto");
         actionForm.setActionScope(emptyList());
         actionForm.setDynamic(true);
@@ -52,6 +53,7 @@ public class ActionFormTest {
         assertEquals(actionForm.getDocUrl(), readActionForm.getDocUrl());
         assertEquals(actionForm.getDescription(), readActionForm.getDescription());
         assertEquals(actionForm.getCategory(), readActionForm.getCategory());
+        assertEquals(actionForm.getAlternateCategory(), readActionForm.getAlternateCategory());
         assertEquals(actionForm.getName(), readActionForm.getName());
         assertEquals(actionForm.getActionScope(), readActionForm.getActionScope());
         assertEquals(actionForm.isDynamic(), readActionForm.isDynamic());

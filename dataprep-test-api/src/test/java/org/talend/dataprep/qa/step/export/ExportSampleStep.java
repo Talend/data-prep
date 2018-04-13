@@ -25,5 +25,5 @@ public interface ExportSampleStep {
      * @return a {@link Map} of sample export specific parameters.
      */
     @NotNull
-    Map<String, Object> extractParameters(@NotNull Map<String, String> params);
+    Map<String, String> extractParameters(@NotNull Map<String, String> params);
 }

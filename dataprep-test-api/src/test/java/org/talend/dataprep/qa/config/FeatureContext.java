@@ -51,7 +51,7 @@ public class FeatureContext {
      */
     private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
-    /** Classify uploaded dataset id by their name (Map< Name, Id >) */
+    /** Classify uploaded dataset id by their suffixed name (Map< Name, Id >) */
     protected Map<String, String> datasetIdByName = new HashMap<>();
 
     protected Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();

@@ -49,6 +49,7 @@
   "SELECT_DATASET_DESCRIPTION": "Select a dataset or a folder to access its details",
 
   "_comment": "Inventory",
+  "DATASET": "Dataset",
   "DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
   "SEARCH_DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}</span> - {{dataset.dataSetNbRow}} row(s), owned by {{owner.displayName}}, last change: {{lastModificationDate | TDPMoment}}, contains {{steps.length - 1}} step(s)",
@@ -62,6 +63,7 @@
   "DESC_ORDER": "Descending",
   "SORT_ORDER": "Order by:",
   "UPLOAD_ERROR": "An error occurred during file upload",
+  "FOLDER": "Folder",
   "CREATE_FOLDER": "Add folder",
   "ENTER_FOLDER_NAME": "Enter folder name",
   "HOME_FOLDER": "Home",
@@ -291,6 +293,8 @@
   "RECORD": "Record",
   "VALUE": "Value",
   "RANGE": "Range",
+  "OCCURRENCES": "Occurrences",
+  "FILTERED_OCCURRENCES": "Filtered Occurrences",
   "MIN": "MIN",
   "MINIMUM": "Minimum",
   "MAX": "MAX",
@@ -432,6 +436,7 @@
   "HEADERBAR_INFO": "Information",
   "SIDEPANEL_COLLAPSE": "Collapse",
   "SIDEPANEL_EXPAND": "Expand",
+  "VIRTUALIZEDLIST_NO_RESULT": "No result found.",
 
   "_comment": "On Boarding",
   "BACK": "Back",

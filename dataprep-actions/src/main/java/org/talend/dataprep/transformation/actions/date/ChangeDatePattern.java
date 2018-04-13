@@ -32,11 +32,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -103,53 +99,38 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        boolean doesCreateNewColumn = ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
-
-        if (doesCreateNewColumn) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX).withCopyMetadataFromId(actionContext.getColumnId())));
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
-
         if (actionContext.getActionStatus() == OK) {
             compileDatePattern(actionContext);
 
-            if (actionContext.getActionStatus() == OK) {
-                // register the new pattern in column's stats as the most used pattern,
-                // to be able to process date action more efficiently later
-                final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
+            // register the new pattern in column stats as most used pattern, to be able to process date action more
+            // efficiently later
+            final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
+            final RowMetadata rowMetadata = actionContext.getRowMetadata();
+            final String columnId = actionContext.getColumnId();
+            final ColumnMetadata column = rowMetadata.getById(columnId);
+            final Statistics statistics = column.getStatistics();
 
-                final RowMetadata rowMetadata = actionContext.getRowMetadata();
-
-                // target column
-                String targetId = ActionsUtils.getTargetColumnId(actionContext);
-                final ColumnMetadata targetColumn = rowMetadata.getById(targetId);
-
-                // origin column
-                final String columnId = actionContext.getColumnId();
-                final ColumnMetadata column = rowMetadata.getById(columnId);
-
-                // if the target column is not the original column, we souldn't use the same statitics object
-                final Statistics statistics;
-                if (doesCreateNewColumn) {
-                    statistics = new Statistics(column.getStatistics());
-                    targetColumn.setStatistics(statistics);
-                } else {
-                    statistics = targetColumn.getStatistics();
-                }
-
-                actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
-
-                final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
-                        .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
-                        .findFirst().orElseGet(() -> {
-                            final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
-                            statistics.getPatternFrequencies().add(newPatternFreq);
-                            return newPatternFreq;
-                        });
-
-                long mostUsedPatternCount = getMostUsedPatternCount(column);
-                newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
-                rowMetadata.update(targetId, targetColumn);
+            final ColumnMetadata targetColumn = rowMetadata.getById(ActionsUtils.getTargetColumnId(actionContext));
+            if (!Objects.equals(targetColumn.getId(), columnId)) {
+                targetColumn.setStatistics(statistics);
             }
+
+            actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
+
+            final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
+                    .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
+                    .findFirst().orElseGet(() -> {
+                        final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
+                        statistics.getPatternFrequencies().add(newPatternFreq);
+                        return newPatternFreq;
+                    });
+
+            long mostUsedPatternCount = getMostUsedPatternCount(column);
+            newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
+            rowMetadata.update(ActionsUtils.getTargetColumnId(actionContext), targetColumn);
         }
     }
 

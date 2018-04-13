@@ -43,23 +43,16 @@ public class ExportPreparationStep extends DataPrepStep {
     }
 
     @Then("^I check that \"(.*)\" available export formats are :$")
-    public void whenIGetExportFormat(String preparationName, DataTable dataTable) throws IOException {
-        String preparationId = context.getPreparationId(suffixName(preparationName));
-
-        Response apiResponse = api.getExportFormats(preparationId);
-
-        ExportFormatMessage[] parameters = objectMapper.readValue(apiResponse.getBody().asString(), ExportFormatMessage[].class);
-        context.storePreparationExportFormat(suffixName(preparationName), parameters);
-    }
-
-    @Then("^I received for the preparation \"(.*)\" the export formats list with:$")
     public void thenIReceivedTheRightExportFormatList(String preparationName, DataTable dataTable) throws IOException {
-        ExportFormatMessage[] exportFormats = context.getExportFormatsByPreparationName(suffixName(preparationName));
+        String preparationId = context.getPreparationId(suffixName(preparationName));
+        Response apiResponse = api.getExportFormats(preparationId);
+        ExportFormatMessage[] exportFormats =
+                objectMapper.readValue(apiResponse.getBody().asString(), ExportFormatMessage[].class);
 
-        List<String> exportFormatsIds = Arrays.stream(exportFormats) //
+        List<String> exportFormatsIds = Arrays
+                .stream(exportFormats) //
                 .map(ExportFormatMessage::getId) //
                 .collect(Collectors.toList());
-
         Assert.assertTrue(exportFormatsIds.containsAll(dataTable.asList(String.class)));
     }
 }

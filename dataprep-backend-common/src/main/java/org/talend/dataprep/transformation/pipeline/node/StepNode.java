@@ -38,11 +38,11 @@ public class StepNode extends BasicNode {
 
     private RowMetadata lastRowMetadata;
 
-    private RowMetadata previousStepRowMetadata;
+    private RowMetadata stepRowMetadata;
 
-    public StepNode(Step step, RowMetadata previousStepRowMetadata, Node entryNode, Node lastNode) {
+    public StepNode(Step step, RowMetadata stepRowMetadata, Node entryNode, Node lastNode) {
         this.step = step;
-        this.previousStepRowMetadata = previousStepRowMetadata;
+        this.stepRowMetadata = stepRowMetadata;
         this.entryNode = entryNode;
         this.lastNode = lastNode;
     }
@@ -58,9 +58,9 @@ public class StepNode extends BasicNode {
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         RowMetadata processingRowMetadata = metadata;
-        if (previousStepRowMetadata != null) {
+        if (stepRowMetadata != null) {
             // Step node has associated metadata, use it instead of supplied one.
-            processingRowMetadata = previousStepRowMetadata;
+            processingRowMetadata = stepRowMetadata;
         }
 
         // make sure the last node (ActionNode) link is set to after the StepNode
@@ -79,7 +79,7 @@ public class StepNode extends BasicNode {
 
     @Override
     public Node copyShallow() {
-        return new StepNode(step, previousStepRowMetadata, entryNode, lastNode);
+        return new StepNode(step, stepRowMetadata, entryNode, lastNode);
     }
 
     /**

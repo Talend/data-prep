@@ -110,21 +110,21 @@ public class DatasetStep extends DataPrepStep {
     public void thenICheckSemanticTypeExist(String semanticTypeLabel, String columnId)
             throws IOException, InterruptedException {
         String dataSetId = context.getObject("dataSetId").toString();
-        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
+        checkDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }
 
     @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
     public void thenICheckSemanticTypeExist(String semanticTypeLabel, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
+        checkDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }
 
     @Then("^I check that the default semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
     public void thenICheckDefaultSemanticTypeExist(String semanticTypeLabel, String columnId, String dataSetName)
             throws IOException, InterruptedException {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
+        checkDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }
 
     @Then("^I check they are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")

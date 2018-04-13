@@ -3,8 +3,6 @@ package org.talend.dataprep.qa.util;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionFilterEnum;
-import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
 
 import javax.annotation.Nullable;
@@ -14,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,7 +75,6 @@ public class OSIntegrationTestUtil {
         Map<String, Object> actionParameters = params
                 .entrySet()
                 .stream() //
-                .filter(entry -> !entry.getKey().startsWith(FILTER.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (parametersToBeSuffixed.contains(e.getKey())) {
                         return suffixName(e.getValue());
@@ -87,32 +83,9 @@ public class OSIntegrationTestUtil {
                     }
                 }));
 
-        actionParameters.put(FILTER.getKey(), mapParamsToFilter(params));
         actionParameters.putIfAbsent(SCOPE.getKey(), "column");
 
         return actionParameters;
-    }
-
-    /**
-     * Map parameters from a Cucumber step to an {@link Filter}.
-     *
-     * @param params the parameters to map.
-     * @return a filled {@link Filter} or <code>null</code> if no filter found.
-     */
-    @Nullable
-    public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
-        final Filter filter = new Filter();
-        long nbAfes = params
-                .keySet()
-                .stream() //
-                .map(ActionFilterEnum::getActionFilterEnum) //
-                .filter(Objects::nonNull) //
-                .peek(afe -> {
-                    String v = params.get(afe.getName());
-                    filter.range.put(afe, afe.processValue(v));
-                }) //
-                .count();
-        return nbAfes > 0 ? filter : null;
     }
 
     /**

@@ -1,32 +1,51 @@
 package org.talend.dataprep.dataset.client;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.joda.time.DateTime;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+/**
+ * Representation of a Talend dataset entity.
+ * See <a href="https://github.com/Talend/dataset/blob/master/common/src/main/scala/org/talend/dataflow/common/model/Dataset.scala#L63">scala implementation in dataset</a>.
+ */
 public class Dataset {
 
     private String id;
 
-    private Date created;
+    private DateTime created;
 
-    private Date updated;
+    private DateTime updated;
 
     private Boolean enabled;
 
     private String label;
 
+    /** TComp type. */
     private String type;
 
-    private Integer version;
+    private String description;
+
+    private Set<String> tags;
+
+    private Long version;
 
     private String datastoreId;
 
+    private String schemaId;
+
+    /** Raw TComp JSON properties. */
+    private ObjectNode properties;
+
+    private EncodedSample sample;
+
+    /** ID of owner. */
     private String owner;
 
-    private List<String> entitlements;
-
-    private Map<String, String> properties;
+    private Integer schemaVersion;
 
     public Dataset() {
     }
@@ -39,19 +58,19 @@ public class Dataset {
         this.id = id;
     }
 
-    public Date getCreated() {
+    public DateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(DateTime created) {
         this.created = created;
     }
 
-    public Date getUpdated() {
+    public DateTime getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(DateTime updated) {
         this.updated = updated;
     }
 
@@ -79,11 +98,27 @@ public class Dataset {
         this.type = type;
     }
 
-    public Integer getVersion() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 
@@ -95,12 +130,28 @@ public class Dataset {
         this.datastoreId = datastoreId;
     }
 
-    public Map<String, String> getProperties() {
+    public String getSchemaId() {
+        return schemaId;
+    }
+
+    public void setSchemaId(String schemaId) {
+        this.schemaId = schemaId;
+    }
+
+    public ObjectNode getProperties() {
         return properties;
     }
 
-    public void setProperties(Map<String, String> properties) {
+    public void setProperties(ObjectNode properties) {
         this.properties = properties;
+    }
+
+    public EncodedSample getSample() {
+        return sample;
+    }
+
+    public void setSample(EncodedSample sample) {
+        this.sample = sample;
     }
 
     public String getOwner() {
@@ -111,11 +162,11 @@ public class Dataset {
         this.owner = owner;
     }
 
-    public List<String> getEntitlements() {
-        return entitlements;
+    public Integer getSchemaVersion() {
+        return schemaVersion;
     }
 
-    public void setEntitlements(List<String> entitlements) {
-        this.entitlements = entitlements;
+    public void setSchemaVersion(Integer schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 }

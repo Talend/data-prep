@@ -45,6 +45,23 @@ public class DatasetClient {
         }
     }
 
+    public Dataset get() {
+        try {
+            URIBuilder uriBuilder = new URIBuilder(datasetApiUrl + "/datasets");
+
+            // add search parameters
+
+
+            return execute(new HttpGet(uriBuilder.build()), Defaults.convertResponse(objectMapper, Dataset.class));
+        } catch (URISyntaxException e) {
+            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
+    }
+
+
+
+
+
     // I would be happy to use GenericCommand if to was not so cluttered with dataprep specific autowired things.
     // This class is written to call dataprep services APIs.
     private <T> T execute(HttpRequestBase httpRequest, BiFunction<HttpRequestBase, HttpResponse, T> successResponseHandler) {

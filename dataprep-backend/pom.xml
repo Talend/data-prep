@@ -64,6 +64,7 @@
         <module>../dataprep-backend-common</module>
         <module>../dataprep-backend-service</module>
         <module>../dataprep-backend-service-parent</module>
+        <module>../dataprep-dataset-client</module>
         <module>../dataprep-avro-message</module>
         <module>../dataprep-actions</module>
         <module>../dataprep-async-api</module>

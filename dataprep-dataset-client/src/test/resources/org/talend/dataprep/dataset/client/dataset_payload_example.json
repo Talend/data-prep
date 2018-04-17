@@ -1,0 +1,22 @@
+{
+  "id": "9640b5b6-9fa2-11e7-abc4-cec278b6b50a",
+  "created": 1515494822743,
+  "updated": 1515494843760,
+  "enabled": true,
+  "label": "French stations frequencies",
+  "type": "SimpleFileIoDataset",
+  "version": 2,
+  "datastoreId": "9abb1206-5f2b-4d51-97cd-f742991d3533",
+  "properties": {
+    "path": "/frequentation-gares.csv",
+    "format": "CSV",
+    "fieldDelimiter": "SEMICOLON",
+    "@definitionName": "SimpleFileIoDataset",
+    "recordDelimiter": "LF",
+    "specificFieldDelimiter": ";",
+    "specificRecordDelimiter": "\\n"
+  },
+  "owner": "f7163d98-655e-42b9-963d-98655e72b908",
+  "entitlements": ["DATASET_READ", "DATASET_UPDATE"],
+  "`__acl`": 16191
+}

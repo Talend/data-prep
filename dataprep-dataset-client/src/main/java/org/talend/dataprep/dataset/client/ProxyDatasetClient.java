@@ -19,11 +19,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.talend.dataprep.dataset.client.domain.Dataset;
+import org.talend.dataprep.dataset.client.domain.EncodedSample;
 import org.talend.dataprep.dataset.client.properties.DatasetProperties;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class ProxyDatasetClient implements DatasetClient {
@@ -40,6 +44,16 @@ public class ProxyDatasetClient implements DatasetClient {
         ResponseEntity<Dataset> entity =
                 restTemplate.getForEntity("/api/v1/datasets/{datasetId}?withUiSpec={withUiSpec}&advanced={advanced}",
                         Dataset.class, datasetId, false, false);
+        return entity.getBody();
+    }
+
+    @Override
+    public EncodedSample findSample(String datasetId, PageRequest pageRequest) {
+        ResponseEntity<EncodedSample> entity =
+                restTemplate.getForEntity("/api/v1/dataset-sample/{datasetId}?offset={offset}&size={size}",
+                        EncodedSample.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
+        ObjectNode schema = entity.getBody().getSchema();
+
         return entity.getBody();
     }
 

@@ -88,6 +88,7 @@ import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
 import static org.talend.dataprep.api.service.PreparationAPITestClient.appendStepsToPrep;
 import static org.talend.dataprep.api.service.PreparationAPITestClient.changePreparationStepsOrder;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
@@ -1333,7 +1334,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         String dataSetId = testClient.createDataset("dataset/dataset.csv", "dataset");
 
         // when using an invalid folder id to create a preparation on the existing dataSet
-        String invalidFolderId = "invalid-folder-id";
+        String invalidFolderId = "%40";
         TdpExceptionDto exception = given().contentType(ContentType.JSON)
                 .body("{ \"name\": \"foo\", \"dataSetId\": \"" + dataSetId + "\"}") //
                 .queryParam("folder", invalidFolderId) //
@@ -1351,20 +1352,36 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldNotAcceptInvalidDataSetId_TDP_4959() {
         // when using an invalid dataSet id
-        String invalidDataSetId = "@+";
+        String invalidDataSetId = "@";
         TdpExceptionDto exception = given().contentType(ContentType.JSON)
                 .body("{ \"name\": \"foo\", \"dataSetId\": \"" + invalidDataSetId + "\"}") //
                 .queryParam("folder", "5a549eea1235ef6ee90e2096") //
                 .expect() //
-                .statusCode(400) //
+                .statusCode(404) //
                 .log()
                 .ifError() //
                 .when() //
                 .post("/api/preparations") //
                 .as(TdpExceptionDto.class);
         // assertions
-        assertTrue(exception.getCause().getCode().endsWith(DATASET_DOES_NOT_EXIST.getCode()));
+        assertTrue(exception.getCode().endsWith(DATASET_DOES_NOT_EXIST.getCode()));
 
+    }
+
+    @Test
+    public void encodingIssuePreparationDetailsGet_TDP_4959() throws IOException {
+        // given a preparation
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "foo", home.getId());
+
+        // should return 400 instead of 500 (exception due to encoding issue for stepId parameter)
+        Response response = given() //
+                .queryParam("stepId", "%00") //
+                .when() //
+                .expect().statusCode(400).log().ifError()
+                .get("/api/preparations/{preparationId}/details", preparationId);
+        TdpExceptionDto exception = response.as(TdpExceptionDto.class);
+
+        assertTrue(exception.getCode().endsWith(UNABLE_TO_GET_PREPARATION_DETAILS.getCode()));
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {

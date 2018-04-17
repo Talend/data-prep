@@ -12,11 +12,33 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.time.temporal.ChronoUnit.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.data.MapEntry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -26,41 +48,6 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.HOURS;
-import static java.time.temporal.ChronoUnit.MONTHS;
-import static java.time.temporal.ChronoUnit.YEARS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
-import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.Behavior;
-import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.SINCE_WHEN_PARAMETER;
-import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.SPECIFIC_DATE_MODE;
-import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.SPECIFIC_DATE_PARAMETER;
-import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.TIME_UNIT_PARAMETER;
 
 /**
  * Test class for ComputeTimeSince action. Creates one consumer, and test it.
@@ -95,7 +82,7 @@ public class ComputeTimeSinceTest extends BaseDateTest<ComputeTimeSince> {
     }
 
     @Override
-    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy(){
         return CreateNewColumnPolicy.VISIBLE_ENABLED;
     }
 
@@ -587,9 +574,8 @@ public class ComputeTimeSinceTest extends BaseDateTest<ComputeTimeSince> {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(Behavior.METADATA_CREATE_COLUMNS));
-        assertTrue(action.getBehavior().contains(Behavior.NEED_STATISTICS_PATTERN));
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
 
 }

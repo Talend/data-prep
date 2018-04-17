@@ -14,14 +14,17 @@
 package org.talend.dataprep.command.preparation;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.emptyStream;
@@ -58,10 +61,13 @@ public class PreparationDetailsGet extends GenericCommand<InputStream> {
     }
 
     private HttpGet onExecute(String preparationId, String stepId) {
-        String uri = preparationServiceUrl + "/preparations/" + preparationId + "/details";
-        if (StringUtils.isNotBlank(stepId)) {
-            uri += "?stepId=" + stepId;
+        try {
+            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl);
+            uriBuilder.setPath(uriBuilder.getPath() + "/preparations/" + preparationId + "/details");
+            uriBuilder.addParameter("stepId", stepId);
+            return new HttpGet(uriBuilder.build());
+        } catch (URISyntaxException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
-        return new HttpGet(uri);
     }
 }

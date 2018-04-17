@@ -16,7 +16,7 @@
 <div>
     <div class="modal-title"
          translate-once="CHOOSE_FOLDER_DESTINATION"
-         translate-values="{type: 'item', name: item.name}"></div>
+         translate-values="{type: $ctrl.itemType, name: item.name}"></div>
 
     <form name="$ctrl.copyMoveForm">
         <folder-selection

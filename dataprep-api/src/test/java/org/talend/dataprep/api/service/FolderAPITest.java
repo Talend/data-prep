@@ -52,12 +52,13 @@ import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_
  * Unit tests for the folder API.
  */
 public class FolderAPITest extends ApiServiceTestBase {
+
     private Folder home;
 
     @Before
     public void cleanupFolder() throws Exception {
         folderRepository.clear();
-        home = folderRepository.getHome();
+        home = testClient.getFolderByPath("/");
     }
 
     @Test
@@ -343,23 +344,25 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertThat(hierarchy.get(1).getId(), equalTo(firstFolder.getId()));
     }
 
+    // check that path query parameter with non query-encoding neutral element does not return a 500 error
     @Test
-    public void updateFolderPathEncodingIssue_TDP_4959() {
-        String parentId = home.getId();
-        // check non encoding issue on path query parameter
+    public void updateFolderPathEncodingIssue_TDP_4959() throws IOException {
+        String parentId = testClient.getFolderByPath("/").getId();
+
         given() //
                 .queryParam("parentId", parentId) //
-                .queryParam("path", "ZAP%25n%25s%25n%25s%25n%25s%25n%25s%25n%25s%0A") //
+                .queryParam("path", "ZAP%n%s%n%s%n%s%n%s%n%s") //
                 .expect().statusCode(200).log().ifError() //
                 .when() //
                 .put("/api/folders");
     }
 
+    // check that nonexistent non query-encoding neutral parent id returns 404 error, not 500.
     @Test
     public void updateFolderWithUnknownParent_TDP_4959() {
         // check non encoding issue on path query parameter
         Response response = given() //
-                .queryParam("parentId", "ZAP%25n%25s%25n%25s%25n%25s%25n%25s%25n%25s%0A") //
+                .queryParam("parentId", "ZAP%n%s%n%s%n%s%n%s%n%s") //
                 .queryParam("path", "new-folder") //
                 .expect().statusCode(400).log().ifError() //
                 .when() //

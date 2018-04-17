@@ -184,11 +184,11 @@ public class DatasetStep extends DataPrepStep {
         } else {
             // We don't expect the semantic type, and no semantic type exist for this column
             if (!StringUtils.EMPTY.equals(response.body().print())) {
-                assertEquals(1,
+                assertEquals(0,
                         response
                                 .body()
                                 .jsonPath()
-                                .getList("findAll { semanticType -> semanticType.id == '"
+                                .getList("findAll { semanticType -> semanticType.label == '"
                                         + suffixName(semanticTypeLabel) + "'  }")
                                 .size());
             }
@@ -205,11 +205,11 @@ public class DatasetStep extends DataPrepStep {
     @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
     public void thenICheckSemanticTypeDoesNotExistOnPreparation(String semanticTypeLabel, String columnId,
             String preparationName) {
-        String preparationId = context.getPreparationId(suffixName(semanticTypeLabel));
+        String preparationId = context.getPreparationId(suffixName(preparationName));
         checkPreparationColumnSemanticTypes(semanticTypeLabel, columnId, preparationId, false);
     }
 
-    private void checkPreparationColumnSemanticTypes(String semanticTypeName, String columnId, String preparationId,
+    private void checkPreparationColumnSemanticTypes(String semanticTypeLabel, String columnId, String preparationId,
             boolean expected) {
 
         Response response = api.getPreparationsColumnSemanticTypes(columnId, preparationId);
@@ -219,7 +219,7 @@ public class DatasetStep extends DataPrepStep {
         if (expected) {
             errorMessage
                     .append("Expected semantic type \"") //
-                    .append(semanticTypeName) //
+                    .append(semanticTypeLabel) //
                     .append("\" wasn't find on column \"") //
                     .append(columnId) //
                     .append("\" ") //
@@ -229,7 +229,7 @@ public class DatasetStep extends DataPrepStep {
         } else {
             errorMessage
                     .append("The semantic type \"") //
-                    .append(semanticTypeName) //
+                    .append(semanticTypeLabel) //
                     .append("\" is present on column \"") //
                     .append(columnId) //
                     .append("\" ") //
@@ -241,7 +241,7 @@ public class DatasetStep extends DataPrepStep {
         assertEquals(errorMessage.toString(), expected ? 1 : 0, response
                 .body()
                 .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semanticTypeName) + "'  }")
+                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semanticTypeLabel) + "'  }")
                 .size());
     }
 

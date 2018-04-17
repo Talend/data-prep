@@ -20,7 +20,7 @@ public class DatasetClientTest extends TestParent {
 
     @Test
     public void getByIdTest() {
-        Dataset toto = datasetClient.getById("toto");
+        Dataset toto = datasetClient.findOne("toto");
         assertNotNull(toto);
     }
 

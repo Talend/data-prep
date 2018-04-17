@@ -13,19 +13,12 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.proxy;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class DataSetProxyApplicationTests {
-
-	@Test
-	public void contextLoads() {
-	}
-
-}
+/**
+ * Adapter classes used to expose the Catalog Dataset API services.
+ * <p>
+ * These classes contain Spring Web annotations.
+ *
+ * @since 2.6
+ */
+package org.talend.dataprep.dataset.adapter;

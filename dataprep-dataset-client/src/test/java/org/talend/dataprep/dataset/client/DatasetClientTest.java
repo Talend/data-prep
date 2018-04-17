@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.dataprep.dataset.client.domain.Dataset;
 
 import static org.junit.Assert.assertNotNull;
 

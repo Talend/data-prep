@@ -13,42 +13,44 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.proxy;
+package org.talend.dataprep.dataset.adapter;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.talend.dataprep.dataset.client.domain.Dataset;
+import org.talend.dataprep.dataset.client.DatasetClient;
+import org.talend.dataprep.dataset.client.domain.EncodedSample;
 
-@RequestMapping("/api/v1")
-public interface ProxyController {
+import com.fasterxml.jackson.dataformat.avro.AvroMapper;
+
+@RestController
+@RequestMapping("/api/v1/datasets")
+public class DataSetController {
+
+    private final DatasetClient datasetClient;
+
+    public DataSetController(DatasetClient datasetClient) {
+        this.datasetClient = datasetClient;
+    }
 
     /**
-     * Get dataset metadata
+     * Get dataset by id
      * @param datasetId id of the dataset
      * @param withUiSpec Add UISpec to the returned json
      * @param advanced asks tcomp to add additionnal UISpec from the datastore
      * @return
      */
-    @GetMapping("/datasets/{datasetId}")
-    ResponseEntity<String> getDatasetMetadata(@PathVariable String datasetId,
+    @GetMapping("/{datasetId}")
+    public ResponseEntity<Dataset> getDatasetMetadata(@PathVariable String datasetId,
             @RequestParam(required = false) boolean withUiSpec,
-            @RequestParam(required = false) boolean advanced);
+            @RequestParam(required = false) boolean advanced) {
+        Dataset dataset = datasetClient.findOne(datasetId);
 
-    /**
-     * Get full dataset content
-     * @param datasetId if of the dataset
-     * @return
-     */
-    @GetMapping("/dataset-content/{datasetId}")
-    ResponseEntity<String> getDatasetContent(@PathVariable String datasetId);
-
-    /**
-     * Get a dataset sample content
-     * @param datasetId if of the dataset
-     * @return
-     */
-    @GetMapping("/dataset-sample/{datasetId}")
-    ResponseEntity<String> getDatasetSample(@PathVariable String datasetId);
+        return new ResponseEntity<>(dataset, HttpStatus.OK);
+    }
 }

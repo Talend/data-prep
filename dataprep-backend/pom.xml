@@ -70,7 +70,6 @@
         <module>../dataprep-async-runtime</module>
         <module>../dataprep-dataset-client</module>
         <module>../dataprep-dataset</module>
-        <module>../dataprep-dataset-proxy</module>
         <module>../dataprep-transformation</module>
         <module>../dataprep-preparation</module>
         <module>../dataprep-api</module>

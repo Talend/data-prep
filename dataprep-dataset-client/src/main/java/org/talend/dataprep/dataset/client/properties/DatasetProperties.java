@@ -13,31 +13,18 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.proxy.properties;
+package org.talend.dataprep.dataset.client.properties;
 
 import java.net.URL;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "dataset")
+@ConfigurationProperties(prefix = "dataset.api")
 public class DatasetProperties {
 
     public DatasetProperties() {}
 
-    /**
-     * DataSet type: Dataprep Dataset or DataCalog Dataset
-     */
-    private DataSetType type;
-
     private URL url;
-
-    public DataSetType getType() {
-        return type;
-    }
-
-    public void setType(DataSetType type) {
-        this.type = type;
-    }
 
     public URL getUrl() {
         return url;
@@ -47,5 +34,4 @@ public class DatasetProperties {
         this.url = url;
     }
 
-    public enum DataSetType { LEGACY, CATALOG}
 }

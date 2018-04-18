@@ -7,7 +7,7 @@ import org.talend.dataprep.dataset.client.domain.Dataset;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-// mimicing spring Crudrepository
+// mimics spring Crudrepository
 public interface DatasetClient {
 
     Dataset findOne(String datasetId);

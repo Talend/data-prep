@@ -28,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.talend.dataprep.dataset.client.domain.Dataset;
 import org.talend.dataprep.dataset.client.domain.EncodedSample;
@@ -37,7 +36,6 @@ import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@Service
 public class ProxyDatasetClient implements DatasetClient {
 
     private final RestTemplate restTemplate;
@@ -52,14 +50,14 @@ public class ProxyDatasetClient implements DatasetClient {
     @Override
     public Dataset findOne(String datasetId) {
         ResponseEntity<Dataset> entity =
-                restTemplate.getForEntity("/api/v1/datasets/{datasetId}?withUiSpec={withUiSpec}&advanced={advanced}",
+                restTemplate.getForEntity("/datasets/{datasetId}?withUiSpec={withUiSpec}&advanced={advanced}",
                         Dataset.class, datasetId, false, false);
         return entity.getBody();
     }
 
     @Override
     public ObjectNode findSample(String datasetId, PageRequest pageRequest) {
-        return restTemplate.getForEntity("/api/v1/dataset-sample/{datasetId}?offset={offset}&size={size}",
+        return restTemplate.getForEntity("/dataset-sample/{datasetId}?offset={offset}&size={size}",
                 EncodedSample.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize()) //
                 .getBody() //
                 .getSchema();
@@ -67,7 +65,7 @@ public class ProxyDatasetClient implements DatasetClient {
 
     @Override
     public List<Dataset> findAll() {
-        ResponseEntity<Dataset[]> entity = restTemplate.getForEntity("/api/v1/datasets", Dataset[].class);
+        ResponseEntity<Dataset[]> entity = restTemplate.getForEntity("/datasets", Dataset[].class);
         return Arrays.asList(entity.getBody());
     }
 

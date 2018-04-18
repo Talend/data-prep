@@ -23,13 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.command.Defaults.convertResponse;
@@ -43,6 +45,9 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
     @Autowired
     private DataSetContentLimit limit;
+
+    @Autowired
+    private DataSetMetadataBuilder dataSetMetadataBuilder;
 
     /**
      * Private constructor to ensure the use of IoC
@@ -70,7 +75,7 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
         URI build;
         try {
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/metadata");
+            uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId );
             build = uriBuilder.build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
@@ -79,8 +84,13 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
-                final DataSet dataSet = objectMapper.readerFor(DataSet.class).readValue(res.getEntity().getContent());
-                return dataSet.getMetadata();
+                JsonNode jsonNode = objectMapper.readTree(res.getEntity().getContent());
+                return dataSetMetadataBuilder //
+                        .id(jsonNode.get("id").asText()) //
+                        .name(jsonNode.get("label").asText()) //
+                        .created(jsonNode.get("created").asLong()) //
+                        .modified(jsonNode.get("updated").asLong()) //
+                        .build();
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {

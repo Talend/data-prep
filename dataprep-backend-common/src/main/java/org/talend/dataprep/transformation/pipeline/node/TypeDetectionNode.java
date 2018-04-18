@@ -166,7 +166,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                     adapter.adapt(columns, resultAnalyzer.getResult(), (Predicate<ColumnMetadata>) filter);
                     resultAnalyzer.close();
                 }
-                if (rowMetadata != null) {
+                if (rowMetadata != null && rowMetadataFallbackProvider != null) {
                     rowMetadataFallbackProvider.setFallback(rowMetadata);
                 }
                 // Continue process

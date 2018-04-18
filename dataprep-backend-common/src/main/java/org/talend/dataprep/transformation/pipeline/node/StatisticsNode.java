@@ -119,7 +119,7 @@ public class StatisticsNode extends ColumnFilteredNode {
             }
         }
         if (signal == Signal.END_OF_STREAM || signal == Signal.STOP) {
-            if (rowMetadataFallbackProvider != null) {
+            if (rowMetadata != null && rowMetadataFallbackProvider != null) {
                 rowMetadataFallbackProvider.setFallback(rowMetadata);
             }
         }

@@ -48,7 +48,7 @@ public class PreparationStepMarkerTest {
         // Then
         assertEquals(StepMarker.Result.COMPLETED, result);
         verify(repository, times(1)).add(eq(Collections.singletonList(step)));
-        verify(step, times(1)).setMarker(eq(stepMarker));
+        verify(step, times(1)).setMarker(eq(stepMarker.toString()));
     }
 
     @Test

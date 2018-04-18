@@ -17,7 +17,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Identifiable;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.tql.model.Expression;
 
@@ -129,6 +133,6 @@ public class PersistentPreparationRepository implements PreparationRepository {
 
     @Override
     public long count(Class<? extends Identifiable> clazz, Expression filter) {
-        return delegate.count(clazz, filter);
+        return delegate.count(selectPersistentClass(clazz), filter);
     }
 }

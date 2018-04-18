@@ -69,7 +69,7 @@ public class PreparationStepMarker implements StepMarker {
                             .getSteps() //
                             .stream() //
                             .filter(s -> !Objects.equals(s, Step.ROOT_STEP))
-                            .peek(s -> s.setMarker(marker)) //
+                            .peek(s -> s.setMarker(marker.toString())) //
                             .collect(Collectors.toList());
                     repository.add(markedSteps);
                 });

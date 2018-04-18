@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
-import static org.talend.tql.api.TqlBuilder.eq;
 import static org.talend.tql.api.TqlBuilder.neq;
 
 import java.util.ArrayList;
@@ -38,6 +37,8 @@ import org.talend.tenancy.ForAll;
 public class PreparationCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
+
+    private static final String MARKER = "marker";
 
     @Autowired
     private PreparationRepository repository;
@@ -74,13 +75,13 @@ public class PreparationCleaner {
             if (allMarkersResult == StepMarker.Result.COMPLETED) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Removing unused steps ({} scheduled for deletion)",
-                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                            repository.count(Step.class, neq(MARKER, currentCleanerRun.toString())));
                 }
-                repository.remove(Step.class, neq("marker", currentCleanerRun.toString()));
+                repository.remove(Step.class, neq(MARKER, currentCleanerRun.toString()));
             } else {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Discarding {} pending step deletes",
-                            repository.count(Step.class, eq("marker", currentCleanerRun.toString())));
+                            repository.count(Step.class, neq(MARKER, currentCleanerRun.toString())));
                 }
             }
         } finally {

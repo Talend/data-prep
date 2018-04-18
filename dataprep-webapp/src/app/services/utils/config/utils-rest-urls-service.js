@@ -26,20 +26,21 @@ export default function RestURLs() {
 	 * @param {Object} uris All URIs to be consumed
 	 */
 	this.register = function register(uris) {
-		this.aggregationUrl = uris.apiAggregate;
-		this.datasetUrl = uris.apiDatasets;
-		this.uploadDatasetUrl = uris.apiUploadDatasets;
-		this.exportUrl = uris.apiExport;
-		this.folderUrl = uris.apiFolders;
-		this.mailUrl = uris.apiMail;
-		this.preparationUrl = uris.apiPreparations;
-		this.previewUrl = uris.apiPreparationsPreview;
-		this.searchUrl = uris.apiSearch;
-		this.settingsUrl = uris.apiSettings;
-		this.tcompUrl = uris.apiTcomp;
-		this.transformUrl = uris.apiTransform;
-		this.typesUrl = uris.apiTypes;
-		this.upgradeVersion = uris.apiUpgradeCheck;
-		this.versionUrl = uris.apiVersion;
+		this.context = uris.context || '';
+		this.aggregationUrl = `${this.context}${uris.apiAggregate}`;
+		this.datasetUrl = `${this.context}${uris.apiDatasets}`;
+		this.uploadDatasetUrl = `${this.context}${uris.apiUploadDatasets}`;
+		this.exportUrl = `${this.context}${uris.apiExport}`;
+		this.folderUrl = `${this.context}${uris.apiFolders}`;
+		this.mailUrl = `${this.context}${uris.apiMail}`;
+		this.preparationUrl = `${this.context}${uris.apiPreparations}`;
+		this.previewUrl = `${this.context}${uris.apiPreparationsPreview}`;
+		this.searchUrl = `${this.context}${uris.apiSearch}`;
+		this.settingsUrl = `${this.context}${uris.apiSettings}`;
+		this.tcompUrl = `${this.context}${uris.apiTcomp}`;
+		this.transformUrl = `${this.context}${uris.apiTransform}`;
+		this.typesUrl = `${this.context}${uris.apiTypes}`;
+		this.upgradeVersion = `${this.context}${uris.apiUpgradeCheck}`;
+		this.versionUrl = `${this.context}${uris.apiVersion}`;
 	};
 }

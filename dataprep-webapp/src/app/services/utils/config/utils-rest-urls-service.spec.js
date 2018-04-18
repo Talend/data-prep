@@ -36,4 +36,29 @@ describe('REST urls service', () => {
 		expect(RestURLs.tcompUrl).toBe('/api/tcomp');
 		expect(RestURLs.versionUrl).toBe('/api/version');
 	}));
+
+	it('should init api urls with context path', inject((RestURLs) => {
+		// when
+		const urisWithContext = {
+			...settings.uris,
+			context: '/context',
+		};
+		RestURLs.register(urisWithContext);
+
+		// then
+		expect(RestURLs.datasetUrl).toBe('/context/api/datasets');
+		expect(RestURLs.uploadDatasetUrl).toBe(RestURLs.datasetUrl);
+		expect(RestURLs.transformUrl).toBe('/context/api/transform');
+		expect(RestURLs.preparationUrl).toBe('/context/api/preparations');
+		expect(RestURLs.previewUrl).toBe('/context/api/preparations/preview');
+		expect(RestURLs.exportUrl).toBe('/context/api/export');
+		expect(RestURLs.aggregationUrl).toBe('/context/api/aggregate');
+		expect(RestURLs.typesUrl).toBe('/context/api/types');
+		expect(RestURLs.folderUrl).toBe('/context/api/folders');
+		expect(RestURLs.mailUrl).toBe('/context/api/mail');
+		expect(RestURLs.searchUrl).toBe('/context/api/search');
+		expect(RestURLs.upgradeVersion).toBe('/context/api/upgrade/check');
+		expect(RestURLs.tcompUrl).toBe('/context/api/tcomp');
+		expect(RestURLs.versionUrl).toBe('/context/api/version');
+	}));
 });

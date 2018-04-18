@@ -141,6 +141,7 @@ public class PersistentStep extends PersistentIdentifiable {
                 ", appVersion='" + appVersion + '\'' + //
                 ", diff=" + diff + //
                 ", marker=" + marker + //
+                ", rowMetadata=" + rowMetadata + //
                 '}';
         return result;
     }

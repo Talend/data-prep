@@ -17,14 +17,14 @@ package org.talend.dataprep.dataset.adapter;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.client.DatasetClient;
 import org.talend.dataprep.dataset.client.domain.Dataset;
-import org.talend.dataprep.dataset.client.domain.EncodedSample;
 import org.talend.dataprep.dataset.service.DataSetService;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Dataprep implementation of {@link DatasetClient}
@@ -49,8 +49,10 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public EncodedSample findSample(String datasetId, PageRequest pageRequest) {
+    public ObjectNode findSample(String datasetId, int offset, int size) {
         throw new UnsupportedOperationException();
+        //TODO convert Stream<DataSetRow> to Avro format
+
     }
 
     @Override

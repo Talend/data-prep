@@ -15,6 +15,7 @@
 
 package org.talend.dataprep.dataset.client.domain;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class EncodedSample {
@@ -27,7 +28,7 @@ public class EncodedSample {
     /**
      * Avro raw data as string.
      */
-    private String data;
+    private ArrayNode data;
 
     /** Enumeration value that can be JSON for now. Binary maybe later as Avro might be json or binary... */
     private String encoding;
@@ -40,11 +41,11 @@ public class EncodedSample {
         this.schema = schema;
     }
 
-    public String getData() {
+    public ArrayNode getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(ArrayNode data) {
         this.data = data;
     }
 

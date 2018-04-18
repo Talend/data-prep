@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,15 +27,19 @@ import org.talend.dataprep.dataset.client.domain.EncodedSample;
 import org.talend.dataprep.dataset.client.properties.DatasetProperties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.avro.AvroMapper;
 
 @Service
 public class ProxyDatasetClient implements DatasetClient {
 
     private final RestTemplate restTemplate;
 
+    private final AvroMapper avroMapper;
+
     public ProxyDatasetClient(RestTemplateBuilder builder, DatasetProperties datasetProperties) {
         String dataSetUrl = datasetProperties.getUrl().toString();
         this.restTemplate = builder.rootUri(dataSetUrl).build();
+        this.avroMapper = new AvroMapper();
     }
 
     @Override
@@ -48,13 +51,11 @@ public class ProxyDatasetClient implements DatasetClient {
     }
 
     @Override
-    public EncodedSample findSample(String datasetId, PageRequest pageRequest) {
-        ResponseEntity<EncodedSample> entity =
-                restTemplate.getForEntity("/api/v1/dataset-sample/{datasetId}?offset={offset}&size={size}",
-                        EncodedSample.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
-        ObjectNode schema = entity.getBody().getSchema();
-
-        return entity.getBody();
+    public ObjectNode findSample(String datasetId, int offset, int size) {
+        return restTemplate.getForEntity("/api/v1/dataset-sample/{datasetId}?offset={offset}&size={size}",
+                EncodedSample.class, datasetId, offset, size) //
+                .getBody() //
+                .getSchema();
     }
 
     @Override

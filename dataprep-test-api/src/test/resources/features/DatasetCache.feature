@@ -1,4 +1,4 @@
-@OnPremise
+@EnvOs @EnvOnPremise @EnvCloud
 Feature: Dataset cache features
 
   @CleanAfter

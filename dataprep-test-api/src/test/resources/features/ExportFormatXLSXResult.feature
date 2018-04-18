@@ -1,3 +1,4 @@
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Exporting preparation on XLSX format
 
   @CleanAfter

@@ -1,3 +1,4 @@
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Perform an OS Smoke Test
 
   Scenario: Upload a dataset

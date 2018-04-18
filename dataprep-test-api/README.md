@@ -33,11 +33,6 @@ It is possible to launch a specific test by specifying it in the command line:
 $ mvn verify -DskipITs=false -Dcucumber.options="classpath:features/ExportPreparationFromCSV.feature"
 ```
 
-It is also possible to launch specific tests by specifying cucumber tags:
-```
-$ mvn verify -DskipITs=false -Dcucumber.options="--tags @LiveDataSet"
-```
-
 By default cucumber tests call the backend api on `http://dev.data-prep.talend.lan:8888`.
 By default cucumber tests call the backend api on `http://localhost:8888`.
 You can set another url value by using the following maven parameter:
@@ -64,6 +59,8 @@ $ mvn verify -DskipITs=false
 * They must follow the good practices described below
 * Don't forget to register any created item in the context in order to have it cleaned by ``@CleanAfter``
 * As the values passed to the folder API differs depending on the environment, always use ``folderUtil`` functions first instead of direct ``OSDataPrepAPIHelper`` calls, in order to keep your features runnable in an on premise environment.
+* By default new features should be tagged with `@EnvOs @EnvOnPremise @EnvCloud`
+* If a feature is known to be OS environment dependent it must be tagged only with `@EnvOs` 
 
 ### Good practices for writing new Java steps
 #### Step Atomicity

@@ -13,6 +13,7 @@ import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.CleanUpNode;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
@@ -38,6 +39,15 @@ public class ActionNodesBuilder {
     private StatisticsAdapter statisticsAdapter;
 
     private AnalyzerService analyzerService;
+
+    /**
+     * The row metadata fallback provider (@link
+     * org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider).
+     * Action Node Builder will use it when it create the statistics nodes (@link
+     * org.talend.dataprep.transformation.pipeline.node.StatisticsNode) via a builder
+     * (link org.talend.dataprep.transformation.pipeline.builder.StatisticsNodesBuilder).
+     */
+    private RowMetadataFallbackProvider rowMetadataFallbackProvider;
 
     public static ActionNodesBuilder builder() {
         return new ActionNodesBuilder();
@@ -83,6 +93,11 @@ public class ActionNodesBuilder {
         return this;
     }
 
+    public ActionNodesBuilder rowMetadataFallbackProvider(RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+        this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
+        return this;
+    }
+
     /**
      * Build the actions pipeline
      */
@@ -101,7 +116,7 @@ public class ActionNodesBuilder {
         // unless we don't have initial metadata or we explicitly ask it
         if (needStatisticsBefore || initialMetadata.getColumns().isEmpty()) {
             LOGGER.debug("No initial metadata submitted for transformation, computing new one.");
-            builder.to(statisticsNodesBuilder.buildPreStatistics());
+            builder.to(statisticsNodesBuilder.buildPreStatistics(rowMetadataFallbackProvider));
         }
 
         // transformation context is the parent of every action context
@@ -118,7 +133,8 @@ public class ActionNodesBuilder {
             // some actions need fresh statistics
             // in those cases, we gather the rows in a reservoir node that triggers statistics computation
             // before dispatching each row to the next node
-            final Node neededReservoir = statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
+            final Node neededReservoir =
+                    statisticsNodesBuilder.buildIntermediateStatistics(nextAction, rowMetadataFallbackProvider);
             if (neededReservoir != null) {
                 builder.to(neededReservoir);
             }
@@ -131,7 +147,7 @@ public class ActionNodesBuilder {
         // global analysis after actions
         // when it is explicitly asked and the actions changes the columns
         if (needStatisticsAfter) {
-            builder.to(statisticsNodesBuilder.buildPostStatistics());
+            builder.to(statisticsNodesBuilder.buildPostStatistics(rowMetadataFallbackProvider));
         }
 
         // cleanup all contexts after all actions

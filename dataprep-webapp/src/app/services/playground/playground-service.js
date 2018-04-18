@@ -946,6 +946,7 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
+			updateFilters();
 		}).finally(stopLoader);
 	}
 
@@ -966,6 +967,7 @@ export default function PlaygroundService(
 		).then((response) => {
 			DatagridService.updateData(response);
 			PreviewService.reset(false);
+			updateFilters();
 		}).finally(stopLoader);
 	}
 
@@ -988,6 +990,17 @@ export default function PlaygroundService(
 		return data;
 	}
 
+	function updateFilters() {
+		const filtersToRemove = state.playground.filter.gridFilters.filter(filter => !state.playground.data.metadata.columns.find(col => col.id === filter.colId));
+		if (filtersToRemove && filtersToRemove.length) {
+			filtersToRemove.forEach(filter => FilterService.removeFilter(filter));
+			StatisticsService.updateFilteredStatistics();
+			StorageService.saveFilter(
+				state.playground.preparation ? state.playground.preparation.id : state.playground.dataset.id,
+				state.playground.filter.gridFilters
+			);
+		}
+	}
 	//------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------STATS REFRESH-------------------------------------------
 	//------------------------------------------------------------------------------------------------------

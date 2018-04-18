@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ import org.springframework.web.client.RestTemplate;
 import org.talend.dataprep.dataset.client.domain.Dataset;
 import org.talend.dataprep.dataset.client.domain.EncodedSample;
 import org.talend.dataprep.dataset.client.properties.DatasetProperties;
+import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.talend.dataprep.security.Security;
 
 @Service
 public class ProxyDatasetClient implements DatasetClient {
@@ -57,9 +58,9 @@ public class ProxyDatasetClient implements DatasetClient {
     }
 
     @Override
-    public ObjectNode findSample(String datasetId, int offset, int size) {
+    public ObjectNode findSample(String datasetId, PageRequest pageRequest) {
         return restTemplate.getForEntity("/api/v1/dataset-sample/{datasetId}?offset={offset}&size={size}",
-                EncodedSample.class, datasetId, offset, size) //
+                EncodedSample.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize()) //
                 .getBody() //
                 .getSchema();
     }

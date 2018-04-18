@@ -2,6 +2,7 @@ package org.talend.dataprep.dataset.client;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.talend.dataprep.dataset.client.domain.Dataset;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -11,7 +12,7 @@ public interface DatasetClient {
 
     Dataset findOne(String datasetId);
 
-    ObjectNode findSample(String datasetId, int offset, int size);
+    ObjectNode findSample(String datasetId, PageRequest pageRequest);
 
     List<Dataset> findAll();
 

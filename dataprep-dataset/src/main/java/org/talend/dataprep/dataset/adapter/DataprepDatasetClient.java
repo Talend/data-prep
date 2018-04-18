@@ -17,6 +17,7 @@ package org.talend.dataprep.dataset.adapter;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -49,10 +50,9 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public ObjectNode findSample(String datasetId, int offset, int size) {
+    public ObjectNode findSample(String datasetId, PageRequest pageRequest) {
         throw new UnsupportedOperationException();
         //TODO convert Stream<DataSetRow> to Avro format
-
     }
 
     @Override

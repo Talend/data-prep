@@ -22,11 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.talend.dataprep.dataset.client.domain.Dataset;
 import org.talend.dataprep.dataset.client.DatasetClient;
-import org.talend.dataprep.dataset.client.domain.EncodedSample;
-
-import com.fasterxml.jackson.dataformat.avro.AvroMapper;
+import org.talend.dataprep.dataset.client.domain.Dataset;
 
 @RestController
 @RequestMapping("/api/v1/datasets")

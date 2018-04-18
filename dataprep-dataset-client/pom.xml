@@ -12,10 +12,6 @@
 
     <artifactId>dataprep-dataset-client</artifactId>
 
-    <properties>
-        <jackson-dataformat-avro.version>2.8.5</jackson-dataformat-avro.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -25,11 +21,6 @@
         <dependency>
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-backend-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-avro</artifactId>
-            <version>${jackson-dataformat-avro.version}</version>
         </dependency>
 
         <!-- TEST -->

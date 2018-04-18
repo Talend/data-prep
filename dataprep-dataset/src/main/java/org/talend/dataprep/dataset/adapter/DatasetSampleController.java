@@ -15,6 +15,7 @@
 
 package org.talend.dataprep.dataset.adapter;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +40,8 @@ public class DatasetSampleController {
     @GetMapping("/{datasetId}")
     public ResponseEntity<ObjectNode> getDatasetSample(@PathVariable String datasetId,
             @RequestParam(required = false, defaultValue = "0") int offset,
-            @RequestParam(required = false, defaultValue = "0") int size) {
-        return new ResponseEntity<>(datasetClient.findSample(datasetId, offset, size), HttpStatus.OK);
+            @RequestParam(required = false, defaultValue = "1") int size) {
+        return new ResponseEntity<>(datasetClient.findSample(datasetId, new PageRequest(offset, size)), HttpStatus.OK);
     }
 
 }

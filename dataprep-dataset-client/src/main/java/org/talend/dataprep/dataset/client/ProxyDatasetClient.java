@@ -29,8 +29,8 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
-import org.talend.dataprep.dataset.client.domain.Dataset;
-import org.talend.dataprep.dataset.client.domain.EncodedSample;
+import org.talend.dataprep.dataset.domain.Dataset;
+import org.talend.dataprep.dataset.domain.EncodedSample;
 import org.talend.dataprep.dataset.client.properties.DatasetProperties;
 import org.talend.dataprep.security.Security;
 

@@ -13,10 +13,9 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.dataset.client.domain;
+package org.talend.dataprep.dataset.domain;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.joda.time.DateTime;
 
 import java.util.Set;
 
@@ -28,9 +27,9 @@ public class Dataset {
 
     private String id;
 
-    private DateTime created;
+    private Long created;
 
-    private DateTime updated;
+    private Long updated;
 
     private Boolean enabled;
 
@@ -70,19 +69,19 @@ public class Dataset {
         this.id = id;
     }
 
-    public DateTime getCreated() {
+    public Long getCreated() {
         return created;
     }
 
-    public void setCreated(DateTime created) {
+    public void setCreated(Long created) {
         this.created = created;
     }
 
-    public DateTime getUpdated() {
+    public Long getUpdated() {
         return updated;
     }
 
-    public void setUpdated(DateTime updated) {
+    public void setUpdated(Long updated) {
         this.updated = updated;
     }
 

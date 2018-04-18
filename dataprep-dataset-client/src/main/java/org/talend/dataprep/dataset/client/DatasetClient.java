@@ -3,7 +3,7 @@ package org.talend.dataprep.dataset.client;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
-import org.talend.dataprep.dataset.client.domain.Dataset;
+import org.talend.dataprep.dataset.domain.Dataset;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

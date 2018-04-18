@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.dataset.client.DatasetClient;
-import org.talend.dataprep.dataset.client.domain.Dataset;
+import org.talend.dataprep.dataset.domain.Dataset;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/datasets")
@@ -49,5 +51,10 @@ public class DataSetController {
         Dataset dataset = datasetClient.findOne(datasetId);
 
         return new ResponseEntity<>(dataset, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Dataset>> getAllDatasetMetadata() {
+        return new ResponseEntity<>(datasetClient.findAll(), HttpStatus.OK);
     }
 }

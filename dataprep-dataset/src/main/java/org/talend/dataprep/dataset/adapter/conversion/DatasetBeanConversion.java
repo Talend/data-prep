@@ -15,13 +15,12 @@
 
 package org.talend.dataprep.dataset.adapter.conversion;
 
-import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.client.domain.Dataset;
+import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
@@ -37,8 +36,8 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                 .using(Dataset.class, (dataSetMetadata, dataset) -> {
                     dataset.setId(dataSetMetadata.getId());
                     dataset.setEnabled(true);
-                    dataset.setCreated(new DateTime(dataSetMetadata.getCreationDate()));
-                    dataset.setUpdated(new DateTime(dataSetMetadata.getLastModificationDate()));
+                    dataset.setCreated(dataSetMetadata.getCreationDate());
+                    dataset.setUpdated(dataSetMetadata.getLastModificationDate());
                     dataset.setOwner(dataSetMetadata.getAuthor());
                     dataset.setLabel(dataSetMetadata.getName());
                     DataSetLocation location = dataSetMetadata.getLocation();

@@ -33,6 +33,27 @@ export default class FilterItemCtrl {
 	$onInit() {
 		this.filter = this.value;
 		this.WILDCARD = WILDCARD;
+		this.update();
+	}
+
+	$onChanges(changes) {
+		const model = changes.value;
+		if (model) {
+			const newModel = model.currentValue;
+			if (newModel) {
+				this.filter = newModel;
+				this.update();
+			}
+		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name update
+	 * @methodOf data-prep.filter-item:FilterItemCtrl
+	 * @description Update model on changes
+	 */
+	update() {
 		if (this.filter) {
 			this.filterValues = this.filter.value;
 			switch (this.filter.type) {
@@ -50,18 +71,6 @@ export default class FilterItemCtrl {
 			}
 		}
 	}
-
-	$onChanges(changes) {
-		const model = changes.value;
-		if (model) {
-			const newModel = model.currentValue;
-			if (newModel) {
-				this.filter = newModel;
-				this.filterValues = this.filter.value;
-			}
-		}
-	}
-
     /**
      * @ngdoc method
      * @name submit

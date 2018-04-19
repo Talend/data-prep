@@ -1,10 +1,7 @@
 package org.talend.dataprep.qa.step;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -123,6 +120,7 @@ public class DatasetStep extends DataPrepStep {
     @Then("^I check that the default semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
     public void thenICheckDefaultSemanticTypeExist(String semanticTypeLabel, String columnId, String dataSetName)
             throws IOException, InterruptedException {
+        Thread.sleep(1000);
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
         checkDatasetsColumnSemanticTypes(semanticTypeLabel, columnId, dataSetId, true);
     }

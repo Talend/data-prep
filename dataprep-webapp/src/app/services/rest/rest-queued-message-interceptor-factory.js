@@ -70,7 +70,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');
-						return `${RestURLs.context}${data.result.downloadUrl}` ? $http({
+						return data.result.downloadUrl ? $http({
 							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
 							url: `${RestURLs.context}${data.result.downloadUrl}`,
 						}) : $q.resolve(data);

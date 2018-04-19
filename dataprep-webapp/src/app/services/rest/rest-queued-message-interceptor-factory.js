@@ -28,7 +28,7 @@ const NOOP = () => {};
  * @name data-prep.services.rest.service:RestQueuedMessageHandler
  * @description Queued message interceptor
  */
-export default function RestQueuedMessageHandler($q, $injector, $timeout) {
+export default function RestQueuedMessageHandler($q, $injector, $timeout, RestURLs) {
 	'ngInject';
 
 	function checkStatus(url) {
@@ -67,10 +67,10 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout) {
 			const { headers, config, status } = response;
 
 			if (status === ACCEPTED_STATUS && ALLOWED_METHODS.includes(config.method) && !config.async) {
-				return loop(headers('Location'), config.statusCallback)
+				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');
-						return data.result.downloadUrl ? $http({
+						return `${RestURLs.context}${data.result.downloadUrl}` ? $http({
 							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
 							url: data.result.downloadUrl,
 						}) : $q.resolve(data);

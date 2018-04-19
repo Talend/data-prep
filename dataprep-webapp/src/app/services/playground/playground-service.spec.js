@@ -569,7 +569,7 @@ describe('Playground Service', () => {
 		const previousLastStepId = '3248fa65e45f588cb464';
 		const lastStep = { transformation: { stepId: lastStepId } };
 		const previousLastStep = { transformation: { stepId: previousLastStepId } };
-		const previousStep = { column: { id: '0003' } };
+		const previousStep = { column: { id: '0003' }, transformation: { stepId: '666' } };
 		beforeEach(inject(($rootScope, $q, PlaygroundService, PreparationService, StepUtilsService) => {
 			preparationHeadContent = {
 				records: [{

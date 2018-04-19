@@ -114,6 +114,17 @@ describe('Playground state service', () => {
             //then
             expect(playgroundState.isSavingPreparationFoldersLoading).toBe(true);
         }));
+
+        it('should set last active step id', inject((playgroundState, PlaygroundStateService) => {
+            //given
+            expect(playgroundState.lastActiveStepId).toBeFalsy();
+
+            //when
+            PlaygroundStateService.setLastActiveStepId(666);
+
+            //then
+            expect(playgroundState.lastActiveStepId).toBe(666);
+        }));
     });
 
     describe('dataset', () => {
@@ -516,6 +527,7 @@ describe('Playground state service', () => {
             playgroundState.isPreprationPickerVisible = true;
             playgroundState.savingPreparationFolders = {};
             playgroundState.isSavingPreparationFoldersLoading = true;
+            playgroundState.lastActiveStepId = 666;
 
             //when
             PlaygroundStateService.reset();
@@ -535,6 +547,7 @@ describe('Playground state service', () => {
             expect(playgroundState.isPreprationPickerVisible).toBe(false);
             expect(playgroundState.savingPreparationFolders).toBe(null);
             expect(playgroundState.isSavingPreparationFoldersLoading).toBe(false);
+            expect(playgroundState.lastActiveStepId).toBe(null);
         }));
 
         it('should reset sub-states', inject((playgroundState, PlaygroundStateService, RecipeStateService, GridStateService, FilterStateService, LookupStateService, SuggestionsStateService, ParametersStateService) => {

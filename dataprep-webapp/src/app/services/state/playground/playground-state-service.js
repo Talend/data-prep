@@ -23,6 +23,7 @@ export const playgroundState = {
 	isReadOnly: false,
 	stepInEditionMode: null,
 	transformationInProgress: false,
+	lastActiveStepId: null,
 };
 
 export function PlaygroundStateService($translate,
@@ -54,6 +55,7 @@ export function PlaygroundStateService($translate,
 		setPreparationName,
 		setNameEditionMode,
 		setData,
+		setLastActiveStepId,
 		updateDatasetRecord,
 		updateDatasetStatistics,
 		setSampleType,
@@ -159,6 +161,10 @@ export function PlaygroundStateService($translate,
 
 	function setNameEditionMode(editionMode) {
 		playgroundState.nameEditionMode = editionMode;
+	}
+
+	function setLastActiveStepId(stepId) {
+		playgroundState.lastActiveStepId = stepId;
 	}
 
 	function updateDatasetStatistics(metadata) {
@@ -274,6 +280,7 @@ export function PlaygroundStateService($translate,
 		playgroundState.lookupData = null;
 		playgroundState.preparation = null;
 		playgroundState.sampleType = 'HEAD';
+		playgroundState.lastActiveStepId = null;
 		playgroundState.isReadOnly = false;
 		playgroundState.stepInEditionMode = null;
 		playgroundState.isNameValidationVisible = false;

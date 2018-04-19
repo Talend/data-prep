@@ -495,6 +495,7 @@ export default function PlaygroundService(
 	 * in actions history. It there is no preparation yet, it is created first and tagged as draft.
 	 */
 	function appendStep(actions) {
+		StateService.setLastActiveStepId(null);
 		startLoader();
 		const actualSteps = state.playground.recipe.current.steps.slice();
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
@@ -613,6 +614,7 @@ export default function PlaygroundService(
 			return;
 		}
 
+		StateService.setLastActiveStepId(null);
 		startLoader();
 
 		// If move up or move down buttons, list is not yet updated
@@ -685,6 +687,7 @@ export default function PlaygroundService(
 	function removeStep(step) {
 		startLoader();
 
+		StateService.setLastActiveStepId(null);
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
 			state.playground.recipe
@@ -884,6 +887,7 @@ export default function PlaygroundService(
 		const stepToLoad = step.inactive
 			? step
 			: StepUtilsService.getPreviousStep(state.playground.recipe, step);
+		StateService.setLastActiveStepId(step.inactive ? 'head' : stepToLoad.transformation.stepId);
 		service.loadStep(stepToLoad);
 	}
 
@@ -933,11 +937,10 @@ export default function PlaygroundService(
 		const tql =
 			state.playground.filter.enabled &&
 			FilterService.stringify(state.playground.filter.gridFilters);
-
 		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
-			'head',
+			state.playground.lastActiveStepId || 'head',
 			state.playground.sampleType,
 			tql
 		).then((response) => {

@@ -54,13 +54,15 @@ $ mvn verify -DskipITs=false
 
 ## Adding new features
 
+### Writing new features
+* By default new features should be tagged with `@EnvOs @EnvOnPremise @EnvCloud`
+* If a feature is known to be OS environment dependent it must be tagged only with `@EnvOs` 
+
 ### Writing new Java steps
 * New Java steps must inherit from `DataPrepStep`
 * They must follow the good practices described below
 * Don't forget to register any created item in the context in order to have it cleaned by ``@CleanAfter``
 * As the values passed to the folder API differs depending on the environment, always use ``folderUtil`` functions first instead of direct ``OSDataPrepAPIHelper`` calls, in order to keep your features runnable in an on premise environment.
-* By default new features should be tagged with `@EnvOs @EnvOnPremise @EnvCloud`
-* If a feature is known to be OS environment dependent it must be tagged only with `@EnvOs` 
 
 ### Good practices for writing new Java steps
 #### Step Atomicity

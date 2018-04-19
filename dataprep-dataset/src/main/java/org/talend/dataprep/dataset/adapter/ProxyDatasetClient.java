@@ -49,8 +49,8 @@ public class ProxyDatasetClient implements DatasetClient {
     @Override
     public Dataset findOne(String datasetId) {
         ResponseEntity<Dataset> entity =
-                restTemplate.getForEntity("/datasets/{datasetId}?withUiSpec={withUiSpec}&advanced={advanced}",
-                        Dataset.class, datasetId, false, false);
+                restTemplate.getForEntity("/datasets/{datasetId}",
+                        Dataset.class, datasetId);
         return entity.getBody();
     }
 

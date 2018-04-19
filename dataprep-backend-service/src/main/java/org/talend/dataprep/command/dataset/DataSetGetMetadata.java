@@ -27,11 +27,10 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.command.Defaults.convertResponse;
@@ -84,12 +83,13 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
-                JsonNode jsonNode = objectMapper.readTree(res.getEntity().getContent());
+                Dataset dataset = objectMapper.readValue(res.getEntity().getContent(), Dataset.class);
+
                 return dataSetMetadataBuilder //
-                        .id(jsonNode.get("id").asText()) //
-                        .name(jsonNode.get("label").asText()) //
-                        .created(jsonNode.get("created").asLong()) //
-                        .modified(jsonNode.get("updated").asLong()) //
+                        .id(dataset.getId()) //
+                        .name(dataset.getLabel()) //
+                        .created(dataset.getCreated()) //
+                        .modified(dataset.getUpdated()) //
                         .build();
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);

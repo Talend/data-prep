@@ -1,7 +1,8 @@
+@Test
 Feature: Exporting preparation on XLSX format
 
   @CleanAfter
-  Scenario: Verify phone number transformation
+  Scenario: Verify phone number transformation - XLSX export format
     Given I upload the dataset "/data/phoneNumber.csv" with name "phoneNumber_dataset"
     And I create a preparation with name "phoneNumber_preparation", based on "phoneNumber_dataset" dataset
     And I add a "format_phone_number" step on the preparation "phoneNumber_preparation" with parameters :
@@ -18,7 +19,7 @@ Feature: Exporting preparation on XLSX format
     Then I check that "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file
 
   @CleanAfter
-  Scenario: Verify phone number on dataset transformation
+  Scenario: Verify phone number on dataset transformation - XLSX export format
     Given I upload the dataset "/data/phoneNumberScopeDataset.csv" with name "phoneNumberScopeDataset_dataset"
     And I create a preparation with name "phoneNumberScopeDataset_preparation", based on "phoneNumberScopeDataset_dataset" dataset
     And I add a "format_phone_number" step on the preparation "phoneNumberScopeDataset_preparation" with parameters :

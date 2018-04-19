@@ -213,7 +213,6 @@ public class DataSetAPI extends APIService {
         }
         try {
             final HystrixCommand<InputStream> retrievalCommand = getCommand(DataSetGet.class, id, fullContent, includeTechnicalProperties, filter);
-            HttpResponseContext.contentType(APPLICATION_JSON_VALUE);
             return toStreaming(retrievalCommand);
         } finally {
             if (LOG.isDebugEnabled()) {

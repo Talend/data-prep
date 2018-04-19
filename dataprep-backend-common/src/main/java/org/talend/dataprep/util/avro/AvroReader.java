@@ -23,14 +23,19 @@ import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.stream.Stream;
 
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
  * TCOMP serializer.
  */
-public class AvroReader implements Closeable {
+public class AvroReader implements Closeable, Iterator<GenericRecord> {
 
     private static final Logger LOGGER = getLogger(AvroReader.class);
 
@@ -42,6 +47,8 @@ public class AvroReader implements Closeable {
 
     private boolean closed = false;
 
+    private GenericRecord buffer;
+
     public AvroReader(InputStream rawContent, Schema schema) throws IOException {
         this.rawContent = rawContent;
 
@@ -50,7 +57,27 @@ public class AvroReader implements Closeable {
         decoder = DecoderFactory.get().jsonDecoder(schema, rawContent);
     }
 
-    public GenericRecord read() throws IOException {
+    @Override
+    public boolean hasNext() {
+        if (buffer == null) {
+            buffer = readNext();
+        }
+        return buffer != null;
+    }
+
+    @Override
+    public GenericRecord next() {
+        GenericRecord genericRecord;
+        if (buffer == null) {
+            genericRecord = readNext();
+        } else {
+            genericRecord = buffer;
+            buffer = null;
+        }
+        return genericRecord;
+    }
+
+    private GenericRecord readNext() {
         GenericRecord record;
         if (!closed) {
             try {
@@ -74,8 +101,12 @@ public class AvroReader implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-        rawContent.close();
+    public void close() {
+        try {
+            rawContent.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         closed = true;
     }
 
@@ -99,5 +130,9 @@ public class AvroReader implements Closeable {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    public Stream<GenericRecord> asStream() {
+        return stream(spliteratorUnknownSize(this, Spliterator.IMMUTABLE), false);
     }
 }

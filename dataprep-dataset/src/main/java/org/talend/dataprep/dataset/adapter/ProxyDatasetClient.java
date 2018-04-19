@@ -15,26 +15,33 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.domain.EncodedSample;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.util.avro.AvroReader;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ProxyDatasetClient implements DatasetClient {
 
@@ -48,24 +55,35 @@ public class ProxyDatasetClient implements DatasetClient {
 
     @Override
     public Dataset findOne(String datasetId) {
-        ResponseEntity<Dataset> entity =
-                restTemplate.getForEntity("/datasets/{datasetId}",
-                        Dataset.class, datasetId);
-        return entity.getBody();
+        return restTemplate.getForObject("/datasets/{datasetId}",
+                Dataset.class, datasetId);
     }
 
     @Override
-    public ObjectNode findSample(String datasetId, PageRequest pageRequest) {
-        return restTemplate.getForEntity("/dataset-sample/{datasetId}?offset={offset}&limit={limit}",
-                EncodedSample.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize()) //
-                .getBody() //
-                .getSchema();
+    public ObjectNode findSchema(String datasetId) {
+        return restTemplate.getForObject("/dataset-sample/" + datasetId, EncodedSample.class).getSchema();
+    }
+
+    @Override
+    public Stream<IndexedRecord> findData(String datasetId, PageRequest pageRequest) {
+        EncodedSample encodedSample =
+                restTemplate.getForObject("/dataset-sample/" + datasetId, EncodedSample.class, pageRequest.getOffset(),
+                        pageRequest.getPageSize());
+        ObjectNode schemaAsJackson = encodedSample.getSchema();
+        Schema schema = new Schema.Parser().parse(schemaAsJackson.toString());
+
+        try {
+            AvroReader avroReader =
+                    new AvroReader(new ByteArrayInputStream(encodedSample.getData().toString().getBytes(UTF_8)), schema);
+            return avroReader.asStream().map(gr -> gr);
+        } catch (IOException e) {
+            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
     }
 
     @Override
     public List<Dataset> findAll() {
-        ResponseEntity<Dataset[]> entity = restTemplate.getForEntity("/datasets", Dataset[].class);
-        return Arrays.asList(entity.getBody());
+        return Arrays.asList(restTemplate.getForObject("/datasets", Dataset[].class));
     }
 
     @Override

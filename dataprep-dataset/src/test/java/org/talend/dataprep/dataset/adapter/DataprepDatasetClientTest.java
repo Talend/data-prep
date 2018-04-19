@@ -15,23 +15,21 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.springframework.data.domain.PageRequest;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -67,7 +65,7 @@ public class DataprepDatasetClientTest {
 
         when(dataSetService.getMetadata(anyString())).thenReturn(dataSet);
 
-        ObjectNode jsonSchema = dataprepDatasetClient.findSample("toto", new PageRequest(0, 1));
+        ObjectNode jsonSchema = dataprepDatasetClient.findSchema("toto");
 
         assertEquals("org.talend.dataprep", jsonSchema.get("namespace").asText());
         JsonNode fields = jsonSchema.get("fields");

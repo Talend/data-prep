@@ -15,16 +15,11 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.dataset.domain.Dataset;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/datasets")
@@ -44,16 +39,14 @@ public class DataSetController {
      * @return
      */
     @GetMapping("/{datasetId}")
-    public ResponseEntity<Dataset> getDatasetMetadata(@PathVariable String datasetId,
+    public Dataset getDatasetMetadata(@PathVariable String datasetId,
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
-        Dataset dataset = datasetClient.findOne(datasetId);
-
-        return new ResponseEntity<>(dataset, HttpStatus.OK);
+        return datasetClient.findOne(datasetId);
     }
 
     @GetMapping
-    public ResponseEntity<List<Dataset>> getAllDatasetMetadata() {
-        return new ResponseEntity<>(datasetClient.findAll(), HttpStatus.OK);
+    public List<Dataset> getAllDatasetMetadata() {
+        return datasetClient.findAll();
     }
 }

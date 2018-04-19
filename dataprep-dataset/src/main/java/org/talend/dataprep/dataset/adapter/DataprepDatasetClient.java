@@ -15,10 +15,11 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Throwables;
 import org.apache.avro.Schema;
+import org.apache.avro.generic.IndexedRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -31,8 +32,10 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.service.DataSetService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * Dataprep implementation of {@link DatasetClient}
@@ -63,7 +66,7 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public ObjectNode findSample(String datasetId, PageRequest pageRequest) {
+    public ObjectNode findSchema(String datasetId) {
         DataSet dataSet = dataSetService.getMetadata(datasetId);
         Schema schema = RowMetadataUtils.toSchema(dataSet.getMetadata().getRowMetadata());
 
@@ -72,6 +75,19 @@ public class DataprepDatasetClient implements DatasetClient {
         } catch (IOException e) {
             throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
+    }
+
+    @Override
+    public Stream<IndexedRecord> findData(String datasetId, PageRequest pageRequest) {
+        Callable<DataSet> dataSetCallable = dataSetService.get(false, true, null, datasetId);
+        DataSet call;
+        try {
+            call = dataSetCallable.call();
+        } catch (Exception e) {
+            Throwables.propagateIfPossible(e, RuntimeException.class);
+            throw new RuntimeException("unexpected", e);
+        }
+        return call.getRecords().map(RowMetadataUtils::toRecord).map(RowMetadataUtils.Record::getIndexedRecord);
     }
 
     @Override

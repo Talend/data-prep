@@ -24,7 +24,7 @@ public class GenericRecordsReader implements Closeable {
 
     public DataSetRow read() throws IOException {
         if (!avroReader.isClosed()) {
-            GenericRecord record = avroReader.read();
+            GenericRecord record = avroReader.next();
             HashMap<String, String> values = new HashMap<>();
             for (ColumnMetadata column : columnsMetadata) {
                 values.put(column.getId(), toString(record, column));

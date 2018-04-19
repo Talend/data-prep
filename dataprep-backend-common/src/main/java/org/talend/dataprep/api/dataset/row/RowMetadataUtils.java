@@ -12,15 +12,10 @@
 
 package org.talend.dataprep.api.dataset.row;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +23,10 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RowMetadataUtils {
 
@@ -160,5 +159,110 @@ public class RowMetadataUtils {
 
         return rowMetadata;
     }
+
+    public static DataSetRow toDataSetRow(Record record) {
+        return toDataSetRow(record.getIndexedRecord(), record.getMetadata());
+    }
+
+    public static DataSetRow toDataSetRow(IndexedRecord indexedRecord, Metadata metadata) {
+        if (metadata == null) {
+            throw new IllegalArgumentException("Metadata cannot be null.");
+        }
+        final List<Schema.Field> fields = indexedRecord.getSchema().getFields();
+
+        final List<ColumnMetadata> newColumns = metadata.columns.stream() //
+                .map(c -> ColumnMetadata.Builder.column().copy(c).build()) //
+                .collect(Collectors.toList());
+
+        DataSetRow row = new DataSetRow(new RowMetadata(newColumns));
+        for (Schema.Field field : fields) {
+            final String dpColumnId = field.getProp(DP_COLUMN_ID);
+            if (dpColumnId != null) {
+                row = row.set(dpColumnId, String.valueOf(indexedRecord.get(field.pos())));
+            }
+        }
+        row.setTdpId(metadata.getRowId());
+        return row;
+    }
+
+    public static Record toRecord(DataSetRow row) {
+        final Schema schema = toSchema(row.getRowMetadata());
+        final IndexedRecord record = new GenericData.Record(schema);
+
+        final Map<String, Object> recordValues = row.values();
+        for (Schema.Field field : schema.getFields()) {
+            final String columnId = field.getProp(DP_COLUMN_ID);
+            if (columnId != null) {
+                if (recordValues.containsKey(columnId)) {
+                    record.put(field.pos(), recordValues.get(columnId));
+                } else {
+                    LOGGER.warn("Unable to set column '{}'.", columnId);
+                }
+            }
+        }
+
+        final Metadata metadata = new Metadata(row.getTdpId(), row.getRowMetadata().getColumns());
+        return new Record(record, metadata);
+    }
+
+    public static class Record {
+
+        private final IndexedRecord indexedRecord;
+
+        private final Metadata metadata;
+
+        public Record(IndexedRecord indexedRecord, Metadata metadata) {
+            this.indexedRecord = indexedRecord;
+            this.metadata = metadata;
+        }
+
+        public IndexedRecord getIndexedRecord() {
+            return indexedRecord;
+        }
+
+        public Metadata getMetadata() {
+            return metadata;
+        }
+    }
+
+
+
+
+
+    public static class Metadata implements Serializable {
+
+        private final Long rowId;
+
+        private final List<ColumnMetadata> columns;
+
+        public Metadata(Long rowId, List<ColumnMetadata> columns) {
+            this.rowId = rowId;
+            this.columns = columns == null ? Collections.emptyList() : columns;
+        }
+
+        public Long getRowId() {
+            return rowId;
+        }
+
+        public List<ColumnMetadata> getColumns() {
+            return columns;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Metadata metadata = (Metadata) o;
+            return Objects.equals(rowId, metadata.rowId) &&
+                    Objects.equals(columns, metadata.columns);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(rowId, columns);
+        }
+    }
+
+
 
 }

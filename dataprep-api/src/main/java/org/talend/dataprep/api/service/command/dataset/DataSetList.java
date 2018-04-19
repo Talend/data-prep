@@ -25,6 +25,7 @@ import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -62,7 +63,10 @@ public class DataSetList extends GenericCommand<InputStream> {
 
     private final Boolean limit;
 
-    private DataSetList(Sort sort, Order order, String name, boolean certified, boolean favorite, boolean limit) {
+    private final BeanConversionService beanConversionService;
+
+    private DataSetList(Sort sort, Order order, String name, boolean certified, boolean favorite, boolean limit,
+            BeanConversionService beanConversionService) {
         super(GenericCommand.DATASET_GROUP);
         this.sort = sort;
         this.order = order;
@@ -70,6 +74,7 @@ public class DataSetList extends GenericCommand<InputStream> {
         this.certified = certified;
         this.favorite = favorite;
         this.limit = limit;
+        this.beanConversionService = beanConversionService;
     }
 
     @PostConstruct
@@ -133,12 +138,7 @@ public class DataSetList extends GenericCommand<InputStream> {
     }
 
     private DataSetMetadata toDataSetMetadata(Dataset dataset) {
-        DataSetMetadata dataSetMetadata = new DataSetMetadata();
-        dataSetMetadata.setName(dataset.getLabel());
-
-        // TODO use beanConversionService
-
-        return dataSetMetadata;
+        return beanConversionService.convert(dataset, DataSetMetadata.class);
     }
 
 }

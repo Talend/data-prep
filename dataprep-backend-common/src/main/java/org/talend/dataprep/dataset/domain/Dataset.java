@@ -46,6 +46,8 @@ public class Dataset {
 
     private String datastoreId;
 
+    private Datastore datastore;
+
     private String schemaId;
 
     /** Raw TComp JSON properties. */
@@ -179,5 +181,13 @@ public class Dataset {
 
     public void setSchemaVersion(Integer schemaVersion) {
         this.schemaVersion = schemaVersion;
+    }
+
+    public Datastore getDatastore() {
+        return datastore;
+    }
+
+    public void setDatastore(Datastore datastore) {
+        this.datastore = datastore;
     }
 }

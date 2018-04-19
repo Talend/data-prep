@@ -15,18 +15,16 @@ package org.talend.dataprep.command.dataset;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
+import org.apache.avro.Schema;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -70,22 +68,8 @@ public class DataSetGetSchema extends GenericCommand<RowMetadata> {
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
-
-                Schema schema = objectMapper.readValue(res.getEntity().getContent(), Schema.class);
-                List<ColumnMetadata> columnMetadataList = Arrays.stream(schema.getFields()).map(field -> {
-                    ColumnMetadata columnMetadata = new ColumnMetadata();
-                    columnMetadata.setName(field.getName());
-                    Schema.Field.Type fieldType = field.getType();
-                    columnMetadata.setType(fieldType.getType());
-                    columnMetadata.setDomain(fieldType.getDqTypeKey());
-                    columnMetadata.setDomainLabel(fieldType.getDqType());
-                    return columnMetadata;
-                }).collect(Collectors.toList());
-
-                RowMetadata rowMetadata = new RowMetadata();
-                rowMetadata.setColumns(columnMetadataList);
-
-                return rowMetadata;
+                Schema schema = new Schema.Parser().parse(res.getEntity().getContent());
+                return RowMetadataUtils.toRowMetadata(schema);
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {
@@ -94,92 +78,4 @@ public class DataSetGetSchema extends GenericCommand<RowMetadata> {
         });
     }
 
-    private static class Schema {
-
-        private String type;
-
-        private String name;
-
-        private Field[] fields;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Field[] getFields() {
-            return fields;
-        }
-
-        public void setFields(Field[] fields) {
-            this.fields = fields;
-        }
-
-        static class Field {
-
-            private String name;
-
-            private Type type;
-
-            public String getName() {
-                return name;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public Type getType() {
-                return type;
-            }
-
-            public void setType(Type type) {
-                this.type = type;
-            }
-
-            static class Type {
-
-                private String type;
-
-                private String dqType;
-
-                private String dqTypeKey;
-
-                public String getType() {
-                    return type;
-                }
-
-                public void setType(String type) {
-                    this.type = type;
-                }
-
-                public String getDqType() {
-                    return dqType;
-                }
-
-                public void setDqType(String dqType) {
-                    this.dqType = dqType;
-                }
-
-                public String getDqTypeKey() {
-                    return dqTypeKey;
-                }
-
-                public void setDqTypeKey(String dqTypeKey) {
-                    this.dqTypeKey = dqTypeKey;
-                }
-            }
-        }
-    }
 }

@@ -12,8 +12,7 @@
 
 package org.talend.dataprep.api.dataset.row;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +29,17 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class RowMetadataUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RowMetadataUtils.class);
 
     private static final String DATAPREP_FIELD_PREFIX = "DP_";
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final String DP_COLUMN_ID = "_dp_column_id";
+
+    private static final String DP_COLUMN_NAME = "_dp_column_name";
+
+    private static final String DP_COLUMN_TYPE = "_dp_column_type";
 
     private RowMetadataUtils() {
     }
@@ -46,18 +48,11 @@ public class RowMetadataUtils {
         return toSchema(rowMetadata.getColumns());
     }
 
-    public static Schema toSchema(String name, RowMetadata rowMetadata) {
-        return toSchema(name, rowMetadata.getColumns());
-    }
-
     public static Schema toSchema(List<ColumnMetadata> columns) {
-        return toSchema("dataprep" + System.currentTimeMillis(), columns);
-    }
-
-    public static Schema toSchema(String name, List<ColumnMetadata> columns) {
-
+        final String name = "dataprep" + System.currentTimeMillis();
         final Map<String, Integer> uniqueSuffixes = new HashMap<>();
         final List<Schema.Field> fields = columns.stream() //
+                .sorted(Comparator.comparingInt(c -> Integer.parseInt(c.getId()))) //
                 .peek(columnMetadata -> {
                     final Integer suffix = uniqueSuffixes.get(columnMetadata.getName());
                     if (suffix != null) {
@@ -83,20 +78,20 @@ public class RowMetadataUtils {
         return schema;
     }
 
-    public static Schema.Field toField(ColumnMetadata column) {
-        final String name = column.getName() == null ? DATAPREP_FIELD_PREFIX + column.getId() : toAvroFieldName(column);
-        final Schema.Field field = new Schema.Field(name, Schema.create(Schema.Type.STRING), StringUtils.EMPTY, null);
-        try {
-            final StringWriter writer = new StringWriter();
-            mapper.writerWithType(ColumnMetadata.class).writeValue(writer, column);
-            field.addProp("_dp_column", writer.toString());
-        } catch (IOException e) {
-            LOGGER.error("Unable to add column metadata to field '{}'.", name, e);
-        }
+    private static Schema.Field toField(ColumnMetadata column) {
+        final String name = StringUtils.isEmpty(column.getName()) ?
+                DATAPREP_FIELD_PREFIX + column.getId() :
+                toAvroFieldName(column);
+        final Schema type = SchemaBuilder.builder().unionOf().nullBuilder().endNull().and().stringType().endUnion();
+        final Schema.Field field = new Schema.Field(name, type, StringUtils.EMPTY, null);
+        field.addProp(DP_COLUMN_ID, column.getId());
+        field.addProp(DP_COLUMN_NAME, column.getName());
+        field.addProp(DP_COLUMN_TYPE, column.getType());
+
         return field;
     }
 
-    public static String toAvroFieldName(ColumnMetadata column) {
+    private static String toAvroFieldName(ColumnMetadata column) {
         final char[] chars = column.getName().toCharArray();
         final StringBuilder columnName = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {
@@ -132,15 +127,38 @@ public class RowMetadataUtils {
         if (Type.get(column.getType()) != Type.DATE) {
             return null;
         }
-        Optional<PatternFrequency> electedPattern = column.getStatistics().getPatternFrequencies().stream()
-                .filter(p -> !StringUtils.isEmpty(p.getPattern()))
-                .sorted((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()))
-                .findFirst();
-        if (electedPattern.isPresent()) {
-            return electedPattern.get().getPattern();
-        } else {
-            return null;
+        final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
+        if (!patternFrequencies.isEmpty()) {
+            patternFrequencies.sort((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()));
+            return patternFrequencies.get(0).getPattern();
         }
+        return null;
+    }
+
+    private static Optional<ColumnMetadata> getColumnMetadata(Schema.Field field) {
+        final String dpColumnId = field.getProp(DP_COLUMN_ID);
+        if (dpColumnId == null) {
+            return Optional.empty();
+        }
+        return Optional.of(ColumnMetadata.Builder.column() //
+                .type(Type.get(field.getProp(DP_COLUMN_TYPE))) //
+                .computedId(field.getProp(DP_COLUMN_ID)) //
+                .name(field.getProp(DP_COLUMN_NAME)) //
+                .build() //
+        );
+    }
+
+    public static RowMetadata toRowMetadata(Schema schema) {
+        RowMetadata rowMetadata = new RowMetadata();
+
+        final List<ColumnMetadata> columns = schema.getFields() //
+                .stream() //
+                .map(RowMetadataUtils::getColumnMetadata) //
+                .filter(Optional::isPresent) //
+                .map(Optional::get).collect(Collectors.toList());
+        rowMetadata.setColumns(columns);
+
+        return rowMetadata;
     }
 
 }

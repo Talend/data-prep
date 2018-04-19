@@ -25,7 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.client.DatasetClient;
 import org.talend.dataprep.dataset.domain.Dataset;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

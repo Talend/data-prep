@@ -68,7 +68,6 @@
         <module>../dataprep-actions</module>
         <module>../dataprep-async-api</module>
         <module>../dataprep-async-runtime</module>
-        <module>../dataprep-dataset-client</module>
         <module>../dataprep-dataset</module>
         <module>../dataprep-transformation</module>
         <module>../dataprep-preparation</module>
@@ -307,11 +306,6 @@
                 <artifactId>dataprep-preparation</artifactId>
                 <version>${project.version}</version>
                 <classifier>lib</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.talend.dataprep</groupId>
-                <artifactId>dataprep-dataset-client</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>

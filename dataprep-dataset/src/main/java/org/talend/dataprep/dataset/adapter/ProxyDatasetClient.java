@@ -13,9 +13,10 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.dataset.client;
+package org.talend.dataprep.dataset.adapter;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.domain.EncodedSample;
-import org.talend.dataprep.dataset.client.properties.DatasetProperties;
 import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -40,9 +40,8 @@ public class ProxyDatasetClient implements DatasetClient {
 
     private final RestTemplate restTemplate;
 
-    public ProxyDatasetClient(RestTemplateBuilder builder, DatasetProperties datasetProperties, Security security) {
-        String dataSetUrl = datasetProperties.getUrl().toString();
-        this.restTemplate = builder.rootUri(dataSetUrl)
+    public ProxyDatasetClient(RestTemplateBuilder builder, URL url, Security security) {
+        this.restTemplate = builder.rootUri(url.toString())
                 .additionalInterceptors(new SecurityAuthorizationInterceptor(security))
                 .build();
     }

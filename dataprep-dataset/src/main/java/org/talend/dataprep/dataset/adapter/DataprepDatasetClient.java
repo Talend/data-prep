@@ -28,7 +28,6 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.client.DatasetClient;
 import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.service.DataSetService;
 

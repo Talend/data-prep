@@ -1,0 +1,157 @@
+{
+  "jsonSchema": {
+    "title": "",
+    "type": "object",
+    "required": [
+      "label"
+    ],
+    "properties": {
+      "label": {
+        "type": "string",
+        "title": "Label"
+      },
+      "description": {
+        "type": "string",
+        "title": "Description"
+      },
+      "properties": {
+        "title": "HDFS Dataset Properties",
+        "type": "object",
+        "properties": {
+          "format": {
+            "title": "Format",
+            "type": "string",
+            "enumNames": [
+              "CSV",
+              "AVRO",
+              "PARQUET"
+            ],
+            "enum": [
+              "CSV",
+              "AVRO",
+              "PARQUET"
+            ]
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "recordDelimiter": {
+            "title": "Record delimiter",
+            "type": "string",
+            "enumNames": [
+              "LF",
+              "CR",
+              "CRLF",
+              "OTHER"
+            ],
+            "enum": [
+              "LF",
+              "CR",
+              "CRLF",
+              "OTHER"
+            ]
+          },
+          "specificRecordDelimiter": {
+            "title": "Specific record delimiter",
+            "type": "string",
+            "minItems": 0
+          },
+          "fieldDelimiter": {
+            "title": "Field delimiter",
+            "type": "string",
+            "enumNames": [
+              "SEMICOLON",
+              "COMMA",
+              "TABULATION",
+              "SPACE",
+              "OTHER"
+            ],
+            "enum": [
+              "SEMICOLON",
+              "COMMA",
+              "TABULATION",
+              "SPACE",
+              "OTHER"
+            ]
+          },
+          "specificFieldDelimiter": {
+            "title": "Specific field delimiter",
+            "type": "string",
+            "minItems": 0
+          }
+        },
+        "required": [
+          "format",
+          "path"
+        ]
+      }
+    }
+  },
+  "uiSchema": {
+    "ui:order": [
+      "label",
+      "description",
+      "properties"
+    ],
+    "properties": {
+      "format": {
+        "ui:trigger": [
+          "after"
+        ]
+      },
+      "recordDelimiter": {
+        "ui:trigger": [
+          "after"
+        ]
+      },
+      "specificRecordDelimiter": {
+        "ui:widget": "hidden"
+      },
+      "fieldDelimiter": {
+        "ui:trigger": [
+          "after"
+        ]
+      },
+      "specificFieldDelimiter": {
+        "ui:widget": "hidden"
+      },
+      "ui:order": [
+        "format",
+        "path",
+        "recordDelimiter",
+        "specificRecordDelimiter",
+        "fieldDelimiter",
+        "specificFieldDelimiter"
+      ]
+    }
+  },
+  "properties": {
+    "properties": {
+      "format": "CSV",
+      "path": "/user/talend/filter1/main",
+      "recordDelimiter": "LF",
+      "specificRecordDelimiter": "\\n",
+      "fieldDelimiter": "SEMICOLON",
+      "specificFieldDelimiter": ";",
+      "@definitionName": "SimpleFileIoDataset"
+    },
+    "datastoreId": "59c364bb-47be-457c-a805-9533003f2959",
+    "enabled": true,
+    "label": "filter1_main",
+    "creator": "free@dss.talend.com",
+    "__acl": 0,
+    "version": 0,
+    "id": "d30e7e14-375a-49c7-87eb-62e1b614500d",
+    "updated": 1524131129516,
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "entitlements": [],
+    "owner": "admin",
+    "type": "SimpleFileIoDataset",
+    "created": 1524131129516
+  }
+}

@@ -72,7 +72,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 						const $http = $injector.get('$http');
 						return `${RestURLs.context}${data.result.downloadUrl}` ? $http({
 							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
-							url: data.result.downloadUrl,
+							url: `${RestURLs.context}${data.result.downloadUrl}`,
 						}) : $q.resolve(data);
 					});
 			}

@@ -24,6 +24,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
@@ -46,12 +47,20 @@ public class StatisticsNode extends ColumnFilteredNode {
 
     private Analyzer<Analyzers.Result> configuredAnalyzer;
 
+    private RowMetadataFallbackProvider rowMetadataFallbackProvider;
+
     public StatisticsNode(Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
-                          Predicate<? super ColumnMetadata> filter,
-                          StatisticsAdapter adapter) {
+            Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter) {
+        this(analyzer, filter, adapter, null);
+    }
+
+    public StatisticsNode(Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
+            Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         super(filter);
         this.analyzer = analyzer;
         this.adapter = adapter;
+        this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
     }
 
     /**
@@ -62,17 +71,20 @@ public class StatisticsNode extends ColumnFilteredNode {
      * @param filter the filter to apply on values of a column
      * @param adapter the adapter used to retrieve statistical information
      */
-    public StatisticsNode(AnalyzerService analyzerService, Predicate<ColumnMetadata> filter, StatisticsAdapter adapter) {
+    public StatisticsNode(AnalyzerService analyzerService, Predicate<? super ColumnMetadata> filter,
+            StatisticsAdapter adapter) {
         this(getDefaultAnalyzer(analyzerService), filter, adapter);
     }
 
     /**
      * Creates a default analyzer with te specified analyzer service.
-     * This analyzer performs quality, cardinality, frequency, patterns, the length, quantiles, summary and histogram analysis.
+     * This analyzer performs quality, cardinality, frequency, patterns, the length, quantiles, summary and histogram
+     * analysis.
      *
      * @param analyzerService the provided analyzer service
      */
-    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getDefaultAnalyzer(AnalyzerService analyzerService) {
+    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>>
+            getDefaultAnalyzer(AnalyzerService analyzerService) {
         return c -> analyzerService.build(c, //
                 AnalyzerService.Analysis.QUALITY, //
                 AnalyzerService.Analysis.CARDINALITY, //
@@ -91,7 +103,8 @@ public class StatisticsNode extends ColumnFilteredNode {
             this.configuredAnalyzer = analyzer.apply(filteredColumns);
         }
         if (!row.isDeleted()) {
-            configuredAnalyzer.analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
+            configuredAnalyzer
+                    .analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
         }
         super.receive(row, metadata);
     }
@@ -105,11 +118,16 @@ public class StatisticsNode extends ColumnFilteredNode {
                 LOGGER.warn("No data received.");
             }
         }
+        if (signal == Signal.END_OF_STREAM || signal == Signal.STOP) {
+            if (rowMetadata != null && rowMetadataFallbackProvider != null) {
+                rowMetadataFallbackProvider.setFallback(rowMetadata);
+            }
+        }
         super.signal(signal);
     }
 
     @Override
     public Node copyShallow() {
-        return new StatisticsNode(analyzer, filter, adapter);
+        return new StatisticsNode(analyzer, filter, adapter, rowMetadataFallbackProvider);
     }
 }

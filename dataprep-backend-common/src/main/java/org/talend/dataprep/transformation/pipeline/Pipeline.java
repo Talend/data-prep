@@ -214,6 +214,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private Long limit = null;
 
+        private RowMetadataFallbackProvider rowMetadataFallbackProvider;
+
         public static Builder builder() {
             return new Builder();
         }
@@ -289,6 +291,11 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return this;
         }
 
+        public Builder withRowMetadataFallbackProvider(RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+            this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
+            return this;
+        }
+
         public Pipeline build() {
             final NodeBuilder current;
             if (inFilter != null) {
@@ -326,6 +333,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
             // Build nodes for actions
             final Node actionsNode = ActionNodesBuilder.builder() //
+                    .rowMetadataFallbackProvider(rowMetadataFallbackProvider) //
                     .initialMetadata(rowMetadata) //
                     .actions(runnableActions) //
                     // statistics requests
@@ -368,5 +376,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             // Finally build pipeline
             return pipeline;
         }
+
     }
 }

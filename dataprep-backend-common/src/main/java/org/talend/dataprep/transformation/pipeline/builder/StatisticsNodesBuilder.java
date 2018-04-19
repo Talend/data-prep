@@ -20,6 +20,7 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.StatisticsNode;
@@ -88,17 +89,17 @@ public class StatisticsNodesBuilder {
         return actionToMetadata;
     }
 
-    public Node buildPreStatistics() {
+    public Node buildPreStatistics(RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         // TODO remove this and fix tests
         if (analyzerService == null) {
             return new BasicNode();
         }
 
         performActionsProfiling();
-        return getTypeDetectionNode(ALL_COLUMNS);
+        return getTypeDetectionNode(ALL_COLUMNS, rowMetadataFallbackProvider);
     }
 
-    public Node buildPostStatistics() {
+    public Node buildPostStatistics(RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         // TODO remove this and fix tests
         if (analyzerService == null) {
             return new BasicNode();
@@ -106,14 +107,19 @@ public class StatisticsNodesBuilder {
 
         performActionsProfiling();
         if (actionsProfile.needFullAnalysis()) {
-            return NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+            return NodeBuilder
+                    .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis(), rowMetadataFallbackProvider))
                     .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .to(getFullStatisticsNode(actionsProfile.getFilterForInvalidAnalysis())).build();
+                    .to(getFullStatisticsNode(actionsProfile.getFilterForInvalidAnalysis(),
+                            rowMetadataFallbackProvider))
+                    .build();
         }
 
         if (actionsProfile.needOnlyInvalidAnalysis()) {
             return NodeBuilder.from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis())).build();
+                    .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis(),
+                            rowMetadataFallbackProvider))
+                    .build();
         }
         return new BasicNode();
     }
@@ -124,7 +130,8 @@ public class StatisticsNodesBuilder {
      * @param nextAction action needing
      * @return
      */
-    public Node buildIntermediateStatistics(final Action nextAction) {
+    public Node buildIntermediateStatistics(final Action nextAction,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         Node node = null;
         //TODO remove this and fix tests
         if (analyzerService == null) {
@@ -135,10 +142,15 @@ public class StatisticsNodesBuilder {
             if (needIntermediateStatistics(nextAction)) {
                 final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                    node = NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
+                    node = NodeBuilder
+                            .from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis(),
+                                    rowMetadataFallbackProvider))
+                            .build();
                 } else {
                     // 2 cases remain as this point: action needs invalid values or filter attached to action does
-                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+                    node = NodeBuilder
+                            .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis(),
+                                    rowMetadataFallbackProvider))
                             .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
                             .build();
                 }
@@ -204,25 +216,32 @@ public class StatisticsNodesBuilder {
         return StatisticsNode.getDefaultAnalyzer(analyzerService);
     }
 
-    private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
-        return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis)
+    private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+        return allowSchemaAnalysis
+                ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis,
+                        rowMetadataFallbackProvider)
                 : new BasicNode();
     }
 
-    private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
+    private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter,
-                c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS)) : new BasicNode();
+                c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS), rowMetadataFallbackProvider)
+                : new BasicNode();
     }
 
     private Node getInvalidDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
         return new InvalidDetectionNode(columnFilter);
     }
 
-    private Node getQualityStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new StatisticsNode(getQualityAnalyzer(), columnFilter, statisticsAdapter);
+    private Node getFullStatisticsNode(final Predicate<ColumnMetadata> columnFilter,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+        return new StatisticsNode(getFullAnalyzer(), columnFilter, statisticsAdapter, rowMetadataFallbackProvider);
     }
 
-    private Node getFullStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new StatisticsNode(getFullAnalyzer(), columnFilter, statisticsAdapter);
+    private Node getQualityStatisticsNode(final Predicate<ColumnMetadata> columnFilter,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+        return new StatisticsNode(getQualityAnalyzer(), columnFilter, statisticsAdapter, rowMetadataFallbackProvider);
     }
 }

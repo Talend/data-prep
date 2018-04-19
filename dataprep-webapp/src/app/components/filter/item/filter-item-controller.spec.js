@@ -14,136 +14,158 @@
 import i18n from './../../../../i18n/en.json';
 
 describe('Filter item controller', () => {
-    'use strict';
+	'use strict';
 
-    let createController;
-    let scope;
+	let createController;
+	let scope;
 
-    let filter;
-    let editable;
-    let onEditFn;
-    let removable;
-    let onRemoveFn;
+	let filter;
+	let editable;
+	let onEditFn;
+	let removable;
+	let onRemoveFn;
 
-    beforeEach(angular.mock.module('data-prep.filter-item'));
-    beforeEach(angular.mock.module('pascalprecht.translate', $translateProvider => {
-        $translateProvider.translations('en', i18n);
-        $translateProvider.preferredLanguage('en');
-    }));
+	beforeEach(angular.mock.module('data-prep.filter-item'));
+	beforeEach(angular.mock.module('pascalprecht.translate', $translateProvider => {
+		$translateProvider.translations('en', i18n);
+		$translateProvider.preferredLanguage('en');
+	}));
 
-    beforeEach(inject(($rootScope, $componentController) => {
-        scope = $rootScope.$new();
+	beforeEach(inject(($rootScope, $componentController) => {
+		scope = $rootScope.$new();
 
-        filter = {
-            type: 'exact',
-            value: [
-                {
-                    value: 'lorem ipsum',
-                },
-            ],
-        };
-        editable = false;
-        onEditFn = jasmine.createSpy('onEditFn');
-        removable = false;
-        onRemoveFn = jasmine.createSpy('onRemoveFn');
+		filter = {
+			type: 'exact',
+			value: [
+				{
+					value: 'lorem ipsum',
+				},
+			],
+		};
+		editable = false;
+		onEditFn = jasmine.createSpy('onEditFn');
+		removable = false;
+		onRemoveFn = jasmine.createSpy('onRemoveFn');
 
-        createController = () => {
-            const ctrl = $componentController('filterItem', {
-                $scope: scope,
-            }, {
-                value: filter,
-                editable: editable,
-                onEdit: onEditFn,
-                removable: removable,
-                onRemove: onRemoveFn,
-            });
-            ctrl.$onInit();
-            return ctrl;
-        };
-    }));
+		createController = () => {
+			const ctrl = $componentController('filterItem', {
+				$scope: scope,
+			}, {
+				value: filter,
+				editable: editable,
+				onEdit: onEditFn,
+				removable: removable,
+				onRemove: onRemoveFn,
+			});
+			ctrl.$onInit();
+			return ctrl;
+		};
+	}));
 
-    it('should set the sign character to : in', () => {
-        //given
-        filter = {
-            type: 'inside_range',
-        };
-        const ctrl = createController();
+	it('should set the sign character to : in', () => {
+		//given
+		filter = {
+			type: 'inside_range',
+		};
+		const ctrl = createController();
 
-        //then
-        expect(ctrl.sign).toEqual(i18n.IN);
-    });
+		//then
+		expect(ctrl.sign).toEqual(i18n.IN);
+	});
 
-    it('should set the sign character to : ":"', () => {
-        //given
-        filter = {
-            type: 'valid_records',
-        };
-        const ctrl = createController();
+	it('should set the sign character to : ":"', () => {
+		//given
+		filter = {
+			type: 'valid_records',
+		};
+		const ctrl = createController();
 
-        //then
-        expect(ctrl.sign).toEqual(i18n.COLON);
-    });
+		//then
+		expect(ctrl.sign).toEqual(i18n.COLON);
+	});
 
-    it('should set the sign character to : "≅"', () => {
-        //given
-        filter = {
-            type: 'contains',
-        };
-        const ctrl = createController();
+	it('should set the sign character to : "≅"', () => {
+		//given
+		filter = {
+			type: 'contains',
+		};
+		const ctrl = createController();
 
-        //then
-        expect(ctrl.sign).toEqual('≅');
-    });
+		//then
+		expect(ctrl.sign).toEqual('≅');
+	});
 
-    it('should set the sign character to : "=" ', () => {
-        //given
-        filter = {
-            type: 'exact',
-        };
-        const ctrl = createController();
+	it('should set the sign character to : "=" ', () => {
+		//given
+		filter = {
+			type: 'exact',
+		};
+		const ctrl = createController();
 
-        //then
-        expect(ctrl.sign).toEqual('=');
-    });
+		//then
+		expect(ctrl.sign).toEqual('=');
+	});
 
-    it('should execute edit callback when submit is called', () => {
-        //given
-        const ctrl = createController();
+	it('should update the sign when $onChanges', () => {
+		//given
+		filter = {
+			type: 'exact',
+		};
+		const ctrl = createController();
 
-        //when
-        ctrl.submit();
+		//when
+		const newModel = {
+			value: {
+				currentValue: {
+					type: 'inside_range'
+				}
+			}
+		};
+		ctrl.$onChanges(newModel);
 
-        //then
-        expect(onEditFn).toHaveBeenCalledWith({
-            filter: filter,
-            value: filter.value,
-        });
-    });
+		//then
+		expect(ctrl.sign).toEqual(i18n.IN);
+	});
 
-    it('should execute edit callback when remove is called', () => {
-        //given
-        const ctrl = createController();
 
-        //when
-        ctrl.remove(0);
+	it('should execute edit callback when submit is called', () => {
+		//given
+		const ctrl = createController();
 
-        //then
-        expect(onEditFn).toHaveBeenCalledWith({
-            filter: filter,
-            value: [],
-        });
-    });
+		//when
+		ctrl.submit();
 
-    it('should execute remove callback when close is called', () => {
-        //given
-        const ctrl = createController();
+		//then
+		expect(onEditFn).toHaveBeenCalledWith({
+			filter: filter,
+			value: filter.value,
+		});
+	});
 
-        //when
-        ctrl.close();
+	it('should execute edit callback when remove is called', () => {
+		//given
+		const ctrl = createController();
 
-        //then
-        expect(onRemoveFn).toHaveBeenCalledWith({
-            filter: filter,
-        });
-    });
+		//when
+		ctrl.remove(0);
+
+		//then
+		expect(onEditFn).toHaveBeenCalledWith({
+			filter: filter,
+			value: [],
+		});
+	});
+
+	it('should execute remove callback when close is called', () => {
+		//given
+		const ctrl = createController();
+
+		//when
+		ctrl.close();
+
+		//then
+		expect(onRemoveFn).toHaveBeenCalledWith({
+			filter: filter,
+		});
+	});
 });

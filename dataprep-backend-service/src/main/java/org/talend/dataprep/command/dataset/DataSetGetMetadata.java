@@ -25,10 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.command.Defaults.convertResponse;
@@ -52,7 +53,7 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
         super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
 
-        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_METADATA, e));
+        onError(Defaults.passthrough());
         on(HttpStatus.NO_CONTENT).then(asNull());
     }
 
@@ -89,7 +90,16 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
     }
 
     private void configureSampleDataset(String dataSetId) {
-        execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/sample/metadata"));
+        URI uri;
+        try {
+            final URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
+            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/sample/metadata");
+            uri = uriBuilder.build();
+        } catch (URISyntaxException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
+
+        execute(() -> new HttpGet(uri));
         on(HttpStatus.OK).then(convertResponse(objectMapper, DataSetMetadata.class));
     }
 

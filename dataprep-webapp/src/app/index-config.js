@@ -13,6 +13,8 @@
 
 import angular from 'angular';
 
+const settingsPath = '/api/settings';
+
 function get(url) {
 	const initInjector = angular.injector(['ng']);
 	const $http = initInjector.get('$http');
@@ -22,5 +24,10 @@ function get(url) {
 }
 
 export default function getAppSettings() {
-	return get('/api/settings');
+	return get(settingsPath).then((data) => {
+		if (data.uris && data.uris.context) {
+			return get(`${data.uris.context}${settingsPath}`);
+		}
+		return data;
+	});
 }

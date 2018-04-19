@@ -999,6 +999,7 @@ export default function PlaygroundService(
 				state.playground.preparation ? state.playground.preparation.id : state.playground.dataset.id,
 				state.playground.filter.gridFilters
 			);
+			updateDatagrid();
 		}
 	}
 	//------------------------------------------------------------------------------------------------------

@@ -40,8 +40,8 @@ public class DatasetSampleController {
     @GetMapping("/{datasetId}")
     public ResponseEntity<ObjectNode> getDatasetSample(@PathVariable String datasetId,
             @RequestParam(required = false, defaultValue = "0") int offset,
-            @RequestParam(required = false, defaultValue = "1") int size) {
-        return new ResponseEntity<>(datasetClient.findSample(datasetId, new PageRequest(offset, size)), HttpStatus.OK);
+            @RequestParam(required = false, defaultValue = "1") int limit) {
+        return new ResponseEntity<>(datasetClient.findSample(datasetId, new PageRequest(offset, limit)), HttpStatus.OK);
     }
 
 }

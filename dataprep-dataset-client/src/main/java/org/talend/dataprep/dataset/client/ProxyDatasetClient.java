@@ -57,7 +57,7 @@ public class ProxyDatasetClient implements DatasetClient {
 
     @Override
     public ObjectNode findSample(String datasetId, PageRequest pageRequest) {
-        return restTemplate.getForEntity("/dataset-sample/{datasetId}?offset={offset}&size={size}",
+        return restTemplate.getForEntity("/dataset-sample/{datasetId}?offset={offset}&limit={limit}",
                 EncodedSample.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize()) //
                 .getBody() //
                 .getSchema();

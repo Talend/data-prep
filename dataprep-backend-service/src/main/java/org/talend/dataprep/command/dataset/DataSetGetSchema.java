@@ -59,7 +59,7 @@ public class DataSetGetSchema extends GenericCommand<RowMetadata> {
             datasetURI = uriBuilder //
                     .setPath(uriBuilder.getPath() + "/api/v1/dataset-sample/" + dataSetId) //
                     .addParameter("offset", "0") //
-                    .addParameter("size", "1") //
+                    .addParameter("limit", "1") //
                     .build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);

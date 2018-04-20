@@ -15,10 +15,8 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -41,6 +39,8 @@ import org.talend.dataprep.dataset.service.DataSetService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Throwables;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Dataprep implementation of {@link DatasetClient}
@@ -83,7 +83,7 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public InputStream findData(String datasetId, PageRequest pageRequest) {
+    public String findData(String datasetId, PageRequest pageRequest) {
         Callable<DataSet> dataSetCallable = dataSetService.get(false, true, null, datasetId);
         DataSet dataSet;
         try {
@@ -108,14 +108,14 @@ public class DataprepDatasetClient implements DatasetClient {
                 try {
                     writer.write(indexedRecord, jsonEncoder);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
                 }
             });
             jsonEncoder.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
-        return new ByteArrayInputStream(outputStream.toByteArray());
+        return new String(outputStream.toByteArray(), UTF_8);
     }
 
     @Override

@@ -16,14 +16,12 @@
 package org.talend.dataprep.dataset.adapter;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -31,8 +29,6 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
-import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -58,13 +54,9 @@ public class ProxyDatasetClient implements DatasetClient {
     }
 
     @Override
-    public InputStream findData(String datasetId, PageRequest pageRequest) {
-        try {
-            return restTemplate.getForEntity("/dataset-sample/{datasetId}?offset={offset}&limit={limit}", Resource.class,
-                    datasetId, pageRequest.getOffset(), pageRequest.getPageSize()).getBody().getInputStream();
-        } catch (IOException e) {
-            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
+    public String findData(String datasetId, PageRequest pageRequest) {
+        return restTemplate.getForObject("/dataset-sample/{datasetId}?offset={offset}&limit={limit}", String.class,
+                datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
     }
 
     @Override

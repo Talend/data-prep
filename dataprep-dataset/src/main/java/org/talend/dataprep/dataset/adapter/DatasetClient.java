@@ -15,7 +15,6 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +28,7 @@ public interface DatasetClient {
 
     ObjectNode findSchema(String datasetId);
 
-    InputStream findData(String datasetId, PageRequest pageRequest);
+    String findData(String datasetId, PageRequest pageRequest);
 
     List<Dataset> findAll();
 

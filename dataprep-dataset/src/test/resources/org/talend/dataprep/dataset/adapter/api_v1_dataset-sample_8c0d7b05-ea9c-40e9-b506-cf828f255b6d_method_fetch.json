@@ -33,7 +33,7 @@
       },
       {
         "name": "srcBytes",
-        "type": "bytes"
+        "type": ["null", "bytes"]
       }
     ]
   },

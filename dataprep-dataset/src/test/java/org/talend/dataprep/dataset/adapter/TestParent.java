@@ -20,7 +20,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -34,10 +34,14 @@ public abstract class TestParent {
     protected int localServerPort;
 
     @SpringBootConfiguration
-    @ComponentScan(basePackageClasses = DatasetClientTestConfiguration.class)
     @EnableAutoConfiguration
     @Import(org.talend.dataprep.configuration.HttpClient.class)
     public static class DatasetClientTestConfiguration {
+
+        @Bean
+        MockDatasetServer mockDatasetServer() {
+            return new MockDatasetServer();
+        }
 
     }
 

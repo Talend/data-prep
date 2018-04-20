@@ -93,7 +93,7 @@ public class DataprepDatasetClient implements DatasetClient {
 
     @Override
     public List<Dataset> findAll() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

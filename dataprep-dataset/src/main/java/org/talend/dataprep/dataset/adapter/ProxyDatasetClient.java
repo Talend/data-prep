@@ -72,10 +72,12 @@ public class ProxyDatasetClient implements DatasetClient {
                         pageRequest.getPageSize());
         ObjectNode schemaAsJackson = encodedSample.getSchema();
         Schema schema = new Schema.Parser().parse(schemaAsJackson.toString());
-
         try {
+            StringBuilder avroRecordsString = new StringBuilder();
+            encodedSample.getData().forEach(jn -> avroRecordsString.append(jn.toString()).append(','));
+
             AvroReader avroReader =
-                    new AvroReader(new ByteArrayInputStream(encodedSample.getData().toString().getBytes(UTF_8)), schema);
+                    new AvroReader(new ByteArrayInputStream(avroRecordsString.toString().getBytes(UTF_8)), schema);
             return avroReader.asStream().map(gr -> gr);
         } catch (IOException e) {
             throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

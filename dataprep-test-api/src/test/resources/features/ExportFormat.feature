@@ -1,3 +1,4 @@
+@EnvOS
 Feature: Test OS the export format
 
   @CleanAfter

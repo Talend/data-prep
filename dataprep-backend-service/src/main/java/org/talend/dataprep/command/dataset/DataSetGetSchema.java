@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.dataset.adapter.EncodedSample;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
@@ -68,7 +69,8 @@ public class DataSetGetSchema extends GenericCommand<RowMetadata> {
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
-                Schema schema = new Schema.Parser().parse(res.getEntity().getContent());
+                EncodedSample sample = objectMapper.readValue(res.getEntity().getContent(), EncodedSample.class);
+                Schema schema = new Schema.Parser().parse(sample.getSchema().toString());
                 return RowMetadataUtils.toRowMetadata(schema);
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);

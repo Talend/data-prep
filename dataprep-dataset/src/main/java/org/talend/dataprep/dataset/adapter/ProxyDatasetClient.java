@@ -15,7 +15,13 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.lang3.Validate;
@@ -34,12 +40,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.avro.AvroReader;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

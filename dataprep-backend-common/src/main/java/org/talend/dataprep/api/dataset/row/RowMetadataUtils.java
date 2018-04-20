@@ -12,6 +12,16 @@
 
 package org.talend.dataprep.api.dataset.row;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -23,10 +33,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class RowMetadataUtils {
 
@@ -225,10 +231,6 @@ public class RowMetadataUtils {
         }
     }
 
-
-
-
-
     public static class Metadata implements Serializable {
 
         private final Long rowId;
@@ -262,7 +264,5 @@ public class RowMetadataUtils {
             return Objects.hash(rowId, columns);
         }
     }
-
-
 
 }

@@ -15,9 +15,11 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Throwables;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
 import org.slf4j.Logger;
@@ -32,10 +34,9 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.service.DataSetService;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Throwables;
 
 /**
  * Dataprep implementation of {@link DatasetClient}

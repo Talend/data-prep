@@ -49,4 +49,10 @@ public class DataSetController {
     public List<Dataset> getAllDatasetMetadata() {
         return datasetClient.findAll();
     }
+
+    @GetMapping("/{datasetId}/schema")
+    public ObjectNode getDatasetSchema(@PathVariable String datasetId) {
+        return datasetClient.findSchema(datasetId);
+    }
+
 }

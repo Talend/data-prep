@@ -1,4 +1,4 @@
-@EnvOs @EnvOnPremise @EnvCloud
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with ChangeDate related actions
 
   # First Part

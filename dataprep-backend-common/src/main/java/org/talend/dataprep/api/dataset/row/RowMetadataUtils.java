@@ -34,6 +34,9 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.api.type.Type.STRING;
+
 public class RowMetadataUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RowMetadataUtils.class);
@@ -141,11 +144,14 @@ public class RowMetadataUtils {
     }
 
     private static Optional<ColumnMetadata> getColumnMetadata(Schema.Field field) {
-        final String dpColumnId = field.getProp(DP_COLUMN_ID);
-        if (dpColumnId == null) {
-            return Optional.empty();
+        if (field.getProp(DP_COLUMN_ID) == null) {
+            return Optional.of(column() //
+                    .type(STRING) //
+                    .id(field.pos()) //
+                    .name(field.name()) //
+                    .build());
         }
-        return Optional.of(ColumnMetadata.Builder.column() //
+        return Optional.of(column() //
                 .type(Type.get(field.getProp(DP_COLUMN_TYPE))) //
                 .computedId(field.getProp(DP_COLUMN_ID)) //
                 .name(field.getProp(DP_COLUMN_NAME)) //
@@ -160,7 +166,8 @@ public class RowMetadataUtils {
                 .stream() //
                 .map(RowMetadataUtils::getColumnMetadata) //
                 .filter(Optional::isPresent) //
-                .map(Optional::get).collect(Collectors.toList());
+                .map(Optional::get) //
+                .collect(Collectors.toList());
         rowMetadata.setColumns(columns);
 
         return rowMetadata;

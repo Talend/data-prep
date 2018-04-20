@@ -43,9 +43,6 @@ window.MODULE_NAME = MODULE_NAME;
 const I18N_DOMAIN_COMPONENTS = 'tui-components';
 const I18N_DOMAIN_FORMS = 'tui-forms';
 
-let ws;
-let wsPing;
-
 let preferredLanguage;
 const fallbackLng = 'en';
 export const i18n = init({
@@ -94,105 +91,85 @@ const app = angular
 	.run(routeInterceptor);
 
 window.fetchConfiguration = function fetchConfiguration() {
-	return getAppConfiguration().then(({ config, appSettings }) => {
-		app
+	return getAppConfiguration()
+		.then((appSettings) => {
+			app
 			// Debug config
-			.config(($compileProvider) => {
-				'ngInject';
-				$compileProvider.debugInfoEnabled(config.enableDebug);
-			})
+				.config(($compileProvider) => {
+					'ngInject';
+					$compileProvider.debugInfoEnabled(false);
+				})
 			.config(($httpProvider, $translateProvider) => {
-				'ngInject';
+					'ngInject';
 
-				preferredLanguage =
-					(appSettings.context && appSettings.context.language) ||
-					fallbackLng;
+					preferredLanguage =
+						(appSettings.context && appSettings.context.language) ||
+						fallbackLng;
 
-				const preferredLocale = appSettings.context && appSettings.context.locale;
-				if (preferredLocale) {
-					$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
-				}
-
-				$translateProvider.preferredLanguage(preferredLanguage);
-
-				moment.locale(preferredLanguage);
-
-				if (preferredLanguage !== fallbackLng) {
-					i18n.changeLanguage(preferredLanguage);
-
-					if (preferredLanguage === 'fr') {
-						const d3locale = d3.locale(d3LocaleFr);
-						d3.format = d3locale.numberFormat;
-						d3.time.format = d3locale.timeFormat;
+					const preferredLocale = appSettings.context && appSettings.context.locale;
+					if (preferredLocale) {
+						$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
 					}
-					if ($.datetimepicker) {
-						$.datetimepicker.setLocale(preferredLanguage);
+
+					$translateProvider.preferredLanguage(preferredLanguage);
+
+					moment.locale(preferredLanguage);
+
+					if (preferredLanguage !== fallbackLng) {
+						i18n.changeLanguage(preferredLanguage);
+
+						if (preferredLanguage === 'fr') {
+							const d3locale = d3.locale(d3LocaleFr);
+							d3.format = d3locale.numberFormat;
+							d3.time.format = d3locale.timeFormat;
+						}
+						if ($.datetimepicker) {
+							$.datetimepicker.setLocale(preferredLanguage);
+						}
 					}
-				}
-			})
-			// Fetch dynamic configuration
-			.run((SettingsService, InventoryStateService) => {
-				'ngInject';
-				// base settings
-				SettingsService.setSettings(appSettings);
-				InventoryStateService.init();
-			})
-			// Configure server api urls and refresh supported encoding
-			.run((DatasetService, HelpService, RestURLs) => {
-				'ngInject';
+				})
+				// Fetch dynamic configuration
+				.run((SettingsService, InventoryStateService) => {
+					'ngInject';
+					// base settings
+					SettingsService.setSettings(appSettings);
+					InventoryStateService.init();
+				})
+				// Configure server api urls and refresh supported encoding
+				.run((DatasetService, HelpService, RestURLs) => {
+					'ngInject';
 
-				const { help } = appSettings;
-				if (help) {
-					HelpService.register(help);
-				}
+					const { help } = appSettings;
+					if (help) {
+						HelpService.register(help);
+					}
 
-				RestURLs.register(config, appSettings.uris);
+					RestURLs.register(appSettings.uris);
 
-				// dataset encodings
-				DatasetService.refreshSupportedEncodings();
-			})
-			// Open a keepalive websocket if requested
-			.run(() => {
-				if (!config.serverKeepAliveUrl) return;
+					// dataset encodings
+					DatasetService.refreshSupportedEncodings();
+				})
+				.run(($translate) => {
+					'ngInject';
 
-				function setupWebSocket() {
-					clearInterval(wsPing);
-
-					ws = new WebSocket(config.serverKeepAliveUrl);
-					ws.onclose = () => {
-						setTimeout(setupWebSocket, 1000);
-					};
-
-					wsPing = setInterval(() => {
-						ws.send('ping');
-					}, 3 * 60 * 1000);
-				}
-
-				setupWebSocket();
-			})
-			.run(($translate) => {
-				'ngInject';
-
-				$translate.onReady(() => {
-					i18n.addResourceBundle(
-						preferredLanguage,
-						I18N_DOMAIN_COMPONENTS,
-						$translate.getTranslationTable(),
-						false,
+					$translate.onReady(() => {
+						i18n.addResourceBundle(
+							preferredLanguage,
+							I18N_DOMAIN_COMPONENTS,
+							$translate.getTranslationTable(),
+							false,
 						false
-					);
+						);
+					});
 				});
-			});
-
-		angular
-			.module(SERVICES_UTILS_MODULE)
-			.value('copyRights', config.copyRights);
-	});
+		});
 };
 
-window.fetchConfiguration().then(() => {
-	angular.element(document).ready(() => angular.bootstrap(document, [window.MODULE_NAME]));
-});
+window.fetchConfiguration()
+	.then(() => {
+		angular.element(document)
+			.ready(() => angular.bootstrap(document, [window.MODULE_NAME]));
+	});
 
 /* eslint-enable angular/window-service */
 

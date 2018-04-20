@@ -17,6 +17,7 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
@@ -27,11 +28,14 @@ import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 @Component
 public class UrisProvider implements AppSettingsProvider<UriSettings> {
 
+    @Value("${gateway-api.service.path:}")
+    private String gatewayContextPath;
+
     @Override
     public List<UriSettings> getSettings() {
-
         // @formatter:off
         return asList(
+                getGatewayContextPath(),
                 Uris.API_AGGREGATE_URI,
                 Uris.API_DATASETS_URI,
                 Uris.API_UPLOAD_DATASETS_URI,
@@ -51,4 +55,13 @@ public class UrisProvider implements AppSettingsProvider<UriSettings> {
         // @formatter:on
     }
 
+    /**
+     * @return the server API context (from the application parameters)
+     */
+    private UriSettings getGatewayContextPath() {
+        return UriSettings.builder() //
+                .id("context") //
+                .uri(gatewayContextPath) //
+                .build();
+    }
 }

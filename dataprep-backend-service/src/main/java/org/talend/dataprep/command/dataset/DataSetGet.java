@@ -97,13 +97,18 @@ public class DataSetGet extends GenericCommand<InputStream> {
                 EncodedSample encodedSample = objectMapper.readValue(content, EncodedSample.class);
 
                 ObjectNode schemaAsJackson = encodedSample.getSchema();
-                Schema schema = new Schema.Parser().parse(schemaAsJackson.toString());
+                String s = schemaAsJackson.toString();
+                // TODO remove this quick and dirty fix
+                s = s.replaceAll("\"type\":\"bytes\"", "\"type\":[\"null\", \"bytes\"] ");
+
+                Schema schema = new Schema.Parser().parse(s);
 
                 StringBuilder avroRecordsString = new StringBuilder();
                 encodedSample.getData().forEach(jn -> avroRecordsString.append(jn.toString()).append(','));
 
                 AvroReader avroReader =
                         new AvroReader(new ByteArrayInputStream(avroRecordsString.toString().getBytes(UTF_8)), schema);
+
 
                 RowMetadata rowMetadata = RowMetadataUtils.toRowMetadata(schema);
 

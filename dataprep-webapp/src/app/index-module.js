@@ -34,6 +34,9 @@ import SETTINGS_MODULE from './settings/settings-module';
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
 
+import TRANSLATIONS_EN from '../i18n/en';
+import TRANSLATIONS_FR from '../i18n/fr';
+import TRANSLATIONS_JA from '../i18n/ja';
 import d3LocaleFr from '../lib/d3.locale.fr';
 
 const MODULE_NAME = 'data-prep';
@@ -80,10 +83,9 @@ const app = angular
 	// Translate config
 	.config(($translateProvider) => {
 		'ngInject';
-		$translateProvider.useStaticFilesLoader({
-			prefix: 'i18n/',
-			suffix: '.json',
-		});
+		$translateProvider.translations('en', TRANSLATIONS_EN);
+		$translateProvider.translations('fr', TRANSLATIONS_FR);
+		$translateProvider.translations('ja', TRANSLATIONS_JA);
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
 	// Router config

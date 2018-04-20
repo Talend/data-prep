@@ -216,7 +216,6 @@ function addPlugins(config, options) {
 	const copyWebpackPluginConfiguration = [
 		{ from: 'src/assets/images', to: 'assets/images' },
 		{ from: 'src/assets/config/config.json', to: 'assets/config' },
-		{ from: 'src/i18n', to: 'i18n' },
 	];
 
 	config.plugins.push(

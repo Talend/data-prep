@@ -115,6 +115,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
                 DataSet dataSet = new DataSet();
 
                 DataSetMetadata dataSetMetadata = new DataSetMetadata();
+                dataSetMetadata.setId(dataSetId);
                 dataSetMetadata.setRowMetadata(rowMetadata);
                 dataSet.setMetadata(dataSetMetadata);
 

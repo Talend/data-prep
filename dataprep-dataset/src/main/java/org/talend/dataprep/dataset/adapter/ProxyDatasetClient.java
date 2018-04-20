@@ -68,7 +68,7 @@ public class ProxyDatasetClient implements DatasetClient {
     @Override
     public Stream<IndexedRecord> findData(String datasetId, PageRequest pageRequest) {
         EncodedSample encodedSample =
-                restTemplate.getForObject("/dataset-sample/" + datasetId + "?offset={offset}&limit={pageSize}", EncodedSample.class, pageRequest.getOffset(),
+                restTemplate.getForObject("/dataset-sample/{datasetId}?offset={offset}&limit={pageSize}", EncodedSample.class, datasetId, pageRequest.getOffset(),
                         pageRequest.getPageSize());
         ObjectNode schemaAsJackson = encodedSample.getSchema();
         Schema schema = new Schema.Parser().parse(schemaAsJackson.toString());

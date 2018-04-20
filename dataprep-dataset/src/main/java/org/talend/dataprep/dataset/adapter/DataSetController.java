@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.dataset.domain.Dataset;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 @RestController
 @RequestMapping("/api/v1/datasets")
 public class DataSetController {

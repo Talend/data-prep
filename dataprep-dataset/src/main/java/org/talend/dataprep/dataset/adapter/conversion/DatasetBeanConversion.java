@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.domain.Dataset;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;

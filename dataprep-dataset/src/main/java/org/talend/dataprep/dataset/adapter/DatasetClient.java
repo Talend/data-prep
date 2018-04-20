@@ -15,13 +15,12 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.avro.generic.IndexedRecord;
-import org.springframework.data.domain.PageRequest;
-import org.talend.dataprep.dataset.domain.Dataset;
-
+import java.io.InputStream;
 import java.util.List;
-import java.util.stream.Stream;
+
+import org.springframework.data.domain.PageRequest;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 // mimics spring Crudrepository
 public interface DatasetClient {
@@ -30,7 +29,7 @@ public interface DatasetClient {
 
     ObjectNode findSchema(String datasetId);
 
-    Stream<IndexedRecord> findData(String datasetId, PageRequest pageRequest);
+    InputStream findData(String datasetId, PageRequest pageRequest);
 
     List<Dataset> findAll();
 

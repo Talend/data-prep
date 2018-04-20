@@ -15,11 +15,14 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import org.apache.avro.generic.IndexedRecord;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
+import java.io.InputStream;
 
-import java.util.stream.Stream;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/dataset-sample")
@@ -32,7 +35,7 @@ public class DatasetSampleController {
     }
 
     @GetMapping("/{datasetId}")
-    public Stream<IndexedRecord> getDatasetSample(@PathVariable String datasetId,
+    public InputStream getDatasetSample(@PathVariable String datasetId,
             @RequestParam(required = false, defaultValue = "0") int offset,
             @RequestParam(required = false, defaultValue = "1") int limit) {
         return datasetClient.findData(datasetId, new PageRequest(offset, limit));

@@ -15,13 +15,18 @@
 
 package org.talend.dataprep.dataset.adapter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
-import org.apache.avro.generic.IndexedRecord;
+import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.io.JsonEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +36,6 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.domain.Dataset;
 import org.talend.dataprep.dataset.service.DataSetService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,10 +64,10 @@ public class DataprepDatasetClient implements DatasetClient {
 
     @Override
     public Dataset findOne(String datasetId) {
-        DataSet datasetMetadata = dataSetService.getMetadata(datasetId);
-        DataSetMetadata metadata = datasetMetadata.getMetadata();
+        DataSet dataSet = dataSetService.getMetadata(datasetId);
+        DataSetMetadata dataSetMetadata = dataSet.getMetadata();
 
-        return beanConversionService.convert(metadata, Dataset.class);
+        return beanConversionService.convert(dataSetMetadata, Dataset.class);
     }
 
     @Override
@@ -79,16 +83,39 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public Stream<IndexedRecord> findData(String datasetId, PageRequest pageRequest) {
+    public InputStream findData(String datasetId, PageRequest pageRequest) {
         Callable<DataSet> dataSetCallable = dataSetService.get(false, true, null, datasetId);
-        DataSet call;
+        DataSet dataSet;
         try {
-            call = dataSetCallable.call();
+            dataSet = dataSetCallable.call();
         } catch (Exception e) {
             Throwables.propagateIfPossible(e, RuntimeException.class);
             throw new RuntimeException("unexpected", e);
         }
-        return call.getRecords().map(RowMetadataUtils::toRecord).map(RowMetadataUtils.Record::getIndexedRecord);
+
+        Schema schema = RowMetadataUtils.toSchema(dataSet.getMetadata().getRowMetadata());
+
+        //Json.ObjectWriter objectWriter = new Json.ObjectWriter();
+        GenericDatumWriter<Object> writer = new GenericDatumWriter<>(schema);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            JsonEncoder jsonEncoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
+
+            dataSet.getRecords().map(RowMetadataUtils::toRecord)
+                    .map(RowMetadataUtils.Record::getIndexedRecord)
+                    .forEach(indexedRecord -> {
+                try {
+                    writer.write(indexedRecord, jsonEncoder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            jsonEncoder.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
     @Override

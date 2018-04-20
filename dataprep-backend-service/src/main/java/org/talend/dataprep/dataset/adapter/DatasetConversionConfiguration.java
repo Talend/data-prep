@@ -10,7 +10,11 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.configuration;
+package org.talend.dataprep.dataset.adapter;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -18,16 +22,10 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.domain.Dataset;
-import org.talend.dataprep.dataset.domain.Datastore;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.schema.FormatFamily;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Function;
 
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
@@ -42,19 +40,19 @@ public class DatasetConversionConfiguration {
                 ApplicationContext applicationContext) {
             conversionService.register(fromBean(Dataset.class) //
                     .toBeans(DataSetMetadata.class)
-                    .using(DataSetMetadata.class, (d, dm) -> {
-                        dm.setName(d.getLabel());
-                        dm.setCreationDate(d.getCreated());
-                        dm.setLastModificationDate(d.getUpdated());
-                        dm.setAuthor(d.getOwner());
+                    .using(DataSetMetadata.class, (dataset, dataSetMetadata) -> {
+                        dataSetMetadata.setName(dataset.getLabel());
+                        dataSetMetadata.setCreationDate(dataset.getCreated());
+                        dataSetMetadata.setLastModificationDate(dataset.getUpdated());
+                        dataSetMetadata.setAuthor(dataset.getOwner());
                         SimpleDataSetLocation dataSetLocation = new SimpleDataSetLocation();
-                        Datastore datastore = d.getDatastore();
+                        Datastore datastore = dataset.getDatastore();
                         if (datastore != null) {
                             dataSetLocation.setLocationType("application/prs.tcomp-ds.tcomp-" + datastore.getType());
                         }
                         dataSetLocation.setEnabled(true);
-                        dm.setLocation(dataSetLocation);
-                        return dm;
+                        dataSetMetadata.setLocation(dataSetLocation);
+                        return dataSetMetadata;
                     }) //
                     .build());
 

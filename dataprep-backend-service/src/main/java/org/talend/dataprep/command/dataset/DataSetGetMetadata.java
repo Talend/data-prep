@@ -27,7 +27,7 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.domain.Dataset;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;

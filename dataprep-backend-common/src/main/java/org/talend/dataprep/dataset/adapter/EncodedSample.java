@@ -13,7 +13,7 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.dataset.domain;
+package org.talend.dataprep.dataset.adapter;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

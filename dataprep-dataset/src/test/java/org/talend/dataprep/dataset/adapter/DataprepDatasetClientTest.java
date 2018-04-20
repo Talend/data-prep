@@ -23,6 +23,9 @@ import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.JsonDecoder;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,8 +37,6 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
 
 import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

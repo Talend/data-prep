@@ -13,11 +13,11 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.dataset.domain;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
+package org.talend.dataprep.dataset.adapter;
 
 import java.util.Set;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Representation of a Talend dataset entity.

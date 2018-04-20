@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.domain;
+package org.talend.dataprep.dataset.adapter;
 
 public class Datastore {
 

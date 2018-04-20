@@ -99,7 +99,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 					'ngInject';
 					$compileProvider.debugInfoEnabled(false);
 				})
-				.config(($httpProvider) => {
+			.config(($httpProvider, $translateProvider) => {
 					'ngInject';
 
 					preferredLanguage =
@@ -110,6 +110,8 @@ window.fetchConfiguration = function fetchConfiguration() {
 					if (preferredLocale) {
 						$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
 					}
+
+					$translateProvider.preferredLanguage(preferredLanguage);
 
 					moment.locale(preferredLanguage);
 
@@ -150,18 +152,13 @@ window.fetchConfiguration = function fetchConfiguration() {
 				.run(($translate) => {
 					'ngInject';
 
-					$translate.fallbackLanguage(fallbackLng);
-					$translate.use(preferredLanguage);
-
 					$translate.onReady(() => {
-						$translate.refresh(preferredLanguage);
-
 						i18n.addResourceBundle(
 							preferredLanguage,
 							I18N_DOMAIN_COMPONENTS,
 							$translate.getTranslationTable(),
 							false,
-							false,
+						false
 						);
 					});
 				});

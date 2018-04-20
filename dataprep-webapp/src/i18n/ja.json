@@ -423,6 +423,7 @@
   "BUILD_ID": "ビルドID",
   "VERSION_ID": "バージョンID",
   "VERSION": "バージョン",
+  "COPYRIGHTS": "© {{year}} Talend. All Rights Reserved",
 
   "_comment": "オンボーディング",
   "ERROR_404_TITLE": "申し訳ありません…",

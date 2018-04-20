@@ -153,8 +153,10 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName) {
+    public void thenICheckSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName)
+            throws Exception {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
+        Thread.sleep(1000);
         checkDatasetsColumnSemanticTypes(suffixName(semanticTypeName), columnId, dataSetId, true);
     }
 

@@ -943,11 +943,7 @@ export default function PlaygroundService(
 			state.playground.lastActiveStepId || 'head',
 			state.playground.sampleType,
 			tql
-		).then((response) => {
-			DatagridService.updateData(response);
-			PreviewService.reset(false);
-			updateFilters();
-		}).finally(stopLoader);
+		).then(updatePlayground).finally(stopLoader);
 	}
 
 	function updateDatasetDatagrid() {
@@ -964,11 +960,7 @@ export default function PlaygroundService(
 			dataset.id,
 			true,
 			tql
-		).then((response) => {
-			DatagridService.updateData(response);
-			PreviewService.reset(false);
-			updateFilters();
-		}).finally(stopLoader);
+		).then(updatePlayground).finally(stopLoader);
 	}
 
 	function updateDatagrid() {
@@ -990,8 +982,9 @@ export default function PlaygroundService(
 		return data;
 	}
 
-	function updateFilters() {
-		const filtersToRemove = state.playground.filter.gridFilters.filter(filter => !state.playground.data.metadata.columns.find(col => col.id === filter.colId));
+	function updatePlayground(data) {
+		// Remove filters from filter bar if the columns are removed and refresh the grid
+		const filtersToRemove = state.playground.filter.gridFilters.filter(filter => !data.metadata.columns.find(col => col.id === filter.colId));
 		if (filtersToRemove && filtersToRemove.length) {
 			filtersToRemove.forEach(filter => FilterService.removeFilter(filter));
 			StatisticsService.updateFilteredStatistics();
@@ -1000,6 +993,10 @@ export default function PlaygroundService(
 				state.playground.filter.gridFilters
 			);
 			updateDatagrid();
+		}
+		else {
+			DatagridService.updateData(data);
+			PreviewService.reset(false);
 		}
 	}
 	//------------------------------------------------------------------------------------------------------

@@ -106,7 +106,9 @@ describe('Playground Service', () => {
 					initialStep: { transformation: { stepId: 'INITIAL_STEP_ID' } },
 					current: { steps: [] }
 				},
-				filter: {},
+				filter: {
+					gridFilters: []
+				},
 				grid: {},
 				sampleType: 'HEAD',
 				data: {
@@ -593,6 +595,9 @@ describe('Playground Service', () => {
 					nbCommands: '17',
 					lastname: 'Johnson',
 				},],
+				metadata: {
+					columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+				},
 			};
 
 			metadata = { id: 'e85afAa78556d5425bc2' };
@@ -727,7 +732,7 @@ describe('Playground Service', () => {
 			it('should refresh datagrid with head content', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
 				// given
 				stateMock.playground.preparation = { id: '15de46846f8a46' };
-				stateMock.playground.filter = { enabled: false };
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 
 				const parameters = {
 					param1: 'param1Value',
@@ -912,7 +917,7 @@ describe('Playground Service', () => {
 				// given
 				const preparation = { id: '456415ae348e6046dc' };
 				stateMock.playground.preparation = preparation;
-				stateMock.playground.filter = { enabled: false };
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 				const parameters = { value: 'tata', column_id: '0001' };
 
 				// when
@@ -1124,7 +1129,7 @@ describe('Playground Service', () => {
 
 			it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
 				// when
-				stateMock.playground.filter = { enabled: false };
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 				PlaygroundService.updateStepOrder(previousPosition, nextPosition);
 				$rootScope.$digest();
 
@@ -1184,7 +1189,7 @@ describe('Playground Service', () => {
 
 				it('should refresh datagrid content on UNDO', inject(($rootScope, PreparationService, DatagridService, PreviewService) => {
 					//given
-					stateMock.playground.filter = { enabled: false };
+					stateMock.playground.filter = { enabled: false, gridFilters: [] };
 
 					// when
 					undo();
@@ -1249,7 +1254,7 @@ describe('Playground Service', () => {
 			it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
 				// given
 				stateMock.playground.preparation = { id: preparationId };
-				stateMock.playground.filter = { enabled: false };
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 
 				// when
 				PlaygroundService.removeStep(stepToDelete);
@@ -1312,7 +1317,7 @@ describe('Playground Service', () => {
 
 				it('should refresh datagrid content on UNDO', inject(($rootScope, PreparationService, DatagridService, PreviewService) => {
 					//given
-					stateMock.playground.filter = { enabled: false };
+					stateMock.playground.filter = { enabled: false, gridFilters: [] };
 
 					// when
 					undo();
@@ -1881,7 +1886,7 @@ describe('Playground Service', () => {
 		it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService) => {
 			// given
 			stateMock.playground.preparation = { id: '79db821355a65cd96' };
-			stateMock.playground.filter = { enabled: false };
+			stateMock.playground.filter = { enabled: false, gridFilters: [] };
 
 			expect(PreparationService.getContent).not.toHaveBeenCalled();
 

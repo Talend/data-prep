@@ -33,7 +33,6 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.command.Defaults.convertResponse;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 @Component
@@ -63,18 +62,10 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
     @PostConstruct
     private void initConfiguration() {
-        if (limit.limitContentSize()) {
-            this.configureLimitedDataset(dataSetId);
-        } else {
-            this.configureSampleDataset(dataSetId);
-        }
-    }
-
-    private void configureLimitedDataset(final String dataSetId) {
         URI build;
         try {
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId );
+            uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId);
             build = uriBuilder.build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
@@ -97,7 +88,6 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
                 req.releaseConnection();
             }
         });
-    }
 
     private void configureSampleDataset(String dataSetId) {
         URI uri;

@@ -12,17 +12,11 @@
 
 package org.talend.dataprep.command.dataset;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.annotation.PostConstruct;
-
 import org.apache.avro.Schema;
-import org.apache.commons.lang.StringUtils;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.adapter.EncodedSample;
@@ -41,9 +37,20 @@ import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroReader;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
@@ -75,7 +82,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
     private DataSetContentLimit limit;
 
     public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
-        this(dataSetId, fullContent, includeInternalContent, StringUtils.EMPTY);
+        this(dataSetId, fullContent, includeInternalContent, EMPTY);
     }
 
     public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent, String filter) {
@@ -91,47 +98,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
         this.filter = filter;
 
         on(HttpStatus.NO_CONTENT).then(emptyStream());
-        on(HttpStatus.OK).then((httpRequestBase, httpResponse) -> {
-            try {
-                InputStream content = httpResponse.getEntity().getContent();
-                EncodedSample encodedSample = objectMapper.readValue(content, EncodedSample.class);
-
-                ObjectNode schemaAsJackson = encodedSample.getSchema();
-                String s = schemaAsJackson.toString();
-                // TODO remove this quick and dirty fix
-                s = s.replaceAll("\"type\":\"bytes\"", "\"type\":[\"null\", \"bytes\"] ");
-
-                Schema schema = new Schema.Parser().parse(s);
-
-                StringBuilder avroRecordsString = new StringBuilder();
-                encodedSample.getData().forEach(jn -> avroRecordsString.append(jn.toString()).append(','));
-
-                AvroReader avroReader =
-                        new AvroReader(new ByteArrayInputStream(avroRecordsString.toString().getBytes(UTF_8)), schema);
-
-
-                RowMetadata rowMetadata = RowMetadataUtils.toRowMetadata(schema);
-
-                DataSet dataSet = new DataSet();
-
-                DataSetMetadata dataSetMetadata = new DataSetMetadata();
-                dataSetMetadata.setId(dataSetId);
-                dataSetMetadata.setRowMetadata(rowMetadata);
-                dataSet.setMetadata(dataSetMetadata);
-
-                dataSet.setRecords(avroReader.asStream().map(genericRecord -> {
-                    RowMetadataUtils.Metadata metadata = new RowMetadataUtils.Metadata(0L, rowMetadata.getColumns());
-                    return RowMetadataUtils.toDataSetRow(genericRecord, metadata);
-                }));
-
-                try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
-                    objectMapper.writeValue(outputStream, dataSet);
-                    return new ByteArrayInputStream(outputStream.toByteArray());
-                }
-            } catch (IOException e) {
-                throw new TalendRuntimeException(org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-            }
-        });
+        on(HttpStatus.OK).then(this::readResult);
         onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
     }
 
@@ -149,5 +116,96 @@ public class DataSetGet extends GenericCommand<InputStream> {
             httpGet.addHeader(ACCEPT_HEADER);
             return httpGet;
         });
+    }
+
+    private InputStream readResult(HttpRequestBase httpRequestBase, HttpResponse httpResponse) {
+        try {
+            InputStream content = httpResponse.getEntity().getContent();
+            EncodedSample encodedSample = objectMapper.readValue(content, EncodedSample.class);
+
+            // parse input data
+            Schema schema = new Schema.Parser().parse(encodedSample.getSchema().toString());
+            StringBuilder avroRecordsString = new StringBuilder();
+            encodedSample.getData().forEach(jn -> avroRecordsString.append(jn.toString()));
+
+            AvroReader avroReader =
+                    new AvroReader(new ByteArrayInputStream(avroRecordsString.toString().getBytes(UTF_8)), schema);
+
+            RowMetadata rowMetadata = RowMetadataUtils.toRowMetadata(schema);
+            List<DataSetRow> rows = new ArrayList<>();
+            long rowId = 0;
+            while (avroReader.hasNext()) {
+                GenericRecord nextRecord = avroReader.next();
+                DataSetRow dataSetRow = new DataSetRow(rowMetadata);
+                for (ColumnMetadata cm : rowMetadata.getColumns()) {
+                    dataSetRow.set(cm.getId(), toString(nextRecord, cm));
+                }
+                dataSetRow.setTdpId(rowId++);
+                rows.add(dataSetRow);
+            }
+
+            // build dataset object
+            DataSet dataSet = new DataSet();
+            DataSetMetadata dataSetMetadata = new DataSetMetadata();
+            dataSetMetadata.setId(dataSetId);
+            dataSetMetadata.setRowMetadata(rowMetadata);
+            dataSet.setMetadata(dataSetMetadata);
+            dataSet.setRecords(rows.stream());
+
+            // Write all in a buffer
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
+                objectMapper.writeValue(outputStream, dataSet);
+                return new ByteArrayInputStream(outputStream.toByteArray());
+            }
+        } catch (IOException e) {
+            throw new TalendRuntimeException(org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
+    }
+
+    /**
+     * From Avro value to dataprep string.
+     *
+     * @param currentRecord avro record
+     * @param column dataprep column
+     * @return row value
+     */
+    private static String toString(GenericRecord currentRecord, ColumnMetadata column) {
+        final Schema fieldSchema = currentRecord.getSchema().getField(column.getName()).schema();
+        Object recordFieldValue = currentRecord.get(column.getName());
+        return convertAvroFieldToString(fieldSchema, recordFieldValue);
+    }
+
+    private static String convertAvroFieldToString(Schema fieldSchema, Object recordFieldValue) {
+        final String result;
+        switch (fieldSchema.getType()) {
+        case BYTES:
+            result = new String(((ByteBuffer) recordFieldValue).array());
+            break;
+        case UNION:
+            String unionValue = EMPTY;
+            Iterator<Schema> iterator = fieldSchema.getTypes().iterator();
+            while (EMPTY.equals(unionValue) && iterator.hasNext()) {
+                Schema schema = iterator.next();
+                unionValue = convertAvroFieldToString(schema, recordFieldValue);
+            }
+            result = unionValue;
+            break;
+        case STRING:
+        case INT:
+        case LONG:
+        case FLOAT:
+        case DOUBLE:
+        case BOOLEAN:
+        case ENUM:
+            result = String.valueOf(recordFieldValue);
+            break;
+        case NULL:
+            result = EMPTY;
+            break;
+        default: // RECORD, ARRAY, MAP, FIXED
+            result = "Data Preparation cannot interpret this value";
+            break;
+        }
+        return result;
     }
 }

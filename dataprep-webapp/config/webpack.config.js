@@ -265,7 +265,6 @@ function addPlugins(config, options) {
 		 * This is used to inject the app loader.
 		 */
 		new TalendHTML({
-			loadCSSAsync: true,
 			appLoaderIcon: appConf.icon,
 		}),
 

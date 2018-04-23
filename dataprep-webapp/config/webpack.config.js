@@ -13,7 +13,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' });
+const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css', allChunks: true });
 
 const INDEX_TEMPLATE_PATH = path.resolve(__dirname, '../src/index.html');
 const STYLE_PATH = path.resolve(__dirname, '../src/app/index.scss');

@@ -183,7 +183,7 @@ public class DatasetStep extends DataPrepStep {
         checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, false);
     }
 
-    @Then("^I check they are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
+    @Then("^I check that there are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
     public void checkColumnQuality(Integer expectedValue, String qualityField, String columnId, String dataSetName)
             throws Exception {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));

@@ -153,7 +153,6 @@ window.fetchConfiguration = function fetchConfiguration() {
 					$translate.preferredLanguage(preferredLanguage);
 
 					$translate.onReady(() => {
-						$translate.refresh(preferredLanguage);
 						i18n.addResourceBundle(
 							preferredLanguage,
 							I18N_DOMAIN_COMPONENTS,

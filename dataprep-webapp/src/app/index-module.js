@@ -147,16 +147,22 @@ window.fetchConfiguration = function fetchConfiguration() {
 					DatasetService.refreshSupportedEncodings();
 				})
 				.run(($translate) => {
-					'ngInject';
+					ngInject';
 
 					$translate.fallbackLanguage(fallbackLng);
 					$translate.preferredLanguage(preferredLanguage);
 
 					$translate.onReady(() => {
+						const translationsWithFallback = Object.assign(
+							{},
+							$translate.getTranslationTable(fallbackLng),
+							$translate.getTranslationTable(preferredLanguage)
+						);
+
 						i18n.addResourceBundle(
 							preferredLanguage,
 							I18N_DOMAIN_COMPONENTS,
-							$translate.getTranslationTable(),
+							translationsWithFallback,
 							false,
 							false,
 						);

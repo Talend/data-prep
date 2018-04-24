@@ -147,7 +147,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 					DatasetService.refreshSupportedEncodings();
 				})
 				.run(($translate) => {
-					ngInject';
+					'ngInject';
 
 					$translate.fallbackLanguage(fallbackLng);
 					$translate.preferredLanguage(preferredLanguage);

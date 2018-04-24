@@ -101,11 +101,11 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     protected static final String US_REGION_CODE = "US";
 
-    private static final String FR_REGION_CODE = "FR";
+    protected static final String FR_REGION_CODE = "FR";
 
-    private static final String UK_REGION_CODE = "UK";
+    protected static final String UK_REGION_CODE = "UK";
 
-    private static final String DE_REGION_CODE = "DE";
+    protected static final String DE_REGION_CODE = "DE";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FormatPhoneNumber.class);
 

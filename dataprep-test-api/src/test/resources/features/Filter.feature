@@ -2,71 +2,104 @@
 Feature: Filter features
 
   @CleanAfter
-  Scenario Outline: Apply a filter to a dataset
-    When I upload the dataset "/data/8L3C.csv" with name "8L3C_dataset"
-    Then I check the records of the dataset "8L3C_dataset" after applying a filter using the following TQL "<tql>" equals "/data/<filename>" file
+  Scenario: Apply a filter to a dataset
+    Given I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then After applying the filter "((0000 between [0, 3[))", the characteristics of the dataset "12L5C_dataset" match:
+      | records | /data/filter/12L5C_0000_between_0_and_3_records.json |
+      | quality | /data/filter/12L5C_initial_quality.json              |
+    Then After removing all filters, the characteristics of the dataset "12L5C_dataset" match:
+      | records | /data/filter/12L5C_initial_records.json |
+      | quality | /data/filter/12L5C_initial_quality.json |
+    Then After applying the filter "((0002 is empty) or (0002 is invalid)) and ((0001 contains 'l'))", the characteristics of the dataset "12L5C_dataset" match:
+      | records | /data/filter/12L5C_0002_empty_or_invalid_and_0001_contains_l_records.json |
+      | quality | /data/filter/12L5C_initial_quality.json                                   |
 
-    Examples:
-      | tql                                                | filename                           |
-      | ((0001 = 'Adele'))                                 | 10L3C_equals_filter_records.json   |
-      | ((0001 contains 'le'))                             | 10L3C_contains_filter_records.json |
-      | ((0001 complies 'Aaaaaaaaa'))                      | 10L3C_complies_filter_records.json |
-      | ((0000 between [0, 3[))                            | 10L3C_between_filter_records.json  |
-      | ((0001 = 'Diana') or (0001 = 'Carole'))            | 10L3C_or_filter_records.json       |
-      | ((0000 between [0, 3[)) and ((0001 contains 'le')) | 10L3C_and_filter_records.json      |
+
+  @CleanAfter
+  Scenario: Apply a filter to a dataset which matches no row
+    Given I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then After applying the filter "((0002 between [1510786800000, 1512082800000]))", the characteristics of the dataset "12L5C_dataset" match:
+      | records | /data/filter/content_no_records.json    |
+      | quality | /data/filter/12L5C_initial_quality.json |
+
 
   @CleanAfter
   Scenario Outline: Apply a filter to a preparation
-    When I upload the dataset "/data/A-customers_100_with_pb.csv" with name "customers_100_with_pb_dataset"
-    And I create a preparation with name "customers_100_with_pb_preparation", based on "customers_100_with_pb_dataset" dataset
-    And I add a "uppercase" step on the preparation "customers_100_with_pb_preparation" with parameters :
+    When I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
+    And I add a "uppercase" step on the preparation "12L5C_preparation" with parameters :
       | column_name | firstname |
-      | column_id   | 0000      |
-    Then I check the records of the preparation "customers_100_with_pb_preparation" after applying a filter using the following TQL "<tql_prep>" equals "/data/<filename_prep>" file
+      | column_id   | 0001      |
+    Then After applying the filter "<tql_1>", the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/<filtered_records_1>       |
+      | quality | /data/filter/12L5C_initial_quality.json |
+    Then After removing all filters, the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/12L5C_prep_no_filter_records.json |
+      | quality | /data/filter/12L5C_initial_quality.json        |
+    Then After applying the filter "<tql_2>", the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/<filtered_records_2>       |
+      | quality | /data/filter/12L5C_initial_quality.json |
 
     Examples:
-      | tql_prep                                        | filename_prep                                       |
-      | ((0000 = 'BILL'))                               | customers_100_equals_filter_records.json            |
-      | ((0000 contains 'WAR'))                         | customers_100_contains_filter_records.json          |
-      | ((0000 complies 'AAAAAAAAAA'))                  | customers_100_complies_filter_records.json          |
-      | ((0003 between [1167606000000, 1169852400000[)) | customers_100_between_filter_records.json           |
-      | ((0001 = 'Johnson')) and ((0000 = 'BILL'))      | customers_100_and_filter_records.json               |
-      | ((0001 = 'Taft') or (0001 = 'Arthur'))          | customers_100_or_filter_records.json                |
-      | (0002 is invalid)                               | customers_100_invalid_filter_records.json           |
-      | (0002 is empty)                                 | customers_100_empty_filter_records.json             |
-      | (* is invalid)                                  | customers_100_all_invalid_filter_records.json       |
-      | (* is empty)                                    | customers_100_all_empty_filter_records.json         |
-      | ((* is empty) or (* is invalid))                | customers_100_all_invalid_empty_filter_records.json |
+      | tql_1                      | filtered_records_1                           | tql_2                                                               | filtered_records_2                                                |
+      | ((0004 contains 'domain')) | 12L5C_prep_0004_contains_domain_records.json | ((0002 is empty) or (0002 is invalid)) and ((0001 contains 'a'))    | 12L5C_prep_0002_empty_or_invalid_and_0001_contains_a_records.json |
+      | ((0003 contains '88'))     | 12L5C_prep_0003_contains_88_records.json     | (0002 is valid) and ((0002 between [1498428000000, 1512082800000])) | 12L5C_prep_0002_valid_and_between_records.json                    |
 
 
   @CleanAfter
-  Scenario Outline: Apply filter to a preparation step
-    When I upload the dataset "/data/A-customers_100_with_pb.csv" with name "customers_100_with_pb_dataset"
-    And I create a preparation with name "customers_100_with_pb_preparation", based on "customers_100_with_pb_dataset" dataset
-    And I add a "<step_name>" step identified by "first_step_filter_preparation" on the preparation "customers_100_with_pb_preparation" with parameters :
-      | column_name | firstname       |
-      | column_id   | 0000            |
-      | filter      | <tql_prep_step> |
-    Then The step "first_step_filter_preparation" is applied with the filter "<tql_prep_step>"
+  Scenario: Apply a filter to a preparation step
+    When I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
+    And I add a "uppercase" step identified by "step_with_filter" on the preparation "12L5C_preparation" with parameters :
+      | column_name | firstname                  |
+      | column_id   | 0001                       |
+      | filter      | ((0004 contains 'domain')) |
+    Then The step "step_with_filter" is applied with the filter "((0004 contains 'domain'))"
+    Then After applying the filter "((0004 contains 'domain'))", the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/12L5C_prep_step_0004_contains_domain_filtered_records.json |
+      | quality | /data/filter/12L5C_initial_quality.json                                 |
     When I export the preparation with parameters :
-      | exportType           | CSV                               |
-      | preparationName      | customers_100_with_pb_preparation |
-      | csv_escape_character | "                                 |
-      | csv_enclosure_char   | "                                 |
-      | dataSetName          | customers_100_with_pb_dataset     |
-      | fileName             | customers_100_with_pb.csv         |
-      | filter               | <export_filter_export>            |
-    Then I check that "customers_100_with_pb.csv" temporary file equals "/data/<export_filename>" file
+      | exportType           | CSV                          |
+      | preparationName      | 12L5C_preparation            |
+      | csv_escape_character | "                            |
+      | csv_enclosure_char   | "                            |
+      | dataSetName          | 12L5C_dataset                |
+      | fileName             | 12L5C_export_with_filter.csv |
+      | filter               | ((0004 contains 'domain'))   |
+    Then I check that "12L5C_export_with_filter.csv" temporary file equals "/data/filter/12L5C_prep_filtered_processed.csv" file
+    When I export the preparation with parameters :
+      | exportType           | CSV               |
+      | preparationName      | 12L5C_preparation |
+      | csv_escape_character | "                 |
+      | csv_enclosure_char   | "                 |
+      | dataSetName          | 12L5C_dataset     |
+      | fileName             | 12L5C_export.csv  |
+    Then I check that "12L5C_export.csv" temporary file equals "/data/filter/12L5C_processed.csv" file
+    Then After removing all filters, the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/12L5C_prep_filtered_step_no_filter_records.json |
+      | quality | /data/filter/12L5C_initial_quality.json                      |
+
+
+  @CleanAfter
+  Scenario Outline: Apply a filter and keep the filtered rows to change the current sample
+    When I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
+    Then After applying the filter "<tql>", the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/<filtered_records>         |
+      | quality | /data/filter/12L5C_initial_quality.json |
+    And I add a "keep_only" step identified by "keep_filtered_rows" on the preparation "12L5C_preparation" with parameters :
+      | column_name | webdomain |
+      | column_id   | 0004      |
+      | filter      | <tql>     |
+    Then The step "keep_filtered_rows" is applied with the filter "<tql>"
+    And After applying the filter "(* is empty)", the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/<filtered_records>   |
+      | quality | /data/filter/<new_sample_quality> |
+    And After removing all filters, the content of the preparation "12L5C_preparation" matches:
+      | records | /data/filter/<filtered_records>   |
+      | quality | /data/filter/<new_sample_quality> |
 
     Examples:
-      | step_name | tql_prep_step                              | export_filter_export                       | export_filename                                    |
-      | uppercase | ((0000 = 'Bill'))                          | ((0000 = 'BILL'))                          | customers_100_equals_filter_records.csv            |
-      | uppercase | ((0000 contains 'war'))                    | ((0000 contains 'WAR'))                    | customers_100_contains_filter_records.csv          |
-      | uppercase | ((0000 complies 'Aaaaaaaaaa'))             | ((0000 complies 'AAAAAAAAAA'))             | customers_100_complies_filter_records.csv          |
-      | uppercase | ((0001 = 'Johnson')) and ((0000 = 'Bill')) | ((0001 = 'Johnson')) and ((0000 = 'BILL')) | customers_100_and_filter_records.csv               |
-      | keep_only | ((0001 = 'Taft') or (0001 = 'Arthur'))     | ((0001 = 'Arthur'))                        | customers_100_or_filter_records.csv                |
-      | keep_only | (0002 is invalid)                          | (0002 is invalid)                          | customers_100_invalid_filter_records.csv           |
-      | keep_only | (0002 is empty)                            | (0002 is empty)                            | customers_100_empty_filter_records.csv             |
-      | keep_only | (* is invalid)                             | (* is invalid)                             | customers_100_all_invalid_filter_records.csv       |
-      | keep_only | (* is empty)                               | (* is empty)                               | customers_100_all_empty_filter_records.csv         |
-      | keep_only | ((* is empty) or (* is invalid))           | ((* is empty) or (* is invalid))           | customers_100_all_invalid_empty_filter_records.csv |
+      | tql                                             | filtered_records                              | new_sample_quality                           |
+      | (* is empty)                                    | 12L5C_prep_rows_with_empty_value_records.json | 12L5C_prep_filtered_rows_sample_quality.json |
+      | ((0002 between [1512082800000, 1512082800000])) | content_no_records.json                       | 12L5C_initial_quality.json                   |

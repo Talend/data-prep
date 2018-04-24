@@ -266,17 +266,20 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Get preparation content by id and at a given version.
      *
      * @param preparationId the preparation id.
-     * @param version       version of the preparation
-     * @param from          Where to get the data from (HEAD if no value)
+     * @param version version of the preparation
+     * @param from Where to get the data from (HEAD if no value)
+     * @param tql The TQL filter to apply (pass null if you want the non-filtered preparation content)
      * @return the response.
      */
     public Response getPreparationContent(String preparationId, String version, String from, String tql)
             throws IOException {
-        Response response = given() //
+        RequestSpecification given = given() //
                 .queryParam("version", version) //
-                .queryParam("from", from) //
-                //FIXME: URLEncoder.encode(tql, "UTF-8") does not work
-                .queryParam("filter", tql) //
+                .queryParam("from", from);
+        if (tql != null) {
+            given.queryParam("filter", tql);
+        }
+        Response response = given
                 .when() //
                 .get("/api/preparations/{preparationId}/content", preparationId);
 
@@ -324,11 +327,15 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Get a dataset content with filter.
      *
      * @param datasetId the dataset id.
+     * @param tql the TQL filter to apply (pass null in order to get the non-filtered dataset content).
      * @return the response.
      */
     public Response getDataset(String datasetId, String tql) throws Exception {
-        return given() //
-                .queryParam("filter", URLEncoder.encode(tql, "UTF-8")) //
+        RequestSpecification given = given();
+        if (tql != null) {
+            given.queryParam("filter", URLEncoder.encode(tql, "UTF-8"));
+        }
+        return given //
                 .when() //
                 .get("/api/datasets/{datasetId}", datasetId);
     }

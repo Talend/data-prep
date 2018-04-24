@@ -984,7 +984,7 @@ export default function PlaygroundService(
 
 	function updatePlayground(data) {
 		// Remove filters from filter bar if the columns are removed and refresh the grid
-		const filtersToRemove = state.playground.filter.gridFilters.filter(filter => !data.metadata.columns.find(col => col.id === filter.colId));
+		const filtersToRemove = state.playground.filter.gridFilters.filter(filter => filter.colId !== '*' && !data.metadata.columns.find(col => col.id === filter.colId));
 		if (filtersToRemove && filtersToRemove.length) {
 			filtersToRemove.forEach(filter => FilterService.removeFilter(filter));
 			StatisticsService.updateFilteredStatistics();

@@ -224,7 +224,7 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS);
+        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
     }
 
     @Override

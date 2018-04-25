@@ -84,11 +84,16 @@ public class UpgradeService {
         int appliedTasks = repository.countUpgradeTask(VERSION.name());
         int availableTasks = (int) tasks.stream().filter(task -> Objects.equals(task.getTarget(), VERSION)).count();
         if (appliedTasks > availableTasks) {
-            LOG.warn("It seems that more upgrade tasks have been applied than the available ones.");
+            LOG.warn(
+                    "It seems that more upgrade tasks have been applied than the available ones (appliedTasks: {} < availableTasks: {}).",
+                    appliedTasks, availableTasks);
             return true;
         } else if (appliedTasks == availableTasks) {
+            LOG.info("No need to upgrade, all tasks already done (appliedTasks: {} < availableTasks: {}).",
+                    appliedTasks, availableTasks);
             return false;
         } else { // appliedTasks < availableTasks
+            LOG.info("We need to upgrade (appliedTasks: {} < availableTasks: {}).", appliedTasks, availableTasks);
             return true;
         }
     }

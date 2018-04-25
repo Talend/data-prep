@@ -139,6 +139,6 @@ public class AvroReader implements Closeable, Iterator<GenericRecord> {
     }
 
     public Stream<GenericRecord> asStream() {
-        return stream(spliteratorUnknownSize(this, Spliterator.IMMUTABLE), false);
+        return stream(spliteratorUnknownSize(this, Spliterator.IMMUTABLE), false).onClose(this::close);
     }
 }

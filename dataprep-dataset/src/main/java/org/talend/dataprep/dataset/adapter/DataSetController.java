@@ -15,6 +15,8 @@
 
 package org.talend.dataprep.dataset.adapter;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.util.avro.AvroUtils;
@@ -29,6 +31,11 @@ public class DataSetController {
 
     public DataSetController(DatasetClient datasetClient) {
         this.datasetClient = datasetClient;
+    }
+
+    @GetMapping
+    public List<Dataset> getAllDatasetMetadata() {
+        return datasetClient.findAll();
     }
 
     /**
@@ -53,15 +60,11 @@ public class DataSetController {
     }
 
     @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
-    public String getDatasetContent(@PathVariable String datasetId,
+    public Resource getDatasetContent(@PathVariable String datasetId,
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
-        return datasetClient.findBinaryAvroData(datasetId, new PageRequest(0, Integer.MAX_VALUE));
-    }
-
-    @GetMapping
-    public List<Dataset> getAllDatasetMetadata() {
-        return datasetClient.findAll();
+        return new InputStreamResource(
+                datasetClient.findBinaryAvroData(datasetId, new PageRequest(0, Integer.MAX_VALUE)));
     }
 
 }

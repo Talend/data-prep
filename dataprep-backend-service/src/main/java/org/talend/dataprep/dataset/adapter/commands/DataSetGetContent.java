@@ -28,7 +28,6 @@ import org.talend.daikon.exception.error.CommonErrorCodes;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.util.avro.AvroReader;
 import org.talend.dataprep.util.avro.AvroUtils;
 
 import javax.annotation.PostConstruct;
@@ -42,6 +41,7 @@ import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT;
+import static org.talend.dataprep.util.avro.AvroUtils.readBinaryStream;
 
 /**
  * Command to get a dataset.
@@ -89,8 +89,7 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
     private Stream<GenericRecord> readResult(HttpRequestBase httpRequestBase, HttpResponse httpResponse) {
         try {
             InputStream content = httpResponse.getEntity().getContent();
-            AvroReader avroReader = new AvroReader(content, contentSchema, true);
-            return avroReader.asStream();
+            return readBinaryStream(content, contentSchema).asStream();
         } catch (IOException e) {
             throw new TalendRuntimeException(org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

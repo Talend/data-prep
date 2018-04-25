@@ -17,6 +17,7 @@ package org.talend.dataprep.dataset.adapter;
 
 import org.springframework.data.domain.PageRequest;
 
+import java.io.InputStream;
 import java.util.List;
 
 // mimics spring Crudrepository
@@ -26,7 +27,7 @@ public interface DatasetClient {
 
     String findSchema(String datasetId);
 
-    String findBinaryAvroData(String datasetId, PageRequest pageRequest);
+    InputStream findBinaryAvroData(String datasetId, PageRequest pageRequest);
 
     List<Dataset> findAll();
 

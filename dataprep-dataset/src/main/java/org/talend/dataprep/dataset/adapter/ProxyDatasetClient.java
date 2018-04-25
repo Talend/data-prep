@@ -26,7 +26,9 @@ import org.springframework.web.client.RestTemplate;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.avro.AvroUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -65,15 +67,16 @@ public class ProxyDatasetClient implements DatasetClient {
     }
 
     @Override
-    public String findBinaryAvroData(String datasetId, PageRequest pageRequest) {
+    public InputStream findBinaryAvroData(String datasetId, PageRequest pageRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(singletonList(AVRO_MEDIA_TYPE));
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response =
+        // TODO: streaming is cool
+        ResponseEntity<byte[]> response =
                 restTemplate.exchange("/datasets/{datasetId}/content?offset={offset}&limit={limit}", GET, entity,
-                        String.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
-        return response.getStatusCode().is2xxSuccessful() ? response.getBody() : null;
+                        byte[].class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
+        return response.getStatusCode().is2xxSuccessful() ? new ByteArrayInputStream(response.getBody()) : null;
     }
 
     @Override

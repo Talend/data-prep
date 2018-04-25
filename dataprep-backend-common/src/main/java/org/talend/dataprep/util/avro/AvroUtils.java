@@ -2,6 +2,7 @@ package org.talend.dataprep.util.avro;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -10,6 +11,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Function;
@@ -64,8 +67,29 @@ public class AvroUtils {
     private AvroUtils() {
     }
 
+    public static AvroReader readBinaryStream(InputStream rawContent, Schema schema) throws IOException {
+        return new AvroReader(rawContent, schema, true);
+    }
+
+    public static AvroReader readJsonStream(InputStream rawContent, Schema schema) throws IOException {
+        return new AvroReader(rawContent, schema, false);
+    }
+
     public static Function<GenericRecord, DataSetRow> toDataSetRowConverter(RowMetadata dataSetMetadata) {
         return new AvroToDatasetRow(dataSetMetadata);
+    }
+
+    public static Function<DataSetRow, GenericRecord> toGenericRecordConverter(Schema schema) {
+        return dsr -> getGenericRecord(schema, dsr);
+    }
+
+    private static GenericRecord getGenericRecord(Schema schema, DataSetRow dsr) {
+        GenericData.Record record = new GenericData.Record(schema);
+        final Iterator<Object> iterator = dsr.order().values().values().iterator();
+        for (int j = 0; j < schema.getFields().size() && iterator.hasNext(); j++) {
+            record.put(j, iterator.next());
+        }
+        return record;
     }
 
     /**
@@ -144,12 +168,20 @@ public class AvroUtils {
         return rowMetadata;
     }
 
+    public static Schema toSchema(String name, RowMetadata rowMetadata) {
+        return toSchema(name, rowMetadata.getColumns());
+    }
+
     public static Schema toSchema(RowMetadata rowMetadata) {
         return toSchema(rowMetadata.getColumns());
     }
 
     public static Schema toSchema(List<ColumnMetadata> columns) {
         final String name = "dataprep" + System.currentTimeMillis();
+        return toSchema(name, columns);
+    }
+
+    public static Schema toSchema(final String name, List<ColumnMetadata> columns) {
         final Map<String, Integer> uniqueSuffixes = new HashMap<>();
         final List<Schema.Field> fields = columns.stream() //
                 .sorted(Comparator.comparingInt(c -> Integer.parseInt(c.getId()))) //

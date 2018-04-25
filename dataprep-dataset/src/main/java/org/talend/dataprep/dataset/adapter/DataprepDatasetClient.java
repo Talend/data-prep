@@ -19,8 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
-import org.apache.avro.io.JsonEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -28,17 +29,23 @@ import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Dataprep implementation of {@link DatasetClient}
@@ -76,42 +83,43 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public String findBinaryAvroData(String datasetId, PageRequest pageRequest) {
-        Callable<DataSet> dataSetCallable = dataSetService.get(false, true, null, datasetId);
-        DataSet dataSet;
+    public InputStream findBinaryAvroData(String datasetId, PageRequest pageRequest) {
+        Callable<DataSet> dataSetCallable = dataSetService.get(false, true, EMPTY, datasetId);
+        Stream<DataSetRow> records;
         try {
-            dataSet = dataSetCallable.call();
+            records = dataSetCallable.call().getRecords();
         } catch (Exception e) {
             Throwables.propagateIfPossible(e, RuntimeException.class);
             throw new RuntimeException("unexpected", e);
         }
+        DataSetMetadata metadata = dataSetService.getMetadata(datasetId).getMetadata();
 
-        Schema schema = AvroUtils.toSchema(dataSet.getMetadata().getRowMetadata());
-
-        //Json.ObjectWriter objectWriter = new Json.ObjectWriter();
-        GenericDatumWriter<Object> writer = new GenericDatumWriter<>(schema);
+        Schema schema = AvroUtils.toSchema(metadata.getRowMetadata());
+        GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            JsonEncoder jsonEncoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
-            dataSet.getRecords()
-                    .forEach(record -> {
+            Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
+            records.map(AvroUtils.toGenericRecordConverter(schema)).forEach(record -> {
                 try {
-                    writer.write(record.values(), jsonEncoder);
+                    writer.write(record, encoder);
                 } catch (IOException e) {
                     throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
                 }
             });
-            jsonEncoder.flush();
+            encoder.flush();
         } catch (IOException e) {
             throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
-        return new String(outputStream.toByteArray(), UTF_8);
+        return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
     @Override
     public List<Dataset> findAll() {
-        return Collections.emptyList();
+        Stream<UserDataSetMetadata> list =
+                dataSetService.list(SortAndOrderHelper.Sort.CREATION_DATE, SortAndOrderHelper.Order.DESC, null, false,
+                        false, false, false);
+        return list.map(udsm -> beanConversionService.convert(udsm, Dataset.class)).collect(Collectors.toList());
     }
 
     @Override

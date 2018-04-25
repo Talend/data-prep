@@ -34,11 +34,12 @@ $badge-background-color: $blue !default;
   }
 
   &-btn-close {
-    width: 9px;
-    cursor: pointer;
+    width: 23px;
     font-size: large;
     font-weight: bolder;
     color: $white;
+    background: transparent;
+    border: none;
 
     &:hover, &:focus {
       color: darken($white, 10%);

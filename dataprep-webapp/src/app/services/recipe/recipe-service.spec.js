@@ -30,6 +30,10 @@ describe('Recipe service', function () {
                             },
                         },
                     },
+	                filterColumnDisplayNames: {
+                        '0000': 'country',
+		                '0001': 'gender',
+                    },
                 },
                 {
                     action: 'fillemptywithdefault',
@@ -37,12 +41,20 @@ describe('Recipe service', function () {
                         default_value: 'M',
                         column_name: 'gender',
                     },
+	                filterColumnDisplayNames: {
+		                '0000': 'country',
+		                '0001': 'gender',
+	                },
                 },
                 {
                     action: 'negate',
                     parameters: {
                         column_name: 'campain',
                     },
+	                filterColumnDisplayNames: {
+		                '0000': 'country',
+		                '0001': 'gender',
+	                },
                 },
                 {
                     action: 'cut',
@@ -50,6 +62,10 @@ describe('Recipe service', function () {
                         pattern: '.',
                         column_name: 'first_item',
                     },
+	                filterColumnDisplayNames: {
+		                '0000': 'country',
+		                '0001': 'gender',
+	                },
                 },
                 {
                     action: 'textclustering',
@@ -65,6 +81,10 @@ describe('Recipe service', function () {
                         column_name: 'uglystate',
                         column_id: '1',
                     },
+	                filterColumnDisplayNames: {
+		                '0000': 'country',
+		                '0001': 'gender',
+	                },
                 },
                 {
                     action: 'fillemptywithdefaultboolean',
@@ -72,12 +92,20 @@ describe('Recipe service', function () {
                         default_value: 'True',
                         column_name: 'campain',
                     },
+	                filterColumnDisplayNames: {
+		                '0000': 'country',
+		                '0001': 'gender',
+	                },
                 },
                 {
                     action: 'delete',
                     parameters: {
                         row_id: '125',
                     },
+	                filterColumnDisplayNames: {
+		                '0000': 'country',
+		                '0001': 'gender',
+	                },
                 },
             ],
             metadata: [
@@ -665,7 +693,8 @@ describe('Recipe service', function () {
             const steps = args[1];
             expect(TqlFilterAdapterService.fromTQL).toHaveBeenCalledWith(
                 steps[0].actionParameters.parameters.filter,
-                stateMock.playground.data.metadata.columns
+                stateMock.playground.data.metadata.columns,
+	            steps[0].actionParameters.filterColumnDisplayNames
             );
             expect(steps[0].filters).toBe(filtersFromTree);
         }));
@@ -707,15 +736,34 @@ describe('Recipe service', function () {
             expect(steps[0].actionParameters).toEqual({
                 action: 'uppercase',
                 parameters: { column_name: 'country', filter: { valid: { field: '0000' } } },
+	            filterColumnDisplayNames: {
+		            '0000': 'country',
+		            '0001': 'gender',
+	            },
             });
             expect(steps[1].actionParameters).toEqual({
                 action: 'fillemptywithdefault',
                 parameters: { default_value: 'M', column_name: 'gender' },
+	            filterColumnDisplayNames: {
+		            '0000': 'country',
+		            '0001': 'gender',
+	            },
             });
-            expect(steps[2].actionParameters).toEqual({ action: 'negate', parameters: { column_name: 'campain' } });
+            expect(steps[2].actionParameters).toEqual({
+                action: 'negate',
+                parameters: { column_name: 'campain' },
+	            filterColumnDisplayNames: {
+		            '0000': 'country',
+		            '0001': 'gender',
+	            },
+            });
             expect(steps[3].actionParameters).toEqual({
                 action: 'cut',
                 parameters: { pattern: '.', column_name: 'first_item' },
+	            filterColumnDisplayNames: {
+		            '0000': 'country',
+		            '0001': 'gender',
+	            },
             });
             expect(steps[4].actionParameters).toEqual({
                 action: 'textclustering',
@@ -731,10 +779,18 @@ describe('Recipe service', function () {
                     column_id: '1',
                     column_name: 'uglystate',
                 },
+	            filterColumnDisplayNames: {
+		            '0000': 'country',
+		            '0001': 'gender',
+	            },
             });
             expect(steps[5].actionParameters).toEqual({
                 action: 'fillemptywithdefaultboolean',
                 parameters: { default_value: 'True', column_name: 'campain' },
+	            filterColumnDisplayNames: {
+		            '0000': 'country',
+		            '0001': 'gender',
+	            },
             });
         }));
     });

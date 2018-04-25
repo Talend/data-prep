@@ -18,6 +18,7 @@ import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,11 +29,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.filter.FilterTranslator;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.preparation.service.PreparationService;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
@@ -123,10 +126,28 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                 final PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
                 if (prepActions != null) {
                     final List<Action> actions = prepActions.getActions();
+
                     for (Action action : actions) {
                         // Translate filter from JSON to TQL
                         Map<String, String> parameters = action.getParameters();
-                        parameters.put(ImplicitParameters.FILTER.getKey(), translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
+
+                        if (!StringUtils.isBlank(parameters.get(ImplicitParameters.FILTER.getKey()))){
+                            parameters.put(ImplicitParameters.FILTER.getKey(), translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
+
+                            //TODO use getPreparationStep
+                            final Step step = preparationRepository.get(source.getSteps().get(actions.indexOf(action) + 1).getId(), Step.class);
+                            if (step != null) {
+                                final StepRowMetadata stepRowMetadata = preparationRepository.get(step.getRowMetadata(), StepRowMetadata.class);
+                                if (stepRowMetadata != null) {
+                                    Map<String, String> filterColumnDisplayNames = action.getFilterColumnDisplayNames();
+                                    stepRowMetadata
+                                            .getRowMetadata()
+                                            .getColumns()
+                                            .stream()
+                                            .forEach(column -> filterColumnDisplayNames.put(column.getId(), column.getName()));
+                                }
+                            }
+                        }
                     }
                     target.setActions(prepActions.getActions());
 

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * Class used to wrap DataSetRowAction into json.
  */
 @JsonRootName("action")
-@JsonPropertyOrder(value = { "action", "parameters" })
+@JsonPropertyOrder(value = { "action", "parameters", "filterColumnDisplayNames" })
 public class Action implements Serializable {
 
     /** Serialization UID. */
@@ -36,6 +36,9 @@ public class Action implements Serializable {
 
     /** Parameters needed for the action. */
     private MixedContentMap parameters = new MixedContentMap();
+
+    /** Filter Parameters needed to display the action. */
+    private MixedContentMap filterColumnDisplayNames = new MixedContentMap();
 
     /**
      * Default empty constructor.
@@ -73,6 +76,14 @@ public class Action implements Serializable {
         this.parameters = parameters;
     }
 
+    public MixedContentMap getFilterColumnDisplayNames() {
+        return filterColumnDisplayNames;
+    }
+
+    public void setFilterColumnDisplayNames(MixedContentMap filterColumnDisplayNames) {
+        this.filterColumnDisplayNames = filterColumnDisplayNames;
+    }
+
     /**
      * @see Object#equals(Object)
      */
@@ -83,12 +94,12 @@ public class Action implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         Action action1 = (Action) o;
-        return Objects.equals(action, action1.action) && Objects.equals(parameters, action1.parameters);
+        return Objects.equals(action, action1.action) && Objects.equals(parameters, action1.parameters) && Objects.equals(filterColumnDisplayNames, action1.filterColumnDisplayNames);
     }
 
     @Override
     public String toString() {
-        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '}';
+        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '\'' + ", filterColumnDisplayNames=" + filterColumnDisplayNames + '}';
     }
 
     /**
@@ -96,7 +107,7 @@ public class Action implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(action, parameters);
+        return Objects.hash(action, parameters, filterColumnDisplayNames);
     }
 
     /**
@@ -105,6 +116,8 @@ public class Action implements Serializable {
     public static class Builder {
 
         private Map<String, String> parameters;
+
+        private Map<String, String> filterColumnDisplayNames;
 
         private String name;
 
@@ -121,12 +134,18 @@ public class Action implements Serializable {
         public Action build() {
             final Action builtAction = new Action();
             builtAction.getParameters().putAll(parameters);
+            builtAction.getFilterColumnDisplayNames().putAll(filterColumnDisplayNames);
             builtAction.setName(name);
             return builtAction;
         }
 
         public Builder withParameters(Map<String, String> parameters) {
             this.parameters = parameters;
+            return this;
+        }
+
+        public Builder withFilterColumnDisplayNames(Map<String, String> filterColumnDisplayNames) {
+            this.filterColumnDisplayNames = filterColumnDisplayNames;
             return this;
         }
 

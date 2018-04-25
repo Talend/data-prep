@@ -34,6 +34,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	let VALID_RECORDS_VALUES;
 	let filters = [];
 	let columns = [];
+	let filterColumnDisplayNames = null;
 	return {
 		createFilter,
 		toTQL,
@@ -201,7 +202,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				},
 			],
 		};
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
 	function onContainsFilter(ctx) {
 		const type = CONTAINS;
@@ -213,7 +214,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				},
 			],
 		};
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
 	function onCompliesFilter(ctx) {
 		const type = MATCHES;
@@ -225,7 +226,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				},
 			],
 		};
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
 	function onBetweenFilter(ctx) {
 		const type = INSIDE_RANGE;
@@ -261,29 +262,30 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			}],
 			type: filteredColumn.type,
 		};
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
 	function onEmptyFilter(ctx) {
 		const type = QUALITY;
 		const field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
 		const args = { empty: true, invalid: false };
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
 	function onValidFilter(ctx) {
 		const type = QUALITY;
 		const field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
 		const args = { valid: true };
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
 	function onInvalidFilter(ctx) {
 		const type = QUALITY;
 		const field = ctx.children[0].getText() !== '(' ? ctx.children[0].getText() : ctx.children[1].getText();
 		const args = { empty: false, invalid: true };
-		createFilterFromTQL(type, field, false, args, columns);
+		createFilterFromTQL(type, field, false, args);
 	}
-	function createFilterFromTQL(type, colId, editable, args, columns) {
+	function createFilterFromTQL(type, colId, editable, args) {
 		const filteredColumn = find(columns, { id: colId });
-		const colName = (filteredColumn && filteredColumn.name) || colId;
+		const colName = (filteredColumn && filteredColumn.name) ||
+			(filterColumnDisplayNames && filterColumnDisplayNames[colId]) || colId;
 
 		const existingEmptyFilter = find(filters, {
 			colId,
@@ -372,9 +374,10 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			}
 		}
 	}
-	function fromTQL(tql, cols) {
+	function fromTQL(tql, cols, columnsDisplayNames) {
 		columns = cols;
 		filters = [];
+		filterColumnDisplayNames = columnsDisplayNames;
 		if (tql) {
 			parse(
 				tql,

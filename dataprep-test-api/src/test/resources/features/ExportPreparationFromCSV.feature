@@ -1,13 +1,14 @@
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Export Preparation from CSV
 
   Scenario: Create a preparation with one step from a CSV
     Given I upload the dataset "/data/6L3C.csv" with name "6L3C_dataset"
     And I create a preparation with name "6L3C_preparation", based on "6L3C_dataset" dataset
     And I add a "uppercase" step on the preparation "6L3C_preparation" with parameters :
-      | column_name      | lastname         |
-      | column_id        | 0001             |
+      | column_name | lastname |
+      | column_id   | 0001     |
 
-  Scenario: Verify transformation result
+  Scenario: Verify transformation result on 6L3C_dataset with CSV format
     # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | exportType           | CSV              |
@@ -18,7 +19,7 @@ Feature: Export Preparation from CSV
       | fileName             | 6L3C_result.csv  |
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_default_export_parameters.csv" file
 
-  Scenario: Verify transformation result with another escape char
+  Scenario: Verify transformation result with another escape char on 6L3C_dataset with CSV format
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |
@@ -29,7 +30,7 @@ Feature: Export Preparation from CSV
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_processed_custom_escape_char.csv" file
 
   @CleanAfter
-  Scenario: Verify transformation result with custom parameters
+  Scenario: Verify transformation result with custom parameters on 6L3C_dataset with CSV format
     When I export the preparation with parameters :
       | exportType           | CSV                               |
       | csv_fields_delimiter | -                                 |

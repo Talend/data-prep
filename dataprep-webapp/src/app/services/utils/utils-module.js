@@ -14,7 +14,6 @@
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
 
-import copyright from './config/utils-copyrights-service';
 import TDPMoment from './moment/moment-filter';
 import RestURLs from './config/utils-rest-urls-service';
 import ConverterService from './converter/converter-service';
@@ -38,7 +37,6 @@ const MODULE_NAME = 'data-prep.services.utils';
  */
 angular
 	.module(MODULE_NAME, [ngTranslate])
-	.value('copyRights', copyright)
 	.filter('TDPMoment', TDPMoment)
 	.service('RestURLs', RestURLs)
 	.service('ConverterService', ConverterService)

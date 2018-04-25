@@ -20,7 +20,7 @@ const BLOCKING_ACTION_TYPES = [
 ];
 
 export default class PreparationActionsService {
-	constructor($stateParams, state, FolderService, MessageService, PreparationService,
+	constructor($stateParams, $translate, state, FolderService, MessageService, PreparationService,
 				StateService, StorageService, TalendConfirmService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
@@ -31,6 +31,10 @@ export default class PreparationActionsService {
 		this.StateService = StateService;
 		this.StorageService = StorageService;
 		this.TalendConfirmService = TalendConfirmService;
+
+		this.i18n = {
+			PREPARATION: $translate.instant('PREPARATION'),
+		};
 	}
 
 	dispatch(action) {
@@ -91,14 +95,14 @@ export default class PreparationActionsService {
 			this.TalendConfirmService
 				.confirm(
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-					{ type: 'preparation', name: preparation.name }
+					{ type: this.i18n.PREPARATION, name: preparation.name }
 				)
 				.then(() => this.PreparationService.delete(preparation))
 				.then(() => this.FolderService.refreshCurrentFolder())
 				.then(() => this.MessageService.success(
 					'PREPARATION_REMOVE_SUCCESS_TITLE',
 					'REMOVE_SUCCESS',
-					{ type: 'preparation', name: preparation.name }
+					{ type: this.i18n.PREPARATION, name: preparation.name }
 				));
 			break;
 		}

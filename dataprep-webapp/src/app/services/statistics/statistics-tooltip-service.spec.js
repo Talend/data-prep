@@ -1,4 +1,4 @@
-import i18n from '../../../i18n/en.json'
+import i18n from '../../../i18n/en.json';
 
 describe('Statistics Tooltip service', function () {
 	'use strict';

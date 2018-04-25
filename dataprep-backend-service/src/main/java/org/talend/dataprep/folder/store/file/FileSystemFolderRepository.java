@@ -12,6 +12,18 @@
 
 package org.talend.dataprep.folder.store.file;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +39,6 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.StringsHelper;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
 
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderBuilder.folder;
@@ -134,7 +134,7 @@ public class FileSystemFolderRepository implements FolderRepository {
                 .collect(Collectors.toList());
 
         if (parentFolderPath == null || !exists(parentId)) {
-            throw new TDPException(UNABLE_TO_ADD_FOLDER, build().put("path", givenPath));
+            throw new TDPException(FOLDER_DOES_NOT_EXIST, build().put("parentId", parentId));
         }
 
         FolderPath folderPathToCreate = new FolderPath(parentFolderPath, pathToAppend.toArray(new String[pathToAppend.size()]));

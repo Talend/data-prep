@@ -18,6 +18,7 @@ const InventoryCopyMoveComponent = {
 	bindings: {
 		initialFolder: '<',
 		item: '<',
+		itemType: '<',
 		onCopy: '&',
 		onMove: '&',
 		isLoading: '<',

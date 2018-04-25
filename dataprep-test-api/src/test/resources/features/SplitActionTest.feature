@@ -1,3 +1,4 @@
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with SplitAction related action
 
   Scenario: TDP-2673 TDP-4926 TDP-5057 related bug fix
@@ -16,7 +17,7 @@ Feature: Perform scenarios with SplitAction related action
       | custom_date_pattern | dd/MM/yy           |
     Then I check that a step like "changeDateFrench" exists in the preparation "Albums_Musique_prep"
 
-  Scenario: Export and check the exported file
+  Scenario: Export Albums_Musique_prep and check the exported file Albums_Musique_prep_result.csv
     When I export the preparation with parameters :
       | preparationName      | Albums_Musique_prep            |
       | dataSetName          | Albums_Musique_dataset         |

@@ -1,4 +1,4 @@
-@OnPremise
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Open preparation multiple times
 
   @CleanAfter

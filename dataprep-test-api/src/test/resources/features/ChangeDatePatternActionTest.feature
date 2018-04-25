@@ -1,6 +1,7 @@
+@EnvOs @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with ChangeDate related actions
 
-    # First Part
+  # First Part
   # Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (without new column) : A-customers_100_with_pb_prep
   # Scenario: Export previous preparation ("A-customers_100_with_pb_prep") and check the exported file
   # Scenario: Remove first ChangeDatePattern Action preparation : A-customers_100_with_pb_prep

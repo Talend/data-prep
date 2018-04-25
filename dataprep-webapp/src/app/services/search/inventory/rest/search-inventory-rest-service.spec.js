@@ -20,7 +20,7 @@ describe('Search Inventory Rest Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.search.inventory'));
 
 	beforeEach(inject(($injector, RestURLs) => {
-		RestURLs.register({ serverUrl: '' }, settings.uris);
+		RestURLs.register(settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

@@ -32,11 +32,16 @@ const PatternOccurrenceWorker = require('worker-loader!./pattern-occurence.worke
  * @requires data-prep.services.utils.service:StorageService
  * @requires data-prep.services.utils.service:DateService
  */
-export default function StatisticsService($q, $log, $filter, state, StateService,
+export default function StatisticsService($q, $log, $filter, $translate, state, StateService,
 											StepUtilsService, StatisticsRestService,
 											ConverterService, TqlFilterAdapterService, TextFormatService,
 											StorageService, FilterUtilsService) {
 	'ngInject';
+
+	const i18n = {
+		OCCURRENCES: $translate.instant('OCCURRENCES'),
+		FILTERED_OCCURRENCES: $translate.instant('FILTERED_OCCURRENCES'),
+	};
 
 	const service = {
 		dateWorker: null,
@@ -167,8 +172,8 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		});
 
 		return {
-			histogram: initVerticalHistogram('data', 'occurrences', 'Occurrences', rangeData),
-			filteredHistogram: initVerticalHistogram('data', 'filteredOccurrences', 'Filtered Occurrences', filteredRangeData),
+			histogram: initVerticalHistogram('data', 'occurrences', i18n.OCCURRENCES, rangeData),
+			filteredHistogram: initVerticalHistogram('data', 'filteredOccurrences', i18n.FILTERED_OCCURRENCES, filteredRangeData),
 		};
 	}
 
@@ -303,7 +308,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 			};
 		});
 
-		return initVerticalHistogram('data', 'occurrences', 'Occurrences', dateRangeData);
+		return initVerticalHistogram('data', 'occurrences', i18n.OCCURRENCES, dateRangeData);
 	}
 
 	/**
@@ -420,7 +425,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 		});
 
 		return {
-			histogram: initHorizontalHistogram(keyField, valueField, 'Occurrences', adaptedData, null),
+			histogram: initHorizontalHistogram(keyField, valueField, i18n.OCCURRENCES, adaptedData, null),
 			filteredHistogram: initHorizontalHistogram(keyField, filteredValueField, null, adaptedFilteredData, 'blueBar'),
 		};
 	}
@@ -654,7 +659,7 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
 		case 'text':
 		case 'boolean':
-			initClassicHistogram('occurrences', 'Occurrences', column.statistics.frequencyTable);
+			initClassicHistogram('occurrences', i18n.OCCURRENCES, column.statistics.frequencyTable);
 			break;
 		default:
 			$log.debug('nor a number neither a boolean, neither a string, neither a date but a ' + simplifiedType);

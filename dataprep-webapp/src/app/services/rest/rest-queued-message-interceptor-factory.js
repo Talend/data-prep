@@ -67,12 +67,12 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 			const { headers, config, status } = response;
 
 			if (status === ACCEPTED_STATUS && ALLOWED_METHODS.includes(config.method) && !config.async) {
-				return loop(`${RestURLs.serverUrl}${headers('Location')}`, config.statusCallback)
+				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');
 						return data.result.downloadUrl ? $http({
 							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
-							url: `${RestURLs.serverUrl}${data.result.downloadUrl}`,
+							url: `${RestURLs.context}${data.result.downloadUrl}`,
 						}) : $q.resolve(data);
 					});
 			}

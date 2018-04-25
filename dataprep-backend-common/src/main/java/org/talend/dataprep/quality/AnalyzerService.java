@@ -15,13 +15,7 @@ package org.talend.dataprep.quality;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -142,9 +136,9 @@ public class AnalyzerService {
     /**
      * Similarly to {@link #build(List, Analysis...)} but for a single column.
      *
-     * @param column   A column, may be null.
+     * @param column A column, may be null.
      * @param settings A varargs with {@link Analysis}. Duplicates are possible in varargs but will be considered only
-     *                 once.
+     * once.
      * @return A ready to use {@link Analyzer}.
      */
     public Analyzer<Analyzers.Result> build(ColumnMetadata column, Analysis... settings) {
@@ -169,9 +163,9 @@ public class AnalyzerService {
      * Build a {@link Analyzer} to analyze records with columns (in <code>columns</code>). <code>settings</code> give
      * all the wanted analysis settings for the analyzer.
      *
-     * @param columns  A list of columns, may be null or empty.
+     * @param columns A list of columns, may be null or empty.
      * @param settings A varargs with {@link Analysis}. Duplicates are possible in varargs but will be considered only
-     *                 once.
+     * once.
      * @return A ready to use {@link Analyzer}.
      */
     public Analyzer<Analyzers.Result> build(List<ColumnMetadata> columns, Analysis... settings) {
@@ -193,7 +187,8 @@ public class AnalyzerService {
         // Column types
         DataTypeEnum[] types = TypeUtils.convert(columns);
         // Semantic domains
-        List<String> domainList = columns.stream() //
+        List<String> domainList = columns
+                .stream() //
                 .map(ColumnMetadata::getDomain) //
                 .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
                 .collect(Collectors.toList());
@@ -205,67 +200,67 @@ public class AnalyzerService {
         List<Analyzer> analyzers = new ArrayList<>();
         for (Analysis setting : settings) {
             switch (setting) {
-                case SEMANTIC:
-                    final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(dictionarySnapshot);
-                    semanticAnalyzer.setLimit(Integer.MAX_VALUE);
-                    semanticAnalyzer.setMetadata(Metadata.HEADER_NAME, extractColumnNames(columns));
-                    analyzers.add(semanticAnalyzer);
-                    break;
-                case HISTOGRAM:
-                    analyzers.add(new StreamDateHistogramAnalyzer(columns, types, dateParser));
-                    analyzers.add(new StreamNumberHistogramAnalyzer(types));
-                    break;
-                case QUALITY:
-                    final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
-                    columns.forEach(
-                            c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
-                    analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
-                            new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), true)); // NOSONAR
-                    break;
-                case CARDINALITY:
-                    analyzers.add(new CardinalityAnalyzer());
-                    break;
-                case PATTERNS:
-                    analyzers.add(buildPatternAnalyzer(columns));
-                    break;
-                case LENGTH:
-                    analyzers.add(new TextLengthAnalyzer());
-                    break;
-                case QUANTILES:
-                    boolean acceptQuantiles = false;
-                    for (DataTypeEnum type : types) {
-                        if (type == DataTypeEnum.INTEGER || type == DataTypeEnum.DOUBLE) {
-                            acceptQuantiles = true;
-                            break;
-                        }
+            case SEMANTIC:
+                final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(dictionarySnapshot);
+                semanticAnalyzer.setLimit(Integer.MAX_VALUE);
+                semanticAnalyzer.setMetadata(Metadata.HEADER_NAME, extractColumnNames(columns));
+                analyzers.add(semanticAnalyzer);
+                break;
+            case HISTOGRAM:
+                analyzers.add(new StreamDateHistogramAnalyzer(columns, types, dateParser));
+                analyzers.add(new StreamNumberHistogramAnalyzer(types));
+                break;
+            case QUALITY:
+                final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
+                columns.forEach(c -> dataTypeQualityAnalyzer
+                        .addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
+                analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
+                        new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), true)); // NOSONAR
+                break;
+            case CARDINALITY:
+                analyzers.add(new CardinalityAnalyzer());
+                break;
+            case PATTERNS:
+                analyzers.add(buildPatternAnalyzer(columns));
+                break;
+            case LENGTH:
+                analyzers.add(new TextLengthAnalyzer());
+                break;
+            case QUANTILES:
+                boolean acceptQuantiles = false;
+                for (DataTypeEnum type : types) {
+                    if (type == DataTypeEnum.INTEGER || type == DataTypeEnum.DOUBLE) {
+                        acceptQuantiles = true;
+                        break;
                     }
-                    if (acceptQuantiles) {
-                        analyzers.add(new QuantileAnalyzer(types));
+                }
+                if (acceptQuantiles) {
+                    analyzers.add(new QuantileAnalyzer(types));
+                }
+                break;
+            case SUMMARY:
+                analyzers.add(new SummaryAnalyzer(types));
+                break;
+            case TYPE:
+                boolean shouldUseTypeAnalysis = true;
+                for (Analysis analysis : settings) {
+                    if (analysis == Analysis.QUALITY) {
+                        shouldUseTypeAnalysis = false;
+                        break;
                     }
-                    break;
-                case SUMMARY:
-                    analyzers.add(new SummaryAnalyzer(types));
-                    break;
-                case TYPE:
-                    boolean shouldUseTypeAnalysis = true;
-                    for (Analysis analysis : settings) {
-                        if (analysis == Analysis.QUALITY) {
-                            shouldUseTypeAnalysis = false;
-                            break;
-                        }
-                    }
-                    if (shouldUseTypeAnalysis) {
-                        final List<String> mostUsedDatePatterns = getMostUsedDatePatterns(columns);
-                        analyzers.add(new DataTypeAnalyzer(mostUsedDatePatterns));
-                    } else {
-                        LOGGER.warn("Disabled {} analysis (conflicts with {}).", setting, Analysis.QUALITY);
-                    }
-                    break;
-                case FREQUENCY:
-                    analyzers.add(new DataTypeFrequencyAnalyzer());
-                    break;
-                default:
-                    throw new IllegalArgumentException("Missing support for '" + setting + "'.");
+                }
+                if (shouldUseTypeAnalysis) {
+                    final List<String> mostUsedDatePatterns = getMostUsedDatePatterns(columns);
+                    analyzers.add(new DataTypeAnalyzer(mostUsedDatePatterns));
+                } else {
+                    LOGGER.warn("Disabled {} analysis (conflicts with {}).", setting, Analysis.QUALITY);
+                }
+                break;
+            case FREQUENCY:
+                analyzers.add(new DataTypeFrequencyAnalyzer());
+                break;
+            default:
+                throw new IllegalArgumentException("Missing support for '" + setting + "'.");
             }
         }
 
@@ -282,8 +277,8 @@ public class AnalyzerService {
 
     public Analyzer<Analyzers.Result> full(final List<ColumnMetadata> columns) {
         // Configure quality & semantic analysis (if column metadata information is present in stream).
-        return build(columns, Analysis.QUALITY, Analysis.CARDINALITY, Analysis.FREQUENCY, Analysis.PATTERNS, Analysis.LENGTH,
-                Analysis.SEMANTIC, Analysis.QUANTILES, Analysis.SUMMARY, Analysis.HISTOGRAM);
+        return build(columns, Analysis.QUALITY, Analysis.CARDINALITY, Analysis.FREQUENCY, Analysis.PATTERNS,
+                Analysis.LENGTH, Analysis.SEMANTIC, Analysis.QUANTILES, Analysis.SUMMARY, Analysis.HISTOGRAM);
     }
 
     public Analyzer<Analyzers.Result> qualityAnalysis(List<ColumnMetadata> columns) {
@@ -398,11 +393,6 @@ public class AnalyzerService {
         }
 
         @Override
-        public Analyzer<Analyzers.Result> merge(Analyzer<Analyzers.Result> analyzer) {
-            return analyzer.merge(analyzer);
-        }
-
-        @Override
         public void close() throws Exception {
             analyzer.close();
             openedAnalyzers.remove(this);
@@ -412,8 +402,10 @@ public class AnalyzerService {
         public String toString() {
             StringBuilder toStringBuilder = new StringBuilder();
             toStringBuilder //
-                    .append(analyzer.toString()).append(' ') //
-                    .append(" last used (").append(System.currentTimeMillis() - lastCall) //
+                    .append(analyzer.toString())
+                    .append(' ') //
+                    .append(" last used (")
+                    .append(System.currentTimeMillis() - lastCall) //
                     .append(" ms ago) ");
 
             final StringWriter toStringCaller = new StringWriter();

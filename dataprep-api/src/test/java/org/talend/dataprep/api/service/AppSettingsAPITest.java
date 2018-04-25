@@ -32,6 +32,7 @@ import static com.jayway.restassured.RestAssured.when;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
@@ -452,7 +453,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         // then
         final Map<String, String> mapUriSettings = settings.getUris();
 
-        assertThat(mapUriSettings.size(), is(15));
+        assertThat(mapUriSettings.size(), is(16));
 
         // then
         assertThat(mapUriSettings.containsKey("apiAggregate"), is(true));
@@ -513,6 +514,10 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         // then
         assertThat(mapUriSettings.containsKey("apiVersion"), is(true));
         assertThat(mapUriSettings.get("apiVersion"), is("/api/version"));
+
+        // then
+        assertThat(mapUriSettings.containsKey("context"), is(true));
+        assertThat(mapUriSettings.get("context"), isEmptyOrNullString());
     }
 
     private List map(final List<Map> list, final String property) {

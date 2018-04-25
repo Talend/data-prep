@@ -32,7 +32,8 @@ import org.talend.dataprep.transformation.actions.date.DateParser;
 public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
     /** 1990-01-01 UTC timezone */
-    protected static final long SECONDS_FROM_1970_01_01_UTC = (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000);
+    protected static final long SECONDS_FROM_1970_01_01_UTC =
+            (LocalDateTime.of(1990, JANUARY, 1, 0, 0).toEpochSecond(UTC) * 1000);
 
     protected final FilterService service = getFilterService();
 
@@ -50,29 +51,29 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
      */
     protected abstract FilterService getFilterService();
 
-    protected void assertThatFilterExecutionReturnsTrue() {
-        assertThat(filter.test(row)).isTrue();
-    }
-
-    protected void assertThatFilterExecutionReturnsFalse() {
-        assertThat(filter.test(row)).isFalse();
-    }
-
-    private FilterTest unlessInvalid(String... invalidColIds) {
+    protected FilterTest unlessInvalid(String... invalidColIds) {
         return new FilterTest(invalidColIds, true);
     }
 
-    private FilterTest whateverValidity() {
+    /**
+     * Means that the filter execution should return the same result even if all columns are invalid for the given row.
+     *
+     * @return an object which helps to test the filter execution.
+     */
+    protected FilterTest whateverValidity() {
         return new FilterTest();
     }
 
-    private class FilterTest {
+    protected class FilterTest {
+
         private String[] invalidColIds;
+
         private String[] colIds;
+
         private boolean invalidityChangesResult;
 
         public FilterTest() {
-            invalidColIds = new String[]{};
+            invalidColIds = new String[] {};
             invalidityChangesResult = false;
         }
 
@@ -83,6 +84,9 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         public FilterTest withColumns(String... coldIs) {
             this.colIds = coldIs;
+            if (!invalidityChangesResult) {
+                this.invalidColIds = this.colIds;
+            }
             return this;
         }
 
@@ -106,7 +110,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
             }
         }
 
-        private void assertFilterReturnsExpectedResultForRow(boolean expectedResult, String[] columnIds, String[] values) {
+        private void assertFilterReturnsExpectedResultForRow(boolean expectedResult, String[] columnIds,
+                String[] values) {
             for (int i = 0; i < columnIds.length; i++) {
                 row.set(columnIds[i], values[i]);
             }
@@ -129,7 +134,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001")
+        whateverValidity()
+                .withColumns("0001")
                 .assertFilterReturnsTrueForValues("5.35")
                 .assertFilterReturnsTrueForValues("5,35");
     }
@@ -143,13 +149,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("toto");
+        whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("toto");
         whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsFalseForValues("Toto") // different case
                 .assertFilterReturnsFalseForValues("tatatoto") // contains but different
                 .assertFilterReturnsFalseForValues("") // empty
-                .assertFilterReturnsFalseForValues(new String[] {null}); // null
+                .assertFilterReturnsFalseForValues(new String[] { null }); // null
     }
 
     protected abstract String givenFilter_0001_equals_toto();
@@ -163,8 +169,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("titi", "toto");
-        unlessInvalid("0001").withColumns("0001", "0002").assertFilterReturnsTrueForValues("toto", "titi");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("titi", "toto");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("toto", "titi");
         whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("titi", "tata");
     }
 
@@ -179,7 +185,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001")
+        whateverValidity()
+                .withColumns("0001")
                 .assertFilterReturnsTrueForValues("5.0") // eq
                 .assertFilterReturnsTrueForValues("5,00") // eq
                 .assertFilterReturnsTrueForValues("05.0") // eq
@@ -207,7 +214,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("5.0", "4.0")
                 .assertFilterReturnsTrueForValues("5.0", "4.0")
@@ -236,7 +243,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("5.35") // eq
                 .assertFilterReturnsTrueForValues("5,35") // eq
@@ -266,13 +273,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("5,35", "4.0")
                 .assertFilterReturnsTrueForValues("5,3500", "4.0")
                 .assertFilterReturnsTrueForValues("0 005.35", "4.0");
 
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("5.0", "5.35")
                 .assertFilterReturnsTrueForValues("5.0", "05.35")
@@ -304,7 +311,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("Test"); // neq
 
         // invalid values matches the filter (as it is a 'not' one)
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsFalseForValues("test"); // eq
+        whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("test"); // eq
     }
 
     protected abstract String givenFilter_0001_not_equal_test();
@@ -323,7 +330,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("toto", "Test");
 
         // invalid values matches the filter (as it is a 'not' one)
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsFalseForValues("toto", "test");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("toto", "test");
     }
 
     protected abstract String givenFilter_one_column_not_equal_test();
@@ -343,7 +350,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("14"); // neq
 
         // invalid values matches the filter (as it is a 'not' one)
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsFalseForValues("12") // eq
                 .assertFilterReturnsFalseForValues("12.00") // eq
@@ -367,11 +374,11 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("14", "11,99");
 
         // invalid values matches the filter (as it is a 'not' one)
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsFalseForValues("12", "11.99")
                 .assertFilterReturnsFalseForValues("012,0", "11.99");
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsFalseForValues("12.1", "12.00");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("12.1", "12.00");
     }
 
     protected abstract String givenFilter_one_column_not_equal_12();
@@ -391,7 +398,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("26.6"); // neq
 
         // invalid values matches the filter (as it is a 'not' one)
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsFalseForValues("24.60") // eq
                 .assertFilterReturnsFalseForValues("24,6") // eq
@@ -409,16 +416,14 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        whateverValidity()
-                .withColumns("0001", "0002")
-                .assertFilterReturnsTrueForValues("24", "26.6");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("24", "26.6");
 
         // invalid values matches the filter (as it is a 'not' one)
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsFalseForValues("24.60", "11.99")
                 .assertFilterReturnsFalseForValues("024,60", "11.99");
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsFalseForValues("12.1", "24,6");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("12.1", "24,6");
     }
 
     protected abstract String givenFilter_one_column_not_equal_24dot6();
@@ -432,7 +437,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("6") // gt
                 .assertFilterReturnsTrueForValues("5.5") // gt
@@ -447,7 +452,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
                 .assertFilterReturnsFalseForValues("toto") // nan
                 .assertFilterReturnsFalseForValues("") // nan
-                .assertFilterReturnsFalseForValues(new String[] {null}) // null
+                .assertFilterReturnsFalseForValues(new String[] { null }) // null
 
                 .assertFilterReturnsFalseForValues("4.5") // lt
                 .assertFilterReturnsFalseForValues("4,5") // lt
@@ -471,12 +476,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("4", "6")
                 .assertFilterReturnsTrueForValues("3.0", "5,5")
                 .assertFilterReturnsTrueForValues("-1.000,5", "26.6");
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("5.5", "1.6")
                 .assertFilterReturnsTrueForValues("24", "-1 000.5");
@@ -507,7 +512,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("-0.05") // gt
                 .assertFilterReturnsTrueForValues("1"); // gt
@@ -520,7 +525,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
                 .assertFilterReturnsFalseForValues("toto") // nan
                 .assertFilterReturnsFalseForValues("") // nan
-                .assertFilterReturnsFalseForValues(new String[] {null}); // null
+                .assertFilterReturnsFalseForValues(new String[] { null }); // null
     }
 
     protected abstract String givenFilter_0001_greater_than_minus0dot1();
@@ -534,7 +539,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("-1", "-0.05")
                 .assertFilterReturnsTrueForValues("-4", "6");
@@ -557,7 +562,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("6") // gt
                 .assertFilterReturnsTrueForValues("5") // eq
@@ -578,7 +583,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
                 .assertFilterReturnsFalseForValues("toto") // nan
                 .assertFilterReturnsFalseForValues("") // nan
-                .assertFilterReturnsFalseForValues(new String[] {null}) // null
+                .assertFilterReturnsFalseForValues(new String[] { null }) // null
 
                 .assertFilterReturnsFalseForValues("4.5") // lt
                 .assertFilterReturnsFalseForValues("4,5") // lt
@@ -597,7 +602,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("6", "3")
                 .assertFilterReturnsTrueForValues("5", "-2")
@@ -608,7 +613,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("5,5", "3")
                 .assertFilterReturnsTrueForValues("1.000,5", "3")
                 .assertFilterReturnsTrueForValues("1 000.5", "3");
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("2", "0 005")
                 .assertFilterReturnsTrueForValues("4", "5.5")
@@ -636,7 +641,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("4") // lt
 
@@ -651,7 +656,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsFalseForValues("5") // eq
                 .assertFilterReturnsFalseForValues("toto") // nan
                 .assertFilterReturnsFalseForValues("") // nan
-                .assertFilterReturnsFalseForValues(new String[] {null}) // null
+                .assertFilterReturnsFalseForValues(new String[] { null }) // null
 
                 .assertFilterReturnsFalseForValues("5.0") // eq
                 .assertFilterReturnsFalseForValues("5,00") // eq
@@ -675,12 +680,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("6", "3")
                 .assertFilterReturnsTrueForValues("7", ",5")
                 .assertFilterReturnsTrueForValues("7", ".5");
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("4.5", "5,5")
                 .assertFilterReturnsTrueForValues("4,5", "8,5")
@@ -712,7 +717,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("5") // eq
                 .assertFilterReturnsTrueForValues("4") // lt
@@ -733,7 +738,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
                 .assertFilterReturnsFalseForValues("toto") // nan
                 .assertFilterReturnsFalseForValues("") // nan
-                .assertFilterReturnsFalseForValues(new String[] {null}) // null
+                .assertFilterReturnsFalseForValues(new String[] { null }) // null
 
                 .assertFilterReturnsFalseForValues("5.5") // gt
                 .assertFilterReturnsFalseForValues("5,5") // gt
@@ -752,7 +757,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("7", ",5")
                 .assertFilterReturnsTrueForValues("42", "4,5")
@@ -760,14 +765,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsTrueForValues("7", ".5")
                 .assertFilterReturnsTrueForValues("7", "5.0")
                 .assertFilterReturnsTrueForValues("7", "05.0");
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("4.5", "12.3")
                 .assertFilterReturnsTrueForValues("5,00", "9.5")
                 .assertFilterReturnsTrueForValues("0 005", "9.5");
-        unlessInvalid("0001", "0002")
-                .withColumns("0001", "0002")
-                .assertFilterReturnsTrueForValues("3", ",7");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("3", ",7");
 
         whateverValidity()
                 .withColumns("0001", "0002")
@@ -791,7 +794,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("toto") // equals
                 .assertFilterReturnsTrueForValues("Toto") // different case
@@ -811,15 +814,16 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001", "0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("toto", "toto"); // equals
-        unlessInvalid("0001")
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("toto", "toto"); // equals
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("toto", "titi") // equals
                 .assertFilterReturnsTrueForValues("tatatoto", "titi"); // contains but different
         // different case
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("titi", "Toto");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("titi", "Toto");
 
-        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("tagada", "titi"); // not contains
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("tagada", "titi"); // not
+                                                                                                            // contains
     }
 
     protected abstract String givenFilter_one_column_contains_toto();
@@ -833,7 +837,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("To5-"); // same pattern
+        whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("To5-"); // same pattern
         whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsFalseForValues("toto") // different pattern
@@ -852,12 +856,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("To5-", "toto") // same pattern
                 .assertFilterReturnsTrueForValues("To5-", "To5--"); // different length
 
-        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("toto", "toto"); // different pattern
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("toto", "toto"); // different
+                                                                                                          // pattern
     }
 
     protected abstract String givenFilter_one_column_complies_Aa9dash();
@@ -871,7 +876,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues(""); // empty value
+        whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues(""); // empty value
 
         whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("tagada"); // not empty value
     }
@@ -888,11 +893,12 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         // then
         // empty values
-        unlessInvalid("0001", "0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "");
-        unlessInvalid("0001").withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "toto"); // empty value
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("titi", ""); // empty value
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "toto"); // empty value
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("titi", ""); // empty value
 
-        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("titi", "toto"); // not empty values
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("titi", "toto"); // not empty
+                                                                                                          // values
     }
 
     protected abstract String givenFilter_one_column_complies_empty();
@@ -945,11 +951,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001")
-                .withColumns("0001")
-                .assertFilterReturnsTrueForValues("whatever"); // value
-        whateverValidity().withColumns("0001")
-                .assertFilterReturnsFalseForValues(""); // empty
+        unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("whatever"); // value
+        whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues(""); // empty
     }
 
     protected abstract String givenFilter_0001_is_valid();
@@ -978,7 +981,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues(""); // empty
+        whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues(""); // empty
         whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("whatever"); // value
     }
 
@@ -993,14 +996,15 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001", "0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "");
-        unlessInvalid("0001").withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "whatever");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "whatever");
         whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("a", "b");
     }
 
     protected abstract String givenFilter_one_column_is_empty();
 
-    private void runTestBetweenPredicateOnNumberValue(String filtersDefinition, boolean isMinIncluded, boolean isMaxIncluded) throws Exception {
+    private void runTestBetweenPredicateOnNumberValue(String filtersDefinition, boolean isMinIncluded,
+            boolean isMaxIncluded) throws Exception {
         // given
         // see method arguments
 
@@ -1010,7 +1014,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         // then
         row.getRowMetadata().getById("0001").setType("integer");
 
-        unlessInvalid("0001")
+        whateverValidity()
                 .withColumns("0001")
                 .assertFilterReturnsTrueForValues("8") // in range
 
@@ -1025,7 +1029,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
                 .assertFilterReturnsFalseForValues("toto") // nan
                 .assertFilterReturnsFalseForValues("") // nan
-                .assertFilterReturnsFalseForValues(new String[]{null}) // null
+                .assertFilterReturnsFalseForValues(new String[] { null }) // null
 
                 .assertFilterReturnsFalseForValues("4.5") // lt
                 .assertFilterReturnsFalseForValues("4,5") // lt
@@ -1036,7 +1040,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsFalseForValues("1 000.5"); // gt
 
         if (isMinIncluded) {
-            unlessInvalid("0001")
+            whateverValidity()
                     .withColumns("0001")
                     .assertFilterReturnsTrueForValues("5") // min
                     .assertFilterReturnsTrueForValues("5.0") // min
@@ -1053,7 +1057,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                     .assertFilterReturnsFalseForValues("0 005"); // min
         }
         if (isMaxIncluded) {
-            unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("10"); // max
+            whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("10"); // max
         } else {
             whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("10"); // max
         }
@@ -1087,7 +1091,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
     protected abstract String givenFilter_0001_between_5_excl_and_10_incl();
 
-    private void runTestBetweenPredicateOnNumberValueOnOneColumn(String filtersDefinition, boolean isMinIncluded, boolean isMaxIncluded)  throws Exception {
+    private void runTestBetweenPredicateOnNumberValueOnOneColumn(String filtersDefinition, boolean isMinIncluded,
+            boolean isMaxIncluded) throws Exception {
         // given
         // see method arguments
 
@@ -1098,7 +1103,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         row.getRowMetadata().getById("0001").setType("integer");
         row.getRowMetadata().getById("0002").setType("integer");
 
-        unlessInvalid("0002")
+        whateverValidity()
                 .withColumns("0001", "0002")
                 .assertFilterReturnsTrueForValues("a", "5.5")
                 .assertFilterReturnsTrueForValues("a", "5,5")
@@ -1114,7 +1119,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                 .assertFilterReturnsFalseForValues("1.000,5", "1 000.5");
 
         if (isMinIncluded) {
-            unlessInvalid("0002")
+            whateverValidity()
                     .withColumns("0001", "0002")
                     .assertFilterReturnsTrueForValues("a", "5") // min
                     .assertFilterReturnsTrueForValues("a", "5.0") // min
@@ -1131,7 +1136,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
                     .assertFilterReturnsFalseForValues("a", "0 005"); // min
         }
         if (isMaxIncluded) {
-            unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("a", "10"); // max
+            whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("a", "10"); // max
         } else {
             whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("a", "10"); // max
         }
@@ -1140,7 +1145,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     @Test
     public void testBetweenPredicateOnNumberValueOnOneColumn_closed() throws Exception {
         // [min, max]
-        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_incl_and_10_incl(), true, true);
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_incl_and_10_incl(), true,
+                true);
     }
 
     protected abstract String givenFilter_one_column_between_5_incl_and_10_incl();
@@ -1148,7 +1154,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     @Test
     public void testBetweenPredicateOnNumberValueOnOneColumn_open() throws Exception {
         // ]min, max[
-        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_excl_and_10_excl(), false, false);
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_excl_and_10_excl(), false,
+                false);
     }
 
     protected abstract String givenFilter_one_column_between_5_excl_and_10_excl();
@@ -1156,7 +1163,8 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     @Test
     public void testBetweenPredicateOnNumberValueOnOneColumn_rightOpen() throws Exception {
         // [min, max[
-        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_incl_and_10_excl(), true, false);
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_incl_and_10_excl(), true,
+                false);
     }
 
     protected abstract String givenFilter_one_column_between_5_incl_and_10_excl();
@@ -1164,12 +1172,14 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     @Test
     public void testBetweenPredicateOnNumberValueOnOneColumn_leftOpen() throws Exception {
         // ]min, max]
-        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_excl_and_10_incl(), false, true);
+        runTestBetweenPredicateOnNumberValueOnOneColumn(givenFilter_one_column_between_5_excl_and_10_incl(), false,
+                true);
     }
 
     protected abstract String givenFilter_one_column_between_5_excl_and_10_incl();
 
-    private void runTestBetweenPredicateOnDateValue(String filtersDefinition, boolean isMinIncluded, boolean isMaxIncluded) throws Exception {
+    private void runTestBetweenPredicateOnDateValue(String filtersDefinition, boolean isMinIncluded,
+            boolean isMaxIncluded) throws Exception {
         // given
         // see method arguments too
         final ColumnMetadata column = row.getRowMetadata().getById("0001");
@@ -1186,20 +1196,21 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("1980-01-01"); // in range
+        whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("1980-01-01"); // in range
 
-        whateverValidity().withColumns("0001")
+        whateverValidity()
+                .withColumns("0001")
                 .assertFilterReturnsFalseForValues("a") // invalid number
                 .assertFilterReturnsFalseForValues("1960-01-01") // lt min
                 .assertFilterReturnsFalseForValues("2000-01-01"); // gt max
 
         if (isMinIncluded) {
-            unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("1970-01-01");
+            whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("1970-01-01");
         } else {
             whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("1970-01-01");
         }
         if (isMaxIncluded) {
-            unlessInvalid("0001").withColumns("0001").assertFilterReturnsTrueForValues("1990-01-01");
+            whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("1990-01-01");
         } else {
             whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("1990-01-01");
         }
@@ -1207,33 +1218,38 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
     @Test
     public void testBetweenPredicateOnDateValue_closed() throws Exception {
-        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl(), true, true);
+        runTestBetweenPredicateOnDateValue(
+                givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl(), true, true);
     }
 
     protected abstract String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_incl();
 
     @Test
     public void testBetweenPredicateOnDateValue_open() throws Exception {
-        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl(), false, false);
+        runTestBetweenPredicateOnDateValue(
+                givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl(), false, false);
     }
 
     protected abstract String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_excl();
 
     @Test
     public void testBetweenPredicateOnDateValue_rigthOpen() throws Exception {
-        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl(), true, false);
+        runTestBetweenPredicateOnDateValue(
+                givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl(), true, false);
     }
 
     protected abstract String givenFilter_0001_between_timestampFor19700101_incl_and_timestampFor19900101_excl();
 
     @Test
     public void testBetweenPredicateOnDateValue_leftOpen() throws Exception {
-        runTestBetweenPredicateOnDateValue(givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl(), false, true);
+        runTestBetweenPredicateOnDateValue(
+                givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl(), false, true);
     }
 
     protected abstract String givenFilter_0001_between_timestampFor19700101_excl_and_timestampFor19900101_incl();
 
-    private void runTestBetweenPredicateOnDateValueOnOneColumn(String filtersDefinition, boolean isMinIncluded, boolean isMaxExcluded) throws Exception {
+    private void runTestBetweenPredicateOnDateValueOnOneColumn(String filtersDefinition, boolean isMinIncluded,
+            boolean isMaxExcluded) throws Exception {
         // given
         // see method args too
         final DateParser dateParser = Mockito.mock(DateParser.class);
@@ -1260,44 +1276,50 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("a", "1980-01-01");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("a", "1980-01-01");
         whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("a", "1960-01-01");
         if (isMinIncluded) {
-            unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("1960-01-01", "1970-01-01");
+            whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("1960-01-01", "1970-01-01");
         } else {
-            whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("1960-01-01", "1970-01-01");
+            whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("1960-01-01",
+                    "1970-01-01");
         }
         if (isMaxExcluded) {
-            unlessInvalid("0001").withColumns("0001", "0002").assertFilterReturnsTrueForValues("1990-01-01", "2000-01-01");
+            whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("1990-01-01", "2000-01-01");
         } else {
-            whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("1990-01-01", "2000-01-01");
+            whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("1990-01-01",
+                    "2000-01-01");
         }
     }
 
     @Test
     public void testBetweenPredicateOnDateValueOnOneColumn_closed() throws Exception {
-        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl(), true, true);
+        runTestBetweenPredicateOnDateValueOnOneColumn(
+                givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl(), true, true);
     }
 
     protected abstract String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_incl();
 
     @Test
     public void testBetweenPredicateOnDateValueOnOneColumn_open() throws Exception {
-        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl(), false, false);
+        runTestBetweenPredicateOnDateValueOnOneColumn(
+                givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl(), false, false);
     }
 
     protected abstract String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_excl();
 
     @Test
     public void testBetweenPredicateOnDateValueOnOneColumn_rightOpen() throws Exception {
-        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl(), true, false);
+        runTestBetweenPredicateOnDateValueOnOneColumn(
+                givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl(), true, false);
     }
 
     protected abstract String givenFilter_one_column_between_timestampFor19700101_incl_and_timestampFor19900101_excl();
 
     @Test
     public void testBetweenPredicateOnDateValueOnOneColumn_leftOpen() throws Exception {
-        runTestBetweenPredicateOnDateValueOnOneColumn(givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl(), false, true);
+        runTestBetweenPredicateOnDateValueOnOneColumn(
+                givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl(), false, true);
     }
 
     protected abstract String givenFilter_one_column_between_timestampFor19700101_excl_and_timestampFor19900101_incl();
@@ -1312,7 +1334,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         // then
         // empty -- eq value
-        unlessInvalid("0001", "0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "toto");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("", "toto");
 
         // not empty -- eq value
         whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("tata", "toto");
@@ -1333,13 +1355,13 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
 
         // then
         // contains -- eq value
-        unlessInvalid("0001", "0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("dataprep", "12,30");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("dataprep", "12,30");
 
         // does not contain -- eq value
-        unlessInvalid("0002").withColumns("0001", "0002").assertFilterReturnsTrueForValues("toto", "012.3");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("toto", "012.3");
 
         // contains -- neq value
-        unlessInvalid("0001").withColumns("0001", "0002").assertFilterReturnsTrueForValues("great data", "12");
+        whateverValidity().withColumns("0001", "0002").assertFilterReturnsTrueForValues("great data", "12");
 
         // does not contain -- neq value
         whateverValidity().withColumns("0001", "0002").assertFilterReturnsFalseForValues("tata", "5");
@@ -1356,7 +1378,7 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        unlessInvalid("0001").withColumns("0001").assertFilterReturnsFalseForValues("great wording"); // contains
+        whateverValidity().withColumns("0001").assertFilterReturnsFalseForValues("great wording"); // contains
         whateverValidity().withColumns("0001").assertFilterReturnsTrueForValues("another sentence"); // does not contain
     }
 

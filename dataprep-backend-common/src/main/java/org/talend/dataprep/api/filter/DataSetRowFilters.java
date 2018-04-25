@@ -63,18 +63,18 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createEqualsPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> StringUtils.equals(s, value) || isBigDecimal(s) //
                         && isBigDecimal(value) //
                         && toBigDecimal(s).compareTo(toBigDecimal(value)) == 0);
     }
 
-    private static Predicate<Map.Entry<String, Object>> keepValidConcernedColumns(String columnId, DataSetRow row) {
+    private static Predicate<Map.Entry<String, Object>> keepConcernedColumns(String columnId) {
         if ("*".equals(columnId)) {
-            return e -> !row.isInvalid(e.getKey()) && !TDP_INVALID.equals(e.getKey());
+            return e -> !TDP_INVALID.equals(e.getKey());
         } else {
-            return e -> StringUtils.equals(columnId, e.getKey()) && !row.isInvalid(e.getKey());
+            return e -> StringUtils.equals(columnId, e.getKey());
         }
     }
 
@@ -87,7 +87,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createGreaterThanPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -103,7 +103,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createLowerThanPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -119,7 +119,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createGreaterOrEqualsPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -135,7 +135,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createLowerOrEqualsPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -154,7 +154,7 @@ class DataSetRowFilters {
                 .values()
                 .entrySet()
                 .stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(values::contains);
     }
@@ -168,7 +168,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createContainsPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> StringUtils.containsIgnoreCase(s, value));
     }
@@ -184,7 +184,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createCompliesPredicate(final String columnId, final String value) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> complies(s, value));
     }
@@ -256,14 +256,6 @@ class DataSetRowFilters {
                 .anyMatch(colId -> r.isInvalid(colId));
     }
 
-    private static Predicate<Map.Entry<String, Object>> keepConcernedColumns(String columnId) {
-        if ("*".equals(columnId)) {
-            return e -> true;
-        } else {
-            return e -> StringUtils.equals(columnId, e.getKey());
-        }
-    }
-
     /**
      * Create a predicate that checks if the var is valid (not empty and not invalid).
      *
@@ -280,6 +272,14 @@ class DataSetRowFilters {
                 .anyMatch(value -> StringUtils.isNotEmpty(value));
     }
 
+    private static Predicate<Map.Entry<String, Object>> keepValidConcernedColumns(String columnId, DataSetRow row) {
+        if ("*".equals(columnId)) {
+            return e -> !row.isInvalid(e.getKey()) && !TDP_INVALID.equals(e.getKey());
+        } else {
+            return e -> StringUtils.equals(columnId, e.getKey()) && !row.isInvalid(e.getKey());
+        }
+    }
+
     /**
      * Create a predicate that checks if the var is empty.
      *
@@ -288,7 +288,7 @@ class DataSetRowFilters {
      */
     static Predicate<DataSetRow> createEmptyPredicate(final String columnId) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(StringUtils::isEmpty);
     }
@@ -307,7 +307,7 @@ class DataSetRowFilters {
     static Predicate<DataSetRow> createRangePredicate(final String columnId, final String min, final String max,
                                                       boolean lowerOpen, boolean upperOpen, final RowMetadata rowMetadata) {
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .anyMatch(e -> {
                     final String columnType = rowMetadata.getById(e.getKey()).getType();
                     Type parsedType = Type.get(columnType);
@@ -435,7 +435,7 @@ class DataSetRowFilters {
     static Predicate<DataSetRow> createMatchesPredicate(final String columnId, final String regex) {
         final Pattern pattern = Pattern.compile(regex);
         return r -> r.values().entrySet().stream() //
-                .filter(keepValidConcernedColumns(columnId, r)) //
+                .filter(keepConcernedColumns(columnId)) //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> pattern.matcher(s).matches());
     }

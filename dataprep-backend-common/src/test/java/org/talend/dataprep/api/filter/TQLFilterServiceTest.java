@@ -30,10 +30,10 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         filter = service.build(tqlFilter, rowMetadata);
 
         // then
-        row.set("0001", "skermabon@dataprep.com");
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "skermabon@talend.com");
-        assertThatFilterExecutionReturnsFalse();
+        whateverValidity()
+                .withColumns("0001")
+                .assertFilterReturnsTrueForValues("skermabon@dataprep.com")
+                .assertFilterReturnsFalseForValues("skermabon@talend.com");
     }
 
     @Test
@@ -45,9 +45,10 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         filter = service.build(tqlFilter, rowMetadata);
 
         // then
-        row.set("0001", "skermabon@dataprep");
-        row.set("0002", "skermabon@dataprep.com");
-        assertThatFilterExecutionReturnsTrue();
+        whateverValidity()
+                .withColumns("0001", "0002")
+                .assertFilterReturnsTrueForValues("skermabon@dataprep", "skermabon@dataprep.com")
+                .assertFilterReturnsFalseForValues("some_value", "whatever");
     }
 
     @Test
@@ -59,10 +60,10 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         filter = service.build(tqlFilter, rowMetadata);
 
         // then
-        row.set("0001", "Vincent");
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "Stéphane");
-        assertThatFilterExecutionReturnsFalse();
+        whateverValidity()
+                .withColumns("0001")
+                .assertFilterReturnsTrueForValues("Vincent")
+                .assertFilterReturnsFalseForValues("Stéphane");
     }
 
     @Test
@@ -74,15 +75,11 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
         filter = service.build(tqlFilter, rowMetadata);
 
         // then
-        row.set("0001", "Vincent");
-        row.set("0002", "François");
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "Vincent");
-        row.set("0002", "Stéphane");
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "Nicolas");
-        row.set("0002", "Stéphane");
-        assertThatFilterExecutionReturnsFalse();
+        whateverValidity()
+                .withColumns("0001", "0002")
+                .assertFilterReturnsTrueForValues("Vincent", "François")
+                .assertFilterReturnsTrueForValues("Vincent", "Stéphane")
+                .assertFilterReturnsFalseForValues("Nicolas", "Stéphane");
     }
 
     @Override

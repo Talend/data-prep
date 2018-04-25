@@ -16,45 +16,47 @@ import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
 
     @Test
     public void should_create_TRUE_predicate_on_empty_filter() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "";
 
-        //when
+        // when
         filter = service.build(filtersDefinition, rowMetadata);
 
-        //then
-        assertThatFilterExecutionReturnsTrue();
+        // then
+        assertThat(filter.test(row)).isTrue();
     }
 
     @Test(expected = TalendRuntimeException.class)
     public void should_throw_exception_on_empty_object_definition() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "{}";
 
-        //when
+        // when
         service.build(filtersDefinition, rowMetadata);
 
-        //then
+        // then
     }
 
     @Test(expected = TalendRuntimeException.class)
     public void should_throw_exception_on_invalid_definition() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "}";
 
-        //when
+        // when
         service.build(filtersDefinition, rowMetadata);
 
-        //then
+        // then
     }
 
     @Test(expected = TalendRuntimeException.class)
     public void should_create_unknown_filter() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "{" + //
                 "   \"bouh\": {" + //
                 "       \"field\": \"0001\"," + //
@@ -62,41 +64,37 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
                 "   }" + //
                 "}";
 
-        //when
+        // when
         service.build(filtersDefinition, rowMetadata);
 
-        //then
+        // then
     }
 
     @Test
     public void should_create_CONTAINS_predicate_on_all() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "{" + //
                 "   \"contains\": {" + //
                 "       \"value\": \"toto\"" + //
                 "   }" + //
                 "}";
 
-        //when
+        // when
         filter = service.build(filtersDefinition, rowMetadata);
 
-        //then
-        row.set("0001", "toto"); //equals
-        row.set("0002", "toto"); //equals
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "Toto"); //different case
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "tatatoto"); //contains but different
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0001", "tagada"); // not contains
-        assertThatFilterExecutionReturnsTrue();
-        row.set("0002", "tagada"); // not contains
-        assertThatFilterExecutionReturnsFalse();
+        // then
+        whateverValidity()
+                .withColumns("0001", "0002")
+                .assertFilterReturnsTrueForValues("toto", "toto") // both equals
+                .assertFilterReturnsTrueForValues("Toto", "toto") // different case - equals
+                .assertFilterReturnsTrueForValues("tatatoto", "toto") // contains but different - equals
+                .assertFilterReturnsTrueForValues("tagada", "toto") // not contains - equals
+                .assertFilterReturnsFalseForValues("tagada", "tagada"); // not contains - not contains
     }
 
     @Test
     public void should_create_number_RANGE_predicate_on_all() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "{" + //
                 "   \"range\": {" + //
                 "       \"start\": \"5\"," + //
@@ -105,21 +103,19 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
                 "   }" + //
                 "}";
 
-        //when
+        // when
         filter = service.build(filtersDefinition, rowMetadata);
 
-        //then
-        row.set("0001", "4");
-        row.set("0002", "3");
-        assertThatFilterExecutionReturnsFalse();
-
-        row.set("0001", "6"); //lt min
-        assertThatFilterExecutionReturnsTrue();
+        // then
+        whateverValidity()
+                .withColumns("0001", "0002")
+                .assertFilterReturnsFalseForValues("4", "3")
+                .assertFilterReturnsTrueForValues("6", "3"); // lt min
     }
 
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid1() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "{" + //
                 "   \"not\": [" + //
                 "       {" + //
@@ -136,15 +132,15 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
                 "   ]" + //
                 "}";
 
-        //when
+        // when
         service.build(filtersDefinition, rowMetadata);
 
-        //then
+        // then
     }
 
     @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid2() throws Exception {
-        //given
+        // given
         final String filtersDefinition = "{" + //
                 "   \"not\":" + //
                 "       {" + //
@@ -738,7 +734,7 @@ public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
         filter = service.build(filtersDefinition, rowMetadata);
 
         // then
-        assertThatFilterExecutionReturnsTrue();
+        assertThat(filter.test(row)).isTrue();
     }
 
     @Test

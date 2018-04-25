@@ -95,9 +95,10 @@ export default function FilterUtilsService($filter) {
 	 * @param {Date} maxDate The range ending date
 	 * @description Returns the range label
 	 */
-	function getDateLabel(pace, minDate, maxDate) {
+	function getDateLabel(pace, minDate, maxDate, excludeMax) {
 		const dateFilter = $filter('date');
 		const format = getDateFormat(pace, minDate);
+		const closing = (excludeMax || excludeMax == null) ? '[' : ']';
 
 		switch (pace) {
 		case 'YEAR':
@@ -108,7 +109,7 @@ export default function FilterUtilsService($filter) {
 		case 'DAY':
 			return dateFilter(minDate, format);
 		default:
-			return '[' + dateFilter(minDate, format) + ', ' + dateFilter(maxDate, format) + '[';
+			return '[' + dateFilter(minDate, format) + ', ' + dateFilter(maxDate, format) + closing;
 		}
 	}
 }

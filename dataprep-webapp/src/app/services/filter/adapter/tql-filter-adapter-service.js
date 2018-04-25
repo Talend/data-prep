@@ -241,13 +241,19 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			const minDate = new Date(min);
 			offset = minDate.getTimezoneOffset() * 60 * 1000;
 		}
+		const excludeMax = ctx.children[6].getText() === '[';
+
 		const label = isDateRange ?
 			FilterUtilsService.getDateLabel(
 				filteredColumn.statistics.histogram.pace,
 				new Date(min),
-				new Date(max)
-			) : FilterUtilsService.getRangeLabelFor({ min, max }, isDateRange);
-
+				new Date(max),
+				excludeMax
+			) : FilterUtilsService.getRangeLabelFor({
+				min,
+				max,
+				excludeMax,
+			}, isDateRange);
 		const args = {
 			intervals: [{
 				label,

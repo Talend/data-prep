@@ -89,7 +89,7 @@ public class UpgradeService {
                     appliedTasks, availableTasks);
             return true;
         } else if (appliedTasks == availableTasks) {
-            LOG.info("No need to upgrade, all tasks already done (appliedTasks: {} < availableTasks: {}).",
+            LOG.info("No need to upgrade, all tasks already done (appliedTasks: {} == availableTasks: {}).",
                     appliedTasks, availableTasks);
             return false;
         } else { // appliedTasks < availableTasks

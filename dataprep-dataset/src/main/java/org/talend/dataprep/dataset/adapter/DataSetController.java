@@ -15,13 +15,11 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.*;
+import org.talend.dataprep.util.avro.AvroUtils;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/datasets")
@@ -45,6 +43,20 @@ public class DataSetController {
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
         return datasetClient.findOne(datasetId);
+    }
+
+    @GetMapping(value = "/{datasetId}/schema", produces = AvroUtils.AVRO_JSON_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
+    public String getDatasetSchema(@PathVariable String datasetId,
+            @RequestParam(required = false) boolean withUiSpec,
+            @RequestParam(required = false) boolean advanced) {
+        return datasetClient.findSchema(datasetId);
+    }
+
+    @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
+    public String getDatasetContent(@PathVariable String datasetId,
+            @RequestParam(required = false) boolean withUiSpec,
+            @RequestParam(required = false) boolean advanced) {
+        return datasetClient.findBinaryAvroData(datasetId, new PageRequest(0, Integer.MAX_VALUE));
     }
 
     @GetMapping

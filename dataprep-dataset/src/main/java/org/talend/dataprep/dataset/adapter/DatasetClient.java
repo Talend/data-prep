@@ -15,20 +15,18 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.util.List;
-
 import org.springframework.data.domain.PageRequest;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
 
 // mimics spring Crudrepository
 public interface DatasetClient {
 
     Dataset findOne(String datasetId);
 
-    ObjectNode findSchema(String datasetId);
+    String findSchema(String datasetId);
 
-    String findData(String datasetId, PageRequest pageRequest);
+    String findBinaryAvroData(String datasetId, PageRequest pageRequest);
 
     List<Dataset> findAll();
 

@@ -15,27 +15,32 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.springframework.http.HttpMethod.GET;
 
 public class ProxyDatasetClient implements DatasetClient {
 
     private final RestTemplate restTemplate;
+
+    private static final MediaType AVRO_SCHEMA_MEDIA_TYPE = MediaType.valueOf(AvroUtils.AVRO_JSON_MIME_TYPES_UNOFFICIAL_VALID_VALUE);
+
+    private static final MediaType AVRO_MEDIA_TYPE = MediaType.valueOf(AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE);
 
     public ProxyDatasetClient(RestTemplateBuilder builder, URL url, Security security) {
         this.restTemplate = builder.rootUri(url.toString())
@@ -49,14 +54,26 @@ public class ProxyDatasetClient implements DatasetClient {
     }
 
     @Override
-    public ObjectNode findSchema(String datasetId) {
-        return restTemplate.getForObject("/dataset-sample/" + datasetId, EncodedSample.class).getSchema();
+    public String findSchema(String datasetId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(singletonList(AVRO_SCHEMA_MEDIA_TYPE));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response =
+                restTemplate.exchange("/datasets/{datasetId}/schema", GET, entity, String.class, datasetId);
+        return response.getStatusCode().is2xxSuccessful() ? response.getBody() : null;
     }
 
     @Override
-    public String findData(String datasetId, PageRequest pageRequest) {
-        return restTemplate.getForObject("/dataset-sample/{datasetId}?offset={offset}&limit={limit}", String.class,
-                datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
+    public String findBinaryAvroData(String datasetId, PageRequest pageRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(singletonList(AVRO_MEDIA_TYPE));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response =
+                restTemplate.exchange("/datasets/{datasetId}/content?offset={offset}&limit={limit}", GET, entity,
+                        String.class, datasetId, pageRequest.getOffset(), pageRequest.getPageSize());
+        return response.getStatusCode().is2xxSuccessful() ? response.getBody() : null;
     }
 
     @Override
@@ -93,7 +110,7 @@ public class ProxyDatasetClient implements DatasetClient {
 
         private Security security;
 
-        public SecurityAuthorizationInterceptor(Security security) {
+        private SecurityAuthorizationInterceptor(Security security) {
             Validate.notNull(security);
             this.security = security;
         }

@@ -12,30 +12,10 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
-import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.*;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
-
-import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.core.JsonParser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -61,20 +41,24 @@ import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
-import org.talend.dataprep.async.*;
-import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
+import org.talend.dataprep.async.AsyncExecutionId;
+import org.talend.dataprep.async.AsyncOperation;
+import org.talend.dataprep.async.AsyncParameter;
 import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
+import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
 import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
 import org.talend.dataprep.async.generator.PrepMetadataExecutionIdGenerator;
 import org.talend.dataprep.async.result.PrepMetadataGetContentUrlGenerator;
 import org.talend.dataprep.async.result.PreparationGetContentUrlGenerator;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -100,8 +84,6 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.api.transformer.configuration.PreviewConfiguration;
 import org.talend.dataprep.transformation.api.transformer.suggestion.Suggestion;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngine;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 import org.talend.dataprep.transformation.service.export.PreparationExportStrategy;
@@ -110,11 +92,28 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
-import com.fasterxml.jackson.core.JsonParser;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
+import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.*;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 @RestController
 @Api(value = "transformations", basePath = "/transform", description = "Transformations on data")
@@ -190,6 +189,9 @@ public class TransformationService extends BaseTransformationService {
 
     @Autowired
     private ExportParametersUtil exportParametersUtil;
+
+    @Autowired
+    private ApiDatasetClient datasetClient;
 
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters",
@@ -271,8 +273,7 @@ public class TransformationService extends BaseTransformationService {
         } else {
             LOG.debug("No step in preparation '{}', falls back to get dataset metadata (id: {})", preparationId,
                     preparation.getDataSetId());
-            DataSetGetMetadata getMetadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId());
-            return getMetadata.execute();
+            return datasetClient.getDataSetMetadata(preparation.getDataSetId());
         }
         return null;
     }
@@ -481,19 +482,14 @@ public class TransformationService extends BaseTransformationService {
 
     private void executeDiffOnDataset(final PreviewParameters previewParameters, final OutputStream output) {
 
-        final DataSetGet dataSetGet = context.getBean(DataSetGet.class, previewParameters.getDataSetId(), false, true);
-
         boolean identityReleased = false;
         securityProxy.asTechnicalUser();
 
         // because of dataset records streaming, the dataset content must be within an auto closeable block
-        try (final InputStream dataSetContent = dataSetGet.execute(); //
-             final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(dataSetContent, UTF_8))) {
-
+        try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
             securityProxy.releaseIdentity();
             identityReleased = true;
 
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             executePreview( //
                     previewParameters.getNewActions(), //
                     previewParameters.getBaseActions(), //
@@ -501,9 +497,6 @@ public class TransformationService extends BaseTransformationService {
                     dataSet, //
                     output //
             );
-
-        } catch (IOException e) {
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_PERFORM_PREVIEW, e);
         } finally {
             // make sure the technical identity is released
             if (!identityReleased) {
@@ -572,10 +565,9 @@ public class TransformationService extends BaseTransformationService {
      * Compare the results of 2 sets of actions, and return the diff metadata Ex : the created columns ids
      */
     private StepDiff getCreatedColumns(final PreviewParameters previewParameters) {
-        final DataSetGetMetadata dataSetGetMetadata = context.getBean(DataSetGetMetadata.class, previewParameters.getDataSetId());
-        DataSetMetadata dataSetMetadata = dataSetGetMetadata.execute();
+        final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(previewParameters.getDataSetId());
         StepDiff stepDiff;
-        if (dataSetGetMetadata.isSuccessfulExecution() && dataSetMetadata != null) {
+        if (dataSetMetadata != null) {
             RowMetadata metadataBase = dataSetMetadata.getRowMetadata();
             RowMetadata metadataAfter = metadataBase.clone();
 
@@ -795,7 +787,7 @@ public class TransformationService extends BaseTransformationService {
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
         final Preparation preparation = getPreparation(preparationId);
-        final DataSetMetadata metadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId()).execute();
+        final DataSetMetadata metadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
         return getPreparationExportTypesForDataSet(metadata.getId());
     }
 
@@ -806,7 +798,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Get the available format types for the preparation")
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForDataSet(@PathVariable String dataSetId) {
-        final DataSetMetadata metadata = context.getBean(DataSetGetMetadata.class, dataSetId).execute();
+        final DataSetMetadata metadata = datasetClient.getDataSetMetadata(dataSetId);
 
         return formatRegistrationService
                 .getExternalFormats() //

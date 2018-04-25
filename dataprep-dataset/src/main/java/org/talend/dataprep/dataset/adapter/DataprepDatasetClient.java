@@ -15,12 +15,8 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.io.EncoderFactory;
@@ -32,13 +28,15 @@ import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
+import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Throwables;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -71,19 +69,14 @@ public class DataprepDatasetClient implements DatasetClient {
     }
 
     @Override
-    public ObjectNode findSchema(String datasetId) {
+    public String findSchema(String datasetId) {
         DataSet dataSet = dataSetService.getMetadata(datasetId);
-        Schema schema = RowMetadataUtils.toSchema(dataSet.getMetadata().getRowMetadata());
-
-        try {
-            return (ObjectNode) objectMapper.readTree(schema.toString());
-        } catch (IOException e) {
-            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
+        Schema schema = AvroUtils.toSchema(dataSet.getMetadata().getRowMetadata());
+        return schema.toString();
     }
 
     @Override
-    public String findData(String datasetId, PageRequest pageRequest) {
+    public String findBinaryAvroData(String datasetId, PageRequest pageRequest) {
         Callable<DataSet> dataSetCallable = dataSetService.get(false, true, null, datasetId);
         DataSet dataSet;
         try {
@@ -93,7 +86,7 @@ public class DataprepDatasetClient implements DatasetClient {
             throw new RuntimeException("unexpected", e);
         }
 
-        Schema schema = RowMetadataUtils.toSchema(dataSet.getMetadata().getRowMetadata());
+        Schema schema = AvroUtils.toSchema(dataSet.getMetadata().getRowMetadata());
 
         //Json.ObjectWriter objectWriter = new Json.ObjectWriter();
         GenericDatumWriter<Object> writer = new GenericDatumWriter<>(schema);
@@ -101,12 +94,10 @@ public class DataprepDatasetClient implements DatasetClient {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             JsonEncoder jsonEncoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
-
-            dataSet.getRecords().map(RowMetadataUtils::toRecord)
-                    .map(RowMetadataUtils.Record::getIndexedRecord)
-                    .forEach(indexedRecord -> {
+            dataSet.getRecords()
+                    .forEach(record -> {
                 try {
-                    writer.write(indexedRecord, jsonEncoder);
+                    writer.write(record.values(), jsonEncoder);
                 } catch (IOException e) {
                     throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
                 }

@@ -17,8 +17,6 @@ package org.talend.dataprep.dataset.adapter;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 /**
  * Representation of a Talend dataset entity.
  * See <a href="https://github.com/Talend/dataset/blob/master/common/src/main/scala/org/talend/dataflow/common/model/Dataset.scala#L63">scala implementation in dataset</a>.
@@ -51,9 +49,7 @@ public class Dataset {
     private String schemaId;
 
     /** Raw TComp JSON properties. */
-    private ObjectNode properties;
-
-    private EncodedSample sample;
+    private String properties;
 
     /** ID of owner. */
     private String owner;
@@ -151,20 +147,12 @@ public class Dataset {
         this.schemaId = schemaId;
     }
 
-    public ObjectNode getProperties() {
+    public String getProperties() {
         return properties;
     }
 
-    public void setProperties(ObjectNode properties) {
+    public void setProperties(String properties) {
         this.properties = properties;
-    }
-
-    public EncodedSample getSample() {
-        return sample;
-    }
-
-    public void setSample(EncodedSample sample) {
-        this.sample = sample;
     }
 
     public String getOwner() {

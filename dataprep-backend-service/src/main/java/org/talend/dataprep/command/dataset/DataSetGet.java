@@ -19,23 +19,22 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.dataset.adapter.EncodedSample;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.util.avro.AvroReader;
+import org.talend.dataprep.util.avro.AvroUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
@@ -44,10 +43,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -80,6 +77,9 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
     @Autowired
     private DataSetContentLimit limit;
+
+    @Autowired
+    private ApiDatasetClient datasetClient;
 
     public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
         this(dataSetId, fullContent, includeInternalContent, EMPTY);
@@ -120,29 +120,14 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
     private InputStream readResult(HttpRequestBase httpRequestBase, HttpResponse httpResponse) {
         try {
-            InputStream content = httpResponse.getEntity().getContent();
-            EncodedSample encodedSample = objectMapper.readValue(content, EncodedSample.class);
+            // Totally short-circuit the hystrix command but for the POC sake
+            EntityUtils.consumeQuietly(httpResponse.getEntity());
+            Schema schema = datasetClient.getDataSetSchema(dataSetId);
+            Stream<GenericRecord> dataSetContent = datasetClient.getDataSetContent(dataSetId);
 
-            // parse input data
-            Schema schema = new Schema.Parser().parse(encodedSample.getSchema().toString());
-            StringBuilder avroRecordsString = new StringBuilder();
-            encodedSample.getData().forEach(jn -> avroRecordsString.append(jn.toString()));
-
-            AvroReader avroReader =
-                    new AvroReader(new ByteArrayInputStream(avroRecordsString.toString().getBytes(UTF_8)), schema);
-
-            RowMetadata rowMetadata = RowMetadataUtils.toRowMetadata(schema);
-            List<DataSetRow> rows = new ArrayList<>();
-            long rowId = 0;
-            while (avroReader.hasNext()) {
-                GenericRecord nextRecord = avroReader.next();
-                DataSetRow dataSetRow = new DataSetRow(rowMetadata);
-                for (ColumnMetadata cm : rowMetadata.getColumns()) {
-                    dataSetRow.set(cm.getId(), toString(nextRecord, cm));
-                }
-                dataSetRow.setTdpId(rowId++);
-                rows.add(dataSetRow);
-            }
+            RowMetadata rowMetadata = AvroUtils.toRowMetadata(schema);
+            Function<GenericRecord, DataSetRow> converter = AvroUtils.toDataSetRowConverter(rowMetadata);
+            Stream<DataSetRow> rows = dataSetContent.map(converter);
 
             // build dataset object
             DataSet dataSet = new DataSet();
@@ -150,7 +135,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
             dataSetMetadata.setId(dataSetId);
             dataSetMetadata.setRowMetadata(rowMetadata);
             dataSet.setMetadata(dataSetMetadata);
-            dataSet.setRecords(rows.stream());
+            dataSet.setRecords(rows);
 
             // Write all in a buffer
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
@@ -162,50 +147,4 @@ public class DataSetGet extends GenericCommand<InputStream> {
         }
     }
 
-    /**
-     * From Avro value to dataprep string.
-     *
-     * @param currentRecord avro record
-     * @param column dataprep column
-     * @return row value
-     */
-    private static String toString(GenericRecord currentRecord, ColumnMetadata column) {
-        final Schema fieldSchema = currentRecord.getSchema().getField(column.getName()).schema();
-        Object recordFieldValue = currentRecord.get(column.getName());
-        return convertAvroFieldToString(fieldSchema, recordFieldValue);
-    }
-
-    private static String convertAvroFieldToString(Schema fieldSchema, Object recordFieldValue) {
-        final String result;
-        switch (fieldSchema.getType()) {
-        case BYTES:
-            result = new String(((ByteBuffer) recordFieldValue).array());
-            break;
-        case UNION:
-            String unionValue = EMPTY;
-            Iterator<Schema> iterator = fieldSchema.getTypes().iterator();
-            while (EMPTY.equals(unionValue) && iterator.hasNext()) {
-                Schema schema = iterator.next();
-                unionValue = convertAvroFieldToString(schema, recordFieldValue);
-            }
-            result = unionValue;
-            break;
-        case STRING:
-        case INT:
-        case LONG:
-        case FLOAT:
-        case DOUBLE:
-        case BOOLEAN:
-        case ENUM:
-            result = String.valueOf(recordFieldValue);
-            break;
-        case NULL:
-            result = EMPTY;
-            break;
-        default: // RECORD, ARRAY, MAP, FIXED
-            result = "Data Preparation cannot interpret this value";
-            break;
-        }
-        return result;
-    }
 }

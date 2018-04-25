@@ -15,8 +15,8 @@ package org.talend.dataprep.util.avro;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
-import org.apache.avro.io.JsonDecoder;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
@@ -33,7 +33,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
- * TCOMP serializer.
+ * Reader in the style of java.io stream readers. Read an avro stream of data using apache reference library.
  */
 public class AvroReader implements Closeable, Iterator<GenericRecord> {
 
@@ -43,18 +43,24 @@ public class AvroReader implements Closeable, Iterator<GenericRecord> {
 
     private final GenericDatumReader<GenericRecord> reader;
 
-    private final JsonDecoder decoder;
+    private final Decoder decoder;
 
     private boolean closed = false;
 
     private GenericRecord buffer;
 
     public AvroReader(InputStream rawContent, Schema schema) throws IOException {
+        this(rawContent, schema, false);
+    }
+
+    public AvroReader(InputStream rawContent, Schema schema, boolean binary) throws IOException {
         this.rawContent = rawContent;
 
         // get the avro schema from parameters
         reader = new GenericDatumReader<>(schema);
-        decoder = DecoderFactory.get().jsonDecoder(schema, rawContent);
+        DecoderFactory decoderFactory = DecoderFactory.get();
+        decoder = binary ? decoderFactory.binaryDecoder(rawContent, null)
+                : decoderFactory.jsonDecoder(schema, rawContent);
     }
 
     @Override
@@ -118,7 +124,7 @@ public class AvroReader implements Closeable, Iterator<GenericRecord> {
      * @return the next record or null if there's none.
      * @throws IOException that can also happen.
      */
-    private static GenericRecord readNext(GenericDatumReader<GenericRecord> reader, JsonDecoder decoder) throws IOException {
+    private static GenericRecord readNext(GenericDatumReader<GenericRecord> reader, Decoder decoder) throws IOException {
         try {
             return reader.read(null, decoder);
         } catch (EOFException eof) {

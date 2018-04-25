@@ -16,11 +16,7 @@
 package org.talend.dataprep.dataset.adapter;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -38,7 +34,7 @@ public class DatasetSampleController {
     public String getDatasetSample(@PathVariable String datasetId,
             @RequestParam(required = false, defaultValue = "0") int offset,
             @RequestParam(required = false, defaultValue = "1") int limit) {
-        return datasetClient.findData(datasetId, new PageRequest(offset, limit));
+        return datasetClient.findBinaryAvroData(datasetId, new PageRequest(offset, limit));
     }
 
 }

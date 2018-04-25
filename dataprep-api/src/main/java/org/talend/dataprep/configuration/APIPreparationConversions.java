@@ -12,10 +12,6 @@
 
 package org.talend.dataprep.configuration;
 
-import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
-
-import java.util.LinkedList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,10 +22,14 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.security.SecurityProxy;
+
+import java.util.LinkedList;
+
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 @Component
 public class APIPreparationConversions extends BeanConversionServiceWrapper {
@@ -56,12 +56,11 @@ public class APIPreparationConversions extends BeanConversionServiceWrapper {
         if (preparationMessage.getDataSetId() == null) {
             return enrichedPreparation;
         } else {
+            ApiDatasetClient datasetClient = applicationContext.getBean(ApiDatasetClient.class);
             // get the dataset metadata
             try {
                 securityProxy.asTechnicalUser(); // because dataset are not shared
-                final DataSetGetMetadata bean = applicationContext.getBean(DataSetGetMetadata.class,
-                        preparationMessage.getDataSetId());
-                final DataSetMetadata dataSetMetadata = bean.execute();
+                final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparationMessage.getDataSetId());
                 enrichedPreparation.setSummary(new EnrichedPreparation.DataSetMetadataSummary(dataSetMetadata));
             } catch (Exception e) {
                 LOGGER.debug("error reading dataset metadata {} : {}", enrichedPreparation.getId(), e);

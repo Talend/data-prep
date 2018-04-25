@@ -17,15 +17,11 @@ package org.talend.dataprep.dataset.adapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.JsonDecoder;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,6 +33,8 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
 
 import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +71,8 @@ public class DataprepDatasetClientTest {
 
         when(dataSetService.getMetadata(anyString())).thenReturn(dataSet);
 
-        ObjectNode jsonSchema = dataprepDatasetClient.findSchema("toto");
+        String jsonSchemaString = dataprepDatasetClient.findSchema("toto");
+        JsonNode jsonSchema = objectMapper.readTree(jsonSchemaString);
 
         assertEquals("org.talend.dataprep", jsonSchema.get("namespace").asText());
         JsonNode fields = jsonSchema.get("fields");

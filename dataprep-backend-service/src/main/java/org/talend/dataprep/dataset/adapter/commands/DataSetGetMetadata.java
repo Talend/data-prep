@@ -10,41 +10,48 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.command.dataset;
+package org.talend.dataprep.dataset.adapter.commands;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.annotation.PostConstruct;
-
-import org.apache.avro.Schema;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.dataset.adapter.EncodedSample;
+import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.adapter.Dataset;
+import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
-@Component
-@Scope("prototype")
-public class DataSetGetSchema extends GenericCommand<RowMetadata> {
+@Component(value = "DataSetGetMetadata#2")
+@Scope(SCOPE_PROTOTYPE)
+public class DataSetGetMetadata extends GenericCommand<Dataset> {
 
     private final String dataSetId;
+
+    @Autowired
+    private DataSetContentLimit limit;
+
+    @Autowired
+    private DataSetMetadataBuilder dataSetMetadataBuilder;
 
     /**
      * Private constructor to ensure the use of IoC
      *
      * @param dataSetId the dataset id to get.
      */
-    private DataSetGetSchema(final String dataSetId) {
+    private DataSetGetMetadata(final String dataSetId) {
         super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
 
@@ -54,30 +61,26 @@ public class DataSetGetSchema extends GenericCommand<RowMetadata> {
 
     @PostConstruct
     private void initConfiguration() {
-        URI datasetURI;
+        URI build;
         try {
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            datasetURI = uriBuilder //
-                    .setPath(uriBuilder.getPath() + "/api/v1/dataset-sample/" + dataSetId) //
-                    .addParameter("offset", "0") //
-                    .addParameter("limit", "1") //
-                    .build();
+            uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId);
+            build = uriBuilder.build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
         }
-        execute(() -> new HttpGet(datasetURI));
+        execute(() -> new HttpGet(build));
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
-                EncodedSample sample = objectMapper.readValue(res.getEntity().getContent(), EncodedSample.class);
-                Schema schema = new Schema.Parser().parse(sample.getSchema().toString());
-                return RowMetadataUtils.toRowMetadata(schema);
+                return objectMapper.readValue(res.getEntity().getContent(), Dataset.class);
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {
                 req.releaseConnection();
             }
         });
+
     }
 
 }

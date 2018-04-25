@@ -12,19 +12,18 @@
 
 package org.talend.dataprep.api.dataset;
 
-import java.util.stream.Stream;
-
-import org.talend.dataprep.api.dataset.json.DataSetRowStreamDeserializer;
-import org.talend.dataprep.api.dataset.json.DataSetRowStreamSerializer;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.talend.dataprep.api.dataset.json.DataSetRowStreamDeserializer;
+import org.talend.dataprep.api.dataset.json.DataSetRowStreamSerializer;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+
+import java.util.stream.Stream;
 
 @JsonRootName("dataset")
-public class DataSet {
+public class DataSet implements AutoCloseable {
 
     public static final String RECORDS_FIELD_NAME = "records";
 
@@ -61,5 +60,10 @@ public class DataSet {
     @Override
     public String toString() {
         return "DataSet{" + "metadata=" + metadata + ", records=...}";
+    }
+
+    @Override
+    public void close() {
+        records.close();
     }
 }

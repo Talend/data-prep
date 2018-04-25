@@ -12,11 +12,6 @@
 
 package org.talend.dataprep.command.dataset;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.annotation.PostConstruct;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +19,27 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
     private final String dataSetId;
@@ -46,6 +49,9 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
     @Autowired
     private DataSetMetadataBuilder dataSetMetadataBuilder;
+
+    @Autowired
+    private ApiDatasetClient datasetClient;
 
     /**
      * Private constructor to ensure the use of IoC
@@ -76,12 +82,16 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
             try {
                 Dataset dataset = objectMapper.readValue(res.getEntity().getContent(), Dataset.class);
 
-                return dataSetMetadataBuilder //
+                RowMetadata rowMetadata = datasetClient.getDataSetRowMetadata(dataSetId);
+
+                DataSetMetadata metadata = dataSetMetadataBuilder.metadata() //
                         .id(dataset.getId()) //
                         .name(dataset.getLabel()) //
                         .created(dataset.getCreated()) //
                         .modified(dataset.getUpdated()) //
                         .build();
+                metadata.setRowMetadata(rowMetadata);
+                return metadata;
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {

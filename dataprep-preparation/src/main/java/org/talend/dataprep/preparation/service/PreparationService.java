@@ -12,31 +12,6 @@
 
 package org.talend.dataprep.preparation.service;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
-import static org.talend.dataprep.i18n.DataprepBundle.message;
-import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
-import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
-import static org.talend.tql.api.TqlBuilder.*;
-
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,14 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -69,6 +43,30 @@ import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
+import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
+import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+import static org.talend.tql.api.TqlBuilder.*;
 
 @Service
 public class PreparationService {
@@ -135,6 +133,9 @@ public class PreparationService {
 
     @Autowired
     private Set<Validator> validators;
+
+    @Autowired
+    private ApiDatasetClient datasetClient;
 
     /**
      * Create a preparation from the http request body.
@@ -235,7 +236,7 @@ public class PreparationService {
 
         return preparationStream.map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on
                                                                                                    // preparation size
-                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
+                .sorted(getPreparationComparator(sort, order, p -> datasetClient.getDataSetMetadata(p.getDataSetId())));
     }
 
     /**
@@ -1329,10 +1330,6 @@ public class PreparationService {
             }
         }
         return null;
-    }
-
-    private DataSetMetadata getDatasetMetadata(String datasetId) {
-        return springContext.getBean(DataSetGetMetadata.class, datasetId).execute();
     }
 
 }

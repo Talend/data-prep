@@ -13,6 +13,15 @@
 
 package org.talend.dataprep.api.dataset;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
+import org.talend.dataprep.api.dataset.row.Flag;
+
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -20,19 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
-import org.apache.avro.Schema;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
-import org.talend.dataprep.api.dataset.row.Flag;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Models metadata information for a row of a data set.
@@ -303,19 +299,15 @@ public class RowMetadata implements Serializable {
         return clone;
     }
 
-    public Schema toSchema() {
-        return RowMetadataUtils.toSchema(this);
-    }
-
     /**
      * Move column with id <code>movedColumnId</code> <b>after</b> <code>columnId</code>. If you have:
-     * 
+     *
      * <pre>
      *     [0001, 0002, 0003, 0004]
      * </pre>
-     * 
+     *
      * And call <code>moveAfter(0004, 0001)</code>, you will change order of columns with:
-     * 
+     *
      * <pre>
      *     [0001, 0004, 0002, 0003]
      * </pre>

@@ -85,7 +85,7 @@ public class UpgradeService {
         int availableTasks = (int) tasks.stream().filter(task -> Objects.equals(task.getTarget(), VERSION)).count();
         if (appliedTasks > availableTasks) {
             LOG.warn(
-                    "It seems that more upgrade tasks have been applied than the available ones (appliedTasks: {} < availableTasks: {}).",
+                    "It seems that more upgrade tasks have been applied than the available ones (appliedTasks: {} > availableTasks: {}).",
                     appliedTasks, availableTasks);
             return true;
         } else if (appliedTasks == availableTasks) {

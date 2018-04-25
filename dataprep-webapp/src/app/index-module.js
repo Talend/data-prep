@@ -156,7 +156,7 @@ window.fetchConfiguration = function fetchConfiguration() {
 						const translationsWithFallback = Object.assign(
 							{},
 							$translate.getTranslationTable(fallbackLng),
-							$translate.getTranslationTable(preferredLanguage)
+							$translate.getTranslationTable(preferredLanguage),
 						);
 
 						i18n.addResourceBundle(

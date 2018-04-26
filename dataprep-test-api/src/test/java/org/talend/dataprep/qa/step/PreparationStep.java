@@ -32,16 +32,12 @@ import cucumber.api.java.en.When;
  */
 public class PreparationStep extends DataPrepStep {
 
-    public static final String DATASET_NAME = "dataSetName";
-
-    public static final String NB_STEPS = "nbSteps";
-
-    public static final String DESTINATION = "destination";
+    private static final String NB_STEPS = "nbSteps";
 
     /**
      * {@link cucumber.api.DataTable} key for new preparationName value.
      */
-    public static final String NEW_PREPARATION_NAME = "newPreparationName";
+
 
     /**
      * This class' logger.
@@ -64,7 +60,7 @@ public class PreparationStep extends DataPrepStep {
         String preparationId = api
                 .createPreparation(datasetId, suffixedPrepName, folderUtil.getAPIFolderRepresentation(prepFolder))
                 .then() //
-                .statusCode(200) //
+                .statusCode(HttpStatus.OK.value()) //
                 .extract()
                 .body()
                 .asString();
@@ -97,7 +93,7 @@ public class PreparationStep extends DataPrepStep {
 
         Response response = api.movePreparation( //
                 suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
-        response.then().statusCode(200);
+        response.then().statusCode(HttpStatus.OK.value());
 
         context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
                 suffixedPrepDestName, destFolder.path);
@@ -115,7 +111,7 @@ public class PreparationStep extends DataPrepStep {
         String newPreparationId = api
                 .copyPreparation(prepId, destFolder.id, suffixedPrepDestName)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.OK.value())
                 .extract()
                 .body()
                 .asString();
@@ -127,7 +123,7 @@ public class PreparationStep extends DataPrepStep {
         String suffixedPrepPath = util.extractPathFromFullName(prepFullName);
         String prepSuffixedName = getSuffixedPrepName(prepFullName);
         String prepId = context.getPreparationId(prepSuffixedName, suffixedPrepPath);
-        api.deletePreparation(prepId).then().statusCode(200);
+        api.deletePreparation(prepId).then().statusCode(HttpStatus.OK.value());
         context.removePreparationRef(prepSuffixedName, suffixedPrepPath);
     }
 

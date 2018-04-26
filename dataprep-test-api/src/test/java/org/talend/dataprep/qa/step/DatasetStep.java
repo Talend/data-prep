@@ -21,9 +21,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -38,7 +40,8 @@ public class DatasetStep extends DataPrepStep {
 
     private static final String NB_ROW = "nbRow";
 
-    private static final int sleepTime = 1000;
+    private static final int timeOut = 5;
+
     /**
      * This class' logger.
      */
@@ -54,14 +57,14 @@ public class DatasetStep extends DataPrepStep {
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     @Given("^It doesn't exist any dataset with the following parameters :$") //
     public void notExistDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     /**
@@ -108,7 +111,7 @@ public class DatasetStep extends DataPrepStep {
     @Deprecated
     public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
             throws IOException, InterruptedException {
-        String dataSetId = context.getObject(DATASET_ID).toString();
+        String dataSetId = context.getObject(DATASET_ID_KEY).toString();
 
         checkDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
     }
@@ -117,16 +120,14 @@ public class DatasetStep extends DataPrepStep {
     public void thenICheckSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName)
             throws Exception {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        Thread.sleep(sleepTime);
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, true);
+        await().atMost(timeOut, TimeUnit.SECONDS).until(checkDatasetsColumnSemanticTypesCallable(semanticTypeName, columnId, dataSetId, true));
     }
 
     @Then("^I check the existence of \"(.*)\" custom semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
     public void thenICheckCustomSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName)
             throws Exception {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        Thread.sleep(sleepTime);
-        checkDatasetsColumnSemanticTypes(suffixName(semanticTypeName), columnId, dataSetId, true);
+        await().atMost(timeOut, TimeUnit.SECONDS).until(checkDatasetsColumnSemanticTypesCallable(suffixName(semanticTypeName), columnId, dataSetId, true));
     }
 
     @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
@@ -159,6 +160,26 @@ public class DatasetStep extends DataPrepStep {
 
             }
         }
+    }
+
+    private Callable<Boolean> checkDatasetsColumnSemanticTypesCallable(String semanticTypeName, String columnId, String dataSetId,
+                                                                       boolean expected) {
+        return new Callable<Boolean>() {
+            public Boolean call() throws Exception {
+                Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
+                response.then().statusCode(OK.value());
+
+                int semanticTypeFound = countSemanticType(response, semanticTypeName);
+                if (expected) {
+                    // we expect the semantic Type
+                    return semanticTypeFound == 1;
+                } else if (!StringUtils.EMPTY.equals(response.body().print())) {
+                    // We don't expect the semantic type, and no semantic type exist for this column
+                    return semanticTypeFound == 0;
+                }
+                return false;
+            }
+        };
     }
 
     @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
@@ -265,8 +286,8 @@ public class DatasetStep extends DataPrepStep {
         Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
 
         // in case of only name parameter, we should use a suffixed dataSet name
-        if (parameters.containsKey(DATASET_NAME) && parameters.size() == 1) {
-            parameters.put(DATASET_NAME, suffixName(parameters.get(DATASET_NAME)));
+        if (parameters.containsKey(DATASET_NAME_KEY) && parameters.size() == 1) {
+            parameters.put(DATASET_NAME_KEY, suffixName(parameters.get(DATASET_NAME_KEY)));
         }
 
         // wait for DataSet creation from previous step
@@ -297,7 +318,7 @@ public class DatasetStep extends DataPrepStep {
 
         parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));
 
-        context.storeDatasetRef(dataset.get("id").asText(), dataset.get(DATASET_NAME).asText());
+        context.storeDatasetRef(dataset.get("id").asText(), dataset.get(DATASET_NAME_KEY).asText());
     }
 
     @Then("^I check that the dataSet \"(.*)\" is created with the following columns :$")

@@ -50,9 +50,9 @@ public abstract class DataPrepStep {
      */
     protected static final String PREPARATION_NAME = "preparationName";
 
-    protected static final String DATASET_NAME = "name";
+    protected static final String DATASET_NAME_KEY = "name";
 
-    protected static final String DATASET_ID = "dataSetId";
+    protected static final String DATASET_ID_KEY = "dataSetId";
 
     @Autowired
     public FeatureContext context;

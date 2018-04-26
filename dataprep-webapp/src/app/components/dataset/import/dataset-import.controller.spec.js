@@ -208,7 +208,7 @@ describe('Dataset Import controller', () => {
 			spyOn(ImportService, 'getDatasetForm').and.returnValue($q.when({ data: fakeDatasetForm }));
 
 			// when
-			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			ctrl.onDatastoreFormSubmit(null, { ...uiSpecs, definitionName });
 			scope.$digest();
 			$timeout.flush();
 
@@ -230,7 +230,7 @@ describe('Dataset Import controller', () => {
 			spyOn(ImportService, 'getDatasetForm').and.returnValue();
 
 			// when
-			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			ctrl.onDatastoreFormSubmit(null, { ...uiSpecs, definitionName });
 			scope.$digest();
 
 			// then
@@ -255,7 +255,7 @@ describe('Dataset Import controller', () => {
 			spyOn(ImportService, 'refreshForms').and.returnValue();
 
 			// when
-			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			ctrl.onDatastoreFormSubmit(null, { ...uiSpecs, definitionName });
 
 			// then
 			expect(ImportService.testConnection).not.toHaveBeenCalled();
@@ -275,7 +275,7 @@ describe('Dataset Import controller', () => {
 			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
 
 			// when
-			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			ctrl.onDatastoreFormSubmit(null, { ...uiSpecs, definitionName });
 			scope.$digest();
 
 			// then
@@ -294,7 +294,7 @@ describe('Dataset Import controller', () => {
 			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
 
 			// when
-			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			ctrl.onDatastoreFormSubmit(null, { ...uiSpecs, definitionName });
 			scope.$digest();
 
 			// then
@@ -312,7 +312,7 @@ describe('Dataset Import controller', () => {
 			spyOn(ImportService, 'refreshForms').and.returnValue($q.when(fakeDatastoreForm.properties));
 
 			// when
-			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			ctrl.onDatastoreFormSubmit(null, { ...uiSpecs, definitionName });
 			scope.$digest();
 
 			// then
@@ -369,7 +369,7 @@ describe('Dataset Import controller', () => {
 			});
 
 			// when
-			ctrl.onDatasetFormSubmit(uiSpecs);
+			ctrl.onDatasetFormSubmit(null, uiSpecs);
 
 			// then
 			expect(ctrl.submitLock).toBeTruthy();

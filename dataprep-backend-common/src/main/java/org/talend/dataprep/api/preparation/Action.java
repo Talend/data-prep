@@ -14,18 +14,21 @@
 package org.talend.dataprep.api.preparation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 
 /**
  * Class used to wrap DataSetRowAction into json.
  */
 @JsonRootName("action")
-@JsonPropertyOrder(value = { "action", "parameters", "filterColumnDisplayNames" })
+@JsonPropertyOrder(value = { "action", "parameters", "filterColumns" })
 public class Action implements Serializable {
 
     /** Serialization UID. */
@@ -38,7 +41,7 @@ public class Action implements Serializable {
     private MixedContentMap parameters = new MixedContentMap();
 
     /** Filter Parameters needed to display the action. */
-    private MixedContentMap filterColumnDisplayNames = new MixedContentMap();
+    private List<ColumnMetadata> filterColumns = new ArrayList<>();
 
     /**
      * Default empty constructor.
@@ -76,12 +79,12 @@ public class Action implements Serializable {
         this.parameters = parameters;
     }
 
-    public MixedContentMap getFilterColumnDisplayNames() {
-        return filterColumnDisplayNames;
+    public List<ColumnMetadata> getFilterColumns() {
+        return filterColumns;
     }
 
-    public void setFilterColumnDisplayNames(MixedContentMap filterColumnDisplayNames) {
-        this.filterColumnDisplayNames = filterColumnDisplayNames;
+    public void setFilterColumns(List<ColumnMetadata> filterColumns) {
+        this.filterColumns = filterColumns;
     }
 
     /**
@@ -94,12 +97,12 @@ public class Action implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         Action action1 = (Action) o;
-        return Objects.equals(action, action1.action) && Objects.equals(parameters, action1.parameters) && Objects.equals(filterColumnDisplayNames, action1.filterColumnDisplayNames);
+        return Objects.equals(action, action1.action) && Objects.equals(parameters, action1.parameters) && Objects.equals(filterColumns, action1.filterColumns);
     }
 
     @Override
     public String toString() {
-        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '\'' + ", filterColumnDisplayNames=" + filterColumnDisplayNames + '}';
+        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '\'' + ", filterColumns=" + filterColumns + '}';
     }
 
     /**
@@ -107,7 +110,7 @@ public class Action implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(action, parameters, filterColumnDisplayNames);
+        return Objects.hash(action, parameters, filterColumns);
     }
 
     /**
@@ -117,7 +120,7 @@ public class Action implements Serializable {
 
         private Map<String, String> parameters;
 
-        private Map<String, String> filterColumnDisplayNames;
+        private List<ColumnMetadata> filterColumns;
 
         private String name;
 
@@ -134,7 +137,7 @@ public class Action implements Serializable {
         public Action build() {
             final Action builtAction = new Action();
             builtAction.getParameters().putAll(parameters);
-            builtAction.getFilterColumnDisplayNames().putAll(filterColumnDisplayNames);
+            builtAction.getFilterColumns().addAll(filterColumns);
             builtAction.setName(name);
             return builtAction;
         }
@@ -144,8 +147,8 @@ public class Action implements Serializable {
             return this;
         }
 
-        public Builder withFilterColumnDisplayNames(Map<String, String> filterColumnDisplayNames) {
-            this.filterColumnDisplayNames = filterColumnDisplayNames;
+        public Builder withFilterColumns(List<ColumnMetadata> filterColumns) {
+            this.filterColumns = filterColumns;
             return this;
         }
 

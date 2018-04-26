@@ -26,6 +26,7 @@ import static org.talend.dataprep.api.filter.DataSetRowFilters.createMatchesPred
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createRangePredicate;
 import static org.talend.dataprep.api.filter.DataSetRowFilters.createValidPredicate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Predicate;
@@ -34,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.tql.model.AllFields;
@@ -69,6 +71,137 @@ public class TQLFilterService implements FilterService {
         }
         final TqlElement parsedPredicate = Tql.parse(filterAsString);
         return parsedPredicate.accept(new DataSetPredicateVisitor(rowMetadata));
+    }
+
+    public List<ColumnMetadata> getFilterColumnsMetadata(String filterAsString, RowMetadata rowMetadata) {
+        if (StringUtils.isEmpty(filterAsString)) {
+            return null;
+        }
+        final TqlElement parsedTqlElement = Tql.parse(filterAsString);
+        DatasetColumnVisitor datasetColumnVisitor = new DatasetColumnVisitor();
+        parsedTqlElement.accept(datasetColumnVisitor);
+
+        return rowMetadata
+                .getColumns()
+                .stream()
+                .filter(column -> datasetColumnVisitor.getColumns().contains(column.getId()))
+                .collect(Collectors.toList());
+    }
+
+    private static class DatasetColumnVisitor implements IASTVisitor<List<String>> {
+        private final List<String> columns = new ArrayList<>();
+
+        private DatasetColumnVisitor() {}
+
+        public List<String> getColumns() {
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(TqlElement tqlElement) {
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(ComparisonOperator comparisonOperator) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public List<String> visit(LiteralValue literalValue) {
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldReference fieldReference) {
+            columns.add(fieldReference.getPath());
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(Expression expression) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public List<String> visit(AndExpression andExpression) {
+            for (Expression expression : andExpression.getExpressions()) {
+                expression.accept(this);
+            }
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(OrExpression orExpression) {
+            for (Expression expression : orExpression.getExpressions()) {
+                expression.accept(this);
+            }
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(ComparisonExpression comparisonExpression) {
+            comparisonExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldInExpression fieldInExpression) {
+            fieldInExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldIsEmptyExpression fieldIsEmptyExpression) {
+            fieldIsEmptyExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldIsValidExpression fieldIsValidExpression) {
+            fieldIsValidExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldIsInvalidExpression fieldIsInvalidExpression) {
+            fieldIsInvalidExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldMatchesRegex fieldMatchesRegex) {
+            fieldMatchesRegex.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldCompliesPattern fieldCompliesPattern) {
+            fieldCompliesPattern.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldBetweenExpression fieldBetweenExpression) {
+            fieldBetweenExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(NotExpression notExpression) {
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldContainsExpression fieldContainsExpression) {
+            fieldContainsExpression.getField().accept(this);
+            return columns;
+        }
+
+        @Override
+        public List<String> visit(AllFields allFields) {
+            return columns;
+        }
     }
 
     private static class DataSetPredicateVisitor implements IASTVisitor<Predicate<DataSetRow>> {

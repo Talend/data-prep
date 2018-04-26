@@ -127,8 +127,7 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 			diff,
 			filters: TqlFilterAdapterService.fromTQL(
 				actionValues.parameters.filter,
-				state.playground.data.metadata.columns,
-				actionValues.filterColumnDisplayNames
+				actionValues.filterColumns
 			),
 		};
 

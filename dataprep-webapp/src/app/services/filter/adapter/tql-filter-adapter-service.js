@@ -34,7 +34,6 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	let VALID_RECORDS_VALUES;
 	let filters = [];
 	let columns = [];
-	let filterColumnDisplayNames = null;
 	return {
 		createFilter,
 		toTQL,
@@ -284,8 +283,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	}
 	function createFilterFromTQL(type, colId, editable, args) {
 		const filteredColumn = find(columns, { id: colId });
-		const colName = (filteredColumn && filteredColumn.name) ||
-			(filterColumnDisplayNames && filterColumnDisplayNames[colId]) || colId;
+		const colName = (filteredColumn && filteredColumn.name) || colId;
 
 		const existingEmptyFilter = find(filters, {
 			colId,
@@ -374,10 +372,9 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			}
 		}
 	}
-	function fromTQL(tql, cols, columnsDisplayNames) {
+	function fromTQL(tql, cols) {
 		columns = cols;
 		filters = [];
-		filterColumnDisplayNames = columnsDisplayNames;
 		if (tql) {
 			parse(
 				tql,

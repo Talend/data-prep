@@ -12,19 +12,7 @@
 
 package org.talend.dataprep.configuration;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import com.netflix.hystrix.HystrixCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,14 +28,23 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
 import org.talend.dataprep.command.dataset.DataSetGet;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.security.NoOpSecurityProxy;
 import org.talend.dataprep.security.SecurityProxy;
 
-import com.netflix.hystrix.HystrixCommand;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for the APIPreparationConversions class.
@@ -81,7 +78,7 @@ public class APIPreparationConversionsTest {
     public void shouldEnrichPreparationWithDataset() {
         // given
         DataSetMetadata metadata = getDataSetMetadata("super dataset", 1001L);
-        setupHystrixCommand(DataSetGetMetadata.class, metadata);
+//        setupHystrixCommand(DataSetGetMetadata.class, metadata);
 
         final PreparationMessage preparation = getPreparationMessage(metadata.getId());
 
@@ -143,7 +140,7 @@ public class APIPreparationConversionsTest {
     public void shouldDealWithRepeatedStepIds() {
         // given
         DataSetMetadata metadata = getDataSetMetadata("super dataset", 1001L);
-        setupHystrixCommand(DataSetGetMetadata.class, metadata);
+//        setupHystrixCommand(DataSetGetMetadata.class, metadata);
 
         final PreparationMessage preparation = getPreparationMessage(metadata.getId());
         preparation.setSteps(asList(Step.ROOT_STEP, Step.ROOT_STEP));

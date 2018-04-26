@@ -13,12 +13,8 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.dataprep.command.Defaults.asNull;
-
-import java.io.IOException;
-import java.util.function.BiFunction;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.netflix.hystrix.HystrixCommand;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -32,12 +28,15 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.command.common.ChainedCommand;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.util.function.BiFunction;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.dataprep.command.Defaults.asNull;
 
 /**
  * <p>
@@ -61,7 +60,7 @@ public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadat
      *
      * @param retrieveMetadata the previous command to execute.
      */
-    private SuggestDataSetActions(DataSetGetMetadata retrieveMetadata) {
+    private SuggestDataSetActions(HystrixCommand<DataSetMetadata> retrieveMetadata) {
         super(GenericCommand.TRANSFORM_GROUP, retrieveMetadata);
         execute(this::onExecute);
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e));

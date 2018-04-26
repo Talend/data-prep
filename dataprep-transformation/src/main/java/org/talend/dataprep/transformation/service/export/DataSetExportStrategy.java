@@ -55,7 +55,6 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
             try (DataSet dataSet = datasetClient.getDataSet(datasetId)) {
-                dataSet.setMetadata(datasetClient.getDataSetMetadata(datasetId));
                 // get the actions to apply (no preparation ==> dataset export ==> no actions)
                 Configuration configuration = Configuration.builder() //
                         .args(parameters.getArguments()) //

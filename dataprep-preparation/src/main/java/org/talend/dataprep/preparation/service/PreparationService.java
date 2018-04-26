@@ -20,11 +20,13 @@ import org.springframework.stereotype.Service;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
@@ -32,6 +34,7 @@ import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -41,6 +44,8 @@ import org.talend.dataprep.transformation.api.action.validation.ActionMetadataVa
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
@@ -137,6 +142,9 @@ public class PreparationService {
     @Autowired
     private ApiDatasetClient datasetClient;
 
+    @Autowired
+    private AnalyzerService analyzerService;
+
     /**
      * Create a preparation from the http request body.
      *
@@ -153,6 +161,19 @@ public class PreparationService {
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setRowMetadata(preparation.getRowMetadata());
+
+        try (final Stream<DataSetRow> records = datasetClient.getDataSetContentAsRows(preparation.getDataSetId())) {
+            RowMetadata rowMetadata = toCreate.getRowMetadata();
+            final Analyzer<Analyzers.Result> analyzer = analyzerService.full(rowMetadata.getColumns());
+
+            analyzer.init();
+            records.map(r -> r.toArray()).forEach(analyzer::analyze);
+            analyzer.end();
+
+            final List<Analyzers.Result> analyzerResult = analyzer.getResult();
+            final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
+            statisticsAdapter.adapt(rowMetadata.getColumns(), analyzerResult);
+        }
 
         preparationRepository.add(toCreate);
 

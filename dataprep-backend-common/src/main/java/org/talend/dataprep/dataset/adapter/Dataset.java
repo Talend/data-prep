@@ -19,6 +19,7 @@ import java.util.Set;
 
 /**
  * Representation of a Talend dataset entity.
+ * Contains ONLY metadata about the dataset. Not its schema, not a sample, no analysis..
  * See <a href="https://github.com/Talend/dataset/blob/master/common/src/main/scala/org/talend/dataflow/common/model/Dataset.scala#L63">scala implementation in dataset</a>.
  */
 public class Dataset {

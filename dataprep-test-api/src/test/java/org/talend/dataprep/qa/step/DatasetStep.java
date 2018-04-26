@@ -3,6 +3,7 @@ package org.talend.dataprep.qa.step;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.path.json.exception.JsonPathException;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ResponseBody;
 import cucumber.api.DataTable;
@@ -218,6 +219,12 @@ public class DatasetStep extends DataPrepStep {
         checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, false);
     }
 
+    @Then("^I check the absence of \"(.*)\" custom semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
+    public void thenICheckCustomSemanticTypeDoesNotExistOnPreparation(String semanticTypeName, String columnId,
+                                                                      String preparationName) {
+        thenICheckSemanticTypeDoesNotExistOnPreparation(suffixName(semanticTypeName), columnId, preparationName);
+    }
+
     @Then("^I check that there are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
     public void checkColumnQuality(Integer expectedValue, String qualityField, String columnId, String dataSetName)
             throws Exception {
@@ -265,11 +272,15 @@ public class DatasetStep extends DataPrepStep {
     }
 
     private int countSemanticType(Response response, String semanticTypeName) {
-        return response
-                .body()
-                .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + semanticTypeName + "'  }")
-                .size();
+        JsonPath jsonPath = response.body().jsonPath();
+        int size = 0;
+        try {
+            size = jsonPath.getList("findAll { semanticType -> semanticType.label == '" + semanticTypeName + "'  }").size();
+        } catch (JsonPathException jsonPathException) {
+            //jsonPath.get();
+            LOGGER.debug("The JSON input text should neither be null nor empty. {} is not present.", semanticTypeName, jsonPathException);
+        }
+        return size;
     }
 
     private void createDataSet(String fileName, String suffixedName) throws IOException {

@@ -19,6 +19,7 @@ import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
 import org.talend.dataprep.dataset.adapter.commands.DatasetList;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 
 import java.io.InputStream;
@@ -42,6 +43,9 @@ public class ApiDatasetClient {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private AnalyzerService analyzerService;
 
     public Stream<Dataset> listDataset() {
         return context.getBean(DatasetList.class).execute();
@@ -95,10 +99,17 @@ public class ApiDatasetClient {
     public DataSet getDataSet(String id, String preparationId) {
         DataSet dataset = new DataSet();
         DataSetMetadata dataSetMetadata = getDataSetMetadata(id);
+
         // If we do not have statistics. Ugly but efficient...
         // correct solution would be to refactor half dataprep strategies and API...
-        if (preparationId != null && dataSetMetadata.getRowMetadata().getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
-            dataSetMetadata.setRowMetadata(getPreparationMetadata(preparationId));
+        if (dataSetMetadata.getRowMetadata().getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
+            if (preparationId == null) {
+                try (Stream<DataSetRow> records = getDataSetContentAsRows(id, dataSetMetadata.getRowMetadata())) {
+                    analyzerService.analyzeFull(records, dataSetMetadata.getRowMetadata().getColumns());
+                }
+            } else {
+                dataSetMetadata.setRowMetadata(getPreparationMetadata(preparationId));
+            }
         }
 
         dataset.setMetadata(dataSetMetadata);

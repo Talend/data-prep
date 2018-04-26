@@ -273,7 +273,9 @@ public class TransformationService extends BaseTransformationService {
         } else {
             LOG.debug("No step in preparation '{}', falls back to get dataset metadata (id: {})", preparationId,
                     preparation.getDataSetId());
-            return datasetClient.getDataSetMetadata(preparation.getDataSetId());
+            DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+            dataSetMetadata.setRowMetadata(preparation.getRowMetadata());
+            return dataSetMetadata;
         }
         return null;
     }

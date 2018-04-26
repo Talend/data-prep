@@ -26,7 +26,6 @@ import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
@@ -44,8 +43,6 @@ import org.talend.dataprep.transformation.api.action.validation.ActionMetadataVa
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
-import org.talend.dataquality.common.inference.Analyzer;
-import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
@@ -163,16 +160,7 @@ public class PreparationService {
         toCreate.setRowMetadata(preparation.getRowMetadata());
 
         try (final Stream<DataSetRow> records = datasetClient.getDataSetContentAsRows(preparation.getDataSetId())) {
-            RowMetadata rowMetadata = toCreate.getRowMetadata();
-            final Analyzer<Analyzers.Result> analyzer = analyzerService.full(rowMetadata.getColumns());
-
-            analyzer.init();
-            records.map(r -> r.toArray()).forEach(analyzer::analyze);
-            analyzer.end();
-
-            final List<Analyzers.Result> analyzerResult = analyzer.getResult();
-            final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
-            statisticsAdapter.adapt(rowMetadata.getColumns(), analyzerResult);
+            analyzerService.analyzeFull(records, toCreate.getRowMetadata().getColumns());
         }
 
         preparationRepository.add(toCreate);

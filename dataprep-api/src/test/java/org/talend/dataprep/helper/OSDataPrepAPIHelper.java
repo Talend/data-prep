@@ -177,8 +177,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log() //
-                .ifValidationFails() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //

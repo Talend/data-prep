@@ -15,15 +15,15 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.talend.dataprep.security.Security;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -51,14 +51,6 @@ public class ProxyDatasetClientTest extends TestParent {
     public void getByIdTest() {
         Dataset toto = datasetClient.findOne("toto");
         assertNotNull(toto);
-    }
-
-    @Test
-    public void getSampleByIdTest() {
-//        InputStream data = datasetClient.findData("toto", new PageRequest(0, Integer.MAX_VALUE));
-//        assertNotNull(data);
-//        List<IndexedRecord> collect = data.collect(Collectors.toList());
-//        assertEquals(collect.size(), 100);
     }
 
 }

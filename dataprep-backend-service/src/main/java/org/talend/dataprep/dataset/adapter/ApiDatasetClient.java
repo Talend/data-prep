@@ -102,6 +102,7 @@ public class ApiDatasetClient {
 
         // If we do not have statistics. Ugly but efficient...
         // correct solution would be to refactor half dataprep strategies and API...
+        // This should not be in API but in transformation, as preparations step zero
         if (dataSetMetadata.getRowMetadata().getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             if (preparationId == null) {
                 try (Stream<DataSetRow> records = getDataSetContentAsRows(id, dataSetMetadata.getRowMetadata())) {

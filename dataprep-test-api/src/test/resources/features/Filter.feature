@@ -1,4 +1,4 @@
-@Filter
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Filter features
 
   @CleanAfter

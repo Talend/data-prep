@@ -30,13 +30,27 @@ public class FilterStep extends DataPrepStep {
 
     private void checkDatasetCharacteristics(String tql, String datasetName, DataTable dataTable) throws Exception {
         String datasetId = context.getDatasetId(suffixName(datasetName));
-        Response response = api.getDataset(datasetId, tql);
-        response.then().statusCode(200);
-        DatasetContent dataset = response.as(DatasetContent.class);
+        DatasetContent dataset = getUpToDateDatasetContent(datasetId, tql);
 
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
         checkRecords(dataset.records, expected.get("records"));
         checkQualityPerColumn(dataset.metadata.columns, expected.get("quality"));
+    }
+
+    /**
+     * Returns the dataset content, once all DQ analysis are done and so all fields are up-to-date.
+     * @param datasetId the id of the dataset
+     * @param tql the TQL filter to apply to the dataset
+     * @return the up-to-date dataset content
+     */
+    private DatasetContent getUpToDateDatasetContent(String datasetId, String tql) throws Exception {
+        Response response;
+        do {
+            response = api.getDataset(datasetId, tql);
+            response.then().statusCode(200);
+        } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty());
+
+        return response.as(DatasetContent.class);
     }
 
     private void checkRecords(List<Object> actualRecords, String expectedRecordsFilename) throws Exception {

@@ -13,7 +13,7 @@
 
 const ACCEPTED_STATUS = 202;
 const LOOP_DELAY = 1000;
-const RUNNING_STATUS = 'RUNNING';
+const FOLLOW_STATUS = ['NEW', 'RUNNING'];
 
 const METHODS = {
 	POST: 'POST',
@@ -36,7 +36,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 
 		return new Promise((resolve, reject) => {
 			$http.get(url)
-				.then(({ data }) => (data.status === RUNNING_STATUS ? reject : resolve)(data));
+				.then(({ data }) => (FOLLOW_STATUS.includes(data.status) ? reject : resolve)(data));
 		});
 	}
 
@@ -61,7 +61,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 		 * @name response
 		 * @methodOf data-prep.services.rest.service:RestQueuedMessageHandler
 		 * @param {object} response - the intercepted response
-		 * @description If a 202 occurs, loop until the status change from RUNNING to anything else
+		 * @description If a 202 occurs, loop until the status change from NEW/RUNNING to anything else
 		 */
 		response(response) {
 			const { headers, config, status } = response;

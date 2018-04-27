@@ -1733,8 +1733,14 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Map<String, String> parametersWithoutDataset = new HashMap<>();
         parametersWithoutDataset.put("other", "other");
 
-        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
+        final List<Action> action1 = singletonList(Action.Builder.builder()
+                .withParameters(parametersWithoutDataset)
+                .withFilterColumns(new ArrayList<>())
+                .build());
+        final List<Action> action2 = singletonList(Action.Builder.builder()
+                .withParameters(parametersOnDataset)
+                .withFilterColumns(new ArrayList<>())
+                .build());
 
         final PreparationActions prepAction1 = new PreparationActions().append(action1);
         final PreparationActions prepAction2 = new PreparationActions().append(action2);

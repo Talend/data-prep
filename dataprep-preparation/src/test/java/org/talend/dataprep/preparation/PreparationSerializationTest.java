@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.preparation;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,17 +20,22 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.ServiceBaseTest;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
 public class PreparationSerializationTest extends ServiceBaseTest {
 
@@ -133,6 +139,84 @@ public class PreparationSerializationTest extends ServiceBaseTest {
         assertEquals(1, actual.getActions().size());
         assertNotNull(actual.getSteps());
         assertEquals(2, actual.getSteps().size());
+
+    }
+
+    @Test
+    public void preparationDetailsStepsWithFilters() throws Exception {
+
+        final String version = versionService.version().getVersionId();
+        //create row metadata
+        RowMetadata rowMetadata = new RowMetadata();
+        ColumnMetadata firstColumn = new ColumnMetadata();
+        firstColumn.setId("0000");
+        ColumnMetadata secondColumn = new ColumnMetadata();
+        secondColumn.setId("0001");
+        ColumnMetadata thirdColumn = new ColumnMetadata();
+        thirdColumn.setId("0002");
+        rowMetadata.setColumns(asList(firstColumn, secondColumn, thirdColumn));
+
+        // Add a step
+        final Action action1 = new Action();
+        action1.setName("uppercase");
+        action1.getParameters().put("column_name", "lastname");
+        action1.getParameters().put("column_id", "0000");
+        action1.getParameters().put(ImplicitParameters.FILTER.getKey(), "((0000 = 'charles'))");
+
+        final List<Action> actions1 = new ArrayList<>();
+        actions1.add(action1);
+
+        final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions1);
+        repository.add(newContent1);
+        final Step s1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
+
+        final String stepRowMetadataId = UUID.randomUUID().toString();
+        s1.setRowMetadata(stepRowMetadataId);
+        repository.add(s1);
+
+        final Action action2 = new Action();
+        action2.setName("uppercase");
+        action2.getParameters().put("column_name", "firstname");
+        action2.getParameters().put("column_id", "0001");
+        action2.getParameters().put(ImplicitParameters.FILTER.getKey(), "((0001 = 'newen'))");
+
+        final List<Action> actions2 = new ArrayList<>();
+        actions2.add(action2);
+
+        final PreparationActions newContent2 = newContent1.append(actions2);
+        repository.add(newContent2);
+        final Step s2 = new Step(s1.id(), newContent2.id(), version);
+        s2.setRowMetadata(stepRowMetadataId);
+        repository.add(s2);
+
+        // Use it in preparation
+        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345",  s2.id(), version);
+        preparation.setCreationDate(0L);
+        preparation.setRowMetadata(rowMetadata);
+
+        repository.add(preparation);
+
+        //add StepRowMetadata
+        StepRowMetadata stepRowMetadata = new StepRowMetadata();
+        stepRowMetadata.setId(stepRowMetadataId);
+        stepRowMetadata.setRowMetadata(rowMetadata);
+        repository.add(stepRowMetadata);
+
+        final Preparation storedPreparation = repository.get(preparation.id(), Preparation.class);
+
+        // when
+        final StringWriter output = new StringWriter();
+        mapper.writer().writeValue(output, conversionService.convert(storedPreparation, PreparationMessage.class));
+
+        // then
+        final PreparationMessage actual = mapper.readerFor(PreparationMessage.class).readValue(output.toString());
+        assertEquals(preparation.getId(), actual.getId());
+        assertNotNull(actual.getActions());
+        assertEquals(2, actual.getActions().size());
+        assertEquals(3, actual.getActions().get(0).getFilterColumns().size());
+        assertEquals(1, actual.getActions().get(1).getFilterColumns().size());
+        assertNotNull(actual.getSteps());
+        assertEquals(3, actual.getSteps().size());
 
     }
 }

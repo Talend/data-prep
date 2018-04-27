@@ -171,8 +171,17 @@ public class DatasetStep extends DataPrepStep {
 
     @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
     public void thenICheckSemanticTypeExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) {
+            String preparationName) throws Exception {
         String preparationId = context.getPreparationId(suffixName(preparationName));
+        Thread.sleep(1000);
+        checkPreparationColumnSemanticTypes(suffixName(semanticTypeName), columnId, preparationId, true);
+    }
+
+    @Then("^I check the existence of \"(.*)\" default semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
+    public void thenICheckDefaultSemanticTypeExistOnPreparation(String semanticTypeName, String columnId,
+            String preparationName) throws Exception {
+        String preparationId = context.getPreparationId(suffixName(preparationName));
+        Thread.sleep(1000);
         checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, true);
     }
 
@@ -180,7 +189,7 @@ public class DatasetStep extends DataPrepStep {
     public void thenICheckSemanticTypeDoesNotExistOnPreparation(String semanticTypeName, String columnId,
             String preparationName) {
         String preparationId = context.getPreparationId(suffixName(preparationName));
-        checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, false);
+        checkPreparationColumnSemanticTypes(suffixName(semanticTypeName), columnId, preparationId, false);
     }
 
     @Then("^I check that there are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
@@ -231,7 +240,7 @@ public class DatasetStep extends DataPrepStep {
         assertEquals(errorMessage.toString(), expected ? 1 : 0, response
                 .body()
                 .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semanticTypeName) + "'  }")
+                .getList("findAll { semanticType -> semanticType.label == '" + semanticTypeName + "'  }")
                 .size());
     }
 

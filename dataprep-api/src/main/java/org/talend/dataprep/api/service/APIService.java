@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.api.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.hystrix.HystrixCommand;
+import io.swagger.annotations.Api;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
 import org.slf4j.Logger;
@@ -21,13 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.hystrix.HystrixCommand;
-
-import io.swagger.annotations.Api;
 
 @Api(value = "api", basePath = "/api", description = "Data Preparation API")
 public class APIService {
@@ -45,6 +44,9 @@ public class APIService {
 
     @Autowired
     protected BeanConversionService beanConversionService;
+
+    @Autowired
+    protected ApiDatasetClient datasetClient;
 
     protected <T extends HystrixCommand> T getCommand(Class<T> clazz, Object... args) {
         try {

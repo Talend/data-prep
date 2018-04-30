@@ -91,7 +91,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
 
-        try (DataSet dataSet = datasetClient.getDataSet(dataSetId, preparationId)) {
+        try (DataSet dataSet = datasetClient.getDataSet(dataSetId, fullContent)) {
 
             // release the technical user identity
             securityProxy.releaseIdentity();

@@ -54,7 +54,6 @@ import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
-import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
@@ -354,6 +353,17 @@ public class TransformationService extends BaseTransformationService {
             throw new TDPException(CommonErrorCodes.BAD_AGGREGATION_PARAMETERS, e);
         }
 
+        // apply the aggregation
+        try (InputStream contentToAggregate = getContentToAggregate(parameters);
+                JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
+            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+            return aggregationService.aggregate(parameters, dataSet);
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
+        }
+    }
+
+    private InputStream getContentToAggregate(AggregationParameters parameters) {
         InputStream contentToAggregate;
 
         // get the content of the preparation (internal call with piped streams)
@@ -390,26 +400,9 @@ public class TransformationService extends BaseTransformationService {
                 throw new TDPException(CommonErrorCodes.UNABLE_TO_AGGREGATE, e);
             }
         } else {
-            final DataSetGet dataSetGet = context.getBean(DataSetGet.class, parameters.getDatasetId(), false, true);
-            contentToAggregate = dataSetGet.execute();
+            contentToAggregate = datasetClient.getDataSetGetCommand(parameters.getDatasetId(), false, true).execute();
         }
-
-        // apply the aggregation
-        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-            return aggregationService.aggregate(parameters, dataSet);
-        } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
-        } finally {
-            // don't forget to release the connection
-            if (contentToAggregate != null) {
-                try {
-                    contentToAggregate.close();
-                } catch (IOException e) {
-                    LOG.warn("Could not close dataset input stream while aggregating", e);
-                }
-            }
-        }
+        return contentToAggregate;
     }
 
     /**

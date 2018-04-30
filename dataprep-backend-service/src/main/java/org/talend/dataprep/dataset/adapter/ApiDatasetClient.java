@@ -1,33 +1,38 @@
 package org.talend.dataprep.dataset.adapter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
 import org.talend.dataprep.dataset.adapter.commands.DatasetList;
+import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
@@ -50,6 +55,15 @@ public class ApiDatasetClient {
 
     @Autowired
     private AnalyzerService analyzerService;
+
+    @Autowired
+    private DataSetContentLimit limit;
+
+    @Value("${dataset.records.limit:10000}")
+    private long sampleSize;
+
+    @Autowired
+    private FilterService filterService;
 
     private Cache<String, RowMetadata> metadataCache = CacheBuilder.newBuilder()
             .maximumSize(50)
@@ -130,6 +144,34 @@ public class ApiDatasetClient {
         dataset.setMetadata(dataSetMetadata);
         dataset.setRecords(getDataSetContentAsRows(id, rowMetadata));
         return dataset;
+    }
+
+    public DataSet getDataSet(final String dataSetId, final boolean fullContent) {
+        return getDataSet(dataSetId, fullContent, StringUtils.EMPTY);
+    }
+
+    /**
+     *
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param filter TQL filter for content
+     */
+    public DataSet getDataSet(String id, boolean fullContent, String filter) {
+        DataSet dataSet = getDataSet(id);
+        Stream<DataSetRow> records =
+                dataSet.getRecords()
+                        .filter(filterService.build(filter, dataSet.getMetadata().getRowMetadata()));
+
+        if (limit.limitContentSize() || fullContent) {
+            records = records.limit(sampleSize);
+        }
+
+        dataSet.setRecords(records);
+        return dataSet;
+    }
+
+    public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
+        return context.getBean(DataSetGet.class, dataSetId, fullContent, includeInternalContent);
     }
 
     private RowMetadata analyseDataset(String id, RowMetadata rowMetadata) {

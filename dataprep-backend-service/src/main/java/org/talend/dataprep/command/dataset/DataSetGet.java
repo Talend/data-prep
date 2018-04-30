@@ -55,9 +55,13 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RETRIE
 
 /**
  * Command to get a dataset.
+ *
+ * @deprecated use {@link ApiDatasetClient#getDataSet(String)} or {@link ApiDatasetClient#getDataSetContentAsRows(String, RowMetadata)} instead.
+ * parameters are not taken in account anymore.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
+@Deprecated
 public class DataSetGet extends GenericCommand<InputStream> {
 
     private static final BasicHeader ACCEPT_HEADER =
@@ -87,6 +91,14 @@ public class DataSetGet extends GenericCommand<InputStream> {
         this(dataSetId, fullContent, includeInternalContent, filter, true);
     }
 
+    /**
+     *
+     * @param dataSetId the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param includeInternalContent option of full content API (/datasets/{dataSetId}/content) in-row TDP content, should not be inserted => Dropping.
+     * @param filter TQL filter for content
+     * @param includeMetadata option of full content API (/datasets/{dataSetId}/content?metadata={includeMetadata}) {@link DataSet#setMetadata(DataSetMetadata)}
+     */
     public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent, String filter, final boolean includeMetadata) {
         super(DATASET_GROUP);
         this.fullContent = fullContent;
@@ -132,6 +144,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
             dataSetMetadata.setRowMetadata(rowMetadata);
             dataSet.setMetadata(dataSetMetadata);
             dataSet.setRecords(rows);
+            // TODO : filter, limit
 
             // Write all in a buffer
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){

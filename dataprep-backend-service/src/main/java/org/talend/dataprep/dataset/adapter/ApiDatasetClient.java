@@ -117,7 +117,7 @@ public class ApiDatasetClient {
         if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             if (preparationId == null) {
                 try {
-                    dataSetMetadata.setRowMetadata(metadataCache.get(id, () -> getRowMetadata(id, rowMetadata)));
+                    dataSetMetadata.setRowMetadata(metadataCache.get(id, () -> analyseDataset(id, rowMetadata)));
                 } catch (ExecutionException e) {
                     // source method do not throw checked exception
                     throw (RuntimeException) e.getCause();
@@ -132,7 +132,7 @@ public class ApiDatasetClient {
         return dataset;
     }
 
-    private RowMetadata getRowMetadata(String id, RowMetadata rowMetadata) {
+    private RowMetadata analyseDataset(String id, RowMetadata rowMetadata) {
         try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata)) {
             analyzerService.analyzeFull(records, rowMetadata.getColumns());
         }

@@ -1,7 +1,10 @@
 package org.talend.dataprep.qa.step;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -12,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
@@ -101,147 +103,6 @@ public class DatasetStep extends DataPrepStep {
         String datasetId = context.getDatasetId(suffixedDatasetName);
         Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
         response.then().statusCode(200);
-    }
-
-    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
-    @Deprecated
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
-            throws IOException, InterruptedException {
-        String dataSetId = context.getObject("dataSetId").toString();
-
-        checkDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
-    }
-
-    @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName)
-            throws Exception {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        Thread.sleep(1000);
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, true);
-    }
-
-    @Then("^I check the existence of \"(.*)\" custom semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckCustomSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName)
-            throws Exception {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        Thread.sleep(1000);
-        checkDatasetsColumnSemanticTypes(suffixName(semanticTypeName), columnId, dataSetId, true);
-    }
-
-    @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeDoesNotExistOnDataset(String semanticTypeName, String columnId,
-            String dataSetName) {
-        String dataSetId = context.getDatasetId(dataSetName);
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, false);
-    }
-
-    @Then("^I check the absence of \"(.*)\" custom semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckCustomSemanticTypeDoesNotExistOnDataset(String semanticTypeName, String columnId,
-            String dataSetName) {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        checkDatasetsColumnSemanticTypes(suffixName(semanticTypeName), columnId, dataSetId, false);
-    }
-
-    private void checkDatasetsColumnSemanticTypes(String semanticTypeName, String columnId, String dataSetId,
-            boolean expected) {
-        Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
-        response.then().statusCode(200);
-
-        if (expected) {
-            // we expect the semantic Type
-            assertEquals(1,
-                    response
-                            .body()
-                            .jsonPath()
-                            .getList("findAll { semanticType -> semanticType.label == '" + semanticTypeName + "'  }")
-                            .size());
-        } else {
-            // We don't expect the semantic type, and no semantic type exist for this column
-            if (!StringUtils.EMPTY.equals(response.body().print())) {
-                assertEquals(0,
-                        response
-                                .body()
-                                .jsonPath()
-                                .getList(
-                                        "findAll { semanticType -> semanticType.label == '" + semanticTypeName + "'  }")
-                                .size());
-            }
-        }
-    }
-
-    @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
-    public void thenICheckSemanticTypeExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) throws Exception {
-        String preparationId = context.getPreparationId(suffixName(preparationName));
-        Thread.sleep(1000);
-        checkPreparationColumnSemanticTypes(suffixName(semanticTypeName), columnId, preparationId, true);
-    }
-
-    @Then("^I check the existence of \"(.*)\" default semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
-    public void thenICheckDefaultSemanticTypeExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) throws Exception {
-        String preparationId = context.getPreparationId(suffixName(preparationName));
-        Thread.sleep(1000);
-        checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, true);
-    }
-
-    @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
-    public void thenICheckSemanticTypeDoesNotExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) {
-        String preparationId = context.getPreparationId(suffixName(preparationName));
-        checkPreparationColumnSemanticTypes(suffixName(semanticTypeName), columnId, preparationId, false);
-    }
-
-    @Then("^I check that there are \"(.*)\" \"(.*)\" cells for the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void checkColumnQuality(Integer expectedValue, String qualityField, String columnId, String dataSetName)
-            throws Exception {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        checkQuality(expectedValue, qualityField, columnId, dataSetId);
-    }
-
-    private void checkQuality(Integer expectedValue, String qualityField, String columnId, String dataSetId)
-            throws Exception {
-        Response response = api.getDataSetMetaData(dataSetId);
-        response.then().statusCode(200);
-
-        assertEquals(expectedValue, response.body().jsonPath().get(
-                "columns.findAll { c -> c.id == '" + columnId + "'}.quality[0]." + qualityField));
-    }
-
-    private void checkPreparationColumnSemanticTypes(String semanticTypeName, String columnId, String preparationId,
-            boolean expected) {
-
-        Response response = api.getPreparationsColumnSemanticTypes(columnId, preparationId);
-        response.then().statusCode(200).log().ifError();
-
-        StringBuilder errorMessage = new StringBuilder();
-        if (expected) {
-            errorMessage
-                    .append("Expected semantic type \"") //
-                    .append(semanticTypeName) //
-                    .append("\" wasn't find on column \"") //
-                    .append(columnId) //
-                    .append("\" ") //
-                    .append("of the preparation \"") //
-                    .append(preparationId) //
-                    .append("\".");
-        } else {
-            errorMessage
-                    .append("The semantic type \"") //
-                    .append(semanticTypeName) //
-                    .append("\" is present on column \"") //
-                    .append(columnId) //
-                    .append("\" ") //
-                    .append("of the preparation \"") //
-                    .append(preparationId) //
-                    .append("\".");
-        }
-
-        assertEquals(errorMessage.toString(), expected ? 1 : 0, response
-                .body()
-                .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + semanticTypeName + "'  }")
-                .size());
     }
 
     private void createDataSet(String fileName, String suffixedName) throws IOException {

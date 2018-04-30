@@ -50,7 +50,7 @@ public class ApiDatasetClient {
     @Autowired
     private AnalyzerService analyzerService;
 
-    Cache<String, RowMetadata> cache = CacheBuilder.newBuilder()
+    private Cache<String, RowMetadata> metadataCache = CacheBuilder.newBuilder()
             .maximumSize(50)
             .softValues()
             .build();
@@ -117,7 +117,7 @@ public class ApiDatasetClient {
         if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             if (preparationId == null) {
                 try {
-                    dataSetMetadata.setRowMetadata(cache.get(id, () -> getRowMetadata(id, rowMetadata)));
+                    dataSetMetadata.setRowMetadata(metadataCache.get(id, () -> getRowMetadata(id, rowMetadata)));
                 } catch (ExecutionException e) {
                     // source method do not throw checked exception
                     throw (RuntimeException) e.getCause();

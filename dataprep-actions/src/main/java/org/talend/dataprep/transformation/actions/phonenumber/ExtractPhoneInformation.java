@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -53,13 +54,13 @@ import org.talend.dataquality.standardization.phone.PhoneNumberTypeEnum;
 /**
  * BLABLA
  */
-@Action(ExtractPhoneInformation.EXTRACT_PHONE_INFORMATION)
+@Action(ExtractPhoneInformation.ACTION_NAME)
 public class ExtractPhoneInformation extends AbstractActionMetadata implements ColumnAction {
 
     /**
      * The action name.
      */
-    public static final String EXTRACT_PHONE_INFORMATION = "extract_phone_information"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "extract_phone_information"; //$NON-NLS-1$
 
     /**
      * The phone type suffix.
@@ -105,9 +106,13 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractPhoneInformation.class);
 
+    private String regionCodeFromDomain = null;
+
+    private Locale localeFromDomain = null;
+
     @Override
     public String getName() {
-        return EXTRACT_PHONE_INFORMATION;
+        return ACTION_NAME;
     }
 
     @Override
@@ -150,7 +155,29 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
                     .add(ActionsUtils.additionalColumn().withKey(CARRIER).withName(column.getName() + CARRIER_SUFFIX));
 
         ActionsUtils.createNewColumn(context, additionalColumns);
-        System.out.println("size after compile : " + context.getRowMetadata().size());
+
+        String domain = column.getDomain();
+
+        switch (domain) {
+            case "FR_PHONE":
+                regionCodeFromDomain = FR_REGION_CODE;
+                localeFromDomain = Locale.FRANCE;
+                break;
+            case "DE_PHONE":
+                regionCodeFromDomain = DE_REGION_CODE;
+                localeFromDomain = Locale.GERMANY;
+                break;
+            case "US_PHONE":
+                regionCodeFromDomain = US_REGION_CODE;
+                localeFromDomain = Locale.US;
+                break;
+            case "UK_PHONE":
+                regionCodeFromDomain = UK_REGION_CODE;
+                localeFromDomain = Locale.UK;
+                break;
+            default:
+                LOGGER.warn("Unsupported domain " + domain);
+        }
     }
 
     /**
@@ -158,73 +185,97 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
      */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        System.out.println("size before apply : " + context.getRowMetadata().size());
         final String columnId = context.getColumnId();
         final String originalValue = row.get(columnId);
+
         // Set the values in newly created columns
-        if (originalValue == null || row.isInvalid(columnId)) {
-            return;
+        if (StringUtils.isNotEmpty(originalValue) && !row.isInvalid(columnId) && regionCodeFromDomain != null) {
+            setPhoneType(row, context, originalValue, regionCodeFromDomain);
+            setPhoneRegion(row, context, originalValue, regionCodeFromDomain);
+            setCountryRegion(row, context, regionCodeFromDomain);
+            setTimezones(row, context, originalValue, regionCodeFromDomain);
+            setGeocoder(row, context, originalValue, regionCodeFromDomain, localeFromDomain);
+            setCarrier(row, context, originalValue, regionCodeFromDomain, localeFromDomain);
+        }else{
+            setEmpty(row, context, TYPE);
+            setEmpty(row, context, REGION);
+            setEmpty(row, context, COUNTRY);
+            setEmpty(row, context, TIME_ZONE);
+            setEmpty(row, context, GEOCODER);
+            setEmpty(row, context, CARRIER);
+            }
+    }
+
+    private void setEmpty(DataSetRow row, ActionContext context, String columnName) {
+        if (Boolean.valueOf(context.getParameters().get(columnName))) {
+            final String typeColumn = ActionsUtils.getTargetColumnIds(context).get(columnName);
+            row.set(typeColumn, "");
         }
+    }
 
-        String domain = row.getRowMetadata().getById(columnId).getDomain();
-        String regionCodeFromDomain;
-        Locale localeFromDomain;
-        switch (domain) {
-        case "FR_PHONE":
-            regionCodeFromDomain = FR_REGION_CODE;
-            localeFromDomain = Locale.FRANCE;
-            break;
-        case "DE_PHONE":
-            regionCodeFromDomain = DE_REGION_CODE;
-            localeFromDomain = Locale.GERMANY;
-            break;
-        case "US_PHONE":
-            regionCodeFromDomain = US_REGION_CODE;
-            localeFromDomain = Locale.US;
-            break;
-        case "UK_PHONE":
-            regionCodeFromDomain = UK_REGION_CODE;
-            localeFromDomain = Locale.UK;
-            break;
-        default:
-            LOGGER.error("Unsupported domain " + domain);
-            return;
+    private void setPhoneType(DataSetRow row, ActionContext context, String originalValue,
+            String regionCodeFromDomain) {
+        if (Boolean.valueOf(context.getParameters().get(TYPE))) {
+            final String typeColumn = ActionsUtils.getTargetColumnIds(context).get(TYPE);
+            final PhoneNumberTypeEnum type =
+                    PhoneNumberHandlerBase.getPhoneNumberType(originalValue, regionCodeFromDomain);
+            row.set(typeColumn, type.getName());
         }
+    }
 
-        final String typeColumn = ActionsUtils.getTargetColumnIds(context).get(TYPE);
-        final PhoneNumberTypeEnum type = PhoneNumberHandlerBase.getPhoneNumberType(originalValue, regionCodeFromDomain);
-        row.set(typeColumn, type.getName());
+    private void setPhoneRegion(DataSetRow row, ActionContext context, String originalValue,
+            String regionCodeFromDomain) {
+        if (Boolean.valueOf(context.getParameters().get(REGION))) {
+            final String regionColumn = ActionsUtils.getTargetColumnIds(context).get(REGION);
+            final String regionCode = PhoneNumberHandlerBase.extractRegionCode(originalValue, regionCodeFromDomain);
+            row.set(regionColumn, regionCode);
+        }
+    }
 
-        final String regionColumn = ActionsUtils.getTargetColumnIds(context).get(REGION);
-        final String regionCode = PhoneNumberHandlerBase.extractRegionCode(originalValue, regionCodeFromDomain);
-        row.set(regionColumn, regionCode);
+    private void setCountryRegion(DataSetRow row, ActionContext context,
+            String regionCodeFromDomain) {
+        if (Boolean.valueOf(context.getParameters().get(COUNTRY))) {
+            final String countryColumn = ActionsUtils.getTargetColumnIds(context).get(COUNTRY);
+            final int country = PhoneNumberHandlerBase.getCountryCodeForRegion(regionCodeFromDomain);
+            row.set(countryColumn, String.valueOf(country));
+        }
+    }
 
-        final String countryColumn = ActionsUtils.getTargetColumnIds(context).get(COUNTRY);
-        final int country = PhoneNumberHandlerBase.getCountryCodeForRegion(regionCodeFromDomain);
-        row.set(countryColumn, String.valueOf(country));
+    private void setTimezones(DataSetRow row, ActionContext context, String originalValue,
+            String regionCodeFromDomain) {
+        if (Boolean.valueOf(context.getParameters().get(TIME_ZONE))) {
+            final String timezoneColumn = ActionsUtils.getTargetColumnIds(context).get(TIME_ZONE);
+            final String timezones = PhoneNumberHandlerBase
+                    .getTimeZonesForNumber(originalValue, regionCodeFromDomain, false)
+                    .stream()
+                    .collect(Collectors.joining(","));
+            row.set(timezoneColumn, timezones);
+        }
+    }
 
-        final String timezoneColumn = ActionsUtils.getTargetColumnIds(context).get(TIME_ZONE);
-        final String timezones = PhoneNumberHandlerBase
-                .getTimeZonesForNumber(originalValue, regionCodeFromDomain, false)
-                .stream()
-                .collect(Collectors.joining(","));
-        row.set(timezoneColumn, timezones);
+    private void setGeocoder(DataSetRow row, ActionContext context, String originalValue, String regionCodeFromDomain,
+            Locale localeFromDomain) {
+        if (Boolean.valueOf(context.getParameters().get(GEOCODER))) {
+            final String geocoderColumn = ActionsUtils.getTargetColumnIds(context).get(GEOCODER);
+            final String geocoder = PhoneNumberHandlerBase.getGeocoderDescriptionForNumber(originalValue,
+                    regionCodeFromDomain, localeFromDomain);
+            row.set(geocoderColumn, geocoder);
+        }
+    }
 
-        final String geocoderColumn = ActionsUtils.getTargetColumnIds(context).get(GEOCODER);
-        final String geocoder = PhoneNumberHandlerBase.getGeocoderDescriptionForNumber(originalValue,
-                regionCodeFromDomain, localeFromDomain);
-        row.set(geocoderColumn, geocoder);
-
-        final String carrierColumn = ActionsUtils.getTargetColumnIds(context).get(CARRIER);
-        final String carrier =
-                PhoneNumberHandlerBase.getCarrierNameForNumber(originalValue, regionCodeFromDomain, localeFromDomain);
-        row.set(carrierColumn, carrier);
-
+    private void setCarrier(DataSetRow row, ActionContext context, String originalValue, String regionCodeFromDomain,
+            Locale localeFromDomain) {
+        if (Boolean.valueOf(context.getParameters().get(CARRIER))) {
+            final String carrierColumn = ActionsUtils.getTargetColumnIds(context).get(CARRIER);
+            final String carrier = PhoneNumberHandlerBase.getCarrierNameForNumber(originalValue, regionCodeFromDomain,
+                    localeFromDomain);
+            row.set(carrierColumn, carrier);
+        }
     }
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
+        return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS, Behavior.NEED_STATISTICS_INVALID);
     }
 
     @Override
@@ -237,22 +288,6 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         parameters.add(parameter(locale).setName(TIME_ZONE).setType(BOOLEAN).setDefaultValue(true).build(this));
         parameters.add(parameter(locale).setName(GEOCODER).setType(BOOLEAN).setDefaultValue(true).build(this));
         parameters.add(parameter(locale).setName(CARRIER).setType(BOOLEAN).setDefaultValue(true).build(this));
-
-        // parameters.add(selectParameter(locale) //
-        // .name(MODE_PARAMETER) //
-        // .item(CONSTANT_MODE, CONSTANT_MODE, //
-        // selectParameter(locale).name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
-        // .item(US_REGION_CODE, US_REGION_CODE) //
-        // .item(FR_REGION_CODE, FR_REGION_CODE) //
-        // .item(UK_REGION_CODE, UK_REGION_CODE) //
-        // .item(DE_REGION_CODE, DE_REGION_CODE) //
-        // .item(OTHER_REGION_TO_BE_SPECIFIED, OTHER_REGION_TO_BE_SPECIFIED,
-        // parameter(locale).setName(MANUAL_REGION_PARAMETER_STRING)
-        // .setType(STRING)
-        // .setDefaultValue(EMPTY)
-        // .build(this)).defaultValue(US_REGION_CODE).build(this)) //
-        // .defaultValue(CONSTANT_MODE).build(this));
-
         return parameters;
     }
 }

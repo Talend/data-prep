@@ -24,19 +24,15 @@ import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTes
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.DE_PHONE;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.FR_PHONE;
-import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.PHONE;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.UK_PHONE;
 import static org.talend.dataquality.semantic.classifier.SemanticCategoryEnum.US_PHONE;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,8 +44,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.net.ExtractUrlTokens;
-import org.talend.dataprep.transformation.actions.net.UrlTokenExtractors;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 

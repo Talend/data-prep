@@ -35,8 +35,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -52,7 +50,7 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 import org.talend.dataquality.standardization.phone.PhoneNumberTypeEnum;
 
 /**
- * BLABLA
+ * Action allowing to extract informations from a phone number (using the google phone library)
  */
 @Action(ExtractPhoneInformation.ACTION_NAME)
 public class ExtractPhoneInformation extends AbstractActionMetadata implements ColumnAction {
@@ -104,11 +102,9 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
 
     private static final String CARRIER = "phone_carrierName"; //$NON-NLS-1$
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExtractPhoneInformation.class);
+    private static final String REGION_CODE_FROM_DOMAIN = "region_from_domain"; //$NON-NLS-1$
 
-    private String regionCodeFromDomain = null;
-
-    private Locale localeFromDomain = null;
+    private static final String LOCALE_FROM_DOMAIN = "locale_from_domain"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -158,26 +154,48 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
 
         String domain = column.getDomain();
 
+        context.get(REGION_CODE_FROM_DOMAIN, p -> getRegionCodeFromDomain(domain));
+        context.get(LOCALE_FROM_DOMAIN, p -> getLocaleFromDomain(domain));
+    }
+
+    private String getRegionCodeFromDomain(String domain) {
+        String region = null;
         switch (domain) {
-            case "FR_PHONE":
-                regionCodeFromDomain = FR_REGION_CODE;
-                localeFromDomain = Locale.FRANCE;
-                break;
-            case "DE_PHONE":
-                regionCodeFromDomain = DE_REGION_CODE;
-                localeFromDomain = Locale.GERMANY;
-                break;
-            case "US_PHONE":
-                regionCodeFromDomain = US_REGION_CODE;
-                localeFromDomain = Locale.US;
-                break;
-            case "UK_PHONE":
-                regionCodeFromDomain = UK_REGION_CODE;
-                localeFromDomain = Locale.UK;
-                break;
-            default:
-                LOGGER.warn("Unsupported domain " + domain);
+        case "FR_PHONE":
+            region = FR_REGION_CODE;
+            break;
+        case "DE_PHONE":
+            region = DE_REGION_CODE;
+            break;
+        case "US_PHONE":
+            region = US_REGION_CODE;
+            break;
+        case "UK_PHONE":
+            region = UK_REGION_CODE;
+            break;
+        default:
         }
+        return region;
+    }
+
+    private Locale getLocaleFromDomain(String domain) {
+        Locale locale = null;
+        switch (domain) {
+        case "FR_PHONE":
+            locale = Locale.FRANCE;
+            break;
+        case "DE_PHONE":
+            locale = Locale.GERMANY;
+            break;
+        case "US_PHONE":
+            locale = Locale.US;
+            break;
+        case "UK_PHONE":
+            locale = Locale.UK;
+            break;
+        default:
+        }
+        return locale;
     }
 
     /**
@@ -188,6 +206,9 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         final String columnId = context.getColumnId();
         final String originalValue = row.get(columnId);
 
+        String regionCodeFromDomain = context.get(REGION_CODE_FROM_DOMAIN);
+        Locale localeFromDomain = context.get(LOCALE_FROM_DOMAIN);
+
         // Set the values in newly created columns
         if (StringUtils.isNotEmpty(originalValue) && !row.isInvalid(columnId) && regionCodeFromDomain != null) {
             setPhoneType(row, context, originalValue, regionCodeFromDomain);
@@ -196,14 +217,14 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
             setTimezones(row, context, originalValue, regionCodeFromDomain);
             setGeocoder(row, context, originalValue, regionCodeFromDomain, localeFromDomain);
             setCarrier(row, context, originalValue, regionCodeFromDomain, localeFromDomain);
-        }else{
+        } else {
             setEmpty(row, context, TYPE);
             setEmpty(row, context, REGION);
             setEmpty(row, context, COUNTRY);
             setEmpty(row, context, TIME_ZONE);
             setEmpty(row, context, GEOCODER);
             setEmpty(row, context, CARRIER);
-            }
+        }
     }
 
     private void setEmpty(DataSetRow row, ActionContext context, String columnName) {
@@ -232,8 +253,7 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         }
     }
 
-    private void setCountryRegion(DataSetRow row, ActionContext context,
-            String regionCodeFromDomain) {
+    private void setCountryRegion(DataSetRow row, ActionContext context, String regionCodeFromDomain) {
         if (Boolean.valueOf(context.getParameters().get(COUNTRY))) {
             final String countryColumn = ActionsUtils.getTargetColumnIds(context).get(COUNTRY);
             final int country = PhoneNumberHandlerBase.getCountryCodeForRegion(regionCodeFromDomain);

@@ -12,13 +12,6 @@ package org.talend.dataprep.util.avro;
 //
 // ============================================================================
 
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericDatumReader;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.Decoder;
-import org.apache.avro.io.DecoderFactory;
-import org.slf4j.Logger;
-
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
@@ -26,6 +19,13 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.stream.Stream;
+
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericDatumReader;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.Decoder;
+import org.apache.avro.io.DecoderFactory;
+import org.slf4j.Logger;
 
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
@@ -57,9 +57,10 @@ public class AvroReader implements Closeable, Iterator<GenericRecord> {
         this.rawContent = rawContent;
 
         // get the avro schema from parameters
-        reader = new GenericDatumReader<>(schema);
+        this.reader = new GenericDatumReader<>(schema);
+
         DecoderFactory decoderFactory = DecoderFactory.get();
-        decoder = binary ? decoderFactory.binaryDecoder(rawContent, null)
+        this.decoder = binary ? decoderFactory.binaryDecoder(rawContent, null) //
                 : decoderFactory.jsonDecoder(schema, rawContent);
     }
 

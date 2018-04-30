@@ -1,6 +1,8 @@
 package org.talend.dataprep.dataset.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 
 import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 import static org.talend.daikon.exception.ExceptionContext.build;
@@ -46,6 +49,11 @@ public class ApiDatasetClient {
 
     @Autowired
     private AnalyzerService analyzerService;
+
+    Cache<String, RowMetadata> cache = CacheBuilder.newBuilder()
+            .maximumSize(50)
+            .softValues()
+            .build();
 
     public Stream<Dataset> listDataset() {
         return context.getBean(DatasetList.class).execute();
@@ -103,10 +111,16 @@ public class ApiDatasetClient {
         // If we do not have statistics. Ugly but efficient...
         // correct solution would be to refactor half dataprep strategies and API...
         // This should not be in API but in transformation, as preparations step zero
-        if (dataSetMetadata.getRowMetadata().getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
+        RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
+
+
+        if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             if (preparationId == null) {
-                try (Stream<DataSetRow> records = getDataSetContentAsRows(id, dataSetMetadata.getRowMetadata())) {
-                    analyzerService.analyzeFull(records, dataSetMetadata.getRowMetadata().getColumns());
+                try {
+                    dataSetMetadata.setRowMetadata(cache.get(id, () -> getRowMetadata(id, rowMetadata)));
+                } catch (ExecutionException e) {
+                    // source method do not throw checked exception
+                    throw (RuntimeException) e.getCause();
                 }
             } else {
                 dataSetMetadata.setRowMetadata(getPreparationMetadata(preparationId));
@@ -114,8 +128,15 @@ public class ApiDatasetClient {
         }
 
         dataset.setMetadata(dataSetMetadata);
-        dataset.setRecords(getDataSetContentAsRows(id, dataSetMetadata.getRowMetadata()));
+        dataset.setRecords(getDataSetContentAsRows(id, rowMetadata));
         return dataset;
+    }
+
+    private RowMetadata getRowMetadata(String id, RowMetadata rowMetadata) {
+        try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata)) {
+            analyzerService.analyzeFull(records, rowMetadata.getColumns());
+        }
+        return rowMetadata;
     }
 
     private RowMetadata getPreparationMetadata(String preparationId) {

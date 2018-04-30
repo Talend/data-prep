@@ -12,8 +12,16 @@
 
 package org.talend.dataprep.command.dataset;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -35,16 +43,6 @@ import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroUtils;
-
-import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -123,11 +121,9 @@ public class DataSetGet extends GenericCommand<InputStream> {
             // Totally short-circuit the hystrix command but for the POC sake
             EntityUtils.consumeQuietly(httpResponse.getEntity());
             Schema schema = datasetClient.getDataSetSchema(dataSetId);
-            Stream<GenericRecord> dataSetContent = datasetClient.getDataSetContent(dataSetId);
 
             RowMetadata rowMetadata = AvroUtils.toRowMetadata(schema);
-            Function<GenericRecord, DataSetRow> converter = AvroUtils.toDataSetRowConverter(rowMetadata);
-            Stream<DataSetRow> rows = dataSetContent.map(converter);
+            Stream<DataSetRow> rows = datasetClient.getDataSetContentAsRows(dataSetId, rowMetadata);
 
             // build dataset object
             DataSet dataSet = new DataSet();
@@ -143,7 +139,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
                 return new ByteArrayInputStream(outputStream.toByteArray());
             }
         } catch (IOException e) {
-            throw new TalendRuntimeException(org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 

@@ -1,8 +1,9 @@
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
@@ -112,7 +113,6 @@ public class ApiDatasetClient {
         // correct solution would be to refactor half dataprep strategies and API...
         // This should not be in API but in transformation, as preparations step zero
         RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
-
 
         if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             if (preparationId == null) {

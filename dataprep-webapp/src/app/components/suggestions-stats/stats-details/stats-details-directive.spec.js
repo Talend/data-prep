@@ -81,30 +81,27 @@ describe('stats details directive', function () {
 		scope.$apply();
 
 		//then
-		const tables = element.find('.stat-table');
-		expect(tables.length).toBe(2);
+		expect(element.find('.stat-table').length).toBe(2);
 
-		const table1tr = tables.eq(0).find('tr');
-		expect(table1tr.eq(0).text().trim()).toBe('Count: 4');
-		expect(table1tr.eq(1).text().trim()).toBe('Distinct: 5');
-		expect(table1tr.eq(2).text().trim()).toBe('Duplicate: 6');
-		expect(table1tr.eq(3).text().trim()).toBe('Valid: 9');
-		expect(table1tr.eq(4).text().trim()).toBe('Empty: 7');
-		expect(table1tr.eq(5).text().trim()).toBe('Invalid: 8');
+		expect(element.find('.stat-table').eq(0).find('tr').eq(0).text().trim().replace(/ /g, '')).toBe('Count:\n4');
+		expect(element.find('.stat-table').eq(0).find('tr').eq(1).text().trim().replace(/ /g, '')).toBe('Distinct:\n5');
+		expect(element.find('.stat-table').eq(0).find('tr').eq(2).text().trim().replace(/ /g, '')).toBe('Duplicate:\n6');
+		expect(element.find('.stat-table').eq(0).find('tr').eq(3).text().trim().replace(/ /g, '')).toBe('Valid:\n9');
+		expect(element.find('.stat-table').eq(0).find('tr').eq(4).text().trim().replace(/ /g, '')).toBe('Empty:\n7');
+		expect(element.find('.stat-table').eq(0).find('tr').eq(5).text().trim().replace(/ /g, '')).toBe('Invalid:\n8');
 
-		const table2tr = tables.eq(1).find('tr');
-		expect(table2tr.eq(0).text().trim()).toBe('MIN: 10');
-		expect(table2tr.eq(1).text().trim()).toBe('MAX: 11');
-		expect(table2tr.eq(2).text().trim()).toBe('Mean: 12');
-		expect(table2tr.eq(3).text().trim()).toBe('Variance: 13');
+		expect(element.find('.stat-table').eq(1).find('tr').eq(0).text().trim().replace(/ /g, '')).toBe('MIN:\n10');
+		expect(element.find('.stat-table').eq(1).find('tr').eq(1).text().trim().replace(/ /g, '')).toBe('MAX:\n11');
+		expect(element.find('.stat-table').eq(1).find('tr').eq(2).text().trim().replace(/ /g, '')).toBe('Mean:\n12');
+		expect(element.find('.stat-table').eq(1).find('tr').eq(3).text().trim().replace(/ /g, '')).toBe('Variance:\n13');
 	});
 
-	it('should render a loader if statistics are computins', () => {
+	it('should render a loader if statistics are computins', inject((FilterManagerService) => {
 		createElement();
 
 		stateMock.playground.statistics.loading = true;
 		scope.$apply();
 
 		expect(element.find('loader').length).toBe(1);
-	});
+	}));
 });

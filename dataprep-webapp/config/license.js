@@ -1,4 +1,4 @@
-const LICENSE_BANNER = `
+const licenseTemplate = `
     ===========================================================================
     
      Copyright (C) 2006-${new Date().getFullYear()} Talend Inc. - www.talend.com
@@ -13,4 +13,4 @@ const LICENSE_BANNER = `
     ===========================================================================
 `;
 
-module.exports = LICENSE_BANNER;
+module.exports = () => licenseTemplate;

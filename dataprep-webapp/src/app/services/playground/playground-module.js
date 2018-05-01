@@ -26,7 +26,6 @@ import SERVICES_RECIPE_MODULE from '../recipe/recipe-module';
 import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_STATISTICS_MODULE from '../statistics/statistics-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
-import SERVICES_APPSETTINGS_MODULE from '../../settings/settings-module';
 import SERVICES_MESSAGE_MODULE from '../message/message-module';
 
 import PlaygroundService from './playground-service';
@@ -54,7 +53,6 @@ const MODULE_NAME = 'data-prep.services.playground';
 angular.module(MODULE_NAME,
 	[
 		uiRouter,
-		SERVICES_APPSETTINGS_MODULE,
 		SERVICES_DATAGRID_MODULE,
 		SERVICES_DATASET_MODULE,
 		SERVICES_EXPORT_MODULE,

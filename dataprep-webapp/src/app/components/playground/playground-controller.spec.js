@@ -16,12 +16,6 @@ import {
 	HOME_DATASETS_ROUTE,
 } from '../../index-route';
 
-const windowMock = {
-	location: {
-		href: '',
-	},
-};
-
 describe('Playground controller', () => {
 	let createController;
 	let scope;
@@ -86,7 +80,6 @@ describe('Playground controller', () => {
 			},
 		};
 		$provide.constant('state', stateMock);
-		$provide.value('$window', windowMock);
 	}));
 
 	beforeEach(inject(($rootScope, $q, $controller, $state, PlaygroundService, PreparationService, StateService) => {

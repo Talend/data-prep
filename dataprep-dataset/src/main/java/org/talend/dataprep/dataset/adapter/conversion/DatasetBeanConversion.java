@@ -23,10 +23,19 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 @Component
 public class DatasetBeanConversion extends BeanConversionServiceWrapper {
+
+    private final ObjectMapper objectMapper;
+
+    public DatasetBeanConversion(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public BeanConversionService doWith(BeanConversionService instance, String beanName,
@@ -40,11 +49,14 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                     dataset.setUpdated(dataSetMetadata.getLastModificationDate());
                     dataset.setOwner(dataSetMetadata.getAuthor());
                     dataset.setLabel(dataSetMetadata.getName());
+
                     DataSetLocation location = dataSetMetadata.getLocation();
-                    //TODO fill with TCompLocation instance only
-                    // dataset.setProperties();
-                    //TODO value according to TCompLocation
-                    // dataset.setType();
+                    dataset.setType(location.getLocationType());
+
+                    ObjectNode jsonNode = objectMapper.createObjectNode();
+                    jsonNode.set("location", objectMapper.valueToTree(location));
+                    jsonNode.set("content", objectMapper.valueToTree(dataSetMetadata.getContent()));
+                    dataset.setProperties(jsonNode.toString());
 
                     return dataset;
                 }).build() //

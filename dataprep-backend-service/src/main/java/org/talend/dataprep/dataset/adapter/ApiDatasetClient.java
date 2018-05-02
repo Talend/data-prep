@@ -24,6 +24,7 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
@@ -57,6 +58,9 @@ public class ApiDatasetClient {
     private AnalyzerService analyzerService;
 
     @Autowired
+    private BeanConversionService conversionService;
+
+    @Autowired
     private DataSetContentLimit limit;
 
     @Value("${dataset.records.limit:10000}")
@@ -80,15 +84,12 @@ public class ApiDatasetClient {
 
     public DataSetMetadata getDataSetMetadata(String id) {
         Dataset dataset = getMetadata(id);
-        RowMetadata rowMetadata = getDataSetRowMetadata(id);
 
-        DataSetMetadata metadata = dataSetMetadataBuilder.metadata() //
-                .id(dataset.getId()) //
-                .name(dataset.getLabel()) //
-                .created(dataset.getCreated()) //
-                .modified(dataset.getUpdated()) //
-                .build();
+        DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);
+
+        RowMetadata rowMetadata = getDataSetRowMetadata(id);
         metadata.setRowMetadata(rowMetadata);
+
         return metadata;
     }
 

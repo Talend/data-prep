@@ -56,6 +56,9 @@ public class RowMetadata implements Serializable {
     @JsonProperty("nextId")
     private int nextId = 0;
 
+    @JsonProperty("sampleNbRows")
+    private long sampleNbRows;
+
     /**
      * Default empty constructor.
      */
@@ -300,6 +303,7 @@ public class RowMetadata implements Serializable {
         columns.forEach(col -> copyColumns.add(ColumnMetadata.Builder.column().copy(col).build()));
         final RowMetadata clone = new RowMetadata(new ArrayList<>(copyColumns));
         clone.nextId = nextId;
+        clone.sampleNbRows = sampleNbRows;
         return clone;
     }
 
@@ -309,13 +313,13 @@ public class RowMetadata implements Serializable {
 
     /**
      * Move column with id <code>movedColumnId</code> <b>after</b> <code>columnId</code>. If you have:
-     * 
+     *
      * <pre>
      *     [0001, 0002, 0003, 0004]
      * </pre>
-     * 
+     *
      * And call <code>moveAfter(0004, 0001)</code>, you will change order of columns with:
-     * 
+     *
      * <pre>
      *     [0001, 0004, 0002, 0003]
      * </pre>
@@ -335,5 +339,13 @@ public class RowMetadata implements Serializable {
 
         columns.remove(movedColumn);
         columns.add(columns.indexOf(columnMetadata) + 1, movedColumn);
+    }
+
+    public void setSampleNbRows(long sampleNbRows) {
+        this.sampleNbRows = sampleNbRows;
+    }
+
+    public long getSampleNbRows() {
+        return sampleNbRows;
     }
 }

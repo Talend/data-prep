@@ -122,6 +122,10 @@ public class StatisticsNode extends ColumnFilteredNode {
             if (rowMetadata != null && rowMetadataFallbackProvider != null) {
                 rowMetadataFallbackProvider.setFallback(rowMetadata);
             }
+            if (rowMetadata != null && rowMetadata.getColumns().size() > 0
+                    && rowMetadata.getColumns().get(0).getStatistics() != null) {
+                rowMetadata.setSampleNbRows(rowMetadata.getColumns().get(0).getStatistics().getCount());
+            }
         }
         super.signal(signal);
     }

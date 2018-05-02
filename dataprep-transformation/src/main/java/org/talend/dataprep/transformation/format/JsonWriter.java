@@ -56,6 +56,8 @@ public class JsonWriter implements TransformerWriter {
 
     private static final String RECORDS_FIELD_NAME = "records";
 
+    public static final String SAMPLE_NB_ROWS = "sampleNbRows";
+
     /** The data-prep ready jackson module. */
     @Autowired
     private ObjectMapper mapper;
@@ -137,6 +139,8 @@ public class JsonWriter implements TransformerWriter {
     private void writeRowMetadataObject(RowMetadata rowMetadata) throws IOException {
         generator.writeFieldName(METADATA_FIELD_NAME);
         generator.writeStartObject();
+        generator.writeFieldName(SAMPLE_NB_ROWS);
+        generator.writeNumber(rowMetadata.getSampleNbRows());
         generator.writeFieldName(METADATA_COLUMNS_FIELD_NAME);
         generator.writeStartArray();
         rowMetadata.getColumns().forEach(col -> {

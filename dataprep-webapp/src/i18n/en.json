@@ -217,7 +217,7 @@
   "DATASET_UPDATE_SUCCESS_TITLE": "Overwrite dataset",
   "DATASET_UPDATE_SUCCESS": "The dataset \"{{dataset}}\" has been overwritten.",
   "REMOVE_SUCCESS_TITLE": "{{type}} removed",
-  "REMOVE_SUCCESS": "The {{type}} \"{{name}}\" has been removed.",
+  "REMOVE_SUCCESS": "{{type}} \"{{name}}\" has been removed.",
   "COPY_SUCCESS_TITLE": "Dataset copy",
   "COPY_SUCCESS": "The dataset has been copied.",
   "MOVE_SUCCESS_TITLE": "Dataset move",

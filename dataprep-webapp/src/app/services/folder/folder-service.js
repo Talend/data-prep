@@ -112,8 +112,8 @@ export default function FolderService($q, $state, $timeout, state, StateService,
 			author: item.owner && item.owner.displayName,
 			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
-			datasetName: item.dataset.dataSetName,
-			nbSteps: item.steps.length - 1, // remove root step
+			datasetName: item.dataset ? item.dataset.dataSetName : '',
+			nbSteps: item.steps ? item.steps.length - 1 : 0, // remove root step
 			icon: 'talend-dataprep',
 			displayMode: 'text',
 			className: 'list-item-preparation',

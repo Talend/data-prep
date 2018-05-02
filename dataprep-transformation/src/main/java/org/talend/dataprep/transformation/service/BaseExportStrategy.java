@@ -116,7 +116,7 @@ public abstract class BaseExportStrategy {
      */
     protected String getActions(String preparationId, String stepId) {
         String actions;
-        if (StringUtils.isBlank(preparationId)) {
+        if (StringUtils.isBlank(preparationId) || StringUtils.isBlank(stepId)) {
             actions = "{\"actions\": []}";
         } else {
             final PreparationGetActions getActionsCommand = applicationContext.getBean(PreparationGetActions.class, preparationId,

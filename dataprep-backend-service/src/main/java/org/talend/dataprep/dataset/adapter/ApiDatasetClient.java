@@ -4,13 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.netflix.hystrix.HystrixCommand;
-import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Stream;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +17,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
@@ -35,7 +29,17 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 /**
@@ -69,10 +73,13 @@ public class ApiDatasetClient {
     @Autowired
     private FilterService filterService;
 
-    private Cache<String, RowMetadata> metadataCache = CacheBuilder.newBuilder()
+    private final Cache<String, AnalysisResult> metadataCache = CacheBuilder.newBuilder()
             .maximumSize(50)
             .softValues()
             .build();
+
+
+    // ------- Pure API -------
 
     public Stream<Dataset> listDataset() {
         return context.getBean(DatasetList.class).execute();
@@ -82,24 +89,8 @@ public class ApiDatasetClient {
         return context.getBean(DataSetGetMetadata.class, id).execute();
     }
 
-    public DataSetMetadata getDataSetMetadata(String id) {
-        Dataset dataset = getMetadata(id);
-
-        DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);
-
-        RowMetadata rowMetadata = getDataSetRowMetadata(id);
-        metadata.setRowMetadata(rowMetadata);
-
-        return metadata;
-    }
-
     public Schema getDataSetSchema(String id) {
         return context.getBean(DataSetGetSchema.class, id).execute();
-    }
-
-    public RowMetadata getDataSetRowMetadata(String id) {
-        Schema dataSetSchema = getDataSetSchema(id);
-        return AvroUtils.toRowMetadata(dataSetSchema);
     }
 
     public Stream<GenericRecord> getDataSetContent(String id) {
@@ -107,48 +98,41 @@ public class ApiDatasetClient {
         return context.getBean(DataSetGetContent.class, id, schema).execute();
     }
 
+    // ------- Composite adapters -------
+
+    public DataSetMetadata getDataSetMetadata(String id) {
+        return toDataSetMetadata(getMetadata(id));
+    }
+
+    public RowMetadata getDataSetRowMetadata(String id) {
+        Schema dataSetSchema = getDataSetSchema(id);
+        return AvroUtils.toRowMetadata(dataSetSchema);
+    }
+
     public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata) {
-        return getDataSetContent(id).map(AvroUtils.toDataSetRowConverter(rowMetadata));
+        return getDataSetContent(id).map(toDatasetRow(rowMetadata));
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id) {
         DataSetMetadata metadata = getDataSetMetadata(id);
-        return getDataSetContent(id).map(AvroUtils.toDataSetRowConverter(metadata.getRowMetadata()));
+        return toDataSetRows(getDataSetContent(id), metadata);
     }
 
     public DataSet getDataSet(String id) {
-        return getDataSet(id, null);
+        return getDataSet(id, false);
     }
 
-    public DataSet getDataSet(String id, String preparationId) {
+    public DataSet getDataSet(String id, boolean fullContent) {
         DataSet dataset = new DataSet();
-        DataSetMetadata dataSetMetadata = getDataSetMetadata(id);
+        // convert metadata
+        DataSetMetadata metadata = toDataSetMetadata(getMetadata(id), fullContent);
+        dataset.setMetadata(metadata);
+        // convert records
+        dataset.setRecords(toDataSetRows(getDataSetContent(id), metadata));
 
-        // If we do not have statistics. Ugly but efficient...
-        // correct solution would be to refactor half dataprep strategies and API...
-        // This should not be in API but in transformation, as preparations step zero
-        RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
-
-        if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
-            if (preparationId == null) {
-                try {
-                    dataSetMetadata.setRowMetadata(metadataCache.get(id, () -> analyseDataset(id, rowMetadata)));
-                } catch (ExecutionException e) {
-                    // source method do not throw checked exception
-                    throw (RuntimeException) e.getCause();
-                }
-            } else {
-                dataSetMetadata.setRowMetadata(getPreparationMetadata(preparationId));
-            }
-        }
-
-        dataset.setMetadata(dataSetMetadata);
-        dataset.setRecords(getDataSetContentAsRows(id, rowMetadata));
+        // DataSet specifics
+        metadata.getContent().getLimit().ifPresent(theLimit -> dataset.setRecords(dataset.getRecords().limit(theLimit)));
         return dataset;
-    }
-
-    public DataSet getDataSet(final String dataSetId, final boolean fullContent) {
-        return getDataSet(dataSetId, fullContent, StringUtils.EMPTY);
     }
 
     /**
@@ -158,28 +142,124 @@ public class ApiDatasetClient {
      * @param filter TQL filter for content
      */
     public DataSet getDataSet(String id, boolean fullContent, String filter) {
-        DataSet dataSet = getDataSet(id);
-        Stream<DataSetRow> records =
-                dataSet.getRecords()
-                        .filter(filterService.build(filter, dataSet.getMetadata().getRowMetadata()));
-
-        if (limit.limitContentSize() || fullContent) {
-            records = records.limit(sampleSize);
-        }
-
-        dataSet.setRecords(records);
+        DataSet dataSet = getDataSet(id, fullContent);
+        dataSet.setRecords(filter(dataSet.getRecords(), filter, dataSet.getMetadata().getRowMetadata()));
         return dataSet;
     }
 
-    public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
-        return context.getBean(DataSetGet.class, dataSetId, fullContent, includeInternalContent);
+    public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {
+        return listDataset()
+                .filter(ds -> {
+                    boolean valid;
+                    String label = ds.getLabel();
+                    if (label != null) {
+                        if (strict) {
+                            valid = label.equals(name);
+                        } else {
+                            valid = label.contains(name);
+                        }
+                    } else {
+                        valid = name == null;
+                    }
+                    return valid;
+                })
+                .map(this::toDataSetMetadata);
     }
 
-    private RowMetadata analyseDataset(String id, RowMetadata rowMetadata) {
-        try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata)) {
+    private Stream<DataSetRow> filter(Stream<DataSetRow> stream, String filter, RowMetadata metadata) {
+        return stream.filter(filterService.build(filter, metadata));
+    }
+
+    private Long limit(boolean fullContent) {
+        Long recordsLimitApply = null;
+        if (limit.limitContentSize() && limit.getLimit() != null) {
+            recordsLimitApply = this.limit.getLimit();
+        }
+        if (!fullContent) {
+            recordsLimitApply = sampleSize;
+        }
+        return recordsLimitApply;
+    }
+
+    /**
+     * Still present because Chained commands still need this one.
+     *
+     * @param dataSetId
+     * @param fullContent
+     * @param includeInternalContent
+     * @return
+     */
+    @Deprecated
+    public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
+        DataSet dataSet = getDataSet(dataSetId, fullContent);
+        return new HystrixCommand<InputStream>(DATASET_GROUP) {
+
+            @Override
+            protected InputStream run() throws IOException {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                mapper.writerFor(DataSet.class).writeValue(out, dataSet);
+                return new ByteArrayInputStream(out.toByteArray());
+            }
+        };
+    }
+
+    // ------- Utilities -------
+
+
+    private Stream<DataSetRow> toDataSetRows(Stream<GenericRecord> dataSetContent, DataSetMetadata metadata) {
+        return dataSetContent.map(toDatasetRow(metadata.getRowMetadata()));
+    }
+    // GenericRecord -> DataSetRow
+    private Function<GenericRecord, DataSetRow> toDatasetRow(RowMetadata rowMetadata) {
+        return AvroUtils.toDataSetRowConverter(rowMetadata);
+    }
+
+    // Dataset -> DataSetMetadata
+    private DataSetMetadata toDataSetMetadata(Dataset dataset) {
+        return toDataSetMetadata(dataset, false);
+    }
+    private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent) {
+        RowMetadata rowMetadata = getDataSetRowMetadata(dataset.getId());
+        DataSetMetadata metadata = dataSetMetadataBuilder.metadata() //
+                .id(dataset.getId()) //
+                .name(dataset.getLabel()) //
+                .created(dataset.getCreated()) //
+                .modified(dataset.getUpdated()) //
+                .build();
+        metadata.setRowMetadata(rowMetadata);
+        metadata.getContent().setLimit(limit(fullContent));
+
+        if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
+            try {
+                AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata));
+                metadata.setRowMetadata(analysisResult.rowMetadata);
+                metadata.setDataSetSize(analysisResult.rowcount);
+                metadata.getContent().setNbRecords(analysisResult.rowcount);
+            } catch (ExecutionException e) {
+                // source method do not throw checked exception
+                throw (RuntimeException) e.getCause();
+            }
+        }
+
+        return metadata;
+    }
+
+    private AnalysisResult analyseDataset(String id, RowMetadata rowMetadata) {
+        AtomicLong count = new AtomicLong(0);
+        try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata).peek(e -> count.incrementAndGet())) {
             analyzerService.analyzeFull(records, rowMetadata.getColumns());
         }
-        return rowMetadata;
+        return new AnalysisResult(rowMetadata, count.get());
+    }
+
+    private class AnalysisResult {
+        private final RowMetadata rowMetadata;
+        private final long rowcount;
+
+        public AnalysisResult(RowMetadata rowMetadata, long rowcount) {
+            this.rowMetadata = rowMetadata;
+            this.rowcount = rowcount;
+        }
     }
 
     private RowMetadata getPreparationMetadata(String preparationId) {

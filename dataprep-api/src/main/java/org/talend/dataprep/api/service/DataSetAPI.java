@@ -207,7 +207,7 @@ public class DataSetAPI extends APIService {
             LOG.debug("Requesting dataset #{} (pool: {})...", id, getConnectionStats());
         }
         try {
-            return datasetClient.getDataSet(id);
+            return datasetClient.getDataSet(id, fullContent, filter);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Request dataset #{} (pool: {}) done.", id, getConnectionStats());

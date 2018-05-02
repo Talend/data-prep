@@ -12,12 +12,6 @@
 
 package org.talend.dataprep.transformation.api.transformer.json;
 
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
-import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
-
-import java.util.Optional;
-import java.util.function.Function;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +38,12 @@ import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
 import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
+
+import java.util.Optional;
+import java.util.function.Function;
+
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
+import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 
 @Component
 public class PipelineTransformer implements Transformer {
@@ -90,9 +90,11 @@ public class PipelineTransformer implements Transformer {
         final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
                 configuration.stepId(), configuration.getSourceType());
         final PreparationMessage preparation = configuration.getPreparation();
-        final Function<Step, RowMetadata> rowMetadataSupplier = s -> Optional.ofNullable(s.getRowMetadata()) //
+        // function that from a step gives the rowMetadata associated to the previous/parent step
+        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
+
         final Pipeline pipeline = Pipeline.Builder.builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
@@ -105,7 +107,7 @@ public class PipelineTransformer implements Transformer {
                 .withFilterOut(configuration.getOutFilter()) //
                 .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata)) //
                 .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(rowMetadataSupplier) //
+                .withStepMetadataSupplier(previousStepRowMetadataSupplier) //
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();

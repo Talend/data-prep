@@ -218,14 +218,10 @@ public class ApiDatasetClient {
     private DataSetMetadata toDataSetMetadata(Dataset dataset) {
         return toDataSetMetadata(dataset, false);
     }
+
     private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent) {
         RowMetadata rowMetadata = getDataSetRowMetadata(dataset.getId());
-        DataSetMetadata metadata = dataSetMetadataBuilder.metadata() //
-                .id(dataset.getId()) //
-                .name(dataset.getLabel()) //
-                .created(dataset.getCreated()) //
-                .modified(dataset.getUpdated()) //
-                .build();
+        DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 

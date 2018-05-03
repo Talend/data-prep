@@ -228,7 +228,7 @@ public class ApiDatasetClient {
         if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             try {
                 AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata));
-                metadata.setRowMetadata(analysisResult.rowMetadata);
+                metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata)); // because sadly, my cache is not immutable
                 metadata.setDataSetSize(analysisResult.rowcount);
                 metadata.getContent().setNbRecords(analysisResult.rowcount);
             } catch (ExecutionException e) {

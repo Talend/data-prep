@@ -69,6 +69,16 @@ public class RowMetadata implements Serializable {
     }
 
     /**
+     * Copy constructor to replace {@link #clone()}.
+     */
+    public RowMetadata(RowMetadata original) {
+        List<ColumnMetadata> copyColumns = new ArrayList<>(original.columns.size());
+        original.columns.forEach(col -> copyColumns.add(ColumnMetadata.Builder.column().copy(col).build()));
+        setColumns(new ArrayList<>(copyColumns));
+        nextId = original.nextId;
+    }
+
+    /**
      * @return The metadata of this row's columns.
      */
     public List<ColumnMetadata> getColumns() {
@@ -291,12 +301,7 @@ public class RowMetadata implements Serializable {
 
     @Override
     public RowMetadata clone() {
-        // also copy the columns !
-        List<ColumnMetadata> copyColumns = new ArrayList<>(columns.size());
-        columns.forEach(col -> copyColumns.add(ColumnMetadata.Builder.column().copy(col).build()));
-        final RowMetadata clone = new RowMetadata(new ArrayList<>(copyColumns));
-        clone.nextId = nextId;
-        return clone;
+        return new RowMetadata(this);
     }
 
     /**

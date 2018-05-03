@@ -30,7 +30,6 @@ import org.talend.dataprep.api.service.command.export.Export;
 import org.talend.dataprep.api.service.command.export.ExportTypes;
 import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
 import org.talend.dataprep.command.CommandHelper;
-import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
@@ -81,8 +80,7 @@ public class ExportAPI extends APIService {
 
             LOG.info("New Export {}", parameters);
 
-            final GenericCommand<InputStream> command = getCommand(Export.class, parameters);
-            return CommandHelper.toStreaming(command);
+            return CommandHelper.toStreaming(getCommand(Export.class, parameters));
         } catch (TDPException e) {
             throw e;
         } catch (Exception e) {

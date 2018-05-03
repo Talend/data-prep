@@ -100,8 +100,9 @@ public class AvroUtils {
      * @return row value
      */
     private static String toStringValue(GenericRecord currentRecord, ColumnMetadata column) {
-        final Schema fieldSchema = currentRecord.getSchema().getField(column.getName()).schema();
-        Object recordFieldValue = currentRecord.get(column.getName());
+        String fieldName = toField(column).name();
+        final Schema fieldSchema = currentRecord.getSchema().getField(fieldName).schema();
+        Object recordFieldValue = currentRecord.get(fieldName);
         return convertAvroFieldToString(fieldSchema, recordFieldValue);
     }
 

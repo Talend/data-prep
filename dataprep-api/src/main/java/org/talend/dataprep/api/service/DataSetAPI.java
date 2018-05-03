@@ -315,8 +315,8 @@ public class DataSetAPI extends APIService {
                     datasetStream = datasetStream.limit(datasetListLimit);
                 }
 
-                return datasetStream
-                        .map(dataset -> beanConversionService.convert(dataset, UserDataSetMetadata.class)) //
+                return datasetStream.map(dataset -> beanConversionService.convert(dataset, DataSetMetadata.class)) //
+                        .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
                         .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
             } finally {
                 LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified, name,

@@ -12,15 +12,22 @@
 
 package org.talend.dataprep.api.service;
 
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -28,7 +35,19 @@ import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedDataSetMetadata;
-import org.talend.dataprep.api.service.command.dataset.*;
+import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
+import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
+import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
+import org.talend.dataprep.api.service.command.dataset.CreateOrUpdateDataSet;
+import org.talend.dataprep.api.service.command.dataset.DataSetDelete;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetEncodings;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetImportParameters;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetImports;
+import org.talend.dataprep.api.service.command.dataset.DataSetPreview;
+import org.talend.dataprep.api.service.command.dataset.GetDataSetColumnTypes;
+import org.talend.dataprep.api.service.command.dataset.SetFavorite;
+import org.talend.dataprep.api.service.command.dataset.UpdateColumn;
+import org.talend.dataprep.api.service.command.dataset.UpdateDataSet;
 import org.talend.dataprep.api.service.command.preparation.PreparationList;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDataSetId;
 import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
@@ -46,22 +65,25 @@ import org.talend.dataprep.user.store.UserDataRepository;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
+import com.netflix.hystrix.HystrixCommand;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.command.CommandHelper.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.command.CommandHelper.toStreaming;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -263,40 +285,33 @@ public class DataSetAPI extends APIService {
     public Callable<Stream<UserDataSetMetadata>> list(
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
-            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(required = false) String name,
-            @ApiParam(value = "Filter on certified data sets") @RequestParam(required = false) Boolean certified,
-            @ApiParam(value = "Filter on favorite data sets") @RequestParam(required = false) Boolean favorite,
-            @ApiParam(value = "Filter on recent data sets") @RequestParam(required = false) Boolean limit) {
-        // For compatibility
-        final String nameFilter = isBlank(name) ? null : name;
-        final Boolean favoriteFilter = favorite != null && !favorite ? null : true;
+            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
+            @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
+            @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
+            @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
         return () -> {
             try {
                 Stream<Dataset> datasetStream = datasetClient.listDataset();
 
-                if (favoriteFilter != null) {
+                if (favorite) {
                     final UserData userData = userDataRepository.get(security.getUserId());
 
                     if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
-                        datasetStream = datasetStream.filter(ds -> {
-                            Set<String> favoritesDatasets = userData.getFavoritesDatasets();
-                            boolean containedInFavorites = favoritesDatasets.contains(ds.getId());
-                            return favoriteFilter == containedInFavorites;
-                        });
+                        datasetStream = datasetStream.filter(ds -> userData.getFavoritesDatasets().contains(ds.getId()));
                     } else {
                         // Wants favorites but user has no favorite
                         datasetStream = datasetStream.filter(ds -> false);
                     }
                 }
 
-                if (nameFilter != null) {
+                if (isNotBlank(name)) {
                     datasetStream = datasetStream.filter(ds -> name.equals(ds.getLabel()));
                 }
 
                 // TODO : certified
                 //datasetStream = datasetStream.filter(ds -> ds.isCertified() == certified);
 
-                if (limit != null && limit) {
+                if (limit) {
                     datasetStream = datasetStream.limit(datasetListLimit);
                 }
 

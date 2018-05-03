@@ -80,6 +80,10 @@ public abstract class BaseDataSetService {
         synchronousAnalyzers.sort(comparingInt(SynchronousDataSetAnalyzer::order));
     }
 
+    public void setSynchronousAnalyzers(List<SynchronousDataSetAnalyzer> synchronousAnalyzers) {
+        this.synchronousAnalyzers = synchronousAnalyzers;
+    }
+
     /**
      * Make sure the given name is not used by another dataset. If yes, throws a TDPException.
      *
@@ -119,7 +123,7 @@ public abstract class BaseDataSetService {
             LOG.info("New DataSet #{}, name: {}, type: {}, from: {}", metadata.getId(), metadata.getName(),
                     metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
         } else {
-            LOG.error("Dataset #{} does not exist (but was expected)", id);
+            LOG.error("Dataset #{} does not exist (but was expected to)", id);
         }
 
         // perform async analysis

@@ -58,8 +58,7 @@ public class OSDataPrepAPIHelper {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${restassured.debug:false}")
-    private boolean enableRestAssuredDebug;
+    private boolean enableRestAssuredDebug = false;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -178,7 +177,8 @@ public class OSDataPrepAPIHelper {
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //
                 .when() //
                 .post("/api/datasets");
@@ -211,7 +211,8 @@ public class OSDataPrepAPIHelper {
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/{datasetId}", datasetId);
@@ -270,8 +271,7 @@ public class OSDataPrepAPIHelper {
      * @param from Where to get the data from (HEAD if no value)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from)
-            throws IOException {
+    public Response getPreparationContent(String preparationId, String version, String from) throws IOException {
         Response response = given() //
                 .queryParam("version", version) //
                 .queryParam("from", from) //
@@ -385,14 +385,16 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT context.
+     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT
+     * context.
      *
      * @param tempFilename the temporary {@link File} filename
      * @param input the {@link InputStream} to store.
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename),
+                "." + FilenameUtils.getExtension(tempFilename));
         Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
         tempFile.deleteOnExit();
@@ -531,6 +533,7 @@ public class OSDataPrepAPIHelper {
 
     /**
      * Return the list of datasets
+     * 
      * @param queryParameters Map containing the parameter names and their values to send with the request.
      * @return The response of the request.
      */
@@ -564,8 +567,7 @@ public class OSDataPrepAPIHelper {
                     .get(asyncMethodStatusUrl)
                     .asString();
 
-            asyncExecutionMessage =
-                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+            asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
             AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
             isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
@@ -580,5 +582,14 @@ public class OSDataPrepAPIHelper {
         }
 
         return asyncExecutionMessage;
+    }
+
+    public boolean isEnableRestAssuredDebug() {
+        return enableRestAssuredDebug;
+    }
+
+    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
+        this.enableRestAssuredDebug = enableRestAssuredDebug;
+        return this;
     }
 }

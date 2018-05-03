@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -13,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
@@ -32,12 +32,9 @@ import cucumber.api.java.en.When;
  */
 public class PreparationStep extends DataPrepStep {
 
+    public static final String DATASET_NAME = "dataSetName";
+
     private static final String NB_STEPS = "nbSteps";
-
-    /**
-     * {@link cucumber.api.DataTable} key for new preparationName value.
-     */
-
 
     /**
      * This class' logger.
@@ -60,7 +57,7 @@ public class PreparationStep extends DataPrepStep {
         String preparationId = api
                 .createPreparation(datasetId, suffixedPrepName, folderUtil.getAPIFolderRepresentation(prepFolder))
                 .then() //
-                .statusCode(HttpStatus.OK.value()) //
+                .statusCode(OK.value()) //
                 .extract()
                 .body()
                 .asString();
@@ -76,7 +73,7 @@ public class PreparationStep extends DataPrepStep {
 
         PreparationDetails prepDet = getPreparationDetails(prepId);
         Assert.assertNotNull(prepDet);
-        Assert.assertEquals(prepDet.dataset.dataSetName, suffixName(params.get(DATASET_NAME_KEY)));
+        Assert.assertEquals(prepDet.dataset.dataSetName, suffixName(params.get(DATASET_NAME)));
         Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
     }
 
@@ -93,7 +90,7 @@ public class PreparationStep extends DataPrepStep {
 
         Response response = api.movePreparation( //
                 suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
-        response.then().statusCode(HttpStatus.OK.value());
+        response.then().statusCode(OK.value());
 
         context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
                 suffixedPrepDestName, destFolder.path);
@@ -111,7 +108,7 @@ public class PreparationStep extends DataPrepStep {
         String newPreparationId = api
                 .copyPreparation(prepId, destFolder.id, suffixedPrepDestName)
                 .then()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(OK.value())
                 .extract()
                 .body()
                 .asString();
@@ -123,7 +120,7 @@ public class PreparationStep extends DataPrepStep {
         String suffixedPrepPath = util.extractPathFromFullName(prepFullName);
         String prepSuffixedName = getSuffixedPrepName(prepFullName);
         String prepId = context.getPreparationId(prepSuffixedName, suffixedPrepPath);
-        api.deletePreparation(prepId).then().statusCode(HttpStatus.OK.value());
+        api.deletePreparation(prepId).then().statusCode(OK.value());
         context.removePreparationRef(prepSuffixedName, suffixedPrepPath);
     }
 
@@ -159,7 +156,7 @@ public class PreparationStep extends DataPrepStep {
         String prepId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
             Response response = api.getPreparationContent(prepId, "head", "HEAD");
-            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+            Assert.assertEquals(OK.value(), response.getStatusCode());
         }
     }
 

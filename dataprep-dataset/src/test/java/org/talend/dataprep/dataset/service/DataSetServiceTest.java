@@ -1716,7 +1716,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
 
     @Test
-    @Ignore
+    @Ignore("Fails due to DQ update")
     public void shouldGetDataSetColumnTypes() throws Exception {
 
         // given

@@ -119,7 +119,7 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    @Ignore
+    @Ignore("Fails due to DQ update")
     public void testTDP_471() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../semantic_type_threshold.csv"));

@@ -62,7 +62,6 @@ import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1716,7 +1715,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
 
     @Test
-    @Ignore("Fails due to DQ update")
     public void shouldGetDataSetColumnTypes() throws Exception {
 
         // given

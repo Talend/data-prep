@@ -327,7 +327,6 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
     }
 
     @Test
-    @Ignore("Fails due to DQ update")
     public void shouldGetPreparationColumnTypes() throws Exception {
 
         // given

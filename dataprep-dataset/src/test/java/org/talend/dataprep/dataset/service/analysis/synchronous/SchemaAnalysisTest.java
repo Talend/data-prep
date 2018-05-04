@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.Random;
 import java.util.UUID;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -119,7 +118,6 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      * @throws Exception
      */
     @Test
-    @Ignore("Fails due to DQ update")
     public void testTDP_471() {
         final DataSetMetadata actual = initializeDataSetMetadata(
                 DataSetServiceTest.class.getResourceAsStream("../semantic_type_threshold.csv"));

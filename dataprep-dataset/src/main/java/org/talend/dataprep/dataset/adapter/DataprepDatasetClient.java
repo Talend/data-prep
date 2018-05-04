@@ -15,8 +15,15 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -36,14 +43,8 @@ import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -92,26 +93,27 @@ public class DataprepDatasetClient implements DatasetClient {
             Throwables.propagateIfPossible(e, RuntimeException.class);
             throw new RuntimeException("unexpected", e);
         }
-        DataSetMetadata metadata = dataSetService.getMetadata(datasetId).getMetadata();
 
+        DataSetMetadata metadata = dataSetService.getMetadata(datasetId).getMetadata();
         Schema schema = AvroUtils.toSchema(metadata.getRowMetadata());
         GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
-            records.map(AvroUtils.toGenericRecordConverter(schema)).forEach(record -> {
-                try {
-                    writer.write(record, encoder);
-                } catch (IOException e) {
-                    throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
-                }
-            });
+
+            records.map(AvroUtils.toGenericRecordConverter(schema)) //
+                    .forEach(record -> {
+                        try {
+                            writer.write(record, encoder);
+                        } catch (IOException e) {
+                            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
+                        }
+                    });
             encoder.flush();
+            return new ByteArrayInputStream(outputStream.toByteArray());
         } catch (IOException e) {
             throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
-        return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
     @Override

@@ -1734,7 +1734,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
          */
         Assert.assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
-        Assert.assertEquals(7, rootNode.size());
+        Assert.assertEquals(6, rootNode.size());
         for (JsonNode type : rootNode) {
             assertTrue(type.has("id"));
             assertTrue(type.has("label"));

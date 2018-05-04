@@ -347,7 +347,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
          */
         assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
-        assertEquals(7, rootNode.size());
+        assertEquals(6, rootNode.size());
         for (JsonNode type : rootNode) {
             assertTrue(type.has("id"));
             assertTrue(type.has("label"));

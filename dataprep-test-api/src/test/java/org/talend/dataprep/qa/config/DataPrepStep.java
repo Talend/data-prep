@@ -28,7 +28,7 @@ import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
 import java.util.function.Predicate;
-
+import static org.springframework.http.HttpStatus.OK;
 /**
  * Base class for all DataPrep step classes.
  */
@@ -49,6 +49,10 @@ public abstract class DataPrepStep {
      * {@link cucumber.api.DataTable} key for preparationName value.
      */
     protected static final String PREPARATION_NAME = "preparationName";
+
+    protected static final String DATASET_NAME_KEY = "name";
+
+    protected static final String DATASET_ID_KEY = "dataSetId";
 
     @Autowired
     public FeatureContext context;
@@ -73,7 +77,7 @@ public abstract class DataPrepStep {
     protected PreparationDetails getPreparationDetails(String preparationId) {
         Response response = api.getPreparationDetails(preparationId);
         response.then()
-                .statusCode(200);
+                .statusCode(OK.value());
 
         return response.as(PreparationDetails.class);
     }
@@ -87,7 +91,7 @@ public abstract class DataPrepStep {
     protected Predicate<String> preparationDeletionIsNotOK() {
         return preparationId -> {
             try {
-                return api.deletePreparation(preparationId).getStatusCode() != 200;
+                return api.deletePreparation(preparationId).getStatusCode() != OK.value();
             } catch (Exception ex) {
                 LOGGER.debug("Error on preparation's suppression {}.", preparationId);
                 return true;
@@ -98,8 +102,8 @@ public abstract class DataPrepStep {
     protected Predicate<String> datasetDeletionIsNotOK() {
         return datasetId -> {
             try {
-                // Even if the dataset doesn't exist, the status is 200
-                return api.deleteDataset(datasetId).getStatusCode() != 200;
+                // Even if the dataset doesn't exist, the status is OK.value()
+                return api.deleteDataset(datasetId).getStatusCode() != OK.value();
             } catch (Exception ex) {
                 LOGGER.debug("Error on Dataset's suppression  {}.", datasetId);
                 return true;
@@ -110,7 +114,7 @@ public abstract class DataPrepStep {
     protected Predicate<Folder> folderDeletionIsNotOK() {
         return folder -> {
             try {
-                return folderUtil.deleteFolder(folder).getStatusCode() != 200;
+                return folderUtil.deleteFolder(folder).getStatusCode() != OK.value();
             } catch (Exception ex) {
                 LOGGER.debug("Error on folder's suppression  {}.", folder.getPath());
                 return true;

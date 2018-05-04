@@ -12,6 +12,26 @@
 
 package org.talend.dataprep.preparation.service;
 
+import java.text.DecimalFormat;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +40,18 @@ import org.springframework.stereotype.Service;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
@@ -46,29 +74,26 @@ import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.INVALID_PREPARATION;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_NAME_ALREADY_USED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_NOT_EMPTY;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_ROOT_STEP_CANNOT_BE_DELETED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_CANNOT_BE_REORDERED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
-import static org.talend.tql.api.TqlBuilder.*;
+import static org.talend.tql.api.TqlBuilder.and;
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.match;
 
 @Service
 public class PreparationService {
@@ -158,10 +183,6 @@ public class PreparationService {
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setRowMetadata(preparation.getRowMetadata());
-
-        try (final Stream<DataSetRow> records = datasetClient.getDataSetContentAsRows(preparation.getDataSetId())) {
-            analyzerService.analyzeFull(records, toCreate.getRowMetadata().getColumns());
-        }
 
         preparationRepository.add(toCreate);
 

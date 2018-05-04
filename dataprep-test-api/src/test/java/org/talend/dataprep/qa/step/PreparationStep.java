@@ -156,7 +156,7 @@ public class PreparationStep extends DataPrepStep {
         String prepId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
             Response response = api.getPreparationContent(prepId, "head", "HEAD");
-            Assert.assertEquals(OK.value(), response.getStatusCode());
+            assertEquals(OK.value(), response.getStatusCode());
         }
     }
 

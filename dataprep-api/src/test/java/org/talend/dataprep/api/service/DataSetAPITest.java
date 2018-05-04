@@ -12,14 +12,14 @@
 
 package org.talend.dataprep.api.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -42,8 +42,14 @@ import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import java.io.InputStream;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -51,8 +57,15 @@ import static com.jayway.restassured.path.json.JsonPath.from;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order.ASC;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order.DESC;
@@ -780,7 +793,11 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_filter.json");
 
         // when
-        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false&filter=0001%3D%27John%27", dataSetId);
+        Response response = given()
+                .queryParam("metadata", "true")
+                .queryParam("columns", "false")
+                .queryParam("filter", "0001='John'")
+                .get("/api/datasets/{id}", dataSetId);
 
         // then
         response.then().contentType(ContentType.JSON);

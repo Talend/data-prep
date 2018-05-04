@@ -79,10 +79,9 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
-
 
     @Test
     public void test_apply_inplace() throws Exception {
@@ -102,11 +101,11 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
         expectedValues.put("0000", "toto");
         expectedValues.put("0001", "01 23 45 67 89");
         expectedValues.put("0003", "Fix_Line");
-        expectedValues.put("0004", "FR");
-        expectedValues.put("0005", "33");
-        expectedValues.put("0006", "Europe/Paris");
-        expectedValues.put("0007", "France");
-        expectedValues.put("0008", "");
+        expectedValues.put("0004", "33");
+        expectedValues.put("0005", "FR");
+        expectedValues.put("0006", "France");
+        expectedValues.put("0007", "");
+        expectedValues.put("0008", "Europe/Paris");
         expectedValues.put("0002", "tata");
 
         // when
@@ -115,7 +114,6 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
         // then
         assertEquals(expectedValues, row.values());
     }
-
 
     @Test
     public void test_invalid_values() {
@@ -126,7 +124,7 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 
-       row.setInvalid("0001");
+        row.setInvalid("0001");
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
         expectedValues.put("0001", "01 23 45 67 8");
@@ -137,7 +135,7 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
         expectedValues.put("0007", "");
         expectedValues.put("0008", "");
         expectedValues.put("0002", "tata");
-        expectedValues.put("__tdpInvalid","0001");
+        expectedValues.put("__tdpInvalid", "0001");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -187,11 +185,11 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
         expected.add(createMetadata("0000", "recipe"));
         expected.add(createMetadata("0001", "fr_phone"));
         expected.add(createMetadata("0003", "fr_phone_type"));
-        expected.add(createMetadata("0004", "fr_phone_region"));
-        expected.add(createMetadata("0005", "fr_phone_country"));
-        expected.add(createMetadata("0006", "fr_phone_timezone"));
-        expected.add(createMetadata("0007", "fr_phone_geographicArea"));
-        expected.add(createMetadata("0008", "fr_phone_carrierName"));
+        expected.add(createMetadata("0004", "fr_phone_country"));
+        expected.add(createMetadata("0005", "fr_phone_region"));
+        expected.add(createMetadata("0006", "fr_phone_geographicArea"));
+        expected.add(createMetadata("0007", "fr_phone_carrierName"));
+        expected.add(createMetadata("0008", "fr_phone_timezone"));
         expected.add(createMetadata("0002", "last update"));
 
         // when

@@ -58,53 +58,53 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
     /**
      * The action name.
      */
-    public static final String ACTION_NAME = "extract_phone_information"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "extract_phone_information";
 
     /**
      * The phone type suffix.
      */
-    private static final String TYPE_SUFFIX = "_type"; //$NON-NLS-1$
+    private static final String TYPE_SUFFIX = "_type";
 
-    private static final String TYPE = "phone_type"; //$NON-NLS-1$
-
-    /**
-     * The region suffix.
-     */
-    private static final String REGION_SUFFIX = "_region"; //$NON-NLS-1$
-
-    private static final String REGION = "phone_region"; //$NON-NLS-1$
+    private static final String TYPE = "phone_type";
 
     /**
      * The country suffix.
      */
-    private static final String COUNTRY_SUFFIX = "_country"; //$NON-NLS-1$
+    private static final String COUNTRY_SUFFIX = "_country";
 
-    private static final String COUNTRY = "phone_country"; //$NON-NLS-1$
+    private static final String COUNTRY = "phone_country";
 
     /**
-     * The Time Zone suffix.
+     * The region suffix.
      */
-    private static final String TIME_ZONE_SUFFIX = "_timezone"; //$NON-NLS-1$
+    private static final String REGION_SUFFIX = "_region";
 
-    private static final String TIME_ZONE = "phone_timezone"; //$NON-NLS-1$
+    private static final String REGION = "phone_region";
 
     /**
      * The Geocoder description suffix.
      */
-    private static final String GEOCODER_SUFFIX = "_geographicArea"; //$NON-NLS-1$
+    private static final String GEOCODER_SUFFIX = "_geographicArea";
 
-    private static final String GEOCODER = "phone_geographicArea"; //$NON-NLS-1$
+    private static final String GEOCODER = "phone_geographicArea";
 
     /**
      * The Carrier name description suffix.
      */
-    private static final String CARRIER_SUFFIX = "_carrierName"; //$NON-NLS-1$
+    private static final String CARRIER_SUFFIX = "_carrierName";
 
-    private static final String CARRIER = "phone_carrierName"; //$NON-NLS-1$
+    private static final String CARRIER = "phone_carrierName";
 
-    private static final String REGION_CODE_FROM_DOMAIN = "region_from_domain"; //$NON-NLS-1$
+    /**
+     * The Time Zone suffix.
+     */
+    private static final String TIME_ZONE_SUFFIX = "_timezone";
 
-    private static final String LOCALE_FROM_DOMAIN = "locale_from_domain"; //$NON-NLS-1$
+    private static final String TIME_ZONE = "phone_timezone";
+
+    private static final String REGION_CODE_FROM_DOMAIN = "region_from_domain";
+
+    private static final String LOCALE_FROM_DOMAIN = "locale_from_domain";
 
     @Override
     public String getName() {
@@ -131,46 +131,40 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(context.getColumnId());
-        if (Boolean.valueOf(context.getParameters().get(TYPE)))
-            additionalColumns
-                    .add(ActionsUtils.additionalColumn().withKey(TYPE).withName(column.getName() + TYPE_SUFFIX));
-        if (Boolean.valueOf(context.getParameters().get(REGION)))
-            additionalColumns
-                    .add(ActionsUtils.additionalColumn().withKey(REGION).withName(column.getName() + REGION_SUFFIX));
-        if (Boolean.valueOf(context.getParameters().get(COUNTRY)))
-            additionalColumns
-                    .add(ActionsUtils.additionalColumn().withKey(COUNTRY).withName(column.getName() + COUNTRY_SUFFIX));
-        if (Boolean.valueOf(context.getParameters().get(TIME_ZONE)))
-            additionalColumns.add(
-                    ActionsUtils.additionalColumn().withKey(TIME_ZONE).withName(column.getName() + TIME_ZONE_SUFFIX));
-        if (Boolean.valueOf(context.getParameters().get(GEOCODER)))
-            additionalColumns.add(
-                    ActionsUtils.additionalColumn().withKey(GEOCODER).withName(column.getName() + GEOCODER_SUFFIX));
-        if (Boolean.valueOf(context.getParameters().get(CARRIER)))
-            additionalColumns
-                    .add(ActionsUtils.additionalColumn().withKey(CARRIER).withName(column.getName() + CARRIER_SUFFIX));
+        addColumn(additionalColumns, column, context, TYPE, TYPE_SUFFIX);
+        addColumn(additionalColumns, column, context, COUNTRY, COUNTRY_SUFFIX);
+        addColumn(additionalColumns, column, context, REGION, REGION_SUFFIX);
+        addColumn(additionalColumns, column, context, GEOCODER, GEOCODER_SUFFIX);
+        addColumn(additionalColumns, column, context, CARRIER, CARRIER_SUFFIX);
+        addColumn(additionalColumns, column, context, TIME_ZONE, TIME_ZONE_SUFFIX);
 
         ActionsUtils.createNewColumn(context, additionalColumns);
 
-        String domain = column.getDomain();
+        SemanticCategoryEnum domainEnum = SemanticCategoryEnum.getCategoryById(column.getDomain());
 
-        context.get(REGION_CODE_FROM_DOMAIN, p -> getRegionCodeFromDomain(domain));
-        context.get(LOCALE_FROM_DOMAIN, p -> getLocaleFromDomain(domain));
+        context.get(REGION_CODE_FROM_DOMAIN, p -> getRegionCodeFromDomain(domainEnum));
+        context.get(LOCALE_FROM_DOMAIN, p -> getLocaleFromDomain(domainEnum));
     }
 
-    private String getRegionCodeFromDomain(String domain) {
+    private void addColumn(List<ActionsUtils.AdditionalColumn> additionalColumns, ColumnMetadata column, ActionContext context, String info, String infoSuffix) {
+        if (Boolean.valueOf(context.getParameters().get(info)))
+            additionalColumns
+                    .add(ActionsUtils.additionalColumn().withKey(info).withName(column.getName() + infoSuffix));
+    }
+
+    private String getRegionCodeFromDomain(SemanticCategoryEnum domainEnum) {
         String region = null;
-        switch (domain) {
-        case "FR_PHONE":
+        switch (domainEnum) {
+        case FR_PHONE:
             region = FR_REGION_CODE;
             break;
-        case "DE_PHONE":
+        case DE_PHONE:
             region = DE_REGION_CODE;
             break;
-        case "US_PHONE":
+        case US_PHONE:
             region = US_REGION_CODE;
             break;
-        case "UK_PHONE":
+        case UK_PHONE:
             region = UK_REGION_CODE;
             break;
         default:
@@ -178,19 +172,19 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         return region;
     }
 
-    private Locale getLocaleFromDomain(String domain) {
+    private Locale getLocaleFromDomain(SemanticCategoryEnum domainEnum) {
         Locale locale = null;
-        switch (domain) {
-        case "FR_PHONE":
+        switch (domainEnum) {
+        case FR_PHONE:
             locale = Locale.FRANCE;
             break;
-        case "DE_PHONE":
+        case DE_PHONE:
             locale = Locale.GERMANY;
             break;
-        case "US_PHONE":
+        case US_PHONE:
             locale = Locale.US;
             break;
-        case "UK_PHONE":
+        case UK_PHONE:
             locale = Locale.UK;
             break;
         default:
@@ -212,18 +206,18 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         // Set the values in newly created columns
         if (StringUtils.isNotEmpty(originalValue) && !row.isInvalid(columnId) && regionCodeFromDomain != null) {
             setPhoneType(row, context, originalValue, regionCodeFromDomain);
-            setPhoneRegion(row, context, originalValue, regionCodeFromDomain);
             setCountryRegion(row, context, regionCodeFromDomain);
-            setTimezones(row, context, originalValue, regionCodeFromDomain);
+            setPhoneRegion(row, context, originalValue, regionCodeFromDomain);
             setGeocoder(row, context, originalValue, regionCodeFromDomain, localeFromDomain);
             setCarrier(row, context, originalValue, regionCodeFromDomain, localeFromDomain);
+            setTimezones(row, context, originalValue, regionCodeFromDomain);
         } else {
             setEmpty(row, context, TYPE);
-            setEmpty(row, context, REGION);
             setEmpty(row, context, COUNTRY);
-            setEmpty(row, context, TIME_ZONE);
+            setEmpty(row, context, REGION);
             setEmpty(row, context, GEOCODER);
             setEmpty(row, context, CARRIER);
+            setEmpty(row, context, TIME_ZONE);
         }
     }
 
@@ -302,12 +296,10 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(parameter(locale).setName(TYPE).setType(BOOLEAN).setDefaultValue(true).build(this));
-        parameters.add(parameter(locale).setName(REGION).setType(BOOLEAN).setDefaultValue(true).build(this));
-        parameters.add(parameter(locale).setName(COUNTRY).setType(BOOLEAN).setDefaultValue(true).build(this));
-        parameters.add(parameter(locale).setName(TIME_ZONE).setType(BOOLEAN).setDefaultValue(true).build(this));
-        parameters.add(parameter(locale).setName(GEOCODER).setType(BOOLEAN).setDefaultValue(true).build(this));
-        parameters.add(parameter(locale).setName(CARRIER).setType(BOOLEAN).setDefaultValue(true).build(this));
+        parameters.addAll(
+                Stream.of(TYPE, COUNTRY, REGION, GEOCODER, CARRIER, TIME_ZONE)//
+                .map(name -> parameter(locale).setName(name).setType(BOOLEAN).setDefaultValue(true).build(this))//
+                .collect(Collectors.toList()));
         return parameters;
     }
 }

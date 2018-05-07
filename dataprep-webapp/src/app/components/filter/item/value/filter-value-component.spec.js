@@ -54,8 +54,8 @@ describe('Filter Item Value Component', () => {
             createElement();
 
             //then
-            expect(element.find('input').size()).toBe(1);
-            expect(element.find('span').size()).toBe(0);
+            expect(element.find('span.filter-value-input').size()).toBe(1);
+            expect(element.find('span.filter-value-text').size()).toBe(0);
         });
 
         it('should render non-editable value with span', () => {
@@ -63,8 +63,8 @@ describe('Filter Item Value Component', () => {
             createElement();
 
             //then
-            expect(element.find('span').size()).toBe(1);
-            expect(element.find('input').size()).toBe(0);
+            expect(element.find('span.filter-value-text').size()).toBe(1);
+            expect(element.find('span.filter-value-input').size()).toBe(0);
         });
 
         it('should render empty value with span with specific class', () => {

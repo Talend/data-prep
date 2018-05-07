@@ -1,9 +1,14 @@
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +34,12 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
@@ -148,22 +150,22 @@ public class ApiDatasetClient {
     }
 
     public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {
-        return listDataset()
-                .filter(ds -> {
-                    boolean valid;
-                    String label = ds.getLabel();
-                    if (label != null) {
-                        if (strict) {
-                            valid = label.equals(name);
-                        } else {
-                            valid = label.contains(name);
-                        }
+        Stream<Dataset> datasetStream = listDataset();
+        if (isNotBlank(name)) {
+            datasetStream = datasetStream.filter(dataset -> {
+                boolean valid = false;
+                String label = dataset.getLabel();
+                if (label != null) {
+                    if (strict) {
+                        valid = label.equals(name);
                     } else {
-                        valid = name == null;
+                        valid = label.contains(name);
                     }
-                    return valid;
-                })
-                .map(this::toDataSetMetadata);
+                }
+                return valid;
+            });
+        }
+        return datasetStream.map(this::toDataSetMetadata);
     }
 
     private Stream<DataSetRow> filter(Stream<DataSetRow> stream, String filter, RowMetadata metadata) {

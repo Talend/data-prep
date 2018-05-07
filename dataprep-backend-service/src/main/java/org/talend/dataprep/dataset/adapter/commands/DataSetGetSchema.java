@@ -12,6 +12,11 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javax.annotation.PostConstruct;
+
 import org.apache.avro.Schema;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -19,14 +24,9 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.APIErrorCodes;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
@@ -48,7 +48,7 @@ public class DataSetGetSchema extends GenericCommand<Schema> {
         super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
 
-        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_METADATA, e));
+        onError(Defaults.passthrough());
         on(HttpStatus.NO_CONTENT).then(asNull());
     }
 

@@ -12,7 +12,11 @@
 
 package org.talend.dataprep.configuration;
 
-import com.netflix.hystrix.HystrixCommand;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,21 +31,22 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
-import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.security.NoOpSecurityProxy;
 import org.talend.dataprep.security.SecurityProxy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.netflix.hystrix.HystrixCommand;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,6 +65,9 @@ public class APIPreparationConversionsTest {
     @Mock
     private ApplicationContext applicationContext;
 
+    @Mock
+    private ApiDatasetClient datasetClient;
+
     private BeanConversionService conversionService = new BeanConversionService();
 
     private boolean setup = false;
@@ -69,7 +77,7 @@ public class APIPreparationConversionsTest {
         if (!setup) {
             conversionService = eeApiPreparationConversions.doWith(conversionService, "whateverTheName", applicationContext);
             when(applicationContext.getBean(eq(SecurityProxy.class))).thenAnswer(i -> new NoOpSecurityProxy());
-
+            when(applicationContext.getBean(eq(ApiDatasetClient.class))).thenReturn(datasetClient);
             setup = true;
         }
     }
@@ -78,7 +86,8 @@ public class APIPreparationConversionsTest {
     public void shouldEnrichPreparationWithDataset() {
         // given
         DataSetMetadata metadata = getDataSetMetadata("super dataset", 1001L);
-//        setupHystrixCommand(DataSetGetMetadata.class, metadata);
+        when(datasetClient.getDataSetMetadata(anyString())).thenReturn(metadata);
+
 
         final PreparationMessage preparation = getPreparationMessage(metadata.getId());
 
@@ -121,11 +130,7 @@ public class APIPreparationConversionsTest {
         // given
         final PreparationMessage preparation = getPreparationMessage("DS-1234");
 
-        when(applicationContext.getBean(eq(DataSetGet.class), any(Object[].class))).thenAnswer(i -> {
-            final DataSetGet mock = mock(DataSetGet.class);
-            when(mock.execute()).thenThrow(new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST));
-            return mock;
-        });
+        when(datasetClient.getDataSetMetadata(anyString())).thenThrow(new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST));
 
         // when
         final EnrichedPreparation actual = conversionService.convert(preparation, EnrichedPreparation.class);
@@ -140,7 +145,7 @@ public class APIPreparationConversionsTest {
     public void shouldDealWithRepeatedStepIds() {
         // given
         DataSetMetadata metadata = getDataSetMetadata("super dataset", 1001L);
-//        setupHystrixCommand(DataSetGetMetadata.class, metadata);
+        when(datasetClient.getDataSetMetadata(anyString())).thenReturn(metadata);
 
         final PreparationMessage preparation = getPreparationMessage(metadata.getId());
         preparation.setSteps(asList(Step.ROOT_STEP, Step.ROOT_STEP));

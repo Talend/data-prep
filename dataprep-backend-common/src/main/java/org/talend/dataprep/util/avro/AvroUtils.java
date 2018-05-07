@@ -1,5 +1,17 @@
 package org.talend.dataprep.util.avro;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -10,13 +22,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -216,7 +221,8 @@ public class AvroUtils {
                 DATAPREP_FIELD_PREFIX + column.getId() :
                 toAvroFieldName(column);
         final Schema type = SchemaBuilder.builder().unionOf().nullBuilder().endNull().and().stringType().endUnion();
-        final Schema.Field field = new Schema.Field(name, type, StringUtils.EMPTY, null);
+
+        final Schema.Field field = new Schema.Field(name, type, StringUtils.EMPTY, ((Object) null));
         field.addProp(DP_COLUMN_ID, column.getId());
         field.addProp(DP_COLUMN_NAME, column.getName());
         field.addProp(DP_COLUMN_TYPE, column.getType());

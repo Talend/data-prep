@@ -1,7 +1,10 @@
 package org.talend.dataprep.transformation.service.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.stream.Stream;
+
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +24,9 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
@@ -32,17 +35,19 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 import org.talend.dataprep.transformation.format.JsonFormat;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreparationExportStrategyTest {
@@ -76,6 +81,9 @@ public class PreparationExportStrategyTest {
     @Mock
     private PreparationDetailsGet preparationDetailsGet;
 
+    @Mock
+    private ApiDatasetClient datasetClient;
+
     @Before
     public void setUp() throws Exception {
         // Given
@@ -84,20 +92,15 @@ public class PreparationExportStrategyTest {
 
         when(formatRegistrationService.getByName(eq("JSON"))).thenReturn(new JsonFormat());
 
-//        final DataSetGetMetadata dataSetGetMetadata = mock(DataSetGetMetadata.class);
-//        when(applicationContext.getBean(eq(DataSetGetMetadata.class), anyVararg())).thenReturn(dataSetGetMetadata);
-
-        DataSetGet dataSetGet = mock(DataSetGet.class);
-        final StringWriter dataSetAsString = new StringWriter();
         DataSet dataSet = new DataSet();
         final DataSetMetadata dataSetMetadata = new DataSetMetadata("ds-1234", "", "", 0L, 0L, new RowMetadata(), "");
         final DataSetContent content = new DataSetContent();
         dataSetMetadata.setContent(content);
         dataSet.setMetadata(dataSetMetadata);
         dataSet.setRecords(Stream.empty());
-        mapper.writerFor(DataSet.class).writeValue(dataSetAsString, dataSet);
-        when(dataSetGet.execute()).thenReturn(new ByteArrayInputStream(dataSetAsString.toString().getBytes()));
-        when(applicationContext.getBean(eq(DataSetGet.class), anyVararg())).thenReturn(dataSetGet);
+
+        when(datasetClient.getDataSet(anyString())).thenReturn(dataSet);
+        //when(datasetClient.getDataSetMetadata(anyString())).thenReturn(dataSetMetadata);
 
         final PreparationGetActions preparationGetActions = mock(PreparationGetActions.class);
         when(preparationGetActions.execute()).thenReturn(new ByteArrayInputStream("{}".getBytes()));

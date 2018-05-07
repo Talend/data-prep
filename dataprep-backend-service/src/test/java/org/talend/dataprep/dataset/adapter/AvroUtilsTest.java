@@ -1,13 +1,14 @@
 package org.talend.dataprep.dataset.adapter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.avro.Schema;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.util.avro.AvroUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,11 +55,11 @@ public class AvroUtilsTest {
     @Test
     public void shouldEscapeInvalidJavaCharacters() {
         // given
-        List<ColumnMetadata> columnMetadatas = new ArrayList<>();
-        columnMetadatas.add(column().id(1).name("#@!abc").type(Type.STRING).build());
+        ColumnMetadata columnMetadata = column().id(1).name("#@!abc").type(Type.STRING).build();
+        List<ColumnMetadata> columnMetadatas = Collections.singletonList(columnMetadata);
 
         // when
-        final Schema schema = AvroUtils.toSchema(columnMetadatas);
+        Schema schema = AvroUtils.toSchema(columnMetadatas);
 
         // then
         assertNotNull(schema);

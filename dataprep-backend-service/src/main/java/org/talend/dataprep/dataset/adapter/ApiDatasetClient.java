@@ -39,6 +39,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.netflix.hystrix.HystrixCommand;
 
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
@@ -153,16 +154,8 @@ public class ApiDatasetClient {
         Stream<Dataset> datasetStream = listDataset();
         if (isNotBlank(name)) {
             datasetStream = datasetStream.filter(dataset -> {
-                boolean valid = false;
                 String label = dataset.getLabel();
-                if (label != null) {
-                    if (strict) {
-                        valid = label.equals(name);
-                    } else {
-                        valid = label.contains(name);
-                    }
-                }
-                return valid;
+                return strict ? name.equals(label) : containsIgnoreCase(label, name);
             });
         }
         return datasetStream.map(this::toDataSetMetadata);

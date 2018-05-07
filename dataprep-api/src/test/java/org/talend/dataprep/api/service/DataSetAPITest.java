@@ -144,15 +144,21 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset_TDP-2546.csv", datasetOriginalName);
 
         // then, the content should include technical properties when asked.
-        String defaultDataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
+        String defaultDataSetContent = given()
+                .queryParam("metadata", true)
+                .get("/api/datasets/{dataSetId}", dataSetId).asString();
         assertThat(defaultDataSetContent.contains("__tdp"), is(false));
 
-        String dataSetContent =
-                when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=false").asString();
+        String dataSetContent = given()
+                .queryParam("metadata", true)
+                .queryParam("includeTechnicalProperties", false)
+                .get("/api/datasets/{dataSetId}", dataSetId).asString();
         assertThat(dataSetContent.contains("__tdp"), is(false));
 
         String dataSetContentWithTechnicalContent =
-                when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=true").asString();
+                given().queryParam("metadata", true)
+                        .queryParam("includeTechnicalProperties", true)
+                        .get("/api/datasets/{dataSetId}", dataSetId).asString();
         assertThat(dataSetContentWithTechnicalContent.contains("__tdp"), is(true));
     }
 
@@ -663,9 +669,11 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
         dataSetMetadata1.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadata1.setLastModificationDate((now().getEpochSecond() + 1) * 1_000);
+
         dataSetMetadataRepository.save(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
         dataSetMetadataRepository.save(dataSetMetadata2);
+
         final DataSetMetadata dataSetMetadata3 = dataSetMetadataRepository.get(dataSetId3);
         dataSetMetadata3.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadataRepository.save(dataSetMetadata3);

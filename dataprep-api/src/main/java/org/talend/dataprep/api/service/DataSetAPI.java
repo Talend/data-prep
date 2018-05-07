@@ -73,6 +73,7 @@ import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -291,6 +292,7 @@ public class DataSetAPI extends APIService {
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
         return () -> {
             try {
+
                 Stream<Dataset> datasetStream = datasetClient.listDataset();
 
                 if (favorite) {
@@ -305,10 +307,10 @@ public class DataSetAPI extends APIService {
                 }
 
                 if (isNotBlank(name)) {
-                    datasetStream = datasetStream.filter(ds -> name.equals(ds.getLabel()));
+                    datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getLabel(), name));
                 }
 
-                // TODO : certified
+                // TODO certified (should fix DataSetAPITest#should_list_filtered_datasets_properly)
                 //datasetStream = datasetStream.filter(ds -> ds.isCertified() == certified);
 
                 if (limit) {

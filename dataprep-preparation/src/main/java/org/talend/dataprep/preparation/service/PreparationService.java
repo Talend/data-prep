@@ -61,7 +61,6 @@ import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -163,9 +162,6 @@ public class PreparationService {
 
     @Autowired
     private ApiDatasetClient datasetClient;
-
-    @Autowired
-    private AnalyzerService analyzerService;
 
     /**
      * Create a preparation from the http request body.

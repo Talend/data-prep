@@ -24,7 +24,6 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
@@ -54,9 +53,6 @@ public class ApiDatasetClient {
 
     @Autowired
     private ApplicationContext context;
-
-    @Autowired
-    private DataSetMetadataBuilder dataSetMetadataBuilder;
 
     @Autowired
     private ObjectMapper mapper;

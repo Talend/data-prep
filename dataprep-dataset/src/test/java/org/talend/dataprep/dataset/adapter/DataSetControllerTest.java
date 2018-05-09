@@ -15,7 +15,8 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStream;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +25,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.talend.dataprep.conversions.BeanConversionService;
 
-import java.io.InputStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,9 +45,6 @@ public class DataSetControllerTest {
 
     @MockBean
     private DatasetClient datasetClient;
-
-    @MockBean
-    private BeanConversionService conversionService;
 
     @Test
     public void getDatasetMetadata() throws Exception {

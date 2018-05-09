@@ -12,23 +12,20 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javax.annotation.PostConstruct;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.adapter.Dataset;
-import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
@@ -39,12 +36,6 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 public class DataSetGetMetadata extends GenericCommand<Dataset> {
 
     private final String dataSetId;
-
-    @Autowired
-    private DataSetContentLimit limit;
-
-    @Autowired
-    private DataSetMetadataBuilder dataSetMetadataBuilder;
 
     /**
      * Private constructor to ensure the use of IoC

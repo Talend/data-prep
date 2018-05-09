@@ -39,16 +39,6 @@ describe('Filter service', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			"INVALID_RECORDS_LABEL": "rows with invalid values",
-			"VALID_RECORDS_LABEL": "rows with valid values",
-			"INVALID_EMPTY_RECORDS_LABEL": "rows with invalid or empty values",
-			"EMPTY_RECORDS_LABEL": "rows with empty values",
-		});
-		$translateProvider.preferredLanguage('en');
-	}));
-
 	beforeEach(inject((StateService, StorageService) => {
 		spyOn(StateService, 'addGridFilter').and.returnValue();
 		spyOn(StorageService, 'removeFilter').and.returnValue();

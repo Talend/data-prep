@@ -2,6 +2,11 @@ describe('Recipe service', function () {
     'use strict';
 
     let preparationDetails = function () {
+        const filterColumns = {
+            '0000': 'country',
+            '0001': 'gender',
+        };
+
         return {
             id: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4',
             dataSetId: 'db6c4ad8-77da-4a30-b29f-ca552706b058',
@@ -30,10 +35,7 @@ describe('Recipe service', function () {
                             },
                         },
                     },
-	                filterColumns: {
-                        '0000': 'country',
-		                '0001': 'gender',
-                    },
+                    filterColumns,
                 },
                 {
                     action: 'fillemptywithdefault',
@@ -41,20 +43,14 @@ describe('Recipe service', function () {
                         default_value: 'M',
                         column_name: 'gender',
                     },
-	                filterColumns: {
-		                '0000': 'country',
-		                '0001': 'gender',
-	                },
+                    filterColumns,
                 },
                 {
                     action: 'negate',
                     parameters: {
                         column_name: 'campain',
                     },
-	                filterColumns: {
-		                '0000': 'country',
-		                '0001': 'gender',
-	                },
+                    filterColumns,
                 },
                 {
                     action: 'cut',
@@ -62,10 +58,7 @@ describe('Recipe service', function () {
                         pattern: '.',
                         column_name: 'first_item',
                     },
-	                filterColumns: {
-		                '0000': 'country',
-		                '0001': 'gender',
-	                },
+                    filterColumns,
                 },
                 {
                     action: 'textclustering',
@@ -81,10 +74,7 @@ describe('Recipe service', function () {
                         column_name: 'uglystate',
                         column_id: '1',
                     },
-	                filterColumns: {
-		                '0000': 'country',
-		                '0001': 'gender',
-	                },
+                    filterColumns,
                 },
                 {
                     action: 'fillemptywithdefaultboolean',
@@ -92,20 +82,14 @@ describe('Recipe service', function () {
                         default_value: 'True',
                         column_name: 'campain',
                     },
-	                filterColumns: {
-		                '0000': 'country',
-		                '0001': 'gender',
-	                },
+                    filterColumns,
                 },
                 {
                     action: 'delete',
                     parameters: {
                         row_id: '125',
                     },
-	                filterColumns: {
-		                '0000': 'country',
-		                '0001': 'gender',
-	                },
+                    filterColumns,
                 },
             ],
             metadata: [
@@ -509,7 +493,7 @@ describe('Recipe service', function () {
         spyOn(StateService, 'setRecipeSteps').and.callFake((initialStep, steps) => {
             stateMock.playground.recipe.current.steps = steps;
         });
-	    spyOn(StateService, 'setRecipeAllowDistributedRun').and.returnValue();
+        spyOn(StateService, 'setRecipeAllowDistributedRun').and.returnValue();
         spyOn(StateService, 'setRecipePreviewSteps').and.returnValue();
         spyOn(StateService, 'restoreRecipeBeforePreview').and.returnValue();
     }));
@@ -546,7 +530,7 @@ describe('Recipe service', function () {
 
             //then
             expect(StateService.setRecipeSteps).toHaveBeenCalled();
-	        expect(StateService.setRecipeAllowDistributedRun).toHaveBeenCalled();
+            expect(StateService.setRecipeAllowDistributedRun).toHaveBeenCalled();
             const args = StateService.setRecipeSteps.calls.argsFor(0);
             const steps = args[1];
 
@@ -690,12 +674,12 @@ describe('Recipe service', function () {
             //then
             expect(StateService.setRecipeSteps).toHaveBeenCalled();
             const args = StateService.setRecipeSteps.calls.argsFor(0);
-            const steps = args[1];
+            const firstStep = args[1][0];
             expect(TqlFilterAdapterService.fromTQL).toHaveBeenCalledWith(
-                steps[0].actionParameters.parameters.filter,
-	            steps[0].actionParameters.filterColumns
+                firstStep.actionParameters.parameters.filter,
+                firstStep.actionParameters.filterColumns
             );
-            expect(steps[0].filters).toBe(filtersFromTree);
+            expect(firstStep.filters).toBe(filtersFromTree);
         }));
 
         it('should reuse dynamic params from previous recipe if ids are the same, on refresh', inject(($rootScope, StateService, RecipeService, TransformationService) => {
@@ -735,34 +719,34 @@ describe('Recipe service', function () {
             expect(steps[0].actionParameters).toEqual({
                 action: 'uppercase',
                 parameters: { column_name: 'country', filter: { valid: { field: '0000' } } },
-	            filterColumns: {
-		            '0000': 'country',
-		            '0001': 'gender',
-	            },
+                filterColumns: {
+                    '0000': 'country',
+                    '0001': 'gender',
+                },
             });
             expect(steps[1].actionParameters).toEqual({
                 action: 'fillemptywithdefault',
                 parameters: { default_value: 'M', column_name: 'gender' },
-	            filterColumns: {
-		            '0000': 'country',
-		            '0001': 'gender',
-	            },
+                filterColumns: {
+                    '0000': 'country',
+                    '0001': 'gender',
+                },
             });
             expect(steps[2].actionParameters).toEqual({
                 action: 'negate',
                 parameters: { column_name: 'campain' },
-	            filterColumns: {
-		            '0000': 'country',
-		            '0001': 'gender',
-	            },
+                filterColumns: {
+                    '0000': 'country',
+                    '0001': 'gender',
+                },
             });
             expect(steps[3].actionParameters).toEqual({
                 action: 'cut',
                 parameters: { pattern: '.', column_name: 'first_item' },
-	            filterColumns: {
-		            '0000': 'country',
-		            '0001': 'gender',
-	            },
+                filterColumns: {
+                    '0000': 'country',
+                    '0001': 'gender',
+                },
             });
             expect(steps[4].actionParameters).toEqual({
                 action: 'textclustering',
@@ -778,18 +762,18 @@ describe('Recipe service', function () {
                     column_id: '1',
                     column_name: 'uglystate',
                 },
-	            filterColumns: {
-		            '0000': 'country',
-		            '0001': 'gender',
-	            },
+                filterColumns: {
+                    '0000': 'country',
+                    '0001': 'gender',
+                },
             });
             expect(steps[5].actionParameters).toEqual({
                 action: 'fillemptywithdefaultboolean',
                 parameters: { default_value: 'True', column_name: 'campain' },
-	            filterColumns: {
-		            '0000': 'country',
-		            '0001': 'gender',
-	            },
+                filterColumns: {
+                    '0000': 'country',
+                    '0001': 'gender',
+                },
             });
         }));
     });

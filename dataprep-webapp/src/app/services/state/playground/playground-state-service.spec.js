@@ -548,6 +548,13 @@ describe('Playground state service', () => {
             expect(playgroundState.savingPreparationFolders).toBe(null);
             expect(playgroundState.isSavingPreparationFoldersLoading).toBe(false);
             expect(playgroundState.lastActiveStepId).toBe(null);
+            expect(PlaygroundStateService.getLastActiveStepId()).toBe('head');
+        }));
+
+        it('should reset playground', inject((playgroundState, PlaygroundStateService) => {
+            playgroundState.lastActiveStepId = 'hahahaha';
+            PlaygroundStateService.resetLastActiveStepId();
+            expect(PlaygroundStateService.getLastActiveStepId()).toBe('head');
         }));
 
         it('should reset sub-states', inject((playgroundState, PlaygroundStateService, RecipeStateService, GridStateService, FilterStateService, LookupStateService, SuggestionsStateService, ParametersStateService) => {

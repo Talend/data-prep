@@ -25,6 +25,7 @@ describe('Grid state service', () => {
                 { id: '0003', type: 'date' },
             ],
             records: 12,
+            sampleNbRows: 12,
         },
         records: [
             { tdpId: 0, firstname: 'Tata' },

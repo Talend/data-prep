@@ -28,6 +28,8 @@ export default class FilterItemCtrl {
 		'ngInject';
 
 		this.$translate = $translate;
+		this.IN = this.$translate.instant('IN');
+		this.COLON = this.$translate.instant('COLON');
 	}
 
 	$onInit() {
@@ -64,10 +66,10 @@ export default class FilterItemCtrl {
 				this.sign = '=';
 				break;
 			case INSIDE_RANGE:
-				this.sign = this.$translate.instant('IN');
+				this.sign = this.IN;
 				break;
 			default:
-				this.sign = this.$translate.instant('COLON');
+				this.sign = this.COLON;
 			}
 		}
 	}

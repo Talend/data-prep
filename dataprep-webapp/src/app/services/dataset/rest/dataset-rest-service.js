@@ -216,12 +216,12 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {boolean} metadata If false, the metadata will not be returned
      * @returns {Promise} The GET promise
      */
-	function getContent(datasetId, metadata, tql) {
+	function getContent(datasetId, metadata, tql = null) {
 		const url = `${RestURLs.datasetUrl}/${datasetId}`;
 		const params = {
 			metadata,
 			includeTechnicalProperties: true,
-			filter: tql || null,
+			filter: tql,
 		};
 
 		return $http(

@@ -495,7 +495,7 @@ export default function PlaygroundService(
 	 * in actions history. It there is no preparation yet, it is created first and tagged as draft.
 	 */
 	function appendStep(actions) {
-		StateService.setLastActiveStepId(null);
+		StateService.resetLastActiveStepId();
 		startLoader();
 		const actualSteps = state.playground.recipe.current.steps.slice();
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
@@ -614,7 +614,7 @@ export default function PlaygroundService(
 			return;
 		}
 
-		StateService.setLastActiveStepId(null);
+		StateService.resetLastActiveStepId();
 		startLoader();
 
 		// If move up or move down buttons, list is not yet updated
@@ -687,7 +687,7 @@ export default function PlaygroundService(
 	function removeStep(step) {
 		startLoader();
 
-		StateService.setLastActiveStepId(null);
+		StateService.resetLastActiveStepId();
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
 			state.playground.recipe
@@ -940,7 +940,7 @@ export default function PlaygroundService(
 		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
-			state.playground.lastActiveStepId || 'head',
+			StateService.getLastActiveStepId(),
 			state.playground.sampleType,
 			tql
 		).then(updatePlayground).finally(stopLoader);
@@ -982,9 +982,11 @@ export default function PlaygroundService(
 		return data;
 	}
 
-	function updatePlayground(data) {
-		// Remove filters from filter bar if the columns are removed and refresh the grid
-		const filtersToRemove = state.playground.filter.gridFilters.filter(filter => filter.colId !== '*' && !data.metadata.columns.find(col => col.id === filter.colId));
+	function cleanFilters(data) {
+		const filtersToRemove = state.playground.filter.gridFilters.filter(
+			filter => filter.colId !== '*' && !data.metadata.columns.find(col => col.id === filter.colId)
+		);
+
 		if (filtersToRemove && filtersToRemove.length) {
 			filtersToRemove.forEach(filter => FilterService.removeFilter(filter));
 			StatisticsService.updateFilteredStatistics();
@@ -992,9 +994,14 @@ export default function PlaygroundService(
 				state.playground.preparation ? state.playground.preparation.id : state.playground.dataset.id,
 				state.playground.filter.gridFilters
 			);
-			updateDatagrid();
+
+			return true;
 		}
-		else {
+	}
+
+	function updatePlayground(data) {
+		// Remove filters from filter bar if the columns are removed and refresh the grid
+		if (!cleanFilters(data)) {
 			DatagridService.updateData(data);
 			PreviewService.reset(false);
 		}

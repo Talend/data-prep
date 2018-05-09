@@ -686,7 +686,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		const stepId = lastActiveStep && lastActiveStep.transformation.stepId;
 		const selectedColumn = state.playground.grid.selectedColumns[0];
 
-		let aggregationParameters = {
+		const aggregationParameters = {
 			datasetId: preparationId ? null : datasetId,
 			preparationId,
 			stepId,
@@ -699,7 +699,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 
 		// add filter in parameters only if there are filters
 		if (state.playground.filter.gridFilters.length) {
-			aggregationParameters = _.extend(aggregationParameters, { filter: TqlFilterAdapterService.toTQL(state.playground.filter.gridFilters) });
+			Object.assign(aggregationParameters, { filter: TqlFilterAdapterService.toTQL(state.playground.filter.gridFilters) });
 		}
 
 		return StatisticsRestService.getAggregations(aggregationParameters)

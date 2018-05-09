@@ -65,7 +65,7 @@ export default function PreparationRestService($http, RestURLs) {
 	function getContent(preparationId, stepId, sampleType, tql) {
 		let url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
 		if (tql) {
-			url = url + '&filter=' + encodeURIComponent(tql);
+			url += '&filter=' + encodeURIComponent(tql);
 		}
 		return $http.get(url).then(res => res.data);
 	}

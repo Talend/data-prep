@@ -1,6 +1,6 @@
 /*  ============================================================================
 
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 
  This source code is available under agreement available at
  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -18,6 +18,9 @@ const RANGE_SEPARATOR = ' .. ';
 export default function FilterUtilsService($filter) {
 	'ngInject';
 
+	const formatDate = d3.time.format('%Y-%m-%d');
+	const formatNumber = d3.format(',');
+
 	const service = {
 		getRangeLabelFor,
 		getDateLabel,
@@ -28,12 +31,19 @@ export default function FilterUtilsService($filter) {
 	//----------------------------------------------------------------------------------------------
 	// ---------------------------------------------------UTILS-------------------------------------
 	//----------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getRangeLabelFor
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {Object} interval The interval to format
+	 * @param {Boolean} isDateRange Indicates if the interval is a date
+	 * @description Returns the formatted intereval to display in the badges
+	 */
 	function getRangeLabelFor(interval, isDateRange) {
 		let label;
-		const formatDate = d3.time.format('%Y-%m-%d');
-		const formatNumber = d3.format(',');
 		let min;
 		let max;
+
 		if (isDateRange) {
 			min = formatDate(new Date(interval.min));
 			max = formatDate(new Date(interval.max));
@@ -74,9 +84,9 @@ export default function FilterUtilsService($filter) {
 		case 'YEAR':
 			return 'yyyy';
 		case 'HALF_YEAR':
-			return '\'H\'' + ((startDate.getMonth() / 6) + 1) + ' yyyy';
+			return `'H'${(startDate.getMonth() / 6) + 1} yyyy`;
 		case 'QUARTER':
-			return 'Q' + ((startDate.getMonth() / 3) + 1) + ' yyyy';
+			return `Q${(startDate.getMonth() / 3) + 1} yyyy`;
 		case 'MONTH':
 			return 'MMM yyyy';
 		case 'WEEK':
@@ -93,6 +103,7 @@ export default function FilterUtilsService($filter) {
 	 * @param {string} pace The histogram time pace
 	 * @param {Date} minDate The range starting date
 	 * @param {Date} maxDate The range ending date
+	 * @param {Boolean} excludeMax Indicates if the ending bound should be opened or closed
 	 * @description Returns the range label
 	 */
 	function getDateLabel(pace, minDate, maxDate, excludeMax) {

@@ -679,7 +679,6 @@ export default class FilterService {
 		return splittedLabel;
 	}
 
-	// frontend can send only TQL to backend
 	stringify(filters) {
 		return this.TqlFilterAdapterService.toTQL(filters);
 	}

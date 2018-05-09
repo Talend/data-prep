@@ -56,6 +56,8 @@ export function PlaygroundStateService($translate,
 		setNameEditionMode,
 		setData,
 		setLastActiveStepId,
+		getLastActiveStepId,
+		resetLastActiveStepId,
 		updateDatasetRecord,
 		updateDatasetStatistics,
 		setSampleType,
@@ -165,6 +167,14 @@ export function PlaygroundStateService($translate,
 
 	function setLastActiveStepId(stepId) {
 		playgroundState.lastActiveStepId = stepId;
+	}
+
+	function getLastActiveStepId() {
+		return playgroundState.lastActiveStepId || 'head';
+	}
+
+	function resetLastActiveStepId() {
+		playgroundState.lastActiveStepId = null;
 	}
 
 	function updateDatasetStatistics(metadata) {

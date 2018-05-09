@@ -70,7 +70,7 @@ export default function PlaygroundService(
 	HistoryService,
 	OnboardingService,
 	MessageService,
-	TitleService
+	TitleService,
 ) {
 	'ngInject';
 
@@ -152,20 +152,22 @@ export default function PlaygroundService(
 
 		// init
 		StateService.setPreparationName(
-			preparation ? preparation.name : dataset.name
+			preparation ? preparation.name : dataset.name,
 		);
 		StateService.setCurrentDataset(dataset);
 		StateService.setCurrentData(data);
 		StateService.setCurrentPreparation(preparation);
 		StateService.setCurrentSampleType(sampleType);
 		FilterService.initFilters(dataset, preparation);
-		updateDatagrid();
+
 		updateGridSelection(dataset, preparation);
-		this.updatePreparationDetails().then(() => {
-			if (state.playground.recipe.current.steps.length) {
-				StateService.showRecipe();
-			}
-		});
+
+		this.updatePreparationDetails()
+			.then(() => {
+				if (state.playground.recipe.current.steps.length) {
+					StateService.showRecipe();
+				}
+			});
 
 		// preparation specific init
 		if (preparation) {
@@ -179,6 +181,8 @@ export default function PlaygroundService(
 			ExportService.refreshTypes('datasets', dataset.id);
 			TitleService.setStrict(dataset.name);
 		}
+
+		return updateDatagrid();
 	}
 
 	/**
@@ -191,13 +195,13 @@ export default function PlaygroundService(
 	 */
 	function updateGridSelection(dataset, preparation) {
 		const selectedCols = StorageService.getSelectedColumns(
-			preparation ? preparation.id : dataset.id
+			preparation ? preparation.id : dataset.id,
 		);
 		if (selectedCols.length) {
 			StateService.setGridSelection(
 				state.playground.grid.columns.filter(
-					col => selectedCols.indexOf(col.id) > -1
-				)
+					col => selectedCols.indexOf(col.id) > -1,
+				),
 			);
 		}
 	}
@@ -249,7 +253,7 @@ export default function PlaygroundService(
 				state.playground.dataset ? state.playground.dataset : { id: preparation.dataSetId },
 				data,
 				preparation,
-				sampleType
+				sampleType,
 			))
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
@@ -277,7 +281,7 @@ export default function PlaygroundService(
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			step.transformation.stepId,
-			state.playground.sampleType
+			state.playground.sampleType,
 		)
 			.then((response) => {
 				DatagridService.updateData(response);
@@ -370,6 +374,7 @@ export default function PlaygroundService(
 				RecipeService.refresh(preparation);
 
 				if (!state.playground.isReadOnly &&
+					!OnboardingService.shouldStartTour('playground') &&
 					OnboardingService.shouldStartTour('recipe') &&
 					state.playground.recipe.current.steps.length >= 3) {
 					StateService.showRecipe();
@@ -396,11 +401,11 @@ export default function PlaygroundService(
 			promise = promise.then((preparation) => {
 				const undo = performCreateOrUpdatePreparation.bind(
 					service,
-					oldName
+					oldName,
 				);
 				const redo = performCreateOrUpdatePreparation.bind(
 					service,
-					name
+					name,
 				);
 				HistoryService.addAction(undo, redo);
 				return preparation;
@@ -465,7 +470,7 @@ export default function PlaygroundService(
 					const activeStep = StepUtilsService.getStep(
 						state.playground.recipe,
 						lastActiveStepIndex,
-						true
+						true,
 					);
 					return loadStep(activeStep);
 				});
@@ -537,7 +542,7 @@ export default function PlaygroundService(
 		PreviewService.cancelPreview();
 		PreparationService.copyImplicitParameters(
 			newParams,
-			step.actionParameters.parameters
+			step.actionParameters.parameters,
 		);
 
 		if (!PreparationService.paramsHasChanged(step, newParams)) {
@@ -548,18 +553,18 @@ export default function PlaygroundService(
 
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
-			state.playground.recipe
+			state.playground.recipe,
 		).transformation.stepId;
 		// save the last active step index to load this step after update
 		const lastActiveStepIndex = StepUtilsService.getActiveThresholdStepIndex(
-			state.playground.recipe
+			state.playground.recipe,
 		);
 
 		return (
 			PreparationService.updateStep(
 				state.playground.preparation.id,
 				step,
-				newParams
+				newParams,
 			)
 				.then(() => this.updatePreparationDetails())
 				// get step id to load and update datagrid with it
@@ -567,25 +572,25 @@ export default function PlaygroundService(
 					const activeStep = StepUtilsService.getStep(
 						state.playground.recipe,
 						lastActiveStepIndex,
-						true
+						true,
 					);
 					return loadStep(activeStep);
 				})
 				// add entry in history for undo/redo
 				.then(() => {
 					const actualHead = StepUtilsService.getLastStep(
-						state.playground.recipe
+						state.playground.recipe,
 					).transformation.stepId;
 					const undo = setPreparationHead.bind(
 						service,
 						state.playground.preparation.id,
-						previousHead
+						previousHead,
 					);
 					const redo = setPreparationHead.bind(
 						service,
 						state.playground.preparation.id,
 						actualHead,
-						newParams.column_id
+						newParams.column_id,
 					);
 					HistoryService.addAction(undo, redo);
 				})
@@ -643,9 +648,9 @@ export default function PlaygroundService(
 			PreparationService.moveStep(
 				preparationId,
 				currentStepId,
-				nextParentStepId
+				nextParentStepId,
 			)
-				// update recipe and datagrid
+			// update recipe and datagrid
 				.then(() => {
 					return $q.all([
 						this.updatePreparationDetails(),
@@ -660,12 +665,12 @@ export default function PlaygroundService(
 						service,
 						preparationId,
 						previousHead,
-						currentStep.actionParameters.parameters.column_id
+						currentStep.actionParameters.parameters.column_id,
 					);
 					const redo = setPreparationHead.bind(
 						service,
 						preparationId,
-						actualHead
+						actualHead,
 					);
 					HistoryService.addAction(undo, redo);
 				})
@@ -687,15 +692,15 @@ export default function PlaygroundService(
 
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
-			state.playground.recipe
+			state.playground.recipe,
 		).transformation.stepId;
 
 		return (
 			PreparationService.removeStep(
 				state.playground.preparation.id,
-				step.transformation.stepId
+				step.transformation.stepId,
 			)
-				// update recipe and datagrid
+			// update recipe and datagrid
 				.then(() => {
 					return $q.all([
 						this.updatePreparationDetails(),
@@ -705,18 +710,18 @@ export default function PlaygroundService(
 				// add entry in history for undo/redo
 				.then(() => {
 					const actualHead = StepUtilsService.getLastStep(
-						state.playground.recipe
+						state.playground.recipe,
 					).transformation.stepId;
 					const undo = setPreparationHead.bind(
 						service,
 						state.playground.preparation.id,
 						previousHead,
-						step.actionParameters.parameters.column_id
+						step.actionParameters.parameters.column_id,
 					);
 					const redo = setPreparationHead.bind(
 						service,
 						state.playground.preparation.id,
-						actualHead
+						actualHead,
 					);
 					HistoryService.addAction(undo, redo);
 				})
@@ -738,13 +743,13 @@ export default function PlaygroundService(
 
 		return getCurrentPreparation()
 			.then(preparation =>
-				PreparationService.copySteps(preparation.id, referenceId)
+				PreparationService.copySteps(preparation.id, referenceId),
 			)
 			.then(() =>
 				$q.all([
 					this.updatePreparationDetails(),
 					updatePreparationDatagrid(),
-				])
+				]),
 			)
 			.finally(stopLoader);
 	}
@@ -767,7 +772,7 @@ export default function PlaygroundService(
 				stepParameters.scope = scope;
 				if (state.playground.filter.applyTransformationOnFilters) {
 					const stepFilters = FilterAdapterService.toTree(
-						state.playground.filter.gridFilters
+						state.playground.filter.gridFilters,
 					);
 					stepParameters = { ...stepParameters, ...stepFilters };
 				}
@@ -781,36 +786,36 @@ export default function PlaygroundService(
 
 				if (state.playground.filter.applyTransformationOnFilters) {
 					const stepFilters = FilterAdapterService.toTree(
-							state.playground.filter.gridFilters
-						);
+						state.playground.filter.gridFilters,
+					);
 					stepParameters = { ...stepParameters, ...stepFilters };
 				}
 				actions = [
-						{ action: action.name, parameters: stepParameters },
+					{ action: action.name, parameters: stepParameters },
 				];
 				break;
 			default:
 				actions = map(
-						state.playground.grid.selectedColumns,
-						(column) => {
-							let parameters = { ...params };
-							parameters.scope = scope;
-							parameters.column_id = column && column.id;
-							parameters.column_name = column && column.name;
-							parameters.row_id = line && line.tdpId;
+					state.playground.grid.selectedColumns,
+					(column) => {
+						let parameters = { ...params };
+						parameters.scope = scope;
+						parameters.column_id = column && column.id;
+						parameters.column_name = column && column.name;
+						parameters.row_id = line && line.tdpId;
 
-							if (
-								state.playground.filter
-									.applyTransformationOnFilters
-							) {
-								const stepFilters = FilterAdapterService.toTree(
-									state.playground.filter.gridFilters
-								);
-								parameters = { ...parameters, ...stepFilters };
-							}
-							return { action: action.name, parameters };
+						if (
+							state.playground.filter
+								.applyTransformationOnFilters
+						) {
+							const stepFilters = FilterAdapterService.toTree(
+								state.playground.filter.gridFilters,
+							);
+							parameters = { ...parameters, ...stepFilters };
 						}
-					);
+						return { action: action.name, parameters };
+					},
+				);
 				break;
 			}
 			return service.appendStep(actions);
@@ -901,22 +906,23 @@ export default function PlaygroundService(
 		const isPreparation = state.playground.preparation;
 		const lastActiveStepIndex = isPreparation
 			? StepUtilsService.getActiveThresholdStepIndex(
-					state.playground.recipe
-				)
+				state.playground.recipe,
+			)
 			: null;
-		return DatasetService.updateParameters(dataset, params).then(() => {
-			if (isPreparation) {
-				const activeStep = StepUtilsService.getStep(
-					state.playground.recipe,
-					lastActiveStepIndex,
-					true
-				);
-				return loadStep(activeStep);
-			}
-			else {
-				this.loadDataset.call(this, dataset.id);
-			}
-		});
+		return DatasetService.updateParameters(dataset, params)
+			.then(() => {
+				if (isPreparation) {
+					const activeStep = StepUtilsService.getStep(
+						state.playground.recipe,
+						lastActiveStepIndex,
+						true,
+					);
+					return loadStep(activeStep);
+				}
+				else {
+					this.loadDataset.call(this, dataset.id);
+				}
+			});
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1011,7 +1017,7 @@ export default function PlaygroundService(
 				fetchStatsTimeout = $timeout(
 					() => fetchStatistics.call(this),
 					1500,
-					false
+					false,
 				);
 			});
 	}
@@ -1053,7 +1059,7 @@ export default function PlaygroundService(
 				return preparation;
 			})
 			.then(preparation =>
-				DatasetService.getMetadata(preparation.dataSetId)
+				DatasetService.getMetadata(preparation.dataSetId),
 			)
 			.then(dataset => StateService.setCurrentDataset(dataset))
 			.catch(errorGoBack);

@@ -30,20 +30,52 @@ public class FilterStep extends DataPrepStep {
 
     private void checkDatasetCharacteristics(String tql, String datasetName, DataTable dataTable) throws Exception {
         String datasetId = context.getDatasetId(suffixName(datasetName));
-        DatasetContent dataset = getUpToDateDatasetContent(datasetId, tql);
-
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
+
+        DatasetContent dataset = getInitialDatasetContent(datasetId, tql);
+        checkSampleRecordsCount(dataset.metadata.records, expected.get("sample_records_count"));
         checkRecords(dataset.records, expected.get("records"));
+
+        dataset = getUpToDateDatasetContent(dataset, datasetId, tql);
         checkQualityPerColumn(dataset.metadata.columns, expected.get("quality"));
     }
 
     /**
+     * Returns the initial dataset content, potentially before all analysis are done (quality, stats, and so on).
+     * @param datasetId the dataset id
+     * @param tql the TQL filter used to filter dataset content
+     * @return the dataset content
+     * @throws Exception very generic as we are in a test class, do not catch it
+     */
+    private DatasetContent getInitialDatasetContent(String datasetId, String tql) throws Exception {
+        Response response;
+        response = api.getDataset(datasetId, tql);
+        response.then().statusCode(200);
+        DatasetContent dataset = response.as(DatasetContent.class);
+        if (!response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty()) {
+            dataset.isUpToDate = true;
+        }
+        return response.as(DatasetContent.class);
+    }
+
+    private void checkSampleRecordsCount(String actualRecordsCount, String expectedRecordsCount) {
+        if (expectedRecordsCount == null) {
+            return;
+        }
+        Assert.assertEquals(expectedRecordsCount, actualRecordsCount);
+    }
+
+    /**
      * Returns the dataset content, once all DQ analysis are done and so all fields are up-to-date.
+     * @param dataset the dataset in its initial state, to determine if it is already up-to-date or not
      * @param datasetId the id of the dataset
      * @param tql the TQL filter to apply to the dataset
      * @return the up-to-date dataset content
      */
-    private DatasetContent getUpToDateDatasetContent(String datasetId, String tql) throws Exception {
+    private DatasetContent getUpToDateDatasetContent(DatasetContent dataset, String datasetId, String tql) throws Exception {
+        if (dataset.isUpToDate) {
+            return dataset;
+        }
         Response response;
         do {
             response = api.getDataset(datasetId, tql);
@@ -120,6 +152,7 @@ public class FilterStep extends DataPrepStep {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
         checkRecords(preparation.records, expected.get("records"));
         checkQualityPerColumn(preparation.metadata.columns, expected.get("quality"));
+        checkSampleRecordsCount(preparation.metadata.records, expected.get("sample_records_count"));
     }
 
     @Then("^After removing all filters, the content of the preparation \"(.*)\" matches:$")

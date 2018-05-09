@@ -56,7 +56,8 @@ public class JsonWriter implements TransformerWriter {
 
     private static final String RECORDS_FIELD_NAME = "records";
 
-    public static final String SAMPLE_NB_ROWS = "sampleNbRows";
+    /** Note: this field is meant to be nested inside the "metadata" field. */
+    private static final String SAMPLE_RECORDS_COUNT_FIELD_NAME = "records";
 
     /** The data-prep ready jackson module. */
     @Autowired
@@ -139,7 +140,7 @@ public class JsonWriter implements TransformerWriter {
     private void writeRowMetadataObject(RowMetadata rowMetadata) throws IOException {
         generator.writeFieldName(METADATA_FIELD_NAME);
         generator.writeStartObject();
-        generator.writeFieldName(SAMPLE_NB_ROWS);
+        generator.writeFieldName(SAMPLE_RECORDS_COUNT_FIELD_NAME);
         generator.writeNumber(rowMetadata.getSampleNbRows());
         generator.writeFieldName(METADATA_COLUMNS_FIELD_NAME);
         generator.writeStartArray();

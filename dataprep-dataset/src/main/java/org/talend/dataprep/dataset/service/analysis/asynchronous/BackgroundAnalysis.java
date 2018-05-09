@@ -157,7 +157,7 @@ public class BackgroundAnalysis {
         }
         // get the analyzer of the first column
         final Analyzers.Result result = results.get(0);
-        if (result.exist(ValueQualityStatistics.class)) {
+        if (metadata.getContent().getNbRecords() == 0 && result.exist(ValueQualityStatistics.class)) {
             final ValueQualityStatistics valueQualityStatistics = result.get(ValueQualityStatistics.class);
             metadata.getContent().setNbRecords(valueQualityStatistics.getCount());
         }

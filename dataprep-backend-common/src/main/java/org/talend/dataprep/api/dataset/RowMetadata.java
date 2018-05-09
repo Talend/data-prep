@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -56,8 +57,8 @@ public class RowMetadata implements Serializable {
     @JsonProperty("nextId")
     private int nextId = 0;
 
-    @JsonProperty("sampleNbRows")
-    private long sampleNbRows;
+    @JsonIgnore
+    private transient long sampleNbRows;
 
     /**
      * Default empty constructor.
@@ -73,6 +74,19 @@ public class RowMetadata implements Serializable {
      */
     public RowMetadata(List<ColumnMetadata> columns) {
         setColumns(columns);
+    }
+
+    public int getNextId() {
+        return nextId;
+    }
+
+    @JsonIgnore
+    public long getSampleNbRows() {
+        return sampleNbRows;
+    }
+
+    public void setSampleNbRows(long sampleNbRows) {
+        this.sampleNbRows = sampleNbRows;
     }
 
     /**
@@ -341,11 +355,4 @@ public class RowMetadata implements Serializable {
         columns.add(columns.indexOf(columnMetadata) + 1, movedColumn);
     }
 
-    public void setSampleNbRows(long sampleNbRows) {
-        this.sampleNbRows = sampleNbRows;
-    }
-
-    public long getSampleNbRows() {
-        return sampleNbRows;
-    }
 }

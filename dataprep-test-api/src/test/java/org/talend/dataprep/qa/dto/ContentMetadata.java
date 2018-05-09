@@ -20,4 +20,5 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ContentMetadata {
     public List<ContentMetadataColumn> columns;
+    public String records;
 }

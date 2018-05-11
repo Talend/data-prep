@@ -61,10 +61,10 @@
                                        ng-trim="false"
                                        is-type="{{::simpleParamCtrl.parameter.type}}"
                                        can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"
-                                       ng-disabled="!!simpleParamCtrl.parameter.readonly"/>
+                                       ng-disabled="!!simpleParamCtrl.parameter.readonly" />
                             </div>
                             <div class="checkbox" ng-switch-when="true">
-                                <label>
+                                <label data-feature="{{simpleParamCtrl.getDataFeature()}}">
                                     <input id="{{::(simpleParamCtrl.parameter.name)}}"
                                            name="{{::(simpleParamCtrl.parameter.name)}}"
                                            type="{{::simpleParamCtrl.parameter.inputType}}"
@@ -73,7 +73,7 @@
                                            ng-trim="false"
                                            is-type="{{::simpleParamCtrl.parameter.type}}"
                                            can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"
-                                           ng-disabled="!!simpleParamCtrl.parameter.readonly"/>
+                                           ng-disabled="!!simpleParamCtrl.parameter.readonly" />
                                     <span>{{simpleParamCtrl.parameter.label || simpleParamCtrl.parameter.name}}</span>
                                 </label>
                             </div>
@@ -84,7 +84,7 @@
         </div>
         <div class="param-error error"
              ng-if="parentForm.$error.isTypeValidation || parentForm.$error.number">
-            <span translate="{{::('TYPE_FORMAT_ERROR_' + simpleParamCtrl.parameter.type.toUpperCase())}}"/>
+            <span translate="{{::('TYPE_FORMAT_ERROR_' + simpleParamCtrl.parameter.type.toUpperCase())}}" />
         </div>
     </div>
 </div>

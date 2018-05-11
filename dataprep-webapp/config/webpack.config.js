@@ -1,134 +1,37 @@
-const appConf = require('./app.conf.js');
-const getLicense = require('./license');
-const SASS_DATA = require('./sass.conf');
-
 const path = require('path');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 
 const TalendHTML = require('@talend/html-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const SassLintPlugin = require('sasslint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' });
+const extractCSS = new ExtractTextPlugin({ filename: '[name]-[hash].css' });
+
+const APP_CONF = require('./app.conf');
+const LICENSE_BANNER = require('./license');
+const SASS_DATA = require('./sass.conf');
+const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
 const INDEX_TEMPLATE_PATH = path.resolve(__dirname, '../src/index.html');
 const STYLE_PATH = path.resolve(__dirname, '../src/app/index.scss');
-const INDEX_PATH = path.resolve(__dirname, '../src/app/index-module.js');
 const VENDOR_PATH = path.resolve(__dirname, '../src/vendor.js');
-const BUILD_PATH = path.resolve(__dirname, '../build');
 
 const AppLoader = require('@talend/react-components/lib/AppLoader/constant').default;
-const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
-const PROXY_OPTIONS = {
-	context: [
-		'/api/**',
-		'/v2/api-docs**',
-		'/docs/**',
-		'/upload/**',
-	],
-	target: 'http://localhost:8888',
-};
-
-function getDefaultConfig(options) {
-	const isTestMode = options.env === 'test';
-	return {
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					use: [
-						{ loader: 'ng-annotate-loader' },
-						{ loader: 'babel-loader', options: { cacheDirectory: true } },
-					],
-					exclude: /node_modules/,
-				},
-				{
-					test: /\.css$/,
-					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getCommonStyleLoaders()),
-					exclude: /@talend/,
-				},
-				{
-					test: /\.scss$/,
-					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders()),
-					exclude: /@talend/,
-				},
-				// css modules local scope
-				{
-					test: /\.scss$/,
-					use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders(true)),
-					include: /@talend/,
-				},
-				{
-					test: /\.(png|jpg|jpeg|gif)$/,
-					loader: isTestMode ? 'null-loader' : 'url-loader',
-					options: { mimetype: 'image/png' },
-				},
-				{
-					test: /\.html$/,
-					use: [
-						{ loader: 'ngtemplate-loader' },
-						{ loader: 'html-loader' },
-					],
-					exclude: INDEX_TEMPLATE_PATH,
-				},
-				{
-					test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,
-					loader: isTestMode ? 'null-loader' : 'file-loader',
-					options: {
-						name: '[name].[ext]',
-						limit: 10000,
-						mimetype: 'application/font-woff',
-						publicPath: '/',
-						outputPath: 'assets/fonts/',
-					},
-				},
-				{
-					test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-					loader: isTestMode ? 'null-loader' : 'url-loader',
-					options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' },
-				},
-			],
-		},
-		resolve: {
-			alias: {
-				react: path.join(__dirname, '../node_modules/react'),
-				i18next: path.join(__dirname, '../node_modules/i18next'),
-			},
-			symlinks: false,
-		},
-		plugins: [
-			extractCSS,
-			new webpack.ProvidePlugin({
-				$: 'jquery',
-				jQuery: 'jquery',
-				jquery: 'jquery',
-				'window.jQuery': 'jquery',
-				moment: 'moment',
-			}),
-			// for compatibility, needed for some loaders
-			new webpack.LoaderOptionsPlugin({
-				options: {
-					context: path.join(__dirname, '../src'),
-					output: {
-						path: BUILD_PATH,
-					},
-				},
-			}),
-		],
-		cache: true,
-		devtool: options.devtool,
-	};
-}
+const isTestMode = process.env.NODE_ENV === 'test';
 
 function getCommonStyleLoaders(enableModules) {
-	const cssOptions = enableModules ?
-		{ sourceMap: true, modules: true, importLoaders: 1, localIdentName: '[name]__[local]___[hash:base64:5]' } :
-		{};
+	let cssOptions = {};
+	if (enableModules) {
+		cssOptions = {
+			sourceMap: true,
+			modules: true,
+			importLoaders: 1,
+			localIdentName: '[name]__[local]___[hash:base64:5]',
+		};
+	}
 	return [
 		{ loader: 'css-loader', options: cssOptions },
 		{
@@ -140,108 +43,117 @@ function getCommonStyleLoaders(enableModules) {
 }
 
 function getSassLoaders(enableModules) {
-	return getCommonStyleLoaders(enableModules).concat({
-		loader: 'sass-loader',
-		options: { sourceMap: true, data: SASS_DATA },
-	});
+	return getCommonStyleLoaders(enableModules)
+		.concat({
+			loader: 'sass-loader',
+			options: { sourceMap: true, data: SASS_DATA },
+		});
 }
 
-function addProdEnvPlugin(config) {
-	config.plugins.push(
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('production'),
-			},
-		})
-	);
-}
-
-function addCoverageConfig(config) {
-	config.module.rules.push({
-		test: /\.js$/,
-		enforce: 'pre',
-		loader: 'isparta-loader',
-		exclude: [/node_modules/, /\.spec\.js$/],
-		options: {
-			embedSource: true,
-			noAutoWrap: true,
-		},
-	});
-}
-
-function addDevServerConfig(config) {
-	config.devServer = {
-		port: appConf.port,
-		host: appConf.host,
-		watchOptions: {
-			aggregateTimeout: 300,
-			poll: 1000,
-		},
-		stats: 'errors-only',
-		contentBase: BUILD_PATH,
-		headers: {
-			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-			'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-		},
-		setup(app) {
-			app.get('/assets/config/config.json', function (req, res) {
-				const configFile = require('./../src/assets/config/config.json');
-				configFile.serverUrl = 'http://localhost:8888';
-				res.json(configFile);
-			});
-		},
-		proxy: [
-			() => PROXY_OPTIONS,
-		],
-	};
-}
-
-function addFilesConfig(config) {
-	config.entry = {
+const config = {
+	entry: {
 		vendor: [
 			'babel-polyfill',
 			VENDOR_PATH,
 		],
 		style: STYLE_PATH,
-		app: INDEX_PATH,
-	};
-	config.output = {
-		path: BUILD_PATH,
+		app: ['babel-polyfill', 'whatwg-fetch', './src/app/index-module.js'],
+	},
+	output: {
+		path: `${__dirname}/../build`,
+		publicPath: '/',
 		filename: '[name]-[hash].js',
-	};
-}
+	},
+	module: {
+		loaders: [
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [
+					{ loader: 'ng-annotate-loader' },
+					{ loader: 'babel-loader' },
+				],
+			},
+			{
+				test: /\.css$/,
+				use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getCommonStyleLoaders()),
+				exclude: /@talend/,
+			},
+			{
+				test: /\.scss$/,
+				use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders()),
+				exclude: /@talend/,
+			},
+			// css modules local scope
+			{
+				test: /\.scss$/,
+				use: isTestMode ? { loader: 'null-loader' } : extractCSS.extract(getSassLoaders(true)),
+				include: /@talend/,
+			},
+			{
+				test: /\.html$/,
+				use: [
+					{ loader: 'ngtemplate-loader' },
+					{ loader: 'html-loader' },
+				],
+				exclude: INDEX_TEMPLATE_PATH,
+			},
+			{
+				test: /\.(png|jpg|jpeg|gif)$/,
+				loader: isTestMode ? 'null-loader' : 'url-loader',
+				options: { mimetype: 'image/png' },
+			},
+			{
+				test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,
+				loader: isTestMode ? 'null-loader' : 'file-loader',
+				options: {
+					name: '[name].[ext]',
+					limit: 10000,
+					mimetype: 'application/font-woff',
+					publicPath: '/',
+					outputPath: 'assets/fonts/',
+				},
+			},
+			{
+				test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+				loader: isTestMode ? 'null-loader' : 'url-loader',
+				options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' },
+			},
+		],
+	},
+	resolve: {
+		symlinks: false,
+	},
+	plugins: [
+		extractCSS,
+		new webpack.ProvidePlugin({
+			$: 'jquery',
+			jQuery: 'jquery',
+			jquery: 'jquery',
+			'window.jQuery': 'jquery',
+			moment: 'moment',
+		}),
+		new webpack.LoaderOptionsPlugin({
+			minimize: true,
+		}),
+	],
+	node: {
+		fs: 'empty',
+	},
+};
 
-function addPlugins(config, options) {
-	const copyWebpackPluginConfiguration = [
-		{ from: 'src/assets/images', to: 'assets/images' },
-		{ from: 'src/assets/config/config.json', to: 'assets/config' },
-	];
-
-	config.plugins.push(
-		/*
-		 * Plugin: CopyWebpackPlugin
-		 * Description: Copy files and directories in webpack.
-		 * Copies project static assets.
-		 *
-		 * See: https://www.npmjs.com/package/copy-webpack-plugin
-		 */
-		new CopyWebpackPlugin(copyWebpackPluginConfiguration),
-
-		/*
-		 * Plugin: HtmlWebpackPlugin
-		 * Description: Simplifies creation of HTML files to serve your webpack bundles.
-		 * This is especially useful for webpack bundles that include a hash in the filename
-		 * which changes every compilation.
-		 *
-		 * See: https://github.com/ampedandwired/html-webpack-plugin
-		 */
+if (!isTestMode) {
+	config.plugins = config.plugins.concat([
+		CopyWebpackPlugin([
+			{ from: 'src/assets/images', to: 'assets/images' },
+			{ from: 'src/assets/config/config.json', to: 'assets/config' },
+		]),
 		new HtmlWebpackPlugin({
-			title: appConf.title,
-			rootElement: appConf.rootElement,
-			rootModule: appConf.rootModule,
-			env: options.env,
+			filename: './index.html',
 			template: INDEX_TEMPLATE_PATH,
+			title: APP_CONF.title,
+			rootElement: APP_CONF.rootElement,
+			rootModule: APP_CONF.rootModule,
 			inject: 'body',
 			loader: AppLoader.APP_LOADER,
 			// ensure loding order vendor/style/app
@@ -257,121 +169,18 @@ function addPlugins(config, options) {
 				return 0;
 			},
 		}),
-
-		/*
-		 * Plugin: TalendHTML
-		 * Description: Hook for HtmlWebpackPlugin
-		 * This is used to inject the app loader.
-		 */
 		new TalendHTML({
 			loadCSSAsync: true,
-			appLoaderIcon: appConf.icon,
+			appLoaderIcon: APP_CONF.icon,
 		}),
-
-		/*
-		 * Plugin: BannerPlugin
-		 * Description: Inject a banner on top of the output file
-		 * This is used to inject the licence.
-		 *
-		 * See: https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
-		 */
-		new webpack.BannerPlugin({ banner: getLicense() }),
-
-		/*
-		 * Plugin: webpack.optimize.CommonsChunkPlugin
-		 * Description: Identifies common modules and put them into a commons chunk
-		 *
-		 * See: https://github.com/webpack/docs/wiki/optimization
-		 */
+		new webpack.BannerPlugin({
+			banner: LICENSE_BANNER,
+		}),
 		new webpack.optimize.CommonsChunkPlugin({
 			name: 'vendor',
 			minChunks: Infinity,
-		})
-	);
-}
-
-function addMinifyConfig(config) {
-	config.plugins.push(
-		new UglifyJsPlugin({
-			parallel: true,
 		}),
-		new webpack.LoaderOptionsPlugin({
-			minimize: true,
-		})
-	);
+	]);
 }
 
-function addStripCommentsConfig(config) {
-	config.module.rules.push({
-		test: /\.js$/,
-		enforce: 'pre',
-		use: 'stripcomment-loader',
-		exclude: [/node_modules/, /\.spec\.js$/],
-	});
-}
-
-function addLinterConfig(config) {
-	config.module.rules.push({
-		test: /src\/.*\.js$/,
-		enforce: 'pre',
-		loader: 'eslint-loader',
-		exclude: /node_modules/,
-		options: { configFile: path.resolve(__dirname, '../.eslintrc') },
-	});
-
-	// config.plugins.push(new SassLintPlugin({
-	//     glob: 'src/app/**/*.s?(a|c)ss',
-	// }));
-}
-
-/*
- {
- coverage: (true | false)            // configure coverage instrumenter
- devtool: 'inline-source-map',       // source map type
- devServer: (true | false),          // configure webpack-dev-server
- entryOutput: (true | false),        // configure entry and output files and plugins to generate full app. For example, test with karma doesn't need that, as the files are managed by karma.
- env: ('dev' | 'prod' | 'test'),     // the environment
- linter: (true | false),             // enable eslint and sass-lint
- minify: (true | false),             // enable minification/uglification
- stripComments: (true | false),      // remove comments
- }
- */
-module.exports = (options) => {
-	const config = getDefaultConfig(options);
-
-
-	if (options.coverage) {
-		addCoverageConfig(config);
-	}
-
-	if (options.devServer) {
-		addDevServerConfig(config);
-	}
-
-	if (options.entryOutput) {
-		addFilesConfig(config);
-		addPlugins(config, options);
-	}
-
-	if (options.env === 'prod') {
-		addProdEnvPlugin(config);
-	}
-
-	if (options.minify) {
-		addMinifyConfig(config);
-	}
-
-	if (options.stripComments) {
-		addStripCommentsConfig(config);
-	}
-
-	if (options.linter) {
-		addLinterConfig(config);
-	}
-
-	config.node = {
-		fs: 'empty',
-	};
-
-	return config;
-};
+module.exports = config;

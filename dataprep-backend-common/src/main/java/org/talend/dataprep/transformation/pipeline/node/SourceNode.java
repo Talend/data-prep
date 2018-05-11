@@ -39,7 +39,9 @@ public class SourceNode extends BasicNode {
 
     @Override
     public void signal(Signal signal) {
-        lastRowMetadata.setSampleNbRows(count);
+        if (lastRowMetadata != null) {
+            lastRowMetadata.setSampleNbRows(count);
+        }
         super.signal(signal);
     }
 

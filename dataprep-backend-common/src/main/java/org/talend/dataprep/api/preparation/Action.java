@@ -97,7 +97,7 @@ public class Action implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         Action action1 = (Action) o;
-        return Objects.equals(action, action1.action) && Objects.equals(parameters, action1.parameters) && Objects.equals(filterColumns, action1.filterColumns);
+        return Objects.equals(action, action1.action) && Objects.equals(parameters, action1.parameters);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class Action implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(action, parameters, filterColumns);
+        return Objects.hash(action, parameters);
     }
 
     /**

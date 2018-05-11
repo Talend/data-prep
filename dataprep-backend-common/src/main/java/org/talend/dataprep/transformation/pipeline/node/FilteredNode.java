@@ -58,7 +58,7 @@ public class FilteredNode extends BasicNode {
         case END_OF_STREAM:
         case STOP:
         case CANCEL:
-            if (!hasMatched) {
+            if (!hasMatched && lastRow != null) {
                 lastRow.setDeleted(true);
                 super.receive(lastRow, lastMetadata);
             }

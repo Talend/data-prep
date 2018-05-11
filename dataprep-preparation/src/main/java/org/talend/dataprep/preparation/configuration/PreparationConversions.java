@@ -131,12 +131,12 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                     for (Action action : actions) {
                         Map<String, String> parameters = action.getParameters();
 
-                        if (!StringUtils.isBlank(parameters.get(ImplicitParameters.FILTER.getKey()))){
+                        if (StringUtils.isNotBlank(parameters.get(ImplicitParameters.FILTER.getKey()))){
                             // Translate filter from JSON to TQL
                             parameters.put(ImplicitParameters.FILTER.getKey(), translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
 
-                            // Fetch column metadata relative to the step filter
-                            // Ask for (n-1) metadata (if case backend hasn't yet completed head metadata)
+                            // Fetch column metadata relative to the filtered action
+                            // Ask for (n-1) metadata (necessary if some columns are deleted during last step)
                             final Step step = preparationRepository.get(source.getSteps().get(actions.indexOf(action)).getId(), Step.class);
                             if (step != null) {
                                 final StepRowMetadata stepRowMetadata = preparationRepository.get(step.getRowMetadata(), StepRowMetadata.class);

@@ -123,13 +123,13 @@ public class DatasetStep extends DataPrepStep {
 
     @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
     public void thenICheckSemanticTypeDoesNotExistOnDataset(String semanticTypeName, String columnId,
-            String dataSetName) {
+                                                            String dataSetName) {
         String dataSetId = context.getDatasetId(suffixName(dataSetName));
         checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, false);
     }
 
     private void checkDatasetsColumnSemanticTypes(String semanticTypeName, String columnId, String dataSetId,
-            boolean expected) {
+                                                  boolean expected) {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 
@@ -156,20 +156,20 @@ public class DatasetStep extends DataPrepStep {
 
     @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
     public void thenICheckSemanticTypeExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) {
+                                                         String preparationName) {
         String preparationId = context.getPreparationId(suffixName(preparationName));
         checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, true);
     }
 
     @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
     public void thenICheckSemanticTypeDoesNotExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) {
+                                                                String preparationName) {
         String preparationId = context.getPreparationId(suffixName(preparationName));
         checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, false);
     }
 
     private void checkPreparationColumnSemanticTypes(String semanticTypeName, String columnId, String preparationId,
-            boolean expected) {
+                                                     boolean expected) {
 
         Response response = api.getPreparationsColumnSemanticTypes(columnId, preparationId);
         response.then().statusCode(200).log().ifError();
@@ -208,26 +208,26 @@ public class DatasetStep extends DataPrepStep {
         LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
         String datasetId;
         switch (util.getFilenameExtension(fileName)) {
-        case "xls":
-        case "xlsx":
-            datasetId = api
-                    .uploadBinaryDataset(fileName, suffixedName) //
-                    .then()
-                    .statusCode(200) //
-                    .extract()
-                    .body()
-                    .asString();
-            break;
-        case "csv":
-        default:
-            datasetId = api
-                    .uploadTextDataset(fileName, suffixedName) //
-                    .then()
-                    .statusCode(200) //
-                    .extract()
-                    .body()
-                    .asString();
-            break;
+            case "xls":
+            case "xlsx":
+                datasetId = api
+                        .uploadBinaryDataset(fileName, suffixedName) //
+                        .then()
+                        .statusCode(200) //
+                        .extract()
+                        .body()
+                        .asString();
+                break;
+            case "csv":
+            default:
+                datasetId = api
+                        .uploadTextDataset(fileName, suffixedName) //
+                        .then()
+                        .statusCode(200) //
+                        .extract()
+                        .body()
+                        .asString();
+                break;
 
         }
         context.storeDatasetRef(datasetId, suffixedName);

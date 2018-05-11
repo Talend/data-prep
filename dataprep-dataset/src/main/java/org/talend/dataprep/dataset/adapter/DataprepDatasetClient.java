@@ -43,7 +43,6 @@ import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -59,13 +58,9 @@ public class DataprepDatasetClient implements DatasetClient {
 
     private final BeanConversionService beanConversionService;
 
-    private final ObjectMapper objectMapper;
-
-    public DataprepDatasetClient(DataSetService dataSetService, BeanConversionService beanConversionService,
-            ObjectMapper objectMapper) {
+    public DataprepDatasetClient(DataSetService dataSetService, BeanConversionService beanConversionService) {
         this.dataSetService = dataSetService;
         this.beanConversionService = beanConversionService;
-        this.objectMapper = objectMapper;
     }
 
     @Override

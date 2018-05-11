@@ -29,8 +29,6 @@ import org.talend.dataprep.dataset.adapter.ProxyDatasetClient;
 import org.talend.dataprep.dataset.service.DataSetService;
 import org.talend.dataprep.security.Security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Configuration
 public class DatasetClientConfiguration {
 
@@ -42,8 +40,8 @@ public class DatasetClientConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
-    public DatasetClient dataprepDatasetClient(DataSetService dataSetService, BeanConversionService beanConversionService, ObjectMapper objectMapper) {
-        return new DataprepDatasetClient(dataSetService, beanConversionService, objectMapper);
+    public DatasetClient dataprepDatasetClient(DataSetService dataSetService, BeanConversionService beanConversionService) {
+        return new DataprepDatasetClient(dataSetService, beanConversionService);
     }
 
 }

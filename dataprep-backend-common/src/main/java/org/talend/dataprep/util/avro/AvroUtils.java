@@ -145,7 +145,7 @@ public class AvroUtils {
         return result;
     }
 
-    static Optional<ColumnMetadata> getColumnMetadata(Schema.Field field) {
+    private static Optional<ColumnMetadata> getColumnMetadata(Schema.Field field) {
         if (field.getProp(DP_COLUMN_ID) == null) {
             return Optional.of(column() //
                     .type(STRING) //
@@ -222,7 +222,7 @@ public class AvroUtils {
                 toAvroFieldName(column);
         final Schema type = SchemaBuilder.builder().unionOf().nullBuilder().endNull().and().stringType().endUnion();
 
-        final Schema.Field field = new Schema.Field(name, type, StringUtils.EMPTY, ((Object) null));
+        final Schema.Field field = new Schema.Field(name, type, EMPTY, ((Object) null));
         field.addProp(DP_COLUMN_ID, column.getId());
         field.addProp(DP_COLUMN_NAME, column.getName());
         field.addProp(DP_COLUMN_TYPE, column.getType());

@@ -12,6 +12,13 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.http.HttpResponse;
@@ -19,23 +26,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicHeader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroUtils;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.stream.Stream;
 
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
@@ -56,9 +54,6 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
     private final String dataSetId;
 
     private final Schema contentSchema;
-
-    @Autowired
-    private DataSetContentLimit limit;
 
     public DataSetGetContent(final String dataSetId, Schema contentSchema) {
         super(DATASET_GROUP);

@@ -38,7 +38,6 @@
     "@talend/icons": "0.183.0",
     "@talend/react-cmf": "0.183.0",
     "@talend/react-cmf-cqrs": "0.183.0",
-    "@talend/react-cmf-webpack-plugin": "0.183.0",
     "@talend/react-components": "0.183.0",
     "@talend/react-containers": "0.183.0",
     "@talend/react-forms": "0.183.0",
@@ -104,6 +103,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
+    "@talend/react-cmf-webpack-plugin": "^0.166.0",
     "acorn": "^5.5.0",
     "angular-mocks": "1.5.9",
     "autoprefixer": "^7.1.4",

@@ -162,12 +162,7 @@ export default function PlaygroundService(
 
 		updateGridSelection(dataset, preparation);
 
-		this.updatePreparationDetails()
-			.then(() => {
-				if (state.playground.recipe.current.steps.length) {
-					StateService.showRecipe();
-				}
-			});
+
 
 		// preparation specific init
 		if (preparation) {
@@ -182,7 +177,15 @@ export default function PlaygroundService(
 			TitleService.setStrict(dataset.name);
 		}
 
-		return updateDatagrid();
+		return $q.all(
+			this.updateDatagrid(),
+			this.updatePreparationDetails()
+				.then(() => {
+					if (state.playground.recipe.current.steps.length) {
+						StateService.showRecipe();
+					}
+				}),
+		);
 	}
 
 	/**

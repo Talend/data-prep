@@ -1,25 +1,19 @@
-// ============================================================================
-//
-// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
-//
-// This source code is available under agreement available at
-// https://github.com/Talend/data-prep/blob/master/LICENSE
-//
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
-//
-// ============================================================================
-
 package org.talend.dataprep.qa.step;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ResponseBody;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,23 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.DatasetMeta;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.response.ResponseBody;
-
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with dataset.
@@ -83,8 +67,8 @@ public class DatasetStep extends DataPrepStep {
      * {@link List}.
      *
      * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
-     * @param datasetName the searched dataset name.
-     * @param nbRows the searched number of row.
+     * @param datasetName  the searched dataset name.
+     * @param nbRows       the searched number of row.
      * @return the number of corresponding {@link DatasetMeta}.
      */
     private long countFilteredDatasetList(List<DatasetMeta> datasetMetas, String datasetName, String nbRows) {
@@ -118,78 +102,30 @@ public class DatasetStep extends DataPrepStep {
         response.then().statusCode(OK.value());
     }
 
-    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
-    @Deprecated
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
-            throws IOException, InterruptedException {
-        String dataSetId = context.getObject("dataSetId").toString();
-
-        checkDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
-    }
-
-    @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName) {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, true);
-    }
-
-    @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeDoesNotExistOnDataset(String semanticTypeName, String columnId,
-            String dataSetName) {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, false);
-    }
-
-    private void checkDatasetsColumnSemanticTypes(String semanticTypeName, String columnId, String dataSetId,
-            boolean expected) {
-        Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
-        response.then().statusCode(200);
-
-        if (expected) {
-            // we expect the semantic Type
-            assertEquals(1, response
-                    .body()
-                    .jsonPath()
-                    .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName) + "'  }")
-                    .size());
-        } else {
-            // We don't expect the semantic type, and no semantic type exist for this column
-            if (!StringUtils.EMPTY.equals(response.body().print())) {
-                assertEquals(0,
-                        response
-                                .body()
-                                .jsonPath()
-                                .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName)
-                                        + "'  }")
-                                .size());
-            }
-        }
-    }
-
     private void createDataSet(String fileName, String suffixedName) throws IOException {
         LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
         String datasetId;
         switch (util.getFilenameExtension(fileName)) {
-        case "xls":
-        case "xlsx":
-            datasetId = api
-                    .uploadBinaryDataset(fileName, suffixedName) //
-                    .then()
-                    .statusCode(OK.value()) //
-                    .extract()
-                    .body()
-                    .asString();
-            break;
-        case "csv":
-        default:
-            datasetId = api
-                    .uploadTextDataset(fileName, suffixedName) //
-                    .then()
-                    .statusCode(OK.value()) //
-                    .extract()
-                    .body()
-                    .asString();
-            break;
+            case "xls":
+            case "xlsx":
+                datasetId = api
+                        .uploadBinaryDataset(fileName, suffixedName) //
+                        .then()
+                        .statusCode(OK.value()) //
+                        .extract()
+                        .body()
+                        .asString();
+                break;
+            case "csv":
+            default:
+                datasetId = api
+                        .uploadTextDataset(fileName, suffixedName) //
+                        .then()
+                        .statusCode(OK.value()) //
+                        .extract()
+                        .body()
+                        .asString();
+                break;
 
         }
         context.storeDatasetRef(datasetId, suffixedName);

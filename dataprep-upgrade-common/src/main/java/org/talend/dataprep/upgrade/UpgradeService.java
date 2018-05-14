@@ -174,7 +174,7 @@ public class UpgradeService implements ApplicationListener<ApplicationReadyEvent
 
             // skip non app ready upgrade task
             if (task.getTarget() != POST_STARTUP) {
-                LOG.debug("{} does not target version", taskId);
+                LOG.debug("{} does not target post startup", taskId);
                 continue;
             }
 

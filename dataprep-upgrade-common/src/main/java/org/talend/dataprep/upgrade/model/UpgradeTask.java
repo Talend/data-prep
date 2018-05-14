@@ -28,7 +28,7 @@ public interface UpgradeTask extends Comparable<UpgradeTask> {
         USER,
         /** Applied once per version only. */
         VERSION,
-        /** Applied only when application is ready to service requests. */
+        /** Applied only when application is ready to serve requests. */
         POST_STARTUP
     }
 

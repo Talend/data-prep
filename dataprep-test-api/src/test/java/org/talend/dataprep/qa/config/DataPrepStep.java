@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.qa.config;
 
+import static org.springframework.http.HttpStatus.OK;
+
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
@@ -31,8 +33,6 @@ import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
-import java.util.function.Predicate;
-import static org.springframework.http.HttpStatus.OK;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.response.Response;
 
@@ -41,11 +41,6 @@ import com.jayway.restassured.response.Response;
  */
 @ContextConfiguration(classes = SpringContextConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public abstract class DataPrepStep {
-
-    /**
-     * This class' logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataPrepStep.class);
 
     /**
      * {@link cucumber.api.DataTable} key for origin folder.
@@ -60,6 +55,13 @@ public abstract class DataPrepStep {
     protected static final String DATASET_NAME_KEY = "name";
 
     protected static final String DATASET_ID_KEY = "dataSetId";
+
+    /**
+     * This class' logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataPrepStep.class);
+
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public FeatureContext context;
@@ -94,12 +96,6 @@ public abstract class DataPrepStep {
         return response.as(PreparationDetails.class);
     }
 
-    protected class CleanAfterException extends RuntimeException {
-        CleanAfterException(String s) {
-            super(s);
-        }
-    }
-
     protected Predicate<String> preparationDeletionIsNotOK() {
         return preparationId -> {
             try {
@@ -132,5 +128,12 @@ public abstract class DataPrepStep {
                 return true;
             }
         };
+    }
+
+    protected class CleanAfterException extends RuntimeException {
+
+        CleanAfterException(String s) {
+            super(s);
+        }
     }
 }

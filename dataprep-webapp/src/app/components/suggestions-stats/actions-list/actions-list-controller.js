@@ -166,7 +166,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService,
 			const categoryName = action.alternateCategory || action.category;
 			const actionName = action.name;
 			if (categoryName && actionName) {
-				return `preparation.${categoryName.replace(/\s/g, '_')}.${actionName}`;
+				return `preparation.${vm.scope === 'dataset' ? 'table.' : ''}${categoryName.replace(/\s/g, '_')}.${actionName}`;
 			}
 		}
 		return '';

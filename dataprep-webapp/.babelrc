@@ -1,19 +1,24 @@
 {
   "plugins": [
-    "transform-runtime",
+    "transform-class-properties",
+    "transform-object-assign",
     "transform-object-rest-spread"
   ],
   "ignore": [
     "**/**/*.css"
   ],
   "presets": [
-    "es2015",
-    ["env", {
-      "targets": {
-        "ie": 11,
-        "browsers": ["last 2 versions"]
+    [
+      "env",
+      {
+        "targets": {
+          "ie": 11,
+          "browsers": [
+            "last 2 versions"
+          ]
+        }
       }
-    }],
+    ],
     "react"
   ]
 }

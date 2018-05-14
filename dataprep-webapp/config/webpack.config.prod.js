@@ -1,11 +1,25 @@
-const configure = require('./webpack.config');
+const webpack = require('webpack');
+const ReactCMFWebpackPlugin = require('@talend/react-cmf-webpack-plugin');
 
-module.exports = function() {
-	return configure({
-		env: 'prod',
-		entryOutput: true,
-		minify: true,
-		stripComments: true,
-		devServer: true,
-	});
-};
+const config = require('./webpack.config');
+
+config.plugins = config.plugins.concat([
+	new ReactCMFWebpackPlugin({
+		quiet: true,
+	}),
+	new webpack.DefinePlugin({
+		'process.env.NODE_ENV': JSON.stringify('production'),
+	}),
+	new webpack.optimize.UglifyJsPlugin({
+		cache: true,
+		compress: {
+			warnings: false,
+		},
+		sourceMap: true,
+		comments: false,
+		mangle: true,
+		minimize: true,
+	}),
+]);
+
+module.exports = config;

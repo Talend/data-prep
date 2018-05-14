@@ -51,6 +51,8 @@ export default function PlaygroundService(
 	$translate,
 	$timeout,
 	$stateParams,
+	$window,
+	appSettings,
 	state,
 	StateService,
 	StepUtilsService,
@@ -1095,6 +1097,14 @@ export default function PlaygroundService(
 	function close() {
 		$timeout.cancel(fetchStatsTimeout);
 		$timeout(StateService.resetPlayground, 500, false);
-		$state.go(state.route.previous, state.route.previousOptions);
+		if (appSettings &&
+			appSettings.context &&
+			appSettings.context.provider &&
+			appSettings.context.provider.includes('catalog')) {
+			$window.location.href = '/';
+		}
+		else {
+			$state.go(state.route.previous, state.route.previousOptions);
+		}
 	}
 }

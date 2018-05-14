@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Redirect action should create a CMF redirection action 1`] = `
+Object {
+  "payload": Object {
+    "args": Array [
+      "/my/resource/myModelId/history",
+    ],
+    "method": "push",
+  },
+  "type": "@@router/CALL_HISTORY_METHOD",
+}
+`;

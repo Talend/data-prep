@@ -13,27 +13,34 @@
 
 package org.talend.dataprep.upgrade;
 
-import static java.util.Collections.emptyList;
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
-import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
-
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.upgrade.model.UpgradeTask;
 import org.talend.dataprep.upgrade.model.UpgradeTaskId;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
 
+import static java.util.Collections.emptyList;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.POST_STARTUP;
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
+import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
+
 /**
  * Service in charge of upgrading data from data prep previous versions.
  */
 @Service
-public class UpgradeService {
+public class UpgradeService implements ApplicationListener<ApplicationReadyEvent> {
 
     /** This class' logger. */
     private static final Logger LOG = getLogger(UpgradeService.class);
@@ -86,11 +93,9 @@ public class UpgradeService {
         if (appliedTasks > availableTasks) {
             LOG.warn("It seems that more upgrade tasks have been applied than the available ones.");
             return true;
-        } else if (appliedTasks == availableTasks) {
-            return false;
-        } else { // appliedTasks < availableTasks
-            return true;
         }
+
+        return appliedTasks != availableTasks;
     }
 
     /**
@@ -156,6 +161,42 @@ public class UpgradeService {
 
         }
         LOG.info("Upgrade process finished for user {}, {} upgrade(s) performed", userId, numberOfTasksApplied);
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+        LOG.info("Post startup upgrade process starting");
+
+        int numberOfTasksApplied = 0;
+        for (UpgradeTask task : tasks) {
+
+            final UpgradeTaskId taskId = task.getId();
+
+            // skip non app ready upgrade task
+            if (task.getTarget() != POST_STARTUP) {
+                LOG.debug("{} does not target version", taskId);
+                continue;
+            }
+
+            final String targetId = POST_STARTUP.name() + '-' + taskId.getVersion();
+
+            if (repository.isAlreadyApplied(targetId, taskId)) {
+                LOG.debug("{} already applied, let's skip it", taskId);
+                continue;
+            }
+
+            LOG.debug("apply upgrade {}", taskId);
+            try {
+                task.run();
+            } catch (Exception exception) {
+                LOG.error("Failed to apply upgrade {}", taskId);
+                break;
+            }
+            repository.applied(targetId, taskId);
+            numberOfTasksApplied++;
+        }
+
+        LOG.info("Post startup upgrade process finished, {} upgrade(s) performed", numberOfTasksApplied);
     }
 
     void setTasks(List<UpgradeTask> tasks) {

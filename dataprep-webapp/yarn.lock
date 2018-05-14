@@ -90,16 +90,16 @@
     hoist-non-react-statics "^1.2.0"
     mock-socket "^7.0.0"
 
-"@talend/react-cmf-webpack-plugin@0.183.0":
-  version "0.183.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-webpack-plugin/-/react-cmf-webpack-plugin-0.183.0.tgz#6a6d9b44ae2d33f304f7055dd7292bc3e93bbd37"
+"@talend/react-cmf-webpack-plugin@^0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-webpack-plugin/-/react-cmf-webpack-plugin-0.166.0.tgz#18dfcd060fdbd44c048a04e7ae3b7dddaf514c25"
   dependencies:
-    "@talend/react-cmf" "^0.183.0"
+    "@talend/react-cmf" "^0.166.0"
     chokidar "^2.0.2"
     deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
-"@talend/react-cmf@0.183.0", "@talend/react-cmf@^0.183.0":
+"@talend/react-cmf@0.183.0":
   version "0.183.0"
   resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.183.0.tgz#79dd775bbb5e704d76f0f0da8710cf54888490e0"
   dependencies:
@@ -108,6 +108,15 @@
     hoist-non-react-statics "^1.2.0"
     jsonpath "^1.0.0"
     mkdirp "^0.5.1"
+    react-immutable-proptypes "2.1.0"
+
+"@talend/react-cmf@^0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.166.0.tgz#493c24d2c176f7ce7fe028f194920e0aa5daa3c1"
+  dependencies:
+    babel-polyfill "6.26.0"
+    deepmerge "1.5.1"
+    hoist-non-react-statics "^1.2.0"
     react-immutable-proptypes "2.1.0"
 
 "@talend/react-components@0.183.0":

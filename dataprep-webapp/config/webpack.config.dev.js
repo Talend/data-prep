@@ -8,7 +8,7 @@ const config = require('./webpack.config');
 config.devtool = 'eval-source-map';
 
 config.module.loaders.push({
-	test:	/src\/.*\.js$/,
+	test: /src\/.*\.js$/,
 	enforce: 'pre',
 	loader: 'eslint-loader',
 	exclude: /node_modules/,
@@ -31,26 +31,37 @@ config.watchOptions = {
 
 const SERVER_URL = 'http://localhost:8888';
 
+const PROXY_OPTIONS = {
+	context: [
+		'/api/**',
+		'/dq/**',
+		'/v2/api-docs**',
+		'/docs/**',
+		'/upload/**',
+	],
+	target: process.env.API_URL || SERVER_URL,
+	pathRewrite: {
+		'^/api/v1': '/api',
+	},
+};
+
 config.devServer = {
 	port: 3000,
 	contentBase: path.resolve(__dirname, '../build'),
+	headers: {
+		'Access-Control-Allow-Origin': '*',
+		'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+		'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+	},
 	setup(app) {
 		app.get('/assets/config/config.json', function (req, res) {
 			appConfig.serverUrl = SERVER_URL;
 			res.json(appConfig);
 		});
 	},
-	proxy: {
-		'/api/v1/stream-websocket': {
-			target: process.env.API_URL || 'http://localhost',
-			ws: true,
-		},
-		'/api': {
-			target: process.env.API_URL || 'http://localhost',
-			changeOrigin: true,
-			secure: false,
-		},
-	},
+	proxy: [
+		() => PROXY_OPTIONS,
+	],
 	stats: 'errors-only',
 	historyApiFallback: true,
 };

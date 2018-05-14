@@ -28,6 +28,7 @@ import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
 import org.talend.dataprep.transformation.actions.date.ExtractDateTokens;
 import org.talend.dataprep.transformation.actions.net.ExtractEmailDomain;
 import org.talend.dataprep.transformation.actions.net.ExtractUrlTokens;
+import org.talend.dataprep.transformation.actions.phonenumber.ExtractPhoneInformation;
 import org.talend.dataprep.transformation.actions.phonenumber.FormatPhoneNumber;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
@@ -69,12 +70,29 @@ public class TypeDomainRules extends BasicRules {
     }
 
     /**
-     * @return A {@link SuggestionEngineRule rule} that shows date actions if column is a phone column.
+     * @return A {@link SuggestionEngineRule rule} that shows phone actions if column is a phone column.
      */
     @Bean
     public static SuggestionEngineRule phoneRule() {
         return forActions(FormatPhoneNumber.ACTION_NAME) //
                 .when(IS_PHONE) //
+                .then(columnMetadata -> MEDIUM) //
+                .build();
+    }
+
+    /**
+     * @return A {@link SuggestionEngineRule rule} that shows extract phone actions if column is a phone column.
+     */
+    @Bean
+    public static SuggestionEngineRule phoneExtractRule() {
+        Set<String> domainsToMask = new HashSet<>();
+        domainsToMask.add(SemanticCategoryEnum.DE_PHONE.getId());
+        domainsToMask.add(SemanticCategoryEnum.FR_PHONE.getId());
+        domainsToMask.add(SemanticCategoryEnum.UK_PHONE.getId());
+        domainsToMask.add(SemanticCategoryEnum.US_PHONE.getId());
+
+        return forActions(ExtractPhoneInformation.ACTION_NAME) //
+                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain())) //
                 .then(columnMetadata -> MEDIUM) //
                 .build();
     }

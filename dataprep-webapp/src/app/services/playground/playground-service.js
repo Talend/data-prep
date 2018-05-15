@@ -162,8 +162,6 @@ export default function PlaygroundService(
 
 		updateGridSelection(dataset, preparation);
 
-
-
 		// preparation specific init
 		if (preparation) {
 			ExportService.refreshTypes('preparations', preparation.id);

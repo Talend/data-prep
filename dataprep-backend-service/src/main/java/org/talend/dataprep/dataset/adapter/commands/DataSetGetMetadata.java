@@ -33,7 +33,7 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 
 @Component(value = "DataSetGetMetadata#2")
 @Scope(SCOPE_PROTOTYPE)
-public class DataSetGetMetadata extends GenericCommand<Dataset> {
+public class DataSetGetMetadata extends DatasetCatalogCommand<Dataset> {
 
     private final String dataSetId;
 
@@ -54,7 +54,7 @@ public class DataSetGetMetadata extends GenericCommand<Dataset> {
     private void initConfiguration() {
         URI build;
         try {
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
+            URIBuilder uriBuilder = new URIBuilder(getDatasetUrl());
             uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId);
             build = uriBuilder.build();
         } catch (URISyntaxException e) {

@@ -64,6 +64,7 @@ describe('Horizontal Barchart directive', function () {
                 'on-click="onClick(item)"' +
                 'key-field="data"' +
                 'primary-data="primaryData"' +
+                'feature="{{feature}}"' +
                 'primary-value-field="occurrences"' +
                 'primary-bar-class="{{primaryBarClass}}"' +
                 'secondary-data="secondaryData"' +
@@ -117,6 +118,21 @@ describe('Horizontal Barchart directive', function () {
             //then
             expect(element.find('.bg-rect').length).toBe(statsData.length);
         }));
+
+		it('should set custom data-feature on bars', inject(function ($timeout) {
+			//given
+			createElement();
+
+			//when
+			scope.primaryData = statsData;
+			scope.feature = 'my.feature';
+
+			scope.$digest();
+			$timeout.flush(100);
+
+			//then
+			expect(element.find('[data-feature="my.feature"]').length).toBe(statsData.length);
+		}));
 
         it('should render grid after a 100ms delay with maximum occurrences >= 1e9', inject(function ($timeout) {
             //given
@@ -312,5 +328,5 @@ describe('Horizontal Barchart directive', function () {
             expect(element.find('.primaryBar > rect.blueBar').length).toBe(statsData.length);
             expect(element.find('.secondaryBar > rect.brownBar').length).toBe(statsData.length);
         }));
-    });
+	});
 });

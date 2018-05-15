@@ -1,11 +1,19 @@
 package org.talend.dataprep.qa.step;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ResponseBody;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -14,32 +22,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.DatasetMeta;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.response.ResponseBody;
-
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with dataset.
  */
 public class DatasetStep extends DataPrepStep {
 
-    public static final String DATASET_NAME = "name";
-
-    public static final String NB_ROW = "nbRow";
+    private static final String NB_ROW = "nbRow";
 
     /**
      * This class' logger.
@@ -56,14 +52,14 @@ public class DatasetStep extends DataPrepStep {
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     @Given("^It doesn't exist any dataset with the following parameters :$") //
     public void notExistDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     /**
@@ -71,8 +67,8 @@ public class DatasetStep extends DataPrepStep {
      * {@link List}.
      *
      * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
-     * @param datasetName the searched dataset name.
-     * @param nbRows the searched number of row.
+     * @param datasetName  the searched dataset name.
+     * @param nbRows       the searched number of row.
      * @return the number of corresponding {@link DatasetMeta}.
      */
     private long countFilteredDatasetList(List<DatasetMeta> datasetMetas, String datasetName, String nbRows) {
@@ -91,7 +87,7 @@ public class DatasetStep extends DataPrepStep {
      */
     private List<DatasetMeta> listDatasetMeta() throws IOException {
         Response response = api.listDatasetDetails();
-        response.then().statusCode(200);
+        response.then().statusCode(OK.value());
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
         return objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {
         });
@@ -103,131 +99,33 @@ public class DatasetStep extends DataPrepStep {
         LOGGER.debug("I update the dataset named {} with data {}.", suffixedDatasetName, fileName);
         String datasetId = context.getDatasetId(suffixedDatasetName);
         Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
-        response.then().statusCode(200);
-    }
-
-    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
-    @Deprecated
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
-            throws IOException, InterruptedException {
-        String dataSetId = context.getObject("dataSetId").toString();
-
-        checkDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
-    }
-
-    @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeExistOnDataset(String semanticTypeName, String columnId, String dataSetName) {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, true);
-    }
-
-    @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" dataset.$")
-    public void thenICheckSemanticTypeDoesNotExistOnDataset(String semanticTypeName, String columnId,
-            String dataSetName) {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        checkDatasetsColumnSemanticTypes(semanticTypeName, columnId, dataSetId, false);
-    }
-
-    private void checkDatasetsColumnSemanticTypes(String semanticTypeName, String columnId, String dataSetId,
-            boolean expected) {
-        Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
-        response.then().statusCode(200);
-
-        if (expected) {
-            // we expect the semantic Type
-            assertEquals(1, response
-                    .body()
-                    .jsonPath()
-                    .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName) + "'  }")
-                    .size());
-        } else {
-            // We don't expect the semantic type, and no semantic type exist for this column
-            if (!StringUtils.EMPTY.equals(response.body().print())) {
-                assertEquals(0,
-                        response
-                                .body()
-                                .jsonPath()
-                                .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeName)
-                                        + "'  }")
-                                .size());
-            }
-        }
-    }
-
-    @Then("^I check the existence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
-    public void thenICheckSemanticTypeExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) {
-        String preparationId = context.getPreparationId(suffixName(preparationName));
-        checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, true);
-    }
-
-    @Then("^I check the absence of \"(.*)\" semantic type on \"(.*)\" column for the \"(.*)\" preparation.$")
-    public void thenICheckSemanticTypeDoesNotExistOnPreparation(String semanticTypeName, String columnId,
-            String preparationName) {
-        String preparationId = context.getPreparationId(suffixName(preparationName));
-        checkPreparationColumnSemanticTypes(semanticTypeName, columnId, preparationId, false);
-    }
-
-    private void checkPreparationColumnSemanticTypes(String semanticTypeName, String columnId, String preparationId,
-            boolean expected) {
-
-        Response response = api.getPreparationsColumnSemanticTypes(columnId, preparationId);
-        response.then().statusCode(200).log().ifError();
-
-        StringBuilder errorMessage = new StringBuilder();
-        if (expected) {
-            errorMessage
-                    .append("Expected semantic type \"") //
-                    .append(semanticTypeName) //
-                    .append("\" wasn't find on column \"") //
-                    .append(columnId) //
-                    .append("\" ") //
-                    .append("of the preparation \"") //
-                    .append(preparationId) //
-                    .append("\".");
-        } else {
-            errorMessage
-                    .append("The semantic type \"") //
-                    .append(semanticTypeName) //
-                    .append("\" is present on column \"") //
-                    .append(columnId) //
-                    .append("\" ") //
-                    .append("of the preparation \"") //
-                    .append(preparationId) //
-                    .append("\".");
-        }
-
-        assertEquals(errorMessage.toString(), expected ? 1 : 0, response
-                .body()
-                .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semanticTypeName) + "'  }")
-                .size());
+        response.then().statusCode(OK.value());
     }
 
     private void createDataSet(String fileName, String suffixedName) throws IOException {
         LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
         String datasetId;
         switch (util.getFilenameExtension(fileName)) {
-        case "xls":
-        case "xlsx":
-            datasetId = api
-                    .uploadBinaryDataset(fileName, suffixedName) //
-                    .then()
-                    .statusCode(200) //
-                    .extract()
-                    .body()
-                    .asString();
-            break;
-        case "csv":
-        default:
-            datasetId = api
-                    .uploadTextDataset(fileName, suffixedName) //
-                    .then()
-                    .statusCode(200) //
-                    .extract()
-                    .body()
-                    .asString();
-            break;
+            case "xls":
+            case "xlsx":
+                datasetId = api
+                        .uploadBinaryDataset(fileName, suffixedName) //
+                        .then()
+                        .statusCode(OK.value()) //
+                        .extract()
+                        .body()
+                        .asString();
+                break;
+            case "csv":
+            default:
+                datasetId = api
+                        .uploadTextDataset(fileName, suffixedName) //
+                        .then()
+                        .statusCode(OK.value()) //
+                        .extract()
+                        .body()
+                        .asString();
+                break;
 
         }
         context.storeDatasetRef(datasetId, suffixedName);
@@ -238,8 +136,8 @@ public class DatasetStep extends DataPrepStep {
         Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
 
         // in case of only name parameter, we should use a suffixed dataSet name
-        if (parameters.containsKey("name") && parameters.size() == 1) {
-            parameters.put("name", suffixName(parameters.get("name")));
+        if (parameters.containsKey(DATASET_NAME_KEY) && parameters.size() == 1) {
+            parameters.put(DATASET_NAME_KEY, suffixName(parameters.get(DATASET_NAME_KEY)));
         }
 
         // wait for DataSet creation from previous step
@@ -270,13 +168,13 @@ public class DatasetStep extends DataPrepStep {
 
         parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));
 
-        context.storeDatasetRef(dataset.get("id").asText(), dataset.get("name").asText());
+        context.storeDatasetRef(dataset.get("id").asText(), dataset.get(DATASET_NAME_KEY).asText());
     }
 
     @Then("^I check that the dataSet \"(.*)\" is created with the following columns :$")
     public void thenTheDataSetIsCreatedWithColumns(String datasetName, List<String> columns) throws IOException {
         Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
-        response.then().statusCode(200);
+        response.then().statusCode(OK.value());
 
         final JsonPath jsonPath = response.body().jsonPath();
         final List<String> actual = jsonPath.getList("columns.name", String.class);

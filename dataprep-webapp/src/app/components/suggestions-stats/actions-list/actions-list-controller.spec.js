@@ -162,19 +162,19 @@ describe('Actions list controller', () => {
         });
 
         it('should set current dynamic transformation on dynamic transformation selection', () => {
-            //given
-            stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
+			//given
+			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
 
-            const transformation = { name: 'cluster', dynamic: true };
-            const ctrl = createController();
-            ctrl.dynamicTransformation = null;
+			const transformation = { name: 'cluster', dynamic: true };
+			const ctrl = createController();
+			ctrl.dynamicTransformation = null;
 
-            //when
-            ctrl.select(transformation);
+			//when
+			ctrl.select(transformation);
 
-            //then
-            expect(ctrl.dynamicTransformation).toBe(transformation);
-        });
+			//then
+			expect(ctrl.dynamicTransformation).toBe(transformation);
+		});
 
         it('should init dynamic params on dynamic transformation selection for current dataset', inject((TransformationService) => {
             //given
@@ -335,6 +335,26 @@ describe('Actions list controller', () => {
 
 			//then
 			expect(datatFeatureValue).toBe('preparation.alternate_data_cleansing_category.cluster');
+		});
+
+		it('should use table scope as prefix', () => {
+			//given
+			stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
+
+			const action = {
+				name: 'cluster',
+				dynamic: true,
+				category: 'data cleansing category',
+				alternateCategory: 'alternate data cleansing category',
+			};
+			const ctrl = createController();
+
+			//when
+			ctrl.scope = 'dataset';
+			const datatFeatureValue = ctrl.getDataFeature(action);
+
+			//then
+			expect(datatFeatureValue).toBe('preparation.table.alternate_data_cleansing_category.cluster');
 		});
 	});
 });

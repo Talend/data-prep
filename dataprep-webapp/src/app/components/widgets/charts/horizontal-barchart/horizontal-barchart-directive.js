@@ -46,6 +46,7 @@ import _ from 'lodash';
  * @param {function}    onShiftClick The callback on chart bar shift + click. The item in argument is the element in primaryData that is selected.
  * @param {string}      keyField The key property name in primaryData elements
  * @param {string}      keyLabel The label property name in primaryData elements used in tooltip
+ * @param {string}      feature The data-feature value to pass to each bar
  * @param {array}       primaryData The primary value array to render
  * @param {string}      primaryValueField The primary value property name in primaryData
  * @param {string}      primaryBarClass The primary chart bar class name. Default: none
@@ -64,6 +65,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 			onClick: '&',
 			onCtrlClick: '&',
 			onShiftClick: '&',
+			feature: '@',
 			keyField: '@',
 			keyLabel: '@',
 			primaryData: '=',
@@ -260,6 +262,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 					.attr('width', width)
 					.attr('height', yScale.rangeBand() + 4)
 					.attr('class', 'bg-rect')
+					.attr('data-feature', scope.feature)
 					.style('opacity', 0)
 					.on('mouseenter', (d, i) => {
 						d3.select(this).style('opacity', 0.4);

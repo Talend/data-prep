@@ -1,5 +1,15 @@
 package org.talend.dataprep.transformation.actions.delete;
 
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -10,17 +20,6 @@ import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
 /**
  * Delete columns when they are empty.
@@ -33,13 +32,24 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
      */
     public static final String DELETE_ALL_EMPTY_COLUMNS_ACTION_NAME = "delete_all_empty_columns";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
-
     protected static final String ACTION_PARAMETER = "action_on_columns_with_blank";
 
     protected static final String DELETE = "delete";
 
     protected static final String KEEP = "keep";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
+
+    private static boolean isColumnToDelete(ColumnMetadata columnMetadata, String parameter) {
+        switch (parameter) {
+        case KEEP:
+            if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
+                return false;
+            }
+        default:
+            return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
+        }
+    }
 
     @Override
     public String getName() {
@@ -50,7 +60,8 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.selectParameter(locale)
+        parameters.add(SelectParameter
+                .selectParameter(locale)
                 .name(ACTION_PARAMETER)
                 .item(DELETE, DELETE)
                 .item(KEEP, KEEP)
@@ -96,22 +107,11 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        //nothing to do here
+        // nothing to do here
     }
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS);
-    }
-
-    private boolean isColumnToDelete(ColumnMetadata columnMetadata, String ActionParameter) {
-        switch (ActionParameter) {
-            case KEEP:
-                if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
-                    return false;
-                }
-            default:
-                return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
-        }
+        return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
     }
 }

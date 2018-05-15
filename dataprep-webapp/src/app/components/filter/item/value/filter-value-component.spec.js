@@ -87,8 +87,8 @@ describe('Filter Item Value Component', () => {
             createElement();
 
             //then
-            expect(element.find('button.filter-value-btn-remove').size()).toBe(1);
-            expect(element.find('button.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeFalsy();
+            expect(element.find('a.filter-value-btn-remove').size()).toBe(1);
+            expect(element.find('a.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeFalsy();
         });
 
         it('should render hidden remove button', () => {
@@ -96,23 +96,23 @@ describe('Filter Item Value Component', () => {
             createElement();
 
             //then
-            expect(element.find('button.filter-value-btn-remove').size()).toBe(1);
-            expect(element.find('button.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeTruthy();
+            expect(element.find('a.filter-value-btn-remove').size()).toBe(1);
+            expect(element.find('a.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeTruthy();
         });
 
         it('should render remove button when removable option has changed', () => {
             //given
             createElement();
-            expect(element.find('button.filter-value-btn-remove').size()).toBe(1);
-            expect(element.find('button.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeTruthy();
+            expect(element.find('a.filter-value-btn-remove').size()).toBe(1);
+            expect(element.find('a.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeTruthy();
 
             //when
             scope.removable = true;
             scope.$digest();
 
             //then
-            expect(element.find('button.filter-value-btn-remove').size()).toBe(1);
-            expect(element.find('button.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeFalsy();
+            expect(element.find('a.filter-value-btn-remove').size()).toBe(1);
+            expect(element.find('a.filter-value-btn-remove').eq(0).hasClass('ng-hide')).toBeFalsy();
         });
 
         it('should call onRemove callback when button is clicked', () => {
@@ -121,7 +121,7 @@ describe('Filter Item Value Component', () => {
             createElement();
 
             //when
-            const $removeBtn = element.find('button.filter-value-btn-remove').eq(0);
+            const $removeBtn = element.find('a.filter-value-btn-remove').eq(0);
             $removeBtn.click();
 
             //then

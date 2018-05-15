@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -13,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
@@ -34,14 +34,7 @@ public class PreparationStep extends DataPrepStep {
 
     public static final String DATASET_NAME = "dataSetName";
 
-    public static final String NB_STEPS = "nbSteps";
-
-    public static final String DESTINATION = "destination";
-
-    /**
-     * {@link cucumber.api.DataTable} key for new preparationName value.
-     */
-    public static final String NEW_PREPARATION_NAME = "newPreparationName";
+    private static final String NB_STEPS = "nbSteps";
 
     /**
      * This class' logger.
@@ -64,7 +57,7 @@ public class PreparationStep extends DataPrepStep {
         String preparationId = api
                 .createPreparation(datasetId, suffixedPrepName, folderUtil.getAPIFolderRepresentation(prepFolder))
                 .then() //
-                .statusCode(200) //
+                .statusCode(OK.value()) //
                 .extract()
                 .body()
                 .asString();
@@ -87,34 +80,35 @@ public class PreparationStep extends DataPrepStep {
     @Then("^I move the preparation \"(.*)\" to \"(.*)\"$")
     public void movePreparation(String prepOriginFullName, String prepDestFullName) throws IOException {
         String suffixedPrepOriginName = getSuffixedPrepName(prepOriginFullName);
-        String prepOriginPath = util.extractPathFromFullName(prepOriginFullName);
-        String prepOriginId = context.getPreparationId(suffixedPrepOriginName, prepOriginPath);
+        String suffixedPrepOriginPath = util.extractPathFromFullName(prepOriginFullName);
+        String suffixedPrepOriginId = context.getPreparationId(suffixedPrepOriginName, suffixedPrepOriginPath);
         String suffixedPrepDestName = getSuffixedPrepName(prepDestFullName);
         String prepDestPath = util.extractPathFromFullName(prepDestFullName);
 
-        Folder originFolder = folderUtil.searchFolder(prepOriginPath);
+        Folder originFolder = folderUtil.searchFolder(suffixedPrepOriginPath);
         Folder destFolder = folderUtil.searchFolder(prepDestPath);
 
-        Response response = api.movePreparation(prepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
-        response.then().statusCode(200);
+        Response response = api.movePreparation( //
+                suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
+        response.then().statusCode(OK.value());
 
-        context.storePreparationMove(prepOriginId, suffixedPrepOriginName, originFolder.path, suffixedPrepDestName,
-                destFolder.path);
+        context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
+                suffixedPrepDestName, destFolder.path);
     }
 
     @Then("^I copy the preparation \"(.*)\" to \"(.*)\"$")
     public void copyPreparation(String prepOriginFullName, String prepDestFullName) throws IOException {
         String suffixedPrepOriginName = getSuffixedPrepName(prepOriginFullName);
-        String prepOriginPath = util.extractPathFromFullName(prepOriginFullName);
+        String suffixedPrepOriginPath = util.extractPathFromFullName(prepOriginFullName);
         String suffixedPrepDestName = getSuffixedPrepName(prepDestFullName);
-        String prepDestPath = util.extractPathFromFullName(prepDestFullName);
+        String suffixedPrepDestPath = util.extractPathFromFullName(prepDestFullName);
 
-        Folder destFolder = folderUtil.searchFolder(prepDestPath);
-        String prepId = context.getPreparationId(suffixedPrepOriginName, prepOriginPath);
+        Folder destFolder = folderUtil.searchFolder(suffixedPrepDestPath);
+        String prepId = context.getPreparationId(suffixedPrepOriginName, suffixedPrepOriginPath);
         String newPreparationId = api
                 .copyPreparation(prepId, destFolder.id, suffixedPrepDestName)
                 .then()
-                .statusCode(200)
+                .statusCode(OK.value())
                 .extract()
                 .body()
                 .asString();
@@ -123,11 +117,11 @@ public class PreparationStep extends DataPrepStep {
 
     @When("^I remove the preparation \"(.*)\"$")
     public void removePreparation(String prepFullName) throws IOException {
-        String prepPath = util.extractPathFromFullName(prepFullName);
+        String suffixedPrepPath = util.extractPathFromFullName(prepFullName);
         String prepSuffixedName = getSuffixedPrepName(prepFullName);
-        String prepId = context.getPreparationId(prepSuffixedName, prepPath);
-        api.deletePreparation(prepId).then().statusCode(200);
-        context.removePreparationRef(prepSuffixedName, prepPath);
+        String prepId = context.getPreparationId(prepSuffixedName, suffixedPrepPath);
+        api.deletePreparation(prepId).then().statusCode(OK.value());
+        context.removePreparationRef(prepSuffixedName, suffixedPrepPath);
     }
 
     @Then("^I check that the preparation \"(.*)\" doesn't exist$")
@@ -147,8 +141,8 @@ public class PreparationStep extends DataPrepStep {
         PreparationDetails prepDet1 = getPreparationDetails(prepId1);
         PreparationDetails prepDet2 = getPreparationDetails(prepId2);
 
-        Assert.assertEquals(prepDet1.actions, prepDet2.actions);
-        Assert.assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
+        assertEquals(prepDet1.actions, prepDet2.actions);
+        assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
         context.storeObject("copiedPrep", prepDet1);
     }
 
@@ -162,7 +156,7 @@ public class PreparationStep extends DataPrepStep {
         String prepId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
             Response response = api.getPreparationContent(prepId, "head", "HEAD");
-            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+            assertEquals(OK.value(), response.getStatusCode());
         }
     }
 
@@ -187,20 +181,6 @@ public class PreparationStep extends DataPrepStep {
                     .count() == 1;
         }
         return isPrepPresent;
-    }
-
-    @And("^I check that the semantic type \"([^\"]*)\" is removed from the types list of the column \"([^\"]*)\" of the preparation \"([^\"]*)\"$")
-    public void iCheckThatTheSemanticTypeIsRemoved(String semantictypeName, String columnId, String prepName) {
-        String prepId = context.getPreparationId(suffixName(prepName));
-
-        Response response = api.getPreparationsColumnSemanticTypes(columnId, prepId);
-        response.then().statusCode(200);
-
-        assertEquals(0, response
-                .body()
-                .jsonPath()
-                .getList("findAll { semanticType -> semanticType.label == '" + suffixName(semantictypeName) + "'  }")
-                .size());
     }
 
     /**

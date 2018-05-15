@@ -19,7 +19,7 @@
     <ul class="submenu">
         <li ng-repeat="semanticDomain in $ctrl.domains track by semanticDomain.id">
             <div class="radio">
-                <label>
+                <label data-feature="column.semantic_type.change">
                     <input type="radio"
                            value="{{ ::semanticDomain.id }}"
                            ng-model="$ctrl.currentDomain"
@@ -33,7 +33,7 @@
         <li ng-if="$ctrl.domains.length > 0" class="divider"></li>
         <li ng-repeat="type in $ctrl.types track by type.id">
             <div class="radio">
-                <label>
+                <label data-feature="column.standard_type.change">
                     <input type="radio"
                            value="{{ ::type.id}}"
                            ng-model="$ctrl.currentDomain"
@@ -44,7 +44,6 @@
                     <span class="type">{{ ::type.labelKey | translate }}</span>
                 </label>
             </div>
-
         </li>
     </ul>
 </li>

@@ -37,6 +37,7 @@ export default function TransformForm() {
 		restrict: 'E',
 		templateUrl: template,
 		scope: {
+			feature: '<',
 			transformation: '=',
 			onSubmit: '&',
 			onSubmitHoverOn: '&',

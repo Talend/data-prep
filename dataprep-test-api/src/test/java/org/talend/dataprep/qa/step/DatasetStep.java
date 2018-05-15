@@ -2,7 +2,10 @@ package org.talend.dataprep.qa.step;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -20,6 +23,7 @@ import org.talend.dataprep.qa.dto.DatasetMeta;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ResponseBody;
 
@@ -33,9 +37,7 @@ import cucumber.api.java.en.When;
  */
 public class DatasetStep extends DataPrepStep {
 
-    public static final String DATASET_NAME = "name";
-
-    public static final String NB_ROW = "nbRow";
+    private static final String NB_ROW = "nbRow";
 
     /**
      * This class' logger.
@@ -52,14 +54,14 @@ public class DatasetStep extends DataPrepStep {
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     @Given("^It doesn't exist any dataset with the following parameters :$") //
     public void notExistDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<DatasetMeta> datasetMetas = listDatasetMeta();
-        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME), params.get(NB_ROW)));
+        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     /**
@@ -87,7 +89,7 @@ public class DatasetStep extends DataPrepStep {
      */
     private List<DatasetMeta> listDatasetMeta() throws IOException {
         Response response = api.listDatasetDetails();
-        response.then().statusCode(200);
+        response.then().statusCode(OK.value());
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
         return objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {
         });
@@ -99,42 +101,7 @@ public class DatasetStep extends DataPrepStep {
         LOGGER.debug("I update the dataset named {} with data {}.", suffixedDatasetName, fileName);
         String datasetId = context.getDatasetId(suffixedDatasetName);
         Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
-        response.then().statusCode(200);
-    }
-
-    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
-            throws IOException, InterruptedException {
-        String dataSetId = context.getObject("dataSetId").toString();
-
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
-    }
-
-    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId, String dataSetName)
-            throws IOException, InterruptedException {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, true);
-    }
-
-    @Then("^I check that the semantic type \"(.*)\" does not exist the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
-    public void thenICheckSemanticTypeDoesNotExist(String semanticTypeId, String columnId, String dataSetName)
-            throws IOException, InterruptedException {
-        String dataSetId = context.getDatasetId(suffixName(dataSetName));
-        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId, false);
-    }
-
-    private void getDatasetsColumnSemanticTypes(String semanticTypeId, String columnId, String dataSetId,
-            boolean expected) {
-        Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
-        response.then().statusCode(200);
-
-        assertEquals(expected ? 1 : 0,
-                response
-                        .body()
-                        .jsonPath()
-                        .getList("findAll { semanticType -> semanticType.id == '" + suffixName(semanticTypeId) + "'  }")
-                        .size());
+        response.then().statusCode(OK.value());
     }
 
     private void createDataSet(String fileName, String suffixedName) throws IOException {
@@ -146,7 +113,7 @@ public class DatasetStep extends DataPrepStep {
             datasetId = api
                     .uploadBinaryDataset(fileName, suffixedName) //
                     .then()
-                    .statusCode(200) //
+                    .statusCode(OK.value()) //
                     .extract()
                     .body()
                     .asString();
@@ -156,7 +123,7 @@ public class DatasetStep extends DataPrepStep {
             datasetId = api
                     .uploadTextDataset(fileName, suffixedName) //
                     .then()
-                    .statusCode(200) //
+                    .statusCode(OK.value()) //
                     .extract()
                     .body()
                     .asString();
@@ -164,7 +131,6 @@ public class DatasetStep extends DataPrepStep {
 
         }
         context.storeDatasetRef(datasetId, suffixedName);
-        // context.storeObject("dataSetId", datasetId);
     }
 
     @Given("^I have a dataset with parameters:$")
@@ -172,8 +138,8 @@ public class DatasetStep extends DataPrepStep {
         Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
 
         // in case of only name parameter, we should use a suffixed dataSet name
-        if (parameters.containsKey("name") && parameters.size() == 1) {
-            parameters.put("name", suffixName(parameters.get("name")));
+        if (parameters.containsKey(DATASET_NAME_KEY) && parameters.size() == 1) {
+            parameters.put(DATASET_NAME_KEY, suffixName(parameters.get(DATASET_NAME_KEY)));
         }
 
         // wait for DataSet creation from previous step
@@ -204,7 +170,27 @@ public class DatasetStep extends DataPrepStep {
 
         parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));
 
-        context.storeDatasetRef(dataset.get("id").asText(), dataset.get("name").asText());
+        context.storeDatasetRef(dataset.get("id").asText(), dataset.get(DATASET_NAME_KEY).asText());
     }
 
+    @Then("^I check that the dataSet \"(.*)\" is created with the following columns :$")
+    public void thenTheDataSetIsCreatedWithColumns(String datasetName, List<String> columns) throws IOException {
+        Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
+        response.then().statusCode(OK.value());
+
+        final JsonPath jsonPath = response.body().jsonPath();
+        final List<String> actual = jsonPath.getList("columns.name", String.class);
+        assertNotNull(new StringBuilder("No columns in dataset \"").append(datasetName).append("\".").toString(),
+                actual);
+        assertFalse(new StringBuilder("No columns in dataset \"").append(datasetName).append("\".").toString(),
+                actual.isEmpty());
+        assertEquals(new StringBuilder("Not the expected number of columns in dataset \"")
+                .append(datasetName)
+                .append("\".")
+                .toString(), columns.size(), actual.size());
+        assertTrue(new StringBuilder("The \"")
+                .append(datasetName)
+                .append("\" dataset doesn't contains the expected columns.")
+                .toString(), actual.containsAll(columns));
+    }
 }

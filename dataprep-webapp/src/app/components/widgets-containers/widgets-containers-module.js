@@ -14,6 +14,7 @@
 import angular from 'angular';
 
 import { ActionButton } from '@talend/react-components/lib/index';
+import AppLoader from '@talend/react-components/lib/AppLoader';
 import AppHeaderBar from '@talend/react-components/lib/HeaderBar';
 import Breadcrumbs from '@talend/react-components/lib/Breadcrumbs';
 import CircularProgress from '@talend/react-components/lib/CircularProgress';
@@ -44,6 +45,7 @@ import SETTINGS_MODULE from '../../settings/settings-module';
 import STATE_MODULE from '../../services/state/state-module';
 import DATASET_UPLOAD_STATUS_MODULE from '../dataset/upload-status/dataset-upload-status-module';
 import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
+import SERVICES_INVENTORY_MODULE from '../../services/inventory/inventory-module';
 
 const MODULE_NAME = '@talend/react-components.containers';
 
@@ -55,10 +57,12 @@ angular.module(MODULE_NAME,
 		STATE_MODULE,
 		DATASET_UPLOAD_STATUS_MODULE,
 		STEP_PROGRESS_MODULE,
+		SERVICES_INVENTORY_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(
 		getTranslated(AppHeaderBar, { i18n })
 	)])
+	.directive('pureAppLoader', ['reactDirective', reactDirective => reactDirective(AppLoader)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureNotification', ['reactDirective', reactDirective => reactDirective(Notifications)])
 	.directive('pureSubHeaderBar', ['reactDirective', reactDirective => reactDirective(SubHeaderBar)])

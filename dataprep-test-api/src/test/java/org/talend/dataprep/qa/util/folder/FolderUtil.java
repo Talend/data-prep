@@ -1,16 +1,16 @@
 package org.talend.dataprep.qa.util.folder;
 
+import com.jayway.restassured.response.Response;
+import org.talend.dataprep.qa.dto.Folder;
+import org.talend.dataprep.qa.dto.FolderContent;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import org.talend.dataprep.qa.dto.Folder;
-import org.talend.dataprep.qa.dto.FolderContent;
 
 public interface FolderUtil {
 
@@ -18,7 +18,7 @@ public interface FolderUtil {
      * List all preparations within a folder.
      *
      * @param folderName the folder to seek
-     * @return
+     * @return FolderContent
      */
     FolderContent listPreparation(String folderName) throws IOException;
 
@@ -34,7 +34,7 @@ public interface FolderUtil {
      * {@link Folder}.
      *
      * @param folderPath the folder full path.
-     * @param folders the {@link List} of {@link Folder}
+     * @param folders    the {@link List} of {@link Folder}
      * @return a {@link Folder} or <code>null</code> if the folder doesn't exist.
      */
     @Nullable
@@ -42,7 +42,7 @@ public interface FolderUtil {
 
     /**
      * Search a {@link Folder} from its path.
-     * 
+     *
      * @param folderPath the folder path.
      * @return the searched Folder if it exists.
      * @throws IOException
@@ -55,7 +55,7 @@ public interface FolderUtil {
      *
      * @param folder the folder to delete
      */
-    void deleteFolder(@NotNull Folder folder);
+    Response deleteFolder(@NotNull Folder folder);
 
     /**
      * Sort a {@link Set} of {@link Folder} in its natural order based on their path.
@@ -77,7 +77,7 @@ public interface FolderUtil {
     /**
      * Split a folder in a {@link Set} folder and subfolders.
      *
-     * @param folder the folder to split.
+     * @param folder  the folder to split.
      * @param folders existing folders.
      * @return a {@link Set} of folders and subfolders.
      */
@@ -86,7 +86,7 @@ public interface FolderUtil {
 
     /**
      * Return a string that represent the folder for dataprep API depending on the context (OS / EE)
-     * 
+     *
      * @param folder the {@link Folder} to represent.
      * @return a folder API representation.
      */

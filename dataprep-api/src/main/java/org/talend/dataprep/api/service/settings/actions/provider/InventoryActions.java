@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.settings.actions.provider;
 
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.DATA_FEATURE_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.builder;
 
@@ -28,6 +29,7 @@ public interface InventoryActions {
             .name("inventory.edit")
             .icon("talend-pencil")
             .type("@@inventory/EDIT")
+            .data(DATA_FEATURE_KEY, "inventory.rename")
             .payload(PAYLOAD_METHOD_KEY, "enableInventoryEdit")
             .build();
 

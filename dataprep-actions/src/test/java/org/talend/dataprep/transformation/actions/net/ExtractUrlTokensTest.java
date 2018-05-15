@@ -36,9 +36,9 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
- * Test class for ExtractEmailDomain action. Creates one consumer, and test it.
+ * Test class for ExtractUrlTokens action. Creates one consumer, and test it.
  *
- * @see ExtractEmailDomain
+ * @see ExtractUrlTokens
  */
 public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTokens> {
 

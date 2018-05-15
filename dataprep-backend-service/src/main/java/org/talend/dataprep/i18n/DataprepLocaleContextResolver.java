@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.SimpleLocaleContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -102,7 +103,7 @@ public class DataprepLocaleContextResolver implements LocaleContextResolver {
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
-        return delegate.resolveLocale(request);
+        return getLocale(request);
     }
 
     @Override
@@ -112,12 +113,19 @@ public class DataprepLocaleContextResolver implements LocaleContextResolver {
 
     @Override
     public LocaleContext resolveLocaleContext(HttpServletRequest request) {
-        return new SimpleLocaleContext(delegate.resolveLocale(request));
+        return new SimpleLocaleContext(getLocale(request));
     }
 
     @Override
     public void setLocaleContext(HttpServletRequest request, HttpServletResponse response,
             LocaleContext localeContext) {
-        delegate.setLocale(request, response, localeContext.getLocale());
+        delegate.setLocale(request, response, getLocale(request));
+    }
+
+    private Locale getLocale(HttpServletRequest request) {
+        final Locale locale = delegate.resolveLocale(request);
+        LOGGER.debug("Resolved locale for request '{}': {} (Accept-Language: '{}').", request, locale,
+                request.getHeader(HttpHeaders.ACCEPT_LANGUAGE));
+        return locale;
     }
 }

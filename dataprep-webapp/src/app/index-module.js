@@ -21,6 +21,8 @@ import uiRouter from 'angular-ui-router';
 
 import { init } from 'i18next';
 
+import bootstrapReact from './index.cmf';
+
 import APP_MODULE from './components/app/app-module';
 import HOME_MODULE from './components/home/home-module';
 import PLAYGROUND_MODULE from './components/playground/playground-module';
@@ -34,15 +36,15 @@ import SETTINGS_MODULE from './settings/settings-module';
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
 
+import translations from '../i18n';
 import d3LocaleFr from '../lib/d3.locale.fr';
 
 const MODULE_NAME = 'data-prep';
 
+window.MODULE_NAME = MODULE_NAME;
+
 const I18N_DOMAIN_COMPONENTS = 'tui-components';
 const I18N_DOMAIN_FORMS = 'tui-forms';
-
-let ws;
-let wsPing;
 
 let preferredLanguage;
 const fallbackLng = 'en';
@@ -81,118 +83,109 @@ const app = angular
 	// Translate config
 	.config(($translateProvider) => {
 		'ngInject';
-		$translateProvider.useStaticFilesLoader({
-			prefix: 'i18n/',
-			suffix: '.json',
-		});
+		Object.keys(translations)
+			.forEach(translationKey => $translateProvider.translations(translationKey, translations[translationKey]));
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
 	// Router config
 	.config(routeConfig)
 	.run(routeInterceptor);
 
-window.fetchConfiguration = function fetchConfiguration() {
-	return getAppConfiguration().then(({ config, appSettings }) => {
-		app
-			// Debug config
-			.config(($compileProvider) => {
-				'ngInject';
-				$compileProvider.debugInfoEnabled(config.enableDebug);
-			})
-			.config(($httpProvider, $translateProvider) => {
-				'ngInject';
+window.bootstrapAngular = function bootstrapAngular(appSettings) {
+	app
+	// Debug config
+		.config(($compileProvider) => {
+			'ngInject';
+			$compileProvider.debugInfoEnabled(false);
+		})
+		.config(($httpProvider) => {
+			'ngInject';
 
-				preferredLanguage =
-					(appSettings.context && appSettings.context.language) ||
-					fallbackLng;
+			preferredLanguage =
+				(appSettings.context && appSettings.context.language) ||
+				fallbackLng;
 
-				const preferredLocale = appSettings.context && appSettings.context.locale;
-				if (preferredLocale) {
-					$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
+			const preferredLocale = appSettings.context && appSettings.context.locale;
+			if (preferredLocale) {
+				$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
+			}
+
+			moment.locale(preferredLanguage);
+
+			if (preferredLanguage !== fallbackLng) {
+				i18n.changeLanguage(preferredLanguage);
+
+				if (preferredLanguage === 'fr') {
+					const d3locale = d3.locale(d3LocaleFr);
+					d3.format = d3locale.numberFormat;
+					d3.time.format = d3locale.timeFormat;
 				}
-
-				$translateProvider.preferredLanguage(preferredLanguage);
-
-				moment.locale(preferredLanguage);
-
-				if (preferredLanguage !== fallbackLng) {
-					i18n.changeLanguage(preferredLanguage);
-
-					if (preferredLanguage === 'fr') {
-						const d3locale = d3.locale(d3LocaleFr);
-						d3.format = d3locale.numberFormat;
-						d3.time.format = d3locale.timeFormat;
-					}
-					if ($.datetimepicker) {
-						$.datetimepicker.setLocale(preferredLanguage);
-					}
+				if ($.datetimepicker) {
+					$.datetimepicker.setLocale(preferredLanguage);
 				}
-			})
-			// Fetch dynamic configuration
-			.run((SettingsService, InventoryStateService) => {
-				'ngInject';
-				// base settings
-				SettingsService.setSettings(appSettings);
-				InventoryStateService.init();
-			})
-			// Configure server api urls and refresh supported encoding
-			.run((DatasetService, HelpService, RestURLs) => {
-				'ngInject';
+			}
+		})
+		// Fetch dynamic configuration
+		.run((SettingsService, InventoryStateService) => {
+			'ngInject';
+			// base settings
+			SettingsService.setSettings(appSettings);
+			InventoryStateService.init();
+		})
+		// Configure server api urls and refresh supported encoding
+		.run((DatasetService, HelpService, RestURLs) => {
+			'ngInject';
 
-				const { help } = appSettings;
-				if (help) {
-					HelpService.register(help);
-				}
+			const { help } = appSettings;
+			if (help) {
+				HelpService.register(help);
+			}
 
-				RestURLs.register(config, appSettings.uris);
+			RestURLs.register(appSettings.uris);
 
-				// dataset encodings
-				DatasetService.refreshSupportedEncodings();
-			})
-			// Open a keepalive websocket if requested
-			.run(() => {
-				if (!config.serverKeepAliveUrl) return;
+			// dataset encodings
+			DatasetService.refreshSupportedEncodings();
+		})
+		.run(($translate) => {
+			'ngInject';
 
-				function setupWebSocket() {
-					clearInterval(wsPing);
+			$translate.fallbackLanguage(fallbackLng);
+			$translate.preferredLanguage(preferredLanguage);
 
-					ws = new WebSocket(config.serverKeepAliveUrl);
-					ws.onclose = () => {
-						setTimeout(setupWebSocket, 1000);
-					};
+			$translate.onReady(() => {
+				const translationsWithFallback = Object.assign(
+					{},
+					$translate.getTranslationTable(fallbackLng),
+					$translate.getTranslationTable(preferredLanguage),
+				);
 
-					wsPing = setInterval(() => {
-						ws.send('ping');
-					}, 3 * 60 * 1000);
-				}
-
-				setupWebSocket();
-			})
-			.run(($translate) => {
-				'ngInject';
-
-				$translate.onReady(() => {
-					i18n.addResourceBundle(
-						preferredLanguage,
-						I18N_DOMAIN_COMPONENTS,
-						$translate.getTranslationTable(),
-						false,
-						false
-					);
-				});
+				i18n.addResourceBundle(
+					preferredLanguage,
+					I18N_DOMAIN_COMPONENTS,
+					translationsWithFallback,
+					false,
+					false,
+				);
 			});
+		});
+};
 
-		angular
-			.module(SERVICES_UTILS_MODULE)
-			.value('copyRights', config.copyRights);
+getAppConfiguration()
+	.then((appSettings) => {
+		// appSettings.context.provider = 'catalog';
+		const { provider = 'legacy' } = appSettings.context;
+
+		if (provider.includes('catalog') && !(/#\/(playground|export|version)/.test(window.location.href))) {
+			bootstrapReact();
+		}
+		else {
+			window.bootstrapAngular(appSettings);
+			angular
+				.element(document)
+				.ready(() => angular.bootstrap(document, [window.MODULE_NAME]));
+		}
 	});
-};
 
-window.bootstrapDataPrepApplication = function bootstrapDataPrepApplication(
-	modules
-) {
-	angular.element(document).ready(() => angular.bootstrap(document, modules));
-};
 /* eslint-enable angular/window-service */
 
 export default MODULE_NAME;

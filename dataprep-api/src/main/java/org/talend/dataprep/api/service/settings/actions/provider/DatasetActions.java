@@ -14,6 +14,7 @@
 package org.talend.dataprep.api.service.settings.actions.provider;
 
 import static org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings.dropdownBuilder;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.DATA_FEATURE_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.builder;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings.splitDropdownBuilder;
@@ -30,6 +31,7 @@ public interface DatasetActions {
             .id("dataset:open")
             .icon("talend-datastore")
             .name("dataset.open")
+            .data(DATA_FEATURE_KEY, "dataset.open")
             .type("@@dataset/OPEN")
             .build();
 
@@ -82,6 +84,7 @@ public interface DatasetActions {
             .name("dataset.favorite")
             .icon("talend-star")
             .type("@@dataset/FAVORITE")
+            .data(DATA_FEATURE_KEY, "dataset.favorite.add")
             .payload(PAYLOAD_METHOD_KEY, "toggleFavorite")
             .build();
 

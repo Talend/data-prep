@@ -41,7 +41,7 @@ describe('About Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.about'));
 
 	beforeEach(inject(($injector, RestURLs) => {
-		RestURLs.register({ serverUrl: '' }, settings.uris);
+		RestURLs.register(settings.uris);
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

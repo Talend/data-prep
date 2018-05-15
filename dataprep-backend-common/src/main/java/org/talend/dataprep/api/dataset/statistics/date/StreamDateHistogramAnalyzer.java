@@ -18,14 +18,12 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataquality.common.inference.Analyzer;
-import org.talend.dataquality.common.inference.Metadata;
 import org.talend.dataquality.common.inference.ResizableList;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.TypeInferenceUtils;
@@ -42,7 +40,8 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
     /**
      * List of statistics (one for each column)
      */
-    private final ResizableList<StreamDateHistogramStatistics> stats = new ResizableList<>(StreamDateHistogramStatistics.class);
+    private final ResizableList<StreamDateHistogramStatistics> stats =
+            new ResizableList<>(StreamDateHistogramStatistics.class);
 
     /**
      * The columns types
@@ -66,7 +65,8 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
      * @param types The columns data types
      * @param dateParser A date parser based on column metadata and DQ analyzer
      */
-    public StreamDateHistogramAnalyzer(List<ColumnMetadata> columns, final DataTypeEnum[] types, final DateParser dateParser) {
+    public StreamDateHistogramAnalyzer(List<ColumnMetadata> columns, final DataTypeEnum[] types,
+            final DateParser dateParser) {
         this.columns = columns;
         this.types = types;
         this.dateParser = dateParser;
@@ -75,10 +75,11 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
     @Override
     public boolean analyze(String... record) {
         if (record.length != types.length) {
-            throw new IllegalArgumentException("Each column of the record should be declared a DataType.Type corresponding! \n"
-                    + types.length + " type(s) declared in this histogram analyzer but " + record.length
-                    + " column(s) was found in this record. \n"
-                    + "Using method: setTypes(DataType.Type[] types) to set the types. ");
+            throw new IllegalArgumentException(
+                    "Each column of the record should be declared a DataType.Type corresponding! \n" + types.length
+                            + " type(s) declared in this histogram analyzer but " + record.length
+                            + " column(s) was found in this record. \n"
+                            + "Using method: setTypes(DataType.Type[] types) to set the types. ");
         }
 
         stats.resize(record.length);
@@ -104,11 +105,6 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
         }
 
         return true;
-    }
-
-    @Override
-    public Analyzer<StreamDateHistogramStatistics> merge(Analyzer<StreamDateHistogramStatistics> another) {
-        throw new NotImplementedException();
     }
 
     @Override

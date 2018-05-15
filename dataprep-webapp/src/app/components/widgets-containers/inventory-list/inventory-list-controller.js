@@ -19,7 +19,7 @@ const ACTION_TYPE = 'actions';
 const LOADING_TIMEOUT_VALUE = 400;
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, $timeout, appSettings, SettingsActionsService, state, StateService) {
+	constructor($element, $translate, $timeout, appSettings, state, InventoryListService, SettingsActionsService, StateService) {
 		'ngInject';
 
 		this.$element = $element;
@@ -27,6 +27,7 @@ export default class InventoryListCtrl {
 		this.$timeout = $timeout;
 		this.appSettings = appSettings;
 		this.stateService = StateService;
+		this.InventoryListService = InventoryListService;
 		this.SettingsActionsService = SettingsActionsService;
 		this.state = state;
 
@@ -182,12 +183,16 @@ export default class InventoryListCtrl {
 			};
 		}
 
-		return {
+		const titleProps = {
 			...titleSettings,
 			onClick,
 			onEditCancel: this.getTitleActionDispatcher(this.viewKey, 'onEditCancel'),
 			onEditSubmit: this.getTitleActionDispatcher(this.viewKey, 'onEditSubmit'),
 		};
+
+		const listSettings = this.appSettings.views[this.viewKey].list;
+		const action = this.appSettings.actions[listSettings.titleProps.onClick];
+		return this.SettingsActionsService.adaptDataAttributes(titleProps, action);
 	}
 
 	getActionDispatcher(actionName) {
@@ -220,21 +225,24 @@ export default class InventoryListCtrl {
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
 		}
-		return baseAction;
+		return this.SettingsActionsService.adaptDataAttributes(baseAction, actionSettings);
 	}
 
 	createDropdownItemAction(item, actionName) {
 		const itemOnClick = this.getActionDispatcher(actionName);
 		const itemAction = this.createBaseAction(actionName, true);
 		itemAction.onClick = event => itemOnClick(event, item);
-		return itemAction;
+		return this.SettingsActionsService.adaptDataAttributes(itemAction);
 	}
 
 	createDropdownActions(items, actionName) {
 		return items.map((item) => {
 			const itemAction = this.createDropdownItemAction(item, actionName);
 			itemAction.label = item.label || item.name;
-			return itemAction;
+			if (item.locationType) {
+				itemAction['data-feature'] = `dataset.${item.locationType}.add`;
+			}
+			return this.SettingsActionsService.adaptDataAttributes(itemAction);
 		});
 	}
 
@@ -251,7 +259,7 @@ export default class InventoryListCtrl {
 					// dropdown static actions are applied to the host model
 					// ex: dataset > "create new preparation action" is applied to the dataset
 					const staticActions = actionSettings.staticActions.map(
-						staticAction => this.createDropdownItemAction(hostModel, staticAction)
+						staticAction => this.createDropdownItemAction(hostModel, staticAction),
 					);
 					// dropdown dynamic action is the unique action on each item click
 					// ex: dataset > "open preparation x" is applied to "preparation x"
@@ -276,11 +284,13 @@ export default class InventoryListCtrl {
 	}
 
 	adaptItemActions(item, actions, index) {
-		const adaptedActions = this.adaptActions(actions, item);
+		let adaptedActions = this.adaptActions(actions, item);
 		if (adaptedActions) {
-			adaptedActions.forEach((action) => {
-				action.id = `${this.id}-${index}-${action.id}`;
-			});
+			adaptedActions = adaptedActions.map(action => ({
+				...action,
+				...this.InventoryListService.adaptAction(action, item),
+				id: `${this.id}-${index}-${action.id}`,
+			}));
 		}
 		return adaptedActions;
 	}

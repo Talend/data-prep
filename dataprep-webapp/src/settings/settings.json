@@ -1,0 +1,260 @@
+{
+  "contentTypes": {},
+  "actions": {
+    "divider": {
+      "divider": true
+    },
+    "menu:preparations": {
+      "id": "menu:preparations",
+      "label": "Preparations",
+      "icon": "talend-dataprep",
+      "payload": {
+        "type": "MENU_LINK",
+        "cmf": {
+          "routerReplace": "/preparations"
+        }
+      }
+    },
+    "help:external": {
+      "id": "help:external",
+      "label": "Help",
+      "href": "https://help.talend.com/search/all?filters=EnrichPlatform%7E%2522Talend+Data+Preparation%2522*EnrichVersion%7E%25222.1%2522&utm_medium=dpdesktop&utm_source=&content-lang=en",
+      "target": "_blank"
+    },
+    "help:community": {
+      "id": "help:community",
+      "label": "Community",
+      "href": "https://community.talend.com/t5/Data-Quality-and-Preparation/bd-p/prepare_govern",
+      "target": "_blank"
+    },
+    "help:tour": {
+      "id": "help:tour",
+      "label": "Guided tour",
+      "actionCreator": "help:tour"
+    },
+    "help:about:open": {
+      "id": "help:about:open",
+      "label": "About Data Preparation",
+      "actionCreator": "help:about:open"
+    },
+    "help:feedback:open": {
+      "id": "help:feedback:open",
+      "label": "Feedback",
+      "actionCreator": "help:feedback:open"
+    },
+    "preparation:add:open": {
+      "id": "preparation:add:open",
+      "bsStyle": "info",
+      "icon": "talend-plus-circle",
+      "label": "Add preparation",
+      "actionCreator": "preparation:add:open"
+    },
+    "preparation:rename": {
+      "id": "preparation:rename",
+      "icon": "talend-pencil",
+      "label": "Rename",
+      "actionCreator": "preparation:rename"
+    },
+    "preparation:duplicate": {
+      "id": "preparation:duplicate",
+      "label": "Duplicate",
+      "icon": "talend-folder",
+      "actionCreator": "preparation:duplicate"
+    },
+    "preparation:edit:submit": {
+      "id": "preparation:edit:submit",
+      "actionCreator": "preparation:edit:submit"
+    },
+    "preparation:edit:cancel": {
+      "id": "preparation:edit:cancel",
+      "actionCreator": "preparation:edit:cancel"
+    },
+    "folder:add:open": {
+      "id": "folder:add:open",
+      "icon": "talend-folder",
+      "label": "Add folder",
+      "actionCreator": "folder:add:open"
+    }
+  },
+  "props": {
+    "indexRouteRedirect": {
+      "path": "/preparations"
+    },
+    "HeaderBar#default": {
+      "app": "Data Preparation",
+      "logo": {
+        "id": "talend-logo",
+        "label": "Go to home page",
+        "isFull": false,
+        "payload": {
+          "type": "MENU_LINK",
+          "cmf": {
+            "routerReplace": "/preparations"
+          }
+        }
+      },
+      "brand": {
+        "label": "Data Preparation",
+        "payload": {
+          "type": "MENU_LINK",
+          "cmf": {
+            "routerReplace": "/preparations"
+          }
+        }
+      },
+      "search": {
+        "icon": {
+          "name": "talend-search",
+          "title": "Toggle search input",
+          "bsStyle": "link",
+          "tooltipPlacement": "bottom"
+        },
+        "id": "headerbar:search",
+        "docked": true,
+        "onToggle": "headerbar:search:toggle"
+      },
+      "help": {
+        "id": "talend-documentation",
+        "label": "Help"
+      },
+      "information": {
+        "id": "headerbar:information",
+        "bsStyle": "link",
+        "icon": "talend-info-circle",
+        "label": "Information",
+        "hideLabel": true,
+        "pullRight": true,
+        "noCaret": true,
+        "tooltipPlacement": "bottom",
+        "displayMode": "dropdown",
+        "actionIds": [
+          "help:about:open",
+          "help:tour",
+          "divider",
+          "help:community",
+          "help:feedback:open"
+        ]
+      }
+    },
+    "SidePanel#default": {
+      "actionIds": [
+        "menu:preparations",
+        "menu:datasets",
+        "menu:datastores"
+      ]
+    },
+    "Version#default": {
+      "displayVersionExpression": {
+        "id": "cmf.collections.get",
+        "args": [
+          "versions.displayVersion",
+          []
+        ]
+      },
+      "servicesExpression": {
+        "id": "cmf.collections.get",
+        "args": [
+          "versions.services",
+          []
+        ]
+      }
+    },
+    "AboutModal#default": {
+      "didMountActionCreator": "version:fetch",
+      "components": {
+        "content": [
+          {
+            "component": "Version"
+          }
+        ]
+      }
+    },
+    "datastores": {
+      "hasTheme": true
+    },
+    "datasets": {
+      "hasTheme": true
+    },
+    "preparations": {
+      "hasTheme": true,
+      "header": {},
+      "sidepanel": {},
+      "list": {
+        "collectionId": "preparations",
+        "list": {
+          "columns": [
+            {
+              "key": "name",
+              "label": "Name"
+            },
+            {
+              "key": "author",
+              "label": "Author"
+            },
+            {
+              "key": "datasetName",
+              "label": "Dataset"
+            },
+            {
+              "key": "nbSteps",
+              "label": "Steps"
+            }
+          ],
+          "titleProps": {
+            "key": "name",
+            "iconKey": "icon",
+            "displayModeKey": "display"
+          }
+        },
+        "toolbar": {
+          "filter": {
+            "placeholder": "Find a preparation"
+          }
+        },
+        "actions": {
+          "title": "preparation:open",
+          "left": [
+            "preparation:add:open",
+            "folder:add:open"
+          ],
+          "items": [
+            "preparation:rename",
+            "preparation:duplicate"
+          ],
+          "editSubmit": "preparation:edit:submit",
+          "editCancel": "preparation:edit:cancel"
+        }
+      }
+    }
+  },
+  "routes": {
+    "path": "/",
+    "component": "App",
+    "indexRoute": {
+      "component": "Redirect",
+      "view": "indexRouteRedirect"
+    },
+    "childRoutes": [
+      {
+        "path": "preparations(/:folderId)",
+        "component": "HomeListView",
+        "view": "preparations",
+        "onEnter": "preparation:fetch"
+      },
+      {
+        "path": "datasets",
+        "component": "HomeListView",
+        "view": "datasets"
+      },
+      {
+        "path": "datastores",
+        "component": "HomeListView",
+        "view": "datastores"
+      }
+    ]
+  },
+  "ref": {
+    "SidePanel#default": {},
+    "AppHeaderBar#default": {}
+  }
+}

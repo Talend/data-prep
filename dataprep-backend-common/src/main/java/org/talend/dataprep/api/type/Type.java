@@ -105,7 +105,7 @@ public enum Type implements Serializable {
     /**
      * @return the type label for the UI.
      */
-    private String getLabelKey() {
+    public String getLabelKey() {
         return labelKey;
     }
 

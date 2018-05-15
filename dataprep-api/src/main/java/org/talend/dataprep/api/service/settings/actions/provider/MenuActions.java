@@ -13,11 +13,9 @@
 
 package org.talend.dataprep.api.service.settings.actions.provider;
 
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
-import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.builder;
-
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.*;
 
 /**
  * Actions on menus (side panel for example) and route change
@@ -37,6 +35,7 @@ public interface MenuActions {
             .name("menu.preparations")
             .icon("talend-dataprep")
             .type("@@router/GO_CURRENT_FOLDER")
+            .data(DATA_FEATURE_KEY, "preparation.open")
             .payload(PAYLOAD_METHOD_KEY, "go")
             .payload(PAYLOAD_ARGS_KEY, new String[]{"home.preparations"})
             .build();
@@ -46,6 +45,7 @@ public interface MenuActions {
             .name("menu.folders")
             .icon("talend-folder")
             .type("@@router/GO_FOLDER")
+            .data(DATA_FEATURE_KEY, "folder.open")
             .payload(PAYLOAD_METHOD_KEY, "go")
             .payload(PAYLOAD_ARGS_KEY, new String[]{"home.preparations"})
             .build();
@@ -64,6 +64,7 @@ public interface MenuActions {
             .name("menu.playground.preparation")
             .icon("talend-dataprep")
             .type("@@router/GO_PREPARATION")
+            .data(DATA_FEATURE_KEY, "dataset.preparation.open")
             .payload(PAYLOAD_METHOD_KEY, "go")
             .payload(PAYLOAD_ARGS_KEY, new String[]{"playground.preparation"})
             .build();

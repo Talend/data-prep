@@ -31,6 +31,7 @@ const preparation = {
 const getAdaptedPreparation = () => {
 	return {
 		id: '1',
+		'data-feature': 'preparation.open',
 		type: 'preparation',
 		name: 'JSO prep 1',
 		author: 'toto',
@@ -57,6 +58,7 @@ const folder = {
 const getAdaptedFolder = () => {
 	return {
 		id: 'Lw==',
+		'data-feature': 'folder.open',
 		type: 'folder',
 		name: 'toto',
 		author: 'toto',

@@ -16,7 +16,7 @@
 <div class="actions-list">
     <sc-accordion class="actions-group">
         <li ng-repeat="category in actionsListCtrl.actions track by $index"
-             ng-if="actionsListCtrl.shouldRenderCategory(category)">
+            ng-if="actionsListCtrl.shouldRenderCategory(category)">
             <div class="actions-category" ng-bind-html="category.categoryHtml"></div>
             <sc-accordion-item
                     ng-repeat="transfo in category.transformations track by transfo.name"
@@ -26,23 +26,29 @@
                 <trigger class="trigger">
                     <!--with dynamic parameters-->
                     <div class="trigger-label" ng-switch-when="false"
-                       ng-if="transfo.dynamic"
-                       ng-click="actionsListCtrl.select(transfo)" ng-bind-html="transfo.labelHtml"></div>
+                         ng-if="transfo.dynamic"
+                         ng-click="actionsListCtrl.select(transfo)" ng-bind-html="transfo.labelHtml"
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(transfo) }}"></div>
 
                     <!--no parameters-->
                     <div class="trigger-label" ng-switch-when="false"
-                       ng-if="!transfo.dynamic"
-                       ng-click="actionsListCtrl.select(transfo)"
-                       ng-mouseenter="actionsListCtrl.earlyPreview(transfo)({})"
-                       ng-mouseleave="actionsListCtrl.cancelEarlyPreview()"
-                       ng-bind-html="transfo.labelHtml"></div>
+                         ng-if="!transfo.dynamic"
+                         ng-click="actionsListCtrl.select(transfo)"
+                         ng-mouseenter="actionsListCtrl.earlyPreview(transfo)({})"
+                         ng-mouseleave="actionsListCtrl.cancelEarlyPreview()"
+                         ng-bind-html="transfo.labelHtml"
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(transfo) }}.submit"></div>
 
                     <!--with static parameters-->
-                    <div class="trigger-label" ng-switch-when="true" ng-bind-html="transfo.labelHtml"></div>
+                    <div class="trigger-label"
+                         ng-switch-when="true"
+                         ng-bind-html="transfo.labelHtml"
+                         data-feature="{{ ::actionsListCtrl.getDataFeature(transfo) }}"></div>
                 </trigger>
 
                 <content ng-switch-when="true">
-                    <transform-form transformation="transfo"
+                    <transform-form feature="::actionsListCtrl.getDataFeature(transfo)"
+                                    transformation="transfo"
                                     on-submit="actionsListCtrl.transform(transfo)(params)"
                                     on-submit-hover-on="actionsListCtrl.earlyPreview(transfo)(params)"
                                     on-submit-hover-off="actionsListCtrl.cancelEarlyPreview()"
@@ -68,6 +74,7 @@
                 <loader ng-if="actionsListCtrl.dynamicFetchInProgress"></loader>
 
                 <transform-form transformation="actionsListCtrl.dynamicTransformation"
+                                feature="::actionsListCtrl.getDataFeature(actionsListCtrl.dynamicTransformation)"
                                 on-submit="actionsListCtrl.transform(actionsListCtrl.dynamicTransformation)(params)"></transform-form>
             </div>
             <div ng-if="!actionsListCtrl.showModalContent">

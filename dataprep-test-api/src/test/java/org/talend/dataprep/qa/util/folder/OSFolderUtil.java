@@ -1,5 +1,16 @@
 package org.talend.dataprep.qa.util.folder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.OSDataPrepAPIHelper;
+import org.talend.dataprep.qa.dto.Folder;
+import org.talend.dataprep.qa.dto.FolderContent;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -12,19 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.OSDataPrepAPIHelper;
-import org.talend.dataprep.qa.dto.Folder;
-import org.talend.dataprep.qa.dto.FolderContent;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.response.Response;
 
 @Component
 public class OSFolderUtil implements FolderUtil {
@@ -65,9 +63,9 @@ public class OSFolderUtil implements FolderUtil {
     }
 
     @Override
-    public void deleteFolder(Folder folder) {
+    public Response deleteFolder(Folder folder) {
         String folderPath = api.encode64(folder.path);
-        api.deleteFolder(folderPath).then().statusCode(200);
+        return api.deleteFolder(folderPath);
     }
 
     @Override
@@ -75,10 +73,14 @@ public class OSFolderUtil implements FolderUtil {
         SortedSet<Folder> sortedFolders = new TreeSet<>((o1, o2) -> {
             if (o1 == null && o2 == null)
                 return 0;
-            if (o1 == null)
+            if (o1 == null || o1.path == null)
                 return 1;
-            if (o2 == null)
+            if (o2 == null || o2.path == null)
                 return -1;
+
+            if (o1.path.length() == o2.path.length())
+                return o1.path.compareTo(o2.path);
+
             return ((Integer) o1.path.length()).compareTo(o2.path.length());
         });
         sortedFolders.addAll(folders);
@@ -91,10 +93,14 @@ public class OSFolderUtil implements FolderUtil {
             // reverse order : the longer string is the first one.
             if (o1 == null && o2 == null)
                 return 0;
-            if (o1 == null)
+            if (o1 == null || o1.path == null)
                 return 1;
-            if (o2 == null)
+            if (o2 == null || o2.path == null)
                 return -1;
+
+            if (o1.path.length() == o2.path.length())
+                return o2.path.compareTo(o1.path);
+
             return ((Integer) o2.path.length()).compareTo(o1.path.length());
         });
     }
@@ -112,7 +118,7 @@ public class OSFolderUtil implements FolderUtil {
         StringBuilder folderBuilder = new StringBuilder();
         Arrays
                 .stream(folderPaths) //
-                .filter(f -> !f.isEmpty() && ! "/".equals(f)) //
+                .filter(f -> !f.isEmpty() && !"/".equals(f)) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
                         folderBuilder.append("/");

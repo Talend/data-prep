@@ -72,4 +72,39 @@ describe('Settings actions service', () => {
 			});
 		}));
 	});
+
+	describe('adaptDataAttributes', () => {
+		const action = {
+			data: {
+				feature: 'my.feature',
+			}
+		};
+
+		it('should adapt action data attributes', inject((SettingsActionsService) => {
+			// when
+			const adaptedAction = SettingsActionsService.adaptDataAttributes(action);
+
+			// then
+			expect(adaptedAction).toEqual({
+				'data-feature': 'my.feature',
+			});
+		}));
+
+		it('should adapt action data attributes from another action', inject((SettingsActionsService) => {
+			// given
+			const anotherAction = {
+				data: {
+					feature: 'my.another.feature',
+				}
+			};
+
+			// when
+			const adaptedAction = SettingsActionsService.adaptDataAttributes(action, anotherAction);
+
+			// then
+			expect(adaptedAction).toEqual({
+				'data-feature': 'my.another.feature',
+			});
+		}));
+	});
 });

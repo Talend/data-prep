@@ -1,11 +1,5 @@
 package org.talend.dataprep.qa.util.folder;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +10,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.dto.Folder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { OSFolderUtil.class, OSDataPrepAPIHelper.class })
+@ContextConfiguration(classes = {OSFolderUtil.class, OSDataPrepAPIHelper.class})
 public class OSFolderUtilTest {
 
     private Folder emptyPathF = new Folder().setPath("");
@@ -29,6 +29,8 @@ public class OSFolderUtilTest {
     private Folder aaaPathF = new Folder().setPath("/a/aa/aaa");
 
     private Folder abPathF = new Folder().setPath("/a/ab");
+
+    private Folder acPathF = new Folder().setPath("/a/ac");
 
     private Folder rootPathF = new Folder().setPath("/");
 
@@ -114,6 +116,18 @@ public class OSFolderUtilTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(aPathF, result.first());
+    }
+
+    @Test
+    public void sortFolderSameSizePath() {
+        Set<Folder> folders = new HashSet<>();
+        folders.add(emptyPathF);
+        folders.add(rootPathF);
+        folders.add(aaPathF);
+        folders.add(abPathF);
+        folders.add(acPathF);
+        SortedSet<Folder> result = folderUtil.sortFolders(folders);
+        Assert.assertEquals(5, result.size());
     }
 
     @Test

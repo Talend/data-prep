@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import i18n from './../../../i18n/en';
+
 describe('Breadcrumb component', () => {
 	let scope;
 	let element;
@@ -57,15 +59,7 @@ describe('Breadcrumb component', () => {
 	}));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			"ABOUT_HEADER": "ABOUT TALEND DATA PREPARATION",
-			"MORE": "more",
-			"LESS": "less",
-			"SERVICE_NAME": "SERVICE",
-			"BUILD_ID": "BUILD ID",
-			"VERSION_ID": "VERSION ID",
-			"VERSION": "VERSION",
-		});
+		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
 
@@ -106,7 +100,7 @@ describe('Breadcrumb component', () => {
 			createElement();
 
 			// then
-			expect(element.find('.modal-header').text().trim()).toBe('ABOUT TALEND DATA PREPARATION');
+			expect(element.find('.modal-header').text().trim()).toBe(i18n.ABOUT_HEADER);
 		});
 
 		it('should render data-prep icon', () => {
@@ -129,12 +123,9 @@ describe('Breadcrumb component', () => {
 			// given
 			createElement();
 
-			// when
-			controller.copyRights = 'current copyRights';
-			scope.$digest();
-
 			// then
-			expect(element.find('#copyrights').text().trim()).toBe('current copyRights');
+			expect(element.find('#copyrights').text())
+				.toBe((i18n.COPYRIGHTS).replace('{{year}}', controller.getFullYear()));
 		});
 
 		it('should render toggle button', () => {

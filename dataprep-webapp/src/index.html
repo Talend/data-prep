@@ -28,10 +28,10 @@
         <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <<%= htmlWebpackPlugin.options.rootElement %>></<%= htmlWebpackPlugin.options.rootElement %>>
-
-        <script language="JavaScript">
-            fetchConfiguration().then(bootstrapDataPrepApplication.bind(null, ['<%= htmlWebpackPlugin.options.rootModule %>']));
-        </script>
+        <div id="app">
+            <<%= htmlWebpackPlugin.options.rootElement %>>
+                <%= htmlWebpackPlugin.options.loader %>
+            </<%= htmlWebpackPlugin.options.rootElement %>>
+        </div>
     </body>
 </html>

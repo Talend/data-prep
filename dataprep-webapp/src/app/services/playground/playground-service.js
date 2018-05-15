@@ -51,6 +51,8 @@ export default function PlaygroundService(
 	$translate,
 	$timeout,
 	$stateParams,
+	$window,
+	appSettings,
 	state,
 	StateService,
 	StepUtilsService,
@@ -209,7 +211,6 @@ export default function PlaygroundService(
 	 * @returns {Promise} The process promise
 	 */
 	function loadDataset(datasetid) {
-		startLoader();
 		return DatasetService.getContent(datasetid, true)
 			.then(data => checkRecords(data))
 			.then(data => reset.call(this, data.metadata, data))
@@ -223,8 +224,7 @@ export default function PlaygroundService(
 					fetchStatistics.call(this);
 				}
 			})
-			.catch(errorGoBack)
-			.finally(stopLoader);
+			.catch(errorGoBack);
 	}
 
 	/**
@@ -243,7 +243,6 @@ export default function PlaygroundService(
 	 * @returns {Promise} The process promise
 	 */
 	function loadPreparation(preparation, sampleType = 'HEAD') {
-		startLoader();
 		return PreparationService.getContent(preparation.id, 'head', sampleType)
 			.then(data => reset.call(
 				this,
@@ -262,8 +261,7 @@ export default function PlaygroundService(
 					fetchStatistics.call(this);
 				}
 			})
-			.catch(errorGoBack)
-			.finally(stopLoader);
+			.catch(errorGoBack);
 	}
 
 	/**
@@ -1049,7 +1047,6 @@ export default function PlaygroundService(
 		}
 
 		StateService.setIsLoadingPlayground(true);
-		startLoader();
 		PreparationService.getDetails(prepid)
 			.then((preparation) => {
 				this.loadPreparation.call(this, preparation);
@@ -1059,8 +1056,7 @@ export default function PlaygroundService(
 				DatasetService.getMetadata(preparation.dataSetId)
 			)
 			.then(dataset => StateService.setCurrentDataset(dataset))
-			.catch(errorGoBack)
-			.finally(stopLoader);
+			.catch(errorGoBack);
 	}
 
 	/**
@@ -1101,6 +1097,14 @@ export default function PlaygroundService(
 	function close() {
 		$timeout.cancel(fetchStatsTimeout);
 		$timeout(StateService.resetPlayground, 500, false);
-		$state.go(state.route.previous, state.route.previousOptions);
+		if (appSettings &&
+			appSettings.context &&
+			appSettings.context.provider &&
+			appSettings.context.provider.includes('catalog')) {
+			$window.location.href = '/';
+		}
+		else {
+			$state.go(state.route.previous, state.route.previousOptions);
+		}
 	}
 }

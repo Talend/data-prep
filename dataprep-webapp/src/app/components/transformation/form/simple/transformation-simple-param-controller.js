@@ -23,12 +23,12 @@ export default function TransformSimpleParamCtrl(ConverterService, TextFormatSer
 	const vm = this;
 	vm.TextFormatService = TextFormatService;
 
-    /**
-     * @ngdoc method
-     * @name initParamValues
-     * @methodOf data-prep.transformation-form.controller:TransformSimpleParamCtrl
-     * @description [PRIVATE] Init simple param values to default
-     */
+	/**
+	 * @ngdoc method
+	 * @name initParamValues
+	 * @methodOf data-prep.transformation-form.controller:TransformSimpleParamCtrl
+	 * @description [PRIVATE] Init simple param values to default
+	 */
 	const initParamValues = function () {
 		if (typeof vm.parameter.initialValue !== 'undefined' && vm.parameter.initialValue !== null) {
 			vm.parameter.initialValue = ConverterService.adaptValue(vm.parameter.type, vm.parameter.initialValue);
@@ -43,16 +43,15 @@ export default function TransformSimpleParamCtrl(ConverterService, TextFormatSer
 		}
 	};
 
-    /**
-     * @ngdoc method
-     * @name initInputTypes
-     * @methodOf data-prep.transformation-form.controller:TransformSimpleParamsCtrl
-     * @description [PRIVATE] Init params input type, depending on param type
-     */
+	/**
+	 * @ngdoc method
+	 * @name initInputTypes
+	 * @methodOf data-prep.transformation-form.controller:TransformSimpleParamsCtrl
+	 * @description [PRIVATE] Init params input type, depending on param type
+	 */
 	const initInputTypes = function () {
 		vm.parameter.inputType = ConverterService.toInputType(vm.parameter.type);
 	};
-
 
 	/**
 	 * @ngdoc method
@@ -62,6 +61,19 @@ export default function TransformSimpleParamCtrl(ConverterService, TextFormatSer
 	 */
 	vm.isBooleanType = () => {
 		return vm.parameter.type === 'boolean';
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name getDataFeature
+	 * @methodOf data-prep.transformation-form.controller:TransformSimpleParamsCtrl
+	 * @description get data-feature attr value depending of parameter value
+	 */
+	vm.getDataFeature = () => {
+		if (vm.parameter && vm.isBooleanType() && !vm.parameter.readonly) {
+			return `preparation.function.${vm.parameter.name}.${vm.parameter.value ? 'uncheck' : 'check'}`;
+		}
+		return '';
 	};
 
 	initParamValues();

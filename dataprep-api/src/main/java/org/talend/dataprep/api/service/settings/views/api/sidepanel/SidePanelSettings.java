@@ -85,6 +85,21 @@ public class SidePanelSettings implements ViewSettings {
         this.actions = actions;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        SidePanelSettings that = (SidePanelSettings) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public static Builder builder() {
         return new Builder();
     }

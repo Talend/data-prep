@@ -13,7 +13,6 @@
 
 import angular from 'angular';
 
-const configPath = '/assets/config/config.json';
 const settingsPath = '/api/settings';
 
 function get(url) {
@@ -24,20 +23,11 @@ function get(url) {
 	}).then(response => response.data);
 }
 
-function getAppConfig() {
-	return get(configPath);
-}
-
-function getAppSettings({ serverUrl }) {
-	return get(serverUrl + settingsPath);
-}
-
-export default function getAppConfiguration() {
-	let config;
-	return getAppConfig()
-		.then((appConfig) => {
-			config = appConfig;
-			return getAppSettings(config);
-		})
-		.then(appSettings => ({ config, appSettings }));
+export default function getAppSettings() {
+	return get(settingsPath).then((data) => {
+		if (data.uris && data.uris.context) {
+			return get(`${data.uris.context}${settingsPath}`);
+		}
+		return data;
+	});
 }

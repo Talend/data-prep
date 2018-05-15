@@ -22,7 +22,7 @@ describe('Rest message interceptor factory', () => {
 	}));
 
 	beforeEach(inject(($injector, RestURLs, MessageService) => {
-		RestURLs.register({ serverUrl: '' }, {});
+		RestURLs.register({});
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 

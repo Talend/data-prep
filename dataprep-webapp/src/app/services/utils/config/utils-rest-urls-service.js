@@ -25,23 +25,22 @@ export default function RestURLs() {
 	 * @param {Object} config Contains the host and port to define API urls
 	 * @param {Object} uris All URIs to be consumed
 	 */
-	this.register = function register(config, uris) {
-		const { serverUrl } = config;
-		this.serverUrl = serverUrl;
-		this.aggregationUrl = serverUrl + uris.apiAggregate;
-		this.datasetUrl = serverUrl + uris.apiDatasets;
-		this.uploadDatasetUrl = serverUrl + uris.apiUploadDatasets;
-		this.exportUrl = serverUrl + uris.apiExport;
-		this.folderUrl = serverUrl + uris.apiFolders;
-		this.mailUrl = serverUrl + uris.apiMail;
-		this.preparationUrl = serverUrl + uris.apiPreparations;
-		this.previewUrl = serverUrl + uris.apiPreparationsPreview;
-		this.searchUrl = serverUrl + uris.apiSearch;
-		this.settingsUrl = serverUrl + uris.apiSettings;
-		this.tcompUrl = serverUrl + uris.apiTcomp;
-		this.transformUrl = serverUrl + uris.apiTransform;
-		this.typesUrl = serverUrl + uris.apiTypes;
-		this.upgradeVersion = serverUrl + uris.apiUpgradeCheck;
-		this.versionUrl = serverUrl + uris.apiVersion;
+	this.register = function register(uris) {
+		this.context = uris.context || '';
+		this.aggregationUrl = `${this.context}${uris.apiAggregate}`;
+		this.datasetUrl = `${this.context}${uris.apiDatasets}`;
+		this.uploadDatasetUrl = `${this.context}${uris.apiUploadDatasets}`;
+		this.exportUrl = `${this.context}${uris.apiExport}`;
+		this.folderUrl = `${this.context}${uris.apiFolders}`;
+		this.mailUrl = `${this.context}${uris.apiMail}`;
+		this.preparationUrl = `${this.context}${uris.apiPreparations}`;
+		this.previewUrl = `${this.context}${uris.apiPreparationsPreview}`;
+		this.searchUrl = `${this.context}${uris.apiSearch}`;
+		this.settingsUrl = `${this.context}${uris.apiSettings}`;
+		this.tcompUrl = `${this.context}${uris.apiTcomp}`;
+		this.transformUrl = `${this.context}${uris.apiTransform}`;
+		this.typesUrl = `${this.context}${uris.apiTypes}`;
+		this.upgradeVersion = `${this.context}${uris.apiUpgradeCheck}`;
+		this.versionUrl = `${this.context}${uris.apiVersion}`;
 	};
 }

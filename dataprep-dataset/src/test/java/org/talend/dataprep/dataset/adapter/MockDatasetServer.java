@@ -15,6 +15,8 @@
 
 package org.talend.dataprep.dataset.adapter;
 
+import java.io.IOException;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,15 +24,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.talend.dataprep.dataset.adapter.ProxyDatasetClientTest.AUTHENTICATION_TOKEN;
+import static org.talend.dataprep.dataset.adapter.MockDatasetServer.AUTHENTICATION_TOKEN;
 
 @RestController
 @RequestMapping(value = "/api/v1", headers = HttpHeaders.AUTHORIZATION + "=" + AUTHENTICATION_TOKEN)
 public class MockDatasetServer {
+
+    public static final String AUTHENTICATION_TOKEN = "authentication-token";
 
     @RequestMapping(value = "/datasets/{datasetId}", method = GET)
     public String getById(@RequestParam(required = false) Boolean withUiSpec,

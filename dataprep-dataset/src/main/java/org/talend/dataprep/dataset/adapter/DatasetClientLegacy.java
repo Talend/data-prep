@@ -32,6 +32,7 @@ import org.apache.avro.io.EncoderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -39,7 +40,6 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
-import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
@@ -48,17 +48,18 @@ import com.google.common.base.Throwables;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- * Dataprep implementation of {@link DatasetClient}
+ * Dataset legacy implementation of {@link DatasetClient}
  */
-public class DataprepDatasetClient implements DatasetClient {
+@Service
+public class DatasetClientLegacy implements DatasetClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataprepDatasetClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetClientLegacy.class);
 
     private final DataSetService dataSetService;
 
     private final BeanConversionService beanConversionService;
 
-    public DataprepDatasetClient(DataSetService dataSetService, BeanConversionService beanConversionService) {
+    public DatasetClientLegacy(DataSetService dataSetService, BeanConversionService beanConversionService) {
         this.dataSetService = dataSetService;
         this.beanConversionService = beanConversionService;
     }
@@ -113,29 +114,29 @@ public class DataprepDatasetClient implements DatasetClient {
 
     @Override
     public List<Dataset> findAll() {
-        Stream<UserDataSetMetadata> list =
-                dataSetService.list(SortAndOrderHelper.Sort.CREATION_DATE, SortAndOrderHelper.Order.DESC, null, false,
-                        false, false, false);
-        return list.map(udsm -> beanConversionService.convert(udsm, Dataset.class)).collect(Collectors.toList());
+        return dataSetService.list(SortAndOrderHelper.Sort.CREATION_DATE, SortAndOrderHelper.Order.DESC, null, false,
+                false, false, false) //
+                .map(userDataSetMetadata -> beanConversionService.convert(userDataSetMetadata, Dataset.class)) //
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean exists(String id) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long count() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void delete(String id) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void delete(Dataset entity) {
-
+        throw new UnsupportedOperationException();
     }
 }

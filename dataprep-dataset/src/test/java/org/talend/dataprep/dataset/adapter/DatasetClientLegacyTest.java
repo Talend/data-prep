@@ -45,9 +45,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class DataprepDatasetClientTest {
+public class DatasetClientLegacyTest {
 
-    DataprepDatasetClient dataprepDatasetClient;
+    DatasetClientLegacy datasetClientLegacy;
 
     @Mock
     DataSetService dataSetService;
@@ -62,19 +62,19 @@ public class DataprepDatasetClientTest {
 
     @Before
     public void setUp() {
-        dataprepDatasetClient = new DataprepDatasetClient(dataSetService, beanConversionService);
+        datasetClientLegacy = new DatasetClientLegacy(dataSetService, beanConversionService);
     }
 
     @Test
     public void findSample() throws IOException {
-        InputStream resourceAsStream = DataprepDatasetClientTest.class.getResourceAsStream(
+        InputStream resourceAsStream = DatasetClientLegacyTest.class.getResourceAsStream(
                 "/org/talend/dataprep/dataset/avengers_expected_limit_2.json");
 
         DataSet dataSet = objectMapper.readValue(resourceAsStream, DataSet.class);
 
         when(dataSetService.getMetadata(anyString())).thenReturn(dataSet);
 
-        String jsonSchemaString = dataprepDatasetClient.findSchema("toto");
+        String jsonSchemaString = datasetClientLegacy.findSchema("toto");
         JsonNode jsonSchema = objectMapper.readTree(jsonSchemaString);
 
         assertEquals("org.talend.dataprep", jsonSchema.get("namespace").asText());

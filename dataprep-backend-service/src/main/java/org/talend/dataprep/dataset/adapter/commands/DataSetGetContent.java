@@ -25,7 +25,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.message.BasicHeader;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -47,21 +46,28 @@ import static org.talend.dataprep.util.avro.AvroUtils.readBinaryStream;
 @Scope(SCOPE_PROTOTYPE)
 public class DataSetGetContent extends DatasetCatalogCommand<Stream<GenericRecord>> {
 
-    private static final BasicHeader AVRO_ACCEPT_HEADER =
-            new BasicHeader(ACCEPT, AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE);
-
     private final String dataSetId;
 
     private final Schema contentSchema;
 
-    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
+    private final String offset;
+
+    private final String limit;
+
+    public DataSetGetContent(final String dataSetId, Schema contentSchema, int offset, int limit) {
         super(DATASET_GROUP);
         this.dataSetId = dataSetId;
         this.contentSchema = contentSchema;
+        this.offset = String.valueOf(offset);
+        this.limit = String.valueOf(limit);
 
         on(HttpStatus.NO_CONTENT).then((req, resp) -> Stream.empty());
         on(HttpStatus.OK).then(this::readResult);
         onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
+    }
+
+    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
+        this(dataSetId, contentSchema, 0, Integer.MAX_VALUE);
     }
 
     @PostConstruct
@@ -70,13 +76,16 @@ public class DataSetGetContent extends DatasetCatalogCommand<Stream<GenericRecor
             URI build;
 
             try {
-                build = new URIBuilder(getDatasetUrl() + "/api/v1/datasets/" + dataSetId + "/content").build();
+                build = new URIBuilder(getDatasetUrl() + "/api/v1/datasets/" + dataSetId + "/content")
+                        .addParameter("offset", offset)
+                        .addParameter("offset", limit)
+                        .build();
             } catch (URISyntaxException e) {
                 throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
 
             HttpGet httpGet = new HttpGet(build);
-            httpGet.addHeader(AVRO_ACCEPT_HEADER);
+            httpGet.addHeader(ACCEPT, AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE);
             return httpGet;
         });
     }

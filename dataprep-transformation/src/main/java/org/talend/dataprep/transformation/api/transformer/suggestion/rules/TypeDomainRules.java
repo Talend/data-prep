@@ -92,7 +92,7 @@ public class TypeDomainRules extends BasicRules {
         domainsToMask.add(SemanticCategoryEnum.US_PHONE.getId());
 
         return forActions(ExtractPhoneInformation.ACTION_NAME) //
-                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain())) //
+                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain()) || IS_PHONE.test(columnMetadata)) //
                 .then(columnMetadata -> MEDIUM) //
                 .build();
     }

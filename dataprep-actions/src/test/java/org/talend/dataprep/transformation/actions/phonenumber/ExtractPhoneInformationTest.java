@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.actions.phonenumber;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -116,6 +115,60 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
     }
 
     @Test
+    public void test_apply_in_germannewcolumn() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("+49-89-636-48018").type(Type.STRING))//
+                .with(value("tata").type(Type.STRING)) //
+                .build();
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "toto");
+        expectedValues.put("0001", "+49-89-636-48018");
+        expectedValues.put("0003", "Fix_Line");
+        expectedValues.put("0004", "49");
+        expectedValues.put("0005", "DE");
+        expectedValues.put("0006", "Munich");
+        expectedValues.put("0007", "");
+        expectedValues.put("0008", "Europe/Berlin");
+        expectedValues.put("0002", "tata");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void test_apply_in_USValueInAFrenchColumn() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("tel:+1-541-754-3010").domain(SemanticCategoryEnum.FR_PHONE.name()))//
+                .with(value("tata").type(Type.STRING)) //
+                .build();
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "toto");
+        expectedValues.put("0001", "tel:+1-541-754-3010");
+        expectedValues.put("0003", "Fixed_Line_Or_Mobile");
+        expectedValues.put("0004", "1");
+        expectedValues.put("0005", "US");
+        expectedValues.put("0006", "Corvallis, OR");
+        expectedValues.put("0007", "");
+        expectedValues.put("0008", "America/Los_Angeles");
+        expectedValues.put("0002", "tata");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void test_invalid_values() {
         // given
         final DataSetRow row = builder() //
@@ -205,21 +258,6 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
         assertTrue(action.acceptField(getColumn(Type.STRING, UK_PHONE)));
         assertTrue(action.acceptField(getColumn(Type.STRING, DE_PHONE)));
         assertTrue(action.acceptField(getColumn(Type.STRING, FR_PHONE)));
-    }
-
-    @Test
-    public void should_not_accept_column() {
-        assertFalse(action.acceptField(getColumn(Type.STRING)));
-        assertFalse(action.acceptField(getColumn(Type.DATE)));
-        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
-        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptField(getColumn(Type.INTEGER)));
-        assertFalse(action.acceptField(getColumn(Type.DOUBLE)));
-        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
-
-        ColumnMetadata column = getColumn(Type.STRING);
-        column.setDomain("not a phone number");
-        assertFalse(action.acceptField(column));
     }
 
     @Test

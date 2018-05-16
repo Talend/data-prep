@@ -395,7 +395,7 @@ public class TransformationService extends BaseTransformationService {
                         final StreamingResponseBody body = executeSampleExportStrategy(exportParameters);
                         body.writeTo(temp);
                     } catch (IOException e) {
-                        throw new TDPException(CommonErrorCodes.UNABLE_TO_AGGREGATE, e);
+                        LOG.info("Data source for aggregation was closed");
                     }
                 };
                 executor.execute(r);

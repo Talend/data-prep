@@ -58,8 +58,8 @@ public class DataSetGetContent extends DatasetCatalogCommand<Stream<GenericRecor
         super(DATASET_GROUP);
         this.dataSetId = dataSetId;
         this.contentSchema = contentSchema;
-        this.offset = String.valueOf(offset);
-        this.limit = String.valueOf(limit);
+        this.offset = Integer.toString(offset);
+        this.limit = Integer.toString(limit);
 
         on(HttpStatus.NO_CONTENT).then((req, resp) -> Stream.empty());
         on(HttpStatus.OK).then(this::readResult);
@@ -78,7 +78,7 @@ public class DataSetGetContent extends DatasetCatalogCommand<Stream<GenericRecor
             try {
                 build = new URIBuilder(getDatasetUrl() + "/api/v1/datasets/" + dataSetId + "/content")
                         .addParameter("offset", offset)
-                        .addParameter("offset", limit)
+                        .addParameter("limit", limit)
                         .build();
             } catch (URISyntaxException e) {
                 throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

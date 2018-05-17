@@ -122,21 +122,21 @@ public class DatasetClientLegacy implements DatasetClient {
 
     @Override
     public boolean exists(String id) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public long count() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public void delete(String id) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public void delete(Dataset entity) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

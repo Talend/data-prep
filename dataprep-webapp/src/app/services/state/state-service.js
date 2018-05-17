@@ -130,6 +130,7 @@ export function StateService(RouteStateService, routeState,
 		removeGridFilter: PlaygroundStateService.removeGridFilter,
 		removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
 		updateGridFilter: PlaygroundStateService.updateGridFilter,
+		updateColumnNameInFilters: PlaygroundStateService.updateColumnNameInFilters,
 		enableFilters: PlaygroundStateService.enableFilters,
 		disableFilters: PlaygroundStateService.disableFilters,
 

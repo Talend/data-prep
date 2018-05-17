@@ -22,10 +22,10 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	'ngInject';
 
 	const service = {
-		// life
 		addFilter,
 		addFilterAndDigest,
 		updateFilter,
+		updateColumnNameInFilters,
 		removeAllFilters,
 		removeFilter,
 		toggleFilters,
@@ -128,6 +128,11 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 		FilterService.updateFilter(oldFilter, newValue, keyName);
 		StatisticsService.updateFilteredStatistics();
 		PlaygroundService.updateDatagrid();
+		_saveFilters();
+	}
+
+	function updateColumnNameInFilters(id, name) {
+		FilterService.updateColumnNameInFilters(id, name);
 		_saveFilters();
 	}
 }

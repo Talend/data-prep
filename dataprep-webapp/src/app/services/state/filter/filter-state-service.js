@@ -25,6 +25,7 @@ export function FilterStateService() {
         // grid
 		addGridFilter,
 		updateGridFilter,
+		updateColumnNameInFilters,
 		removeGridFilter,
 		removeAllGridFilters,
 		enableFilters,
@@ -48,6 +49,10 @@ export function FilterStateService() {
 		const index = filterState.gridFilters.indexOf(oldFilter);
 		filterState.gridFilters = filterState.gridFilters.slice(0);
 		filterState.gridFilters[index] = newFilter;
+	}
+
+	function updateColumnNameInFilters(id, name) {
+		filterState.gridFilters.filter(f => f.colId === id).forEach(f => f.colName = name);
 	}
 
 	function removeGridFilter(filterInfo) {

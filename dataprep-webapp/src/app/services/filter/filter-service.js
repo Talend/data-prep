@@ -333,6 +333,10 @@ export default class FilterService {
 		}
 	}
 
+	updateColumnNameInFilters(id, name) {
+		this.StateService.updateColumnNameInFilters(id, name);
+	}
+
 	/**
 	 * @ngdoc method
 	 * @name updateFilter

@@ -47,6 +47,7 @@ describe('Filter Manager Service', () => {
 		spyOn(FilterService, 'removeFilter').and.returnValue();
 		spyOn(FilterService, 'toggleFilters').and.returnValue();
 		spyOn(FilterService, 'updateFilter').and.returnValue();
+		spyOn(FilterService, 'updateColumnNameInFilters').and.returnValue();
 		spyOn(StorageService, 'saveFilter').and.returnValue();
 		spyOn(StorageService, 'removeFilter').and.returnValue();
 		spyOn(PlaygroundService, 'updateDatagrid').and.returnValue();
@@ -259,6 +260,15 @@ describe('Filter Manager Service', () => {
 			FilterManagerService.updateFilter();
 
 			// then
+			expect(StorageService.saveFilter).toHaveBeenCalledWith(
+				stateMock.playground.preparation.id,
+				stateMock.playground.filter.gridFilters
+			);
+		}));
+
+		it('should update filters when a column has been renamed', inject((FilterManagerService, FilterService, StorageService) => {
+			FilterManagerService.updateColumnNameInFilters('0001', 'yoooo');
+			expect(FilterService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'yoooo');
 			expect(StorageService.saveFilter).toHaveBeenCalledWith(
 				stateMock.playground.preparation.id,
 				stateMock.playground.filter.gridFilters

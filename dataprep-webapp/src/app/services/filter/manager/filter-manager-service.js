@@ -131,6 +131,14 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 		_saveFilters();
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name updateColumnNameInFilters
+	 * @methodOf data-prep.services.filter-manager.service:FilterManagerService
+	 * @param {string} id The column id
+	 * @param {string} name The new column name
+	 * @description Updates the column name in the filter's label
+	 */
 	function updateColumnNameInFilters(id, name) {
 		FilterService.updateColumnNameInFilters(id, name);
 		_saveFilters();

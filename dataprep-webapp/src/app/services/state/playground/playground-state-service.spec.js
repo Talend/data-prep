@@ -47,6 +47,7 @@ describe('Playground state service', () => {
         spyOn(FilterStateService, 'reset').and.returnValue();
         spyOn(FilterStateService, 'enableFilters').and.returnValue();
         spyOn(FilterStateService, 'disableFilters').and.returnValue();
+        spyOn(FilterStateService, 'updateColumnNameInFilters').and.returnValue();
         spyOn(LookupStateService, 'reset').and.returnValue();
         spyOn(LookupStateService, 'setVisibility').and.returnValue();
         spyOn(SuggestionsStateService, 'reset').and.returnValue();
@@ -456,6 +457,11 @@ describe('Playground state service', () => {
 
                 //then
                 expect(FilterStateService.enableFilters).toHaveBeenCalledWith();
+            }));
+
+            it('should call proper method to update column name', inject((PlaygroundStateService, FilterStateService) => {
+                PlaygroundStateService.updateColumnNameInFilters('0001', 'tata');
+                expect(FilterStateService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'tata');
             }));
         });
 

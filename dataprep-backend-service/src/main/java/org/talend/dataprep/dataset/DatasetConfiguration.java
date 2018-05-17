@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.dataset;
 
+import java.net.URL;
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -35,7 +36,9 @@ public class DatasetConfiguration {
 
     public static class Service {
 
-        private Provider provider;
+        private Provider provider = Provider.LEGACY;
+
+        private URL url;
 
         public Provider getProvider() {
             return provider;
@@ -43,6 +46,14 @@ public class DatasetConfiguration {
 
         public void setProvider(Provider provider) {
             this.provider = provider;
+        }
+
+        public URL getUrl() {
+            return url;
+        }
+
+        public void setUrl(URL url) {
+            this.url = url;
         }
 
         enum Provider {LEGACY, CATALOG}

@@ -33,7 +33,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component("DataSetList#2")
 @Scope(SCOPE_PROTOTYPE)
-public class DatasetList extends DatasetCatalogCommand<Stream<Dataset>> {
+public class DatasetList extends GenericCommand<Stream<Dataset>> {
 
     private DatasetList() {
         super(GenericCommand.DATASET_GROUP);
@@ -42,7 +42,7 @@ public class DatasetList extends DatasetCatalogCommand<Stream<Dataset>> {
     @PostConstruct
     private void initDataSetList() {
         try {
-            execute(() -> new HttpGet(getDatasetUrl() + "/api/v1/datasets"));
+            execute(() -> new HttpGet(datasetServiceUrl + "/api/v1/datasets"));
             on(HttpStatus.OK).then(this::readResponse);
 
             onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_LIST_DATASETS, e));

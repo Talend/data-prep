@@ -30,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroUtils;
 
@@ -44,7 +45,7 @@ import static org.talend.dataprep.util.avro.AvroUtils.readBinaryStream;
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class DataSetGetContent extends DatasetCatalogCommand<Stream<GenericRecord>> {
+public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
 
     private final String dataSetId;
 
@@ -76,7 +77,7 @@ public class DataSetGetContent extends DatasetCatalogCommand<Stream<GenericRecor
             URI build;
 
             try {
-                build = new URIBuilder(getDatasetUrl() + "/api/v1/datasets/" + dataSetId + "/content")
+                build = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/content")
                         .addParameter("offset", offset)
                         .addParameter("limit", limit)
                         .build();

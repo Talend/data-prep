@@ -36,7 +36,7 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class DataSetGetSchema extends DatasetCatalogCommand<Schema> {
+public class DataSetGetSchema extends GenericCommand<Schema> {
 
     private final String dataSetId;
 
@@ -57,8 +57,7 @@ public class DataSetGetSchema extends DatasetCatalogCommand<Schema> {
     private void initConfiguration() {
         URI datasetURI;
         try {
-            URIBuilder uriBuilder = new URIBuilder(getDatasetUrl());
-            datasetURI = uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId + "/schema").build();
+            datasetURI = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/schema").build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
         }

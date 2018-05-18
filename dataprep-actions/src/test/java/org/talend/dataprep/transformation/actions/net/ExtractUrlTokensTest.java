@@ -252,6 +252,12 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
 
     @Test
     public void testProtocolExtractor() throws URISyntaxException {
+        // TDQ-14551: Support URLs with Asian characters
+        assertEquals("例子.卷筒纸", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://例子.卷筒纸")));
+        assertEquals("例子.卷筒纸", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸")));
+        assertEquals("引き割り.引き割り", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://引き割り.引き割り:8080/引き割metadata.html")));
+        assertEquals("引き割り.引き割り", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8080/引き割metadata.html")));
+
         assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("http://www.yahoo.fr")));
         assertEquals("mailto", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mailto:smallet@talend.com")));
         assertEquals("ftp",

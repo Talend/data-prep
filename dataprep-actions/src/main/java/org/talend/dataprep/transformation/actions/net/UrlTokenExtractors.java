@@ -51,7 +51,23 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
-            return url.getHost();
+            // TDQ-14551: Support URLs with Asian characters
+           String authority = url.getAuthority();
+           if(authority != null) {
+               if(authority.indexOf("@") != -1) {
+                   String domain = authority.substring(authority.indexOf("@")+1);
+                   if(domain.indexOf(":") != -1) {
+                       return domain.substring(0, domain.lastIndexOf(":"));
+                   }
+                   return domain;
+               } else {
+                   if(authority.indexOf(":") != -1) {
+                       return authority.substring(0, authority.lastIndexOf(":"));
+                   }
+                   return authority;
+               }
+           }
+           return url.getHost();
         }
     };
 

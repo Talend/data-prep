@@ -35,8 +35,9 @@
           ng-bind-html="$ctrl.valueWithInvisibleChars"
     />
 
-    <a class="filter-value-btn-remove"
-            ng-show="$ctrl.removable"
-            ng-click="$ctrl.onRemove()">&times;
+    <a  class="filter-value-btn-remove"
+        role="button"
+        ng-show="$ctrl.removable"
+        ng-click="$ctrl.onRemove()">&times;
     </a>
 </div>

@@ -221,7 +221,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 		const params = {
 			metadata,
 			includeTechnicalProperties: true,
-			filter: tql,
+			filter: tql || '',
 		};
 
 		return $http(

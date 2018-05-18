@@ -1002,8 +1002,10 @@ export default function PlaygroundService(
 	}
 
 	function updatePlayground(data) {
-		// Remove filters from filter bar if the columns are removed and refresh the grid
-		if (!cleanFilters(data)) {
+		if (cleanFilters(data)) {
+			updateDatagrid();
+		}
+		else {
 			DatagridService.updateData(data);
 			PreviewService.reset(false);
 		}

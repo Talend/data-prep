@@ -853,6 +853,12 @@ describe('Filter service', () => {
 	describe('update filter', () => {
 		beforeEach(inject((StateService) => {
 			spyOn(StateService, 'updateGridFilter').and.returnValue();
+			spyOn(StateService, 'updateColumnNameInFilters').and.returnValue();
+		}));
+
+		it('should call the proper service if a column name is altered', inject((FilterService, StateService) => {
+			FilterService.updateColumnNameInFilters('0001', 'heeeey');
+			expect(StateService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'heeeey');
 		}));
 
 		it('should update "contains" filter', inject((FilterService, StateService) => {

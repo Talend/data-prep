@@ -110,6 +110,7 @@ export function PlaygroundStateService($translate,
 		// filters
 		addGridFilter,
 		updateGridFilter,
+		updateColumnNameInFilters,
 		removeGridFilter,
 		removeAllGridFilters,
 		enableFilters,
@@ -257,6 +258,10 @@ export function PlaygroundStateService($translate,
 	function addGridFilter(filter) {
 		FilterStateService.addGridFilter(filter);
 		FilterStateService.enableFilters();
+	}
+
+	function updateColumnNameInFilters(id, name) {
+		FilterStateService.updateColumnNameInFilters(id, name);
 	}
 
 	function updateGridFilter(oldFilter, newFilter) {

@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -131,7 +135,7 @@ public class DateParserTest {
         assertEquals(new DatePattern("yyyy-MM-dd", 1), action.guessPattern("2015-01-02", column));
         assertEquals(new DatePattern("9999", 1), action.guessPattern("2015", column));
         // Since TDQ-14001 the result, could be sensitive to the local => July 14 2015 is now recognize as "MMM d yyyy" or "MMMM d yyyy"
-        assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("July 14 2015", column));
+        assertThat(action.guessPattern("July 14 2015", column), anyOf(is(new DatePattern("MMM d yyyy", 1)), is(new DatePattern("MMMM d yyyy", 1))));
         assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("Juillet 14 2015", column));
         assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jui 14 2015", column));
         assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jul 14 2015", column));

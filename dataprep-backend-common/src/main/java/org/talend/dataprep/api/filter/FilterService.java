@@ -16,12 +16,12 @@ package org.talend.dataprep.api.filter;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 
-@FunctionalInterface
 public interface FilterService {
 
     /**
@@ -35,4 +35,12 @@ public interface FilterService {
      * @see ActionFactory#create(ActionDefinition, Map)
      */
     Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata);
+
+    /**
+     * Validate the filter as a correct filter.
+     *
+     * @param filterAsString The filter to be parsed.
+     * @throws TalendRuntimeException if filter is not valid.
+     */
+    void validateFilter(String filterAsString);
 }

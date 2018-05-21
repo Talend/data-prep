@@ -12,17 +12,20 @@
 
 package org.talend.dataprep.api.filter;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
-import java.util.Iterator;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A walker for the JSON structure of a filter. This class walks the JSON structure and calls the corresponding methods
@@ -68,6 +71,7 @@ public class JSONFilterWalker {
 
     /**
      * Walks the JSON structure of <code>filterAsString</code> and calls the methods in <code>callback</code>
+     *
      * @param filterAsString The JSON filter to be parsed.
      * @param rowMetadata An optional row metadata.
      * @param callback The {@link JSONFilterCallback callback} to be called during walk.
@@ -92,6 +96,23 @@ public class JSONFilterWalker {
         }
     }
 
+    /**
+     * Validate the filter as a correct json object.
+     *
+     * @param filterAsString The JSON filter to be parsed.
+     * @throws TalendRuntimeException if filter is not valid.
+     */
+    public static void validate(String filterAsString) {
+        if (!StringUtils.isEmpty(filterAsString)) {
+            final ObjectMapper mapper = new ObjectMapper();
+            try {
+                mapper.reader().readTree(filterAsString);
+            } catch (IOException e) {
+                throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e);
+            }
+        }
+    }
+
     // Internal method for walk structure
     private static <T> T buildFilter(JsonNode currentNode, RowMetadata rowMetadata, JSONFilterCallback<T> callBack) {
         final Iterator<JsonNode> children = currentNode.elements();
@@ -101,7 +122,8 @@ public class JSONFilterWalker {
 
         final Iterator<String> propertiesIterator = currentNode.fieldNames();
         if (!propertiesIterator.hasNext()) {
-            throw new UnsupportedOperationException("Unsupported query, empty filter definition: " + currentNode.toString());
+            throw new UnsupportedOperationException(
+                    "Unsupported query, empty filter definition: " + currentNode.toString());
         }
 
         final String operation = propertiesIterator.next();
@@ -185,19 +207,22 @@ public class JSONFilterWalker {
         }
     }
 
-    private static <T> T createAndPredicate(final JsonNode nodeContent, RowMetadata rowMetadata, JSONFilterCallback<T> callback) {
+    private static <T> T createAndPredicate(final JsonNode nodeContent, RowMetadata rowMetadata,
+            JSONFilterCallback<T> callback) {
         final T leftFilter = walk(nodeContent.get(0).toString(), rowMetadata, callback);
         final T rightFilter = walk(nodeContent.get(1).toString(), rowMetadata, callback);
         return callback.and(leftFilter, rightFilter);
     }
 
-    private static <T> T createOrPredicate(final JsonNode nodeContent, RowMetadata rowMetadata, JSONFilterCallback<T> callback) {
+    private static <T> T createOrPredicate(final JsonNode nodeContent, RowMetadata rowMetadata,
+            JSONFilterCallback<T> callback) {
         final T leftFilter = walk(nodeContent.get(0).toString(), rowMetadata, callback);
         final T rightFilter = walk(nodeContent.get(1).toString(), rowMetadata, callback);
         return callback.or(leftFilter, rightFilter);
     }
 
-    private static <T> T createNotPredicate(final JsonNode nodeContent, RowMetadata rowMetadata, JSONFilterCallback<T> callback) {
+    private static <T> T createNotPredicate(final JsonNode nodeContent, RowMetadata rowMetadata,
+            JSONFilterCallback<T> callback) {
         if (!nodeContent.isObject()) {
             throw new IllegalArgumentException("Unsupported query, malformed 'not' (expected 1 object child).");
         }

@@ -35,9 +35,12 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.tql.excp.TqlException;
 import org.talend.tql.model.AllFields;
 import org.talend.tql.model.AndExpression;
 import org.talend.tql.model.ComparisonExpression;
@@ -73,6 +76,17 @@ public class TQLFilterService implements FilterService {
         return parsedPredicate.accept(new DataSetPredicateVisitor(rowMetadata));
     }
 
+    @Override
+    public void validateFilter(String filterAsString) {
+        if (!StringUtils.isEmpty(filterAsString)) {
+            try {
+                Tql.parse(filterAsString);
+            } catch (TqlException tqle) {
+                throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, tqle);
+            }
+        }
+    }
+
     public List<ColumnMetadata> getFilterColumnsMetadata(String filterAsString, RowMetadata rowMetadata) {
         if (StringUtils.isEmpty(filterAsString)) {
             return null;
@@ -89,9 +103,11 @@ public class TQLFilterService implements FilterService {
     }
 
     private static class DatasetColumnVisitor implements IASTVisitor<List<String>> {
+
         private final List<String> columns = new ArrayList<>();
 
-        private DatasetColumnVisitor() {}
+        private DatasetColumnVisitor() {
+        }
 
         public List<String> getColumns() {
             return columns;
@@ -298,7 +314,8 @@ public class TQLFilterService implements FilterService {
         public Predicate<DataSetRow> visit(FieldInExpression fieldInExpression) {
             fieldInExpression.getField().accept(this);
             final String columnName = fields.pop();
-            final List<String> collect = Stream.of(fieldInExpression.getValues()).map(LiteralValue::getValue).collect(Collectors.toList());
+            final List<String> collect =
+                    Stream.of(fieldInExpression.getValues()).map(LiteralValue::getValue).collect(Collectors.toList());
 
             return createInPredicate(columnName, collect);
         }

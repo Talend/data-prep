@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
+import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedDataSetMetadata;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
@@ -82,6 +84,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class DataSetAPI extends APIService {
+
+    @Autowired
+    private FilterService filterService;
 
     /**
      * Create a dataset from request body content.
@@ -211,6 +216,9 @@ public class DataSetAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting dataset #{} (pool: {})...", id, getConnectionStats());
         }
+
+        filterService.validateFilter(filter);
+
         try {
             final HystrixCommand<InputStream> retrievalCommand = getCommand(DataSetGet.class, id, fullContent, includeTechnicalProperties, filter);
             HttpResponseContext.contentType(APPLICATION_JSON_VALUE);

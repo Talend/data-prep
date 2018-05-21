@@ -12,13 +12,13 @@
 
 package org.talend.dataprep.api.filter;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.transformation.actions.date.DateParser;
+import static org.talend.dataprep.api.filter.JSONFilterWalker.validate;
+import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
 
 import java.util.function.Predicate;
 
-import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 
 /**
  * An implementation of {@link FilterService} that reads a JSON-based language.
@@ -31,5 +31,10 @@ public class SimpleFilterService implements FilterService {
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
         final PredicateCallback callback = new PredicateCallback();
         return walk(filterAsString, rowMetadata, callback);
+    }
+
+    @Override
+    public void validateFilter(String filterAsString) {
+        validate(filterAsString);
     }
 }

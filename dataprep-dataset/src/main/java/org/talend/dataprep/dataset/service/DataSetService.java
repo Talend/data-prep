@@ -75,6 +75,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -432,8 +433,11 @@ public class DataSetService extends BaseDataSetService {
                     @PathVariable(value = "id") @ApiParam(name = "id",
                             value = "Id of the requested data set") String dataSetId) {
         return () -> {
+            filterService.validateFilter(filter);
+
             final Marker marker = Markers.dataset(dataSetId);
             LOG.debug(marker, "Get data set #{}", dataSetId);
+            Stream<DataSetRow> stream = null;
             try {
                 DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
                 assertDataSetMetadata(dataSetMetadata, dataSetId);
@@ -442,7 +446,7 @@ public class DataSetService extends BaseDataSetService {
                 if (metadata) {
                     dataSet.setMetadata(conversionService.convert(dataSetMetadata, UserDataSetMetadata.class));
                 }
-                Stream<DataSetRow> stream = contentStore.stream(dataSetMetadata, -1); // Disable line limit
+                stream = contentStore.stream(dataSetMetadata, -1); // Disable line limit
                 if (!includeInternalContent) {
                     LOG.debug("Skip internal content when serving data set #{} content.", dataSetId);
                     stream = stream.map(r -> {
@@ -450,9 +454,9 @@ public class DataSetService extends BaseDataSetService {
                         final Map<String, Object> filteredValues = new HashMap<>(values);
                         values.forEach((k, v) -> {
                             if (k != null && k.startsWith(FlagNames.INTERNAL_PROPERTY_PREFIX)) { // Removes technical
-                                                                                                 // properties
-                                                                                                 // from returned
-                                                                                                 // values.
+                                // properties
+                                // from returned
+                                // values.
                                 filteredValues.remove(k);
                             }
                         });
@@ -467,6 +471,11 @@ public class DataSetService extends BaseDataSetService {
 
                 dataSet.setRecords(stream);
                 return dataSet;
+            } catch (Exception e) {
+                if (stream != null) {
+                    stream.close();
+                }
+                throw new TDPException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e, ExceptionContext.build());
             } finally {
                 LOG.debug(marker, "Get done.");
             }

@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.AggregateOperation;
 import org.talend.dataprep.helper.api.AggregateResult;
@@ -40,8 +38,6 @@ import cucumber.api.java.en.When;
  * Step dealing with aggregation
  */
 public class AggregateStep extends DataPrepStep {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AggregateStep.class);
 
     @When("^I apply an aggregation preparation \"(.*)\" with parameters :$")
     public void applyAnAggregation(String preparationName, DataTable dataTable) throws Exception {
@@ -84,6 +80,8 @@ public class AggregateStep extends DataPrepStep {
                 break;
             case "SUM":
                 element.sum = params.get(data);
+                break;
+            default:
                 break;
             }
             result.add(element);

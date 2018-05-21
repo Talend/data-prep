@@ -41,9 +41,6 @@ public class DateParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateParser.class);
 
-    // top k frequency table
-    private static final int topKFrequency  = 5;
-
     private final AnalyzerService analyzerService;
 
     public DateParser() {
@@ -114,8 +111,8 @@ public class DateParser {
             final Analyzers.Result result = analyzer.getResult().get(0);
             if (result.exist(PatternFrequencyStatistics.class)) {
                 final PatternFrequencyStatistics patternFrequencyStatistics = result.get(PatternFrequencyStatistics.class);
-                final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(topKFrequency);
-                List<PatternFrequency> patterns = new ArrayList<>(topKFrequency);
+                final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(1);
+                List<PatternFrequency> patterns = new ArrayList<>(1);
                 topTerms.forEach((s, o) -> patterns.add(new PatternFrequency(s, o)));
 
                 // get & check the results

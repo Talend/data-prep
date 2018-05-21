@@ -130,7 +130,11 @@ public class DateParserTest {
         assertEquals(new DatePattern("d/M/yyyy", 1), action.guessPattern("1/2/2015", column));
         assertEquals(new DatePattern("yyyy-MM-dd", 1), action.guessPattern("2015-01-02", column));
         assertEquals(new DatePattern("9999", 1), action.guessPattern("2015", column));
-        assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("July 14 2015", column));
+        // Since TDQ-14001 the result, could be sensitive to the local => July 14 2015 is now recognize as "MMM d yyyy" or "MMMM d yyyy"
+        assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("July 14 2015", column));
+        assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("Juillet 14 2015", column));
+        assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jui 14 2015", column));
+        assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jul 14 2015", column));
     }
 
     @Test(expected = DateTimeException.class)

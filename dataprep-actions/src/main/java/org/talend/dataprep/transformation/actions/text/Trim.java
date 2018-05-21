@@ -52,6 +52,8 @@ public class Trim extends AbstractMultiScopeAction {
      */
     public static final String TRIM_ACTION_NAME = "trim"; //$NON-NLS-1$
 
+    protected static final String NEW_COLUMN_SUFFIX = "_trim";
+
     /**
      * Padding Character.
      */
@@ -63,20 +65,18 @@ public class Trim extends AbstractMultiScopeAction {
     static final String CUSTOM_PADDING_CHAR_PARAMETER = "custom_padding_character"; //$NON-NLS-1$
 
     /**
-     * String Converter help class.
-     */
-    private static final String STRING_TRIMMER = "string_trimmer"; //$NON-NLS-1$
-
-    /**
      * Keys used in the values of different parameters:
      */
     static final String CUSTOM = "custom"; //$NON-NLS-1$
 
-    private static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
-
-    protected static final String NEW_COLUMN_SUFFIX = "_trim";
+    /**
+     * String Converter help class.
+     */
+    private static final String STRING_TRIMMER = "string_trimmer"; //$NON-NLS-1$
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+
+    private static final String WHITESPACE = "whitespace"; //$NON-NLS-1$
 
     public Trim() {
         this(COLUMN);
@@ -161,9 +161,9 @@ public class Trim extends AbstractMultiScopeAction {
     @Override
     public Set<Behavior> getBehavior() {
         if (DATASET.equals(scope)) {
-            return EnumSet.of(Behavior.VALUES_ALL, Behavior.NEED_STATISTICS_PATTERN);
+            return EnumSet.of(Behavior.VALUES_ALL);
         } else {
-            return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.NEED_STATISTICS_PATTERN);
+            return EnumSet.of(Behavior.VALUES_COLUMN);
         }
     }
 

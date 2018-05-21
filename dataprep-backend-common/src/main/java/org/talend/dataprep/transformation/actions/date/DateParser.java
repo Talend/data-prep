@@ -41,6 +41,9 @@ public class DateParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateParser.class);
 
+    // top k frequency table
+    private static final int topKFrequency  = 5;
+
     private final AnalyzerService analyzerService;
 
     public DateParser() {
@@ -111,8 +114,8 @@ public class DateParser {
             final Analyzers.Result result = analyzer.getResult().get(0);
             if (result.exist(PatternFrequencyStatistics.class)) {
                 final PatternFrequencyStatistics patternFrequencyStatistics = result.get(PatternFrequencyStatistics.class);
-                final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(1);
-                List<PatternFrequency> patterns = new ArrayList<>(1);
+                final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(topKFrequency);
+                List<PatternFrequency> patterns = new ArrayList<>(topKFrequency);
                 topTerms.forEach((s, o) -> patterns.add(new PatternFrequency(s, o)));
 
                 // get & check the results
@@ -122,7 +125,7 @@ public class DateParser {
                 }
 
                 // as Christopher L. said : "there can be only one" :-)
-                return getPatterns(patterns).get(0);
+                return results.get(0);
             } else {
                 throw new DateTimeException("DQ did not find any pattern for '" + value + "'");
             }

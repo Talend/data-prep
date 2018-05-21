@@ -13,17 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataprep.transformation.actions.Providers;
-import org.talend.dataquality.common.inference.Analyzer;
-import org.talend.dataquality.common.inference.Analyzers;
-import org.talend.dataquality.statistics.datetime.SystemDateTimePatternManager;
-import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -38,8 +29,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.Providers;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.statistics.datetime.SystemDateTimePatternManager;
+import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 
 /**
  * Component in charge of parsing dates.
@@ -64,7 +64,7 @@ public class DateParser {
      * At first uses the known date patterns from the column statistics. If it fails, the DQ library is called to try to get the
      * pattern.
      *
-     * @param value  the value to get the date time from. Value can't be be empty or null/
+     * @param value the value to get the date time from. Value can't be be empty or null/
      * @param column the column to get the date patterns from.
      * @return the parsed date time. For date only value, time is set to 00:00:00.
      * @throws DateTimeException if the date cannot be parsed, or if value is empty or null.
@@ -82,7 +82,7 @@ public class DateParser {
      * Try to guess the pattern from the value. If the date is successfully parsed, the column statistics is updated
      * with the new pattern.
      *
-     * @param value  the date to parse.
+     * @param value the date to parse.
      * @param column the column.
      * @return the parsed date.
      * @throws DateTimeException if the date cannot be parsed.
@@ -101,7 +101,7 @@ public class DateParser {
     /**
      * Guess the pattern from the given value.
      *
-     * @param value  the value to get the date time from.
+     * @param value the value to get the date time from.
      * @param column the column metadata
      * @return the wanted parsed date time. For date only value, time is set to 00:00:00.
      */
@@ -141,7 +141,7 @@ public class DateParser {
     /**
      * Parse the date from the given patterns.
      *
-     * @param value    the text to parse.
+     * @param value the text to parse.
      * @param patterns the patterns to use.
      * @return the parsed date-time
      */
@@ -154,8 +154,8 @@ public class DateParser {
 
         for (DatePattern pattern : patterns) {
             // TDQ-14421 use ResolverStyle.STRICT to parse a date. such as "2017-02-29" should be invalid.
-            final DateTimeFormatter formatter =
-                    SystemDateTimePatternManager.getDateTimeFormatterByPattern(pattern.getPattern(), Locale.ENGLISH);
+            final DateTimeFormatter formatter = SystemDateTimePatternManager.getDateTimeFormatterByPattern(pattern.getPattern(),
+                    Locale.ENGLISH);
             if (formatter == null) {
                 continue;
             }
@@ -186,9 +186,7 @@ public class DateParser {
     public List<DatePattern> getPatterns(List<PatternFrequency> patternsFrequency) {
         final Set<String> distinctPatterns = new HashSet<>(patternsFrequency.size());
 
-        return patternsFrequency
-                .stream()
-                .filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
+        return patternsFrequency.stream().filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
                 .filter(patternFreqItem -> distinctPatterns.add(patternFreqItem.getPattern())) // use Set<> to detect if
                 // pattern is a duplicate
                 .map(patternFreqItem -> {
@@ -199,9 +197,7 @@ public class DateParser {
                         LOGGER.debug("Unable to parse pattern '{}'", patternFreqItem.getPattern(), e);
                         return null;
                     }
-                })
-                .filter(Objects::nonNull) // remove non valid date patterns
-                .sorted()
-                .collect(toList());
+                }).filter(Objects::nonNull) // remove non valid date patterns
+                .sorted().collect(toList());
     }
 }

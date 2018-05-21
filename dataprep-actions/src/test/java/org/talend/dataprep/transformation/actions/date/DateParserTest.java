@@ -1,25 +1,22 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
 
-import org.junit.Test;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.anyOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,10 +29,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.anyOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 
 /**
  * Unit test for the DateParser class.
@@ -62,8 +62,13 @@ public class DateParserTest {
     public void getPatterns_should_remove_invalid_or_empty_then_sort_patterns() throws IOException {
         // given
         final DataSetRow row = ActionMetadataTestUtils.getRow("toto", "04/25/1999", "tata");
-        ActionMetadataTestUtils.setStatistics(row, "0001", getDateTestJsonAsStream("statistics_with_different_test_cases.json")); //contains valid, invalid, empty patterns
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
+        ActionMetadataTestUtils.setStatistics(row, "0001", getDateTestJsonAsStream("statistics_with_different_test_cases.json")); // contains
+                                                                                                                                  // valid,
+                                                                                                                                  // invalid,
+                                                                                                                                  // empty
+                                                                                                                                  // patterns
+        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics()
+                .getPatternFrequencies();
 
         // when
         final List<DatePattern> actual = action.getPatterns(patternFrequencies);
@@ -78,7 +83,7 @@ public class DateParserTest {
 
     @Test
     public void parseDateFromPatterns_should_parse_from_multiple_patterns() throws ParseException {
-        //given
+        // given
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         final TemporalAccessor date = LocalDate.of(2015, 8, 17);
         final String expected = dtf.format(date);
@@ -88,7 +93,7 @@ public class DateParserTest {
         patterns.add(new DatePattern("MM-dd-yy", 1));
         patterns.add(new DatePattern("yy/dd/MM", 1));
 
-        //when/then
+        // when/then
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("08-17-15", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", patterns)));
@@ -113,7 +118,7 @@ public class DateParserTest {
 
     @Test
     public void parseDateFromPatterns_should_parse_independently_of_empty_patterns() throws ParseException {
-        //given
+        // given
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         final TemporalAccessor date = LocalDate.of(2015, 8, 17);
         final String expected = dtf.format(date);
@@ -122,10 +127,10 @@ public class DateParserTest {
         patterns.add(new DatePattern("", 1));
         patterns.add(new DatePattern("yyyy/MM/dd", 2));
 
-        //when
+        // when
         final String actual = dtf.format(action.parseDateFromPatterns("2015/08/17", patterns));
 
-        //then
+        // then
         assertEquals(expected, actual);
     }
 
@@ -136,8 +141,10 @@ public class DateParserTest {
         assertEquals(new DatePattern("d/M/yyyy", 1), action.guessPattern("1/2/2015", column));
         assertEquals(new DatePattern("yyyy-MM-dd", 1), action.guessPattern("2015-01-02", column));
         assertEquals(new DatePattern("9999", 1), action.guessPattern("2015", column));
-        // Since TDQ-14001 the result, could be sensitive to the local => July 14 2015 is now recognize as "MMM d yyyy" or "MMMM d yyyy"
-        assertThat(action.guessPattern("July 14 2015", column), anyOf(is(new DatePattern("MMM d yyyy", 1)), is(new DatePattern("MMMM d yyyy", 1))));
+        // Since TDQ-14001 the result, could be sensitive to the local => July 14 2015 is now recognize as "MMM d yyyy" or "MMMM d
+        // yyyy"
+        assertThat(action.guessPattern("July 14 2015", column),
+                anyOf(is(new DatePattern("MMM d yyyy", 1)), is(new DatePattern("MMMM d yyyy", 1))));
         assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("Juillet 14 2015", column));
         assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jui 14 2015", column));
         assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jul 14 2015", column));

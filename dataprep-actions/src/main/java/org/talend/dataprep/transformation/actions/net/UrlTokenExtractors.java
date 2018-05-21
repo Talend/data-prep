@@ -74,8 +74,12 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
-            final int port = url.getPort();
-            return port == -1 ? "" : port + "";
+            try {
+                final int port = new java.net.URL(url.toASCIIString()).getPort();
+                return port == -1 ? "" : port + "";
+            } catch (java.net.MalformedURLException e) {
+                return url.getPort() == -1 ? "" : url.getPort() + "";
+            }
         }
 
         @Override
@@ -145,8 +149,12 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
-            final String userInfo = url.getUserInfo();
-            return userInfo == null ? "" : userInfo.split(":")[0];
+            try {
+                final String userInfo = new java.net.URL(url.toASCIIString()).getUserInfo();
+                return userInfo == null ? "" : userInfo.split(":")[0];
+            } catch (java.net.MalformedURLException e) {
+                return url.getUserInfo() == null ? "" : url.getUserInfo().split(":")[0];
+            }
         }
     };
 
@@ -162,8 +170,12 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
-            final String userInfo = url.getUserInfo();
-            return userInfo == null ? "" : userInfo.split(":")[1];
+            try {
+                final String userInfo = new java.net.URL(url.toASCIIString()).getUserInfo();
+                return userInfo == null ? "" : userInfo.split(":")[1];
+            } catch (java.net.MalformedURLException e) {
+                return url.getUserInfo() == null ? "" : url.getUserInfo().split(":")[1];
+            }
         }
     };
 

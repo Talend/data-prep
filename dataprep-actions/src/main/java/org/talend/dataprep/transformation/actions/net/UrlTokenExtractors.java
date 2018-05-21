@@ -52,22 +52,13 @@ public class UrlTokenExtractors {
         @Override
         public String extractToken(URI url) {
             // TDQ-14551: Support URLs with Asian characters
-           String authority = url.getAuthority();
-           if(authority != null) {
-               if(authority.indexOf("@") != -1) {
-                   String domain = authority.substring(authority.indexOf("@")+1);
-                   if(domain.indexOf(":") != -1) {
-                       return domain.substring(0, domain.lastIndexOf(":"));
-                   }
-                   return domain;
-               } else {
-                   if(authority.indexOf(":") != -1) {
-                       return authority.substring(0, authority.lastIndexOf(":"));
-                   }
-                   return authority;
-               }
-           }
-           return url.getHost();
+            try {
+                return java.net.URLDecoder.decode(new java.net.URL(url.toASCIIString()).getHost(), java.nio.charset.StandardCharsets.UTF_8.name());
+            } catch (java.net.MalformedURLException e) {
+                return url.getHost();
+            } catch (java.io.UnsupportedEncodingException e) {
+                return url.getHost();
+            }
         }
     };
 

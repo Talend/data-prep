@@ -13,10 +13,13 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,22 +32,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.hamcrest.core.Is;
-import org.junit.Test;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.anyOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit test for the DateParser class.
+ *
  * @see DateParser
  */
 public class DateParserTest {
 
-    /** The action to test. */
+    /**
+     * The action to test.
+     */
     private final DateParser action = new DateParser(new AnalyzerService());
 
     protected InputStream getDateTestJsonAsStream(String testFileName) {

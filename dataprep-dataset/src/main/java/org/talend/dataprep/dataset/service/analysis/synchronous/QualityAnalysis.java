@@ -37,7 +37,6 @@ import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
-import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 @Component
 public class QualityAnalysis implements SynchronousDataSetAnalyzer {

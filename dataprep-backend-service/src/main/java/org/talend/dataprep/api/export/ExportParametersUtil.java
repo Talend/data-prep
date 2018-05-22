@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.api.export;
 
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -28,9 +31,6 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.exception.TDPException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 @Component
 public class ExportParametersUtil {
@@ -61,13 +61,13 @@ public class ExportParametersUtil {
         result.setFilter(exportParam.getFilter());
 
         // we deal with a preparation export parameter. We need to populate stepId and datasetId
-        if(StringUtils.isNotEmpty(exportParam.getPreparationId())){
+        if (StringUtils.isNotEmpty(exportParam.getPreparationId())) {
             Preparation prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
             result.setStepId(getCleanStepId(prep, exportParam.getStepId()));
-            if(exportParam.getFrom() != ExportParameters.SourceType.FILTER){
+            if (exportParam.getFrom() != ExportParameters.SourceType.FILTER) {
                 result.setDatasetId(prep.getDataSetId());
             }
-        } else{
+        } else {
             // it'w a dataset export parameter. We need to switch stepId to empty
             result.setStepId("");
         }
@@ -84,7 +84,8 @@ public class ExportParametersUtil {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {
             return mapper.readerFor(PreparationMessage.class).readValue(details);
         } catch (IOException e) {

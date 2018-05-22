@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class PreparationContent {
 
     public List<Object> records = new ArrayList<>();
+
     public ContentMetadata metadata;
 
 }

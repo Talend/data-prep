@@ -1,7 +1,12 @@
 package org.talend.dataprep.qa.step.export;
 
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.*;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.DATASET_ID;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.EXPORT_TYPE;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILENAME;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILTER;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.PREPARATION_ID;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.STEP_ID;
 import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
 
 import java.io.File;

@@ -40,9 +40,9 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
      * <p>
      * It first tries String comparison, and if not 'true' uses number comparison.
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The compare value
+     * @param value The compare value
      * @return The eq predicate
      */
     @Override
@@ -54,13 +54,14 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the var is greater than a value
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The compare value
+     * @param value The compare value
      * @return The gt predicate
      */
     @Override
-    public Predicate<DataSetRow> createGreaterThanPredicate(final JsonNode node, final String columnId, final String value) {
+    public Predicate<DataSetRow> createGreaterThanPredicate(final JsonNode node, final String columnId,
+            final String value) {
         checkValidValue(node, value);
         return DataSetRowFilters.createGreaterThanPredicate(columnId, value);
     }
@@ -68,13 +69,14 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the var is lower than a value
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The compare value
+     * @param value The compare value
      * @return The lt predicate
      */
     @Override
-    public Predicate<DataSetRow> createLowerThanPredicate(final JsonNode node, final String columnId, final String value) {
+    public Predicate<DataSetRow> createLowerThanPredicate(final JsonNode node, final String columnId,
+            final String value) {
         checkValidValue(node, value);
         return DataSetRowFilters.createLowerThanPredicate(columnId, value);
     }
@@ -82,13 +84,14 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the var is greater than or equals to a value
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The compare value
+     * @param value The compare value
      * @return The gte predicate
      */
     @Override
-    public Predicate<DataSetRow> createGreaterOrEqualsPredicate(final JsonNode node, final String columnId, final String value) {
+    public Predicate<DataSetRow> createGreaterOrEqualsPredicate(final JsonNode node, final String columnId,
+            final String value) {
         checkValidValue(node, value);
         return DataSetRowFilters.createGreaterOrEqualsPredicate(columnId, value);
     }
@@ -96,13 +99,14 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the var is lower than or equals to a value
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The compare value
+     * @param value The compare value
      * @return The lte predicate
      */
     @Override
-    public Predicate<DataSetRow> createLowerOrEqualsPredicate(final JsonNode node, final String columnId, final String value) {
+    public Predicate<DataSetRow> createLowerOrEqualsPredicate(final JsonNode node, final String columnId,
+            final String value) {
         checkValidValue(node, value);
         return DataSetRowFilters.createLowerOrEqualsPredicate(columnId, value);
     }
@@ -110,13 +114,14 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the var contains a value
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The contained value
+     * @param value The contained value
      * @return The contains predicate
      */
     @Override
-    public Predicate<DataSetRow> createContainsPredicate(final JsonNode node, final String columnId, final String value) {
+    public Predicate<DataSetRow> createContainsPredicate(final JsonNode node, final String columnId,
+            final String value) {
         checkValidValue(node, value);
         return DataSetRowFilters.createContainsPredicate(columnId, value);
     }
@@ -124,13 +129,14 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the var matches a value
      *
-     * @param node     The filter node
+     * @param node The filter node
      * @param columnId The column id
-     * @param value    The value to match
+     * @param value The value to match
      * @return The match predicate
      */
     @Override
-    public Predicate<DataSetRow> createCompliesPredicate(final JsonNode node, final String columnId, final String value) {
+    public Predicate<DataSetRow> createCompliesPredicate(final JsonNode node, final String columnId,
+            final String value) {
         checkValidValue(node, value);
         return DataSetRowFilters.createCompliesPredicate(columnId, value);
     }
@@ -171,24 +177,26 @@ public class PredicateCallback implements JSONFilterCallback<Predicate<DataSetRo
     /**
      * Create a predicate that checks if the value is within a range [min, max[
      *
-     * @param columnId    The column id
+     * @param columnId The column id
      * @param node The node content that contains min/max values
      * @return The range predicate
      */
     @Override
     public Predicate<DataSetRow> createRangePredicate(final String columnId, final JsonNode node,
-                                                      final RowMetadata rowMetadata) {
+            final RowMetadata rowMetadata) {
         final String start = node.get("start").asText();
         final String end = node.get("end").asText();
         final boolean upperBoundOpen = Optional.ofNullable(node.get("upperOpen")).map(JsonNode::asBoolean).orElse(true);
-        final boolean lowerBoundOpen = Optional.ofNullable(node.get("lowerOpen")).map(JsonNode::asBoolean).orElse(false);
-        return DataSetRowFilters.createRangePredicate(columnId, start, end, lowerBoundOpen, upperBoundOpen, rowMetadata);
+        final boolean lowerBoundOpen =
+                Optional.ofNullable(node.get("lowerOpen")).map(JsonNode::asBoolean).orElse(false);
+        return DataSetRowFilters.createRangePredicate(columnId, start, end, lowerBoundOpen, upperBoundOpen,
+                rowMetadata);
     }
 
     /**
      * check if the node has a non null value
      *
-     * @param node  The node to test
+     * @param node The node to test
      * @param value The node 'value' property
      * @throws IllegalArgumentException If the node has not a 'value' property
      */

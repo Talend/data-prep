@@ -12,6 +12,12 @@
 
 package org.talend.dataprep.transformation.api.transformer.json;
 
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
+import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
+
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +45,6 @@ import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
 import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
-
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
-import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 
 @Component
 public class PipelineTransformer implements Transformer {
@@ -85,18 +85,20 @@ public class PipelineTransformer implements Transformer {
         // prepare the fallback row metadata
         RowMetadataFallbackProvider rowMetadataFallbackProvider = new RowMetadataFallbackProvider(rowMetadata);
 
-        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(), configuration.output(),
-                configuration.getArguments());
+        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
+                configuration.output(), configuration.getArguments());
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
-                configuration.stepId(), configuration.getSourceType());
+        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
+                configuration.getPreparationId(), configuration.stepId(), configuration.getSourceType());
         final PreparationMessage preparation = configuration.getPreparation();
         // function that from a step gives the rowMetadata associated to the previous/parent step
-        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional.ofNullable(s.getParent()) //
+        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional
+                .ofNullable(s.getParent()) //
                 .map(id -> preparationUpdater.get(id)) //
                 .orElse(null);
 
-        final Pipeline pipeline = Pipeline.Builder.builder() //
+        final Pipeline pipeline = Pipeline.Builder
+                .builder() //
                 .withRowMetadataFallbackProvider(rowMetadataFallbackProvider) //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //

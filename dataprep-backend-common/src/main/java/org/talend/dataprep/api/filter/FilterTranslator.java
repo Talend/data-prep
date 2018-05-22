@@ -13,13 +13,14 @@
 
 package org.talend.dataprep.api.filter;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.api.dataset.RowMetadata;
+import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
 
 import java.util.Optional;
 
-import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.dataset.RowMetadata;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Translate legacy JSON filters to TQL filters.
@@ -99,12 +100,15 @@ public class FilterTranslator {
 
         @Override
         public String createRangePredicate(String columnId, JsonNode node, RowMetadata rowMetadata) {
-            final boolean upperBoundOpen = Optional.ofNullable(node.get("upperOpen")).map(JsonNode::asBoolean).orElse(true);
-            final boolean lowerBoundOpen = Optional.ofNullable(node.get("lowerOpen")).map(JsonNode::asBoolean).orElse(false);
+            final boolean upperBoundOpen =
+                    Optional.ofNullable(node.get("upperOpen")).map(JsonNode::asBoolean).orElse(true);
+            final boolean lowerBoundOpen =
+                    Optional.ofNullable(node.get("lowerOpen")).map(JsonNode::asBoolean).orElse(false);
             final String lowerBound = lowerBoundOpen ? "]" : "[";
             final String upperBound = upperBoundOpen ? "[" : "]";
 
-            return columnId + " between " + lowerBound + node.get("start").asText() + ", " + node.get("end").asText() + upperBound;
+            return columnId + " between " + lowerBound + node.get("start").asText() + ", " + node.get("end").asText()
+                    + upperBound;
         }
 
         @Override

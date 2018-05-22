@@ -23,7 +23,6 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,6 +31,7 @@ import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -97,6 +97,15 @@ public class RowMetadata implements Serializable {
     }
 
     /**
+     * @param columnMetadata the metadata to set.
+     */
+    public void setColumns(List<ColumnMetadata> columnMetadata) {
+        columns.clear();
+        nextId = 0;
+        columnMetadata.forEach(this::addColumn);
+    }
+
+    /**
      * Returns true if this data set metadata is compatible with <tt>rowMetadata</tt> (they have same types in
      * the same order and same column names) and false otherwise.
      *
@@ -115,15 +124,6 @@ public class RowMetadata implements Serializable {
             }
         }
         return true;
-    }
-
-    /**
-     * @param columnMetadata the metadata to set.
-     */
-    public void setColumns(List<ColumnMetadata> columnMetadata) {
-        columns.clear();
-        nextId = 0;
-        columnMetadata.forEach(this::addColumn);
     }
 
     public ColumnMetadata addColumn(ColumnMetadata columnMetadata) {

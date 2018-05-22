@@ -76,11 +76,8 @@ class PipelineDiffTransformer implements Transformer {
         Validate.notNull(input, "Input cannot be null.");
         final PreviewConfiguration previewConfiguration = (PreviewConfiguration) configuration;
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
-        final TransformerWriter writer = writerRegistrationService.getWriter(
-                configuration.formatId(),
-                configuration.output(),
-                configuration.getArguments()
-        );
+        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
+                configuration.output(), configuration.getArguments());
 
         // Build diff pipeline
         final Node diffWriterNode = new DiffWriterNode(writer);
@@ -100,7 +97,8 @@ class PipelineDiffTransformer implements Transformer {
         }
 
         // Build diff pipeline
-        final Node diffPipeline = NodeBuilder.filteredSource(filter) //
+        final Node diffPipeline = NodeBuilder
+                .filteredSource(filter) //
                 .dispatchTo(referencePipeline, previewPipeline) //
                 .zipTo(diffWriterNode) //
                 .build();
@@ -130,7 +128,8 @@ class PipelineDiffTransformer implements Transformer {
     }
 
     private Pipeline buildPipeline(RowMetadata rowMetadata, String actions) {
-        return Pipeline.Builder.builder() //
+        return Pipeline.Builder
+                .builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
                 .withActions(actionParser.parse(actions)) //

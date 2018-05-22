@@ -12,11 +12,11 @@
 
 package org.talend.dataprep.api.filter;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.RowMetadata;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleFilterServiceTest extends AbstractFilterServiceTest {
 

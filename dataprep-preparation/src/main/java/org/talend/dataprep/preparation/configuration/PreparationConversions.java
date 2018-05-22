@@ -28,11 +28,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.filter.FilterTranslator;
-import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.filter.TQLFilterService;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.service.UserPreparation;
@@ -57,9 +64,23 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
     private final TQLFilterService tqlFilterService = new TQLFilterService();
 
+    /**
+     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in
+     * TDP-4531 to
+     * avoid removing columns used by other actions.
+     * <p>
+     * Such method is not ideal as the system should be able to handle such removal in a much more generic way.
+     * </p>
+     */
+    private static ActionForm disallowColumnCreationChange(ActionForm form) {
+        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(
+                p -> p.setReadonly(true));
+        return form;
+    }
+
     @Override
     public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
-                                        ApplicationContext applicationContext) {
+            ApplicationContext applicationContext) {
         conversionService.register(fromBean(Preparation.class) //
                 .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class) //
                 .using(PreparationMessage.class, (s, t) -> toPreparationMessage(s, t, applicationContext)) //
@@ -70,7 +91,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
     }
 
     private PreparationSummary toStudioPreparation(Preparation source, PreparationSummary target,
-                                                   ApplicationContext applicationContext) {
+            ApplicationContext applicationContext) {
         if (target.getOwner() == null) {
             final Security security = applicationContext.getBean(Security.class);
             Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
@@ -107,12 +128,15 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
         return target;
     }
 
-    private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target, ApplicationContext applicationContext) {
+    private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target,
+            ApplicationContext applicationContext) {
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
         final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
         // Steps diff metadata
-        final List<StepDiff> diffs = source.getSteps().stream() //
+        final List<StepDiff> diffs = source
+                .getSteps()
+                .stream() //
                 .filter(step -> !Step.ROOT_STEP.id().equals(step.id())) //
                 .map(Step::getDiff) //
                 .collect(toList());
@@ -124,29 +148,33 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             final String headId = source.getHeadId();
             final Step head = preparationRepository.get(headId, Step.class);
             if (head != null) {
-                final PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+                final PreparationActions prepActions =
+                        preparationRepository.get(head.getContent(), PreparationActions.class);
                 if (prepActions != null) {
                     final List<Action> actions = prepActions.getActions();
 
                     for (Action action : actions) {
                         Map<String, String> parameters = action.getParameters();
 
-                        if (StringUtils.isNotBlank(parameters.get(ImplicitParameters.FILTER.getKey()))){
+                        if (StringUtils.isNotBlank(parameters.get(ImplicitParameters.FILTER.getKey()))) {
                             // Translate filter from JSON to TQL
-                            parameters.put(ImplicitParameters.FILTER.getKey(), translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
+                            parameters.put(ImplicitParameters.FILTER.getKey(),
+                                    translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
 
                             // Fetch column metadata relative to the filtered action
                             // Ask for (n-1) metadata (necessary if some columns are deleted during last step)
-                            final Step step = preparationRepository.get(source.getSteps().get(actions.indexOf(action)).getId(), Step.class);
+                            final Step step = preparationRepository
+                                    .get(source.getSteps().get(actions.indexOf(action)).getId(), Step.class);
                             if (step != null) {
-                                final StepRowMetadata stepRowMetadata = preparationRepository.get(step.getRowMetadata(), StepRowMetadata.class);
+                                final StepRowMetadata stepRowMetadata =
+                                        preparationRepository.get(step.getRowMetadata(), StepRowMetadata.class);
                                 List<ColumnMetadata> filterColumns;
                                 if (stepRowMetadata == null) {
                                     filterColumns = target.getRowMetadata().getColumns();
-                                }
-                                else {
+                                } else {
                                     filterColumns = tqlFilterService.getFilterColumnsMetadata(
-                                            parameters.get(ImplicitParameters.FILTER.getKey()), stepRowMetadata.getRowMetadata());
+                                            parameters.get(ImplicitParameters.FILTER.getKey()),
+                                            stepRowMetadata.getRowMetadata());
                                 }
                                 action.setFilterColumns(filterColumns);
                             }
@@ -170,12 +198,16 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
                     // Actions metadata
                     if (actionRegistry == null) {
-                        LOGGER.debug("No action metadata available, unable to serialize action metadata for preparation {}.",
+                        LOGGER.debug(
+                                "No action metadata available, unable to serialize action metadata for preparation {}.",
                                 source.id());
                     } else {
-                        List<ActionForm> actionDefinitions = actions.stream() //
-                                .map(a -> actionRegistry.get(a.getName()) //
-                                .adapt(ScopeCategory.from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
+                        List<ActionForm> actionDefinitions = actions
+                                .stream() //
+                                .map(a -> actionRegistry
+                                        .get(a.getName()) //
+                                        .adapt(ScopeCategory
+                                                .from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
                                 .map(a -> a.getActionForm(getLocale())) //
                                 .map(PreparationConversions::disallowColumnCreationChange) //
                                 .collect(Collectors.toList());
@@ -194,17 +226,5 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             target.setMetadata(Collections.emptyList());
         }
         return target;
-    }
-
-    /**
-     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in TDP-4531 to
-     * avoid removing columns used by other actions.
-     * <p>
-     * Such method is not ideal as the system should be able to handle such removal in  a much more generic way.
-     * </p>
-     */
-    private static ActionForm disallowColumnCreationChange(ActionForm form) {
-        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(p -> p.setReadonly(true));
-        return form;
     }
 }

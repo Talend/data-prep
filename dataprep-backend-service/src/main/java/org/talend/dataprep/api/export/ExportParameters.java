@@ -31,27 +31,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 public class ExportParameters implements AsyncGroupKey {
 
     /**
-     * Where should the data comes from.
-     */
-    public enum SourceType {
-        /**
-         * Export is performed from preparation's head. This corresponds to apply steps to dataset head (10k
-         * first lines).
-         */
-        HEAD,
-        /**
-         * Export is performed for building a new sample (out of a filter). This corresponds to "Fetch more"
-         * operation on UI side.
-         */
-        FILTER,
-        /**
-         * Export is performed from preparation's reservoir (not first 10K lines of the dataset). <b>Not used</b> at
-         * the moment.
-         */
-        RESERVOIR
-    }
-
-    /**
      * The export format.
      */
     @NotNull
@@ -183,12 +162,12 @@ public class ExportParameters implements AsyncGroupKey {
         }
     }
 
-    public void setContent(DataSet content) {
-        this.content = content;
-    }
-
     public DataSet getContent() {
         return content;
+    }
+
+    public void setContent(DataSet content) {
+        this.content = content;
     }
 
     @Override
@@ -205,7 +184,28 @@ public class ExportParameters implements AsyncGroupKey {
                 '}';
     }
 
-    public String generateUniqueId(){
-        return DigestUtils.sha1Hex(preparationId +"_" + stepId + "_" + datasetId + "_" + from +"_" + filter);
+    public String generateUniqueId() {
+        return DigestUtils.sha1Hex(preparationId + "_" + stepId + "_" + datasetId + "_" + from + "_" + filter);
+    }
+
+    /**
+     * Where should the data comes from.
+     */
+    public enum SourceType {
+        /**
+         * Export is performed from preparation's head. This corresponds to apply steps to dataset head (10k
+         * first lines).
+         */
+        HEAD,
+        /**
+         * Export is performed for building a new sample (out of a filter). This corresponds to "Fetch more"
+         * operation on UI side.
+         */
+        FILTER,
+        /**
+         * Export is performed from preparation's reservoir (not first 10K lines of the dataset). <b>Not used</b> at
+         * the moment.
+         */
+        RESERVOIR
     }
 }

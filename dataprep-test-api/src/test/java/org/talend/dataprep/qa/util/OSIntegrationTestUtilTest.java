@@ -1,5 +1,12 @@
 package org.talend.dataprep.qa.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,18 +18,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.FeatureContext;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.FILTER;
-import static org.talend.dataprep.helper.api.ActionParamEnum.ROW_ID;
-
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {OSIntegrationTestUtil.class})
+@ContextConfiguration(classes = { OSIntegrationTestUtil.class })
 public class OSIntegrationTestUtilTest {
 
     @Autowired
@@ -32,7 +29,8 @@ public class OSIntegrationTestUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        ReflectionUtils.setField(FeatureContext.class.getDeclaredField("TI_SUFFIX_UID"), featureContext, "_TI_SUFFIX_UID");
+        ReflectionUtils.setField(FeatureContext.class.getDeclaredField("TI_SUFFIX_UID"), featureContext,
+                "_TI_SUFFIX_UID");
     }
 
     @Test

@@ -47,7 +47,9 @@ public class DataSetGet extends GenericCommand<InputStream> {
     private final String dataSetId;
 
     private final boolean includeInternalContent;
+
     private final boolean includeMetadata;
+
     private final String filter;
 
     @Autowired
@@ -57,11 +59,13 @@ public class DataSetGet extends GenericCommand<InputStream> {
         this(dataSetId, fullContent, includeInternalContent, StringUtils.EMPTY);
     }
 
-    public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent, String filter) {
+    public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent,
+            String filter) {
         this(dataSetId, fullContent, includeInternalContent, filter, true);
     }
 
-    public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent, String filter, final boolean includeMetadata) {
+    public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent,
+            String filter, final boolean includeMetadata) {
         super(DATASET_GROUP);
         this.fullContent = fullContent;
         this.dataSetId = dataSetId;

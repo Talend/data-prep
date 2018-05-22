@@ -42,6 +42,7 @@ public class FilterStep extends DataPrepStep {
 
     /**
      * Returns the initial dataset content, potentially before all analysis are done (quality, stats, and so on).
+     *
      * @param datasetId the dataset id
      * @param tql the TQL filter used to filter dataset content
      * @return the dataset content
@@ -67,12 +68,14 @@ public class FilterStep extends DataPrepStep {
 
     /**
      * Returns the dataset content, once all DQ analysis are done and so all fields are up-to-date.
+     *
      * @param dataset the dataset in its initial state, to determine if it is already up-to-date or not
      * @param datasetId the id of the dataset
      * @param tql the TQL filter to apply to the dataset
      * @return the up-to-date dataset content
      */
-    private DatasetContent getUpToDateDatasetContent(DatasetContent dataset, String datasetId, String tql) throws Exception {
+    private DatasetContent getUpToDateDatasetContent(DatasetContent dataset, String datasetId, String tql)
+            throws Exception {
         if (dataset.isUpToDate) {
             return dataset;
         }

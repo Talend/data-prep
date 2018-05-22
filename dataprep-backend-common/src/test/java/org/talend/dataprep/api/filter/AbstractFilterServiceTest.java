@@ -64,67 +64,6 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
         return new FilterTest();
     }
 
-    protected class FilterTest {
-
-        private String[] invalidColIds;
-
-        private String[] colIds;
-
-        private boolean invalidityChangesResult;
-
-        public FilterTest() {
-            invalidColIds = new String[] {};
-            invalidityChangesResult = false;
-        }
-
-        public FilterTest(String[] invalidColIds, boolean invalidityChangesResult) {
-            this.invalidColIds = invalidColIds;
-            this.invalidityChangesResult = invalidityChangesResult;
-        }
-
-        public FilterTest withColumns(String... coldIs) {
-            this.colIds = coldIs;
-            if (!invalidityChangesResult) {
-                this.invalidColIds = this.colIds;
-            }
-            return this;
-        }
-
-        public FilterTest assertFilterReturnsTrueForValues(String... values) {
-            assertFilterReturnsExpectedValue(true, values);
-            return this;
-        }
-
-        private void assertFilterReturnsExpectedValue(boolean expected, String... values) {
-            assertFilterReturnsExpectedResultForRow(expected, colIds, values);
-            for (String invalidColId : invalidColIds) {
-                row.setInvalid(invalidColId);
-            }
-            if (invalidityChangesResult) {
-                assertFilterReturnsExpectedResultForRow(!expected, colIds, values);
-            } else {
-                assertFilterReturnsExpectedResultForRow(expected, colIds, values);
-            }
-            for (String invalidColId : invalidColIds) {
-                row.unsetInvalid(invalidColId);
-            }
-        }
-
-        private void assertFilterReturnsExpectedResultForRow(boolean expectedResult, String[] columnIds,
-                String[] values) {
-            for (int i = 0; i < columnIds.length; i++) {
-                row.set(columnIds[i], values[i]);
-            }
-            assertThat(filter.test(row)).isEqualTo(expectedResult);
-        }
-
-        public FilterTest assertFilterReturnsFalseForValues(String... values) {
-            assertFilterReturnsExpectedValue(false, values);
-            return this;
-        }
-
-    }
-
     @Test
     public void testFilterShouldUnderstandAllDecimalSeparators() {
         // given
@@ -1383,5 +1322,66 @@ public abstract class AbstractFilterServiceTest extends FilterServiceTest {
     }
 
     protected abstract String givenFilter_0001_does_not_contain_word();
+
+    protected class FilterTest {
+
+        private String[] invalidColIds;
+
+        private String[] colIds;
+
+        private boolean invalidityChangesResult;
+
+        public FilterTest() {
+            invalidColIds = new String[] {};
+            invalidityChangesResult = false;
+        }
+
+        public FilterTest(String[] invalidColIds, boolean invalidityChangesResult) {
+            this.invalidColIds = invalidColIds;
+            this.invalidityChangesResult = invalidityChangesResult;
+        }
+
+        public FilterTest withColumns(String... coldIs) {
+            this.colIds = coldIs;
+            if (!invalidityChangesResult) {
+                this.invalidColIds = this.colIds;
+            }
+            return this;
+        }
+
+        public FilterTest assertFilterReturnsTrueForValues(String... values) {
+            assertFilterReturnsExpectedValue(true, values);
+            return this;
+        }
+
+        private void assertFilterReturnsExpectedValue(boolean expected, String... values) {
+            assertFilterReturnsExpectedResultForRow(expected, colIds, values);
+            for (String invalidColId : invalidColIds) {
+                row.setInvalid(invalidColId);
+            }
+            if (invalidityChangesResult) {
+                assertFilterReturnsExpectedResultForRow(!expected, colIds, values);
+            } else {
+                assertFilterReturnsExpectedResultForRow(expected, colIds, values);
+            }
+            for (String invalidColId : invalidColIds) {
+                row.unsetInvalid(invalidColId);
+            }
+        }
+
+        private void assertFilterReturnsExpectedResultForRow(boolean expectedResult, String[] columnIds,
+                String[] values) {
+            for (int i = 0; i < columnIds.length; i++) {
+                row.set(columnIds[i], values[i]);
+            }
+            assertThat(filter.test(row)).isEqualTo(expectedResult);
+        }
+
+        public FilterTest assertFilterReturnsFalseForValues(String... values) {
+            assertFilterReturnsExpectedValue(false, values);
+            return this;
+        }
+
+    }
 
 }

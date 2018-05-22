@@ -25,7 +25,12 @@ import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.api.transformer.ConfiguredCacheWriter;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
-import org.talend.dataprep.transformation.pipeline.*;
+import org.talend.dataprep.transformation.pipeline.Monitored;
+import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
+import org.talend.dataprep.transformation.pipeline.RuntimeNode;
+import org.talend.dataprep.transformation.pipeline.Signal;
+import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 public class WriterNode extends BasicNode implements Monitored {
@@ -60,7 +65,8 @@ public class WriterNode extends BasicNode implements Monitored {
      * @param writer the transformer writer.
      * @param metadataCacheWriter the metadata cache writer.
      * @param metadataKey the transformation metadata cache key to use.
-     * @param fallBackRowMetadata fallback raw metadata to be able to write an empty content even if no row/rowMetadata id
+     * @param fallBackRowMetadata fallback raw metadata to be able to write an empty content even if no row/rowMetadata
+     * id
      * received.
      */
     public WriterNode(final TransformerWriter writer, final ConfiguredCacheWriter metadataCacheWriter,

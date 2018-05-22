@@ -1,5 +1,16 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -16,17 +27,6 @@ import org.talend.dataprep.transformation.pipeline.node.StatisticsNode;
 import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
-
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
-import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 public class StatisticsNodesBuilder {
 
@@ -116,7 +116,8 @@ public class StatisticsNodesBuilder {
         }
 
         if (actionsProfile.needOnlyInvalidAnalysis()) {
-            return NodeBuilder.from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
+            return NodeBuilder
+                    .from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
                     .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis(),
                             rowMetadataFallbackProvider))
                     .build();
@@ -133,7 +134,7 @@ public class StatisticsNodesBuilder {
     public Node buildIntermediateStatistics(final Action nextAction,
             RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         Node node = null;
-        //TODO remove this and fix tests
+        // TODO remove this and fix tests
         if (analyzerService == null) {
             node = new BasicNode();
         } else {
@@ -230,8 +231,9 @@ public class StatisticsNodesBuilder {
 
     private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter,
             RowMetadataFallbackProvider rowMetadataFallbackProvider) {
-        return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter,
-                c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS), rowMetadataFallbackProvider)
+        return allowSchemaAnalysis
+                ? new TypeDetectionNode(columnFilter, statisticsAdapter,
+                        c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS), rowMetadataFallbackProvider)
                 : new BasicNode();
     }
 

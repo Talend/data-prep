@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.aggregation.api;
 
@@ -19,8 +19,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.talend.dataprep.validation.OneNotBlank;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * JavaBean used to model aggregation parameters.
@@ -148,19 +146,19 @@ public class AggregationParameters {
     }
 
     /**
+     * @param operations the operations to set.
+     */
+    public void setOperations(List<AggregationOperation> operations) {
+        this.operations = operations;
+    }
+
+    /**
      * Add the given operation to the parameters.
      *
      * @param operation the operatio to add.
      */
     public void addOperation(AggregationOperation operation) {
         this.operations.add(operation);
-    }
-
-    /**
-     * @param operations the operations to set.
-     */
-    public void setOperations(List<AggregationOperation> operations) {
-        this.operations = operations;
     }
 
     /**
@@ -191,6 +189,5 @@ public class AggregationParameters {
                 + ", stepId='" + stepId + '\'' + ", groupBy=" + groupBy + ", operations=" + operations + ", filter="
                 + filter + ", sampleSize=" + sampleSize + '}';
     }
-
 
 }

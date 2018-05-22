@@ -29,21 +29,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
 public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Autowired
-    private ObjectMapper mapper;
+    PreparationRepository repository;
 
     @Autowired
-    PreparationRepository repository;
+    private ObjectMapper mapper;
 
     @Autowired
     private VersionService versionService;
@@ -53,8 +58,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void emptyPreparation() throws Exception {
-        Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7", versionService.version().getVersionId());
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
         mapper.writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
@@ -64,8 +69,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void namePreparation() throws Exception {
-        Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7", versionService.version().getVersionId());
         preparation.setName("MyName");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -76,8 +81,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationDataSet() throws Exception {
-        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", versionService.version().getVersionId());
         preparation.setDataSetId("12345");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -88,8 +93,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationAuthor() throws Exception {
-        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e",
-                versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", versionService.version().getVersionId());
         preparation.setDataSetId("12345");
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
@@ -101,13 +106,14 @@ public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Test
     public void preparationDetailsSteps() throws Exception {
-        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345", Step.ROOT_STEP.id(),
-                versionService.version().getVersionId());
+        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345",
+                Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
         mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
-        final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("preparationDetailsSteps.json");
+        final InputStream expected =
+                PreparationSerializationTest.class.getResourceAsStream("preparationDetailsSteps.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
 
@@ -122,7 +128,8 @@ public class PreparationSerializationTest extends ServiceBaseTest {
         final Step s1 = new Step(Step.ROOT_STEP.id(), newContent1.id(), version);
         repository.add(s1);
         // Use it in preparation
-        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
+        Preparation preparation =
+                new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
         preparation.setCreationDate(0L);
         repository.add(preparation);
 
@@ -146,7 +153,7 @@ public class PreparationSerializationTest extends ServiceBaseTest {
     public void preparationDetailsStepsWithFilters() throws Exception {
 
         final String version = versionService.version().getVersionId();
-        //create row metadata
+        // create row metadata
         RowMetadata rowMetadata = new RowMetadata();
         ColumnMetadata firstColumn = new ColumnMetadata();
         firstColumn.setId("0000");
@@ -190,13 +197,14 @@ public class PreparationSerializationTest extends ServiceBaseTest {
         repository.add(s2);
 
         // Use it in preparation
-        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345",  s2.id(), version);
+        Preparation preparation =
+                new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s2.id(), version);
         preparation.setCreationDate(0L);
         preparation.setRowMetadata(rowMetadata);
 
         repository.add(preparation);
 
-        //add StepRowMetadata
+        // add StepRowMetadata
         StepRowMetadata stepRowMetadata = new StepRowMetadata();
         stepRowMetadata.setId(stepRowMetadataId);
         stepRowMetadata.setRowMetadata(rowMetadata);

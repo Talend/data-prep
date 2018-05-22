@@ -52,15 +52,18 @@ import com.jayway.restassured.specification.RequestSpecification;
 /**
  * Utility class to allow dataprep-api integration tests.
  */
-@Component public class OSDataPrepAPIHelper {
+@Component
+public class OSDataPrepAPIHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${restassured.debug:false}") private boolean enableRestAssuredDebug;
+    @Value("${restassured.debug:false}")
+    private boolean enableRestAssuredDebug;
 
-    @Value("${backend.api.url:http://localhost:8888}") private String apiBaseUrl;
+    @Value("${backend.api.url:http://localhost:8888}")
+    private String apiBaseUrl;
 
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
@@ -78,9 +81,9 @@ import com.jayway.restassured.specification.RequestSpecification;
     /**
      * Create a preparation from a dataset and a home folder.
      *
-     * @param datasetID       the dataset id to create the preparation from.
+     * @param datasetID the dataset id to create the preparation from.
      * @param preparationName name for the new preparation.
-     * @param homeFolderId    new preparation folder.
+     * @param homeFolderId new preparation folder.
      * @return the response.
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
@@ -109,7 +112,7 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Add an action to the end of a preparation.
      *
      * @param preparationId the preparation id.
-     * @param action        the action to add as a step.
+     * @param action the action to add as a step.
      * @return the response.
      */
     public Response addAction(String preparationId, Action action) {
@@ -124,8 +127,8 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Update an action within a preparation.
      *
      * @param preparationId the preparation id.
-     * @param stepId        the step to modify.
-     * @param action        the new parameters.
+     * @param stepId the step to modify.
+     * @param action the new parameters.
      * @return the response.
      */
     public Response updateAction(String preparationId, String stepId, Action action) {
@@ -140,8 +143,8 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Move an action inside the prepration order.
      *
      * @param preparationId the preparation id.
-     * @param stepId        the step id.
-     * @param parentStepId  the wanted parent steo id.
+     * @param stepId the step id.
+     * @param parentStepId the wanted parent steo id.
      * @return the response.
      */
     public Response moveAction(String preparationId, String stepId, String parentStepId) {
@@ -156,7 +159,7 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Remove an action within a preparation.
      *
      * @param preparationId the preparation id.
-     * @param actionId      the id of the action to delete.
+     * @param actionId the id of the action to delete.
      * @return the response.
      */
     public Response deleteAction(String preparationId, String actionId) {
@@ -168,14 +171,15 @@ import com.jayway.restassured.specification.RequestSpecification;
     /**
      * Upload a text dataset into dataprep.
      *
-     * @param filename    the file to upload
+     * @param filename the file to upload
      * @param datasetName the dataset basename
      * @return the response
      * @throws java.io.IOException if creation isn't possible
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log().all() //
+                .log()
+                .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
                         Charset.defaultCharset())) //
@@ -187,7 +191,7 @@ import com.jayway.restassured.specification.RequestSpecification;
     /**
      * Upload a binary dataset into dataprep.
      *
-     * @param filename    the file to upload
+     * @param filename the file to upload
      * @param datasetName the dataset basename
      * @return the response
      * @throws java.io.IOException if creation isn't possible
@@ -195,7 +199,8 @@ import com.jayway.restassured.specification.RequestSpecification;
     public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -204,7 +209,7 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Update a existing dataset with current file
      *
      * @param datasetName the dataset name to update
-     * @param filename    the file to use to update the dataset
+     * @param filename the file to use to update the dataset
      * @return the response
      */
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
@@ -396,10 +401,11 @@ import com.jayway.restassured.specification.RequestSpecification;
     }
 
     /**
-     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT context.
+     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT
+     * context.
      *
      * @param tempFilename the temporary {@link File} filename
-     * @param input        the {@link InputStream} to store.
+     * @param input the {@link InputStream} to store.
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
@@ -415,13 +421,15 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Create a new folder.
      *
      * @param parentFolderId the parent folder id.
-     * @param folder         the folder to create.
+     * @param folder the folder to create.
      * @return the response.
      */
     public Response createFolder(String parentFolderId, String folder) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("parentId", parentFolderId).queryParam("path", folder).when() //
+                .queryParam("parentId", parentFolderId)
+                .queryParam("path", folder)
+                .when() //
                 .put("/api/folders");
     }
 
@@ -452,10 +460,10 @@ import com.jayway.restassured.specification.RequestSpecification;
     /**
      * Move a preparation from a folder to another.
      *
-     * @param prepId     the preparation id.
-     * @param folderSrc  the preparation source folder.
+     * @param prepId the preparation id.
+     * @param folderSrc the preparation source folder.
      * @param folderDest the preparation destination folder.
-     * @param prepName   the new preparation name (can be the same as the original one).
+     * @param prepName the new preparation name (can be the same as the original one).
      * @return the response.
      */
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
@@ -471,9 +479,9 @@ import com.jayway.restassured.specification.RequestSpecification;
     /**
      * Copy a preparation from a folder to another.
      *
-     * @param id         the preparation id.
+     * @param id the preparation id.
      * @param folderDest the preparation destination folder.
-     * @param prepName   the new preparation name (can be the same as the original one).
+     * @param prepName the new preparation name (can be the same as the original one).
      * @return the response.
      */
     public Response copyPreparation(String id, String folderDest, String prepName) {
@@ -489,7 +497,7 @@ import com.jayway.restassured.specification.RequestSpecification;
     /**
      * Get the semantic types of a column
      *
-     * @param columnId  the column id.
+     * @param columnId the column id.
      * @param datasetId the new dataset name (can be the same as the original one).
      * @return the response.
      */
@@ -503,7 +511,7 @@ import com.jayway.restassured.specification.RequestSpecification;
      * Get the semantic types of a column
      *
      * @param columnId the column id.
-     * @param prepId   the new preparation name (can be the same as the original one).
+     * @param prepId the new preparation name (can be the same as the original one).
      * @return the response.
      */
     public Response getPreparationsColumnSemanticTypes(String columnId, String prepId) {
@@ -548,7 +556,8 @@ import com.jayway.restassured.specification.RequestSpecification;
     public Response getDatasets(Map<String, String> queryParameters) {
         return given() //
                 .when() //
-                .queryParameters(queryParameters).get("/api/datasets");
+                .queryParameters(queryParameters)
+                .get("/api/datasets");
     }
 
     /**
@@ -565,9 +574,14 @@ import com.jayway.restassured.specification.RequestSpecification;
 
         while (isAsyncMethodRunning && nbLoop < 100) {
 
-            String statusAsyncMethod = given().when() //
-                    .expect().statusCode(200).log().ifError() //
-                    .get(asyncMethodStatusUrl).asString();
+            String statusAsyncMethod = given()
+                    .when() //
+                    .expect()
+                    .statusCode(200)
+                    .log()
+                    .ifError() //
+                    .get(asyncMethodStatusUrl)
+                    .asString();
 
             asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 

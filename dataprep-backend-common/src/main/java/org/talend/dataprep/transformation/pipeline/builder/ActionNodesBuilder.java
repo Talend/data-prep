@@ -22,9 +22,9 @@ public class ActionNodesBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionNodesBuilder.class);
 
-    private RowMetadata initialMetadata;
-
     private final List<RunnableAction> actions = new ArrayList<>();
+
+    private RowMetadata initialMetadata;
 
     // analyze requests
     private boolean needStatisticsBefore = false;
@@ -102,7 +102,8 @@ public class ActionNodesBuilder {
      * Build the actions pipeline
      */
     public Node build() {
-        final StatisticsNodesBuilder statisticsNodesBuilder = StatisticsNodesBuilder.builder()
+        final StatisticsNodesBuilder statisticsNodesBuilder = StatisticsNodesBuilder
+                .builder()
                 .analyzerService(analyzerService) //
                 .actionRegistry(actionRegistry) //
                 .statisticsAdapter(statisticsAdapter) //

@@ -1,10 +1,12 @@
 package org.talend.dataprep.api.filter;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.talend.dataprep.api.dataset.RowMetadata;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * An interface to be implemented to convert a JSON filter into T.
+ *
  * @param <T> The return type
  */
 public interface JSONFilterCallback<T> {
@@ -96,6 +98,7 @@ public interface JSONFilterCallback<T> {
 
     /**
      * Combines the 2 expressions for a AND.
+     *
      * @param left left expression.
      * @param right right expression.
      * @return A <i>and</i> between 2 expressions.
@@ -104,6 +107,7 @@ public interface JSONFilterCallback<T> {
 
     /**
      * Combines the 2 expressions for a OR.
+     *
      * @param left left expression.
      * @param right right expression.
      * @return A <i>or</i> between 2 expressions.
@@ -112,6 +116,7 @@ public interface JSONFilterCallback<T> {
 
     /**
      * Negates the expression.
+     *
      * @param expression the expression to negate.
      * @return A <i>not</i> between 2 expressions.
      */

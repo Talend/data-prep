@@ -19,10 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 
 /**
  * Class used to wrap DataSetRowAction into json.
@@ -102,7 +103,8 @@ public class Action implements Serializable {
 
     @Override
     public String toString() {
-        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '\'' + ", filterColumns=" + filterColumns + '}';
+        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '\'' + ", filterColumns="
+                + filterColumns + '}';
     }
 
     /**

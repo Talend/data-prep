@@ -13,14 +13,9 @@
 
 package org.talend.dataprep.api.filter;
 
-import org.junit.Test;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-
-import java.util.Arrays;
-
 import static org.junit.Assert.assertEquals;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+
+import org.junit.Test;
 
 public class FilterTranslatorTest {
 

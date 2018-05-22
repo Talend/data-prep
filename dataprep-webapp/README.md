@@ -2,7 +2,7 @@
 ## How to run
 ### Prerequisites
 1. nodejs : http://nodejs.org/
-2. npm : it should be install with the above node
+2. yarn : https://yarnpkg.com/
 3. git clone git@github.com:Talend/data-prep.git in _checkouts_ (adapt others commands if clone in another folder)
 4. go to _checkouts/data-prep/dataprep-webapp_ and type the following command
 
@@ -16,7 +16,6 @@ This will install all the dev package for dataprep as well as third party librar
 ├── build/                                  - untracked generated folder where you find minified build in prod mode and unminified in dev mode
 ├── config/                                 - untracked generated folder where you find build config
 ├── coverage/                               - untracked generated folder where karma istanbul plugin will put coverage files
-├── docker/                                 - dockefile and scripts to generate the docker image 
 ├── node_modules/                           - untracked generated folder for gulp build node modules
 ├── src/                                    - sources
 ├── target/                                 - untracked generated folder for maven build
@@ -92,7 +91,7 @@ The source file structure is based on the [Best Practice Recommendations for Ang
 
 
 ### Code style
-Interesting style guides to follow : 
+Interesting style guides to follow :
 * Todd Motto : https://github.com/toddmotto/angularjs-styleguide
 * John Papa : https://github.com/johnpapa/angular-styleguide
 
@@ -101,32 +100,19 @@ when in folder _checkouts/data-prep/dataprep-webapp_ type the command
 
 `npm run serve`
 
-Then it will start a web server on port 3000 and watch any code change to refresh the browser. 
-
-### Alternative way to launch, this does't require the prerequisites.
-
-`docker run -v /home/smallet/Development/clones/data-prep/dataprep-webapp/:/data-prep/ -p 3000:3000 registry.talend.com:5000/talend/data-prep-webapp-tools:1.8 /bin/sh -c "npm run serve"`
-
-Of course change */home/smallet/Development/clones/data-prep/dataprep-webapp* regarding the path of your git clone.
+Then it will start a web server on port 3000 and watch any code change to refresh the browser.
 
 Then application is available at http://localhost:3000
-
-### Run on your local machine
-By default, the webapp is setup to access the api hosted on `10.42.10.99`. This setting can be changed in the following file :
-
-* _src/assets/config/config.mine.json_.
-
-This file is an untracked file that overwrites the configuration in config.json.
 
 ### Run tests
 when in folder _checkouts/data-prep/dataprep-webapp_ type the command
 
-`npm run test`
+`yarn test`
 
 This will get all source files, include them in karma config and run all the unit tests only once.
 To run it continuously with source watch, type the command
 
-`npm run test:auto`
+`yarn test:auto`
 
 ### Test coverage
 During each test run, Karma will generate coverage files, using [karma-coverage plugin](https://github.com/karma-runner/karma-coverage).
@@ -138,21 +124,18 @@ For more information about how to write ngDoc :
 * https://github.com/angular/angular.js/wiki/Writing-AngularJS-Documentation
 * https://github.com/angular/dgeni-packages/blob/master/NOTES.md
 
-### Build a standalone lib distrib (not minified)
+### Build a standalone lib distribution (not minified)
 run
-`npm run build`
+`yarn start`
 
-### Build a standalone prod distrib
+### Build a standalone prod distribution
 run
-`npm run build:dist`
+`yarn build`
 
 ##Maven profiles
-The build and test can be executed using maven as well here are the different maven profile avaialble.
+The build and test can be executed using maven as well here are the different maven profile available.
 
-###-P dev (default)
-The default maven profile called *dev* that launches all the necessary tasks for building and testing the app with the usuall maven phases : *test* *package*.
-This profile assumes that all the tooling is installed on the current machine.
-
-###-Duse.docker.tool=true
-The profile name *ci* is triggered using this property. It is used for continuus integration build on our jenkins server. This build is using a docker image installed with all the required tooling because it was too much of a pain to install the tooling directly on the jenkins server. This allows for installing on other servers easilly too.
-The docker image is build from the Dockerfile : [docker/Dockerfile-for-dev-tools](docker/Dockerfile-for-dev-tools)
+###-P ci
+The profile name *ci* is triggered using this property.
+It is used for continuous integration build on our jenkins server.
+Code coverage is added at this step.

@@ -48,7 +48,6 @@ import org.talend.dataprep.api.service.command.preparation.PreparationCopyStepsF
 import org.talend.dataprep.api.service.command.preparation.PreparationCreate;
 import org.talend.dataprep.api.service.command.preparation.PreparationDelete;
 import org.talend.dataprep.api.service.command.preparation.PreparationDeleteAction;
-import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetMetadata;
 import org.talend.dataprep.api.service.command.preparation.PreparationList;
 import org.talend.dataprep.api.service.command.preparation.PreparationLock;
@@ -67,6 +66,7 @@ import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationCacheDelete;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.command.preparation.PreparationGetContent;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;

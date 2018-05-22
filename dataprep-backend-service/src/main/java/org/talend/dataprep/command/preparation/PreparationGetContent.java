@@ -11,10 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.api.service.command.preparation;
-
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.command.Defaults.pipeStream;
+package org.talend.dataprep.command.preparation;
 
 import java.io.InputStream;
 
@@ -29,11 +26,15 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
 /**
  * Command used to retrieve the preparation content.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationGetContent extends GenericCommand<InputStream> {
 
     /** The preparation id. */

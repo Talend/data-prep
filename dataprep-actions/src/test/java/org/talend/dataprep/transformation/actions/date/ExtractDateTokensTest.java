@@ -1,6 +1,6 @@
 //  ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 //  This source code is available under agreement available at
 //  https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -106,7 +106,11 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
 
         // then
         assertEquals(expectedValues, row.values());
-        assertEquals("_MINUTE", row.getRowMetadata().getColumns().get(2).getName());
+        List<ColumnMetadata> columns = row.getRowMetadata().getColumns();
+        assertEquals("_MINUTE", columns.get(2).getName());
+        assertEquals("_HOUR_24", columns.get(3).getName());
+        assertEquals("_MONTH", columns.get(4).getName());
+        assertEquals("_YEAR", columns.get(5).getName());
     }
 
     @Test

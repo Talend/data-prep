@@ -11,17 +11,17 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
@@ -37,7 +37,7 @@ public class ActionsUtils {
     /**
      * Key for the context map to retrieve column created by "Create new column" parameter.
      */
-    private static final String TARGET_COLUMN_CONTEXT_KEY = "target";
+    public static final String TARGET_COLUMN_CONTEXT_KEY = "target";
 
     private ActionsUtils() {
     }

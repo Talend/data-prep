@@ -16,7 +16,6 @@ package org.talend.dataprep.transformation.actions.date;
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +41,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.TARGET_COLUMN_CONTEXT_KEY;
 
 /**
  * Change the date pattern on a 'date' column.
@@ -151,24 +151,25 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         final String columnId = context.getColumnId();
         final ColumnMetadata column = rowMetadata.getById(columnId);
 
-        context.evict("target");
-        context.get("target", r -> {
-            HashMap<String, String> cols = new HashMap<>();
-            Arrays.stream(dateFields) //
-                    .filter(dateField -> Boolean.valueOf(context.getParameters().get(dateField.key))) //
-                    .forEach(dateField -> {
-                        ColumnMetadata metadata = ColumnMetadata.Builder.column()
-                                .name(column.getName() + SEPARATOR + dateField.key)
-                                .type(Type.INTEGER)
-                                .empty(column.getQuality().getEmpty()) //
-                                .invalid(column.getQuality().getInvalid()) //
-                                .valid(column.getQuality().getValid()) //
-                                .headerSize(column.getHeaderSize()) //
-                                .build();
+        // like ActionsUtils#createNewColumn but using always context column id for RowMetadata#insertAfter
+        context.evict(TARGET_COLUMN_CONTEXT_KEY);
+        context.get(TARGET_COLUMN_CONTEXT_KEY, r -> {
+            Map<String, String> targetColumnIds = new HashMap<>();
+            for (DateFieldMappingBean dateField : dateFields) {
+                if (Boolean.valueOf(context.getParameters().get(dateField.key))) {
+                    ColumnMetadata metadata = ColumnMetadata.Builder.column() //
+                            .name(column.getName() + SEPARATOR + dateField.key) //
+                            .type(Type.INTEGER) //
+                            .empty(column.getQuality().getEmpty()) //
+                            .invalid(column.getQuality().getInvalid()) //
+                            .valid(column.getQuality().getValid()) //
+                            .headerSize(column.getHeaderSize()) //
+                            .build();
 
-                        cols.put(dateField.key, rowMetadata.insertAfter(columnId, metadata));
-                    });
-            return cols;
+                    targetColumnIds.put(dateField.key, rowMetadata.insertAfter(columnId, metadata));
+                }
+            }
+            return targetColumnIds;
         });
     }
 

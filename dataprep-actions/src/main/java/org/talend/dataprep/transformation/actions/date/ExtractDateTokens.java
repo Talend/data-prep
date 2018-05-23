@@ -13,20 +13,24 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static org.talend.dataprep.parameters.Parameter.parameter;
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
-
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
-import java.util.*;
-
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
@@ -35,6 +39,9 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.talend.dataprep.parameters.Parameter.parameter;
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
 /**
  * Change the date pattern on a 'date' column.
@@ -90,7 +97,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** False constant value. */
     private static final String FALSE = "false";
 
-    private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
+    private static final DateFieldMappingBean[] dateFields = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
             new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
@@ -136,19 +143,33 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
-            for (DateFieldMappingBean date_field : DATE_FIELDS) {
-                if (Boolean.valueOf(context.getParameters().get(date_field.key))) {
-                    additionalColumns.add(ActionsUtils.additionalColumn()
-                            .withKey(date_field.key)
-                            .withName(context.getColumnName() + SEPARATOR + date_field.key)
-                            .withType(Type.INTEGER));
-                }
-            }
-            Collections.reverse(additionalColumns);
-            ActionsUtils.createNewColumn(context, additionalColumns);
+        if (!ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+            return;
         }
+
+        final RowMetadata rowMetadata = context.getRowMetadata();
+        final String columnId = context.getColumnId();
+        final ColumnMetadata column = rowMetadata.getById(columnId);
+
+        context.evict("target");
+        context.get("target", r -> {
+            HashMap<String, String> cols = new HashMap<>();
+            Arrays.stream(dateFields) //
+                    .filter(dateField -> Boolean.valueOf(context.getParameters().get(dateField.key))) //
+                    .forEach(dateField -> {
+                        ColumnMetadata metadata = ColumnMetadata.Builder.column()
+                                .name(column.getName() + SEPARATOR + dateField.key)
+                                .type(Type.INTEGER)
+                                .empty(column.getQuality().getEmpty()) //
+                                .invalid(column.getQuality().getInvalid()) //
+                                .valid(column.getQuality().getValid()) //
+                                .headerSize(column.getHeaderSize()) //
+                                .build();
+
+                        cols.put(dateField.key, rowMetadata.insertAfter(columnId, metadata));
+                    });
+            return cols;
+        });
     }
 
     @Override
@@ -170,7 +191,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         }
 
         // insert new extracted values
-        for (final DateFieldMappingBean date_field : DATE_FIELDS) {
+        for (final DateFieldMappingBean date_field : dateFields) {
             if (Boolean.valueOf(parameters.get(date_field.key))) {
                 String newValue = StringUtils.EMPTY;
                 if (temporalAccessor != null && // may occurs if date can not be parsed with pattern

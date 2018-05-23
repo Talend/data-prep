@@ -40,7 +40,7 @@
         <org.talend.dataquality.sampling.version>${dataquality-libraries.version}</org.talend.dataquality.sampling.version>
         <org.talend.dataquality.standardization.version>${dataquality-libraries.version}</org.talend.dataquality.standardization.version>
         <org.talend.dataquality.converters.version>${dataquality-libraries.version}</org.talend.dataquality.converters.version>
-        <spring-boot.version>1.5.2.RELEASE</spring-boot.version>
+        <spring-boot.version>1.5.13.RELEASE</spring-boot.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->

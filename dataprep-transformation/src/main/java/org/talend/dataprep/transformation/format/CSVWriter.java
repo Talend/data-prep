@@ -210,8 +210,7 @@ public class CSVWriter extends AbstractTransformerWriter {
                 objectBuffer.readAll().forEach(this::internalWrite);
                 LOGGER.debug("Finished writing temporary values into TComp.");
             } finally {
-                objectBuffer.close();
-                objectBuffer = null;
+                safeCloseObjectBuffer();
             }
         }
         csvWriter.flush();
@@ -235,6 +234,21 @@ public class CSVWriter extends AbstractTransformerWriter {
     public void flush() throws IOException {
         if (csvWriter != null) {
             csvWriter.flush();
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        safeCloseObjectBuffer();
+        if (csvWriter != null) {
+            csvWriter.close();
+        }
+    }
+
+    private void safeCloseObjectBuffer() throws IOException {
+        if (objectBuffer != null) {
+            objectBuffer.close();
+            objectBuffer = null;
         }
     }
 

@@ -111,6 +111,34 @@ public class AggregationTest extends TransformationServiceBaseTest {
     }
 
     @Test
+    public void shouldAggregateFromPreparationWithFilter() throws IOException {
+        // given
+        final String datasetId =
+                createDataset("../aggregation/aggregation_dataset.csv", "for a preparation", "text/csv");
+        final String preparationId = createEmptyPreparationFromDataset(datasetId, "preparation");
+        applyActionFromFile(preparationId, "../aggregation/uppercase_action.json");
+
+        // when
+        final String actionsAsJson =
+                IOUtils.toString(this.getClass().getResourceAsStream("../aggregation/sum_filter.json"), UTF_8);
+        final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
+        parameters.setDatasetId(null);
+        parameters.setPreparationId(preparationId);
+        parameters.setStepId(null);
+
+        String actual = given()//
+                .body(mapper.writeValueAsString(parameters))//
+                .contentType(APPLICATION_JSON_VALUE) //
+                .when()
+                .post("/aggregate")//
+                .asString();
+
+        // then
+        assertThat(actual, sameJSONAsFile(
+                this.getClass().getResourceAsStream("../aggregation/uppercase_sum_with_filter_expected.json")));
+    }
+
+    @Test
     public void shouldAggregateSumWithFilter() throws IOException {
         // when
         final String actual = aggregateFromDataSet("../aggregation/sum_filter.json", "../aggregation/aggregation_dataset.csv");

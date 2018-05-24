@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,35 +13,40 @@
 
 package org.talend.dataprep.helper;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import static com.jayway.restassured.http.ContentType.JSON;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Base64;
+import java.util.Map;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
+import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Base64;
-import java.util.Map;
-
-import static com.jayway.restassured.http.ContentType.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 
 /**
  * Utility class to allow dataprep-api integration tests.
  */
 @Component
 public class OSDataPrepAPIHelper {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -65,9 +70,9 @@ public class OSDataPrepAPIHelper {
     /**
      * Create a preparation from a dataset and a home folder.
      *
-     * @param datasetID       the dataset id to create the preparation from.
+     * @param datasetID the dataset id to create the preparation from.
      * @param preparationName name for the new preparation.
-     * @param homeFolderId    new preparation folder.
+     * @param homeFolderId new preparation folder.
      * @return the response.
      */
     public Response createPreparation(String datasetID, String preparationName, String homeFolderId) {
@@ -98,7 +103,7 @@ public class OSDataPrepAPIHelper {
      * Add an action to the end of a preparation.
      *
      * @param preparationId the preparation id.
-     * @param action        the action to add as a step.
+     * @param action the action to add as a step.
      * @return the response.
      */
     public Response addAction(String preparationId, Action action) {
@@ -114,8 +119,8 @@ public class OSDataPrepAPIHelper {
      * Update an action within a preparation.
      *
      * @param preparationId the preparation id.
-     * @param stepId        the step to modify.
-     * @param action        the new parameters.
+     * @param stepId the step to modify.
+     * @param action the new parameters.
      * @return the response.
      */
     public Response updateAction(String preparationId, String stepId, Action action) {
@@ -131,8 +136,8 @@ public class OSDataPrepAPIHelper {
      * Move an action inside the prepration order.
      *
      * @param preparationId the preparation id.
-     * @param stepId        the step id.
-     * @param parentStepId  the wanted parent steo id.
+     * @param stepId the step id.
+     * @param parentStepId the wanted parent steo id.
      * @return the response.
      */
     public Response moveAction(String preparationId, String stepId, String parentStepId) {
@@ -147,7 +152,7 @@ public class OSDataPrepAPIHelper {
      * Remove an action within a preparation.
      *
      * @param preparationId the preparation id.
-     * @param actionId      the id of the action to delete.
+     * @param actionId the id of the action to delete.
      * @return the response.
      */
     public Response deleteAction(String preparationId, String actionId) {
@@ -158,9 +163,9 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Upload a dataset into dataprep.
+     * Upload a text dataset into dataprep.
      *
-     * @param filename    the file to upload
+     * @param filename the file to upload
      * @param datasetName the dataset basename
      * @return the response
      * @throws java.io.IOException if creation isn't possible
@@ -186,7 +191,7 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset()))
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/" + datasetId);
@@ -246,7 +251,7 @@ public class OSDataPrepAPIHelper {
      * Get preparation content by id and at a given version.
      *
      * @param preparationId the preparation id.
-     * @param version       version of the preparation
+     * @param version version of the preparation
      * @param from
      * @return the response.
      */
@@ -350,15 +355,14 @@ public class OSDataPrepAPIHelper {
      * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT context.
      *
      * @param tempFilename the temporary {@link File} filename
-     * @param input        the {@link InputStream} to store.
+     * @param input the {@link InputStream} to store.
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename),
+                "." + FilenameUtils.getExtension(tempFilename));
+        Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
-        FileOutputStream fos = new FileOutputStream(path.toFile());
-        IOUtils.copy(input, fos);
-        fos.close();
         tempFile.deleteOnExit();
         return tempFile;
     }
@@ -367,7 +371,7 @@ public class OSDataPrepAPIHelper {
      * Create a new folder.
      *
      * @param parentFolderId the parent folder id.
-     * @param folder         the folder to create.
+     * @param folder the folder to create.
      * @return the response.
      */
     public Response createFolder(String parentFolderId, String folder) {
@@ -407,10 +411,10 @@ public class OSDataPrepAPIHelper {
     /**
      * Move a preparation from a folder to another.
      *
-     * @param prepId     the preparation id.
-     * @param folderSrc  the preparation source folder.
+     * @param prepId the preparation id.
+     * @param folderSrc the preparation source folder.
      * @param folderDest the preparation destination folder.
-     * @param prepName   the new preparation name (can be the same as the original one).
+     * @param prepName the new preparation name (can be the same as the original one).
      * @return the response.
      */
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
@@ -422,6 +426,53 @@ public class OSDataPrepAPIHelper {
                         + "/move?folder=" + folderSrc //
                         + "&destination=" + folderDest //
                         + "&newName=" + prepName);
+    }
+
+    /**
+     * Copy a preparation from a folder to another.
+     *
+     * @param id the preparation id.
+     * @param folderDest the preparation destination folder.
+     * @param prepName the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response copyPreparation(String id, String folderDest, String prepName) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .contentType(JSON) //
+                .when() //
+                .urlEncodingEnabled(false) //
+                .queryParam("newName", prepName) //
+                .queryParam("destination", folderDest) //
+                .post("/api/preparations/{id}/copy", id);
+    }
+
+    /**
+     * Get the semantic types of a column
+     *
+     * @param columnId the column id.
+     * @param datasetId the new dataset name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response getDatasetsColumnSemanticTypes(String columnId, String datasetId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/datasets/{datasetId}/columns/{columnId}/types", datasetId, columnId);
+    }
+
+    /**
+     * Get the semantic types of a column
+     *
+     * @param columnId the column id.
+     * @param prepId the new preparation name (can be the same as the original one).
+     * @return the response.
+     */
+    public Response getPreparationsColumnSemanticTypes(String columnId, String prepId) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .get("/api/preparations/{prepId}/columns/{columnId}/types", prepId, columnId);
     }
 
     /**
@@ -451,5 +502,27 @@ public class OSDataPrepAPIHelper {
                 .baseUri(apiBaseUrl) //
                 .when() //
                 .get("/api/export/formats/preparations/" + preparationId);
+    }
+
+    /**
+     * Return the list of datasets
+     * @param queryParameters
+     * @return
+     */
+    public Response getDatasets(Map<String, String> queryParameters) {
+        return given() //
+                .baseUri(apiBaseUrl) //
+                .when() //
+                .queryParameters(queryParameters)
+                .get("/api/datasets");
+    }
+
+    public Response applyAggragate(Aggregate aggregate) throws Exception {
+        return given()
+                .baseUri(apiBaseUrl) //
+                .header(new Header("Content-Type", "application/json")) //
+                .when() //
+                .body(mapper.writeValueAsString(aggregate)) //
+                .post("/api/aggregate");
     }
 }

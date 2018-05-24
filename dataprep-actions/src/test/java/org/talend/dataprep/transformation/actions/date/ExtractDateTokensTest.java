@@ -152,11 +152,11 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
         expectedValues.put("0001", "Dec-17-2017");
-        expectedValues.put("0007", "2017");
-        expectedValues.put("0006", "4");
+        expectedValues.put("0003", "2017");
+        expectedValues.put("0004", "4");
         expectedValues.put("0005", "12");
-        expectedValues.put("0004", "0");
-        expectedValues.put("0003", "0");
+        expectedValues.put("0006", "0");
+        expectedValues.put("0007", "0");
         expectedValues.put("0002", "tata");
 
         // when
@@ -164,6 +164,13 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
 
         // then
         assertEquals(expectedValues, row.values());
+
+        List<ColumnMetadata> columns = row.getRowMetadata().getColumns();
+        assertEquals("_MINUTE", columns.get(2).getName());
+        assertEquals("_HOUR_24", columns.get(3).getName());
+        assertEquals("_MONTH", columns.get(4).getName());
+        assertEquals("_QUARTER", columns.get(5).getName());
+        assertEquals("_YEAR", columns.get(6).getName());
     }
 
     @Test

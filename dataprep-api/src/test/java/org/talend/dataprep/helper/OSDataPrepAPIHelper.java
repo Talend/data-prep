@@ -40,6 +40,7 @@ import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
+import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -180,7 +181,8 @@ public class OSDataPrepAPIHelper {
                 .log()
                 .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //
                 .when() //
                 .post("/api/datasets");
@@ -213,7 +215,8 @@ public class OSDataPrepAPIHelper {
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/{datasetId}", datasetId);
@@ -272,8 +275,7 @@ public class OSDataPrepAPIHelper {
      * @param from Where to get the data from (HEAD if no value)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from)
-            throws IOException {
+    public Response getPreparationContent(String preparationId, String version, String from) throws IOException {
         Response response = given() //
                 .queryParam("version", version) //
                 .queryParam("from", from) //
@@ -394,7 +396,8 @@ public class OSDataPrepAPIHelper {
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename),
+                "." + FilenameUtils.getExtension(tempFilename));
         Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
         tempFile.deleteOnExit();
@@ -533,6 +536,7 @@ public class OSDataPrepAPIHelper {
 
     /**
      * Return the list of datasets
+     *
      * @param queryParameters Map containing the parameter names and their values to send with the request.
      * @return The response of the request.
      */
@@ -566,8 +570,7 @@ public class OSDataPrepAPIHelper {
                     .get(asyncMethodStatusUrl)
                     .asString();
 
-            asyncExecutionMessage =
-                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+            asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
             AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
             isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
@@ -582,5 +585,13 @@ public class OSDataPrepAPIHelper {
         }
 
         return asyncExecutionMessage;
+    }
+
+    public Response applyAggragate(Aggregate aggregate) throws Exception {
+        return given()
+                .header(new Header("Content-Type", "application/json")) //
+                .when() //
+                .body(mapper.writeValueAsString(aggregate)) //
+                .post("/api/aggregate");
     }
 }

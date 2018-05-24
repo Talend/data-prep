@@ -1,0 +1,34 @@
+[
+  {
+    "data": "METROPOLE DE LYON",
+    "SUM": 932593.0
+  },
+  {
+    "data": "LOIRE",
+    "SUM": 242846.0
+  },
+  {
+    "data": "ISERE",
+    "SUM": 232277.0
+  },
+  {
+    "data": "DROME",
+    "SUM": 131886.0
+  },
+  {
+    "data": "HAUTE-SAVOIE",
+    "SUM": 118770.0
+  },
+  {
+    "data": "SAVOIE",
+    "SUM": 58039.0
+  },
+  {
+    "data": "AIN",
+    "SUM": 40171.0
+  },
+  {
+    "data": "RHONE",
+    "SUM": 36241.0
+  }
+]

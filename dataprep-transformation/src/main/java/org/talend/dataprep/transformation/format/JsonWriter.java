@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * The JSON output is an object with two fields:<br/>
  * - "records": an array of key-value records objects<br/>
  * - "metadata": object with one field: "columns" which is an array of
- *  {@link org.talend.dataprep.api.dataset.ColumnMetadata ColumnMetadata} objects.
+ * {@link org.talend.dataprep.api.dataset.ColumnMetadata ColumnMetadata} objects.
  *
  * This writer buffers {@link RowMetadata} to write it at the end of the object.
  */
@@ -56,12 +56,12 @@ public class JsonWriter implements TransformerWriter {
 
     private static final String RECORDS_FIELD_NAME = "records";
 
+    /** Where this writer should write. */
+    private final OutputStream output;
+
     /** The data-prep ready jackson module. */
     @Autowired
     private ObjectMapper mapper;
-
-    /** Where this writer should write. */
-    private final OutputStream output;
 
     /** Jackson generator. */
     private JsonGenerator generator;
@@ -71,6 +71,9 @@ public class JsonWriter implements TransformerWriter {
 
     /** If receiving metadata while writing records => go to buffer and write at close. */
     private RowMetadata bufferedRowMetadata;
+
+    /** Buffer to store records before we received the metadata. */
+    private ObjectBuffer<BufferedDataSetRow> recordsBuffer;
 
     private boolean closed = false;
 
@@ -105,8 +108,36 @@ public class JsonWriter implements TransformerWriter {
     }
 
     @Override
-    public void write(final RowMetadata rowMetadata) {
+    public void write(final RowMetadata rowMetadata) throws IOException {
         this.bufferedRowMetadata = rowMetadata;
+        writeRowMetadataObject(rowMetadata);
+        if (!writingRecords) {
+            startRecordsWriting();
+        }
+        writeRecordsBuffer();
+    }
+
+    private void writeRecordsBuffer() throws IOException {
+        if (recordsBuffer != null) {
+            try {
+                recordsBuffer.readAll().forEach(row -> {
+                    try {
+                        generator.writeObject(row.values);
+                    } catch (IOException e) {
+                        LOGGER.debug("Could not write the records in the json.", e);
+                    }
+                });
+            } finally {
+                safeCloseObjectBuffer();
+            }
+        }
+    }
+
+    private void safeCloseObjectBuffer() throws IOException {
+        if (recordsBuffer != null) {
+            recordsBuffer.close();
+            recordsBuffer = null;
+        }
     }
 
     private void openRootObject() throws IOException {
@@ -121,10 +152,17 @@ public class JsonWriter implements TransformerWriter {
 
     @Override
     public void write(final DataSetRow row) throws IOException {
-        if (!writingRecords) {
-            startRecordsWriting();
+        if (bufferedRowMetadata == null) {
+            if (recordsBuffer == null) {
+                recordsBuffer = new ObjectBuffer<>(BufferedDataSetRow.class);
+            }
+            recordsBuffer.appendRow(new BufferedDataSetRow(row));
+        } else {
+            if (!writingRecords) {
+                startRecordsWriting();
+            }
+            generator.writeObject(row.valuesWithId());
         }
-        generator.writeObject(row.valuesWithId());
     }
 
     private void endRecordsWriting() throws IOException {
@@ -169,10 +207,10 @@ public class JsonWriter implements TransformerWriter {
             if (!writingRecords) {
                 startRecordsWriting();
             }
-            endRecordsWriting();
-            if (bufferedRowMetadata != null) {
-                writeRowMetadataObject(bufferedRowMetadata);
+            if (recordsBuffer != null) {
+                writeRecordsBuffer();
             }
+            endRecordsWriting();
             closeRootObject();
             generator.flush();
             generator.close();
@@ -185,4 +223,15 @@ public class JsonWriter implements TransformerWriter {
         generator.flush();
     }
 
+    private static final class BufferedDataSetRow {
+
+        public Map<String, Object> values;
+
+        public BufferedDataSetRow() {
+        }
+
+        public BufferedDataSetRow(DataSetRow row) {
+            values = row.valuesWithId();
+        }
+    }
 }

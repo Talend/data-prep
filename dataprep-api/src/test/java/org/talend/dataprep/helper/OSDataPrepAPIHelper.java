@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.helper;
 
+import static com.jayway.restassured.http.ContentType.JSON;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,20 +31,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
+import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
-
-import static com.jayway.restassured.http.ContentType.JSON;
 
 /**
  * Utility class to allow dataprep-api integration tests.
  */
 @Component
 public class OSDataPrepAPIHelper {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -141,7 +145,8 @@ public class OSDataPrepAPIHelper {
                 .baseUri(apiBaseUrl) //
                 .contentType(JSON) //
                 .when() //
-                .post("/api/preparations/" + preparationId + "/steps/" + stepId + "/order?parentStepId=" + parentStepId);
+                .post("/api/preparations/" + preparationId + "/steps/" + stepId + "/order?parentStepId="
+                        + parentStepId);
     }
 
     /**
@@ -168,10 +173,12 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log().all() //
+                .log()
+                .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //
                 .when() //
                 .post("/api/datasets");
@@ -189,7 +196,8 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -205,7 +213,8 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
                 .baseUri(apiBaseUrl) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/" + datasetId);
@@ -366,14 +375,16 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT context.
+     * Store a given {@link InputStream} into a temporary {@link File} and store the {@link File} reference in IT
+     * context.
      *
      * @param tempFilename the temporary {@link File} filename
      * @param input the {@link InputStream} to store.
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename),
+                "." + FilenameUtils.getExtension(tempFilename));
         Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
         tempFile.deleteOnExit();
@@ -519,6 +530,7 @@ public class OSDataPrepAPIHelper {
 
     /**
      * Return the list of datasets
+     *
      * @param queryParameters
      * @return
      */
@@ -528,5 +540,14 @@ public class OSDataPrepAPIHelper {
                 .when() //
                 .queryParameters(queryParameters)
                 .get("/api/datasets");
+    }
+
+    public Response applyAggragate(Aggregate aggregate) throws Exception {
+        return given()
+                .baseUri(apiBaseUrl) //
+                .header(new Header("Content-Type", "application/json")) //
+                .when() //
+                .body(mapper.writeValueAsString(aggregate)) //
+                .post("/api/aggregate");
     }
 }

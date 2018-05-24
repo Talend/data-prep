@@ -41,51 +41,6 @@ public interface TransformerWriter extends AutoCloseable {
     void write(DataSetRow row) throws IOException;
 
     /**
-     * Start to write an array.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void startArray() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * End to write an array.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void endArray() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * Start to write an object.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void startObject() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * End to write an object.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void endObject() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * Write a field name.
-     *
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void fieldName(String columns) throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
      * Flush the current writing.
      *
      * @throws IOException if an unexpected error occurs.
@@ -96,20 +51,8 @@ public interface TransformerWriter extends AutoCloseable {
 
     /**
      * Close the data stream properly when all data is written or a stop signal is received. Not meant to close the OutputStream.
-     *
-     * @throws IOException if an unexpected error occurs.
      */
     default void close() throws IOException {
-        // default implementation to ease implementations development
-    }
-
-    /**
-     * Set the Header of the file after write enough lines.
-     *
-     * @param columns MetaData that contains the columns name.
-     * @throws IOException if an unexpected error occurs.
-     */
-    default void setHeader(RowMetadata columns) throws IOException {
         // default implementation to ease implementations development
     }
 

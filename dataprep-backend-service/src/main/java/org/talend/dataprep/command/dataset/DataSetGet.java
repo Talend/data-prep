@@ -27,6 +27,8 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -41,6 +43,8 @@ import org.talend.dataprep.exception.TDPException;
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class DataSetGet extends GenericCommand<InputStream> {
+
+    protected static final Logger LOG = LoggerFactory.getLogger(DataSetGet.class);
 
     private final boolean fullContent;
 
@@ -99,6 +103,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
                 return new HttpGet(uriBuilder.build());
             } catch (URISyntaxException e) {
+                LOG.warn("Unable to get the dataSet", e);
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });
@@ -114,6 +119,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
                 return new HttpGet(uriBuilder.build());
             } catch (URISyntaxException e) {
+                LOG.warn("Unable to get the dataSet", e);
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });

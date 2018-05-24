@@ -112,6 +112,7 @@ public class StatisticsNode extends ColumnFilteredNode {
     @Override
     public void signal(Signal signal) {
         if (signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) {
+            // Inject Statistic Analysis to columns metaData
             if (configuredAnalyzer != null) {
                 adapter.adapt(filteredColumns, configuredAnalyzer.getResult());
             } else {
@@ -119,9 +120,11 @@ public class StatisticsNode extends ColumnFilteredNode {
             }
         }
         if (signal == Signal.END_OF_STREAM || signal == Signal.STOP) {
+            // In the end of records the row metaData are correct, so we set this metaData as fallback
             if (rowMetadata != null && rowMetadataFallbackProvider != null) {
                 rowMetadataFallbackProvider.setFallback(rowMetadata);
             }
+            // To send number of records to front we use the number of count of statistic.
             if (rowMetadata != null && rowMetadata.getColumns().size() > 0
                     && rowMetadata.getColumns().get(0).getStatistics() != null) {
                 rowMetadata.setSampleNbRows(rowMetadata.getColumns().get(0).getStatistics().getCount());

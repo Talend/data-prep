@@ -15,10 +15,13 @@ package org.talend.dataprep.api.filter;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -36,6 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @see #walk(String, RowMetadata, JSONFilterCallback)
  */
 public class JSONFilterWalker {
+
+    protected static final Logger LOG = LoggerFactory.getLogger(JSONFilterWalker.class);
 
     private static final String EQ = "eq";
 
@@ -65,6 +70,9 @@ public class JSONFilterWalker {
 
     private static final String NOT = "not";
 
+    private static final List<String> ALLOWED =
+            Arrays.asList(EQ, GT, LT, GTE, LTE, CONTAINS, MATCHES, INVALID, VALID, EMPTY, RANGE);
+
     private JSONFilterWalker() {
         // Utility class, no need for public constructor.
     }
@@ -92,6 +100,7 @@ public class JSONFilterWalker {
                 return buildFilter(root, rowMetadata, callback);
             }
         } catch (Exception e) {
+            LOG.warn("Unable to parse filter {]", filterAsString, e);
             throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e);
         }
     }
@@ -145,25 +154,7 @@ public class JSONFilterWalker {
     }
 
     private static boolean allowFullFilter(String operation) {
-        switch (operation) {
-        case EQ:
-        case GT:
-        case LT:
-        case GTE:
-        case LTE:
-        case CONTAINS:
-        case MATCHES:
-        case INVALID:
-        case VALID:
-        case EMPTY:
-        case RANGE:
-            return true;
-        case AND:
-        case OR:
-        case NOT:
-        default:
-            return false;
-        }
+        return ALLOWED.contains(operation);
     }
 
     private static <T> T buildOperationFilter(JsonNode currentNode, //

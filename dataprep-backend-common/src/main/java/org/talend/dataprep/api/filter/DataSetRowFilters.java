@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -47,6 +48,8 @@ class DataSetRowFilters {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSetRowFilters.class);
 
+    public static final String AT_LEAST_ONE_COLUMN = "*";
+
     private static DateParser dateParser;
 
     private DataSetRowFilters() {
@@ -58,12 +61,12 @@ class DataSetRowFilters {
      * It first tries String comparison, and if not 'true' uses number comparison.
      *
      * @param columnId The column id
-     * @param value    The compared value
+     * @param value The compared value
      * @return The eq predicate
      */
     static Predicate<DataSetRow> createEqualsPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> StringUtils.equals(s, value) || isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -71,7 +74,7 @@ class DataSetRowFilters {
     }
 
     private static Predicate<Map.Entry<String, Object>> keepConcernedColumns(String columnId) {
-        if ("*".equals(columnId)) {
+        if (AT_LEAST_ONE_COLUMN.equals(columnId)) {
             return e -> !TDP_INVALID.equals(e.getKey());
         } else {
             return e -> StringUtils.equals(columnId, e.getKey());
@@ -82,12 +85,12 @@ class DataSetRowFilters {
      * Create a predicate that checks if the var is greater than a value.
      *
      * @param columnId The column id
-     * @param value    The compared value
+     * @param value The compared value
      * @return The gt predicate
      */
     static Predicate<DataSetRow> createGreaterThanPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -98,12 +101,12 @@ class DataSetRowFilters {
      * Create a predicate that checks if the var is lower than a value.
      *
      * @param columnId The column id
-     * @param value    The compared value
+     * @param value The compared value
      * @return The lt predicate
      */
     static Predicate<DataSetRow> createLowerThanPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -114,12 +117,12 @@ class DataSetRowFilters {
      * Create a predicate that checks if the var is greater than or equal to a value.
      *
      * @param columnId The column id
-     * @param value    The compared value
+     * @param value The compared value
      * @return The gte predicate
      */
     static Predicate<DataSetRow> createGreaterOrEqualsPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -130,12 +133,12 @@ class DataSetRowFilters {
      * Create a predicate that checks if the var is lower than or equals to a value.
      *
      * @param columnId The column id
-     * @param value    The compared value
+     * @param value The compared value
      * @return The lte predicate
      */
     static Predicate<DataSetRow> createLowerOrEqualsPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> isBigDecimal(s) //
                         && isBigDecimal(value) //
@@ -150,11 +153,8 @@ class DataSetRowFilters {
      * @return The in predicate
      */
     static Predicate<DataSetRow> createInPredicate(final String columnId, final List<String> values) {
-        return r -> r
-                .values()
-                .entrySet()
-                .stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(values::contains);
     }
@@ -163,12 +163,12 @@ class DataSetRowFilters {
      * Create a predicate that checks if the var contains a value.
      *
      * @param columnId The column id
-     * @param value    The contained value
+     * @param value The contained value
      * @return The contains predicate
      */
     static Predicate<DataSetRow> createContainsPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> StringUtils.containsIgnoreCase(s, value));
     }
@@ -179,12 +179,12 @@ class DataSetRowFilters {
      * It DOES NOT correspond to the TQL "matches" filter.
      *
      * @param columnId The column id
-     * @param value    The pattern to comply to
+     * @param value The pattern to comply to
      * @return The complies predicate
      */
     static Predicate<DataSetRow> createCompliesPredicate(final String columnId, final String value) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> complies(s, value));
     }
@@ -192,7 +192,7 @@ class DataSetRowFilters {
     /**
      * Test a string value against a pattern.
      *
-     * @param value   A string value. May be null.
+     * @param value A string value. May be null.
      * @param pattern A pattern as returned in value analysis.
      * @return <code>true</code> if value complies, <code>false</code> otherwise.
      */
@@ -204,7 +204,7 @@ class DataSetRowFilters {
             return false;
         }
         // Character based patterns
-        if (StringUtils.containsAny(pattern, new char[]{'A', 'a', '9'})) {
+        if (StringUtils.containsAny(pattern, new char[] { 'A', 'a', '9' })) {
             if (value.length() != pattern.length()) {
                 return false;
             }
@@ -247,13 +247,10 @@ class DataSetRowFilters {
      * @return The invalid value predicate
      */
     static Predicate<DataSetRow> createInvalidPredicate(final String columnId) {
-        return r -> r
-                .values()
-                .entrySet()
-                .stream() //
-                .filter(keepConcernedColumns(columnId)) //
-                .map(e -> e.getKey()) //
-                .anyMatch(colId -> r.isInvalid(colId));
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
+                .map(Map.Entry::getKey) //
+                .anyMatch(r::isInvalid);
     }
 
     /**
@@ -269,11 +266,11 @@ class DataSetRowFilters {
                 .stream() //
                 .filter(keepValidConcernedColumns(columnId, r)) //
                 .map(e -> String.valueOf(e.getValue())) //
-                .anyMatch(value -> StringUtils.isNotEmpty(value));
+                .anyMatch(StringUtils::isNotEmpty);
     }
 
     private static Predicate<Map.Entry<String, Object>> keepValidConcernedColumns(String columnId, DataSetRow row) {
-        if ("*".equals(columnId)) {
+        if (AT_LEAST_ONE_COLUMN.equals(columnId)) {
             return e -> !row.isInvalid(e.getKey()) && !TDP_INVALID.equals(e.getKey());
         } else {
             return e -> StringUtils.equals(columnId, e.getKey()) && !row.isInvalid(e.getKey());
@@ -287,8 +284,8 @@ class DataSetRowFilters {
      * @return The empty value predicate
      */
     static Predicate<DataSetRow> createEmptyPredicate(final String columnId) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(StringUtils::isEmpty);
     }
@@ -296,25 +293,27 @@ class DataSetRowFilters {
     /**
      * Create a predicate that checks if the value is within a range [min, max[.
      *
-     * @param columnId    The column id
-     * @param min         The minimum
-     * @param max         The maximum
-     * @param lowerOpen   <code>true</code> if min number is excluded from range.
-     * @param upperOpen   <code>true</code> if max number is excluded from range.
+     * @param columnId The column id
+     * @param min The minimum
+     * @param max The maximum
+     * @param lowerOpen <code>true</code> if min number is excluded from range.
+     * @param upperOpen <code>true</code> if max number is excluded from range.
      * @param rowMetadata The row metadata
      * @return The range predicate
      */
     static Predicate<DataSetRow> createRangePredicate(final String columnId, final String min, final String max,
-                                                      boolean lowerOpen, boolean upperOpen, final RowMetadata rowMetadata) {
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+            boolean lowerOpen, boolean upperOpen, final RowMetadata rowMetadata) {
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .anyMatch(e -> {
                     final String columnType = rowMetadata.getById(e.getKey()).getType();
                     Type parsedType = Type.get(columnType);
                     if (Type.DATE.isAssignableFrom(parsedType)) {
-                        return createDateRangePredicate(e.getKey(), min, lowerOpen, max, upperOpen, rowMetadata).test(r);
+                        return createDateRangePredicate(e.getKey(), min, lowerOpen, max, upperOpen, rowMetadata)
+                                .test(r);
                     } else {
-                        // Assume range can be parsed as number (may happen if column is currently marked as string, but will
+                        // Assume range can be parsed as number (may happen if column is currently marked as string, but
+                        // will
                         // contain some numbers).
                         return createNumberRangePredicate(e.getKey(), min, lowerOpen, max, upperOpen).test(r);
                     }
@@ -325,14 +324,14 @@ class DataSetRowFilters {
      * Create a predicate that checks if the date value is within a range [min, max[.
      *
      * @param columnId The column id
-     * @param start    The start value
-     * @param end      The end value
-     * @param lowerOpen   <code>true</code> if start is excluded from range.
-     * @param upperOpen   <code>true</code> if end is excluded from range.
+     * @param start The start value
+     * @param end The end value
+     * @param lowerOpen <code>true</code> if start is excluded from range.
+     * @param upperOpen <code>true</code> if end is excluded from range.
      * @return The date range predicate
      */
-    private static Predicate<DataSetRow> createDateRangePredicate(final String columnId, final String start, boolean lowerOpen, final String end,
-                                                                  boolean upperOpen, final RowMetadata rowMetadata) {
+    private static Predicate<DataSetRow> createDateRangePredicate(final String columnId, final String start,
+            boolean lowerOpen, final String end, boolean upperOpen, final RowMetadata rowMetadata) {
         try {
             final long minTimestamp = Long.parseLong(start);
             final long maxTimestamp = Long.parseLong(end);
@@ -387,13 +386,14 @@ class DataSetRowFilters {
      * Create a predicate that checks if the number value is within a range [min, max[
      *
      * @param columnId The column id
-     * @param min      The minimal value
-     * @param max      The maximal value
-     * @param lowerOpen   <code>true</code> if min number is excluded from range.
-     * @param upperOpen   <code>true</code> if max number is excluded from range.
+     * @param min The minimal value
+     * @param max The maximal value
+     * @param lowerOpen <code>true</code> if min number is excluded from range.
+     * @param upperOpen <code>true</code> if max number is excluded from range.
      * @return The number range predicate
      */
-    private static Predicate<DataSetRow> createNumberRangePredicate(final String columnId, final String min, boolean lowerOpen, final String max, boolean upperOpen) {
+    private static Predicate<DataSetRow> createNumberRangePredicate(final String columnId, final String min,
+            boolean lowerOpen, final String max, boolean upperOpen) {
         try {
             final BigDecimal low = toBigDecimal(min);
             final BigDecimal high = toBigDecimal(max);
@@ -420,24 +420,45 @@ class DataSetRowFilters {
             };
         } catch (Exception e) {
             LOGGER.debug("Unable to create number range predicate.", e);
-            throw new IllegalArgumentException("Unsupported query, malformed 'range' (expected number min and max properties).");
+            throw new IllegalArgumentException(
+                    "Unsupported query, malformed 'range' (expected number min and max properties).");
         }
     }
 
     /**
      * Create a predicate that checks if the var matches the regex
-     * It only corresponds correspond to the TQL "matches" filter, NOT the JSON one (which is corresponds to a "complies" one).
+     * It only corresponds correspond to the TQL "matches" filter, NOT the JSON one (which is corresponds to a
+     * "complies" one).
      *
      * @param columnId The column id
-     * @param regex    The regex to comply to
+     * @param regex The regex to comply to
      * @return The matches predicate
      */
     static Predicate<DataSetRow> createMatchesPredicate(final String columnId, final String regex) {
         final Pattern pattern = Pattern.compile(regex);
-        return r -> r.values().entrySet().stream() //
-                .filter(keepConcernedColumns(columnId)) //
+        return r -> new GetConcernedColumns(columnId, r)
+                .invoke() //
                 .map(e -> String.valueOf(e.getValue())) //
                 .anyMatch(s -> pattern.matcher(s).matches());
     }
 
+    private static class GetConcernedColumns {
+
+        private String columnId;
+
+        private DataSetRow r;
+
+        public GetConcernedColumns(String columnId, DataSetRow r) {
+            this.columnId = columnId;
+            this.r = r;
+        }
+
+        public Stream<Map.Entry<String, Object>> invoke() {
+            return r
+                    .values()
+                    .entrySet()
+                    .stream() //
+                    .filter(keepConcernedColumns(columnId));
+        }
+    }
 }

@@ -1736,7 +1736,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final List<Action> action1 = singletonList(Action.Builder
                 .builder()
                 .withParameters(parametersWithoutDataset)
-                .withFilterColumns(new ArrayList<>())
+                .withFilterColumns(null)
                 .build());
         final List<Action> action2 = singletonList(Action.Builder
                 .builder()
@@ -1772,7 +1772,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         final List<Action> action1 = singletonList(Action.Builder.builder()
                 .withParameters(parametersWithoutDataset)
-                .withFilterColumns(new ArrayList<>())
+                .withFilterColumns(null)
                 .build());
         final List<Action> action2 = singletonList(Action.Builder.builder()
                 .withParameters(parametersOnDataset)

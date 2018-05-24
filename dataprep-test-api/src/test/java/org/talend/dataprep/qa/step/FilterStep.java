@@ -49,14 +49,13 @@ public class FilterStep extends DataPrepStep {
      * @throws Exception very generic as we are in a test class, do not catch it
      */
     private DatasetContent getInitialDatasetContent(String datasetId, String tql) throws Exception {
-        Response response;
-        response = api.getDataset(datasetId, tql);
+        Response response = api.getDataset(datasetId, tql);
         response.then().statusCode(200);
         DatasetContent dataset = response.as(DatasetContent.class);
         if (!response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty()) {
             dataset.isUpToDate = true;
         }
-        return response.as(DatasetContent.class);
+        return dataset;
     }
 
     private void checkSampleRecordsCount(String actualRecordsCount, String expectedRecordsCount) {

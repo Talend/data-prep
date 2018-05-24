@@ -139,7 +139,9 @@ public class Action implements Serializable {
         public Action build() {
             final Action builtAction = new Action();
             builtAction.getParameters().putAll(parameters);
-            builtAction.getFilterColumns().addAll(filterColumns);
+            if (filterColumns != null) {
+                builtAction.getFilterColumns().addAll(filterColumns);
+            }
             builtAction.setName(name);
             return builtAction;
         }

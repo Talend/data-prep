@@ -14,6 +14,10 @@
 package org.talend.dataprep.transformation.actions.net;
 
 import java.net.URI;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.MalformedURLException;
+import java.io.UnsupportedEncodingException;
 
 import org.talend.dataprep.api.type.Type;
 
@@ -53,10 +57,10 @@ public class UrlTokenExtractors {
         public String extractToken(URI url) {
             // TDQ-14551: Support URLs with Asian characters
             try {
-                return java.net.URLDecoder.decode(new java.net.URL(url.toASCIIString()).getHost(), java.nio.charset.StandardCharsets.UTF_8.name());
-            } catch (java.net.MalformedURLException e) {
+                return URLDecoder.decode(new URL(url.toASCIIString()).getHost(), java.nio.charset.StandardCharsets.UTF_8.name());
+            } catch (MalformedURLException e) {
                 return url.getHost();
-            } catch (java.io.UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
                 return url.getHost();
             }
         }
@@ -75,9 +79,9 @@ public class UrlTokenExtractors {
         @Override
         public String extractToken(URI url) {
             try {
-                final int port = new java.net.URL(url.toASCIIString()).getPort();
+                final int port = new URL(url.toASCIIString()).getPort();
                 return port == -1 ? "" : port + "";
-            } catch (java.net.MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 return url.getPort() == -1 ? "" : url.getPort() + "";
             }
         }
@@ -150,9 +154,9 @@ public class UrlTokenExtractors {
         @Override
         public String extractToken(URI url) {
             try {
-                final String userInfo = new java.net.URL(url.toASCIIString()).getUserInfo();
+                final String userInfo = new URL(url.toASCIIString()).getUserInfo();
                 return userInfo == null ? "" : userInfo.split(":")[0];
-            } catch (java.net.MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 return url.getUserInfo() == null ? "" : url.getUserInfo().split(":")[0];
             }
         }
@@ -171,10 +175,12 @@ public class UrlTokenExtractors {
         @Override
         public String extractToken(URI url) {
             try {
-                final String userInfo = new java.net.URL(url.toASCIIString()).getUserInfo();
+                final String userInfo = new URL(url.toASCIIString()).getUserInfo();
                 return userInfo == null ? "" : userInfo.split(":")[1];
-            } catch (java.net.MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 return url.getUserInfo() == null ? "" : url.getUserInfo().split(":")[1];
+            } catch (Exception e) {
+                return "";
             }
         }
     };

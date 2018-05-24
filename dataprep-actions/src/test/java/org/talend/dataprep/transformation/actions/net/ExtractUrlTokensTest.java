@@ -266,6 +266,9 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         assertEquals("pass", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8580")));
         assertEquals("8580", UrlTokenExtractors.PORT_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8580")));
 
+        assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user@例子.卷筒纸:8580")));
+        assertEquals("", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user@例子.卷筒纸:8580")));
+
         assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("http://www.yahoo.fr")));
         assertEquals("mailto", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mailto:smallet@talend.com")));
         assertEquals("ftp",

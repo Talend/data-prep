@@ -58,9 +58,7 @@ public class UrlTokenExtractors {
             // TDQ-14551: Support URLs with Asian characters
             try {
                 return URLDecoder.decode(new URL(url.toASCIIString()).getHost(), java.nio.charset.StandardCharsets.UTF_8.name());
-            } catch (MalformedURLException e) {
-                return url.getHost();
-            } catch (UnsupportedEncodingException e) {
+            } catch (MalformedURLException | UnsupportedEncodingException e) {
                 return url.getHost();
             }
         }
@@ -78,12 +76,13 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
+            int port = -1;
             try {
-                final int port = new URL(url.toASCIIString()).getPort();
-                return port == -1 ? "" : port + "";
+                port = new URL(url.toASCIIString()).getPort();
             } catch (MalformedURLException e) {
-                return url.getPort() == -1 ? "" : url.getPort() + "";
+                port = url.getPort();
             }
+            return port == -1 ? "" : port + "";
         }
 
         @Override
@@ -153,12 +152,17 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
+            String userInfo = null;
             try {
-                final String userInfo = new URL(url.toASCIIString()).getUserInfo();
-                return userInfo == null ? "" : userInfo.split(":")[0];
+                userInfo = new URL(url.toASCIIString()).getUserInfo();
             } catch (MalformedURLException e) {
-                return url.getUserInfo() == null ? "" : url.getUserInfo().split(":")[0];
+                userInfo = url.getUserInfo();
             }
+            if (userInfo == null) {
+                return "";
+            }
+            String userInfos[] = userInfo.split(":");
+            return userInfos.length > 0 ? userInfos[0] : "";
         }
     };
 
@@ -174,14 +178,17 @@ public class UrlTokenExtractors {
 
         @Override
         public String extractToken(URI url) {
+            String userInfo = null;
             try {
-                final String userInfo = new URL(url.toASCIIString()).getUserInfo();
-                return userInfo == null ? "" : userInfo.split(":")[1];
+                userInfo = new URL(url.toASCIIString()).getUserInfo();
             } catch (MalformedURLException e) {
-                return url.getUserInfo() == null ? "" : url.getUserInfo().split(":")[1];
-            } catch (Exception e) {
+                userInfo = url.getUserInfo();
+            }
+            if (userInfo == null) {
                 return "";
             }
+            String userInfos[] = userInfo.split(":");
+            return userInfos.length == 1 ? "" : userInfos[1];
         }
     };
 

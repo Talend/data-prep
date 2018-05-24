@@ -97,7 +97,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
     /** False constant value. */
     private static final String FALSE = "false";
 
-    private static final DateFieldMappingBean[] dateFields = new DateFieldMappingBean[] { //
+    private static final DateFieldMappingBean[] DATE_FIELDS = new DateFieldMappingBean[] { //
             new DateFieldMappingBean(YEAR, ChronoField.YEAR), //
             new DateFieldMappingBean(QUARTER, ChronoField.MONTH_OF_YEAR), //
             new DateFieldMappingBean(MONTH, ChronoField.MONTH_OF_YEAR), //
@@ -155,7 +155,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         context.evict(TARGET_COLUMN_CONTEXT_KEY);
         context.get(TARGET_COLUMN_CONTEXT_KEY, r -> {
             Map<String, String> targetColumnIds = new HashMap<>();
-            for (DateFieldMappingBean dateField : dateFields) {
+            for (DateFieldMappingBean dateField : DATE_FIELDS) {
                 if (Boolean.valueOf(context.getParameters().get(dateField.key))) {
                     ColumnMetadata metadata = ColumnMetadata.Builder.column() //
                             .name(column.getName() + SEPARATOR + dateField.key) //
@@ -192,7 +192,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         }
 
         // insert new extracted values
-        for (final DateFieldMappingBean date_field : dateFields) {
+        for (final DateFieldMappingBean date_field : DATE_FIELDS) {
             if (Boolean.valueOf(parameters.get(date_field.key))) {
                 String newValue = StringUtils.EMPTY;
                 if (temporalAccessor != null && // may occurs if date can not be parsed with pattern

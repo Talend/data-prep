@@ -13,17 +13,8 @@
 
 package org.talend.dataprep.transformation.actions.net;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -34,6 +25,22 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 /**
  * Test class for ExtractUrlTokens action. Creates one consumer, and test it.
@@ -85,7 +92,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
-        final Map<String, String> expectedValues = new HashMap<>();
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
         expectedValues.put("0000", "lorem bacon");
         expectedValues.put("0001", "http://www.talend.com");
         expectedValues.put("0003", "http");
@@ -102,7 +109,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(expectedValues, row.order().values());
     }
 
     @Test
@@ -144,7 +151,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
-        final Map<String, String> expectedValues = new HashMap<>();
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
         expectedValues.put("0000", "lorem bacon");
         expectedValues.put("0001", "http_www.talend.com");
         expectedValues.put("0003", "");
@@ -161,7 +168,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(expectedValues, row.order().values());
     }
 
     @Test
@@ -173,7 +180,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
-        final Map<String, String> expectedValues = new HashMap<>();
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
         expectedValues.put("0000", "lorem bacon");
         expectedValues.put("0001", "");
         expectedValues.put("0003", "");
@@ -191,7 +198,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        assertEquals(expectedValues, row.order().values());
     }
 
     @Test
@@ -251,46 +258,111 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     }
 
     @Test
-    public void testProtocolExtractor() throws URISyntaxException {
+    public void testApplyNonUtf8HostsExtraction_TDQ_14551() {
         // TDQ-14551: Support URLs with Asian characters
-        assertEquals("例子.卷筒纸", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://例子.卷筒纸")));
-        assertEquals("例子.卷筒纸", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸")));
-        assertEquals("引き割り.引き割り", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://引き割り.引き割り:8080/引き割metadata.html")));
-        assertEquals("引き割り.引き割り", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8080/引き割metadata.html")));
+        assertEquals("例子.卷筒纸", testApply("https://user:pass@例子.卷筒纸").hostToken);
+        assertEquals("例子.卷筒纸", testApply("https://例子.卷筒纸").hostToken);
+        assertEquals("引き割り.引き割り", testApply("https://引き割り.引き割り:8080/引き割metadata.html").hostToken);
+        assertEquals("引き割り.引き割り", testApply("https://user:pass@引き割り.引き割り:8080/引き割metadata.html").hostToken);
+    }
 
-        assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
-        assertEquals("pass", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
-        assertEquals("8580", UrlTokenExtractors.PORT_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
+    @Test
+    public void testApplyChineseHostExtraction() {
+        TokenExtractionResult result = testApply("https://user:pass@例子.卷筒纸:8580");
+        assertEquals("user", result.userToken);
+        assertEquals("pass", result.passwordToken);
+        assertEquals("8580", result.portToken);
+    }
 
-        assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8580")));
-        assertEquals("pass", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8580")));
-        assertEquals("8580", UrlTokenExtractors.PORT_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8580")));
+    @Test
+    public void testApplyChineseHostNoPasswordExtraction() {
+        TokenExtractionResult result = testApply("https://user@例子.卷筒纸:8580/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        assertEquals("user", result.userToken);
+        assertEquals("", result.passwordToken);
+    }
 
-        assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user@例子.卷筒纸:8580")));
-        assertEquals("", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user@例子.卷筒纸:8580")));
-        assertEquals("卷筒", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://卷筒:纸@引き割り.引き割り:8580")));
-        assertEquals("纸", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://卷筒:纸@引き割り.引き割り:8580")));
-        // TDQ-14551~
+    @Test
+    public void testApplyJapaneseHostExtraction() {
+        TokenExtractionResult result = testApply("https://user:pass@引き割り.引き割り:8580");
+        assertEquals("user", result.userToken);
+        assertEquals("pass", result.passwordToken);
+        assertEquals("8580", result.portToken);
+    }
 
-        assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("http://www.yahoo.fr")));
-        assertEquals("mailto", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mailto:smallet@talend.com")));
-        assertEquals("ftp",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("ftp://server:21/this/is/a/resource")));
-        assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("HTTP://www.yahoo.fr")));
-        assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR
-                .extractToken(new URI("http:10.42.10.99:80/home/datasets?datasetid=c522a037")));
-        assertEquals("file",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("file://server:21/this/is/a/resource")));
-        assertEquals("mvn",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mvn://server:21/this/is/a/resource")));
-        assertEquals("tagada",
-                UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("tagada://server:21/this/is/a/resource")));
+    @Test
+    public void testApplyChineseAndJapaneseMixTokenExtraction() {
+        TokenExtractionResult result = testApply("https://卷筒:纸@引き割り.引き割り:8580");
+        assertEquals("卷筒", result.userToken);
+        assertEquals("纸", result.passwordToken);
+    }
+
+    @Test
+    @Ignore
+    public void testApplyEncodedCharactersTokenExtraction() throws Exception {
+        // encoded version of: https://卷筒:纸@引き割り.引き割り:8580
+        TokenExtractionResult result = testApply("https://%E5%8D%B7%E7%AD%92:%E7%BA%B8@%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A.%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A:8580");
+
+        assertEquals("%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A.%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A", result.hostToken);
+        assertEquals("%E5%8D%B7%E7%AD%92", result.userToken);
+        assertEquals("%E7%BA%B8", result.passwordToken);
+        assertEquals("8580", result.portToken);
+    }
+
+    @Test
+    public void testProtocolExtractor_TDQ_14551() {
+        assertEquals("http", testApply("http://www.yahoo.fr").protocolToken);
+        assertEquals("mailto", testApply("mailto:smallet@talend.com").protocolToken);
+        assertEquals("ftp", testApply("ftp://server:21/this/is/a/resource").protocolToken);
+        assertEquals("http", testApply("HTTP://www.yahoo.fr").protocolToken);
+        assertEquals("http", testApply("http:10.42.10.99:80/home/datasets?datasetid=c522a037").protocolToken);
+        assertEquals("file", testApply("file://server:21/this/is/a/resource").protocolToken);
+        assertEquals("mvn", testApply("mvn://server:21/this/is/a/resource").protocolToken);
+        assertEquals("tagada", testApply("tagada://server:21/this/is/a/resource").protocolToken);
     }
 
     @Test
     public void should_have_expected_behavior() {
         assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
+    }
+
+    // Utility to test the action
+    private TokenExtractionResult testApply(String myUrl) {
+        // given
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("column_id", "0000");
+        parameters.put("column_name", "url");
+        parameters.put("scope", "column");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", myUrl);
+        final DataSetRow row = new DataSetRow(values);
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        TokenExtractionResult result = new TokenExtractionResult();
+        result.protocolToken = row.get("0001");
+        result.hostToken = row.get("0002");
+        result.portToken = row.get("0003");
+        result.pathToken = row.get("0004");
+        result.queryToken = row.get("0005");
+        result.fragmentToken = row.get("0006");
+        result.userToken = row.get("0007");
+        result.passwordToken = row.get("0008");
+        return result;
+    }
+
+    private static class TokenExtractionResult {
+        private String protocolToken;
+        private String hostToken;
+        private String portToken;
+        private String pathToken;
+        private String queryToken;
+        private String fragmentToken;
+        private String userToken;
+        private String passwordToken;
     }
 
 }

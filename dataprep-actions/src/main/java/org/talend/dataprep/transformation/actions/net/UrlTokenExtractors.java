@@ -13,23 +13,25 @@
 
 package org.talend.dataprep.transformation.actions.net;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.client.utils.URIUtils;
+import org.talend.dataprep.api.type.Type;
+
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.MalformedURLException;
-import java.io.UnsupportedEncodingException;
-
-import org.talend.dataprep.api.type.Type;
+import java.util.Arrays;
 
 /**
  * Class that holds all the url extractors.
  */
-public class UrlTokenExtractors {
+class UrlTokenExtractors {
 
     /**
      * Extracts the protocol.
      */
-    protected static final UrlTokenExtractor PROTOCOL_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor PROTOCOL_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -37,16 +39,16 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            final String scheme = url.getScheme();
-            return scheme == null ? "" : scheme.toLowerCase();
+        public String extractToken(URI uri) {
+            final String scheme = uri.getScheme();
+            return scheme == null ? null : scheme.toLowerCase();
         }
     };
 
     /**
      * Extracts the host.
      */
-    protected static final UrlTokenExtractor HOST_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor HOST_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -54,20 +56,17 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            // TDQ-14551: Support URLs with Asian characters
-            try {
-                return URLDecoder.decode(new URL(url.toASCIIString()).getHost(), java.nio.charset.StandardCharsets.UTF_8.name());
-            } catch (MalformedURLException | UnsupportedEncodingException e) {
-                return url.getHost();
-            }
+        public String extractToken(URI uri) {
+            // URI.getHost() is bugged, @see https://bugs.java.com/view_bug.do?bug_id=6587184
+            HttpHost httpHost = URIUtils.extractHost(uri);
+            return httpHost == null ? null : httpHost.getHostName();
         }
     };
 
     /**
      * Extracts the port, if any.
      */
-    protected static final UrlTokenExtractor PORT_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor PORT_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -75,14 +74,18 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            int port = -1;
-            try {
-                port = new URL(url.toASCIIString()).getPort();
-            } catch (MalformedURLException e) {
-                port = url.getPort();
+        public String extractToken(URI uri) {
+            int port = uri.getPort();
+            if (port == -1) {
+                String authority = uri.getAuthority();
+                if (authority != null) {
+                    String endAfterColon = StringUtils.substringAfterLast(authority, ":");
+                    if (StringUtils.isNumeric(endAfterColon)) {
+                        port = Integer.parseInt(endAfterColon);
+                    }
+                }
             }
-            return port == -1 ? "" : port + "";
+            return port == -1 ? null : Integer.toString(port);
         }
 
         @Override
@@ -95,7 +98,7 @@ public class UrlTokenExtractors {
     /**
      * Extracts the path.
      */
-    protected static final UrlTokenExtractor PATH_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor PATH_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -103,15 +106,15 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            return url.getPath();
+        public String extractToken(URI uri) {
+            return uri.getPath();
         }
     };
 
     /**
      * Extracts the query, if any.
      */
-    protected static final UrlTokenExtractor QUERY_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor QUERY_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -119,15 +122,15 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            return url.getQuery();
+        public String extractToken(URI uri) {
+            return uri.getQuery();
         }
     };
 
     /**
      * Extracts the fragment.
      */
-    protected static final UrlTokenExtractor FRAGMENT_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor FRAGMENT_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -135,15 +138,15 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            return url.getFragment();
+        public String extractToken(URI uri) {
+            return uri.getFragment();
         }
     };
 
     /**
      * Extracts the user, if any.
      */
-    protected static final UrlTokenExtractor USER_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor USER_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -151,30 +154,15 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            String userInfo = null;
-            try {
-                userInfo = new URL(url.toASCIIString()).getUserInfo();
-            } catch (MalformedURLException e) {
-                userInfo = url.getUserInfo();
-            }
-            if (userInfo == null) {
-                return "";
-            }
-            try {
-                userInfo = URLDecoder.decode(userInfo, java.nio.charset.StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e) {
-                userInfo = url.getUserInfo();
-            }
-            String userInfos[] = userInfo.split(":");
-            return userInfos.length > 0 ? userInfos[0] : "";
+        public String extractToken(URI uri) {
+            return extractUserInfo(uri)[0];
         }
     };
 
     /**
      * Extracts the password, if any.
      */
-    protected static final UrlTokenExtractor PASSWORD_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
+    private static final UrlTokenExtractor PASSWORD_TOKEN_EXTRACTOR = new UrlTokenExtractor() {
 
         @Override
         public String getTokenName() {
@@ -182,30 +170,36 @@ public class UrlTokenExtractors {
         }
 
         @Override
-        public String extractToken(URI url) {
-            String userInfo = null;
-            try {
-                userInfo = new URL(url.toASCIIString()).getUserInfo();
-            } catch (MalformedURLException e) {
-                userInfo = url.getUserInfo();
-            }
-            if (userInfo == null) {
-                return "";
-            }
-            try {
-                userInfo = URLDecoder.decode(userInfo, java.nio.charset.StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e) {
-                userInfo = url.getUserInfo();
-            }
-            String userInfos[] = userInfo.split(":");
-            return userInfos.length == 1 ? "" : userInfos[1];
+        public String extractToken(URI uri) {
+            return extractUserInfo(uri)[1];
         }
     };
+
+    private static String[] extractUserInfo(URI uri) {
+        String userInfo = uri.getUserInfo();
+        if (userInfo == null) {
+            // try using URL parsing
+            try {
+                // circumvent the URL in-built scheme validation that wouldn't validate mvn protocol for instance
+                userInfo = new URL("http://" + uri.getAuthority()).getUserInfo();
+            } catch (MalformedURLException e) {
+                // ignoring
+            }
+            if (userInfo == null) {
+                // try manual extraction
+                String authority = uri.getAuthority();
+                if (authority != null && authority.contains("@")) {
+                    userInfo = StringUtils.substringBefore(authority, "@");
+                }
+            }
+        }
+        return userInfo == null ? new String[2] : Arrays.copyOf(StringUtils.split(userInfo, ':'), 2);
+    }
 
     /**
      * List all the available extractors.
      */
-    protected static UrlTokenExtractor[] urlTokenExtractors = new UrlTokenExtractor[] { PROTOCOL_TOKEN_EXTRACTOR,
+    static UrlTokenExtractor[] URL_TOKEN_EXTRACTORS = new UrlTokenExtractor[] { PROTOCOL_TOKEN_EXTRACTOR,
             HOST_TOKEN_EXTRACTOR, PORT_TOKEN_EXTRACTOR, PATH_TOKEN_EXTRACTOR, QUERY_TOKEN_EXTRACTOR, FRAGMENT_TOKEN_EXTRACTOR,
             USER_TOKEN_EXTRACTOR, PASSWORD_TOKEN_EXTRACTOR };
 

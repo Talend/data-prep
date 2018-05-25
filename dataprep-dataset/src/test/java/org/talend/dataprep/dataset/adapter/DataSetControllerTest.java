@@ -23,10 +23,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.configuration.DataPrepComponentScanConfiguration;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
 
@@ -35,13 +38,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(DataSetController.class)
+@Import({DataPrepComponentScanConfiguration.class })
 @Ignore
 public class DataSetControllerTest {
 
@@ -64,10 +69,15 @@ public class DataSetControllerTest {
 
         DataSet dataSet = objectMapper.readValue(resourceAsStream, DataSet.class);
 
-        given(dataSetService.getMetadata(anyString())).willReturn(dataSet);
+        when(dataSetService.getMetadata(anyString())).thenReturn(dataSet);
+
+        //TODO mock the bean conversion
+        when(beanConversionService.convert(any(DataSetMetadata.class), Dataset.class)).thenReturn(null);
 
         MvcResult result =
-                mvc.perform(get("/api/v1/datasets/{datasetId}", "1234")).andExpect(status().isOk()).andReturn();
+                mvc.perform(get("/api/v1/datasets/{datasetId}", "1234")) //
+                        .andExpect(status().isOk())
+                        .andReturn();
 
         JsonNode jsonSchema = objectMapper.readTree(result.getResponse().getContentAsString());
 

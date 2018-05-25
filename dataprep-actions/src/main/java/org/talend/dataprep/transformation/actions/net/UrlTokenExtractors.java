@@ -161,6 +161,11 @@ public class UrlTokenExtractors {
             if (userInfo == null) {
                 return "";
             }
+            try {
+                userInfo = URLDecoder.decode(userInfo, java.nio.charset.StandardCharsets.UTF_8.name());
+            } catch (UnsupportedEncodingException e) {
+                userInfo = url.getUserInfo();
+            }
             String userInfos[] = userInfo.split(":");
             return userInfos.length > 0 ? userInfos[0] : "";
         }
@@ -186,6 +191,11 @@ public class UrlTokenExtractors {
             }
             if (userInfo == null) {
                 return "";
+            }
+            try {
+                userInfo = URLDecoder.decode(userInfo, java.nio.charset.StandardCharsets.UTF_8.name());
+            } catch (UnsupportedEncodingException e) {
+                userInfo = url.getUserInfo();
             }
             String userInfos[] = userInfo.split(":");
             return userInfos.length == 1 ? "" : userInfos[1];

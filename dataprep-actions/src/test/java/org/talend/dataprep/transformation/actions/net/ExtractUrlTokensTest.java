@@ -252,14 +252,13 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
 
     @Test
     public void testProtocolExtractor() throws URISyntaxException {
-        assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
         // TDQ-14551: Support URLs with Asian characters
         assertEquals("例子.卷筒纸", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://例子.卷筒纸")));
         assertEquals("例子.卷筒纸", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸")));
         assertEquals("引き割り.引き割り", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://引き割り.引き割り:8080/引き割metadata.html")));
         assertEquals("引き割り.引き割り", UrlTokenExtractors.HOST_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@引き割り.引き割り:8080/引き割metadata.html")));
 
-
+        assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
         assertEquals("pass", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
         assertEquals("8580", UrlTokenExtractors.PORT_TOKEN_EXTRACTOR .extractToken(new URI("https://user:pass@例子.卷筒纸:8580")));
 
@@ -269,6 +268,9 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
 
         assertEquals("user", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://user@例子.卷筒纸:8580")));
         assertEquals("", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://user@例子.卷筒纸:8580")));
+        assertEquals("卷筒", UrlTokenExtractors.USER_TOKEN_EXTRACTOR .extractToken(new URI("https://卷筒:纸@引き割り.引き割り:8580")));
+        assertEquals("纸", UrlTokenExtractors.PASSWORD_TOKEN_EXTRACTOR .extractToken(new URI("https://卷筒:纸@引き割り.引き割り:8580")));
+        // TDQ-14551~
 
         assertEquals("http", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("http://www.yahoo.fr")));
         assertEquals("mailto", UrlTokenExtractors.PROTOCOL_TOKEN_EXTRACTOR.extractToken(new URI("mailto:smallet@talend.com")));

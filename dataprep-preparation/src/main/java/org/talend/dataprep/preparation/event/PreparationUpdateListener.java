@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.event;
+package org.talend.dataprep.preparation.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,6 +18,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.preparation.store.PreparationRepository;
@@ -25,7 +26,7 @@ import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
 @Component
-public class DatasetUpdateListener {
+public class PreparationUpdateListener {
 
     @Autowired
     protected ApplicationEventPublisher publisher;
@@ -49,6 +50,9 @@ public class DatasetUpdateListener {
                     // Reset step row metadata in preparation's steps.
                     preparationUtils
                             .listSteps(preparation.getHeadId(), preparationRepository) //
+                            .stream() //
+                            .filter(s -> !Step.ROOT_STEP.id().equals(s.id())) //
+                            .filter(s -> s.getRowMetadata() != null) //
                             .forEach(s -> {
                                 final Expression expression = TqlBuilder.eq("id", s.getRowMetadata());
                                 preparationRepository.remove(StepRowMetadata.class, expression);

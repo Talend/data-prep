@@ -41,11 +41,18 @@ public class DatasetUpdateListener {
         final Expression filter = TqlBuilder.eq("dataSetId", event.getSource().getId());
         preparationRepository
                 .list(Preparation.class, filter) //
-                .forEach(preparation -> preparationUtils
-                        .listSteps(preparation.getHeadId(), preparationRepository) //
-                        .forEach(s -> {
-                            final Expression expression = TqlBuilder.eq("id", s.getRowMetadata());
-                            preparationRepository.remove(StepRowMetadata.class, expression);
-                        }));
+                .forEach(preparation -> {
+                    // Reset preparation row metadata.
+                    preparation.setRowMetadata(event.getSource().getRowMetadata());
+                    preparationRepository.add(preparation);
+
+                    // Reset step row metadata in preparation's steps.
+                    preparationUtils
+                            .listSteps(preparation.getHeadId(), preparationRepository) //
+                            .forEach(s -> {
+                                final Expression expression = TqlBuilder.eq("id", s.getRowMetadata());
+                                preparationRepository.remove(StepRowMetadata.class, expression);
+                            });
+                });
     }
 }

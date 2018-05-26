@@ -25,6 +25,7 @@ import static org.talend.dataprep.transformation.api.action.context.ActionContex
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -205,4 +206,12 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS);
     }
 
+    @Override
+    public Set<Behavior> getBehavior(org.talend.dataprep.api.preparation.Action action) {
+        final Set<Behavior> behaviors = new HashSet<>(getBehavior());
+        if ("sequence".equals(action.getParameters().get(MODE_PARAMETER))) { // TODO Temporary
+            behaviors.add(Behavior.FORBID_DISTRIBUTED);
+        }
+        return behaviors;
+    }
 }

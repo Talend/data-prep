@@ -177,7 +177,7 @@ export default class DatasetImportCtrl {
 	 * @param changes Form changes
 	 */
 	onDatastoreFormSubmit(event, changes) {
-		const { formData, definitionName = (this.locationType || LIVE_LOCATION_TYPE) } = changes;
+		const { formData, definitionName = (this.locationType || this.item.location.componentType || LIVE_LOCATION_TYPE) } = changes;
 		if (this.submitLock) {
 			const formsData = {
 				dataStoreProperties: formData,
@@ -221,7 +221,7 @@ export default class DatasetImportCtrl {
 					'DATASTORE_CONNECTION_SUCCESSFUL'
 				))
 				.then(() => {
-					if (!this.item && !this.datasetForm) {
+					if (!this.datasetForm) {
 						return this._initDatasetForm(formData);
 					}
 				});

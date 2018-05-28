@@ -19,7 +19,7 @@ const playgroundTour = [
 		position: 'right',
 	},
 	{
-		element: '#datagrid .slick-header-columns-right > .slick-header-column',
+		element: '#datagrid .grid-header',
 		title: 'PLAYGROUND_STEP_2_TITLE',
 		content: 'PLAYGROUND_STEP_2_CONTENT',
 		position: 'right',

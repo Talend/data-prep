@@ -239,29 +239,7 @@ public class OSDataPrepAPIHelper {
     public Response listDatasetDetails() {
         return given() //
                 .when() //
-                .get("api/datasets/summary");
-    }
-
-    /**
-     * List all dataset in TDP instance.
-     *
-     * @return the response.
-     */
-    public Response listDataset() {
-        return given() //
-                .get("/api/datasets");
-    }
-
-    /**
-     * Get a preparation as a list of step id.
-     *
-     * @param preparationId the preparation id.
-     * @return the response.
-     */
-    public Response getPreparation(String preparationId) {
-        return given() //
-                .when() //
-                .get("/api/preparations/{preparationId}/details", preparationId);
+                .get("/api/datasets/summary");
     }
 
     /**

@@ -32,7 +32,7 @@ public class AddLanguageToActionExtractDatePart extends BaseUpgradeTaskTo_2_4_0_
 
     @Override
     public int getOrder() {
-        return 0;
+        return 1;
     }
 
     @Override

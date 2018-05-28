@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -39,8 +40,9 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testNoDataSetFound() {
-        contentAnalysis.analyze("1234");
-        assertThat(dataSetMetadataRepository.get("1234"), nullValue());
+        String dataSetId = UUID.randomUUID().toString();
+        contentAnalysis.analyze(dataSetId);
+        assertThat(dataSetMetadataRepository.get(dataSetId), nullValue());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,7 +52,7 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testAnalysisNoHeaderParameter() {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(UUID.randomUUID().toString()).build();
         createCsvDataSet(metadata, "5_lines.csv");
 
         contentAnalysis.analyze(metadata.getId());
@@ -64,7 +66,7 @@ public class ContentAnalysisTest extends DataSetBaseTest {
     @Test
     public void testAnalysisWithHeaderParameter() {
         final DataSetMetadata metadata = metadataBuilder.metadata() //
-                .id("1234") //
+                .id(UUID.randomUUID().toString()) //
                 .parameter(CSVFormatFamily.HEADER_NB_LINES_PARAMETER, "56").build();
         createCsvDataSet(metadata, "5_lines.csv");
 
@@ -78,7 +80,7 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testAnalysisWithLimit() {
-        final DataSetMetadata metadata = createMetadata("3548",
+        final DataSetMetadata metadata = createMetadata(UUID.randomUUID().toString(),
                 Arrays.asList("id", "first_name", "last_name", "email", "gender", "ip_address"));
         metadataBuilder.metadata().id("3548").build();
         createCsvDataSet(metadata, "100_lines.csv");
@@ -98,7 +100,7 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testAnalysisWithoutLimit() {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("8520").build();
+        final DataSetMetadata metadata = metadataBuilder.metadata().id(UUID.randomUUID().toString()).build();
         createCsvDataSet(metadata, "5_lines.csv");
 
         contentAnalysis.analyze(metadata.getId());

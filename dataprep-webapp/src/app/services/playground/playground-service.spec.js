@@ -1797,7 +1797,7 @@ describe('Playground Service', () => {
 				// given
 				stateMock.playground.dataset = { id: '123456' };
 				spyOn(OnboardingService, 'startTour').and.returnValue();
-				spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true); // not completed
+				spyOn(OnboardingService, 'shouldStartTour').and.callFake(tourName => tourName === 'recipe'); // not completed
 
 				const parameters = { param1: 'param1Value', param2: 4 };
 				const actions = [{ action: 'uppercase', parameters: parameters }];

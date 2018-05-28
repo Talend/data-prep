@@ -34,7 +34,7 @@
         <table ng-if="$ctrl.showBuildDetails">
             <thead>
                 <tr>
-                    <th>{{'SERVICE' | translate}}</th>
+                    <th>{{'SERVICE_NAME' | translate}}</th>
                     <th>{{'BUILD_ID' | translate}}</th>
                     <th>{{'VERSION_ID' | translate}}</th>
                 </tr>
@@ -48,6 +48,6 @@
             </tbody>
         </table>
 
-        <button class="btn btn-primary" id="toggle-details" translate="{{!$ctrl.showBuildDetails ? 'MORE' : 'LESS'}}" ng-click="$ctrl.toggleDetailsDisplay()"></button>
+        <button class="btn btn-default" id="toggle-details" translate="{{!$ctrl.showBuildDetails ? 'MORE' : 'LESS'}}" ng-click="$ctrl.toggleDetailsDisplay()"></button>
     </div>
 </talend-modal>

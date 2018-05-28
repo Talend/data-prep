@@ -58,6 +58,9 @@
 		.vertical-barchart-cls .secondaryBar rect.bar {
 			fill: $brand-primary;
 		}
+		.tc-breadcrumb .tc-breadcrumb-item.active span {
+			box-shadow: 0 -2px 0 $brand-primary inset;
+		}
 	}
 
 	@import "~@talend/bootstrap-theme/src/theme/variations/tdp";

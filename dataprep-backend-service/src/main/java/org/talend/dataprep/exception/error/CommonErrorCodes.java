@@ -12,14 +12,16 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.talend.daikon.exception.error.ErrorCode;
+
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public enum CommonErrorCodes implements ErrorCode {
     UNEXPECTED_EXCEPTION(500),
@@ -44,6 +46,7 @@ public enum CommonErrorCodes implements ErrorCode {
     UNABLE_TO_READ_USER_DATA(500, "id"),
     UNABLE_TO_SAVE_PREPARATION(500, "id"),
     UNABLE_TO_GET_PREPARATION(500, "id"),
+    UNABLE_TO_DELETE_PREPARATION_CACHE(500, "id"),
     UNABLE_TO_READ_PREPARATION(500),
 
     ILLEGAL_ORDER_FOR_LIST(400, "order"),

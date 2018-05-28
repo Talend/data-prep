@@ -9,32 +9,36 @@
  * 9 rue Pages 92150 Suresnes, France
  */
 
-package org.talend.dataprep.upgrade.to_2_3_0_PE;
+package org.talend.dataprep.upgrade.to_2_4_0_PE;
 
 import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.upgrade.common.ActionFormatPhoneNumber;
+import org.talend.dataprep.upgrade.to_2_3_0_PE.BaseUpgradeTaskTo_2_3_0_PE;
 
 @Component
-public class FormatPhoneNumberAction extends BaseUpgradeTaskTo_2_3_0_PE {
+public class RemoveStepRowMetadata extends BaseUpgradeTaskTo_2_4_0_PE {
 
     private final PreparationRepository preparationRepository;
 
-    public FormatPhoneNumberAction(PreparationRepository preparationRepository) {
+    public RemoveStepRowMetadata(PreparationRepository preparationRepository) {
         this.preparationRepository = preparationRepository;
     }
 
-    @Override public void run() {
-        ActionFormatPhoneNumber.upgradeActions(preparationRepository);
+    @Override
+    public void run() {
+        preparationRepository.list(StepRowMetadata.class).forEach(preparationRepository::remove);
     }
 
-    @Override public int getOrder() {
-        return 3;
+    @Override
+    public int getOrder() {
+        return 0;
     }
 
-    @Override public target getTarget() {
+    @Override
+    public target getTarget() {
         return VERSION;
     }
 }

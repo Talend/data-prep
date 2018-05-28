@@ -1,3 +1,4 @@
+@EnvOs @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with ChangeDate related actions
 
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (without new column)

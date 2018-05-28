@@ -159,9 +159,6 @@ public class DataSetMetadata implements Serializable {
         this.appVersion = appVersion;
     }
 
-    /**
-     * @return the dataset id.
-     */
     public String getId() {
         return id;
     }
@@ -372,15 +369,9 @@ public class DataSetMetadata implements Serializable {
      * @return true if this data set metadata is similar with the specified one and false otherwise
      */
     public boolean compatible(DataSetMetadata other) {
-        if (other == null) {
-            return false;
-        }
-        return rowMetadata != null ? rowMetadata.compatible(other.getRowMetadata()) : rowMetadata == other.getRowMetadata();
+        return other != null && (rowMetadata != null ? rowMetadata.compatible(other.getRowMetadata()) : other.getRowMetadata() == null);
     }
 
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return "DataSetMetadata{" + //
@@ -401,9 +392,6 @@ public class DataSetMetadata implements Serializable {
                 '}';
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -430,9 +418,6 @@ public class DataSetMetadata implements Serializable {
                 Objects.equals(appVersion, that.appVersion);
     }
 
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return Objects.hash(id, rowMetadata, lifecycle, dataSetSize, content, governance, location, name, author, creationDate,

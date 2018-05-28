@@ -17,6 +17,7 @@ const InventoryCopyMoveComponent = {
 	bindings: {
 		initialFolder: '<',
 		item: '<',
+		itemType: '<',
 		onCopy: '&',
 		onMove: '&',
 		isLoading: '<',
@@ -27,7 +28,7 @@ const InventoryCopyMoveComponent = {
     <div>
         <div class="modal-title"
              translate-once="CHOOSE_FOLDER_DESTINATION"
-             translate-values="{type: 'item', name: item.name}"></div>
+             translate-values="{type: $ctrl.itemType, name: item.name}"></div>
 
         <form name="$ctrl.copyMoveForm">
             <folder-selection
@@ -61,7 +62,7 @@ const InventoryCopyMoveComponent = {
                         label="'{{ 'MOVE_HERE_ACTION' | translate }}'"
                         tooltip-label="'{{($ctrl.isActionDisabled() && 'WAITING_FOLDERS_TITLE') | translate}}'">
 				</action-button>
-                
+
                 <action-button
                         id="'copy-move-copy-btn'"
                         bs-style="'primary'"

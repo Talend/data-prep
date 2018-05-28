@@ -29,8 +29,4 @@ public class Versions {
         return new ClassPathManifestInfoProvider("/dataprep-git.properties", "OS");
     }
 
-    @Bean
-    public ManifestInfoProvider opsProvider() {
-        return new ClassPathManifestInfoProvider("/dataprep-ops-git.properties", "OPS");
-    }
 }

@@ -59,7 +59,7 @@ public class AddLanguageToActionExtractDatePartTest extends Base_2_4_0_PE_Test {
 
     @Override
     protected int getExpectedTaskOrder() {
-        return 0;
+        return 1;
     }
 
 }

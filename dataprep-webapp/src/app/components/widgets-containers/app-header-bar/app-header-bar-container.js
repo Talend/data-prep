@@ -20,6 +20,7 @@ const AppHeaderBarContainer = {
 		 	help="$ctrl.help"
 		 	user="$ctrl.user"
 			products="$ctrl.products"
+			information="$ctrl.information"
 		 	watch-depth="reference"
 		/>`,
 	controller: AppHeaderBarCtrl,

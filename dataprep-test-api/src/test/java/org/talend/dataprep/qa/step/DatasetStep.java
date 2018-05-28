@@ -1,5 +1,10 @@
 package org.talend.dataprep.qa.step;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -23,11 +28,6 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with dataset.
@@ -76,8 +76,22 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset$")
-    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId) throws IOException {
+    @Deprecated
+    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId)
+            throws IOException, InterruptedException {
         String dataSetId = context.getObject("dataSetId").toString();
+
+        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId);
+    }
+
+    @Then("^I check that the semantic type \"(.*)\" exists the types list of the column \"(.*)\" of the dataset \"(.*)\"$")
+    public void thenICheckSemanticTypeExist(String semanticTypeId, String columnId, String dataSetName)
+            throws IOException, InterruptedException {
+        String dataSetId = context.getDatasetId(suffixName(dataSetName));
+        getDatasetsColumnSemanticTypes(semanticTypeId, columnId, dataSetId);
+    }
+
+    private void getDatasetsColumnSemanticTypes(String semanticTypeId, String columnId, String dataSetId) {
         Response response = api.getDatasetsColumnSemanticTypes(columnId, dataSetId);
         response.then().statusCode(200);
 

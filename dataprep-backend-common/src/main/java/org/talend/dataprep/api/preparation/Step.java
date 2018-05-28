@@ -167,6 +167,7 @@ public class Step extends Identifiable implements Serializable {
             result += "null";
         }
         result += '\'' + //
+                ", id='" + id + '\'' + //
                 ", actions='" + preparationActions + '\'' + //
                 ", appVersion='" + appVersion + '\'' + //
                 ", diff=" + diff + //

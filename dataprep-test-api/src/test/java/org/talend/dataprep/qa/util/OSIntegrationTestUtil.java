@@ -28,7 +28,7 @@ import static org.talend.dataprep.transformation.actions.common.ImplicitParamete
 @Component
 public class OSIntegrationTestUtil {
 
-    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id");
+    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id", "new_domain_label");
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.

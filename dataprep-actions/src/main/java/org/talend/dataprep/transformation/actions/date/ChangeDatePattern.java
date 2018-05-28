@@ -13,6 +13,20 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,19 +43,6 @@ import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 /**
  * Change the date pattern on a 'date' column.
@@ -157,7 +158,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
         if (actionContext.getParameters() == null) {
             return emptyList();
         }
-        switch (actionContext.getParameters().get(FROM_MODE)) {
+        switch (Optional.ofNullable(actionContext.getParameters().get(FROM_MODE)).orElse(FROM_MODE_BEST_GUESS)) {
             case FROM_MODE_BEST_GUESS:
                 final RowMetadata rowMetadata = actionContext.getRowMetadata();
                 final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());

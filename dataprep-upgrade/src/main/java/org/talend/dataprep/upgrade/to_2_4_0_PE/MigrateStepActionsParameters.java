@@ -32,7 +32,7 @@ public class MigrateStepActionsParameters extends BaseUpgradeTaskTo_2_4_0_PE {
 
     @Override
     public int getOrder() {
-        return 1;
+        return 2;
     }
 
     @Override

@@ -12,9 +12,11 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.TeeOutputStream;
@@ -94,7 +96,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
         final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
         try (InputStream datasetContent = dataSetGet.execute()) {
-            try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
+            try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
                 // head is not allowed as step id
                 final String version = getCleanStepId(preparation, stepId);
 

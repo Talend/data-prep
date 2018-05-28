@@ -1,3 +1,4 @@
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with SearchAndReplace related action
 
   Scenario: See bug TDP-5243

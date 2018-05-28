@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,9 +21,14 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.MOVED_PERMANENTLY;
+
 public enum APIErrorCodes implements ErrorCode {
     UNABLE_TO_DELETE_PREPARATION(BAD_REQUEST),
-    UNABLE_TO_DELETE_PREPARATION_CACHE(INTERNAL_SERVER_ERROR),
     UNABLE_TO_CREATE_DATASET(BAD_REQUEST),
     UNABLE_TO_CREATE_OR_UPDATE_DATASET(BAD_REQUEST),
     UNABLE_TO_CERTIFY_DATASET(BAD_REQUEST),

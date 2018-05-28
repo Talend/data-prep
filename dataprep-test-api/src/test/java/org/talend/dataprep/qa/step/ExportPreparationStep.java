@@ -1,5 +1,6 @@
 package org.talend.dataprep.qa.step;
 
+
 import com.jayway.restassured.response.Response;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Then;
@@ -13,8 +14,6 @@ import org.talend.dataprep.qa.util.export.ExportParamAnalyzer;
 import org.talend.dataprep.qa.util.export.ExportType;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +42,8 @@ public class ExportPreparationStep extends DataPrepStep {
         exporter.exportSample(params);
     }
 
-    @When("^I get the export formats for the preparation \"(.*)\"$")
-    public void whenIGetExportFormat(String preparationName) throws IOException {
+    @Then("^I check that \"(.*)\" available export formats are :$")
+    public void whenIGetExportFormat(String preparationName, DataTable dataTable) throws IOException {
         String preparationId = context.getPreparationId(suffixName(preparationName));
 
         Response apiResponse = api.getExportFormats(preparationId);

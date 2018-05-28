@@ -13,6 +13,14 @@
 
 package org.talend.dataprep.qa.config;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.export.ExportFormatMessage;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.dto.Folder;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,14 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.format.export.ExportFormatMessage;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.qa.dto.Folder;
 
 /**
  * Used to share data within steps.
@@ -78,7 +78,7 @@ public class FeatureContext {
     /**
      * Add a suffix to a name depending of the execution instance.
      *
-     * @param name the to suffix.
+     * @param name the name to suffix.
      * @return the suffixed name.
      */
     public static String suffixName(String name) {
@@ -86,9 +86,26 @@ public class FeatureContext {
     }
 
     /**
+     * Add a suffix to a name depending of the execution instance.
+     *
+     * @param folderPath to suffix.
+     * @return the suffixed folderPath.
+     */
+    public static String suffixFolderName(String folderPath) {
+        // The Home folder does not be suffixed
+        if (StringUtils.equals(folderPath, "/")) {
+            return folderPath;
+        }
+        // 2 cases, following the path starts from the root or not
+        return folderPath.startsWith("/") ?
+                "/" + folderPath.substring(1).replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID :
+                folderPath.replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID;
+    }
+
+    /**
      * Store a new dataset reference. In order to delete it later.
      *
-     * @param id the dataset id.
+     * @param id   the dataset id.
      * @param name the dataset name.
      */
     public void storeDatasetRef(@NotNull String id, @NotNull String name) {
@@ -98,7 +115,7 @@ public class FeatureContext {
     /**
      * Store a new preparation reference. In order to delete it later.
      *
-     * @param id the preparation id.
+     * @param id   the preparation id.
      * @param name the preparation name.
      */
     public void storePreparationRef(@NotNull String id, @NotNull String name) {
@@ -108,7 +125,7 @@ public class FeatureContext {
     /**
      * Store a new semantic type reference. In order to delete it later.
      *
-     * @param id the semantic type id.
+     * @param id   the semantic type id.
      * @param name the semantic type name.
      */
     public void storeSemanticTypeRef(@NotNull String id, @NotNull String name) {
@@ -145,7 +162,7 @@ public class FeatureContext {
     /**
      * Store an {@link Action}.
      *
-     * @param alias the {@link Action} alias.
+     * @param alias  the {@link Action} alias.
      * @param action the {@link Action} to store.
      */
     public void storeAction(@NotNull String alias, @NotNull Action action) {
@@ -250,7 +267,8 @@ public class FeatureContext {
         preparationIdByName.clear();
     }
 
-    /**s
+    /**
+     * s
      * Clear the list of semantic types.
      */
     public void clearSemanticType() {

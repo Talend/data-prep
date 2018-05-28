@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.upgrade.to_2_1_0_PE;
+package org.talend.dataprep.upgrade;
 
 import static org.mockito.BDDMockito.when;
 import static org.mockito.Matchers.any;
@@ -30,14 +30,21 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
+import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.service.TransformationService;
 import org.talend.dataprep.upgrade.model.UpgradeTaskId;
+import org.talend.dataprep.upgrade.to_2_1_0_PE.Base_2_1_0_PE_Test;
+import org.talend.dataprep.upgrade.to_2_1_0_PE.SetStepRowMetadata;
 
 /**
  * Unit tests.
@@ -45,10 +52,16 @@ import org.talend.dataprep.upgrade.model.UpgradeTaskId;
  * @see SetStepRowMetadata
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SetStepRowMetadataTest extends Base_2_1_0_PE_Test {
+public class StepRowMetadataComputeTest {
 
     @InjectMocks
-    private SetStepRowMetadata task;
+    private StepRowMetadataCompute task;
+
+    @Mock
+    private ContentCache contentCache;
+
+    @Mock
+    private CacheKeyGenerator cacheKeyGenerator;
 
     @Mock
     private PreparationRepository repository;
@@ -71,6 +84,21 @@ public class SetStepRowMetadataTest extends Base_2_1_0_PE_Test {
         when(repository.list(PersistentPreparation.class))
                 .thenReturn(preparations.stream()) //
                 .thenReturn(preparations.stream());
+
+        final CacheKeyGenerator.MetadataCacheKeyBuilder metadataBuilder = mock(CacheKeyGenerator.MetadataCacheKeyBuilder.class);
+        when(cacheKeyGenerator.metadataBuilder()).thenReturn(metadataBuilder);
+        when(metadataBuilder.preparationId(anyString())).thenReturn(metadataBuilder);
+        when(metadataBuilder.sourceType(any())).thenReturn(metadataBuilder);
+        when(metadataBuilder.stepId(anyString())).thenReturn(metadataBuilder);
+        when(metadataBuilder.build()).thenReturn(mock(TransformationMetadataCacheKey.class));
+
+        final CacheKeyGenerator.ContentCacheKeyBuilder contentBuilder = mock(CacheKeyGenerator.ContentCacheKeyBuilder.class);
+        when(cacheKeyGenerator.contentBuilder()).thenReturn(contentBuilder);
+        when(contentBuilder.preparationId(anyString())).thenReturn(contentBuilder);
+        when(contentBuilder.sourceType(any())).thenReturn(contentBuilder);
+        when(contentBuilder.stepId(anyString())).thenReturn(contentBuilder);
+        when(contentBuilder.build()).thenReturn(mock(TransformationCacheKey.class));
+
     }
 
     private PersistentPreparation makePersistentPreparation(String id) {
@@ -105,19 +133,4 @@ public class SetStepRowMetadataTest extends Base_2_1_0_PE_Test {
         verify(service, times(preparations.size())).execute(any());
     }
 
-    /**
-     * @return the task id.
-     */
-    @Override
-    protected UpgradeTaskId getTaskId() {
-        return task.getId();
-    }
-
-    /**
-     * @return the expected task order.
-     */
-    @Override
-    protected int getExpectedTaskOrder() {
-        return 3;
-    }
 }

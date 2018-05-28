@@ -31,7 +31,7 @@ public class MigrateActionsParameters extends BaseUpgradeTaskTo_2_3_0_PE {
 
     @Override
     public int getOrder() {
-        return 0;
+        return 1;
     }
 
     @Override

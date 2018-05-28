@@ -28,6 +28,7 @@ const PreparationCopyMoveContainer = {
 		    <inventory-copy-move
 				initial-folder="$ctrl.state.inventory.homeFolder"
 				item="$ctrl.state.home.preparations.copyMove.preparation"
+				item-type="$ctrl.itemType"
 				on-copy="$ctrl.copy(item, destination, name)"
 				on-move="$ctrl.move(item, destination, name)"
 				is-loading="$ctrl.state.home.preparations.copyMove.isTreeLoading"

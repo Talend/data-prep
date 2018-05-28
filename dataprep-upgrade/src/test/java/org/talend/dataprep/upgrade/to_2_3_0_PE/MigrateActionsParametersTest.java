@@ -58,6 +58,6 @@ public class MigrateActionsParametersTest extends Base_2_3_0_PE_Test {
 
     @Override
     protected int getExpectedTaskOrder() {
-        return 0;
+        return 1;
     }
 }

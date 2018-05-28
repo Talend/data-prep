@@ -17,6 +17,7 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.content.ContentServiceEnabled;
 import org.talend.daikon.content.DeletableResource;
 import org.talend.daikon.content.ResourceResolver;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.exception.TDPException;
@@ -42,8 +44,16 @@ public class LocalFileContentStore extends DataSetContentStore {
     @Autowired
     private ResourceResolver resolver;
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private DeletableResource getResource(DataSetMetadata dataSetMetadata) {
-        return resolver.getResource(ROOT + dataSetMetadata.getId());
+        String id = dataSetMetadata.getId();
+        try {
+            UUID.fromString(id); // ID is supposed to be an UUID, Exception if not
+        } catch (IllegalArgumentException e) {
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_SERVE_DATASET_CONTENT,
+                    ExceptionContext.withBuilder().put("id", id).build());
+        }
+        return resolver.getResource(ROOT + id);
     }
 
     @Override

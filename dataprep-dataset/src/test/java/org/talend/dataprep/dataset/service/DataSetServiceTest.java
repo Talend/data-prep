@@ -12,28 +12,16 @@
 
 package org.talend.dataprep.dataset.service;
 
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.http.ContentType.JSON;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.Instant.now;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort.LAST_MODIFICATION_DATE;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
@@ -46,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.daikon.content.DeletableResource;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -69,10 +59,46 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.http.ContentType.JSON;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Instant.now;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.LAST_MODIFICATION_DATE;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
 public class DataSetServiceTest extends DataSetBaseTest {
 
     @Autowired
     private ContentCache cacheManager;
+
+    @Autowired
+    private ResourceResolver resolver;
 
     @MockBean
     private QuotaService quotaService;
@@ -721,6 +747,28 @@ public class DataSetServiceTest extends DataSetBaseTest {
         ids = from(when().get("/datasets").asString()).get("id");
         assertThat(ids, hasItem(dataSetId));
         assertQueueMessages(dataSetId);
+    }
+
+    @Test
+    public void updateRawContentWithDirectoryTraversalFile_TDP_3505() throws Exception {
+        // dataSetId is the filename under which the file will be stored on the server
+        String dataSetIdFlawed = "foobar..\\..\\..\\a";
+
+        // create dataset
+        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8))
+                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+
+        String body = IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV), UTF_8);
+        given().body(body) //
+                .when() //
+                .queryParam("name", "toto") //
+                .put("/datasets/{id}/raw", dataSetIdFlawed) //
+                .then() //
+                .statusCode(OK.value());
+
+        // expectations
+        DeletableResource resource = resolver.getResource("/store/datasets/content/dataset/" + dataSetIdFlawed);
+        assertFalse(resource.getFile().exists());
     }
 
     @Test
@@ -1668,22 +1716,9 @@ public class DataSetServiceTest extends DataSetBaseTest {
         final Response response = when().get("/datasets/{dataSetId}/columns/{columnId}/types", dataSetId, "0000");
 
         // then
-        /*
-         * expected response array of
-         * {
-         *   "id": "CITY",
-         *   "label": "City",
-         *   "frequency": 100.0
-         * }
-         */
         Assert.assertEquals(200, response.getStatusCode());
-        final JsonNode rootNode = mapper.readTree(response.asInputStream());
-        Assert.assertEquals(8, rootNode.size());
-        for (JsonNode type : rootNode) {
-            assertTrue(type.has("id"));
-            assertTrue(type.has("label"));
-            assertTrue(type.has("frequency"));
-        }
+        SemanticDomain[] semanticDomains = response.as(SemanticDomain[].class);
+        assertTrue(semanticDomains.length > 2);
     }
 
     @Test

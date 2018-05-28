@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.security.Security;
@@ -20,6 +21,7 @@ import org.talend.tenancy.ForAll;
  *
  */
 @Component
+@ConditionalOnProperty(name = "upgrade.scheduled", matchIfMissing = true)
 public class UpgradeTask {
 
     /** This class' logger. */

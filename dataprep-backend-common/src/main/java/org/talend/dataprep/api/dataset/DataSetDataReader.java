@@ -14,6 +14,7 @@ package org.talend.dataprep.api.dataset;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -23,10 +24,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.Validate;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Utility class to read data set data as returned by data-prep.
@@ -81,7 +82,7 @@ public final class DataSetDataReader {
 
         try (JsonParser jsonParser = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .getFactory()
-                .createParser(inputStream)) {
+                .createParser(new InputStreamReader(inputStream, UTF_8))) {
             LightweightExportableDataSet lookupDataset = new LightweightExportableDataSet();
             RowMetadata rowMetadata = new RowMetadata();
 

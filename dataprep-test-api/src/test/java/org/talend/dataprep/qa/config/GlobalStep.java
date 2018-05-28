@@ -13,8 +13,13 @@
 
 package org.talend.dataprep.qa.config;
 
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.dto.Folder;
 
 import cucumber.api.java.After;
 
@@ -37,36 +42,95 @@ public class GlobalStep extends DataPrepStep {
     public void cleanAfter() {
         LOGGER.debug("Cleaning IT context.");
 
+        Boolean cleanAfterStepIsOK = true;
+
         // cleaning stored actions
         context.clearAction();
 
         // cleaning temporary files
         context.clearTempFile();
 
-        // cleaning preparation
-        context.getPreparationIds().forEach(preparationId -> {
-            api.deletePreparation(preparationId).then().statusCode(200);
-            LOGGER.debug("Suppression of preparation {}.", preparationId);
-        });
+        // cleaning application's preparations
+        List<String> listPreparationDeletionPb = context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
+        cleanAfterStepIsOK = listPreparationDeletionPb.size() == 0;
+
+        // cleaning preparations's related context
         context.clearPreparation();
 
-        // cleaning dataset
-        context.getDatasetIds().forEach(datasetId -> {
-            api.deleteDataset(datasetId).then().statusCode(200);
-            LOGGER.debug("Suppression of dataset {}.", datasetId);
-        });
+        // cleaning application's datasets
+        List<String> listDatasetDeletionPb = context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
+        cleanAfterStepIsOK = cleanAfterStepIsOK && listDatasetDeletionPb.size() == 0;
+
+        // cleaning dataset's related context
         context.clearDataset();
 
-        context.getFolders().forEach(folder -> {
-            folderUtil.deleteFolder(folder);
-            LOGGER.debug("Suppression of folder {}", folder);
-        });
+        // cleaning application's folders
+        List<Folder> listFolderDeletionPb = context.getFolders().stream().filter(folderDeletionIsNotOK()).collect(Collectors.toList());
+        cleanAfterStepIsOK = cleanAfterStepIsOK && listFolderDeletionPb.size() == 0;
+
+        // cleaning folder's related context
         context.clearFolders();
 
         // cleaning all features context object
         context.clearObject();
 
-        // cleaning all export parameters
-        context.clearPreparationExportFormat();
+        if (cleanAfterStepIsOK) {
+            LOGGER.info("The Clean After Step is Ok. All deletion were done.");
+        } else {
+            for (String prepId : listPreparationDeletionPb) {
+                LOGGER.warn("Pb in the deletion of preparation {}.", prepId);
+            }
+            for (String datasetId : listDatasetDeletionPb) {
+                LOGGER.warn("Pb in the deletion of dataset {}.", datasetId);
+            }
+            for (Folder folder : listFolderDeletionPb) {
+                LOGGER.warn("Pb in the deletion of folder {}.", folder.getPath());
+            }
+            LOGGER.warn("The Clean After Step has failed. All deletion were not done.");
+            throw new CleanAfterException("Fail to delete some elements : go to see the logs to obtain more details. Good luck luke. May the Force (may)be with you");
+        }
     }
+
+
+    public class CleanAfterException extends RuntimeException {
+        CleanAfterException(String s) {
+            super(s);
+        }
+    }
+
+    private Predicate<String> preparationDeletionIsNotOK() {
+        return preparationId -> {
+            try {
+                return api.deletePreparation(preparationId).getStatusCode() != 200;
+            } catch (Exception ex) {
+                LOGGER.debug("Error on preparation's suppression {}.", preparationId);
+                return true;
+            }
+        };
+    }
+
+    private Predicate<String> datasetDeletionIsNotOK() {
+        return datasetId -> {
+            try {
+                // Even if the dataset doesn't exist, the status is 200
+                return api.deleteDataset(datasetId).getStatusCode() != 200;
+            } catch (Exception ex) {
+                LOGGER.debug("Error on dataset's suppression  {}.", datasetId);
+                return true;
+            }
+        };
+    }
+
+    private Predicate<Folder> folderDeletionIsNotOK() {
+        return folder -> {
+            try {
+                return folderUtil.deleteFolder(folder).getStatusCode() != 200;
+            } catch (Exception ex) {
+                LOGGER.debug("Error on folder's suppression  {}.", folder.getPath());
+                return true;
+            }
+        };
+    }
+
+
 }

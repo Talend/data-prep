@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
+import java.util.stream.Collectors;
+
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
@@ -89,6 +92,18 @@ public class PipelineConsoleDump extends Visitor {
     @Override
     public void visitStepNode(StepNode stepNode) {
         builder.append("STEP NODE (").append(stepNode.getStep().toString()).append(")\n");
+        final RowMetadata rowMetadata = stepNode.getRowMetadata();
+        if (rowMetadata != null) {
+            final String columnsAsString = rowMetadata
+                    .getColumns()
+                    .stream() //
+                    .map(c -> c.getId() + ":" + c.getName()) //
+                    .collect(Collectors.joining(","));
+            builder.append("Metadata: ").append(columnsAsString).append('\n');
+        }
+        builder.append("{\n");
+        stepNode.getEntryNode().accept(this);
+        builder.append("}\n");
         super.visitStepNode(stepNode);
     }
 }

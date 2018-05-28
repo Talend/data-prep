@@ -12,14 +12,8 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-
 import java.io.InputStream;
 import java.util.stream.Stream;
-
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -30,17 +24,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
-import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
-import org.talend.dataprep.api.service.command.transformation.*;
+import org.talend.dataprep.api.service.command.transformation.ColumnActions;
+import org.talend.dataprep.api.service.command.transformation.DatasetActions;
+import org.talend.dataprep.api.service.command.transformation.DictionaryCommand;
+import org.talend.dataprep.api.service.command.transformation.LineActions;
+import org.talend.dataprep.api.service.command.transformation.SuggestActionParams;
+import org.talend.dataprep.api.service.command.transformation.SuggestColumnActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGet;
+import org.talend.dataprep.command.preparation.PreparationGetContent;
 import org.talend.dataprep.metrics.Timed;
 
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 
 @RestController
 public class TransformAPI extends APIService {

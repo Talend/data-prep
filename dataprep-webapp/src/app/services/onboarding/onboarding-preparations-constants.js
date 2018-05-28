@@ -31,9 +31,15 @@ const preparationTour = [
 		position: 'bottom',
 	},
 	{
-		element: '#headerbar\\:help',
+		element: '#external\\:help',
 		title: 'PREPARATIONS_STEP_4_TITLE',
 		content: 'PREPARATIONS_STEP_4_CONTENT',
+		position: 'left',
+	},
+	{
+		element: '#headerbar\\:information',
+		title: 'PREPARATIONS_STEP_5_TITLE',
+		content: 'PREPARATIONS_STEP_5_CONTENT',
 		position: 'left',
 	},
 ];

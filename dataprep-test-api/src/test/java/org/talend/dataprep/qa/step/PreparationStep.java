@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -77,8 +78,8 @@ public class PreparationStep extends DataPrepStep {
     public void movePreparation(String preparationName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<Folder> folders = folderUtil.listFolders();
-        Folder originFolder = folderUtil.extractFolder(params.get(ORIGIN), folders);
-        Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
+        Folder originFolder = folderUtil.extractFolder(suffixFolderName(params.get(ORIGIN)), folders);
+        Folder destFolder = folderUtil.extractFolder(suffixFolderName(params.get(DESTINATION)), folders);
         String prepId = context.getPreparationId(suffixName(preparationName));
         Response response = api.movePreparation(prepId, originFolder.id, destFolder.id,
                 suffixName(params.get(NEW_PREPARATION_NAME)));
@@ -90,7 +91,7 @@ public class PreparationStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String suffixedPreparationName = suffixName(params.get(NEW_PREPARATION_NAME));
         List<Folder> folders = folderUtil.listFolders();
-        Folder destFolder = folderUtil.extractFolder(params.get(DESTINATION), folders);
+        Folder destFolder = folderUtil.extractFolder(suffixFolderName(params.get(DESTINATION)), folders);
         String prepId = context.getPreparationId(suffixName(preparationName));
         String newPreparationId = api.copyPreparation(prepId, destFolder.id, suffixedPreparationName).then().statusCode(200)
                 .extract().body().asString();
@@ -117,8 +118,8 @@ public class PreparationStep extends DataPrepStep {
         PreparationDetails prepDet1 = getPreparationDetails(prepId1);
         PreparationDetails prepDet2 = getPreparationDetails(prepId2);
 
-        Assert.assertEquals(prepDet1.actions, prepDet2.actions);
-        Assert.assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
+        assertEquals(prepDet1.actions, prepDet2.actions);
+        assertEquals(prepDet1.steps.size(), prepDet2.steps.size());
         context.storeObject("copiedPrep", prepDet1);
     }
 
@@ -127,10 +128,10 @@ public class PreparationStep extends DataPrepStep {
         Assert.assertEquals(1, checkPrepExistsInTheFolder(preparationName, folder));
     }
 
-    private long checkPrepExistsInTheFolder(String preparationName, String folder) throws IOException {
+    private long checkPrepExistsInTheFolder(String preparationName, String folderName) throws IOException {
         String suffixedPreparationName = suffixName(preparationName);
         String prepId = context.getPreparationId(suffixedPreparationName);
-        FolderContent folderContent = folderUtil.listPreparation(folder);
+        FolderContent folderContent = folderUtil.listPreparation(suffixFolderName(folderName));
 
         return folderContent.preparations.stream() //
                 .filter(p -> p.id.equals(prepId) //

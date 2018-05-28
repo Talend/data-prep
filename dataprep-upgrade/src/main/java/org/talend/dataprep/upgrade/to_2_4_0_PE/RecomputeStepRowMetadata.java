@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -11,29 +10,31 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.upgrade.to_2_3_0_PE;
+package org.talend.dataprep.upgrade.to_2_4_0_PE;
 
 import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataprep.upgrade.common.ActionCreateNewColumn;
+import org.talend.dataprep.upgrade.StepRowMetadataCompute;
 
+/**
+ * Set the RowMetadata for every step <b>after</b> action parameter migration.
+ */
 @Component
-public class MigrateActionsCreateNewColumn extends BaseUpgradeTaskTo_2_3_0_PE {
+public class RecomputeStepRowMetadata extends BaseUpgradeTaskTo_2_4_0_PE {
 
     @Autowired
-    private PreparationRepository preparationRepository;
+    private StepRowMetadataCompute compute;
 
     @Override
     public void run() {
-        ActionCreateNewColumn.upgradeActions(preparationRepository);
+        compute.run();
     }
 
     @Override
     public int getOrder() {
-        return 2;
+        return 3;
     }
 
     @Override

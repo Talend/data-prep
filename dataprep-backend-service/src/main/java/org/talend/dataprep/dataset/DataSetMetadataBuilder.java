@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.service.info.VersionService;
-import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.schema.Schema;
 
 /**
@@ -80,11 +79,6 @@ public class DataSetMetadataBuilder {
      * @see org.talend.dataprep.api.dataset.DataSetMetadata#draft
      */
     private boolean draft = true;
-
-    /**
-     * @see org.talend.dataprep.api.dataset.DataSetMetadata#favorite
-     */
-    private boolean isFavorite;
 
     /**
      * @see org.talend.dataprep.api.dataset.DataSetMetadata#location
@@ -169,12 +163,6 @@ public class DataSetMetadataBuilder {
 
     /** Flag used to make sure the builder went through metadata(). */
     private boolean builtWithMetadata = false;
-
-    private boolean sharedDataSet = false;
-
-    private Owner owner;
-
-    private Set<String> roles = new HashSet<>();
 
     private long dataSetSize;
 
@@ -289,21 +277,6 @@ public class DataSetMetadataBuilder {
         return this;
     }
 
-    public DataSetMetadataBuilder shared(boolean shared) {
-        this.sharedDataSet = shared;
-        return this;
-    }
-
-    public DataSetMetadataBuilder owner(Owner owner) {
-        this.owner = owner;
-        return this;
-    }
-
-    public DataSetMetadataBuilder roles(Set<String> roles) {
-        this.roles = roles;
-        return this;
-    }
-
     public DataSetMetadataBuilder formatFamilyId(String formatGuessId) {
         this.formatFamilyId = formatGuessId;
         return this;
@@ -316,11 +289,6 @@ public class DataSetMetadataBuilder {
 
     public DataSetMetadataBuilder encoding(String encoding) {
         this.encoding = encoding;
-        return this;
-    }
-
-    public DataSetMetadataBuilder isFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
         return this;
     }
 

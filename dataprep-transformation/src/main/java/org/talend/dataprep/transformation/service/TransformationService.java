@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -418,7 +417,8 @@ public class TransformationService extends BaseTransformationService {
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
                 final InputStream content = contentCache.get(contentKey); //
-                final JsonParser contentParser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
+                final JsonParser contentParser =
+                        mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);
@@ -451,7 +451,8 @@ public class TransformationService extends BaseTransformationService {
 
         // because of dataset records streaming, the dataset content must be within an auto closeable block
         try (final InputStream dataSetContent = dataSetGet.execute(); //
-                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(dataSetContent, UTF_8))) {
+                final JsonParser parser =
+                        mapper.getFactory().createParser(new InputStreamReader(dataSetContent, UTF_8))) {
 
             securityProxy.releaseIdentity();
             identityReleased = true;
@@ -641,8 +642,7 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return actionRegistry
                 .findAll() //
-                .filter(action -> !"TEST".equals(action.getCategory(LocaleContextHolder.getLocale()))
-                        && action.acceptScope(COLUMN)) //
+                .filter(action -> !"TEST".equals(action.getCategory(getLocale())) && action.acceptScope(COLUMN)) //
                 .map(am -> column != null ? am.adapt(column) : am)
                 .map(ad -> ad.getActionForm(getLocale()));
     }

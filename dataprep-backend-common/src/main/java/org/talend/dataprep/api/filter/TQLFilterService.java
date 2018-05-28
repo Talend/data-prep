@@ -87,6 +87,12 @@ public class TQLFilterService implements FilterService {
         }
     }
 
+    /**
+     * Get the list of columns present in the filter expression.
+     * @param filterAsString The filter expression.
+     * @param rowMetadata The rowMetaData to get the list of all columns of the dataSet.
+     * @return List of columns present in the filter expression.
+     */
     public List<ColumnMetadata> getFilterColumnsMetadata(String filterAsString, RowMetadata rowMetadata) {
         if (StringUtils.isEmpty(filterAsString)) {
             return null;
@@ -102,6 +108,10 @@ public class TQLFilterService implements FilterService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Visitor use to get the column id present in the filter expression.
+     * For exemple (0001 > 5) return {"0001"}.
+     */
     private static class DatasetColumnVisitor implements IASTVisitor<List<String>> {
 
         private final List<String> columns = new ArrayList<>();
@@ -220,6 +230,9 @@ public class TQLFilterService implements FilterService {
         }
     }
 
+    /**
+     * Apply the filter to a dataSet row.
+     */
     private static class DataSetPredicateVisitor implements IASTVisitor<Predicate<DataSetRow>> {
 
         private final RowMetadata rowMetadata;
@@ -386,6 +399,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(AllFields allFields) {
+            // character * represent all fields.
             fields.push("*");
             return null;
         }

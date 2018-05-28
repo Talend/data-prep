@@ -20,7 +20,6 @@ import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -338,8 +337,9 @@ public class OSDataPrepAPIHelper {
     public Response getDataset(String datasetId, String tql) throws Exception {
         RequestSpecification given = given();
         if (tql != null) {
-            given.queryParam("filter", URLEncoder.encode(tql, "UTF-8"));
+            given.queryParam("filter", tql);
         }
+        given.queryParam("includeTechnicalProperties", "true");
         return given //
                 .when() //
                 .get("/api/datasets/{datasetId}", datasetId);

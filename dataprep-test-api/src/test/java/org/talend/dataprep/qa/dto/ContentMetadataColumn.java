@@ -24,6 +24,11 @@ public class ContentMetadataColumn extends NamedItem implements Comparable<Conte
 
     @Override
     public int compareTo(ContentMetadataColumn o) {
+        if (o == null || o.id == null) {
+            return (1);
+        } else if (this.id == null) {
+            return (-1);
+        }
         return id.compareTo(o.id);
     }
 }

@@ -3,12 +3,16 @@ package org.talend.dataprep.qa.step;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.ContentMetadataColumn;
@@ -19,43 +23,33 @@ import com.jayway.restassured.response.Response;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 public class FilterStep extends DataPrepStep {
 
-    @Then("^After applying the filter \"(.*)\", the characteristics of the dataset \"(.*)\" match:$")
-    public void afterApplyingFilterThenDatasetCharacteristicsMatch(String tql, String datasetName, DataTable dataTable)
-            throws Exception {
-        checkDatasetCharacteristics(tql, datasetName, dataTable);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilterStep.class);
+
+    @When("^I apply the filter \"(.*)\" on dataset \"(.*)\"$")
+    public void applyFilterOnDataSet(String tql, String datasetName) throws Exception {
+        doApplyFilterOnDataSet(tql, datasetName);
     }
 
-    private void checkDatasetCharacteristics(String tql, String datasetName, DataTable dataTable) throws Exception {
+    private void doApplyFilterOnDataSet(String tql, String datasetName) throws Exception {
         String datasetId = context.getDatasetId(suffixName(datasetName));
+        DatasetContent datasetContent = getDatasetContent(datasetId, tql);
+
+        context.storeObject("dataSetContent", datasetContent);
+    }
+
+    @Then("^The characteristics of the dataset \"(.*)\" match:$")
+    public void checkFilterApplyedOnDataSet(String datasetName, DataTable dataTable) throws Exception {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
 
-        DatasetContent dataset = getInitialDatasetContent(datasetId, tql);
-        checkSampleRecordsCount(dataset.metadata.records, expected.get("sample_records_count"));
-        checkRecords(dataset.records, expected.get("records"));
+        DatasetContent datasetContent = (DatasetContent)context.getObject("dataSetContent");
+        checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
+        checkRecords(datasetContent.records, expected.get("records"));
 
-        dataset = getUpToDateDatasetContent(dataset, datasetId, tql);
-        checkQualityPerColumn(dataset.metadata.columns, expected.get("quality"));
-    }
-
-    /**
-     * Returns the initial dataset content, potentially before all analysis are done (quality, stats, and so on).
-     *
-     * @param datasetId the dataset id
-     * @param tql the TQL filter used to filter dataset content
-     * @return the dataset content
-     * @throws Exception very generic as we are in a test class, do not catch it
-     */
-    private DatasetContent getInitialDatasetContent(String datasetId, String tql) throws Exception {
-        Response response = api.getDataset(datasetId, tql);
-        response.then().statusCode(200);
-        DatasetContent dataset = response.as(DatasetContent.class);
-        if (!response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty()) {
-            dataset.isUpToDate = true;
-        }
-        return dataset;
+        checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
     }
 
     private void checkSampleRecordsCount(String actualRecordsCount, String expectedRecordsCount) {
@@ -68,21 +62,22 @@ public class FilterStep extends DataPrepStep {
     /**
      * Returns the dataset content, once all DQ analysis are done and so all fields are up-to-date.
      *
-     * @param dataset the dataset in its initial state, to determine if it is already up-to-date or not
      * @param datasetId the id of the dataset
      * @param tql the TQL filter to apply to the dataset
      * @return the up-to-date dataset content
      */
-    private DatasetContent getUpToDateDatasetContent(DatasetContent dataset, String datasetId, String tql)
-            throws Exception {
-        if (dataset.isUpToDate) {
-            return dataset;
-        }
+    private DatasetContent getDatasetContent(String datasetId, String tql) throws Exception {
         Response response;
+        int tries = 0;
         do {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                LOGGER.error("Thread interrupted");
+            }
             response = api.getDataset(datasetId, tql);
             response.then().statusCode(200);
-        } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty());
+        } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty() && tries < 10);
 
         return response.as(DatasetContent.class);
     }
@@ -128,27 +123,32 @@ public class FilterStep extends DataPrepStep {
         Assert.assertEquals(filter, prepStep.parameters.get(FILTER.getKey()));
     }
 
-    @Then("^After removing all filters, the characteristics of the dataset \"(.*)\" match:$")
-    public void afterRemovingAllFiltersTheCharacteristicsOfTheDatasetMatch(String datasetName, DataTable dataTable)
-            throws Exception {
-        checkDatasetCharacteristics(null, datasetName, dataTable);
+    @When("^I removing all filters on dataset \"(.*)\"$")
+    public void removeFilter(String datasetName) throws Exception {
+        doApplyFilterOnDataSet(null, datasetName);
     }
 
-    @Then("^After applying the filter \"(.*)\", the content of the preparation \"(.*)\" matches:$")
-    public void afterApplyingTheFilterTheContentOfThePreparationMatches(String tql, String prepName,
-            DataTable dataTable) throws Exception {
-        checkPreparationContent(tql, prepName, dataTable);
+    @When("^I apply the filter \"(.*)\" on the preparation \"(.*)\"$")
+    public void applyFilterOnPreparation(String tql, String preparationName) throws Exception {
+        doApplyFilterOnPreparation(tql, preparationName);
     }
 
-    private void checkPreparationContent(String tql, String prepName, DataTable dataTable) throws Exception {
-        String preparationId = context.getPreparationId(suffixName(prepName));
+    private void doApplyFilterOnPreparation(String tql, String preparationName) throws IOException {
+        String preparationId = context.getPreparationId(suffixName(preparationName));
         Response response = api.getPreparationContent(preparationId, "head", "HEAD", tql);
         response.then().statusCode(200);
 
-        PreparationContent preparation = response.as(PreparationContent.class);
-
-        checkContent(preparation, dataTable);
+        PreparationContent preparationContent = response.as(PreparationContent.class);
+        context.storeObject("preparationContent", preparationContent);
     }
+
+    @Then("^The characteristics of the preparation \"(.*)\" match:$")
+    public void checkFilterApplyedOnPreparation(String preparationName, DataTable dataTable) throws Exception {
+        PreparationContent preparationContent = (PreparationContent)context.getObject("preparationContent");
+
+        checkContent(preparationContent, dataTable);
+    }
+
 
     public void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
@@ -157,10 +157,8 @@ public class FilterStep extends DataPrepStep {
         checkSampleRecordsCount(preparation.metadata.records, expected.get("sample_records_count"));
     }
 
-    @Then("^After removing all filters, the content of the preparation \"(.*)\" matches:$")
-    public void afterRemovingAllFiltersTheContentOfThePreparationMatches(String prepName, DataTable dataTable)
-            throws Exception {
-        checkPreparationContent(null, prepName, dataTable);
+    @Then("^I removing all filters on preparation \"(.*)\"$")
+    public void removeAllFiltersOnPreparation(String preparationName) throws Exception {
+        doApplyFilterOnPreparation(null, preparationName);
     }
-
 }

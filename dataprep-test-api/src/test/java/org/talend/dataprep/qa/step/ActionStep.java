@@ -13,18 +13,9 @@
 
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.PreparationDetails;
+import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
+import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,9 +23,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_ID;
-import static org.talend.dataprep.helper.api.ActionParamEnum.COLUMN_NAME;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.PreparationDetails;
+
+import com.jayway.restassured.response.Response;
+
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with action
@@ -57,6 +59,27 @@ public class ActionStep extends DataPrepStep {
         action.parameters = util.mapParamsToActionParameters(params);
         Response response = api.addAction(prepId, action);
         response.then().statusCode(200);
+    }
+
+    @When("^I add a \"(.*)\" step on the preparation \"(.*)\" with parameters :$")
+    public void whenIAddAStepToAPreparation(String actionName, String preparationName, DataTable dataTable) {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        String prepId = context.getPreparationId(suffixName(preparationName));
+        Action action = new Action();
+        action.action = actionName;
+        action.parameters.putAll(util.mapParamsToActionParameters(params));
+        api.addAction(prepId, action);
+    }
+
+    @When("^I add a \"(.*)\" step identified by \"(.*)\" on the preparation \"(.*)\" with parameters :$")
+    public void whenIAddAStepWithAliasToAPreparation(String actionName, String stepAlias, String preparationName,
+            DataTable dataTable) throws IOException {
+        // step creation
+        whenIAddAStepToAPreparation(actionName, preparationName, dataTable);
+        // we recover the preparation details in order to get an action object with the step Id
+        String prepId = context.getPreparationId(suffixName(preparationName));
+        Action action = getLastActionfromPreparation(prepId);
+        context.storeAction(stepAlias, action);
     }
 
     @When("^I add a step identified by \"(.*)\" with parameters :$")

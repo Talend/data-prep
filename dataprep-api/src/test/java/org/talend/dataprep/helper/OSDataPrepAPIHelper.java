@@ -48,9 +48,6 @@ public class OSDataPrepAPIHelper {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${backend.api.url:http://localhost:8888}")
-    private String apiBaseUrl;
-
     @Value("${restassured.debug:false}")
     private boolean enableRestAssuredDebug;
 

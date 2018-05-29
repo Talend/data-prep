@@ -9,8 +9,64 @@ import {
 	DEFAULT_SEARCH_PAYLOAD,
 	DEBOUNCE_TIMEOUT,
 	DOCUMENTATION_SEARCH_URL,
-	TDP_SEARCH_URL,
+	DATAPREP_SEARCH_URL,
+
+	// SEARCH_CATEGORIES_BY_PROVIDER,
 } from '../constants/search';
+
+import SearchService from '../services/search.service';
+
+
+// function* process(payload) {
+// 	yield delay(DEBOUNCE_TIMEOUT);
+// 	const [tdp, doc] = yield all([call(dataprep, payload), call(documentation, payload)]);
+// 	const categories = tdp.categories;
+//
+// 	const results = [...adaptTDPResults(tdp), ...adaptSearchResult(doc)];
+// 	const items = categories
+// 		.filter(({ type }) => results.some(result => result.inventoryType === type))
+// 		.map((inventory) => {
+// 			const suggestions = results.filter(result => result.inventoryType === inventory.type);
+// 			let label = inventory.type;
+// 			if (categories) {
+// 				label = categories.find(category => category.type === inventory.type).label;
+// 			}
+//
+// 			return {
+// 				title: label,
+// 				icon: {
+// 					name: 'fixme', // inventory.iconName,
+// 					title: label,
+// 				},
+// 				suggestions,
+// 			};
+// 		});
+// 	yield put(Typeahead.setStateAction({ searching: false }, 'headerbar:search'));
+// 	// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: false }));
+// 	yield put(actions.collections.addOrReplace('search', items));
+// }
+//
+// function* search() {
+// 	let task;
+// 	while (true) {
+// 		const { payload } = yield take(SEARCH);
+//
+// 		if (task) {
+// 			yield cancel(task);
+// 		}
+// 		// const searchState = select(Typeahead.getState)
+// 		yield put(Typeahead.setStateAction({ searching: true }, 'headerbar:search'));
+// 		// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: true }));
+// 		task = yield fork(process, payload);
+// 	}
+// }
+//
+// function* reset() {
+// 	yield takeLatest(SEARCH_RESET, function* () {
+// 		yield put(actions.collections.addOrReplace('search', null));
+// 	});
+// }
+
 
 function* goTo() {
 	while (true) {
@@ -51,7 +107,7 @@ function* documentation(query) {
 }
 
 function* dataprep(query) {
-	const { data } = yield call(http.get, `${TDP_SEARCH_URL}${query}`);
+	const { data } = yield call(http.get, `${DATAPREP_SEARCH_URL}${query}`);
 	return JSON.parse(data);
 }
 
@@ -98,6 +154,9 @@ function* search() {
 		if (task) {
 			yield cancel(task);
 		}
+
+		console.log('[NC] SearchService: ', SearchService.build('yolo'));
+		yield put(SearchService.build('yolo')[0]);
 		// const searchState = select(Typeahead.getState)
 		yield put(Typeahead.setStateAction({ searching: true }, 'headerbar:search'));
 		// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: true }));

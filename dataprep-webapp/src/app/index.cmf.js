@@ -1,7 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
+
 import { App } from '@talend/react-cmf';
+
+import i18n from './i18n'; // eslint-disable-line
 
 import configure from './configure.cmf';
 

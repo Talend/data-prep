@@ -86,9 +86,6 @@
       ],
       "hasCollections": ["settings"]
     },
-    "indexRouteRedirect": {
-      "path": "/preparations"
-    },
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
@@ -181,13 +178,13 @@
         "content": []
       }
     },
-    "datastores": {
+    "HomeListView#datastores": {
       "hasTheme": true
     },
-    "datasets": {
+    "HomeListView#datasets": {
       "hasTheme": true
     },
-    "preparations": {
+    "HomeListView#preparations": {
       "hasTheme": true,
       "header": {},
       "sidepanel": {},

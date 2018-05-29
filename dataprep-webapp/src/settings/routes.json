@@ -1,13 +1,19 @@
 {
   "props": {
-    "404": {
+    "RedirectContainer#default": {
+      "path": "/preparations"
+    },
+    "RedirectContainer#unknownRouteRedirect": {
+      "path": "/404"
+    },
+    "HttpErrorView#404": {
       "header": {},
       "sidepanel": {},
       "status": 404,
       "title": "Oops",
       "message": "We didn't find the requested page"
     },
-    "403": {
+    "HttpErrorView#403": {
       "header": {},
       "sidepanel": {},
       "status": 403,
@@ -19,35 +25,39 @@
     "path": "/",
     "component": "App",
     "indexRoute": {
-      "component": "Redirect",
-      "view": "indexRouteRedirect"
+      "component": "Redirect"
     },
     "childRoutes": [
       {
         "path": "404",
         "component": "HttpErrorView",
-        "view": "404"
+        "componentId": "404"
       },
       {
         "path": "403",
         "component": "HttpErrorView",
-        "view": "403"
+        "componentId": "403"
       },
       {
         "path": "preparations(/:folderId)",
         "component": "HomeListView",
-        "view": "preparations",
+        "componentId": "preparations",
         "onEnter": "preparation:fetch"
       },
       {
         "path": "datasets",
         "component": "HomeListView",
-        "view": "datasets"
+        "componentId": "datasets"
       },
       {
         "path": "datastores",
         "component": "HomeListView",
-        "view": "datastores"
+        "componentId": "datastores"
+      },
+      {
+        "path": "*",
+        "component": "Redirect",
+        "componentId": "unknownRouteRedirect"
       }
     ]
   }

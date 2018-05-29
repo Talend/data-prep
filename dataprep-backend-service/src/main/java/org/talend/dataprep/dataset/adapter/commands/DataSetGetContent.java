@@ -55,20 +55,17 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
 
     private final String limit;
 
-    public DataSetGetContent(final String dataSetId, Schema contentSchema, int offset, int limit) {
+
+    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
         super(DATASET_GROUP);
         this.dataSetId = dataSetId;
         this.contentSchema = contentSchema;
-        this.offset = Integer.toString(offset);
-        this.limit = Integer.toString(limit);
+        this.offset = Integer.toString(0);
+        this.limit = Integer.toString(Integer.MAX_VALUE);
 
         on(HttpStatus.NO_CONTENT).then((req, resp) -> Stream.empty());
         on(HttpStatus.OK).then(this::readResult);
         onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
-    }
-
-    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
-        this(dataSetId, contentSchema, 0, Integer.MAX_VALUE);
     }
 
     @PostConstruct

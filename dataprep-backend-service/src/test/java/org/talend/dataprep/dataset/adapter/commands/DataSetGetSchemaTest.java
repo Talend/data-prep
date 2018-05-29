@@ -32,13 +32,13 @@ import static org.talend.dataprep.dataset.adapter.MockDatasetServer.AUTHENTICATI
 public class DataSetGetSchemaTest extends ServiceBaseTest {
 
     @Autowired
-    ApplicationContext context;
+    private ApplicationContext context;
 
     @MockBean
-    Security security;
+    private Security security;
 
     @Test
-    public void name() {
+    public void testExecuteDataSetGetSchema_shouldReturnDataset() {
         when(security.getAuthenticationToken()).thenReturn(AUTHENTICATION_TOKEN);
 
         DataSetGetMetadata command = context.getBean(DataSetGetMetadata.class, "no-matter");

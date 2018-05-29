@@ -1,7 +1,9 @@
 package org.talend.dataprep.preparation.event;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,20 +17,21 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.tql.api.TqlBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PreparationUpdateListenerTest {
+public class PreparationUpdateListenerUtilTest {
 
     @InjectMocks
-    private PreparationUpdateListener preparationUpdateListener;
+    private PreparationUpdateListenerUtil preparationUpdateListenerUtil;
 
     @Mock
     private PreparationRepository preparationRepository;
@@ -36,9 +39,15 @@ public class PreparationUpdateListenerTest {
     @Mock
     private PreparationUtils preparationUtils;
 
+    @Mock
+    private ApplicationContext applicationContext;
+
     @Test
     public void shouldRemoveStepRowMetadata() {
         // given
+        final DataSetMetadata metadata = new DataSetMetadata();
+        metadata.setId("ds-1234");
+
         final Step step1 = new Step();
         step1.setId(UUID.randomUUID().toString());
         step1.setRowMetadata("srmd-1");
@@ -60,10 +69,12 @@ public class PreparationUpdateListenerTest {
         when(preparationRepository.get(eq(step1.id()), eq(Step.class))).thenReturn(step1);
         when(preparationRepository.get(eq(step2.id()), eq(Step.class))).thenReturn(step2);
 
+        final DataSetGetMetadata dataSetGetMetadata = mock(DataSetGetMetadata.class);
+        when(applicationContext.getBean(eq(DataSetGetMetadata.class), anyVararg())).thenReturn(dataSetGetMetadata);
+        when(dataSetGetMetadata.execute()).thenReturn(metadata);
+
         // when
-        final DataSetMetadata metadata = new DataSetMetadata();
-        metadata.setId("ds-1234");
-        preparationUpdateListener.onUpdate(new DatasetUpdatedEvent(metadata));
+        preparationUpdateListenerUtil.removePreparationStepRowMetadata(metadata.getId());
 
         // then
         verify(preparationRepository, times(1)).add(any(Preparation.class));

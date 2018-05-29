@@ -239,32 +239,6 @@
       }
     }
   },
-  "routes": {
-    "path": "/",
-    "component": "App",
-    "indexRoute": {
-      "component": "Redirect",
-      "view": "indexRouteRedirect"
-    },
-    "childRoutes": [
-      {
-        "path": "preparations(/:folderId)",
-        "component": "HomeListView",
-        "view": "preparations",
-        "onEnter": "preparation:fetch"
-      },
-      {
-        "path": "datasets",
-        "component": "HomeListView",
-        "view": "datasets"
-      },
-      {
-        "path": "datastores",
-        "component": "HomeListView",
-        "view": "datastores"
-      }
-    ]
-  },
   "ref": {
     "SidePanel#default": {},
     "AppHeaderBar#default": {}

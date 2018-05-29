@@ -1,0 +1,54 @@
+{
+  "props": {
+    "404": {
+      "header": {},
+      "sidepanel": {},
+      "status": 404,
+      "title": "Oops",
+      "message": "We didn't find the requested page"
+    },
+    "403": {
+      "header": {},
+      "sidepanel": {},
+      "status": 403,
+      "title": "Access denied",
+      "message": "You are not allowed to access this page"
+    }
+  },
+  "routes": {
+    "path": "/",
+    "component": "App",
+    "indexRoute": {
+      "component": "Redirect",
+      "view": "indexRouteRedirect"
+    },
+    "childRoutes": [
+      {
+        "path": "404",
+        "component": "HttpErrorView",
+        "view": "404"
+      },
+      {
+        "path": "403",
+        "component": "HttpErrorView",
+        "view": "403"
+      },
+      {
+        "path": "preparations(/:folderId)",
+        "component": "HomeListView",
+        "view": "preparations",
+        "onEnter": "preparation:fetch"
+      },
+      {
+        "path": "datasets",
+        "component": "HomeListView",
+        "view": "datasets"
+      },
+      {
+        "path": "datastores",
+        "component": "HomeListView",
+        "view": "datastores"
+      }
+    ]
+  }
+}

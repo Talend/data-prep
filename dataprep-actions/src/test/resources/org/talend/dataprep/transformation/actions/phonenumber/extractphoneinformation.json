@@ -1,0 +1,19 @@
+{
+  "actions": [
+
+    {
+      "action": "extract_phone_information",
+      "parameters": {
+        "column_id": "0001",
+        "phone_type":"true",
+        "phone_region":"true",
+        "phone_country":"true",
+        "phone_timezone":"true",
+        "phone_geographicArea":"true",
+        "phone_carrierName":"true",
+        "LANGUAGE": "en",
+        "scope": "column"
+      }
+    }
+  ]
+}

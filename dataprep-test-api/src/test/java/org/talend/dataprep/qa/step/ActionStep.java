@@ -92,7 +92,7 @@ public class ActionStep extends DataPrepStep {
         response.then().statusCode(200);
     }
 
-    @Given("I update the first action with name \"(.*)\" on the preparation \"(.*)\" with the following parameters :")
+    @Given("^I update the first action with name \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
     public void updateFirstActionFoundWithName(String actionName, String prepName, DataTable dataTable)
             throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
@@ -177,7 +177,7 @@ public class ActionStep extends DataPrepStep {
         return api.moveAction(prepId, action.id, parentAction.id);
     }
 
-    @Given("I remove the first action with name \"(.*)\" on the preparation \"(.*)\"")
+    @Given("^I remove the first action with name \"(.*)\" on the preparation \"(.*)\"$")
     public void removeFirstActionFoundWithName(String actionName, String prepName) throws IOException {
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);

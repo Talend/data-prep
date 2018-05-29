@@ -25,7 +25,7 @@ These files must be used together with the common code contained in [daikon](htt
 | [dataprep-transformation](dataprep-transformation) | *rest service to apply transformations (actions are here)*           |
 | [dataprep-upgrade-common](dataprep-upgrade-common) | *Support code for executing upgrades (when starting a newer version on top of a previous version.*           |
 | [dataprep-upgrade](dataprep-upgrade) | *Upgrade tasks when startting a newer version on top of a previous version*           |
-| [dataprep-webapp](dataprep-webapp)                 | *web app (AngularJS)*                                                |
+| [dataprep-webapp](dataprep-webapp)                 | *web app (React & AngularJS)*                                        |
 | [tooling](tooling)                                 | *IDE specific config files + some other stuff*                       |
 
 ### UI
@@ -34,7 +34,7 @@ The following project provides UI for Data Prep.
 
 | _Project_                  | _Description_ |
 |:-------------------------|-------------|
-| [dataprep-webapp](dataprep-webapp)         | *Builds all the AngularJS UI of Data Prep* |
+| [dataprep-webapp](dataprep-webapp)         | *Builds all the React and AngularJS UI of Data Prep* |
 
 ### Back-end
 
@@ -70,7 +70,7 @@ You can download this product from the [Talend website](http://www.talend.com/do
 
 Documentation is available on [Talend Help Center](http://help.talend.com/).
 
-## 4. Support 
+## 4. Support
 
 You can ask for help on our [Forum](http://www.talend.com/services/global-technical-support).
 

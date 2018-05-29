@@ -129,7 +129,7 @@ public class PreparationStep extends DataPrepStep {
         Assert.assertFalse(doesPrepExistsInFolder(prepFullName));
     }
 
-    @And("I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")
+    @And("^I check that the preparations \"(.*)\" and \"(.*)\" have the same steps$")
     public void checkPreparationsSteps(String prep1FullName, String prep2FullName) {
         String suffixedPrep1Name = getSuffixedPrepName(prep1FullName);
         String prep1Path = util.extractPathFromFullName(prep1FullName);
@@ -151,7 +151,7 @@ public class PreparationStep extends DataPrepStep {
         Assert.assertTrue(doesPrepExistsInFolder(prepFullName));
     }
 
-    @Then("^I check that I can load \"(.*)\" times the preparation with name \"(.*)\"")
+    @Then("^I check that I can load \"(.*)\" times the preparation with name \"(.*)\"$")
     public void loadPreparationMultipleTimes(Integer nbTime, String prepFullName) throws IOException {
         String prepId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {

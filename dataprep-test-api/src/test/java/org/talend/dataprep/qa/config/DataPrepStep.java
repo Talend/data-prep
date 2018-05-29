@@ -13,11 +13,17 @@
 
 package org.talend.dataprep.qa.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.response.Response;
+import static org.springframework.http.HttpStatus.OK;
+
+import java.util.function.Predicate;
+
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
@@ -27,18 +33,14 @@ import org.talend.dataprep.qa.dto.PreparationDetails;
 import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
-import java.util.function.Predicate;
-import static org.springframework.http.HttpStatus.OK;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.response.Response;
+
 /**
  * Base class for all DataPrep step classes.
  */
 @ContextConfiguration(classes = SpringContextConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public abstract class DataPrepStep {
-
-    /**
-     * This class' logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataPrepStep.class);
 
     /**
      * {@link cucumber.api.DataTable} key for origin folder.
@@ -54,6 +56,13 @@ public abstract class DataPrepStep {
 
     protected static final String DATASET_ID_KEY = "dataSetId";
 
+    /**
+     * This class' logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataPrepStep.class);
+
+    protected final ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     public FeatureContext context;
 
@@ -66,7 +75,13 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
-    protected final ObjectMapper objectMapper = new ObjectMapper();
+    @Value("${restassured.debug:false}")
+    private boolean enableRestAssuredDebug;
+
+    @PostConstruct
+    public void init() {
+        api.setEnableRestAssuredDebug(enableRestAssuredDebug);
+    }
 
     /**
      * Retrieve the details of a preparation from its id.
@@ -76,16 +91,9 @@ public abstract class DataPrepStep {
      */
     protected PreparationDetails getPreparationDetails(String preparationId) {
         Response response = api.getPreparationDetails(preparationId);
-        response.then()
-                .statusCode(OK.value());
+        response.then().statusCode(HttpStatus.OK.value());
 
         return response.as(PreparationDetails.class);
-    }
-
-    protected class CleanAfterException extends RuntimeException {
-        CleanAfterException(String s) {
-            super(s);
-        }
     }
 
     protected Predicate<String> preparationDeletionIsNotOK() {
@@ -102,7 +110,7 @@ public abstract class DataPrepStep {
     protected Predicate<String> datasetDeletionIsNotOK() {
         return datasetId -> {
             try {
-                // Even if the dataset doesn't exist, the status is OK.value()
+                // Even if the dataset doesn't exist, the status is 200
                 return api.deleteDataset(datasetId).getStatusCode() != OK.value();
             } catch (Exception ex) {
                 LOGGER.debug("Error on Dataset's suppression  {}.", datasetId);
@@ -120,5 +128,12 @@ public abstract class DataPrepStep {
                 return true;
             }
         };
+    }
+
+    protected class CleanAfterException extends RuntimeException {
+
+        CleanAfterException(String s) {
+            super(s);
+        }
     }
 }

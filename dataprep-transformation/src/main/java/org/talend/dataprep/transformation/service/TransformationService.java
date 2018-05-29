@@ -25,7 +25,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -93,8 +99,18 @@ import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -104,14 +120,18 @@ import static java.util.Collections.singletonList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.*;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 @RestController
@@ -256,12 +276,6 @@ public class TransformationService extends BaseTransformationService {
                     throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND, e);
                 }
             }
-
-            // Return transformation cached content (after sanity check)
-//            if (!contentCache.has(cacheKey)) {
-                // Not expected: We've just ran a transformation, yet no metadata cached?
-//                throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND);
-//            }
             if (contentCache.has(cacheKey)) {
                 try (InputStream stream = contentCache.get(cacheKey)) {
                     return mapper.readerFor(DataSetMetadata.class).readValue(stream);
@@ -528,7 +542,8 @@ public class TransformationService extends BaseTransformationService {
      */
     //@formatter:off
     @RequestMapping(value = "/transform/diff/metadata", method = POST)
-    @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids", notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids",
+            notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
     @VolumeMetered
     public Stream<StepDiff> getCreatedColumns(@ApiParam(name = "body", value = "Preview parameters list in json.") @RequestBody final List<PreviewParameters> previewParameters) {
         return previewParameters.stream().map(this::getCreatedColumns);

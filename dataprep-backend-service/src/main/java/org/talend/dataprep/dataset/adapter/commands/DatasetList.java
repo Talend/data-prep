@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -25,9 +28,6 @@ import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import javax.annotation.PostConstruct;
-import java.util.stream.Stream;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 

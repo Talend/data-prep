@@ -13,44 +13,42 @@
  *  ============================================================================
  */
 
-package org.talend.dataprep.dataset.adapter;
+package org.talend.dataprep.dataset.adapter.commands;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.talend.ServiceBaseTest;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.security.Security;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.talend.dataprep.dataset.adapter.MockDatasetServer.AUTHENTICATION_TOKEN;
 
-public class ProxyDatasetClientTest extends TestParent {
-
-    public static final String AUTHENTICATION_TOKEN = "authentication-token";
+public class DataSetGetSchemaTest extends ServiceBaseTest {
 
     @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
+    private ApplicationContext context;
 
     @MockBean
     private Security security;
 
-    private DatasetClient datasetClient;
-
-    @Before
-    public void updateClientUrl() throws MalformedURLException {
-        URL url = new URL("http://localhost:" + localServerPort + "/api/v1");
-        datasetClient = new ProxyDatasetClient(restTemplateBuilder, url, security);
-        when(security.getAuthenticationToken()).thenReturn(AUTHENTICATION_TOKEN);
-    }
-
     @Test
-    public void getByIdTest() {
-        Dataset toto = datasetClient.findOne("toto");
-        assertNotNull(toto);
-    }
+    public void testExecuteDataSetGetSchema_shouldReturnDataset() {
+        when(security.getAuthenticationToken()).thenReturn(AUTHENTICATION_TOKEN);
 
+        DataSetGetMetadata command = context.getBean(DataSetGetMetadata.class, "no-matter");
+
+        Dataset dataset = command.execute();
+
+        assertEquals(HttpStatus.OK, command.getStatus());
+        assertNotNull(dataset);
+        // check dataset does not contains null values
+        assertNotNull(dataset.getId());
+        assertNotNull(dataset.getLabel());
+    }
 }

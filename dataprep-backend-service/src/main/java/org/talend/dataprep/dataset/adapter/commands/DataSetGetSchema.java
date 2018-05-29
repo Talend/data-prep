@@ -13,6 +13,7 @@
 package org.talend.dataprep.dataset.adapter.commands;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.annotation.PostConstruct;
@@ -20,15 +21,15 @@ import javax.annotation.PostConstruct;
 import org.apache.avro.Schema;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.util.EntityUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.util.avro.AvroUtils;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
@@ -56,21 +57,22 @@ public class DataSetGetSchema extends GenericCommand<Schema> {
     private void initConfiguration() {
         URI datasetURI;
         try {
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            datasetURI = uriBuilder.setPath(uriBuilder.getPath() + "/api/v1/datasets/" + dataSetId + "/schema").build();
+            datasetURI = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/schema").build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
         }
-        execute(() -> new HttpGet(datasetURI));
+        execute(() -> {
+            HttpGet httpGet = new HttpGet(datasetURI);
+            httpGet.setHeader(ACCEPT, AvroUtils.AVRO_JSON_MIME_TYPES_UNOFFICIAL_VALID_VALUE);
+            return httpGet;
+        });
 
         on(HttpStatus.OK).then((req, res) -> {
-            try {
-                String schemaAsString = EntityUtils.toString(res.getEntity(), UTF_8);
-                return new Schema.Parser().parse(schemaAsString);
+            try (InputStream inputStream = res.getEntity().getContent()){
+                return new Schema.Parser().parse(inputStream);
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {
-                EntityUtils.consumeQuietly(res.getEntity());
                 req.releaseConnection();
             }
         });

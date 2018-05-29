@@ -23,18 +23,31 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.configuration.DataPrepComponentScanConfiguration;
+import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.service.DataSetService;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.mockito.BDDMockito.given;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(DataSetController.class)
-@Ignore("do not pass for no reason")
+@Import({DataPrepComponentScanConfiguration.class })
+@Ignore
 public class DataSetControllerTest {
 
     @Autowired
@@ -44,17 +57,39 @@ public class DataSetControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private DatasetClient datasetClient;
+    private DataSetService dataSetService;
+
+    @MockBean
+    private BeanConversionService beanConversionService;
 
     @Test
-    public void getDatasetMetadata() throws Exception {
-        String datasetId = "1251df6e-33db-42ba-8651-fdfff081390f";
+    public void findSample() throws Exception {
+        InputStream resourceAsStream = DataSetControllerTest.class.getResourceAsStream(
+                "/org/talend/dataprep/dataset/avengers_expected_limit_2.json");
 
-        InputStream jsonStream = DataSetControllerTest.class.getResourceAsStream("dataset_payload_example.json");
-        Dataset dataset = objectMapper.readValue(jsonStream, Dataset.class);
+        DataSet dataSet = objectMapper.readValue(resourceAsStream, DataSet.class);
 
-        given(datasetClient.findOne(datasetId)).willReturn(dataset);
+        when(dataSetService.getMetadata(anyString())).thenReturn(dataSet);
 
-        mvc.perform(get("/api/v1/datasets/{datasetId}", datasetId)).andExpect(status().isOk());
+        //TODO mock the bean conversion
+        when(beanConversionService.convert(any(DataSetMetadata.class), Dataset.class)).thenReturn(null);
+
+        MvcResult result =
+                mvc.perform(get("/api/v1/datasets/{datasetId}", "1234")) //
+                        .andExpect(status().isOk())
+                        .andReturn();
+
+        JsonNode jsonSchema = objectMapper.readTree(result.getResponse().getContentAsString());
+
+        assertEquals("org.talend.dataprep", jsonSchema.get("namespace").asText());
+        JsonNode fields = jsonSchema.get("fields");
+        assertTrue(fields.isArray());
+
+        assertEquals("nickname", fields.get(0).get("name").asText());
+        assertEquals("secret_firstname", fields.get(1).get("name").asText());
+        assertEquals("secret_lastname", fields.get(2).get("name").asText());
+        assertEquals("date_of_birth", fields.get(3).get("name").asText());
+        assertEquals("city", fields.get(4).get("name").asText());
+
     }
 }

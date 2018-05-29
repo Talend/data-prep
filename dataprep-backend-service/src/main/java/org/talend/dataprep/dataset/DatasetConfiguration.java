@@ -35,15 +35,27 @@ public class DatasetConfiguration {
 
     public static class Service {
 
-        private String provider;
+        private Provider provider = Provider.LEGACY;
 
-        public String getProvider() {
+        private String url;
+
+        public Provider getProvider() {
             return provider;
         }
 
-        public void setProvider(String provider) {
+        public void setProvider(Provider provider) {
             this.provider = provider;
         }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        enum Provider {LEGACY, CATALOG}
     }
 
     public Service getService() {
@@ -51,6 +63,6 @@ public class DatasetConfiguration {
     }
 
     public String getProvider() {
-        return service.getProvider();
+        return service.getProvider().name().toLowerCase();
     }
 }

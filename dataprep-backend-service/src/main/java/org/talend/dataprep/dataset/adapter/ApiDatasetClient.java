@@ -1,14 +1,9 @@
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,29 +15,27 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.filter.FilterService;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
 import org.talend.dataprep.dataset.adapter.commands.DatasetList;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
-import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 /**
  * Client based on Hystrix commands to call a dataset API. Exposes native avro calls and conversions.
@@ -76,7 +69,6 @@ public class ApiDatasetClient {
             .maximumSize(50)
             .softValues()
             .build();
-
 
     // ------- Pure API -------
 
@@ -246,16 +238,6 @@ public class ApiDatasetClient {
         public AnalysisResult(RowMetadata rowMetadata, long rowcount) {
             this.rowMetadata = rowMetadata;
             this.rowcount = rowcount;
-        }
-    }
-
-    private RowMetadata getPreparationMetadata(String preparationId) {
-        final PreparationDetailsGet preparationDetailsGet = context.getBean(PreparationDetailsGet.class, preparationId, Step.ROOT_STEP.id());
-        try (InputStream details = preparationDetailsGet.execute()) {
-            PreparationMessage preparationMessage = mapper.readerFor(PreparationMessage.class).readValue(details);
-            return preparationMessage.getRowMetadata();
-        } catch (Exception e) {
-            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }
     }
 

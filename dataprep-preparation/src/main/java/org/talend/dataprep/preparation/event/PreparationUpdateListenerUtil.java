@@ -1,7 +1,5 @@
 package org.talend.dataprep.preparation.event;
 
-import static org.talend.tql.api.TqlBuilder.in;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -13,8 +11,10 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.tql.api.TqlBuilder;
-import org.talend.tql.model.Expression;
+import org.talend.dataprep.security.SecurityProxy;
+
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.in;
 
 /**
  * Utility class to remove all {@link StepRowMetadata} associated to a preparation that uses a given dataset.
@@ -36,6 +36,9 @@ public class PreparationUpdateListenerUtil {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private SecurityProxy securityProxy;
+
     /**
      * Removes all {@link StepRowMetadata} of preparations that use the provided {@link DataSetMetadata} metadata.
      *
@@ -44,11 +47,16 @@ public class PreparationUpdateListenerUtil {
      */
     public void removePreparationStepRowMetadata(String dataSetId) {
         final DataSetGetMetadata metadataRetriever = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
-        final RowMetadata rowMetadata = metadataRetriever.execute().getRowMetadata();
+        RowMetadata rowMetadata;
+        try {
+            securityProxy.asTechnicalUser();
+            rowMetadata = metadataRetriever.execute().getRowMetadata();
+        } finally {
+            securityProxy.releaseIdentity();
+        }
 
-        final Expression filter = TqlBuilder.eq("dataSetId", dataSetId);
         preparationRepository
-                .list(Preparation.class, filter) //
+                .list(Preparation.class, eq("dataSetId", dataSetId)) //
                 .forEach(preparation -> {
                     // Reset preparation row metadata.
                     preparation.setRowMetadata(rowMetadata);

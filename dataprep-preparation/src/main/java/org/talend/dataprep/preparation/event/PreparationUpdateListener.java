@@ -13,17 +13,11 @@
 package org.talend.dataprep.preparation.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationUtils;
-import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
-import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.tql.api.TqlBuilder;
-import org.talend.tql.model.Expression;
 
 /**
  * <p>
@@ -36,37 +30,15 @@ import org.talend.tql.model.Expression;
  * </p>
  */
 @Component
+@ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
 public class PreparationUpdateListener {
 
     @Autowired
-    protected ApplicationEventPublisher publisher;
-
-    @Autowired
-    private PreparationUtils preparationUtils;
-
-    @Autowired
-    private PreparationRepository preparationRepository;
+    private PreparationUpdateListenerUtil preparationUpdateListenerUtil;
 
     @EventListener
     public void onUpdate(DatasetUpdatedEvent event) {
-        final Expression filter = TqlBuilder.eq("dataSetId", event.getSource().getId());
-        preparationRepository
-                .list(Preparation.class, filter) //
-                .forEach(preparation -> {
-                    // Reset preparation row metadata.
-                    preparation.setRowMetadata(event.getSource().getRowMetadata());
-                    preparationRepository.add(preparation);
-
-                    // Reset step row metadata in preparation's steps.
-                    preparationUtils
-                            .listSteps(preparation.getHeadId(), preparationRepository) //
-                            .stream() //
-                            .filter(s -> !Step.ROOT_STEP.equals(s)) //
-                            .filter(s -> s.getRowMetadata() != null) //
-                            .forEach(s -> {
-                                final Expression expression = TqlBuilder.eq("id", s.getRowMetadata());
-                                preparationRepository.remove(StepRowMetadata.class, expression);
-                            });
-                });
+        preparationUpdateListenerUtil.removePreparationStepRowMetadata(event.getSource().getId());
     }
+
 }

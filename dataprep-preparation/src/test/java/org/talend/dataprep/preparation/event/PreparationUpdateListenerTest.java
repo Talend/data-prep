@@ -67,7 +67,6 @@ public class PreparationUpdateListenerTest {
 
         // then
         verify(preparationRepository, times(1)).add(any(Preparation.class));
-        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.eq("id", "srmd-1")));
-        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.eq("id", "srmd-2")));
+        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
     }
 }

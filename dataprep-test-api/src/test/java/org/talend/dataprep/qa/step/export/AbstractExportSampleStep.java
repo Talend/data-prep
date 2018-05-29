@@ -72,7 +72,14 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
 
         // TODO manage export from step ? (or from version)
         List<String> steps =
-                api.getPreparation(preparationId).then().statusCode(200).extract().body().jsonPath().getJsonObject(
+                api
+                        .getPreparationDetails(preparationId)
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .body()
+                        .jsonPath()
+                        .getJsonObject(
                         "steps");
 
         exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);

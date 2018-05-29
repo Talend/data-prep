@@ -40,6 +40,7 @@ import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
+import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,8 +59,7 @@ public class OSDataPrepAPIHelper {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${restassured.debug:false}")
-    private boolean enableRestAssuredDebug;
+    private boolean enableRestAssuredDebug = false;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -177,8 +177,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log()
-                .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
                         Charset.defaultCharset())) //
@@ -241,29 +239,7 @@ public class OSDataPrepAPIHelper {
     public Response listDatasetDetails() {
         return given() //
                 .when() //
-                .get("api/datasets/summary");
-    }
-
-    /**
-     * List all dataset in TDP instance.
-     *
-     * @return the response.
-     */
-    public Response listDataset() {
-        return given() //
-                .get("/api/datasets");
-    }
-
-    /**
-     * Get a preparation as a list of step id.
-     *
-     * @param preparationId the preparation id.
-     * @return the response.
-     */
-    public Response getPreparation(String preparationId) {
-        return given() //
-                .when() //
-                .get("/api/preparations/{preparationId}/details", preparationId);
+                .get("/api/datasets/summary");
     }
 
     /**
@@ -275,8 +251,7 @@ public class OSDataPrepAPIHelper {
      * @param tql The TQL filter to apply (pass null if you want the non-filtered preparation content)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from, String tql)
-            throws IOException {
+    public Response getPreparationContent(String preparationId, String version, String from, String tql) throws IOException {
         RequestSpecification given = given() //
                 .queryParam("version", version) //
                 .queryParam("from", from);
@@ -598,5 +573,22 @@ public class OSDataPrepAPIHelper {
         }
 
         return asyncExecutionMessage;
+    }
+
+    public boolean isEnableRestAssuredDebug() {
+        return enableRestAssuredDebug;
+    }
+
+    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
+        this.enableRestAssuredDebug = enableRestAssuredDebug;
+        return this;
+    }
+
+    public Response applyAggragate(Aggregate aggregate) throws Exception {
+        return given()
+                .header(new Header("Content-Type", "application/json")) //
+                .when() //
+                .body(mapper.writeValueAsString(aggregate)) //
+                .post("/api/aggregate");
     }
 }

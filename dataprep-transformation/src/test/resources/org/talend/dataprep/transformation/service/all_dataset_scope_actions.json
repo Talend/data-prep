@@ -298,8 +298,23 @@
         "implicit": false,
         "canBeBlank": false,
         "placeHolder": "",
+        "configuration": {
+          "values": [
+            {
+              "value": "delete",
+              "label": "Delete"
+            },
+            {
+              "value": "keep",
+              "label": "Keep"
+            }
+          ],
+          "multiple": false
+        },
         "label": "Rows containing only non-printing characters",
         "description": "Delete rows containing only non-printing characters",
+        "readonly": true,
+        "radio": false,
         "default": "delete"
       }
     ],
@@ -450,7 +465,7 @@
                         "label": "French/British standard"
                       },
                       {
-                        "value": "UK",
+                        "value": "GB",
                         "label": "English standard"
                       },
                       {
@@ -623,4 +638,3 @@
     "dynamic": false
   }
 ]
-

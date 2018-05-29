@@ -403,7 +403,7 @@ public class TransformationService extends BaseTransformationService {
 
         // apply the aggregation
         try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+            DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             if (parameters.getPreparationId() != null) {
                 dataSet.setMetadata(executeMetadata(parameters.getPreparationId(), parameters.getStepId()));
             }
@@ -546,7 +546,8 @@ public class TransformationService extends BaseTransformationService {
      */
     //@formatter:off
     @RequestMapping(value = "/transform/diff/metadata", method = POST)
-    @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids", notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids",
+            notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
     @VolumeMetered
     public Stream<StepDiff> getCreatedColumns(@ApiParam(name = "body", value = "Preview parameters list in json.") @RequestBody final List<PreviewParameters> previewParameters) {
         return previewParameters.stream().map(this::getCreatedColumns);

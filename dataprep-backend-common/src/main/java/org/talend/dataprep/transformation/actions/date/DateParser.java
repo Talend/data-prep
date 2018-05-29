@@ -20,7 +20,14 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -122,7 +129,7 @@ public class DateParser {
                 }
 
                 // as Christopher L. said : "there can be only one" :-)
-                return getPatterns(patterns).get(0);
+                return results.get(0);
             } else {
                 throw new DateTimeException("DQ did not find any pattern for '" + value + "'");
             }
@@ -147,8 +154,8 @@ public class DateParser {
 
         for (DatePattern pattern : patterns) {
             // TDQ-14421 use ResolverStyle.STRICT to parse a date. such as "2017-02-29" should be invalid.
-            final DateTimeFormatter formatter =
-                    SystemDateTimePatternManager.getDateTimeFormatterByPattern(pattern.getPattern(), Locale.ENGLISH);
+            final DateTimeFormatter formatter = SystemDateTimePatternManager.getDateTimeFormatterByPattern(pattern.getPattern(),
+                    Locale.ENGLISH);
             if (formatter == null) {
                 continue;
             }
@@ -179,11 +186,9 @@ public class DateParser {
     public List<DatePattern> getPatterns(List<PatternFrequency> patternsFrequency) {
         final Set<String> distinctPatterns = new HashSet<>(patternsFrequency.size());
 
-        return patternsFrequency
-                .stream()
-                .filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
+        return patternsFrequency.stream().filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
                 .filter(patternFreqItem -> distinctPatterns.add(patternFreqItem.getPattern())) // use Set<> to detect if
-                                                                                               // pattern is a duplicate
+                // pattern is a duplicate
                 .map(patternFreqItem -> {
                     try {
                         return new DatePattern(patternFreqItem.getPattern(), patternFreqItem.getOccurrences());
@@ -192,9 +197,7 @@ public class DateParser {
                         LOGGER.debug("Unable to parse pattern '{}'", patternFreqItem.getPattern(), e);
                         return null;
                     }
-                })
-                .filter(Objects::nonNull) // remove non valid date patterns
-                .sorted()
-                .collect(toList());
+                }).filter(Objects::nonNull) // remove non valid date patterns
+                .sorted().collect(toList());
     }
 }

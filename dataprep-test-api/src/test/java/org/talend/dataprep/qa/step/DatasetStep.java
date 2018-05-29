@@ -1,19 +1,12 @@
 package org.talend.dataprep.qa.step;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.response.ResponseBody;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.DatasetMeta;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,13 +15,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.DatasetMeta;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ResponseBody;
+
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with dataset.
@@ -67,8 +69,8 @@ public class DatasetStep extends DataPrepStep {
      * {@link List}.
      *
      * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
-     * @param datasetName  the searched dataset name.
-     * @param nbRows       the searched number of row.
+     * @param datasetName the searched dataset name.
+     * @param nbRows the searched number of row.
      * @return the number of corresponding {@link DatasetMeta}.
      */
     private long countFilteredDatasetList(List<DatasetMeta> datasetMetas, String datasetName, String nbRows) {
@@ -106,26 +108,26 @@ public class DatasetStep extends DataPrepStep {
         LOGGER.debug("I upload the dataset {} with name {}.", fileName, suffixedName);
         String datasetId;
         switch (util.getFilenameExtension(fileName)) {
-            case "xls":
-            case "xlsx":
-                datasetId = api
-                        .uploadBinaryDataset(fileName, suffixedName) //
-                        .then()
-                        .statusCode(OK.value()) //
-                        .extract()
-                        .body()
-                        .asString();
-                break;
-            case "csv":
-            default:
-                datasetId = api
-                        .uploadTextDataset(fileName, suffixedName) //
-                        .then()
-                        .statusCode(OK.value()) //
-                        .extract()
-                        .body()
-                        .asString();
-                break;
+        case "xls":
+        case "xlsx":
+            datasetId = api
+                    .uploadBinaryDataset(fileName, suffixedName) //
+                    .then()
+                    .statusCode(OK.value()) //
+                    .extract()
+                    .body()
+                    .asString();
+            break;
+        case "csv":
+        default:
+            datasetId = api
+                    .uploadTextDataset(fileName, suffixedName) //
+                    .then()
+                    .statusCode(OK.value()) //
+                    .extract()
+                    .body()
+                    .asString();
+            break;
 
         }
         context.storeDatasetRef(datasetId, suffixedName);

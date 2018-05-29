@@ -1,6 +1,6 @@
 import { call, take, put, select } from 'redux-saga/effects';
 import http from '@talend/react-cmf/lib/sagas/http';
-import { api, actions } from '@talend/react-cmf';
+import api, { actions } from '@talend/react-cmf';
 import {
 	CANCEL_RENAME_PREPARATION,
 	FETCH_PREPARATIONS,

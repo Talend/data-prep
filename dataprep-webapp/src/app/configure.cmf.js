@@ -1,4 +1,4 @@
-import { api, store as cmfstore, sagaRouter, actions as cmfActions } from '@talend/react-cmf';
+import api, { store as cmfstore, sagaRouter, actions as cmfActions } from '@talend/react-cmf';
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
@@ -11,6 +11,9 @@ import actions from './next/actions';
 import components from './next/components/index';
 import App from './next/components/App.container';
 import { ALERT, FETCH_PREPARATIONS } from './next/constants/actions';
+
+import { default as constants } from './next/constants';
+
 import sagas from './next/sagas';
 
 const registerActionCreator = api.actionCreator.register;
@@ -158,7 +161,9 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */
-		store.dispatch(cmfActions.settingsActions.fetchSettings('/settings.json'));
+		store.dispatch(
+			cmfActions.settingsActions.fetchSettings(`/settings.${constants.I18N.EN_LOCALE}.json`),
+		);
 
 		reduxLocalStorage.saveOnReload({
 			engine,

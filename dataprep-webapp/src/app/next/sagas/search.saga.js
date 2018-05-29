@@ -2,7 +2,7 @@ import { delay } from 'redux-saga';
 import { call, cancel, fork, take, takeLatest, all, put, select } from 'redux-saga/effects';
 import http from '@talend/react-cmf/lib/sagas/http';
 import { actions } from '@talend/react-cmf';
-// import { Typeahead } from '@talend/react-containers';
+import { Typeahead } from '@talend/react-containers';
 import { SEARCH, SEARCH_SELECT, SEARCH_RESET, OPEN_WINDOW } from '../constants/actions';
 import { default as creators } from '../actions';
 import {
@@ -85,8 +85,8 @@ function* process(payload) {
 				suggestions,
 			};
 		});
-
-	yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: false }));
+	yield put(Typeahead.setStateAction({ searching: false }, 'headerbar:search'));
+	// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: false }));
 	yield put(actions.collections.addOrReplace('search', items));
 }
 
@@ -98,8 +98,9 @@ function* search() {
 		if (task) {
 			yield cancel(task);
 		}
-
-		yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: true }));
+		// const searchState = select(Typeahead.getState)
+		yield put(Typeahead.setStateAction({ searching: true }, 'headerbar:search'));
+		// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: true }));
 		task = yield fork(process, payload);
 	}
 }

@@ -37,10 +37,10 @@ export const SEARCH_CATEGORIES = [
 
 
 export const QUERY_BUILDER = {
-	tdp: (categories) => {
+	tdp: () => {
 		return http.get('http://tld.com');
 	},
-	external: (categories) => {
+	external: () => {
 		return http.get('http://tld.fr');
 	},
 };

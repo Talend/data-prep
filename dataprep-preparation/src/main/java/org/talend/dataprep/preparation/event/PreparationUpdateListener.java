@@ -25,6 +25,16 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
 
+/**
+ * <p>
+ * This listener takes care of {@link StepRowMetadata} clean up when a dataset use as input for a preparation is
+ * modified.
+ * </p>
+ * <p>
+ * When a dataset is modified, its metadata may change, in this case previously computed {@link StepRowMetadata} must be
+ * removed, so they will be re-computed on next preparation use.
+ * </p>
+ */
 @Component
 public class PreparationUpdateListener {
 
@@ -51,7 +61,7 @@ public class PreparationUpdateListener {
                     preparationUtils
                             .listSteps(preparation.getHeadId(), preparationRepository) //
                             .stream() //
-                            .filter(s -> !Step.ROOT_STEP.id().equals(s.id())) //
+                            .filter(s -> !Step.ROOT_STEP.equals(s)) //
                             .filter(s -> s.getRowMetadata() != null) //
                             .forEach(s -> {
                                 final Expression expression = TqlBuilder.eq("id", s.getRowMetadata());

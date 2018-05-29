@@ -857,8 +857,8 @@ describe('Filter service', () => {
 		}));
 
 		it('should call the proper service if a column name is altered', inject((FilterService, StateService) => {
-			FilterService.updateColumnNameInFilters('0001', 'heeeey');
-			expect(StateService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'heeeey');
+			FilterService.updateColumnNameInFilters({'0001' : []});
+			expect(StateService.updateColumnNameInFilters).toHaveBeenCalledWith({'0001' : []});
 		}));
 
 		it('should update "contains" filter', inject((FilterService, StateService) => {

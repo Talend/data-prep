@@ -169,16 +169,26 @@ describe('Filter state service', () => {
 
         it('should update column name', inject((filterState, FilterStateService) => {
             var filter1 = { colId: '0001', colName: 'haha', args: { value: 'toto' } };
-            var filter2 = { colId: '0002', colName: 'haha', args: { value: 'toto' } };
+            var filter2 = { colId: '0002', colName: 'hahaha', args: { value: 'toto' } };
             var originalGridFilters = [filter1, filter2];
             filterState.gridFilters = originalGridFilters;
             filterState.applyTransformationOnFilters = true;
 
-            FilterStateService.updateColumnNameInFilters('0001', 'hehe');
+            const cols = [
+                {
+                    id: '0001',
+	                name: 'haha',
+                },
+	            {
+		            id: '0002',
+		            name: 'toto',
+	            },
+            ];
+            FilterStateService.updateColumnNameInFilters(cols);
 
             var gridFilters = filterState.gridFilters;
-            expect(gridFilters[0].colName).toBe('hehe');
-            expect(gridFilters[1].colName).toBe('haha');
+            expect(gridFilters[0].colName).toBe('haha');
+            expect(gridFilters[1].colName).toBe('toto');
         }));
     });
 });

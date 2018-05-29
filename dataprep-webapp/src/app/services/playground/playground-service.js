@@ -1008,11 +1008,18 @@ export default function PlaygroundService(
 		}
 	}
 
+	function updateColumnNameInFilters(data) {
+		if (data && data.metadata && data.metadata.columns && data.metadata.columns.length) {
+			FilterService.updateColumnNameInFilters(data.metadata.columns);
+		}
+	}
+
 	function updatePlayground(data) {
 		if (cleanFilters(data)) {
 			updateDatagrid();
 		}
 		else {
+			updateColumnNameInFilters(data);
 			DatagridService.updateData(data);
 			PreviewService.reset(false);
 		}

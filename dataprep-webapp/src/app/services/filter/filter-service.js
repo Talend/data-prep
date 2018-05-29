@@ -337,12 +337,11 @@ export default class FilterService {
 	 * @ngdoc method
 	 * @name updateColumnNameInFilters
 	 * @methodOf data-prep.services.filter.service:FilterService
-	 * @param {string} id The column id
-	 * @param {string} name The new column name
-	 * @description Updates the column name in the filter's label
+	 * @param {array} columns The columns
+	 * @description Updates the columns name in the filter's label
 	 */
-	updateColumnNameInFilters(id, name) {
-		this.StateService.updateColumnNameInFilters(id, name);
+	updateColumnNameInFilters(columns) {
+		this.StateService.updateColumnNameInFilters(columns);
 	}
 
 	/**

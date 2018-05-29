@@ -243,9 +243,8 @@ describe('Datagrid header controller', () => {
 	});
 
 	describe('update column name', () => {
-		beforeEach(inject(($q, PlaygroundService, FilterManagerService) => {
+		beforeEach(inject(($q, PlaygroundService) => {
 			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when(true));
-			spyOn(FilterManagerService, 'updateColumnNameInFilters').and.returnValue($q.when(true));
 		}));
 
 		it('should update column name', inject((PlaygroundService, FilterManagerService) => {
@@ -268,8 +267,6 @@ describe('Datagrid header controller', () => {
 			}];
 
 			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
-			scope.$digest();
-			expect(FilterManagerService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'new name');
 		}));
 
 		it('should turn off edition mode after name update', () => {

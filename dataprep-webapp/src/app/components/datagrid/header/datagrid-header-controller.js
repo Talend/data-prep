@@ -107,7 +107,6 @@ export default function DatagridHeaderCtrl($scope, state,
 		PlaygroundService.appendStep([{ action: RENAME_ACTION, parameters: params }])
 			.then(() => {
 				vm.setEditMode(false);
-				vm.filterManagerService.updateColumnNameInFilters(vm.column.id, vm.newName);
 				originalName = vm.newName;
 			});
 	};

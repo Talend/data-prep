@@ -260,8 +260,8 @@ export function PlaygroundStateService($translate,
 		FilterStateService.enableFilters();
 	}
 
-	function updateColumnNameInFilters(id, name) {
-		FilterStateService.updateColumnNameInFilters(id, name);
+	function updateColumnNameInFilters(columns) {
+		FilterStateService.updateColumnNameInFilters(columns);
 	}
 
 	function updateGridFilter(oldFilter, newFilter) {

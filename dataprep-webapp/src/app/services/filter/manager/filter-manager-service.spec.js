@@ -265,14 +265,5 @@ describe('Filter Manager Service', () => {
 				stateMock.playground.filter.gridFilters
 			);
 		}));
-
-		it('should update filters when a column has been renamed', inject((FilterManagerService, FilterService, StorageService) => {
-			FilterManagerService.updateColumnNameInFilters('0001', 'yoooo');
-			expect(FilterService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'yoooo');
-			expect(StorageService.saveFilter).toHaveBeenCalledWith(
-				stateMock.playground.preparation.id,
-				stateMock.playground.filter.gridFilters
-			);
-		}));
 	});
 });

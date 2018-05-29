@@ -460,8 +460,8 @@ describe('Playground state service', () => {
             }));
 
             it('should call proper method to update column name', inject((PlaygroundStateService, FilterStateService) => {
-                PlaygroundStateService.updateColumnNameInFilters('0001', 'tata');
-                expect(FilterStateService.updateColumnNameInFilters).toHaveBeenCalledWith('0001', 'tata');
+                PlaygroundStateService.updateColumnNameInFilters({'0001' : []});
+                expect(FilterStateService.updateColumnNameInFilters).toHaveBeenCalledWith({'0001' : []});
             }));
         });
 

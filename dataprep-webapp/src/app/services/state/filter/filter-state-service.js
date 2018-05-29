@@ -51,8 +51,13 @@ export function FilterStateService() {
 		filterState.gridFilters[index] = newFilter;
 	}
 
-	function updateColumnNameInFilters(id, name) {
-		filterState.gridFilters.filter(f => f.colId === id).forEach(f => f.colName = name);
+	function updateColumnNameInFilters(columns) {
+		filterState.gridFilters.forEach((filter) => {
+			const colToUpdate = columns.find(col => col.id === filter.colId);
+			if (colToUpdate && filter.colName !== colToUpdate.name) {
+				filter.colName = colToUpdate.name;
+			}
+		});
 	}
 
 	function removeGridFilter(filterInfo) {

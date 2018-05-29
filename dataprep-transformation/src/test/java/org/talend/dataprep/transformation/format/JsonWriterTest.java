@@ -131,12 +131,15 @@ public class JsonWriterTest extends BaseFormatTest {
         final DataSetRow row2 = new DataSetRow(valuesRow2);
         row2.setTdpId(42L);
 
+        RowMetadata rowMetadata = new RowMetadata(columns);
+        rowMetadata.setSampleNbRows(2);
+
         final String expectedJson = IOUtils
                 .toString(this.getClass().getResourceAsStream("expected_json_with_row_and_metadata.json"), UTF_8);
 
         // when
         writer.write(row);
-        writer.write(new RowMetadata(columns));
+        writer.write(rowMetadata);
         writer.write(row2);
         writer.close();
 

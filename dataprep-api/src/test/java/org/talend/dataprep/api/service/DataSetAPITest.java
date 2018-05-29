@@ -17,6 +17,7 @@ import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -793,10 +794,15 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_filter.json");
 
         // when
-        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false&filter=0001%3D%27John%27", dataSetId);
+        Response response = given()
+                .queryParam("metadata", "true")
+                .queryParam("columns", "false")
+                .queryParam("filter", "0001='John'")
+                .when()
+                .get("/api/datasets/{id}", dataSetId);
 
         // then
-        response.then().header("Content-Type", "application/json");
+        response.then().header("Content-Type", containsString("application/json"));
         final String contentAsString = response.asString();
         assertThat(contentAsString, sameJSONAsFile(expected));
     }

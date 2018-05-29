@@ -450,7 +450,7 @@ describe('Dataset Rest Service', () => {
 			const data = [{ column: [], records: [] }];
 
 			$httpBackend
-				.expectGET(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?metadata=false&includeTechnicalProperties=true')
+				.expectGET(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?filter=&metadata=false&includeTechnicalProperties=true')
 				.respond(200, data);
 
 			//when

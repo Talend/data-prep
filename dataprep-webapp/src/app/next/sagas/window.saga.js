@@ -3,11 +3,15 @@ import { takeEvery } from 'redux-saga/effects';
 import { OPEN_WINDOW, REDIRECT_WINDOW } from '../constants/actions';
 
 function openWindow(action) {
-	window.open(action.payload.url, '_blank');
+	if (action && action.payload) {
+		window.open(action.payload.url, '_blank');
+	}
 }
 
 function redirectWindow(action) {
-	window.location.assign(action.payload.url);
+	if (action && action.payload) {
+		window.location.assign(action.payload.url);
+	}
 }
 
 /**

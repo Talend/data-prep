@@ -25,6 +25,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tql.api.TqlBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,6 +42,9 @@ public class PreparationUpdateListenerUtilTest {
 
     @Mock
     private ApplicationContext applicationContext;
+
+    @Mock
+    private SecurityProxy securityProxy;
 
     @Test
     public void shouldRemoveStepRowMetadata() {
@@ -79,5 +83,7 @@ public class PreparationUpdateListenerUtilTest {
         // then
         verify(preparationRepository, times(1)).add(any(Preparation.class));
         verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
+        verify(securityProxy, times(1)).asTechnicalUser();
+        verify(securityProxy, times(1)).releaseIdentity();
     }
 }

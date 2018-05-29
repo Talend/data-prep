@@ -1,5 +1,10 @@
 package org.talend.dataprep.preparation.event;
 
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.in;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -13,9 +18,6 @@ import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 
-import static org.talend.tql.api.TqlBuilder.eq;
-import static org.talend.tql.api.TqlBuilder.in;
-
 /**
  * Utility class to remove all {@link StepRowMetadata} associated to a preparation that uses a given dataset.
  *
@@ -23,6 +25,8 @@ import static org.talend.tql.api.TqlBuilder.in;
  */
 @Component
 public class PreparationUpdateListenerUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationUpdateListenerUtil.class);
 
     /**
      * The preparation repository.
@@ -46,31 +50,35 @@ public class PreparationUpdateListenerUtil {
      * that use this <code>dataSetId</code>).
      */
     public void removePreparationStepRowMetadata(String dataSetId) {
-        final DataSetGetMetadata metadataRetriever = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
-        RowMetadata rowMetadata;
         try {
             securityProxy.asTechnicalUser();
-            rowMetadata = metadataRetriever.execute().getRowMetadata();
+            final DataSetGetMetadata metadataRetriever = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
+            final DataSetMetadata dataSetMetadata = metadataRetriever.execute();
+            if (dataSetMetadata == null) {
+                LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).", dataSetId);
+                return;
+            }
+            final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
+
+            preparationRepository
+                    .list(Preparation.class, eq("dataSetId", dataSetId)) //
+                    .forEach(preparation -> {
+                        // Reset preparation row metadata.
+                        preparation.setRowMetadata(rowMetadata);
+                        preparationRepository.add(preparation);
+
+                        // Reset step row metadata in preparation's steps.
+                        final String[] idToRemove = preparationUtils
+                                .listSteps(preparation.getHeadId(), preparationRepository) //
+                                .stream() //
+                                .filter(s -> !Step.ROOT_STEP.equals(s)) //
+                                .filter(s -> s.getRowMetadata() != null) //
+                                .map(Step::getRowMetadata) //
+                                .toArray(String[]::new);
+                        preparationRepository.remove(StepRowMetadata.class, in("id", idToRemove));
+                    });
         } finally {
             securityProxy.releaseIdentity();
         }
-
-        preparationRepository
-                .list(Preparation.class, eq("dataSetId", dataSetId)) //
-                .forEach(preparation -> {
-                    // Reset preparation row metadata.
-                    preparation.setRowMetadata(rowMetadata);
-                    preparationRepository.add(preparation);
-
-                    // Reset step row metadata in preparation's steps.
-                    final String[] idToRemove = preparationUtils
-                            .listSteps(preparation.getHeadId(), preparationRepository) //
-                            .stream() //
-                            .filter(s -> !Step.ROOT_STEP.equals(s)) //
-                            .filter(s -> s.getRowMetadata() != null) //
-                            .map(Step::getRowMetadata) //
-                            .toArray(String[]::new);
-                    preparationRepository.remove(StepRowMetadata.class, in("id", idToRemove));
-                });
     }
 }

@@ -103,8 +103,8 @@ public class Action implements Serializable {
 
     @Override
     public String toString() {
-        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '\'' + ", filterColumns="
-                + filterColumns + '}';
+        return "Action{" + "action='" + action + '\'' + ", parameters='" + parameters + '\'' + ", filterColumns='"
+                + filterColumns + "'}";
     }
 
     /**
@@ -120,9 +120,7 @@ public class Action implements Serializable {
      */
     public static class Builder {
 
-        private Map<String, String> parameters;
-
-        private List<ColumnMetadata> filterColumns;
+        private Map<String, String> parameters = new MixedContentMap();
 
         private String name;
 
@@ -139,20 +137,12 @@ public class Action implements Serializable {
         public Action build() {
             final Action builtAction = new Action();
             builtAction.getParameters().putAll(parameters);
-            if (filterColumns != null) {
-                builtAction.getFilterColumns().addAll(filterColumns);
-            }
             builtAction.setName(name);
             return builtAction;
         }
 
         public Builder withParameters(Map<String, String> parameters) {
             this.parameters = parameters;
-            return this;
-        }
-
-        public Builder withFilterColumns(List<ColumnMetadata> filterColumns) {
-            this.filterColumns = filterColumns;
             return this;
         }
 

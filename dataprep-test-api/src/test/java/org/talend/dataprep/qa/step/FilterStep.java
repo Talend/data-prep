@@ -123,7 +123,7 @@ public class FilterStep extends DataPrepStep {
         Assert.assertEquals(filter, prepStep.parameters.get(FILTER.getKey()));
     }
 
-    @When("^I removing all filters on dataset \"(.*)\"$")
+    @When("^I remove all filters on dataset \"(.*)\"$")
     public void removeFilter(String datasetName) throws Exception {
         doApplyFilterOnDataSet(null, datasetName);
     }
@@ -157,7 +157,7 @@ public class FilterStep extends DataPrepStep {
         checkSampleRecordsCount(preparation.metadata.records, expected.get("sample_records_count"));
     }
 
-    @Then("^I removing all filters on preparation \"(.*)\"$")
+    @Then("^I remove all filters on preparation \"(.*)\"$")
     public void removeAllFiltersOnPreparation(String preparationName) throws Exception {
         doApplyFilterOnPreparation(null, preparationName);
     }

@@ -70,7 +70,7 @@ public class JSONFilterWalker {
 
     private static final String NOT = "not";
 
-    private static final List<String> ALLOWED =
+    private static final List<String> ALLOWED_ON_FULL_TABLE =
             Arrays.asList(EQ, GT, LT, GTE, LTE, CONTAINS, MATCHES, INVALID, VALID, EMPTY, RANGE);
 
     private JSONFilterWalker() {
@@ -154,7 +154,7 @@ public class JSONFilterWalker {
     }
 
     private static boolean allowFullFilter(String operation) {
-        return ALLOWED.contains(operation);
+        return ALLOWED_ON_FULL_TABLE.contains(operation);
     }
 
     private static <T> T buildOperationFilter(JsonNode currentNode, //

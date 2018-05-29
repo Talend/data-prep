@@ -89,14 +89,11 @@ public class TQLFilterService implements FilterService {
 
     /**
      * Get the list of columns present in the filter expression.
-     * @param filterAsString The filter expression.
+     * @param filterAsString The non-blank filter expression.
      * @param rowMetadata The rowMetaData to get the list of all columns of the dataSet.
      * @return List of columns present in the filter expression.
      */
     public List<ColumnMetadata> getFilterColumnsMetadata(String filterAsString, RowMetadata rowMetadata) {
-        if (StringUtils.isEmpty(filterAsString)) {
-            return null;
-        }
         final TqlElement parsedTqlElement = Tql.parse(filterAsString);
         DatasetColumnVisitor datasetColumnVisitor = new DatasetColumnVisitor();
         parsedTqlElement.accept(datasetColumnVisitor);
@@ -109,8 +106,8 @@ public class TQLFilterService implements FilterService {
     }
 
     /**
-     * Visitor use to get the column id present in the filter expression.
-     * For exemple (0001 > 5) return {"0001"}.
+     * Visitor used to retrieve the column ids present in the filter expression.
+     * For example (0001 > 5) returns {"0001"}.
      */
     private static class DatasetColumnVisitor implements IASTVisitor<List<String>> {
 

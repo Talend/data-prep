@@ -12,13 +12,47 @@
 
 package org.talend.dataprep.api.filter;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.Test;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 
 public class TQLFilterServiceTest extends AbstractFilterServiceTest {
 
     @Override
     protected FilterService getFilterService() {
         return new TQLFilterService();
+    }
+
+    @Test
+    public void testGetFilterColumnsMetadata() {
+        // given
+        final TQLFilterService tqlFilterService = new TQLFilterService();
+        final RowMetadata rowMetadata = new RowMetadata();
+        final ColumnMetadata firstColumn = new ColumnMetadata();
+        firstColumn.setId("0000");
+        firstColumn.setName("last name");
+        final ColumnMetadata secondColumn = new ColumnMetadata();
+        secondColumn.setId("0001");
+        secondColumn.setName("First_Name COL");
+        final ColumnMetadata thirdColumn = new ColumnMetadata();
+        thirdColumn.setId("0002");
+        thirdColumn.setName("The_e-mail");
+        rowMetadata.setColumns(asList(firstColumn, secondColumn, thirdColumn));
+        final String tqlFilter = "0002 ~ '[a-z]+@dataprep.[a-z]+' and 0001 in ['Vincent', 'François', 'Paul']";
+
+        // when
+        List<ColumnMetadata> filterColumns = tqlFilterService.getFilterColumnsMetadata(tqlFilter, rowMetadata);
+
+        // then
+        assertEquals(2, filterColumns.size());
+        assertTrue(filterColumns.contains(secondColumn));
+        assertTrue(filterColumns.contains(thirdColumn));
     }
 
     @Test

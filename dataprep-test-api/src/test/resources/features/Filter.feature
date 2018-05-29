@@ -10,7 +10,7 @@ Feature: Filter features
       | quality              | /data/filter/12L5C_initial_quality.json              |
       | sample_records_count | 12                                                   |
 
-    When I removing all filters on dataset "12L5C_dataset"
+    When I remove all filters on dataset "12L5C_dataset"
     Then The characteristics of the dataset "12L5C_dataset" match:
       | records              | /data/filter/12L5C_initial_records.json |
       | quality              | /data/filter/12L5C_initial_quality.json |
@@ -47,7 +47,7 @@ Feature: Filter features
       | quality              | /data/filter/12L5C_initial_quality.json |
       | sample_records_count | 12                                      |
 
-    When I removing all filters on preparation "12L5C_preparation"
+    When I remove all filters on preparation "12L5C_preparation"
     Then The characteristics of the preparation "12L5C_preparation" match:
       | records              | /data/filter/12L5C_prep_no_filter_records.json |
       | quality              | /data/filter/12L5C_initial_quality.json        |
@@ -100,7 +100,7 @@ Feature: Filter features
       | fileName             | 12L5C_export.csv  |
     Then I check that "12L5C_export.csv" temporary file equals "/data/filter/12L5C_processed.csv" file
 
-    When I removing all filters on preparation "12L5C_preparation"
+    When I remove all filters on preparation "12L5C_preparation"
     Then The characteristics of the preparation "12L5C_preparation" match:
       | records              | /data/filter/12L5C_prep_filtered_step_no_filter_records.json |
       | quality              | /data/filter/12L5C_initial_quality.json                      |
@@ -127,7 +127,7 @@ Feature: Filter features
       | records              | /data/filter/<filtered_records>   |
       | quality              | /data/filter/<new_sample_quality> |
       | sample_records_count | <new_sample_records_count>        |
-    When I removing all filters on preparation "12L5C_preparation"
+    When I remove all filters on preparation "12L5C_preparation"
     Then The characteristics of the preparation "12L5C_preparation" match:
       | records              | /data/filter/<filtered_records>   |
       | quality              | /data/filter/<new_sample_quality> |

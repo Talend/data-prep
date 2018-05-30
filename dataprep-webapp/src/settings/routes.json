@@ -41,8 +41,7 @@
       {
         "path": "preparations(/:folderId)",
         "component": "HomeListView",
-        "componentId": "preparations",
-        "onEnter": "preparation:fetch"
+        "componentId": "preparations"
       },
       {
         "path": "datasets",

@@ -185,6 +185,7 @@
       "hasTheme": true
     },
     "HomeListView#preparations": {
+      "didMountActionCreator" : "preparation:fetchAll",
       "hasTheme": true,
       "header": {},
       "sidepanel": {},

@@ -86,9 +86,6 @@
       ],
       "hasCollections": ["settings"]
     },
-    "indexRouteRedirect": {
-      "path": "/preparations"
-    },
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
@@ -181,13 +178,13 @@
         "content": []
       }
     },
-    "datastores": {
+    "HomeListView#datastores": {
       "hasTheme": true
     },
-    "datasets": {
+    "HomeListView#datasets": {
       "hasTheme": true
     },
-    "preparations": {
+    "HomeListView#preparations": {
       "hasTheme": true,
       "header": {},
       "sidepanel": {},
@@ -238,32 +235,6 @@
         }
       }
     }
-  },
-  "routes": {
-    "path": "/",
-    "component": "App",
-    "indexRoute": {
-      "component": "Redirect",
-      "view": "indexRouteRedirect"
-    },
-    "childRoutes": [
-      {
-        "path": "preparations(/:folderId)",
-        "component": "HomeListView",
-        "view": "preparations",
-        "onEnter": "preparation:fetch"
-      },
-      {
-        "path": "datasets",
-        "component": "HomeListView",
-        "view": "datasets"
-      },
-      {
-        "path": "datastores",
-        "component": "HomeListView",
-        "view": "datastores"
-      }
-    ]
   },
   "ref": {
     "SidePanel#default": {},

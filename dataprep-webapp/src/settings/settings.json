@@ -185,11 +185,11 @@
       "hasTheme": true
     },
     "HomeListView#preparations": {
-      "didMountActionCreator" : "preparation:fetchAll",
       "hasTheme": true,
       "header": {},
       "sidepanel": {},
       "list": {
+        "didMountActionCreator" : "preparation:fetchAll",
         "collectionId": "preparations",
         "list": {
           "columns": [

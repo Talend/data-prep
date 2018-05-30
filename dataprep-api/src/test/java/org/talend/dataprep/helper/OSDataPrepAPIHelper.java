@@ -40,7 +40,6 @@ import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionRequest;
-import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -534,7 +533,7 @@ public class OSDataPrepAPIHelper {
 
     /**
      * Return the list of datasets
-     *
+     * 
      * @param queryParameters Map containing the parameter names and their values to send with the request.
      * @return The response of the request.
      */
@@ -585,14 +584,6 @@ public class OSDataPrepAPIHelper {
         return asyncExecutionMessage;
     }
 
-    public Response applyAggragate(Aggregate aggregate) throws Exception {
-        return given()
-                .header(new Header("Content-Type", "application/json")) //
-                .when() //
-                .body(mapper.writeValueAsString(aggregate)) //
-                .post("/api/aggregate");
-    }
-      
     public boolean isEnableRestAssuredDebug() {
         return enableRestAssuredDebug;
     }

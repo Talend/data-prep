@@ -17,32 +17,18 @@ import static java.util.Collections.singletonList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.*;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -59,13 +45,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -81,19 +61,15 @@ import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
-import org.talend.dataprep.async.AsyncExecutionId;
-import org.talend.dataprep.async.AsyncOperation;
-import org.talend.dataprep.async.AsyncParameter;
-import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
+import org.talend.dataprep.async.*;
 import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
+import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
 import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
 import org.talend.dataprep.async.generator.PrepMetadataExecutionIdGenerator;
 import org.talend.dataprep.async.result.PrepMetadataGetContentUrlGenerator;
 import org.talend.dataprep.async.result.PreparationGetContentUrlGenerator;
-import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
@@ -124,6 +100,8 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.api.transformer.configuration.PreviewConfiguration;
 import org.talend.dataprep.transformation.api.transformer.suggestion.Suggestion;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngine;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 import org.talend.dataprep.transformation.service.export.PreparationExportStrategy;
@@ -277,6 +255,12 @@ public class TransformationService extends BaseTransformationService {
                     throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND, e);
                 }
             }
+
+            // Return transformation cached content (after sanity check)
+//            if (!contentCache.has(cacheKey)) {
+                // Not expected: We've just ran a transformation, yet no metadata cached?
+//                throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND);
+//            }
             if (contentCache.has(cacheKey)) {
                 try (InputStream stream = contentCache.get(cacheKey)) {
                     return mapper.readerFor(DataSetMetadata.class).readValue(stream);
@@ -409,10 +393,19 @@ public class TransformationService extends BaseTransformationService {
 
         // apply the aggregation
         try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
-            DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             return aggregationService.aggregate(parameters, dataSet);
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
+        } finally {
+            // don't forget to release the connection
+            if (contentToAggregate != null) {
+                try {
+                    contentToAggregate.close();
+                } catch (IOException e) {
+                    LOG.warn("Could not close dataset input stream while aggregating", e);
+                }
+            }
         }
     }
 
@@ -547,8 +540,7 @@ public class TransformationService extends BaseTransformationService {
      */
     //@formatter:off
     @RequestMapping(value = "/transform/diff/metadata", method = POST)
-    @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids",
-            notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Given a list of requested preview, it applies the diff to each one. A diff is between 2 sets of actions and return the info like created columns ids", notes = "This operation returns the diff metadata", consumes = APPLICATION_JSON_VALUE)
     @VolumeMetered
     public Stream<StepDiff> getCreatedColumns(@ApiParam(name = "body", value = "Preview parameters list in json.") @RequestBody final List<PreviewParameters> previewParameters) {
         return previewParameters.stream().map(this::getCreatedColumns);

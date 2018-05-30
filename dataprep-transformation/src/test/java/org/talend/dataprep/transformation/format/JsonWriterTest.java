@@ -1,15 +1,15 @@
-// ============================================================================
+//  ============================================================================
 //
-// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-// This source code is available under agreement available at
-// https://github.com/Talend/data-prep/blob/master/LICENSE
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
 //
-// ============================================================================
+//  ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
@@ -53,18 +53,17 @@ public class JsonWriterTest extends BaseFormatTest {
     }
 
     @Test
-    public void shouldWriteColumns() throws Exception {
+    public void write_should_write_columns() throws Exception {
         // given
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("id").type(Type.STRING).build();
-        final ColumnMetadata column2 =
-                ColumnMetadata.Builder.column().id(2).name("firstname").type(Type.STRING).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("firstname").type(Type.STRING).build();
 
         final List<ColumnMetadata> columns = new ArrayList<>(2);
         columns.add(column1);
         columns.add(column2);
 
-        String expectedOutput =
-                IOUtils.toString(JsonWriterTest.class.getResourceAsStream("expected_columns.json"), UTF_8);
+        String expectedOutput = IOUtils.toString(JsonWriterTest.class.getResourceAsStream("expected_columns.json"),
+                UTF_8);
 
         // when
         writer.write(new RowMetadata(columns));
@@ -75,10 +74,9 @@ public class JsonWriterTest extends BaseFormatTest {
     }
 
     @Test
-    public void shouldWriteRowWithTdpId() throws IOException {
+    public void write_should_write_row_with_tdp_id() throws IOException {
         // given
         Map<String, String> values = new HashMap<String, String>() {
-
             {
                 put("id", "64a5456ac148b64524ef165");
                 put("firstname", "Superman");
@@ -87,8 +85,7 @@ public class JsonWriterTest extends BaseFormatTest {
         final DataSetRow row = new DataSetRow(values);
         row.setTdpId(23L);
 
-        final String expectedJson =
-                "{\"records\":[{\"firstname\":\"Superman\",\"id\":\"64a5456ac148b64524ef165\",\"tdpId\":23}]}";
+        final String expectedJson = "{\"records\":[{\"firstname\":\"Superman\",\"id\":\"64a5456ac148b64524ef165\",\"tdpId\":23}]}";
 
         // when
         writer.write(row);
@@ -98,49 +95,4 @@ public class JsonWriterTest extends BaseFormatTest {
         assertThat(new String(outputStream.toByteArray()), is(expectedJson));
     }
 
-    @Test
-    public void shouldWriteMetadataAndRecords() throws IOException {
-        // given
-        // metadata
-        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("id").type(Type.STRING).build();
-        final ColumnMetadata column2 =
-                ColumnMetadata.Builder.column().id(2).name("firstname").type(Type.STRING).build();
-
-        final List<ColumnMetadata> columns = new ArrayList<>(2);
-        columns.add(column1);
-        columns.add(column2);
-
-        // rows
-        Map<String, String> values = new HashMap<String, String>() {
-
-            {
-                put("id", "64a5456ac148b64524ef165");
-                put("firstname", "Superman");
-            }
-        };
-        final DataSetRow row = new DataSetRow(values);
-        row.setTdpId(23L);
-
-        Map<String, String> valuesRow2 = new HashMap<String, String>() {
-
-            {
-                put("id", "b4a5456ac148b64524ef165");
-                put("firstname", "Batman");
-            }
-        };
-        final DataSetRow row2 = new DataSetRow(valuesRow2);
-        row2.setTdpId(42L);
-
-        final String expectedJson = IOUtils
-                .toString(this.getClass().getResourceAsStream("expected_json_with_row_and_metadata.json"), UTF_8);
-
-        // when
-        writer.write(row);
-        writer.write(new RowMetadata(columns));
-        writer.write(row2);
-        writer.close();
-
-        // then
-        assertThat(new String(outputStream.toByteArray()), sameJSONAs(expectedJson));
-    }
 }

@@ -92,77 +92,77 @@ const app = angular
 
 window.fetchConfiguration = function fetchConfiguration() {
 	return getAppConfiguration()
-	.then((appSettings) => {
-		app
-		// Debug config
-		.config(($compileProvider) => {
-			'ngInject';
-			$compileProvider.debugInfoEnabled(false);
-		})
-		.config(($httpProvider, $translateProvider) => {
-			'ngInject';
+		.then((appSettings) => {
+			app
+			// Debug config
+				.config(($compileProvider) => {
+					'ngInject';
+					$compileProvider.debugInfoEnabled(false);
+				})
+			.config(($httpProvider, $translateProvider) => {
+					'ngInject';
 
-			preferredLanguage =
-				(appSettings.context && appSettings.context.language) ||
-				fallbackLng;
+					preferredLanguage =
+						(appSettings.context && appSettings.context.language) ||
+						fallbackLng;
 
-			const preferredLocale = appSettings.context && appSettings.context.locale;
-			if (preferredLocale) {
-				$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
-			}
+					const preferredLocale = appSettings.context && appSettings.context.locale;
+					if (preferredLocale) {
+						$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
+					}
 
-			$translateProvider.preferredLanguage(preferredLanguage);
+					$translateProvider.preferredLanguage(preferredLanguage);
 
-			moment.locale(preferredLanguage);
+					moment.locale(preferredLanguage);
 
-			if (preferredLanguage !== fallbackLng) {
-				i18n.changeLanguage(preferredLanguage);
+					if (preferredLanguage !== fallbackLng) {
+						i18n.changeLanguage(preferredLanguage);
 
-				if (preferredLanguage === 'fr') {
-					const d3locale = d3.locale(d3LocaleFr);
-					d3.format = d3locale.numberFormat;
-					d3.time.format = d3locale.timeFormat;
-				}
-				if ($.datetimepicker) {
-					$.datetimepicker.setLocale(preferredLanguage);
-				}
-			}
-		})
-		// Fetch dynamic configuration
-		.run((SettingsService, InventoryStateService) => {
-			'ngInject';
-			// base settings
-			SettingsService.setSettings(appSettings);
-			InventoryStateService.init();
-		})
-		// Configure server api urls and refresh supported encoding
-		.run((DatasetService, HelpService, RestURLs) => {
-			'ngInject';
+						if (preferredLanguage === 'fr') {
+							const d3locale = d3.locale(d3LocaleFr);
+							d3.format = d3locale.numberFormat;
+							d3.time.format = d3locale.timeFormat;
+						}
+						if ($.datetimepicker) {
+							$.datetimepicker.setLocale(preferredLanguage);
+						}
+					}
+				})
+				// Fetch dynamic configuration
+				.run((SettingsService, InventoryStateService) => {
+					'ngInject';
+					// base settings
+					SettingsService.setSettings(appSettings);
+					InventoryStateService.init();
+				})
+				// Configure server api urls and refresh supported encoding
+				.run((DatasetService, HelpService, RestURLs) => {
+					'ngInject';
 
-			const { help } = appSettings;
-			if (help) {
-				HelpService.register(help);
-			}
+					const { help } = appSettings;
+					if (help) {
+						HelpService.register(help);
+					}
 
-			RestURLs.register(appSettings.uris);
+					RestURLs.register(appSettings.uris);
 
-			// dataset encodings
-			DatasetService.refreshSupportedEncodings();
-		})
-		.run(($translate) => {
-			'ngInject';
+					// dataset encodings
+					DatasetService.refreshSupportedEncodings();
+				})
+				.run(($translate) => {
+					'ngInject';
 
-			$translate.onReady(() => {
-				i18n.addResourceBundle(
-					preferredLanguage,
-					I18N_DOMAIN_COMPONENTS,
-					$translate.getTranslationTable(),
-					false,
-				false
-				);
-			});
+					$translate.onReady(() => {
+						i18n.addResourceBundle(
+							preferredLanguage,
+							I18N_DOMAIN_COMPONENTS,
+							$translate.getTranslationTable(),
+							false,
+						false
+						);
+					});
+				});
 		});
-	});
 };
 
 window.fetchConfiguration()

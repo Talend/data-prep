@@ -11,7 +11,7 @@ import {
 	DOCUMENTATION_SEARCH_URL,
 	DATAPREP_SEARCH_URL,
 
-	// SEARCH_CATEGORIES_BY_PROVIDER,
+	SEARCH_CATEGORIES_BY_PROVIDER,
 } from '../constants/search';
 
 import SearchService from '../services/search.service';
@@ -97,19 +97,19 @@ function* goTo() {
 	}
 }
 
-function* documentation(query) {
-	const { data } = yield call(http.post, DOCUMENTATION_SEARCH_URL, {
-		...DEFAULT_SEARCH_PAYLOAD,
-		query,
-	});
-
-	return data;
-}
-
-function* dataprep(query) {
-	const { data } = yield call(http.get, `${DATAPREP_SEARCH_URL}${query}`);
-	return JSON.parse(data);
-}
+// function* documentation(query) {
+// 	const { data } = yield call(http.post, DOCUMENTATION_SEARCH_URL, {
+// 		...DEFAULT_SEARCH_PAYLOAD,
+// 		query,
+// 	});
+//
+// 	return data;
+// }
+//
+// function* dataprep(query) {
+// 	const { data } = yield call(http.get, `${DATAPREP_SEARCH_URL}${query}`);
+// 	return JSON.parse(data);
+// }
 
 function* reset() {
 	yield takeLatest(SEARCH_RESET, function* () {
@@ -119,31 +119,56 @@ function* reset() {
 
 function* process(payload) {
 	yield delay(DEBOUNCE_TIMEOUT);
-	const [tdp, doc] = yield all([call(dataprep, payload), call(documentation, payload)]);
-	const categories = tdp.categories;
+	const test = Object.keys(SEARCH_CATEGORIES_BY_PROVIDER).map(
+		provider => SearchService.build(
+			provider,
+			SEARCH_CATEGORIES_BY_PROVIDER[provider],
+			payload,
+		)
+	);
+	console.log('[NC] test: ', test);
+	console.log('[NC] test[0]: ', test[0]);
 
-	const results = [...adaptTDPResults(tdp), ...adaptSearchResult(doc)];
-	const items = categories
-		.filter(({ type }) => results.some(result => result.inventoryType === type))
-		.map((inventory) => {
-			const suggestions = results.filter(result => result.inventoryType === inventory.type);
-			let label = inventory.type;
-			if (categories) {
-				label = categories.find(category => category.type === inventory.type).label;
-			}
+	// const res = yield all(test.map(t1 => all(t1.map(put))));
 
-			return {
-				title: label,
-				icon: {
-					name: 'fixme', // inventory.iconName,
-					title: label,
-				},
-				suggestions,
-			};
-		});
-	yield put(Typeahead.setStateAction({ searching: false }, 'headerbar:search'));
-	// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: false }));
-	yield put(actions.collections.addOrReplace('search', items));
+	const res = yield all(test.map((t1) => {
+		console.log('[NC] t1: ', t1);
+
+		return (all(t1.map((t2) => {
+			console.log('[NC] t2: ', t2);
+			return call(...t2);
+		})));
+	}));
+
+	console.log('[NC] res: ', res);
+
+
+	// console.log('[NC] SearchService -> test: ', test);
+	// const [tdp, doc] = yield all([call(dataprep, payload), call(documentation, payload)]);
+	// const categories = tdp.categories;
+	//
+	// const results = [...adaptTDPResults(tdp), ...adaptSearchResult(doc)];
+	// const items = categories
+	// 	.filter(({ type }) => results.some(result => result.inventoryType === type))
+	// 	.map((inventory) => {
+	// 		const suggestions = results.filter(result => result.inventoryType === inventory.type);
+	// 		let label = inventory.type;
+	// 		if (categories) {
+	// 			label = categories.find(category => category.type === inventory.type).label;
+	// 		}
+	//
+	// 		return {
+	// 			title: label,
+	// 			icon: {
+	// 				name: 'fixme', // inventory.iconName,
+	// 				title: label,
+	// 			},
+	// 			suggestions,
+	// 		};
+	// 	});
+	// yield put(Typeahead.setStateAction({ searching: false }, 'headerbar:search'));
+	// // yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: false }));
+	// yield put(actions.collections.addOrReplace('search', items));
 }
 
 function* search() {
@@ -155,11 +180,7 @@ function* search() {
 			yield cancel(task);
 		}
 
-		console.log('[NC] SearchService: ', SearchService.build('yolo'));
-		yield put(SearchService.build('yolo')[0]);
-		// const searchState = select(Typeahead.getState)
 		yield put(Typeahead.setStateAction({ searching: true }, 'headerbar:search'));
-		// yield put(actions.components.mergeState('Container(Typeahead)', 'headerbar:search', { searching: true }));
 		task = yield fork(process, payload);
 	}
 }

@@ -179,4 +179,10 @@ public class Dataset {
     public void setDatastore(Datastore datastore) {
         this.datastore = datastore;
     }
+
+    public enum CertificationState {
+        none,
+        pending,
+        certified
+    }
 }

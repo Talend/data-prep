@@ -15,13 +15,7 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
+import com.google.common.base.Throwables;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -45,8 +39,14 @@ import org.talend.dataprep.dataset.service.DataSetService;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.google.common.base.Throwables;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
+import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @RestController
@@ -63,9 +63,26 @@ public class DataSetController {
     }
 
     @GetMapping
-    public Stream<Dataset> getAllDatasets() {
+    public Stream<Dataset> getAllDatasets(@RequestParam(required = false) Dataset.CertificationState certification,
+            @RequestParam(required = false) Boolean favorite) {
+        boolean legacyCertified;
+        if (certification == null) {
+            legacyCertified = false;
+        } else {
+            switch (certification) {
+            case certified:
+                legacyCertified = true;
+                break;
+            case none:
+            case pending:
+            default:
+                legacyCertified = false;
+                break;
+            }
+        }
+        boolean legacyFavorite = favorite != null && favorite == TRUE;
         return dataSetService.list(SortAndOrderHelper.Sort.CREATION_DATE, SortAndOrderHelper.Order.DESC, null, false,
-                false, false, false) //
+                legacyCertified, legacyFavorite, false) //
                 .map(userDataSetMetadata -> beanConversionService.convert(userDataSetMetadata, Dataset.class));
     }
 

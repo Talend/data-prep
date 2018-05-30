@@ -12,14 +12,14 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -42,14 +42,13 @@ import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -242,21 +241,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void testListCompatibleDataSets() throws Exception {
-        // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2");
-        final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible");
-
-        // when
-        final String compatibleDatasetList = when().get("/api/datasets/{id}/compatibledatasets", dataSetId).asString();
-
-        // then
-        assertTrue(compatibleDatasetList.contains(dataSetId2));
-        assertFalse(compatibleDatasetList.contains(dataSetId3));
-    }
-
-    @Test
     public void testListCompatiblePreparationsWhenNothingIsCompatible() throws Exception {
         //
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
@@ -288,18 +272,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
         assertEquals(2, compatiblePreparations.size());
         assertTrue(prep2.equals(compatiblePreparations.get(0).getId()));
         assertTrue(prep1.equals(compatiblePreparations.get(1).getId()));
-    }
-
-    @Test
-    public void testListCompatibleDataSetsWhenUniqueDatasetInRepository() throws Exception {
-        // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "unique");
-
-        // when
-        final String compatibleDatasetList = when().get("/api/datasets/{id}/compatibledatasets", dataSetId).asString();
-
-        // then
-        assertFalse(compatibleDatasetList.contains(dataSetId));
     }
 
     @Test

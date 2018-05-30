@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.function.BiFunction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
 
 /**
@@ -52,7 +53,7 @@ import static org.talend.dataprep.command.Defaults.asNull;
  * </p>
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadata> {
 
     /**

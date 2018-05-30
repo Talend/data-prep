@@ -19,19 +19,46 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 import org.talend.dataprep.api.service.api.PreviewDiffParameters;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
-import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
-import org.talend.dataprep.api.service.command.preparation.*;
+import org.talend.dataprep.api.service.command.preparation.CachePreparationEviction;
+import org.talend.dataprep.api.service.command.preparation.DiffMetadata;
+import org.talend.dataprep.api.service.command.preparation.FindStep;
+import org.talend.dataprep.api.service.command.preparation.PreparationCopy;
+import org.talend.dataprep.api.service.command.preparation.PreparationCopyStepsFrom;
+import org.talend.dataprep.api.service.command.preparation.PreparationCreate;
+import org.talend.dataprep.api.service.command.preparation.PreparationDelete;
+import org.talend.dataprep.api.service.command.preparation.PreparationDeleteAction;
+import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
+import org.talend.dataprep.api.service.command.preparation.PreparationGetMetadata;
+import org.talend.dataprep.api.service.command.preparation.PreparationList;
+import org.talend.dataprep.api.service.command.preparation.PreparationLock;
+import org.talend.dataprep.api.service.command.preparation.PreparationMove;
+import org.talend.dataprep.api.service.command.preparation.PreparationMoveHead;
+import org.talend.dataprep.api.service.command.preparation.PreparationReorderStep;
+import org.talend.dataprep.api.service.command.preparation.PreparationUnlock;
+import org.talend.dataprep.api.service.command.preparation.PreparationUpdateAction;
+import org.talend.dataprep.api.service.command.preparation.PreviewAdd;
+import org.talend.dataprep.api.service.command.preparation.PreviewDiff;
+import org.talend.dataprep.api.service.command.preparation.PreviewUpdate;
 import org.talend.dataprep.api.service.command.transformation.GetPreparationColumnTypes;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
@@ -56,7 +83,10 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.daikon.exception.ExceptionContext.withBuilder;
 import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
@@ -90,41 +120,6 @@ public class PreparationAPI extends APIService {
 
         GenericCommand<InputStream> command = getCommand(PreparationList.class, format, name, folderPath, path, sort, order);
         return CommandHelper.toStreaming(command);
-    }
-
-    /**
-     * Returns a list containing all data sets metadata that are compatible with a preparation identified by
-     * <tt>preparationId</tt>: its id. If no compatible data set is found an empty list is returned. The base data set
-     * of the preparation with id <tt>preparationId</tt> is never returned in the list.
-     *
-     * @param preparationId the specified preparation id
-     * @param sort          the sort criterion: either name or date.
-     * @param order         the sorting order: either asc or desc
-     */
-    @RequestMapping(value = "/api/preparations/{id}/basedatasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get all data sets that are compatible with a preparation.", notes = "Returns the list of data sets the current user is allowed to see and that are compatible with the preparation.")
-    @Timed
-    public StreamingResponseBody listCompatibleDatasets(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId,
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate", required = false) Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc", required = false) Order order) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Listing compatible datasets (pool: {} )...", getConnectionStats());
-        }
-
-        try {
-            // get the preparation
-            final Preparation preparation = internalGetPreparation(preparationId);
-
-            // to list compatible datasets
-            String dataSetId = preparation.getDataSetId();
-            HystrixCommand<InputStream> listCommand = getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
-            return CommandHelper.toStreaming(listCommand);
-        } finally {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Listing compatible datasets (pool: {}) done.", getConnectionStats());
-            }
-        }
     }
 
     //@formatter:off

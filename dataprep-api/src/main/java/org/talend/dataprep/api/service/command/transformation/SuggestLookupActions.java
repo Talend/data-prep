@@ -13,15 +13,10 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.function.BiFunction;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.netflix.hystrix.HystrixCommand;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -40,10 +35,15 @@ import org.talend.dataprep.io.ReleasableInputStream;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.netflix.hystrix.HystrixCommand;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.function.BiFunction;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 /**
  * Suggestion Lookup actions in addition to dataset actions.
@@ -51,7 +51,7 @@ import com.netflix.hystrix.HystrixCommand;
  * Take the suggested column actions as input and add the lookup ones.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
 
     @Autowired

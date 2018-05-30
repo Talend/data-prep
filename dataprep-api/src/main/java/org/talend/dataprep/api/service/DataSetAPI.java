@@ -12,12 +12,9 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.netflix.hystrix.HystrixCommand;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedDataSetMetadata;
@@ -42,7 +38,6 @@ import org.talend.dataprep.api.service.command.dataset.CreateOrUpdateDataSet;
 import org.talend.dataprep.api.service.command.dataset.DataSetDelete;
 import org.talend.dataprep.api.service.command.dataset.DataSetGetEncodings;
 import org.talend.dataprep.api.service.command.dataset.DataSetGetImportParameters;
-import org.talend.dataprep.api.service.command.dataset.DataSetGetImports;
 import org.talend.dataprep.api.service.command.dataset.DataSetPreview;
 import org.talend.dataprep.api.service.command.dataset.GetDataSetColumnTypes;
 import org.talend.dataprep.api.service.command.dataset.SetFavorite;
@@ -52,7 +47,6 @@ import org.talend.dataprep.api.service.command.preparation.PreparationList;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDataSetId;
 import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
-import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
@@ -65,13 +59,14 @@ import org.talend.dataprep.user.store.UserDataRepository;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
-
-import com.netflix.hystrix.HystrixCommand;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -83,7 +78,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.command.CommandHelper.toPublisher;
-import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.command.CommandHelper.toStreaming;
 
 @RestController
@@ -230,7 +224,7 @@ public class DataSetAPI extends APIService {
             LOG.debug("Requesting dataset #{} (pool: {})...", id, getConnectionStats());
         }
         try {
-            return datasetClient.getDataSet(id, fullContent, filter);
+            return datasetClient.getDataSet(id, fullContent, includeTechnicalProperties, filter);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Request dataset #{} (pool: {}) done.", id, getConnectionStats());
@@ -293,18 +287,8 @@ public class DataSetAPI extends APIService {
         return () -> {
             try {
 
-                Stream<Dataset> datasetStream = datasetClient.listDataset();
-
-                if (favorite) {
-                    final UserData userData = userDataRepository.get(security.getUserId());
-
-                    if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
-                        datasetStream = datasetStream.filter(ds -> userData.getFavoritesDatasets().contains(ds.getId()));
-                    } else {
-                        // Wants favorites but user has no favorite
-                        datasetStream = datasetStream.filter(ds -> false);
-                    }
-                }
+                Stream<Dataset> datasetStream = datasetClient.listDataset(
+                        certified ? Dataset.CertificationState.certified : Dataset.CertificationState.none, favorite);
 
                 if (isNotBlank(name)) {
                     datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getLabel(), name));
@@ -358,27 +342,6 @@ public class DataSetAPI extends APIService {
                                 .block();
                     });
         };
-    }
-
-    /**
-     * Returns a list containing all data sets metadata that are compatible with the data set with id <tt>id</tt>. If no
-     * compatible data set is found an empty list is returned. The data set with id <tt>dataSetId</tt> is never returned
-     * in the list.
-     *
-     * @param id    the specified data set id
-     * @param sort  the sort criterion: either name or date.
-     * @param order the sorting order: either asc or desc
-     * @return a list containing all data sets metadata that are compatible with the data set with id <tt>id</tt> and
-     * empty list if no data set is compatible.
-     */
-    @RequestMapping(value = "/api/datasets/{id}/compatibledatasets", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List compatible data sets.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets that are compatible with the specified one.")
-    @Timed
-    public Callable<Stream<UserDataSetMetadata>> listCompatibleDatasets(
-            @ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
-        return () -> toStream(UserDataSetMetadata.class, mapper, getCommand(CompatibleDataSetList.class, id, sort, order));
     }
 
     /**
@@ -490,14 +453,6 @@ public class DataSetAPI extends APIService {
     @PublicAPI
     public ResponseEntity<StreamingResponseBody> getImportParameters(@PathVariable("import") final String importType) {
         return toStreaming(getCommand(DataSetGetImportParameters.class, importType));
-    }
-
-    @RequestMapping(value = "/api/datasets/imports", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List supported imports for a dataset.", notes = "Returns the supported import types.")
-    @Timed
-    @PublicAPI
-    public Callable<Stream<Import>> listImports() {
-        return () -> CommandHelper.toStream(Import.class, mapper, getCommand(DataSetGetImports.class));
     }
 
     /**

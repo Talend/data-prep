@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.InvalidMarker;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
@@ -23,13 +25,17 @@ import org.talend.dataprep.dataset.adapter.commands.DatasetList;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -72,8 +78,8 @@ public class ApiDatasetClient {
 
     // ------- Pure API -------
 
-    public Stream<Dataset> listDataset() {
-        return context.getBean(DatasetList.class).execute();
+    public Stream<Dataset> listDataset(Dataset.CertificationState certification, Boolean favorite) {
+        return context.getBean(DatasetList.class, certification, favorite).execute();
     }
 
     public Dataset getMetadata(String id) {
@@ -101,25 +107,32 @@ public class ApiDatasetClient {
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata) {
-        return getDataSetContent(id).map(toDatasetRow(rowMetadata));
+        return toDataSetRows(getDataSetContent(id), rowMetadata);
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id) {
         DataSetMetadata metadata = getDataSetMetadata(id);
-        return toDataSetRows(getDataSetContent(id), metadata);
+        return toDataSetRows(getDataSetContent(id), metadata.getRowMetadata());
     }
 
     public DataSet getDataSet(String id) {
-        return getDataSet(id, false);
+        return getDataSet(id, false, false, null);
     }
 
-    public DataSet getDataSet(String id, boolean fullContent) {
+    public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();
         // convert metadata
         DataSetMetadata metadata = toDataSetMetadata(getMetadata(id), fullContent);
         dataset.setMetadata(metadata);
         // convert records
-        dataset.setRecords(toDataSetRows(getDataSetContent(id), metadata));
+        Stream<DataSetRow> records = toDataSetRows(getDataSetContent(id), metadata.getRowMetadata());
+        if (withRowValidityMarker) {
+            records = records.peek(addValidity(metadata.getRowMetadata().getColumns()));
+        }
+        if (filter != null) {
+            records = filter(records, filter, metadata.getRowMetadata());
+        }
+        dataset.setRecords(records);
 
         // DataSet specifics
         metadata.getContent().getLimit().ifPresent(theLimit -> dataset.setRecords(dataset.getRecords().limit(theLimit)));
@@ -133,13 +146,11 @@ public class ApiDatasetClient {
      * @param filter TQL filter for content
      */
     public DataSet getDataSet(String id, boolean fullContent, String filter) {
-        DataSet dataSet = getDataSet(id, fullContent);
-        dataSet.setRecords(filter(dataSet.getRecords(), filter, dataSet.getMetadata().getRowMetadata()));
-        return dataSet;
+        return getDataSet(id, fullContent, false, filter);
     }
 
     public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {
-        Stream<Dataset> datasetStream = listDataset();
+        Stream<Dataset> datasetStream = listDataset(null, null);
         if (isNotBlank(name)) {
             datasetStream = datasetStream.filter(dataset -> {
                 String label = dataset.getLabel();
@@ -174,7 +185,7 @@ public class ApiDatasetClient {
      */
     @Deprecated
     public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
-        DataSet dataSet = getDataSet(dataSetId, fullContent);
+        DataSet dataSet = getDataSet(dataSetId, fullContent, false, null);
         return new HystrixCommand<InputStream>(DATASET_GROUP) {
 
             @Override
@@ -188,10 +199,16 @@ public class ApiDatasetClient {
 
     // ------- Utilities -------
 
-
-    private Stream<DataSetRow> toDataSetRows(Stream<GenericRecord> dataSetContent, DataSetMetadata metadata) {
-        return dataSetContent.map(toDatasetRow(metadata.getRowMetadata()));
+    private Stream<DataSetRow> toDataSetRows(Stream<GenericRecord> dataSetContent, RowMetadata rowMetadata) {
+        return dataSetContent.map(toDatasetRow(rowMetadata));
     }
+
+    private Consumer<DataSetRow> addValidity(List<ColumnMetadata> columns) {
+        final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columns, AnalyzerService.Analysis.QUALITY);
+        InvalidMarker invalidMarker = new InvalidMarker(columns, analyzer);
+        return invalidMarker::apply;
+    }
+
     // GenericRecord -> DataSetRow
     private Function<GenericRecord, DataSetRow> toDatasetRow(RowMetadata rowMetadata) {
         return AvroUtils.toDataSetRowConverter(rowMetadata);

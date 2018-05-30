@@ -13,12 +13,10 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
-import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -29,20 +27,37 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import javax.annotation.PostConstruct;
+import java.net.URI;
+import java.util.stream.Stream;
+
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component("DataSetList#2")
 @Scope(SCOPE_PROTOTYPE)
 public class DatasetList extends GenericCommand<Stream<Dataset>> {
 
-    private DatasetList() {
+    private final Dataset.CertificationState certification;
+    private final Boolean favorite;
+
+    private DatasetList(Dataset.CertificationState certification, Boolean favorite) {
         super(GenericCommand.DATASET_GROUP);
+        this.certification = certification;
+        this.favorite = favorite;
     }
 
     @PostConstruct
     private void initDataSetList() {
         try {
-            execute(() -> new HttpGet(datasetServiceUrl + "/api/v1/datasets"));
+            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/api/v1/datasets");
+            if (certification != null) {
+                uriBuilder.addParameter("certification", certification.name());
+            }
+            if (favorite != null) {
+                uriBuilder.addParameter("favorite", Boolean.toString(favorite));
+            }
+            URI dataSetListUri = uriBuilder.build();
+            execute(() -> new HttpGet(dataSetListUri));
             on(HttpStatus.OK).then(this::readResponse);
 
             onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_LIST_DATASETS, e));

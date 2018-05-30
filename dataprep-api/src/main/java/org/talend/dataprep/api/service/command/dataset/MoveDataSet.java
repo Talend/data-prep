@@ -13,15 +13,6 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.talend.daikon.exception.ExceptionContext.build;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpPut;
@@ -35,11 +26,21 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.talend.daikon.exception.ExceptionContext.build;
+
 /**
  * Command to move a dataset to an other folder.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class MoveDataSet extends GenericCommand<HttpResponse> {
 
     /**

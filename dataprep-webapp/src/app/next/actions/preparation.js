@@ -1,4 +1,4 @@
-import { folder } from '.';
+import folder from './folder';
 import {
 	CANCEL_RENAME_PREPARATION,
 	PREPARATION_DUPLICATE,

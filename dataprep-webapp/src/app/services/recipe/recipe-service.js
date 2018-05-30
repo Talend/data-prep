@@ -107,10 +107,11 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 		const actionValues = actionStep[1];
 		const metadata = actionStep[2];
 		const diff = actionStep[3];
+		const stepScopeColumn = actionValues.filterColumns.find(col => col.id === actionValues.parameters.column_id);
 		const item = {
 			column: {
 				id: actionValues.parameters.column_id,
-				name: actionValues.parameters.column_name,
+				name: (stepScopeColumn && stepScopeColumn.name) || actionValues.parameters.column_name,
 			},
 			row: {
 				id: actionValues.parameters.row_id,

@@ -17,6 +17,7 @@ import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -155,30 +156,40 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
                     for (Action action : actions) {
                         Map<String, String> parameters = action.getParameters();
+                        List<ColumnMetadata> filterColumns = new ArrayList<>();
 
-                        if (StringUtils.isNotBlank(parameters.get(ImplicitParameters.FILTER.getKey()))) {
-                            // Translate filter from JSON to TQL
-                            parameters.put(ImplicitParameters.FILTER.getKey(),
-                                    translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
+                        // Fetch column metadata relative to the filtered action
+                        // Ask for (n-1) metadata (necessary if some columns are deleted during last step)
+                        final Step step = preparationRepository
+                                .get(source.getSteps().get(actions.indexOf(action)).getId(), Step.class);
+                        if (step != null) {
+                            final StepRowMetadata stepRowMetadata =
+                                    preparationRepository.get(step.getRowMetadata(), StepRowMetadata.class);
 
-                            // Fetch column metadata relative to the filtered action
-                            // Ask for (n-1) metadata (necessary if some columns are deleted during last step)
-                            final Step step = preparationRepository
-                                    .get(source.getSteps().get(actions.indexOf(action)).getId(), Step.class);
-                            if (step != null) {
-                                final StepRowMetadata stepRowMetadata =
-                                        preparationRepository.get(step.getRowMetadata(), StepRowMetadata.class);
-                                List<ColumnMetadata> filterColumns;
-                                if (stepRowMetadata == null) {
-                                    filterColumns = target.getRowMetadata().getColumns();
-                                } else {
+                            if (stepRowMetadata == null) {
+                                filterColumns = target.getRowMetadata().getColumns();
+                            } else {
+                                if (StringUtils.isNotBlank(parameters.get(ImplicitParameters.FILTER.getKey()))) {
+                                    // Translate filter from JSON to TQL
+                                    parameters.put(ImplicitParameters.FILTER.getKey(),
+                                            translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
                                     filterColumns = tqlFilterService.getFilterColumnsMetadata(
                                             parameters.get(ImplicitParameters.FILTER.getKey()),
                                             stepRowMetadata.getRowMetadata());
                                 }
-                                action.setFilterColumns(filterColumns);
+                                //add metadata of the scope column if not already added(use when there is a column rename for example)
+                                if(filterColumns.stream().filter(column -> parameters.get(ImplicitParameters.COLUMN_ID.getKey()).equals(column.getId())).findFirst().orElse(null) == null) {
+                                    filterColumns.addAll(stepRowMetadata.getRowMetadata()
+                                            .getColumns()
+                                            .stream()
+                                            .filter(column -> parameters.get(ImplicitParameters.COLUMN_ID.getKey()).equals(column.getId()))
+                                            .collect(Collectors.toList()));
+                                }
                             }
+                        } else {
+                            filterColumns = target.getRowMetadata().getColumns();
                         }
+                        action.setFilterColumns(filterColumns);
                     }
                     target.setActions(prepActions.getActions());
 

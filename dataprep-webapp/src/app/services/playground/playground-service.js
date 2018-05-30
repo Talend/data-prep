@@ -655,13 +655,9 @@ export default function PlaygroundService(
 				currentStepId,
 				nextParentStepId,
 			)
-			// update recipe and datagrid
-				.then(() => {
-					return $q.all([
-						this.updatePreparationDetails(),
-						updatePreparationDatagrid(),
-					]);
-				})
+			// update recipe and datagrid (due to backend implementation: getContent should be called first so that updated stepRowMetadata is available for getContent)
+				.then(updatePreparationDatagrid)
+				.then(this.updatePreparationDetails)
 				// add entry in history for undo/redo
 				.then(() => {
 					const actualHead = StepUtilsService.getLastStep(recipe)

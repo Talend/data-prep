@@ -243,7 +243,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		}
 		const excludeMax = ctx.children[6].getText() === '[';
 
-		const label = isDateRange ?
+		const label = isDateRange && filteredColumn.statistics.histogram ?
 			FilterUtilsService.getDateLabel(
 				filteredColumn.statistics.histogram.pace,
 				new Date(min),

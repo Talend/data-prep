@@ -1,12 +1,10 @@
 describe('Recipe service', function () {
     'use strict';
-
+	const filterColumns = [
+		{'0000': 'country'},
+		{'0001': 'gender'},
+	];
     let preparationDetails = function () {
-        const filterColumns = {
-            '0000': 'country',
-            '0001': 'gender',
-        };
-
         return {
             id: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4',
             dataSetId: 'db6c4ad8-77da-4a30-b29f-ca552706b058',
@@ -719,34 +717,22 @@ describe('Recipe service', function () {
             expect(steps[0].actionParameters).toEqual({
                 action: 'uppercase',
                 parameters: { column_name: 'country', filter: { valid: { field: '0000' } } },
-                filterColumns: {
-                    '0000': 'country',
-                    '0001': 'gender',
-                },
+                filterColumns,
             });
             expect(steps[1].actionParameters).toEqual({
                 action: 'fillemptywithdefault',
                 parameters: { default_value: 'M', column_name: 'gender' },
-                filterColumns: {
-                    '0000': 'country',
-                    '0001': 'gender',
-                },
+	            filterColumns,
             });
             expect(steps[2].actionParameters).toEqual({
                 action: 'negate',
                 parameters: { column_name: 'campain' },
-                filterColumns: {
-                    '0000': 'country',
-                    '0001': 'gender',
-                },
+	            filterColumns,
             });
             expect(steps[3].actionParameters).toEqual({
                 action: 'cut',
                 parameters: { pattern: '.', column_name: 'first_item' },
-                filterColumns: {
-                    '0000': 'country',
-                    '0001': 'gender',
-                },
+	            filterColumns,
             });
             expect(steps[4].actionParameters).toEqual({
                 action: 'textclustering',
@@ -762,18 +748,12 @@ describe('Recipe service', function () {
                     column_id: '1',
                     column_name: 'uglystate',
                 },
-                filterColumns: {
-                    '0000': 'country',
-                    '0001': 'gender',
-                },
+	            filterColumns,
             });
             expect(steps[5].actionParameters).toEqual({
                 action: 'fillemptywithdefaultboolean',
                 parameters: { default_value: 'True', column_name: 'campain' },
-                filterColumns: {
-                    '0000': 'country',
-                    '0001': 'gender',
-                },
+	            filterColumns,
             });
         }));
     });

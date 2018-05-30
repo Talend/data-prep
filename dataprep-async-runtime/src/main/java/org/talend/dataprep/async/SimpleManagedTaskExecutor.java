@@ -75,7 +75,7 @@ public class SimpleManagedTaskExecutor implements ManagedTaskExecutor {
                     ExceptionContext.withBuilder().put("id", executionId).build());
         } else if (execution.isResumable()) {
             // Execution is expected to be created as "RUNNING" or "NEW" before the dispatcher resumes it.
-            LOGGER.error("Execution #{} can be resumed (status is {}) for tenant:", execution.getId(), execution.getStatus(), execution.getTenantId());
+            LOGGER.error("Execution #{} can be resumed (status is {}) for tenant: {}", execution.getId(), execution.getStatus(), execution.getTenantId());
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION,
                     ExceptionContext.withBuilder().put("id", executionId).build());
         }

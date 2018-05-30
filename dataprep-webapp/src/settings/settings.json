@@ -190,6 +190,7 @@
       "header": {},
       "sidepanel": {},
       "list": {
+        "didMountActionCreator" : "preparation:fetchAll",
         "collectionId": "preparations",
         "list": {
           "columns": [

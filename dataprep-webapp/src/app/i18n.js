@@ -5,7 +5,6 @@ import constants from './next/constants';
 import { default as locales } from './next/locales';
 
 const I18N = constants.I18N;
-console.log(I18N);
 
 const NAMESPACES = [
 	I18N.DATASET_APP_NAME_SPACE,

@@ -15,7 +15,7 @@ export default function App(props) {
 		<I18nextProvider i18n={i18n}>
 			<AppLoader>
 				<IconsProvider />
-				<ShortcutManager view="shortcuts" />
+				<ShortcutManager />
 				<Notification />
 				<AboutModal />
 				<PreparationCreatorModal />

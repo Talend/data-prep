@@ -28,6 +28,7 @@ const registerRouteFunction = api.route.registerFunction;
  * - Register action creators in CMF actions dictionary
  */
 export default function initialize(additionalConfiguration = {}) {
+	window.registry = api.registry.getRegistry();
 	// register all saga api
 	api.saga.registerMany(sagas.bootstrap);
 

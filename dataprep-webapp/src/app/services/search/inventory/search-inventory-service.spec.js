@@ -14,9 +14,9 @@
 describe('Search Inventory Service', () => {
 	const results = {
 		data: {
-			folders: [{ name: 'folder test', lastModificationDate: 1 }],
-			preparations: [{ name: 'prep test', lastModificationDate: 2 }],
-			datasets: [{
+			folder: [{ name: 'folder test', lastModificationDate: 1 }],
+			preparation: [{ name: 'prep test', lastModificationDate: 2 }],
+			dataset: [{
 				id: 'id',
 				name: 'dataset test',
 				lastModificationDate: 3,
@@ -51,7 +51,7 @@ describe('Search Inventory Service', () => {
 				name: 'dataset test',
 				path: 'home',
 				type: 'csv',
-				model: results.data.datasets[0],
+				model: results.data.dataset[0],
 				lastModificationDate: 3,
 				tooltipName: 'dataset test',
 				owner: {

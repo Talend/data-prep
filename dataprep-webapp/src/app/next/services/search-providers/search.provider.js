@@ -5,7 +5,7 @@ export default class SearchProvider {
 		throw new Error('build(): Not implemented');
 	}
 
-	static convert() {
+	static transform() {
 		throw new Error('convert(): Not implemented');
 	}
 }

@@ -17,7 +17,7 @@ export default class SearchService {
 		return SearchService.getProvider(provider).build(term, categories);
 	}
 
-	static convert(provider, results) {
-		return SearchService.getProvider(provider).convert(results);
+	static transform(provider, results) {
+		return SearchService.getProvider(provider).transform(results);
 	}
 }

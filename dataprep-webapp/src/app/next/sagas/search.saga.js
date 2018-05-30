@@ -21,11 +21,11 @@ function* goTo() {
 			.get(payload.itemIndex)
 			.toJS();
 
-		switch (item.category) {
+		switch (item.type) {
 		case 'preparation':
 		case 'dataset':
 		case 'folder':
-			yield put(creators[item.category].open(null, item));
+			yield put(creators[item.type].open(null, item));
 			break;
 		case 'documentation':
 			yield put({
@@ -56,7 +56,7 @@ function* process(payload) {
 	const results = (
 			yield all(batches.map(request => call(...request)))
 		).map(
-			(result, index) => SearchService.convert(providers[index], result)
+			(result, index) => SearchService.transform(providers[index], result)
 		);
 
 	yield put(Typeahead.setStateAction({ searching: false }, 'headerbar:search'));

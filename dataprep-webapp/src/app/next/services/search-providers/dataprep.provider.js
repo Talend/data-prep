@@ -14,13 +14,13 @@ export default class DataprepSearchProvider extends SearchProvider {
 		];
 	}
 
-	static convert(data) {
+	static transform(data) {
 		const converted = JSON.parse(data.data);
-		return Object.keys(converted).map(category => ({
-			title: category,
-			suggestions: converted[category].map(({ id, name }) => ({
+		return Object.keys(converted).map(type => ({
+			title: type,
+			suggestions: converted[type].map(({ id, name }) => ({
 				title: name,
-				category,
+				type,
 				id,
 			})),
 		}));

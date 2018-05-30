@@ -31,11 +31,11 @@ export default class DocumentationSearchProvider extends SearchProvider {
 		return dom.innerText;
 	}
 
-	static convert(data) {
+	static transform(data) {
 		return {
 			title: DocumentationSearchProvider.CATEGORY,
 			suggestions: data.data.results.map(topic => ({
-				category: DocumentationSearchProvider.CATEGORY,
+				type: DocumentationSearchProvider.CATEGORY,
 				description: DocumentationSearchProvider._normalize(topic.htmlExcerpt),
 				title: DocumentationSearchProvider._normalize(topic.htmlTitle),
 				url: topic.occurrences[0].readerUrl,

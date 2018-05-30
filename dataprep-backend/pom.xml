@@ -32,7 +32,7 @@
         <junit.version>4.12</junit.version>
         <tika.version>1.16</tika.version>
         <org.talend.daikon.version>0.19.0</org.talend.daikon.version>
-        <dataquality-libraries.version>4.0.4-SNAPSHOT</dataquality-libraries.version>
+        <dataquality-libraries.version>4.0.3</dataquality-libraries.version>
         <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>
         <org.talend.dataquality.statistics.version>${dataquality-libraries.version}</org.talend.dataquality.statistics.version>
@@ -51,7 +51,7 @@
         <apache.poi.version>3.15</apache.poi.version>
         <java-semver.version>0.9.0</java-semver.version>
         <commons-math3.version>3.5</commons-math3.version>
-        <!-- validation and httpclients Must be compatible with what is imported by spring-boot-starter-web version -->
+        <!-- validataion and httpclients Must be compatible with what is imported by spring-boot-starter-web version -->
         <!-- Because we do not import web components in backend lib -->
         <!-- See http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#appendix-dependency-versions -->
         <validation-api.version>1.1.0.Final</validation-api.version>

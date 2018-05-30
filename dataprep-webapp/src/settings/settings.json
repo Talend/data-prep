@@ -110,6 +110,7 @@
       },
       "search": {
         "id": "headerbar:search",
+        "componentId": "headerbar:search",
         "icon": {
           "name": "talend-search",
           "title": "Toggle search input",

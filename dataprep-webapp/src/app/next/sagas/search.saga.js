@@ -11,7 +11,7 @@ import {
 
 import SearchService from '../services/search.service';
 
-function* goTo() {
+function* goto() {
 	while (true) {
 		const { payload } = yield take(SEARCH_SELECT);
 		const results = yield select(state => state.cmf.collections.get('search'));
@@ -83,5 +83,5 @@ function* search() {
 export default {
 	search,
 	reset,
-	goTo,
+	goto,
 };

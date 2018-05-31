@@ -271,6 +271,7 @@ describe('Inventory list container', () => {
 
 				// when
 				element.find('#list-0-inventory\\:edit').click();
+				element.find('#list-0-inventory\\:edit').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);

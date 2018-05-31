@@ -27,9 +27,14 @@ function open(event, { type, id }) {
 	}
 }
 
-function fetchAll() {
-	// TODO [NC]: folderId
-	return { type: FETCH_PREPARATIONS };
+function fetchAll(payload) {
+	const { folderId = 'Lw==' } = payload || {};
+	return {
+		type: FETCH_PREPARATIONS,
+		payload: {
+			folderId,
+		},
+	};
 }
 
 function duplicate(event, { model }) {

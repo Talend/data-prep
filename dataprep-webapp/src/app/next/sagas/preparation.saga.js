@@ -45,11 +45,20 @@ function* duplicate() {
 	}
 }
 
+function* openFolder() {
+	while (true) {
+		const { id } = yield take(OPEN_FOLDER);
+		yield api.saga.putActionCreator('preparation:fetchAll', {
+			folderId: id,
+		});
+	}
+}
+
 function* fetchPreparations() {
 	while (true) {
-		const { folderId = 'Lw==' } = yield take(FETCH_PREPARATIONS);
+		const { payload } = yield take(FETCH_PREPARATIONS);
 		yield put(
-			actions.http.get(`http://localhost:8888/api/folders/${folderId}/preparations`, {
+			actions.http.get(`http://localhost:8888/api/folders/${payload.folderId}/preparations`, {
 				cmf: {
 					collectionId: 'preparations',
 				},
@@ -117,6 +126,7 @@ export default {
 	cancelRename,
 	duplicate,
 	fetchPreparations,
+	openFolder,
 	rename,
 	setTitleEditionMode,
 	openAbout,

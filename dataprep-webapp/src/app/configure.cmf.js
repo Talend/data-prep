@@ -41,7 +41,6 @@ export default function initialize(additionalConfiguration = {}) {
 		fork(api.sagas.component.handle),
 		...sagas.help.map(call),
 		...sagas.preparation.map(call),
-		...sagas.search.map(call),
 		...sagas.redirect.map(call),
 		fork(sagas.httpHandler),
 	];
@@ -150,9 +149,6 @@ export default function initialize(additionalConfiguration = {}) {
 		}));
 		registerActionCreator('redirect', actions.redirect);
 		registerActionCreator('version:fetch', actions.version.fetch);
-		registerActionCreator('headerbar:search:start', actions.search.start);
-		registerActionCreator('headerbar:search:select', actions.search.select);
-		registerActionCreator('headerbar:search:reset', actions.search.reset);
 
 		const additionalActionCreators = additionalConfiguration.actionCreators;
 		if (additionalActionCreators) {

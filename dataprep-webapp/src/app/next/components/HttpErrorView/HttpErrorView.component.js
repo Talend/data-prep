@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Inject } from '@talend/react-cmf';
 import { HttpError, Layout } from '@talend/react-components';
 
-import './HttpErrorView.scss'
+import './HttpErrorView.scss';
 
 function HttpErrorView({ status, title, message }) {
 	return (

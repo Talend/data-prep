@@ -8,6 +8,7 @@ import {
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
+	OPEN_FOLDER,
 } from '../constants/actions';
 
 const defaultHttpConfiguration = {

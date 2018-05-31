@@ -4,12 +4,13 @@ import api, { actions } from '@talend/react-cmf';
 import {
 	CANCEL_RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
+	OPEN_FOLDER,
 	OPEN_PREPARATION_CREATOR,
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
-	OPEN_FOLDER,
 } from '../constants/actions';
+import PreparationService from '../services/preparation.service';
 
 const defaultHttpConfiguration = {
 	headers: {
@@ -41,20 +42,11 @@ function* duplicate() {
 			{},
 			defaultHttpConfiguration,
 		);
-		yield api.saga.putActionCreator('preparation:fetchAll');
+		yield call(fetch);
 	}
 }
 
-function* openFolder() {
-	while (true) {
-		const { id } = yield take(OPEN_FOLDER);
-		yield api.saga.putActionCreator('preparation:fetchAll', {
-			folderId: id,
-		});
-	}
-}
-
-function* fetchPreparations() {
+function* fetch() {
 	while (true) {
 		const { payload } = yield take(FETCH_PREPARATIONS);
 		yield put(
@@ -62,30 +54,18 @@ function* fetchPreparations() {
 				cmf: {
 					collectionId: 'preparations',
 				},
-				transform({ folders, preparations }) {
-					const adaptedFolders = folders.map(folder => ({
-						author: folder.ownerId,
-						className: 'list-item-folder',
-						icon: 'talend-folder',
-						id: folder.id,
-						name: folder.name,
-						type: 'folder',
-					}));
-					const adaptedPreparations = preparations.map(prep => ({
-						author: prep.author,
-						className: 'list-item-preparation',
-						datasetName: prep.dataset.dataSetName,
-						icon: 'talend-dataprep',
-						id: prep.id,
-						name: prep.name,
-						nbSteps: prep.steps.length - 1,
-						type: 'preparation',
-					}));
-
-					return adaptedFolders.concat(adaptedPreparations);
-				},
+				transform: PreparationService.transform,
 			}),
 		);
+	}
+}
+
+function* openFolder() {
+	while (true) {
+		const { id } = yield take(OPEN_FOLDER);
+		yield api.saga.putActionCreator('preparation:fetch', {
+			folderId: id,
+		});
 	}
 }
 
@@ -99,7 +79,7 @@ function* rename() {
 			{ name: payload.name },
 			defaultHttpConfiguration,
 		);
-		yield api.saga.putActionCreator('preparation:fetchAll');
+		yield call(fetch);
 	}
 }
 
@@ -125,7 +105,7 @@ function* openAbout() {
 export default {
 	cancelRename,
 	duplicate,
-	fetchPreparations,
+	fetch,
 	openFolder,
 	rename,
 	setTitleEditionMode,

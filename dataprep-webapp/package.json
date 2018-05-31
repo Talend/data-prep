@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@talend/bootstrap-theme": "0.189.0",
-    "@talend/data-quality-semantic-ee": "^4.0.1",
     "@talend/dataset": "2.0.0",
     "@talend/html-webpack-plugin": "0.0.3",
     "@talend/icons": "0.189.0",

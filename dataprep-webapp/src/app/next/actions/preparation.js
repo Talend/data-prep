@@ -27,7 +27,7 @@ function open(event, { type, id }) {
 	}
 }
 
-function fetchAll(payload) {
+function fetch(payload) {
 	const { folderId = 'Lw==' } = payload || {};
 	return {
 		type: FETCH_PREPARATIONS,
@@ -76,7 +76,7 @@ function openCreator() {
 
 export default {
 	open,
-	fetchAll,
+	fetch,
 	duplicate,
 	rename,
 	cancelRename,

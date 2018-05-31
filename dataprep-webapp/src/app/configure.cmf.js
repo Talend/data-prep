@@ -10,7 +10,7 @@ import { all, call, fork } from 'redux-saga/effects';
 import actions from './next/actions';
 import components from './next/components/index';
 import App from './next/components/App.container';
-import { ALERT, FETCH_PREPARATIONS } from './next/constants/actions';
+import { ALERT } from './next/constants/actions';
 
 import { default as constants } from './next/constants';
 
@@ -36,13 +36,12 @@ export default function initialize(additionalConfiguration = {}) {
 
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
-
-		// FIXME: do not use this syntax. Switch to new syntax (see line 47)
 		fork(api.sagas.component.handle),
 		...sagas.help.map(call),
 		...sagas.preparation.map(call),
 		...sagas.search.map(call),
 		...sagas.redirect.map(call),
+		...sagas.preparation.map(call),
 		fork(sagas.httpHandler),
 	];
 
@@ -54,6 +53,7 @@ export default function initialize(additionalConfiguration = {}) {
 		});
 	}
 
+	api.saga.registerMany(sagas.preparation);
 	// Use for EE additional configuration
 	const additionalManySagas = additionalConfiguration.manySagas;
 	if (additionalManySagas) {
@@ -93,12 +93,6 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register route functions
 		 */
-		registerRouteFunction('preparation:fetch', ({ router, dispatch }) =>
-			dispatch({
-				type: FETCH_PREPARATIONS,
-				folderId: router.nextState.params.folderId,
-			}),
-		);
 		const additionalRouteFunctions = additionalConfiguration.routeFunctions;
 		if (additionalRouteFunctions) {
 			Object.keys(additionalRouteFunctions).map(k =>
@@ -132,12 +126,12 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register action creators in CMF Actions dictionary
 		 */
-		registerActionCreator('preparation:fetchAll', actions.preparation.fetchAll);
 		registerActionCreator('preparation:duplicate', actions.preparation.duplicate);
 		registerActionCreator('preparation:edit:submit', actions.preparation.rename);
 		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
 		registerActionCreator('preparation:open', actions.preparation.open);
 		registerActionCreator('folder:open', actions.folder.open);
+		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
 		registerActionCreator('help:tour', () => ({
@@ -165,7 +159,7 @@ export default function initialize(additionalConfiguration = {}) {
 		 * Fetch the CMF settings and configure the CMF app
 		 */
 		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${constants.I18N.EN_LOCALE}.json`),
+			cmfActions.settingsActions.fetchSettings(`/settings.${constants.I18N.DEFAULT_LOCALE}.json`),
 		);
 
 		reduxLocalStorage.saveOnReload({

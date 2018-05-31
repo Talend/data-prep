@@ -5,20 +5,22 @@ import { Notification, ShortcutManager } from '@talend/react-containers';
 import AppLoader from '@talend/react-containers/lib/AppLoader/index';
 
 import { I18nextProvider } from 'react-i18next';
-
+import i18n from './../../i18n';
 import AboutModal from './AboutModal';
 import PreparationCreatorModal from '../../components/preparation-creator/index';
 
 export default function App(props) {
 	return (
-		<I18nextProvider>
+		<I18nextProvider i18n={i18n}>
 			<AppLoader>
-				<IconsProvider />
-				<ShortcutManager />
-				<Notification />
-				<AboutModal />
-				<PreparationCreatorModal />
-				{props.children}
+				<div className="tdp">
+					<IconsProvider />
+					<ShortcutManager view="shortcuts" />
+					<Notification />
+					<AboutModal />
+					<PreparationCreatorModal />
+					{props.children}
+				</div>
 			</AppLoader>
 		</I18nextProvider>
 	);

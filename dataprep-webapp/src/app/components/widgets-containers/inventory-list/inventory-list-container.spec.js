@@ -264,39 +264,18 @@ describe('Inventory list container', () => {
 			})
 		);
 
-		it('should dispatch folder edit on action click',
-			inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-
-				// when
-				element.find('#list-0-inventory\\:edit').click();
-				element.find('#list-0-inventory\\:edit').click();
-
+		it('should have edit action for folder',
+			() => {
 				// then
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('inventory:edit');
-				expect(lastCallArgs.type).toBe('@@inventory/EDIT');
-				expect(lastCallArgs.payload.model).toBe(folders[0].model);
-			})
+				expect(element.find('#list-0-inventory\\:edit').length).toBe(1);
+			}
 		);
 
-		it('should dispatch folder remove on action click',
-			inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-
-				// when
-				element.find('#list-0-preparation\\:folder\\:remove').click();
-
+		it('should have remove action for folder',
+			() => {
 				// then
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:folder:remove');
-				expect(lastCallArgs.type).toBe('@@preparation/FOLDER_REMOVE');
-				expect(lastCallArgs.payload.model).toBe(folders[0].model);
-			})
+				expect(element.find('#list-0-preparation\\:folder\\:remove').length).toBe(1);
+			}
 		);
 	});
 
@@ -332,55 +311,25 @@ describe('Inventory list container', () => {
 			})
 		);
 
-		it('should dispatch preparation edit on action click',
-			inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-
+		it('should have edit action for preparation',
+			() => {
 				// when
-				element.find('#list-2-inventory\\:edit').click();
-
-				// then
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('inventory:edit');
-				expect(lastCallArgs.type).toBe('@@inventory/EDIT');
-				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
-			})
+				expect(element.find('#list-2-inventory\\:edit').length).toBe(1);
+			}
 		);
 
-		it('should dispatch preparation copy/move on action click',
-			inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-
-				// when
-				element.find('#list-2-preparation\\:copy-move').click();
-
+		it('should have copy/move action for preparation',
+			() => {
 				// then
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:copy-move');
-				expect(lastCallArgs.type).toBe('@@preparation/COPY_MOVE');
-				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
-			})
+				expect(element.find('#list-2-preparation\\:copy-move').length).toBe(1);
+			}
 		);
 
-		it('should dispatch preparation remove on action click',
-			inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-
-				// when
-				element.find('#list-2-preparation\\:remove').click();
-
+		it('should have remove action for preparation',
+			() => {
 				// then
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:remove');
-				expect(lastCallArgs.type).toBe('@@preparation/REMOVE');
-				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
-			})
+				expect(element.find('#list-2-preparation\\:remove').length).toBe(1);
+			}
 		);
 
 		it('should dispatch preparation playground on title click',
@@ -449,8 +398,7 @@ describe('Inventory list container', () => {
 
 		it('should render favorite action', () => {
 			// then
-			const rows = element.find('.tc-list-cell-statusActions');
-			expect(rows.eq(1).find('#list-0-dataset\\:favorite').length).toBe(1);
+			expect(element.find('#list-0-dataset\\:favorite').length).toBe(1);
 		});
 
 		it('should dispatch favorite toggle', inject((SettingsActionsService) => {

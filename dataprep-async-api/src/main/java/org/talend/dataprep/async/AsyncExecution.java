@@ -25,6 +25,7 @@ import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -261,6 +262,7 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
 
     }
 
+    @JsonIgnore
     public boolean isResumable() {
         return this.getStatus() == Status.RUNNING || this.getStatus() == Status.NEW;
     }

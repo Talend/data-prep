@@ -10,14 +10,21 @@ export const INITIAL_STATE = {
 						{
 							type: 'preparation',
 							title: 'R1',
+							id: 666,
 						},
 						{
 							type: 'folder',
 							title: 'R2',
+							id: 42,
 						},
 						{
 							type: 'documentation',
 							title: 'R3',
+							url: 'www.doc.org/test',
+						},
+						{
+							type: 'unknown',
+							title: 'FAKE',
 						},
 					],
 				},

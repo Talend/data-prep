@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -103,7 +104,7 @@ public class ApiDatasetClient {
 
     public RowMetadata getDataSetRowMetadata(String id) {
         Schema dataSetSchema = getDataSetSchema(id);
-        return AvroUtils.toRowMetadata(dataSetSchema);
+        return dataSetSchema == null ? null : AvroUtils.toRowMetadata(dataSetSchema);
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata) {
@@ -157,7 +158,7 @@ public class ApiDatasetClient {
                 return strict ? name.equals(label) : containsIgnoreCase(label, name);
             });
         }
-        return datasetStream.map(this::toDataSetMetadata);
+        return datasetStream.filter(Objects::nonNull).map(this::toDataSetMetadata);
     }
 
     private Stream<DataSetRow> filter(Stream<DataSetRow> stream, String filter, RowMetadata metadata) {
@@ -225,7 +226,7 @@ public class ApiDatasetClient {
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
-        if (rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
+        if (rowMetadata != null && rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
             try {
                 AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata));
                 metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata)); // because sadly, my cache is not immutable

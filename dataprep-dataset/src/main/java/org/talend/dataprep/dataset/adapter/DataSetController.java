@@ -99,9 +99,13 @@ public class DataSetController {
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
         DataSet dataSet = dataSetService.getMetadata(datasetId);
-        DataSetMetadata dataSetMetadata = dataSet.getMetadata();
-
-        return beanConversionService.convert(dataSetMetadata, Dataset.class);
+        if (dataSet != null){
+            DataSetMetadata metadata = dataSet.getMetadata();
+            if (metadata != null) {
+                return beanConversionService.convert(metadata, Dataset.class);
+            }
+        }
+        return null;
     }
 
     @GetMapping(value = "/{datasetId}/schema", produces = AvroUtils.AVRO_JSON_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
@@ -109,8 +113,12 @@ public class DataSetController {
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
         DataSet dataSet = dataSetService.getMetadata(datasetId);
-        RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata();
-        return AvroUtils.toSchema(rowMetadata).toString();
+        if (dataSet != null && dataSet.getMetadata() != null && dataSet.getMetadata().getRowMetadata() != null) {
+            RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata();
+            return AvroUtils.toSchema(rowMetadata).toString();
+        } else {
+            return null;
+        }
     }
 
     @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
@@ -119,9 +127,12 @@ public class DataSetController {
             @RequestParam(required = false) boolean advanced) {
         InputStream result;
         Callable<DataSet> dataSetCallable = dataSetService.get(false, true, EMPTY, datasetId);
-        Stream<DataSetRow> records;
+        Stream<DataSetRow> records = null;
         try {
-            records = dataSetCallable.call().getRecords();
+            DataSet dataSet = dataSetCallable.call();
+            if (dataSet != null) {
+                records = dataSet.getRecords();
+            }
         } catch (Exception e) {
             Throwables.propagateIfPossible(e, RuntimeException.class);
             throw new RuntimeException("unexpected", e);

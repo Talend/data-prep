@@ -168,8 +168,8 @@
       "hasTheme": true
     },
     "HomeListView#preparations": {
+      "didMountActionCreator": "preparation:fetch",
       "hasTheme": true,
-      "saga": "preparation:fetch:home",
       "header": {},
       "sidepanel": {},
       "list": {

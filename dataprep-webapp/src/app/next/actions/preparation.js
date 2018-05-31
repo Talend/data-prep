@@ -29,9 +29,15 @@ function open(event, { type, id }) {
 	}
 }
 
-function fetchAll() {
-	// TODO [NC]: folderId
-	return { type: FETCH_PREPARATIONS };
+function fetch(payload) {
+	console.log('[NC] FETCH ?: ', payload);
+	const { folderId = 'Lw==' } = payload || {};
+	return {
+		type: FETCH_PREPARATIONS,
+		payload: {
+			folderId,
+		},
+	};
 }
 
 function duplicate(event, { model }) {
@@ -73,7 +79,7 @@ function openCreator() {
 
 export default {
 	open,
-	fetchAll,
+	fetch,
 	duplicate,
 	rename,
 	cancelRename,

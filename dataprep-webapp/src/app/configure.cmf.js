@@ -10,7 +10,7 @@ import { all, call, fork } from 'redux-saga/effects';
 import actions from './next/actions';
 import components from './next/components/index';
 import App from './next/components/App.container';
-import { ALERT, FETCH_PREPARATIONS } from './next/constants/actions';
+import { ALERT } from './next/constants/actions';
 
 import { default as constants } from './next/constants';
 
@@ -36,11 +36,10 @@ export default function initialize(additionalConfiguration = {}) {
 
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
-
-		// FIXME: do not use this syntax. Switch to new syntax (see line 47)
 		fork(api.sagas.component.handle),
 		...sagas.help.map(call),
 		...sagas.redirect.map(call),
+		...sagas.preparation.map(call),
 		fork(sagas.httpHandler),
 	];
 
@@ -92,12 +91,6 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register route functions
 		 */
-		// registerRouteFunction('preparation:fetch:open', ({ router, dispatch }) =>
-		// 	dispatch({
-		// 		type: FETCH_PREPARATIONS,
-		// 		folderId: router.nextState.params.folderId,
-		// 	}),
-		// );
 		const additionalRouteFunctions = additionalConfiguration.routeFunctions;
 		if (additionalRouteFunctions) {
 			Object.keys(additionalRouteFunctions).map(k =>
@@ -136,6 +129,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
 		registerActionCreator('preparation:open', actions.preparation.open);
 		registerActionCreator('folder:open', actions.folder.open);
+		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
 		registerActionCreator('help:tour', () => ({

@@ -1,6 +1,6 @@
 import { call, take, put, select } from 'redux-saga/effects';
 import http from '@talend/react-cmf/lib/sagas/http';
-import { actions } from '@talend/react-cmf';
+import api, { actions } from '@talend/react-cmf';
 import {
 	CANCEL_RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
@@ -42,47 +42,15 @@ function* duplicate() {
 			{},
 			defaultHttpConfiguration,
 		);
-		yield call(fetchPreparations);
+		yield call(fetch);
 	}
 }
 
-function* fetchHomePreparations() {
-	yield put(
-		actions.http.get('http://localhost:8888/api/folders/Lw==/preparations', {
-			cmf: {
-				collectionId: 'preparations',
-			},
-			transform({ folders, preparations }) {
-				const adaptedFolders = folders.map(folder => ({
-					author: folder.ownerId,
-					className: 'list-item-folder',
-					icon: 'talend-folder',
-					id: folder.id,
-					name: folder.name,
-					type: 'folder',
-				}));
-				const adaptedPreparations = preparations.map(prep => ({
-					author: prep.author,
-					className: 'list-item-preparation',
-					datasetName: prep.dataset.dataSetName,
-					icon: 'talend-dataprep',
-					id: prep.id,
-					name: prep.name,
-					nbSteps: prep.steps.length - 1,
-					type: 'preparation',
-				}));
-
-				return adaptedFolders.concat(adaptedPreparations);
-			},
-		}),
-	);
-}
-
-function* fetchPreparations() {
+function* fetch() {
 	while (true) {
-		const { folderId = 'Lw==' } = yield take(FETCH_PREPARATIONS);
+		const { payload } = yield take(FETCH_PREPARATIONS);
 		yield put(
-			actions.http.get(`http://localhost:8888/api/folders/${folderId}/preparations`, {
+			actions.http.get(`http://localhost:8888/api/folders/${payload.folderId}/preparations`, {
 				cmf: {
 					collectionId: 'preparations',
 				},
@@ -92,18 +60,12 @@ function* fetchPreparations() {
 	}
 }
 
-function* fetchFolder() {
+function* openFolder() {
 	while (true) {
 		const { id } = yield take(OPEN_FOLDER);
-		debugger
-		yield put(
-			actions.http.get(`http://localhost:8888/api/folders/${id}/preparations`, {
-				cmf: {
-					collectionId: 'preparations',
-				},
-				transform: PreparationService.transform,
-			}),
-		);
+		yield api.saga.putActionCreator('preparation:fetch', {
+			folderId: id,
+		});
 	}
 }
 
@@ -117,7 +79,7 @@ function* rename() {
 			{ name: payload.name },
 			defaultHttpConfiguration,
 		);
-		yield call(fetchPreparations);
+		yield call(fetch);
 	}
 }
 
@@ -141,12 +103,11 @@ function* openAbout() {
 }
 
 export default {
-	'preparation:cancelRename': cancelRename,
-	'preparation:duplicate': duplicate,
-	'preparation:fetch:home': fetchHomePreparations,
-	'preparation:fetch': fetchPreparations,
-	'preparation:folder': fetchFolder,
-	'preparation:rename': rename,
-	'preparation:setTitleEditionMode': setTitleEditionMode,
-	'preparation:openAbout': openAbout,
+	cancelRename,
+	duplicate,
+	fetch,
+	openFolder,
+	rename,
+	setTitleEditionMode,
+	openAbout,
 };
